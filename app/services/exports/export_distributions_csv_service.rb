@@ -8,10 +8,10 @@ module Exports
     include ItemsHelper
 
     def initialize(distributions:, organization:, filters: {})
-      # Currently, the @distributions are already loaded by the controllers that are delegating exporting
-      # to this service object; this is happening within the same request/response cycle, so it's already
-      # in memory, so we can pass that collection in directly. Should this be moved to a background / async
-      # job, we will need to pass in a collection of IDs instead.
+      # Currently, `distributions` is a ActiveRecord::Relation from the controllers that are delegating exporting
+      # to this service object; this is happening within the same request/response cycle, so we pass the query in
+      # directly. Should this be moved to a background / async job, we will need to pass in a collection of IDs instead.
+      # The distribution model objects are not loaded until the `#find_each` in `generate_csv_data`
       # Also, adding in a `filters` parameter to make the filters that have been used available to this
       # service object.
       @distributions = distributions
