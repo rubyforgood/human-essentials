@@ -21,11 +21,14 @@ RSpec.describe PartnerProfileUpdateService do
         end
 
         context "and there are other errors in the profile" do
+          before do
+            profile.partner.awaiting_review!
+          end
           it "does not store the new values and it returns a failure" do
             expect(profile.served_areas.size).to eq(0)
             result = PartnerProfileUpdateService.new(profile.partner, partner_params, other_incorrect_attributes).call
             expect(result.success?).to eq(false)
-            expect(result.error.to_s).to include("No social media presence must be checked")
+            expect(result.error.to_s).to include("'No social media presence' must be checked")
             profile.reload
             expect(profile.served_areas.size).to eq(0)
           end
@@ -59,13 +62,16 @@ RSpec.describe PartnerProfileUpdateService do
           end
         end
         context "and there are errors on the profile" do
+          before do
+            profile.partner.awaiting_review!
+          end
           it "maintains the old values and returns failure" do
             profile.reload
             expect(profile.served_areas.size).to eq(2)
-            PartnerProfileUpdateService.new(profile.partner, partner_params, other_incorrect_attributes).call
+            result = PartnerProfileUpdateService.new(profile.partner, partner_params, other_incorrect_attributes).call
             profile.reload
             expect(profile.served_areas.size).to eq(2)
-            expect(profile.errors).to_not be_empty
+            expect(result.success?).to eq(false)
           end
         end
       end
@@ -108,7 +114,7 @@ RSpec.describe PartnerProfileUpdateService do
       it "returns failure" do
         result = PartnerProfileUpdateService.new(partner, partner_params, basic_correct_attributes).call
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to include("Partner '#{partner.name}' had error(s) preventing the profile from being updated: Email is invalid")
+        expect(result.error.to_s).to include("Validation failed: Email is invalid")
       end
 
       it "doesn't update the partner profile" do
