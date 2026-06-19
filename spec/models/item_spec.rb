@@ -72,8 +72,8 @@ RSpec.describe Item, type: :model do
       kit_params[:line_items_attributes] = [{item_id: item.id, quantity: 1}]
       KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call # shouldn't be counted
 
-      expect(ConcreteItem.where(organization: organization).count).to eq(1)
-      expect(ConcreteItem.where(organization: organization).first.name).to eq(name)
+      expect(organization.concrete_items.count).to eq(1)
+      expect(organization.concrete_items.first.name).to eq(name)
     end
 
     specify "->alphabetized retrieves items in alphabetical order" do
