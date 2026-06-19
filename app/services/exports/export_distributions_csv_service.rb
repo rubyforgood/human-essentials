@@ -39,6 +39,14 @@ module Exports
       csv_data
     end
 
+    def generate_csv_stream
+      yield CSV.generate_line(base_headers + item_headers)
+
+      distributions.each do |distribution|
+        yield CSV.generate_line(build_row_data(distribution))
+      end
+    end
+
     private
 
     attr_reader :distributions
