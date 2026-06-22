@@ -6,7 +6,7 @@ RSpec.describe "Audits", type: :request do
     {
       organization_id: organization.id,
       storage_location_id: storage_location.id,
-      user_id: create(:organization_admin, organization: organization).id
+      user_id: organization_admin.id
     }
   end
 
@@ -14,15 +14,13 @@ RSpec.describe "Audits", type: :request do
     {
       organization_id: organization.id,
       storage_location_id: nil,
-      user_id: create(:organization_admin, organization: organization).id
+      user_id: organization_admin.id
     }
   end
 
   let(:invalid_attributes) do
     { organization_id: nil }
   end
-
-  let(:valid_session) { {} }
 
   describe "while signed in as an organization admin" do
     before do
@@ -155,6 +153,7 @@ RSpec.describe "Audits", type: :request do
           expect do
             post audits_path(audit: valid_attributes, save_progress: '')
             expect(Audit.last.in_progress?).to be_truthy
+            expect(flash[:notice]).to include("Audit's progress was successfully saved.")
           end.to change(Audit.in_progress, :count).by(1)
         end
 
