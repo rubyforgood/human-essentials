@@ -10,22 +10,22 @@
             <!-- form start -->
             <div class="card-body">
               <%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
-                <%= f.input :business_name, label: "Business Name", wrapper: :input_group do %>
+                <%= f.input :business_name, label: "Business Name*", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-suitcase"></i></span>
                   <%= f.input_field :business_name, class: "form-control" %>
                 <% end %>
 
-                <%= f.input :contact_name, label: "Contact Name", wrapper: :input_group do %>
+                <%= f.input :contact_name, label: "Contact Name*", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                   <%= f.input_field :contact_name, class: "form-control" %>
                 <% end %>
 
-                <%= f.input :phone, label: "Phone", wrapper: :input_group do %>
+                <%= f.input :phone, label: "Phone* (phone number or e-mail required)", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-phone"></i></span>
                   <%= f.input_field :phone, class: "form-control" %>
                 <% end %>
 
-                <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
+                <%= f.input :email, label: "E-mail* (phone number or e-mail required)", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                   <%= f.input_field :email, class: "form-control" %>
                 <% end %>
