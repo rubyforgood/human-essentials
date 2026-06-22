@@ -36,6 +36,11 @@ class AuditsController < ApplicationController
   end
 
   def update
+    if @audit.reload.finalized?
+      redirect_to audit_path(@audit), error: "This audit has been finalized and cannot be edited."
+      return
+    end
+
     @audit.line_items.destroy_all
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
