@@ -29,13 +29,13 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit_1 = create(:kit_item, name: "Kit 1", organization: organization, distribution_quantity: 1)
+      kit_1 = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: 1)
       kit_1.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
       ]
 
-      kit_2 = create(:kit_item, name: "Kit 2", organization: organization, distribution_quantity: 1)
+      kit_2 = create(:kit, name: "Kit 2", organization: organization, distribution_quantity: 1)
       kit_2.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
@@ -82,7 +82,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit = create(:kit_item, name: "Kit 1", organization: organization, distribution_quantity: nil)
+      kit = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: nil)
       kit.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
@@ -122,7 +122,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       not_disposable_kit_item = create(:item, name: "Adult Diapers", reporting_category: :adult_incontinence)
 
       # this quantity shouldn't matter so I'm setting it to a high number to ensure it isn't used
-      kit = create(:kit_item, name: "Kit 1", organization: organization, distribution_quantity: 3)
+      kit = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: 3)
       kit.line_items = [
         create(:line_item, quantity: 1000, item: toddler_disposable_kit_item),
         create(:line_item, quantity: 1000, item: infant_disposable_kit_item),

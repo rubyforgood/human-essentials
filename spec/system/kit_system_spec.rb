@@ -38,12 +38,12 @@ RSpec.describe "Kit management", type: :system do
     kit_traits = attributes_for(:kit)
 
     fill_in "Name", with: kit_traits[:name]
-    find(:css, '#kit_item_value_in_dollars').set('10.10')
+    find(:css, '#kit_value_in_dollars').set('10.10')
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_item_line_items_attributes_0_item_id"
-    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
+    select item.name, from: "kit_line_items_attributes_0_item_id"
+    find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
 
@@ -73,7 +73,7 @@ RSpec.describe "Kit management", type: :system do
 
     expect(page).to have_content("Barcode Added to Inventory")
     # Check that item details have been filled in via javascript
-    expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity)
+    expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity)
     # Check that new field has been added via javascript
     expect(page).to have_css(".line_item_section", count: 2)
   end
@@ -212,12 +212,12 @@ RSpec.describe "Kit management", type: :system do
       visit new_kit_path
       kit_traits = attributes_for(:kit)
 
-      find(:css, '#kit_item_value_in_dollars').set('10.10')
+      find(:css, '#kit_value_in_dollars').set('10.10')
 
       item = Item.last
       quantity_per_kit = 5
-      select item.name, from: "kit_item_line_items_attributes_0_item_id"
-      find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
+      select item.name, from: "kit_line_items_attributes_0_item_id"
+      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
 
       click_button "Save"
 

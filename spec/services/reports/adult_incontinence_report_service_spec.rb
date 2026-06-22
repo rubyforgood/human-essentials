@@ -42,27 +42,27 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
       let!(:ai_concrete_3) { create(:item, name: "Adult Briefs (Small)", reporting_category: "adult_incontinence", organization: organization) }
       let!(:non_ai_concrete) { create(:item, name: "Baby Wipes", reporting_category: "other", organization: organization) }
 
-      # Create kits (KitItems) and configure their contents with concrete items
+      # Create kits and configure their contents with concrete items
       let!(:kit_1) do
-        kit = create(:kit_item, organization: organization, distribution_quantity: 1)
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
         kit.line_items = [create(:line_item, item: ai_concrete_1, quantity: 5)]
         kit
       end
 
       let!(:kit_2) do
-        kit = create(:kit_item, organization: organization, distribution_quantity: 1)
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
         kit.line_items = [create(:line_item, item: ai_concrete_2, quantity: 5)]
         kit
       end
 
       let!(:kit_4) do
-        kit = create(:kit_item, organization: organization, distribution_quantity: 1)
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
         kit.line_items = [create(:line_item, item: ai_concrete_3, quantity: 5)]
         kit
       end
 
       let!(:kit_3) do
-        kit = create(:kit_item, organization: organization)
+        kit = create(:kit, organization: organization)
         kit.line_items = [create(:line_item, item: non_ai_concrete, quantity: 5)]
         kit
       end

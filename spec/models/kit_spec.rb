@@ -23,13 +23,13 @@
 #  organization_id              :integer
 #
 
-RSpec.describe KitItem, type: :model do
+RSpec.describe Kit, type: :model do
   let(:organization) { create(:organization) }
 
-  let(:kit) { build(:kit_item, name: "Test Kit", organization: organization) }
+  let(:kit) { build(:kit, name: "Test Kit", organization: organization) }
 
   context "Validations >" do
-    subject { build(:kit_item, organization: organization) }
+    subject { build(:kit, organization: organization) }
 
     it { should validate_presence_of(:name) }
     it { should belong_to(:organization) }
@@ -38,7 +38,7 @@ RSpec.describe KitItem, type: :model do
     it "requires a unique name" do
       subject.save
       expect(
-        build(:kit_item, name: subject.name, organization: organization)
+        build(:kit, name: subject.name, organization: organization)
       ).not_to be_valid
     end
 
@@ -67,20 +67,20 @@ RSpec.describe KitItem, type: :model do
       a_name = "KitA"
       b_name = "KitB"
       c_name = "KitC"
-      create(:kit_item, name: c_name, organization: organization)
-      create(:kit_item, name: b_name, organization: organization)
-      create(:kit_item, name: a_name, organization: organization)
+      create(:kit, name: c_name, organization: organization)
+      create(:kit, name: b_name, organization: organization)
+      create(:kit, name: a_name, organization: organization)
       alphabetized_list = [a_name, b_name, c_name]
 
-      expect(organization.kit_items.alphabetized.count).to eq(3)
-      expect(organization.kit_items.alphabetized.map(&:name)).to eq(alphabetized_list)
+      expect(organization.kits.alphabetized.count).to eq(3)
+      expect(organization.kits.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
 
     it "->by_name filters by name" do
-      create(:kit_item, name: "Newborn Kit", organization: organization)
-      create(:kit_item, name: "Toddler Kit", organization: organization)
+      create(:kit, name: "Newborn Kit", organization: organization)
+      create(:kit, name: "Toddler Kit", organization: organization)
 
-      expect(organization.kit_items.by_name("newborn").map(&:name)).to eq(["Newborn Kit"])
+      expect(organization.kits.by_name("newborn").map(&:name)).to eq(["Newborn Kit"])
     end
   end
 

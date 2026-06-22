@@ -30,15 +30,15 @@ RSpec.describe KitCreateService do
     end
 
     context 'when the parameters are valid' do
-      it 'should create a new KitItem with line items' do
-        expect { subject }.to change { KitItem.all.count }.by(1)
-        kit = KitItem.last
+      it 'should create a new Kit with line items' do
+        expect { subject }.to change { Kit.all.count }.by(1)
+        kit = Kit.last
         expect(kit.line_items.count).to eq(3)
       end
 
-      it 'should return the created KitItem' do
-        expect(subject.kit).to eq(KitItem.last)
-        expect(subject.kit).to be_a(KitItem)
+      it 'should return the created Kit' do
+        expect(subject.kit).to eq(Kit.last)
+        expect(subject.kit).to be_a(Kit)
       end
 
       it 'should not create any other items' do
@@ -51,8 +51,8 @@ RSpec.describe KitCreateService do
           allow_any_instance_of(ItemCreateService).to receive(:call).and_raise(raised_error)
         end
 
-        it 'should not create a KitItem' do
-          expect { subject }.not_to change { KitItem.all.count }
+        it 'should not create a Kit' do
+          expect { subject }.not_to change { Kit.all.count }
         end
 
         it 'should have an error that includes the raised error' do
@@ -68,8 +68,8 @@ RSpec.describe KitCreateService do
           allow_any_instance_of(ItemCreateService).to receive(:call).and_return(failing_result)
         end
 
-        it 'should not create a KitItem' do
-          expect { subject }.not_to change { KitItem.all.count }
+        it 'should not create a Kit' do
+          expect { subject }.not_to change { Kit.all.count }
         end
 
         it 'should have an error that includes the error' do
@@ -90,7 +90,7 @@ RSpec.describe KitCreateService do
       context 'because the kit_params is invalid for kit creation' do
         let(:kit_params) { { organization_id: organization_id } }
         let(:kit_validation_errors) do
-          kit = organization.kit_items.new
+          kit = organization.kits.new
           kit.valid?
           kit.errors
         end

@@ -23,7 +23,7 @@
 #  organization_id              :integer
 #
 FactoryBot.define do
-  factory :kit_item, aliases: [:kit] do
+  factory :kit do
     sequence(:name) { |n| "#{n} - Dont test this" }
     partner_key { "kit" }
     reporting_category { nil }

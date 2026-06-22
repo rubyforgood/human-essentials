@@ -108,7 +108,7 @@ module Reports
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND kit_items.reporting_category = 'adult_incontinence'
-          AND items.type = 'KitItem'
+          AND items.type = 'Kit'
           AND kit_line_items.itemizable_type = 'Item';
       SQL
 
@@ -133,28 +133,28 @@ module Reports
       total_quantity.to_f / 12.0
     end
 
-    # The distributed "kits" are KitItems that appear directly in distribution line items.
+    # The distributed "kits" are Kits that appear directly in distribution line items.
     def distributed_kits_for_year
       organization
         .distributions
         .for_year(year)
         .joins(line_items: :item)
-        .where(items: { type: 'KitItem' })
+        .where(items: { type: 'Kit' })
         .distinct
         .pluck('items.id')
     end
 
     def total_distributed_kits_containing_adult_incontinence_items_per_month
-      kit_items = KitItem.where(id: distributed_kits_for_year).select do |kit_item|
-        kit_item.items.adult_incontinence.exists?
+      kits = Kit.where(id: distributed_kits_for_year).select do |kit|
+        kit.items.adult_incontinence.exists?
       end
 
-      total_assisted_adults = kit_items.sum do |kit_item|
+      total_assisted_adults = kits.sum do |kit|
         organization
           .distributions
           .for_year(year)
           .joins(line_items: :item)
-          .where(line_items: { item_id: kit_item.id })
+          .where(line_items: { item_id: kit.id })
           .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1.0)')
       end
       total_assisted_adults.to_i / 12.0

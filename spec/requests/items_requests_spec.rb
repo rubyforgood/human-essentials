@@ -122,7 +122,7 @@ RSpec.describe "Items", type: :request do
       end
 
       context "when item is housing a kit" do
-        let(:item) { create(:kit_item, organization: organization) }
+        let(:item) { create(:kit, organization: organization) }
 
         it "shows the NDBN reporting category field disabled" do
           get edit_item_path(item)
@@ -345,7 +345,7 @@ RSpec.describe "Items", type: :request do
       let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", reporting_category: :adult_incontinence, item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
       let!(:item_unit_1) { create(:item_unit, item: item, name: 'ITEM1') }
       let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
-      let!(:item_containing_kit) { create(:kit_item, organization: organization) }
+      let!(:item_containing_kit) { create(:kit, organization: organization) }
 
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)

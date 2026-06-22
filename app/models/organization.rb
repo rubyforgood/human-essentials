@@ -86,7 +86,7 @@ class Organization < ApplicationRecord
       class_name: "Tag", inverse_of: false
     has_many :inventory_items, through: :storage_locations
     has_many :concrete_items
-    has_many :kit_items
+    has_many :kits
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
     has_many :vendors

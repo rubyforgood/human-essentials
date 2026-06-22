@@ -22,10 +22,10 @@
 #  kit_id                       :integer
 #  organization_id              :integer
 #
-class KitItem < Item
+class Kit < Item
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
 
-  # Kit items are managed through the kits UI (deactivate/reactivate), not the normal
+  # Kits are managed through the kits UI (deactivate/reactivate), not the normal
   # item-deletion path.
   def can_delete?(inventory = nil, kits = nil)
     false

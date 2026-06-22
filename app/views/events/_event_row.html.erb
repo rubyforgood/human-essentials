@@ -9,7 +9,7 @@
     </td>
     <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
     <td>
-      <%= link_to event.eventable_id, eventable_path(event.eventable) %>
+      <%= link_to event.eventable_id, event.eventable %>
       <%= link_to(
           events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
           class: 'btn btn-md') do %>

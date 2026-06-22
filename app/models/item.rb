@@ -101,7 +101,7 @@ class Item < ApplicationRecord
     if kits
       kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
-      organization.kit_items
+      organization.kits
         .active
         .joins(:line_items)
         .where(line_items: { item_id: id}).any?
@@ -191,7 +191,7 @@ class Item < ApplicationRecord
     self.distribution_quantity ||= default_distribution_quantity
   end
 
-  # Overridden in KitItem (kits default to 1).
+  # Overridden in Kit (kits default to 1).
   def default_distribution_quantity
     50
   end
