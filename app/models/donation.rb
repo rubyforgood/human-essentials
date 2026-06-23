@@ -120,10 +120,6 @@ class Donation < ApplicationRecord
     donation_site.nil? ? "N/A" : donation_site.name
   end
 
-  def drive_participant_view
-    product_drive_participant.nil? ? "N/A" : product_drive_participant.display_name
-  end
-
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
   end
