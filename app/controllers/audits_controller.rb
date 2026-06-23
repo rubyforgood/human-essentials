@@ -2,6 +2,7 @@
 class AuditsController < ApplicationController
   before_action :authorize_admin
   before_action :set_audit, only: %i(show edit update destroy finalize)
+  before_action :ensure_audit_is_editable, only: %i(finalize update)
 
   def index
     @selected_location = filter_params[:at_location]
@@ -36,11 +37,6 @@ class AuditsController < ApplicationController
   end
 
   def update
-    if @audit.reload.finalized?
-      redirect_to audit_path(@audit), error: "This audit has been finalized and cannot be edited."
-      return
-    end
-
     @audit.line_items.destroy_all
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
@@ -84,6 +80,12 @@ class AuditsController < ApplicationController
   end
 
   private
+
+  def ensure_audit_is_editable
+    if @audit.reload.finalized?
+      redirect_to audit_path(@audit), error: "This audit has been finalized and cannot be edited."
+    end
+  end
 
   def handle_audit_errors
     error_message = @audit.errors.uniq(&:attribute).map do |error|

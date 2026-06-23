@@ -203,6 +203,19 @@ RSpec.describe "Audits", type: :request do
         expect(audit.reload).to be_finalized
         expect(AuditEvent.count).to eq(1)
       end
+
+      context "when the audit has already been finalized" do
+        it "does not create a new AuditEvent and redirects to the finalized audit" do
+          finalized_audit = create(:audit, organization: organization, status: :finalized)
+
+          expect do
+            post audit_finalize_path(audit_id: finalized_audit.to_param)
+          end.not_to change(AuditEvent, :count)
+
+          expect(response).to redirect_to(audit_path(finalized_audit))
+          expect(flash[:error]).to include("This audit has been finalized and cannot be edited.")
+        end
+      end
     end
 
     describe "DELETE #destroy" do
