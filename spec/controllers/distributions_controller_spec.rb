@@ -439,5 +439,29 @@ RSpec.describe DistributionsController, type: :controller do
         end
       end
     end
+
+    describe "GET #index" do
+      context "when distribution has items updated for minimum quantity" do
+        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:distribution_count) { 5 }
+        let(:distributions) { create_list(:distribution, distribution_count, :with_items, item: items.sample, storage_location: storage_location, organization: organization) }
+        let(:items) { create_list(:item, 500, organization:, on_hand_minimum_quantity: 5) }
+
+        it "responds 200" do
+          get :index
+
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "downloads a CSV" do
+          distributions
+          get :index, format: :csv
+
+          expect(response.header["Content-Type"]).to include "text/csv"
+          expect(response).to have_http_status(:ok)
+          expect(CSV.parse(response.body).size).to eq(distribution_count + 1)
+        end
+      end
+    end
   end
 end

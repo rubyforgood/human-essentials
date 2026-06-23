@@ -7,11 +7,11 @@ module Exports
     include DistributionHelper
     include ItemsHelper
 
-    def initialize(distributions:, organization:, filters: [])
-      # Currently, the @distributions are already loaded by the controllers that are delegating exporting
-      # to this service object; this is happening within the same request/response cycle, so it's already
-      # in memory, so we can pass that collection in directly. Should this be moved to a background / async
-      # job, we will need to pass in a collection of IDs instead.
+    def initialize(distributions:, organization:, filters: {})
+      # Currently, `distributions` is a ActiveRecord::Relation from the controllers that are delegating exporting
+      # to this service object; this is happening within the same request/response cycle, so we pass the query in
+      # directly. Should this be moved to a background / async job, we will need to pass in a collection of IDs instead.
+      # The distribution model objects are not loaded until the `#find_each` in `generate_csv_data`
       # Also, adding in a `filters` parameter to make the filters that have been used available to this
       # service object.
       @distributions = distributions
@@ -32,7 +32,7 @@ module Exports
       csv_data = []
 
       csv_data << base_headers + item_headers
-      distributions.each do |distribution|
+      distributions.find_each do |distribution|
         csv_data << build_row_data(distribution)
       end
 
@@ -147,18 +147,26 @@ module Exports
     end
 
     def build_row_data(distribution)
-      row = base_table.values.map { |closure| closure.call(distribution) }
+      base_row = base_table.values.map { |closure| closure.call(distribution) }
 
-      item_names.each do |item_name|
-        # We are doing this in-memory so that we can use the already-loaded line item records
-        line_items = distribution.line_items.select { |item| item.name == item_name }
-
-        row << line_items.sum(&:quantity)
-        row << Money.new(line_items.sum(&:value_per_line_item)) if @organization.include_in_kind_values_in_exported_files
-        row << line_items.map(&:has_packages).compact.sum.round(2) if @organization.include_packages_in_distribution_export
+      grouped_line_items = distribution.line_items.group_by(&:name)
+      base_row + item_names.flat_map do |item_name|
+        line_items = grouped_line_items[item_name]
+        next missing_item unless line_items
+        [
+          line_items.sum(&:quantity),
+          (Money.new(line_items.sum(&:value_per_line_item)) if @organization.include_in_kind_values_in_exported_files),
+          (line_items.map(&:has_packages).compact.sum.round(2) if @organization.include_packages_in_distribution_export)
+        ].compact
       end
+    end
 
-      row
+    def missing_item
+      @missing_item ||= [
+        0,
+        ("0.00".freeze if @organization.include_in_kind_values_in_exported_files),
+        (0 if @organization.include_packages_in_distribution_export)
+      ].compact
     end
   end
 end
