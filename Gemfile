@@ -24,7 +24,7 @@ gem "rails", "~> 8.0.2"
 gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.3'
+gem 'discard', '~> 2.0'
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
