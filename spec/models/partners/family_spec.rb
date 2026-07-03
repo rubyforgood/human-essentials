@@ -33,6 +33,15 @@ RSpec.describe Partners::Family, type: :model do
     it { should have_many(:authorized_family_members).dependent(:destroy) }
   end
 
+  describe "encrypts guardian_phone at rest" do
+    let(:family) { create(:partners_family, guardian_phone: "555-123-4567") }
+
+    it "stores ciphertext but round-trips the value" do
+      expect(family.reload.guardian_phone).to eq("555-123-4567")
+      expect(family.ciphertext_for(:guardian_phone)).not_to include("555-123-4567")
+    end
+  end
+
   describe "validations" do
     subject { partners_family }
     let(:partners_family) { FactoryBot.build(:partners_family) }

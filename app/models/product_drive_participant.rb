@@ -18,6 +18,7 @@
 
 class ProductDriveParticipant < ApplicationRecord
   has_paper_trail
+  encrypts :phone, :email
   include Provideable
   include Geocodable
 

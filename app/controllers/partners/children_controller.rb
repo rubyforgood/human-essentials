@@ -13,6 +13,13 @@ module Partners
 
       @children = @filterrific.find
 
+      # date_of_birth is encrypted => can't ORDER BY it in SQL. Sort the decrypted value in Ruby
+      # (safe: this index isn't paginated, whole set is already loaded).
+      if params[:sort] == "date_of_birth"
+        @children = @children.sort_by { |c| [c.date_of_birth || Date.new(9999, 12, 31), c.last_name.to_s, c.id] }
+        @children = @children.reverse if sort_direction == "desc"
+      end
+
       respond_to do |format|
         format.js
         format.html
@@ -91,6 +98,7 @@ module Partners
     end
 
     def sort_order
+      return "last_name, id" if params[:sort] == "date_of_birth" # encrypted; sorted in Ruby, not SQL
       sort_column + ' ' + sort_direction
     end
 

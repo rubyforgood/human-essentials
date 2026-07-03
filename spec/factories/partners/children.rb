@@ -7,7 +7,7 @@
 #  archived             :boolean
 #  child_lives_with     :jsonb
 #  comments             :text
-#  date_of_birth        :date
+#  date_of_birth        :text
 #  first_name           :string
 #  gender               :string
 #  health_insurance     :jsonb

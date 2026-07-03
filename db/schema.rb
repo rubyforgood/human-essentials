@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_13_201123) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_03_191552) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -112,7 +112,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_201123) do
   create_table "authorized_family_members", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
-    t.date "date_of_birth"
+    t.text "date_of_birth"
     t.string "gender"
     t.text "comments"
     t.bigint "family_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_201123) do
   create_table "children", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
-    t.date "date_of_birth"
+    t.text "date_of_birth"
     t.string "gender"
     t.jsonb "child_lives_with"
     t.jsonb "race"
