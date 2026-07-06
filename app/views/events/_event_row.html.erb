@@ -41,12 +41,12 @@
         end %>
       <% sorted_entries.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id } %>
+        <% quantity = entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %>
         <% if item %>
-          <%= link_to item.name, item_path(item.id) %>:
+          <%= link_to item.name, item_path(item.id) %>: <%= quantity %><br>
         <% else %>
-          Item <%= entry.item_id %> (deleted)
+          Item <%= entry.item_id %> (deleted): <%= quantity %><br>
         <% end %>
-        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
       <% end %>
     </td>
   </tr>
