@@ -4,18 +4,11 @@ class ProductDriveParticipantsController < ApplicationController
   include Importable
 
   def index
-    @product_drive_participants = current_organization
-                                  .product_drive_participants
-                                  .includes(:donations)
-                                  .with_volumes
-                                  .class_filter(filter_params)
-                                  .order(:business_name)
-    @selected_business_name_filter = filter_params[:by_business_name]
-    @selected_contact_name_filter = filter_params[:by_contact_name]
+    @products = View::ProductDriveParticipants.new(params: params, organization: current_organization)
 
     respond_to do |format|
       format.html
-      format.csv { send_data ProductDriveParticipant.generate_csv(@product_drive_participants), filename: "ProductDriveParticipants-#{Time.zone.today}.csv" }
+      format.csv { send_data ProductDriveParticipant.generate_csv(@products.participants), filename: "ProductDriveParticipants-#{Time.zone.today}.csv" }
     end
   end
 
