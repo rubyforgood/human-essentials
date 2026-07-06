@@ -56,7 +56,7 @@ RSpec.describe ProductDriveParticipant, type: :model do
         another_cats_biz = create(:product_drive_participant, business_name: "I like cats")
         create(:product_drive_participant, business_name: "Dogs")
 
-        expect(ProductDriveParticipant.by_business_name('Cats')).to match_array([cats_biz, another_cats_biz])
+        expect(ProductDriveParticipant.by_business_name("Cats")).to match_array([cats_biz, another_cats_biz])
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe ProductDriveParticipant, type: :model do
         donna = create(:product_drive_participant, contact_name: "Donna Shellstrop")
         create(:product_drive_participant, contact_name: "Jason Mendoza")
 
-        expect(ProductDriveParticipant.by_contact_name('Shellstrop')).to match_array([eleanor, donna])
+        expect(ProductDriveParticipant.by_contact_name("Shellstrop")).to match_array([eleanor, donna])
       end
     end
   end

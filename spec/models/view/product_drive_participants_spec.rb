@@ -6,8 +6,8 @@ RSpec.describe View::ProductDriveParticipants do
       params = ActionController::Parameters.new(
       {
         filters: {
-          by_business_name: 'The Good Place',
-          by_contact_name: 'Jason Mendoza'
+          by_business_name: "The Good Place",
+          by_contact_name: "Jason Mendoza"
         }
       }
     ).permit!
