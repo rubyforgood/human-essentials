@@ -1,8 +1,15 @@
 <% if event.is_a?(SnapshotEvent) %>
   <%= render partial: "snapshot_event_row", object: event, as: :event, locals: { items: items, storage_locs: storage_locs } %>
 <% else %>
-  <% from_loc = event.data.items.first&.from_storage_location %>
-  <% to_loc = event.data.items.first&.to_storage_location %>
+  <%
+    # KitAllocateEvent/KitDeallocateEvent mix directions within a single event: the
+    # kit's own line item (always last) moves opposite the component items, so the
+    # row's From/To direction must be derived from the kit line item, not the first one.
+    is_kit_event = event.is_a?(KitAllocateEvent) || event.is_a?(KitDeallocateEvent)
+    direction_item = is_kit_event ? event.data.items.last : event.data.items.first
+  %>
+  <% from_loc = direction_item&.from_storage_location %>
+  <% to_loc = direction_item&.to_storage_location %>
   <tr>
     <td>
       <%= event.user&.name || "No Name Provided" %>
