@@ -3,10 +3,15 @@
 class ProductDriveParticipantsController < ApplicationController
   include Importable
 
-  # TODO: Should there be a :destroy action for this?
-
   def index
-    @product_drive_participants = current_organization.product_drive_participants.includes(:donations).with_volumes.order(:business_name)
+    @product_drive_participants = current_organization
+                                  .product_drive_participants
+                                  .includes(:donations)
+                                  .with_volumes
+                                  .class_filter(filter_params)
+                                  .order(:business_name)
+    @selected_business_name_filter = filter_params[:by_business_name]
+    @selected_contact_name_filter = filter_params[:by_contact_name]
 
     respond_to do |format|
       format.html
@@ -65,6 +70,8 @@ class ProductDriveParticipantsController < ApplicationController
 
   helper_method \
     def filter_params
-    {}
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:by_business_name, :by_contact_name)
   end
 end
