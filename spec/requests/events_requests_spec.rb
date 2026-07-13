@@ -263,6 +263,112 @@ RSpec.describe "Events", type: :request do
           expect(response.body).not_to include("99<br>")
         end
       end
+
+      context "with kit allocation and deallocation events" do
+        let(:component_item) { create(:item, organization: organization, name: "Widget") }
+        let(:kit) do
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: component_item.id, quantity: 5}
+          ])
+        end
+
+        def row_for(event_type)
+          Nokogiri::HTML(response.body).css("tbody tr").find do |row|
+            row.css("td")[1]&.text&.strip == event_type
+          end
+        end
+
+        before do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {component_item.id => 100}
+          })
+          KitAllocateEvent.publish(kit, storage_location.id, 3)
+          KitDeallocateEvent.publish(kit, storage_location.id, 1)
+        end
+
+        it "shows a positive kit quantity to the storage location and a negative item quantity for KitAllocate" do
+          subject
+          row = row_for("KitAllocate")
+          expect(row).not_to be_nil
+          cells = row.css("td")
+          expect(cells[4].text).not_to include(storage_location.name)
+          expect(cells[5].text).to include(storage_location.name)
+          expect(cells[6].text).to include("#{kit.name}: 3")
+          expect(cells[6].text).to include("Widget: -15")
+        end
+
+        it "shows a positive kit quantity from the storage location and a negative item quantity for KitDeallocate" do
+          subject
+          row = row_for("KitDeallocate")
+          expect(row).not_to be_nil
+          cells = row.css("td")
+          expect(cells[4].text).to include(storage_location.name)
+          expect(cells[5].text).not_to include(storage_location.name)
+          expect(cells[6].text).to include("#{kit.name}: 1")
+          expect(cells[6].text).to include("Widget: -5")
+        end
+      end
+
+      context "with kit events whose line items are not in the usual order" do
+        # KitAllocateEvent/KitDeallocateEvent normally append the kit's own line item
+        # last, but the view must not depend on that ordering to work out direction.
+        let(:component_item) { create(:item, organization: organization, name: "Widget") }
+        let(:kit) do
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: component_item.id, quantity: 5}
+          ])
+        end
+
+        def row_for(event_type)
+          Nokogiri::HTML(response.body).css("tbody tr").find do |row|
+            row.css("td")[1]&.text&.strip == event_type
+          end
+        end
+
+        before do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {component_item.id => 100, kit.kit_item.id => 100}
+          })
+        end
+
+        it "shows the correct direction for KitAllocate with the kit's line item first" do
+          KitAllocateEvent.create!(
+            eventable: kit,
+            organization_id: organization.id,
+            event_time: Time.zone.now,
+            data: EventTypes::InventoryPayload.new(
+              items: KitAllocateEvent.event_line_items(kit, storage_location.id, 2).reverse
+            )
+          )
+          subject
+          row = row_for("KitAllocate")
+          expect(row).not_to be_nil
+          cells = row.css("td")
+          expect(cells[4].text).not_to include(storage_location.name)
+          expect(cells[5].text).to include(storage_location.name)
+          expect(cells[6].text).to include("#{kit.name}: 2")
+          expect(cells[6].text).to include("Widget: -10")
+        end
+
+        it "shows the correct direction for KitDeallocate with the kit's line item first" do
+          KitDeallocateEvent.create!(
+            eventable: kit,
+            organization_id: organization.id,
+            event_time: Time.zone.now,
+            data: EventTypes::InventoryPayload.new(
+              items: KitDeallocateEvent.event_line_items(kit, storage_location.id, 4).reverse
+            )
+          )
+          subject
+          row = row_for("KitDeallocate")
+          expect(row).not_to be_nil
+          cells = row.css("td")
+          expect(cells[4].text).to include(storage_location.name)
+          expect(cells[5].text).not_to include(storage_location.name)
+          expect(cells[6].text).to include("#{kit.name}: 4")
+          expect(cells[6].text).to include("Widget: -20")
+        end
+      end
     end
   end
 end
