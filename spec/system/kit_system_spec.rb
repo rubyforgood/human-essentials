@@ -47,9 +47,46 @@ RSpec.describe "Kit management", type: :system do
 
     click_button "Save"
 
+    expect(page).to have_css("#kitConfirmationModal", visible: true)
+    within "#kitConfirmationModal" do
+      expect(page).to have_content("Kit Creation Confirmation")
+      expect(find(:element, "data-testid": "kit-confirmation-name")).to have_text(kit_traits[:name])
+      expect(find(:element, "data-testid": "kit-confirmation-value")).to have_text("$10.10")
+      expect(page).to have_content(item.name)
+      expect(page).to have_content(quantity_per_kit.to_s)
+      expect(page).to have_css(".text-danger", text: "not")
+      click_button "Yes, it's correct"
+    end
+
     expect(page.find(".alert")).to have_content "Kit created successfully"
     expect(page).to have_content(kit_traits[:name])
     expect(page).to have_content("#{quantity_per_kit} #{item.name}")
+  end
+
+  it "returns to the form with values intact when declining the confirmation" do
+    visit new_kit_path
+    kit_traits = attributes_for(:kit)
+
+    fill_in "Name", with: kit_traits[:name]
+    find(:css, '#kit_value_in_dollars').set('10.10')
+
+    item = Item.last
+    quantity_per_kit = 5
+    select item.name, from: "kit_item_line_items_attributes_0_item_id"
+    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
+
+    click_button "Save"
+
+    expect(page).to have_css("#kitConfirmationModal", visible: true)
+    within "#kitConfirmationModal" do
+      click_button "No, I need to make changes"
+    end
+
+    expect(page).to have_no_css("#kitConfirmationModal", visible: true)
+    expect(page).to have_current_path(new_kit_path)
+    expect(page).to have_no_content("Kit created successfully")
+    expect(page).to have_field("Name", with: kit_traits[:name])
+    expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity_per_kit.to_s)
   end
 
   it "can add items correctly" do
@@ -221,6 +258,11 @@ RSpec.describe "Kit management", type: :system do
 
       click_button "Save"
 
+      expect(page).to have_css("#kitConfirmationModal", visible: true)
+      within "#kitConfirmationModal" do
+        click_button "Yes, it's correct"
+      end
+
       expect(page.find(".alert")).to have_content "Name can't be blank"
       expect(page).to have_content(kit_traits[:quantity])
       expect(page).to have_content(item.name)
@@ -253,10 +295,15 @@ RSpec.describe "Kit management", type: :system do
         fill_in quantity_input[:id], with: "15"
       end
 
-      # Try to save - should trigger duplicate detection modal
+      # Try to save - the confirmation preview appears first
       click_button "Save"
 
-      # JavaScript modal should appear
+      expect(page).to have_css("#kitConfirmationModal", visible: true)
+      within "#kitConfirmationModal" do
+        click_button "Yes, it's correct"
+      end
+
+      # Confirming then triggers duplicate detection
       expect(page).to have_css("#duplicateItemsModal", visible: true)
       expect(page).to have_content("Multiple Item Entries Detected")
       expect(page).to have_content("Merge Items")
