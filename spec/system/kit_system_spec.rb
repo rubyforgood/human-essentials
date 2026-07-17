@@ -239,8 +239,8 @@ RSpec.describe "Kit management", type: :system do
       item = Item.last
 
       # Add first entry for the item
-      select item.name, from: "item_line_items_attributes_0_item_id"
-      fill_in "item_line_items_attributes_0_quantity", with: "10"
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      fill_in "kit_item_line_items_attributes_0_quantity", with: "10"
 
       # Add a new line item row
       find("[data-form-input-target='addButton']").click
