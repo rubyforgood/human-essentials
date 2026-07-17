@@ -69,7 +69,9 @@ RSpec.describe "Donations", type: :request do
         end
 
         context "when given a misc donation" do
-          let(:full_comment) { Faker::Lorem.paragraph }
+          # Comment must be longer than the 140 characters the Comments column
+          # truncates at, so that asserting the full comment is absent is meaningful.
+          let(:full_comment) { Faker::Lorem.paragraph_by_chars(number: 200) }
           let(:donation) { create(:donation, source: "Misc. Donation", comment: full_comment) }
 
           it "should display Misc Donation and a truncated comment" do
