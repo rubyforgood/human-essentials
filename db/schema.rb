@@ -112,7 +112,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_03_191552) do
   create_table "authorized_family_members", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
-    t.text "date_of_birth"
+    t.string "date_of_birth"
     t.string "gender"
     t.text "comments"
     t.bigint "family_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_03_191552) do
   create_table "children", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
-    t.text "date_of_birth"
+    t.string "date_of_birth"
     t.string "gender"
     t.jsonb "child_lives_with"
     t.jsonb "race"

@@ -4,7 +4,7 @@
 #
 #  id            :bigint           not null, primary key
 #  comments      :text
-#  date_of_birth :text
+#  date_of_birth :string
 #  first_name    :string
 #  gender        :string
 #  last_name     :string
