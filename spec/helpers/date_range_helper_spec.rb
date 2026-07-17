@@ -45,5 +45,31 @@ RSpec.describe DateRangeHelper do
         expect(flash_now[:notice]).to eq("Invalid Date range provided. Reset to default date range")
       end
     end
+
+    context "with an open-ended date range" do
+      it "falls back to default date range and sets a flash notice instead of raising" do
+        open_ended_range = "August 25, 2025 - "
+        flash_now = {}
+        flash_double = double("flash", now: flash_now)
+        helper = dummy_class.new({filters: {date_range: open_ended_range}}, flash_double)
+
+        interval = helper.selected_interval
+        default_start, default_end = helper.default_date.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") }
+
+        expect(interval).to eq([default_start, default_end])
+        expect(flash_now[:notice]).to eq("Invalid Date range provided. Reset to default date range")
+      end
+    end
+  end
+
+  describe "#selected_range_described" do
+    it "does not raise when given an open-ended date range" do
+      open_ended_range = "August 25, 2025 - "
+      flash_now = {}
+      flash_double = double("flash", now: flash_now)
+      helper = dummy_class.new({filters: {date_range: open_ended_range}}, flash_double)
+
+      expect { helper.selected_range_described }.not_to raise_error
+    end
   end
 end

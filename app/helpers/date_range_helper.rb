@@ -34,14 +34,20 @@ module DateRangeHelper
   end
 
   def selected_interval
-    date_range_params.split(" - ").map do |d|
+    dates = date_range_params.split(" - ").map do |d|
       Date.strptime(d, "%B %d, %Y")
     rescue
+      nil
+    end
+
+    if dates.size != 2 || dates.any?(&:nil?)
       flash.now[:notice] = "Invalid Date range provided. Reset to default date range"
       return default_date.split(" - ").map do |d|
         Date.strptime(d.to_s, "%B %d, %Y")
       end
     end
+
+    dates
   end
 
   def selected_range
