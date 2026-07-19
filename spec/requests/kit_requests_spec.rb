@@ -40,7 +40,7 @@ RSpec.describe "/kits", type: :request do
           storage_location = create(:storage_location)
           TestInventory.create_inventory(kit.organization, {
             storage_location.id => {
-              kit.kit_item.id => 10
+              kit.id => 10
             }
           })
           get kits_url
@@ -53,7 +53,7 @@ RSpec.describe "/kits", type: :request do
 
       context "when it is already deactivated" do
         it "should show reactivate button" do
-          kit.deactivate
+          kit.deactivate!
           get kits_url(include_inactive_items: true)
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
@@ -81,9 +81,9 @@ RSpec.describe "/kits", type: :request do
 
     describe "PUT #reactivate" do
       it "cannot reactivate if it has an inactive item" do
-        kit.deactivate
+        kit.deactivate!
         expect(kit).not_to be_active
-        kit.kit_item.line_items.first.item.update!(active: false)
+        kit.line_items.first.item.update!(active: false)
 
         put reactivate_kit_url(kit)
         expect(kit.reload).not_to be_active
@@ -92,7 +92,7 @@ RSpec.describe "/kits", type: :request do
       end
 
       it "should successfully reactivate" do
-        kit.deactivate
+        kit.deactivate!
         expect(kit).not_to be_active
         put reactivate_kit_url(kit)
         expect(kit.reload).to be_active
@@ -111,7 +111,7 @@ RSpec.describe "/kits", type: :request do
       end
 
       it "does not allow reactivating a kit from another organization" do
-        other_kit.deactivate
+        other_kit.deactivate!
         put reactivate_kit_url(other_kit)
         expect(response.status).to eq(404)
       end
