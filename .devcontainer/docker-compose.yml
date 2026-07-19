@@ -20,7 +20,11 @@ services:
     network_mode: service:postgres
 
   postgres:
-    image: postgres:latest
+    # Pin a stable major version. `postgres:latest` is now PG18, whose Docker
+    # image refuses to start against the legacy /var/lib/postgresql/data mount
+    # layout this compose file uses (it wants the mount one level up). Pinning
+    # avoids that and keeps the DB version reproducible across hosts.
+    image: postgres:16
     restart: always
     volumes:
       - postgres-data:/var/lib/postgresql/data

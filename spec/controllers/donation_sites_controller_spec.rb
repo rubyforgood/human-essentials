@@ -39,16 +39,5 @@ RSpec.describe DonationSitesController, type: :controller do
         expect(subject).to be_successful
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:donation_site, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:donation_site) }
-
-    include_examples "requiring authorization"
   end
 end

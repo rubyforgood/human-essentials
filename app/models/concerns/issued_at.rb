@@ -21,7 +21,7 @@ module IssuedAt
   end
 
   def issued_at_cannot_be_further_than_1_year
-    if issued_at.present? && issued_at > DateTime.now.next_year
+    if issued_at.present? && issued_at > DateTime.current.next_year
       errors.add(:issued_at, "cannot be more than 1 year in the future")
     end
   end

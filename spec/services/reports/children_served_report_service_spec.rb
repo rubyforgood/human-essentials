@@ -29,18 +29,17 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit_1 = create(:kit, organization: organization, line_items: [
+      kit_1 = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: 1)
+      kit_1.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
+      ]
 
-      kit_2 = create(:kit, organization: organization, line_items: [
+      kit_2 = create(:kit, name: "Kit 2", organization: organization, distribution_quantity: 1)
+      kit_2.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
-
-      create(:item, name: "Kit 1", kit: kit_1, organization:, distribution_quantity: 1)
-      create(:item, name: "Kit 2", kit: kit_2, organization:, distribution_quantity: 1)
+      ]
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -53,10 +52,10 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 5, item: kit_1.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 5, item: kit_1.item, itemizable: toddler_distribution)
-      create(:line_item, quantity: 5, item: kit_2.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 5, item: kit_2.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_1, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_1, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_2, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_2, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
@@ -83,12 +82,11 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit = create(:kit, organization: organization, line_items: [
+      kit = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: nil)
+      kit.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
-
-      create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 1)
+      ]
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -101,8 +99,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 10, item: kit.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 10, item: kit.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: kit, itemizable: infant_distribution)
+      create(:line_item, quantity: 10, item: kit, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
@@ -124,20 +122,19 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       not_disposable_kit_item = create(:item, name: "Adult Diapers", reporting_category: :adult_incontinence)
 
       # this quantity shouldn't matter so I'm setting it to a high number to ensure it isn't used
-      kit = create(:kit, organization: organization, line_items: [
+      kit = create(:kit, name: "Kit 1", organization: organization, distribution_quantity: 3)
+      kit.line_items = [
         create(:line_item, quantity: 1000, item: toddler_disposable_kit_item),
         create(:line_item, quantity: 1000, item: infant_disposable_kit_item),
         create(:line_item, quantity: 1000, item: not_disposable_kit_item)
-      ])
-
-      create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 3)
+      ]
 
       # Distributions
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
       [toddler_distribution, infant_distribution].each do |distribution|
-        create(:line_item, quantity: 2, item: kit.item, itemizable: distribution)
+        create(:line_item, quantity: 2, item: kit, itemizable: distribution)
       end
 
       report = described_class.new(organization: organization, year: within_time.year).report

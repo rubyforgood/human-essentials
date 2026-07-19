@@ -20,8 +20,10 @@ RSpec.describe "NDBNMembers", type: :request do
       html = Nokogiri::HTML(response.body)
 
       expect(html.css("h1").text).to eq("NDBN Member Upload")
-      expect(html.css("input[type=file]").count).to eq(1)
-      expect(html.css("button[type=submit]").count).to eq(1)
+
+      expect(html.css("form[action='/admin/ndbn_members/upload_csv']").count).to eq(1)
+      expect(html.css("form[action='/admin/ndbn_members/upload_csv'] input[type=file]").count).to eq(1)
+      expect(html.css("form[action='/admin/ndbn_members/upload_csv'] button[type=submit]").count).to eq(1)
 
       expect(html.css("th").map(&:text)).to match_array(["NDBN Member Number", "Member Name"])
       expect(html.css("tbody tr td").map(&:text)).to match_array(["123", "A Baby Center"])
