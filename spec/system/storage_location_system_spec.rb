@@ -265,7 +265,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
         end
         before do
           create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
-          Event.last.update(created_at: start_date)
+          Event.last.update(event_time: start_date)
           fill_in "filters[date_range]", with: "#{start_date} - #{end_date}"
           click_button "Filter"
           find("#custom-tabs-inventory-flow-tab").click

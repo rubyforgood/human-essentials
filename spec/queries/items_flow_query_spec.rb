@@ -14,19 +14,22 @@ RSpec.describe ItemsFlowQuery do
         quantity_in: 10,
         quantity_out: 5,
         change: 5,
-        total_quantity_in: 19,
-        total_quantity_out: 7,
-        total_change: 12
+        total_quantity_in: 16,
+        total_quantity_out: 8,
+        total_change: 8
       },
       {
+        # Donation (+3) and adjustment (+3) flow in; the transfer (-2) flows
+        # out. The audit counts an absolute quantity of 3 when the running
+        # quantity is 4, so it contributes its delta: 1 more out.
         item_id: items[1].id,
         item_name: items[1].name,
-        quantity_in: 9,
-        quantity_out: 2,
-        change: 7,
-        total_quantity_in: 19,
-        total_quantity_out: 7,
-        total_change: 12
+        quantity_in: 6,
+        quantity_out: 3,
+        change: 3,
+        total_quantity_in: 16,
+        total_quantity_out: 8,
+        total_change: 8
       }
     ].map(&:with_indifferent_access)
   end
@@ -61,11 +64,11 @@ RSpec.describe ItemsFlowQuery do
 
     before do
       create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
-      Event.last.update(created_at: 10.days.ago)
+      Event.last.update(event_time: 10.days.ago)
       create(:donation, :with_items, item: old_items[1], item_quantity: 8, storage_location: storage_location)
       distribution = create(:distribution, :with_items, item: old_items[1], item_quantity: 5, storage_location: storage_location)
       DistributionEvent.publish(distribution)
-      Event.last.update(created_at: 10.days.ago)
+      Event.last.update(event_time: 10.days.ago)
     end
 
     let(:filtered_result) do
@@ -95,6 +98,64 @@ RSpec.describe ItemsFlowQuery do
 
     it "returns array of hashes" do
       expect(subject.to_a).to match_array(filtered_result)
+    end
+  end
+
+  context "when a donation has been edited" do
+    let!(:fresh_organization) { create(:organization) }
+    let(:location) { create(:storage_location, organization: fresh_organization) }
+    let(:item) { create(:item, organization: fresh_organization) }
+
+    subject { described_class.new(organization: fresh_organization, storage_location: location).call }
+
+    it "only counts the latest version of the donation" do
+      donation = create(:donation, :with_items, item: item, item_quantity: 10, storage_location: location, organization: fresh_organization)
+      donation.line_items.first.update!(quantity: 25)
+      DonationEvent.publish(donation)
+
+      row = subject.to_a.find { |r| r["item_id"] == item.id }
+      expect(row["quantity_in"]).to eq(25)
+    end
+  end
+
+  context "when a donation has been destroyed" do
+    let!(:fresh_organization) { create(:organization) }
+    let(:location) { create(:storage_location, organization: fresh_organization) }
+    let(:item) { create(:item, organization: fresh_organization) }
+
+    subject { described_class.new(organization: fresh_organization, storage_location: location).call }
+
+    it "does not count the destroyed donation or list its item" do
+      donation = create(:donation, :with_items, item: item, item_quantity: 10, storage_location: location, organization: fresh_organization)
+      DonationDestroyEvent.publish(donation)
+
+      expect(subject.to_a).to be_empty
+    end
+  end
+
+  context "with kit allocations" do
+    let!(:fresh_organization) { create(:organization) }
+    let(:location) { create(:storage_location, organization: fresh_organization) }
+    let(:content_item) { create(:item, organization: fresh_organization) }
+    let(:kit) do
+      kit_params = {
+        organization_id: fresh_organization.id,
+        name: "Flow Test Kit",
+        line_items_attributes: [{item_id: content_item.id, quantity: 2}]
+      }
+      KitCreateService.new(organization_id: fresh_organization.id, kit_params: kit_params).tap(&:call).kit
+    end
+
+    subject { described_class.new(organization: fresh_organization, storage_location: location).call }
+
+    it "counts kit contents flowing out and assembled kits flowing in" do
+      create(:donation, :with_items, item: content_item, item_quantity: 10, storage_location: location, organization: fresh_organization)
+      KitAllocateEvent.publish(kit, location.id, 3)
+
+      rows = subject.to_a.index_by { |r| r["item_id"] }
+      expect(rows[kit.id]["quantity_in"]).to eq(3)
+      expect(rows[content_item.id]["quantity_in"]).to eq(10)
+      expect(rows[content_item.id]["quantity_out"]).to eq(6)
     end
   end
 end
