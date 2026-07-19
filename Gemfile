@@ -24,7 +24,7 @@ gem "rails", "~> 8.0.2"
 gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.3'
+gem 'discard', '~> 2.0'
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -156,7 +156,7 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.33.4"
+  gem "rubocop-rails", "~> 2.34.3"
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.

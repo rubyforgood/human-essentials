@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -105,11 +106,11 @@ class Item < ApplicationRecord
 
   def is_in_kit?(kits = nil)
     if kits
-      kits.any? { |k| k.item.line_items.map(&:item_id).include?(id) }
+      kits.any? { |k| k.kit_item.line_items.map(&:item_id).include?(id) }
     else
       organization.kits
         .active
-        .joins(item: :line_items)
+        .joins(kit_item: :line_items)
         .where(line_items: { item_id: id}).any?
     end
   end

@@ -13,7 +13,7 @@
       <td><%= kit.name %></td>
       <td>
         <ul>
-          <% kit.item.line_items.quantities_by_name.map do |id, item_hash| %>
+          <% kit.kit_item.line_items.quantities_by_name.map do |id, item_hash| %>
             <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
           <% end %>
         </ul>
@@ -26,7 +26,7 @@
               <td class="text-right"> Quantity </td>
             </tr>
           </thead>
-          <% @inventory.all_items.select { |i| i.item_id == kit.item.id}.each do |item| %>
+          <% @inventory.all_items.select { |i| i.item_id == kit.kit_item.id}.each do |item| %>
             <tr>
               <td><%= @inventory.storage_location_name(item.storage_location_id) %></td>
               <td class="text-right"><%= item.quantity %></td>

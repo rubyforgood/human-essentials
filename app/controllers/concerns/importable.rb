@@ -39,7 +39,7 @@ module Importable
     else
       flash[:error] = "No file was attached!"
     end
-    redirect_back(fallback_location: { action: :index, organization_id: current_organization })
+    redirect_back_or_to({ action: :index, organization_id: current_organization })
   end
 
   private

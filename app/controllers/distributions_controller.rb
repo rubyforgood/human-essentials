@@ -273,7 +273,7 @@ class DistributionsController < ApplicationController
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
-    redirect_back(fallback_location: distribution_path)
+    redirect_back_or_to(distribution_path)
   end
 
   def pickup_day
