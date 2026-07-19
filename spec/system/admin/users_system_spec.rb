@@ -44,6 +44,24 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page.find(".error")).to have_content "Failed to create user: Please select an associated resource for the role."
     end
 
+    it "clears the resource when the role type changes" do
+      create(:partner, name: "Partner ABC", organization: organization)
+
+      visit new_admin_user_path
+      find('select#resource_type option', exact_text: "Organization").select_option
+      find("label", text: "Resource").sibling(".input-group").click
+      find('li[role="option"]', text: organization.name).click
+      find('select#resource_type option', text: "Partner").select_option
+      fill_in "user_name", with: "TestUser"
+      fill_in "user_email", with: "testuser@example.com"
+      click_on "Save"
+
+      expect(page.find(".error")).to have_content(
+        "Failed to create user: Please select an associated resource for the role."
+      )
+      expect(User.find_by(email: "testuser@example.com")).to be_nil
+    end
+
     it "hides the resource dropdown if super admin role is selected" do
       visit new_admin_user_path
       expect(page).to have_content("Resource")

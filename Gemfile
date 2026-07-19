@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.6.1"
+gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -24,7 +24,7 @@ gem "rails", "~> 8.0.2"
 gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.3'
+gem 'discard', '~> 2.0'
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -156,11 +156,11 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.25.1"
+  gem "rubocop-rails", "~> 2.34.3"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.5"
+  gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.50"
+  gem "standard", "~> 1.54"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
@@ -181,7 +181,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.9.0"
+  gem "listen", "~> 3.10.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.

@@ -24,7 +24,7 @@ RSpec.describe "DonationSites", type: :request do
         page = Nokogiri::HTML(response.body)
         expect(response.body).to include("An Active Site")
         expect(response.body).not_to include("An Inactive Site")
-        button1 = page.css(".btn[href='/donation_sites/#{active_donation_site.id}/deactivate']")
+        button1 = page.css("form[action='/donation_sites/#{active_donation_site.id}/deactivate'] .btn")
         expect(button1.text.strip).to eq("Deactivate")
         expect(button1.attr('class')).not_to match(/disabled/)
       end
@@ -39,12 +39,12 @@ RSpec.describe "DonationSites", type: :request do
           expect(response.body).to include("An Inactive Site")
 
           # Active donation site should have deactivate button
-          button1 = page.css(".btn[href='/donation_sites/#{active_donation_site.id}/deactivate']")
+          button1 = page.css("form[action='/donation_sites/#{active_donation_site.id}/deactivate'] .btn")
           expect(button1.text.strip).to eq("Deactivate")
           expect(button1.attr('class')).not_to match(/disabled/)
 
           # Inactive donation site should have reactivate button
-          button2 = page.css(".btn[href='/donation_sites/#{inactive_donation_site.id}/reactivate']")
+          button2 = page.css("form[action='/donation_sites/#{inactive_donation_site.id}/reactivate'] .btn")
           expect(button2.text.strip).to eq("Restore")
           expect(button2.attr('class')).not_to match(/disabled/)
         end

@@ -109,8 +109,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # expect(org_dashboard_page.outstanding_requests).to be_empty
       end
 
-      it "does not display a discarded request" do
-        create :request, :discarded
+      it "does not display a cancelled request" do
+        create :request, :cancelled
         org_dashboard_page.visit
         org_dashboard_page.outstanding_section # wait for the section
         expect(org_dashboard_page.outstanding_requests).to be_empty

@@ -55,6 +55,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get print_distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -75,6 +83,16 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to be_successful
       end
 
+      context "with export_csv param" do
+        it "redirects then renders a csv-download stimulus controller to export CSV" do
+          get distributions_path(export_csv: true, foo: "bar")
+          expect(response).to redirect_to(distributions_path(foo: "bar"))
+          follow_redirect!
+          expect(response.body).to include("data-controller=\"toast csv-download\"")
+          expect(response.body).to include("distributions.csv?foo=bar")
+        end
+      end
+
       it "sums distribution totals accurately" do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
@@ -87,7 +105,7 @@ RSpec.describe "Distributions", type: :request do
         get distributions_path
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+        reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(reclaim.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/Has Inactive Items/)
@@ -102,7 +120,7 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+          reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)
@@ -158,6 +176,63 @@ RSpec.describe "Distributions", type: :request do
 
           expect(item_total_header.text).to eq("Total #{item.name}")
           expect(item_value_header.text).to eq("Value of #{item.name}")
+        end
+      end
+
+      context "when filtering by reporting category" do
+        let!(:item_pads) { create(:item, reporting_category: "pads", value_in_cents: 100, organization: organization) }
+        let!(:item_diapers) { create(:item, reporting_category: "disposable_diapers", value_in_cents: 100, organization: organization) }
+        let!(:distribution_pads) { create(:distribution, :with_items, item: item_pads, item_quantity: 5, organization: organization) }
+        let!(:distribution_diapers) { create(:distribution, :with_items, item: item_diapers, item_quantity: 8, organization: organization) }
+        let(:params) { { filters: { by_reporting_category: "pads" } } }
+
+        it "only shows distributions containing items with the given reporting category" do
+          get distributions_path, params: params
+
+          expect(assigns(:distributions)).to include(distribution_pads)
+          expect(assigns(:distributions)).not_to include(distribution_diapers)
+        end
+
+        it "includes the reporting category filter select in the page" do
+          get distributions_path
+
+          page = Nokogiri::HTML(response.body)
+          reporting_category_select = page.at_css("select[name='filters[by_reporting_category]']")
+          expect(reporting_category_select).to be_present
+          expect(reporting_category_select.text).to include("Pads")
+        end
+
+        it "annotates the quantity and value column headers with the reporting category name" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          quantity_header, value_header = page.css("table thead tr th.numeric")
+          expect(quantity_header.text).to eq("Total Pads")
+          expect(value_header.text).to eq("Value of Pads")
+        end
+
+        it "exports only matching distributions to CSV with annotated headers and a Reporting Category column" do
+          get distributions_path(format: :csv, filters: params[:filters])
+
+          csv = CSV.parse(response.body, headers: true)
+          expect(csv.headers).to include("Reporting Category")
+          expect(csv.headers).to include("Total Number of Pads")
+          expect(csv.headers).to include("Total Value of Pads")
+          expect(csv.count).to eq(1)
+          expect(csv.first["Reporting Category"]).to eq("Pads")
+        end
+
+        context "when also filtering by item" do
+          let(:combined_params) { { filters: { by_item_id: item_pads.id, by_reporting_category: "pads" } } }
+
+          it "uses the item name in the column headers, not the reporting category" do
+            get distributions_path, params: combined_params
+
+            page = Nokogiri::HTML(response.body)
+            quantity_header, value_header = page.css("table thead tr th.numeric")
+            expect(quantity_header.text).to eq("Total #{item_pads.name}")
+            expect(value_header.text).to eq("Value of #{item_pads.name}")
+          end
         end
       end
 
@@ -473,6 +548,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -548,11 +631,6 @@ RSpec.describe "Distributions", type: :request do
       end
 
       include_examples "restricts access to organization users/admins"
-    end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:distribution, organization: create(:organization)) }
-      include_examples "requiring authorization"
     end
 
     describe "PATCH #update" do
@@ -672,6 +750,16 @@ RSpec.describe "Distributions", type: :request do
           it "does not send the e-mail" do
             expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
           end
+        end
+      end
+
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          original_comment = other_distribution.comment
+          patch distribution_path(id: other_distribution.id), params: {distribution: {comment: "hacked"}}
+          expect(response.status).to eq(404)
+          expect(other_distribution.reload.comment).to eq(original_comment)
         end
       end
 
@@ -895,6 +983,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get edit_distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -932,14 +1028,22 @@ RSpec.describe "Distributions", type: :request do
         expect(flash[:error]).to eq("We can't delete distributions entered before #{1.day.ago.to_date}.")
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          expect {
+            delete distribution_path(id: other_distribution.id)
+          }.not_to change { Distribution.count }
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
   end
 
   context "While not signed in" do
     let(:object) { create(:distribution) }
-
-    include_examples "requiring authorization"
 
     # calendar does not need signin
     describe 'GET #calendar' do

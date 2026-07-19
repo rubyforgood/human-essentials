@@ -51,7 +51,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: "User has been promoted!"
     rescue => e
-      redirect_back(fallback_location: organization_path, alert: e.message)
+      redirect_back_or_to(organization_path, alert: e.message)
     end
   end
 
@@ -64,7 +64,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: "User has been demoted!"
     rescue => e
-      redirect_back(fallback_location: organization_path, alert: e.message)
+      redirect_back_or_to(organization_path, alert: e.message)
     end
   end
 
@@ -77,7 +77,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: "User has been removed!"
     rescue => e
-      redirect_back(fallback_location: organization_path, alert: e.message)
+      redirect_back_or_to(organization_path, alert: e.message)
     end
   end
 
@@ -104,6 +104,7 @@ class OrganizationsController < ApplicationController
       :signature_for_distribution_pdf, :receive_email_on_requests,
       :bank_is_set_up,
       :include_in_kind_values_in_exported_files,
+      :include_packages_in_distribution_export,
       partner_form_fields: [],
       request_unit_names: []
     )

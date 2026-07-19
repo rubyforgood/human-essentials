@@ -80,7 +80,7 @@ RSpec.describe "Transfer management", type: :system do
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
     accept_confirm do
-      click_link 'Delete'
+      click_button 'Delete'
     end
 
     expect(page).to have_content(/Successfully deleted Transfer/)
@@ -109,7 +109,7 @@ RSpec.describe "Transfer management", type: :system do
     allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
 
     accept_confirm do
-      click_link 'Delete'
+      click_button 'Delete'
     end
 
     expect(page).to have_content(/OH NOES/)

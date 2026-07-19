@@ -45,7 +45,7 @@ class BroadcastAnnouncementsController < ApplicationController
   private
 
   def set_broadcast_announcement
-    @broadcast_announcement = BroadcastAnnouncement.find(params[:id])
+    @broadcast_announcement = BroadcastAnnouncement.where(organization_id: current_organization.id).find(params[:id])
   end
 
   def broadcast_announcement_params
