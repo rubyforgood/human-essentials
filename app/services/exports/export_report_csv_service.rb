@@ -36,14 +36,19 @@ module Exports
       csv_data = []
       return csv_data if @reports.empty?
 
-      headers = @reports.first.all_reports.flat_map { |r| r['entries'].keys }
+      # Reports from different years can have different columns (fields get
+      # added or renamed over time), so build the union of headers across all
+      # the reports, in first-seen order, and look each report's values up by
+      # header. Values a year doesn't have are left blank.
+      headers = @reports.flat_map { |report|
+        report.all_reports.flat_map { |r| r['entries'].keys }
+      }.uniq
+
       csv_data << ['Year'] + headers
 
       @reports.each do |report|
-        report_data = report.all_reports
-        year = report['year']
-        values = report_data.flat_map { |r| r['entries'].values }
-        csv_data << [year] + values
+        entries = report.all_reports.reduce({}) { |merged, r| merged.merge(r['entries']) }
+        csv_data << [report['year']] + entries.values_at(*headers)
       end
 
       csv_data
