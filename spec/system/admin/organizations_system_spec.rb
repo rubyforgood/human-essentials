@@ -116,6 +116,9 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_name", with: admin_user_params[:name]
         fill_in "organization_user_email", with: admin_user_params[:email]
 
+        choose 'Day of Month'
+        fill_in "organization_reminder_schedule_service_day_of_month", with: 1
+
         click_on "Save"
       end
 
@@ -124,7 +127,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click
       end
-
       expect(page).to have_content(org_params[:name])
       expect(page).to have_content("Remount")
       expect(page).to have_content("Front Royal")
@@ -151,6 +153,24 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
       expect(page).to have_content("Receive email when Partner makes a Request?")
+    end
+
+    describe "can create an organization with deadline and reminder" do
+      before do
+        visit new_admin_organization_path
+        within "form#new_organization" do
+          fill_in "organization_name", with: "aaa" # So the new org will be on the first page
+        end
+      end
+
+      def post_form_submit
+        expect(page.find(".alert")).to have_content "Organization added!"
+        within(find("td", text: "aaa").sibling(".text-right")) do
+          first(:link, "View").click
+        end
+      end
+
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
     end
   end
 end

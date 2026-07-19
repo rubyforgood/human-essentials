@@ -39,7 +39,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       before do
         visit subject
         click_on "New Adjustment"
-        select storage_location.name, from: "From storage location"
+        await_select2("#adjustment_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "From storage location"
+        end
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
       end
@@ -67,7 +69,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New Adjustment"
-        select storage_location.name, from: "From storage location"
+        await_select2("#adjustment_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "From storage location"
+        end
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
@@ -84,7 +88,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New Adjustment"
-        select storage_location.name, from: "From storage location"
+        await_select2("#adjustment_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "From storage location"
+        end
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s

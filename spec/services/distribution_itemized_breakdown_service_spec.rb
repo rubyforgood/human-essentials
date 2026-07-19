@@ -26,6 +26,17 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service do
     it "should include the break down of items distributed with onhand data" do
       expect(subject).to eq(expected_output)
     end
+
+    context "#fetch with inactive item" do
+      let(:inactive_item) { create(:item, :inactive, organization: organization, name: "Inactive Item") }
+      let(:distribution) { create(:distribution, :with_items, item: inactive_item, organization: organization) }
+      let(:service) { described_class.new(organization: organization, distribution_ids: [distribution.id]) }
+
+      it "returns current_onhand as 0 for inactive items" do
+        result = service.fetch
+        expect(result.find { |i| i[:name] == inactive_item.name }[:current_onhand]).to eq(0)
+      end
+    end
   end
 
   describe "#fetch_csv" do

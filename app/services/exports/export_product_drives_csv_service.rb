@@ -1,6 +1,7 @@
 module Exports
   class ExportProductDrivesCSVService
     include ItemsHelper
+
     HEADERS = ["Product Drive Name", "Start Date", "End Date", "Held Virtually?", "Quantity of Items",
       "Variety of Items", "In Kind Value"].freeze
 

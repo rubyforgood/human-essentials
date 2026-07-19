@@ -11,7 +11,7 @@
         <div class="card-footer">
           <div class="pull-right">
             <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) %>
-            <%= download_button_to(partners_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
+            <%= download_button_to(partners_path(format: :csv, filters: filter_params), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
             <%= new_button_to new_partner_path, {text: "New Partner Agency"} %>
           </div>
         </div>
@@ -29,10 +29,9 @@
                   <th>Partner</th>
                   <th>E-mail</th>
                   <th>Group</th>
-                  <th>Quota</th>
+                  <th class="text-right">Quota</th>
                   <th>Status</th>
-                  <th>Action</th>
-                  <th>&nbsp;</th>
+                  <th class="text-right">Action</th>
                 </tr>
               </thead>
               <tbody>

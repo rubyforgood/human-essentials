@@ -28,7 +28,9 @@
       <!-- left column -->
       <div class="col-md-12">
         <!-- jquery validation -->
-        <div class="card card-primary">
+        <div class="card card-primary"
+            data-controller="confirmation"
+            data-confirmation-pre-check-path-value="<%= validate_transfers_path(format: :json) %>">
           <!-- /.card-header -->
           <!-- form start -->
             <div class="card-body">
@@ -39,10 +41,9 @@
                     storage location to another.</p>
                 </div>
                 <div class="box-body">
-
                   <%= simple_form_for @transfer,
-                    data: { controller: "form-input" },
-                    html: { class: "storage-location-required", id: 'new_transfer' } do |f| %>
+                    data: { controller: "form-input", confirmation_target: "form" },
+                    html: { class: "storage-location-required", id: "new_transfer" } do |f| %>
                     <%= render partial: "storage_locations/source", object: f, locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
 
                     <%= f.association :to,
@@ -69,10 +70,19 @@
 
                     </div>
                     <div class="card-footer">
-                      <%= submit_button %>
+                      <%= submit_button({}, { action: "click->confirmation#openModal" }) %>
                     </div>
                   <% end %>
                   </div>
+                <div
+                  id="transferConfirmationModal"
+                  class="modal confirm"
+                  aria-labelledby="transferConfirmationModal"
+                  aria-hidden="true"
+                  tabindex="-1"
+                  data-bs-backdrop="static"
+                  data-confirmation-target="modal">
+                </div>
             </div><!-- /.box -->
         </div>
       </div>

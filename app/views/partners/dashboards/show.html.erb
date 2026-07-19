@@ -6,6 +6,16 @@
 </header>
 
 <main>
+  <% if @partner.info_for_partner.present? %>
+    <section class="container mx-auto my-5">
+      <h2 class="font-weight-bold">Information from <%= @parent_org.name %></h2>
+
+      <div class="rounded-3 w-100 shadow-lg p-2 bg-white">
+        <%= @partner.info_for_partner %>
+      </div>
+    </section>
+  <% end %>
+
   <%= render partial: '/partners/requests/request_options_card' if @partner.approved? %>
 
   <section class="container mx-auto my-5">

@@ -36,8 +36,7 @@ To remove a user, just click on the "actions" button beside their information, a
 ## What to do if your admin has left without assigning a new one.
 Send an email to info@humanessentials.app (or DM one of the human essentials staff on slack) explaining the situation, and we'll walk you through our process for getting a new admin set up.
 
-[Prior:  Levels of Access](getting_started_access_levels.md)
-[Next:  Everyday Essentials -- your dashboard](essentials_dashboard.md)
+[Prior:  Levels of Access](getting_started_access_levels.md)  [Next: Entering or uploading your initial partner list](getting_started_partners.md)
 
 
 

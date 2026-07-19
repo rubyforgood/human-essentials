@@ -23,7 +23,7 @@
           <td><%= partner.profile.primary_contact_email %></td>
           <td><%= partner.updated_at.strftime("%B %d %Y") %></td>
           <td>
-            <%= view_button_to partner_path(partner) + "#partner-information", { text: "Review Application", icon: "check", type: "warning", class: 'badge' } %>
+            <%= view_button_to partner_path(partner) + "#partner-information", { text: "Review Applicant's Profile", icon: "check", type: "warning", class: 'badge' } %>
           </td>
         </tr>
       <% end %>

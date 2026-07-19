@@ -25,6 +25,7 @@ class BarcodeItem < ApplicationRecord
 
   include Filterable
   include Exportable
+
   default_scope { order("barcodeable_type DESC, created_at ASC") }
 
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }

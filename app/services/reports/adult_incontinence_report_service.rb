@@ -1,6 +1,7 @@
 module Reports
   class AdultIncontinenceReportService
     include ActionView::Helpers::NumberHelper
+
     attr_reader :year, :organization
 
     # @param year [Integer]
@@ -102,13 +103,13 @@ module Reports
         FROM distributions 
         INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
         INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        INNER JOIN line_items AS kit_line_items ON items.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND kit_items.reporting_category = 'adult_incontinence'
-          AND kit_line_items.itemizable_type = 'Kit';
+          AND items.type = 'Kit'
+          AND kit_line_items.itemizable_type = 'Item';
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
@@ -127,18 +128,20 @@ module Reports
                         .distributions
                         .for_year(year)
                         .joins(line_items: :item)
-                        .merge(Item.adult_incontinence.where(kit_id: nil)) # exclude kits
+                        .merge(ConcreteItem.adult_incontinence) # exclude kits
                         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50.0)')
       total_quantity.to_f / 12.0
     end
 
+    # The distributed "kits" are Kits that appear directly in distribution line items.
     def distributed_kits_for_year
       organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: :kit })
+        .joins(line_items: :item)
+        .where(items: { type: 'Kit' })
         .distinct
-        .pluck('kits.id')
+        .pluck('items.id')
     end
 
     def total_distributed_kits_containing_adult_incontinence_items_per_month
@@ -147,15 +150,11 @@ module Reports
       end
 
       total_assisted_adults = kits.sum do |kit|
-        kit_item = Item.where(kit_id: kit.id).first
-
-        next 0 unless kit_item
-
         organization
           .distributions
           .for_year(year)
           .joins(line_items: :item)
-          .where(line_items: { item_id: kit_item.id })
+          .where(line_items: { item_id: kit.id })
           .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1.0)')
       end
       total_assisted_adults.to_i / 12.0

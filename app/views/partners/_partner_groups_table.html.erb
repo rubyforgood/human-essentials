@@ -45,9 +45,21 @@
                     </td>
                     <td>
                       <% if pg.send_reminders %>
-                        <span>Reminder emails are sent on the <strong class='text-bold text-red-600'><%= pg.reminder_day.ordinalize %></strong> of every month. </span>
-                        <br>
-                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> of every month. </span>
+                        <% if pg.reminder_schedule.valid? %>
+                          <span>Reminder emails are sent <strong class='text-bold text-red-600'><%= pg.reminder_schedule&.show_description %></strong>. </span>
+                          <small class="mb-3 d-block text-muted">
+                            <%= "Your next reminder date is #{pg.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
+                          </small>
+                          <br>
+                        <% end %>
+                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> after the reminder. </span>
+                        <% if pg.deadline_day && pg.reminder_schedule.valid? %>
+                          <small class="mb-3 d-block text-muted">
+                            <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                              deadline_day: pg.deadline_day,
+                              today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
+                          </small>
+                        <% end %>
                       <% else %>
                         <span class='text-gray-600 text-bold font-italic'>No</span>
                       <% end %>

@@ -1,6 +1,6 @@
 require "prawn/table"
 
-# Configures a Prawn PDF template for generating Distribution manifests
+# Configures a Prawn PDF template for generating Picklist pdfs
 class PicklistsPdf
   include Prawn::View
   include ItemsHelper
@@ -73,6 +73,16 @@ class PicklistsPdf
           text "Items Received Year-to-Date:", style: :bold, align: :right
           font_size 12
           text request.partner.quantity_year_to_date.to_s, align: :right
+          font_size 10
+        end
+
+        # Add quota information only if quota is set and greater than 0
+        quota = request.partner.quota
+        if quota && quota > 0
+          move_down 5
+          text "Quota:", style: :bold, align: :right
+          font_size 12
+          text quota.to_s, align: :right
           font_size 10
         end
 

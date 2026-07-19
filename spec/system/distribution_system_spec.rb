@@ -340,6 +340,7 @@ RSpec.feature "Distributions", type: :system do
   context "With an existing distribution" do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
+    let!(:request) { create(:request, distribution: distribution) }
 
     before do
       sign_in(organization_admin)
@@ -348,11 +349,19 @@ RSpec.feature "Distributions", type: :system do
 
     it "the user can make changes" do
       click_on "Edit", match: :first
-      expect do
-        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
-        click_on "Save", match: :first
-        distribution.reload
-      end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
+      fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+      click_on "Save", match: :first
+      # Make Capybara wait for events to finish before checking Db.
+      expect(page).to have_content("SOMETHING DIFFERENT")
+
+      distribution.reload
+      expect(distribution.agency_rep).to eq("SOMETHING DIFFERENT")
+    end
+
+    it "the user can view related request" do
+      click_on "View Request"
+
+      expect(page).to have_content "Request from #{distribution.request.partner.name}"
     end
 
     it "sends an email if reminders are enabled" do
@@ -700,7 +709,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "via barcode entry" do
-    let(:existing_barcode) { create(:barcode_item) }
+    let(:existing_barcode) { create(:barcode_item, quantity: 50) }
     let(:item_with_barcode) { existing_barcode.item }
     let(:item_no_barcode) { create(:item) }
 
@@ -875,14 +884,66 @@ RSpec.feature "Distributions", type: :system do
     # therefore the confirmation modal does not appear here.
 
     expect(page).to have_content("Distribution Complete")
-    expect(page).to have_link("Distribution Complete")
+    expect(page).to have_button("Distribution Complete")
 
     expect(View::Inventory.new(organization.id)
       .quantity_for(item_id: item.id, storage_location: storage_location.id)).to eq(0)
 
-    click_link "Distribution Complete"
+    click_button "Distribution Complete"
     expect(page).to have_content('Distribution')
 
     expect(page).to have_content("This distribution has been marked as being completed!")
+  end
+
+  it "Double clicking distribution complete does not result in the distribution attemping to be completed twice" do
+    visit new_distribution_path
+    item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
+    TestInventory.create_inventory(organization,
+      {
+        storage_location.id => { item.id => 20 }
+      })
+
+    select "Test Partner", from: "Partner"
+    select "Test Storage Location", from: "From storage location"
+    choose "Delivery"
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+    click_button "Save"
+
+    within "#distributionConfirmationModal" do
+      click_button "Yes, it's correct"
+    end
+
+    expect(page).to have_content("Distribution created!")
+
+    # Make sure the button is there before trying to double click it
+    expect(page).to have_button("Distribution Complete", visible: true)
+
+    # Double click on the Distribution Complete button
+    ferrum_double_click("form[action='#{distribution_path(id: organization.distributions.last.id)}/picked_up']")
+
+    expect(page).to have_content("This distribution has been marked as being completed!")
+    expect(page).not_to have_button("Distribution Complete")
+
+    # If it tries to mark the distribution as completed twice, the second time
+    # will fail (the distribution is already complete) and show this error
+    expect(page).not_to have_content("Sorry, we encountered an error when trying to mark this distribution as being completed")
+  end
+
+  describe "CSV export", js: true do
+    before do
+      create(:distribution, :with_items, organization: organization)
+      visit distributions_path
+    end
+
+    it "downloads a CSV and shows a toast notification" do
+      click_on "Export Distributions"
+
+      wait_for_download
+      expect(downloads.length).to eq(1)
+      expect(download).to match(/Distributions.*\.csv/)
+      expect(page).to have_text("Your CSV export is downloading!")
+    end
   end
 end

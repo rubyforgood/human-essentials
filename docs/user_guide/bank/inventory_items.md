@@ -72,6 +72,8 @@ Clicking "View" will bring up details on the Item, including all the things you 
 The fields are:
 - Base Item -- this is the "Base Item" for this Item -- which determines what section it is in for the Annual Survey.  You can also search by Base Item (at this time)
 - Category -- this is a category you define (see [Item Categories](inventory_items.md#item-categories), below
+- NDBN Reporting Category -- this is used for accounting purposes in annual reports based on NDNB's rules. The value is set based on a Base Item's reporting category, or selected manually.
+!NOTE New NDBN reporting categories can only be created by a Super Admin.
 - Value per Item -- this is currently shown in cents (there is a request to change it to dollars in our list).  It is used for any "Fair Market Value" calculations -- including on donation and distribution printouts.  
 [!NOTE] We only have one 'Value per Item' per Item -- so it's always the current fair market value not the historical.  If provided, this is used for the value column on the distribution and donation printouts (unless you hide those columns when [customizing your bank](getting_started_customization.md))
 - Quantity per individual -- This is used for two things:  
@@ -82,9 +84,11 @@ The fields are:
 - On hand recommended quantity -- This is the amount you want to have on hand -- if you don't have this, it will appear in the low inventory list on your dashboard, just not in red.
 - Package size -- If you use this, the calculated number of packages for the Item will appear on the distribution printout, unless you hide it when [customizing your bank](getting_started_customization.md).
 - Item visible to partners -- This is useful if you have Items that you do not want the partners directly requesting.   Uses include: Items you don't get very often,  or Items you only have because they are going into kits you haven't assembled yet. You can uncheck this to hide those Items from all your partners.
+
 #### Filtering your item list
 The most common thing you'll when filtering your item list is to include inactive items.  If you have deactivated an item, but are going to offer it again,  you'll need to check the "Also include inactive Items" box in the filter, and then click "Filter" to show it, so that you can reactivate it.
 
+You can also filter your item list by NDBN reporting category (a field used for annual reporting purposed based on NDBN rules). Select a category from the drop-down menu and click "Filter".
 
 #### Editing an Item
 Clicking "Edit" beside an Item on the Item list lets you edit the Item definition, with the fields as described above.

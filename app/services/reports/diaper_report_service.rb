@@ -1,6 +1,7 @@
 module Reports
   class DiaperReportService
     include ActionView::Helpers::NumberHelper
+
     attr_reader :year, :organization
 
     # @param year [Integer]
@@ -32,9 +33,13 @@ module Reports
                      "% disposable diapers purchased" => "#{percent_disposable_diapers_purchased.round}%",
                      "% cloth diapers purchased" => "#{percent_cloth_diapers_purchased.round}%",
                      "Money spent purchasing diapers" => number_to_currency(money_spent_on_diapers),
-                     "Purchased from" => purchased_from,
-                     "Vendors diapers purchased through" => vendors_purchased_from
+                     "Purchased from" => combined_purchased_from
                    }}
+    end
+
+    # Helper method to combine purchased_from and vendors_purchased_from
+    def combined_purchased_from
+      [purchased_from, vendors_purchased_from].compact_blank.join(", ")
     end
 
     # @return [Integer]
@@ -53,16 +58,16 @@ module Reports
 
       sql_query = <<-SQL
         SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM distributions 
-        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
-        INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        FROM distributions
+        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
+        INNER JOIN items ON items.id = line_items.item_id
+        INNER JOIN line_items AS kit_line_items ON items.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
+          AND items.type = 'Kit'
           AND kit_items.reporting_category = 'disposable_diapers'
-          AND kit_line_items.itemizable_type = 'Kit';
+          AND kit_line_items.itemizable_type = 'Item';
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])

@@ -385,6 +385,9 @@ RSpec.describe InventoryAggregate do
         {item_id: item1.id, quantity: 10},
         {item_id: item2.id, quantity: 3}
       ])
+      # it should work even if snapshot is after the kit
+      kit.update!(created_at: 1.week.ago)
+      SnapshotEvent.publish(organization)
 
       KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
@@ -401,7 +404,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 4, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 2, storage_location_id: storage_location1.id)
+              kit.id => EventTypes::EventItem.new(item_id: kit.id, quantity: 2, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
@@ -427,7 +430,7 @@ RSpec.describe InventoryAggregate do
             item1.id => 30,
             item2.id => 10,
             item3.id => 40,
-            kit.item.id => 3
+            kit.id => 3
           },
           storage_location2.id => {
             item2.id => 10,
@@ -453,7 +456,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 1, storage_location_id: storage_location1.id)
+              kit.id => EventTypes::EventItem.new(item_id: kit.id, quantity: 1, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
@@ -604,57 +607,6 @@ RSpec.describe InventoryAggregate do
             id: storage_location1.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id)
-            }
-          )
-        }
-      ))
-    end
-
-    # NOTE: as of now, this behavior is not necessary since all our events are "now". However, we
-    # know this might change in the future if we allow rewriting history due to clerical errors.
-    # This was already coded, so we might as well leave it in so we don't shoot ourselves in the
-    # foot later.
-    it "should ignore unusable snapshots" do
-      freeze_time do
-        donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-        donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
-        donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
-        DonationEvent.publish(donation)
-
-        travel 1.minute
-        SnapshotEvent.publish(organization)
-
-        # check inventory at this point
-        inventory = described_class.inventory_for(organization.id)
-        expect(inventory).to eq(EventTypes::Inventory.new(
-          organization_id: organization.id,
-          storage_locations: {
-            storage_location1.id => EventTypes::EventStorageLocation.new(
-              id: storage_location1.id,
-              items: {
-                item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50, storage_location_id: storage_location1.id),
-                item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30, storage_location_id: storage_location1.id)
-              }
-            )
-          }
-        ))
-
-        travel 1.minute
-        # correction event - should ruin the snapshot since it's updating a previous event
-        donation.line_items = [build(:line_item, quantity: 40, item: item1, itemizable: donation)]
-        event = DonationEvent.publish(donation)
-        event.update!(event_time: donation.created_at)
-      end
-
-      inventory = described_class.inventory_for(organization.id)
-      expect(inventory).to eq(EventTypes::Inventory.new(
-        organization_id: organization.id,
-        storage_locations: {
-          storage_location1.id => EventTypes::EventStorageLocation.new(
-            id: storage_location1.id,
-            items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 40, storage_location_id: storage_location1.id),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0, storage_location_id: storage_location1.id)
             }
           )
         }

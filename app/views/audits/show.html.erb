@@ -46,7 +46,7 @@
               <tr>
                 <th>Item</th>
                 <th>Audit Quantity</th>
-                <th>Quantity in Records</th>
+                <th class="text-right">Quantity in Records</th>
               </tr>
               </thead>
               <tbody>
@@ -55,7 +55,7 @@
                 <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
                   <td><%= inventory_item.name %></td>
                   <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
-                  <td><%= inventory_item.quantity %></td>
+                  <td class="text-right"><%= inventory_item.quantity %></td>
                 </tr>
               <% end %>
               </tbody>

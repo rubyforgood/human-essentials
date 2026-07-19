@@ -1,5 +1,5 @@
 # Human Essentials User Guide
-This user guide is meant for users of Human Essentials at essentials banks.  As of November 2, 2024, it is a work in progress.  If you are interested in helping out, please reach out to @cielf.
+This user guide is meant for users of Human Essentials at essentials banks.  
 
 1. Introduction
    1. [Is Human Essentials right for you?](intro_i.md) (what we help with and what we don't)
@@ -7,13 +7,13 @@ This user guide is meant for users of Human Essentials at essentials banks.  As 
 2. Getting started
    1. [Some choices you'll want to think about at the start. ](getting_started_choices.md)
    2. [Storage Locations](getting_started_storage_locations.md)
-   3. [Partner Agencies](getting_started_partners.md)
-   4. [Donation sites](getting_started_donation_sites.md)
-   5. [Inventory](getting_started_inventory.md)
-   6. [Customization and other organization-level info](getting_started_customization.md)
-   7. Adding your staff
+   3. [Inventory](getting_started_inventory.md)
+   4. [Customization and other organization-level info](getting_started_customization.md)
+   5. Adding your staff
       1. [Levels of access](getting_started_access_levels.md)
       2. [User management](getting_started_user_management.md)
+   6. [Partner Agencies](getting_started_partners.md)
+   7. [Donation sites](getting_started_donation_sites.md) 
 3. Everyday essentials 
    1. [Your dashboard](essentials_dashboard.md)
    2. [Donations](essentials_donations.md)

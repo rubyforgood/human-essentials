@@ -20,12 +20,10 @@
 
 FactoryBot.define do
   factory :purchase do
-    comment { "It's a fine day for diapers." }
-    purchased_from { "Google" }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
     issued_at { Time.current }
-    amount_spent_in_cents { 10_00 }
+    amount_spent_in_cents { 999_00 } # Don't test this number
     vendor { Vendor.try(:first) || create(:vendor) }
 
     transient do

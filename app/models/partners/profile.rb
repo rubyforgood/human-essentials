@@ -37,7 +37,6 @@
 #  new_client_times               :string
 #  no_social_media_presence       :boolean
 #  other_agency_type              :string
-#  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
 #  pick_up_name                   :string
 #  pick_up_phone                  :string
@@ -163,7 +162,7 @@ module Partners
     #   population_hispanic, population_asian, population_american_indian, population_island,
     #   population_multi_racial, population_other, zips_served, at_fpl_or_below, above_1_2_times_fpl
     #   greater_2_times_fpl, poverty_unknown
-    # executive_director
+    # contacts
     #   executive_director_name, executive_director_phone, executive_director_email, primary_contact_name,
     #   primary_contact_phone, primary_contact_mobile, primary_contact_email
     # pick_up_person
@@ -177,21 +176,6 @@ module Partners
 
     # These are columns which currently do not appear in any partial of the profile form.
     # It is possible these will be removed in the future.
-    self.ignored_columns += %w[
-      application_data
-      distributor_type
-      evidence_based_description
-      program_client_improvement
-      incorporate_plan
-      turn_away_child_care
-      responsible_staff_position
-      trusted_pickup
-      serve_income_circumstances
-      internal_db
-      maac
-      pick_up_method
-      ages_served
-    ]
 
     def client_share_total
       # client_share could be nil

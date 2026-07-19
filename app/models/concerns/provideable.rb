@@ -19,7 +19,7 @@ module Provideable
     end
 
     def self.csv_export_headers
-      ["Business Name", "Contact Name", "Phone", "Email", "Total Diapers"]
+      ["Business Name", "Contact Name", "Phone", "Email", "Total Items"]
     end
 
     def csv_export_attributes

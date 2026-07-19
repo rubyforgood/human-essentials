@@ -37,7 +37,6 @@
 #  new_client_times               :string
 #  no_social_media_presence       :boolean
 #  other_agency_type              :string
-#  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
 #  pick_up_name                   :string
 #  pick_up_phone                  :string

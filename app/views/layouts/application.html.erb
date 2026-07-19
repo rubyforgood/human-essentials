@@ -16,6 +16,23 @@
     # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
     javascript_importmap_tags
   %>
+
+  <!-- Use sinon to make sure the browser's time matches Rails' potentially spoofed time.
+  Be sure to navigate to the page under test AFTER spoofing Rails' time or there will be a
+  mismatch. -->
+  <% if Rails.env.test? %>
+    <script type="module">
+      import sinon from "sinon"
+      if( window.fakeTimerClock ){
+        window.fakeTimerClock.restore();
+      }
+      window.fakeTimerClock = sinon.useFakeTimers({
+        now: <%= Time.now.to_i * 1000 %>,
+        shouldAdvanceTime: true
+      })
+    </script>
+  <% end %>
+
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <script type="esms-options">
   {

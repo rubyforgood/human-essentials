@@ -7,6 +7,13 @@ class AuditsController < ApplicationController
     @selected_location = filter_params[:at_location]
     @audits = current_organization.audits.includes(:line_items, :storage_location).class_filter(filter_params)
     @storage_locations = StorageLocation.with_audits_for(current_organization).select(:id, :name)
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data Audit.generate_csv(@audits), filename: "Audits-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   def show
@@ -21,14 +28,11 @@ class AuditsController < ApplicationController
   end
 
   def finalize
-    @audit.adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, user_id: current_user.id, comment: 'Created Automatically through the Auditing Process')
-    @audit.save
-
     AuditEvent.publish(@audit)
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
   rescue => e
-    redirect_back(fallback_location: audits_path, alert: "Could not finalize audit: #{e.message}")
+    redirect_back_or_to(audits_path, alert: "Could not finalize audit: #{e.message}")
   end
 
   def update

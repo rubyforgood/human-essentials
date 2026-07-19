@@ -19,7 +19,7 @@ class BroadcastAnnouncementsController < ApplicationController
       if @broadcast_announcement.save
         format.html { redirect_to broadcast_announcements_url, notice: "Broadcast announcement was successfully created." }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -29,7 +29,7 @@ class BroadcastAnnouncementsController < ApplicationController
       if @broadcast_announcement.update(broadcast_announcement_params)
         format.html { redirect_to broadcast_announcements_url, notice: "Broadcast announcement was successfully updated." }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -45,7 +45,7 @@ class BroadcastAnnouncementsController < ApplicationController
   private
 
   def set_broadcast_announcement
-    @broadcast_announcement = BroadcastAnnouncement.find(params[:id])
+    @broadcast_announcement = BroadcastAnnouncement.where(organization_id: current_organization.id).find(params[:id])
   end
 
   def broadcast_announcement_params

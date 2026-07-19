@@ -40,3 +40,4 @@ en:
         issued_at: "Distribution date and time"
     models:
       product_drive: "Product Drive"
+      donation_site: "Donation Site"

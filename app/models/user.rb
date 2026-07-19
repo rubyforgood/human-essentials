@@ -95,6 +95,10 @@ class User < ApplicationRecord
     name.presence || "Name Not Provided"
   end
 
+  def preferred_name
+    name.presence || email
+  end
+
   def formatted_email
     email.present? ? "#{name} <#{email}>" : ""
   end

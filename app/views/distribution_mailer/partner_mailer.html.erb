@@ -217,19 +217,6 @@
       margin-bottom: 0;
     }
 
-    .preheader {
-      color: transparent;
-      display: none;
-      height: 0;
-      max-height: 0;
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
-      mso-hide: all;
-      visibility: hidden;
-      width: 0;
-    }
-
     .powered-by a {
       text-decoration: none;
     }
@@ -328,7 +315,6 @@
         <div class="content">
 
           <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader">You have a new distribution from <%= @partner.organization.name %>. Please refer to the attachment for details.</span>
           <table role="presentation" class="main">
 
             <!-- START MAIN CONTENT AREA -->
@@ -339,10 +325,15 @@
                     <td>
                     From: <a href="mailto:<%= @from_email %>"><%= @from_email %></a>
                     </td>
-                </tr>
+                  </tr>
                   <tr>
                     <td>
-                    <%= @default_email_text_interpolated.html_safe %>
+                      <% if @default_email_text.present? %>
+                        <%= @default_email_text_interpolated.html_safe %>
+                      <% elsif @distribution_changes.blank? %>
+                        You have a new distribution from <%= @partner.organization.name %>.
+                        Please refer to the attachment for details.
+                      <% end %>
                     </td>
                   </tr>
                 <% if @distribution_changes.present? %>

@@ -19,6 +19,7 @@ class Transfer < ApplicationRecord
 
   include Itemizable
   include Filterable
+
   # to make it play nice with Itemizable - alias of `from`
   belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }

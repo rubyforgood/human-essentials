@@ -24,7 +24,7 @@ class Admin::BroadcastAnnouncementsController < AdminController
       if @broadcast_announcement.save
         format.html { redirect_to admin_broadcast_announcements_url, notice: "Broadcast announcement was successfully created." }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -34,7 +34,7 @@ class Admin::BroadcastAnnouncementsController < AdminController
       if @broadcast_announcement.update(broadcast_announcement_params)
         format.html { redirect_to admin_broadcast_announcements_url, notice: "Broadcast announcement was successfully updated." }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end

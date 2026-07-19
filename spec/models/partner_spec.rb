@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
@@ -325,6 +326,14 @@ RSpec.describe Partner, type: :model do
       let!(:child2) { create_list(:partners_child, 2, family: family3) }
 
       it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
+
+      context "when children are archived" do
+        let!(:child2) { create_list(:partners_child, 2, archived: true, family: family2) }
+
+        it "does not include the children in children_served_count" do
+          expect(subject).to eq({families_served: 3, children_served: 2, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]})
+        end
+      end
     end
 
     context "when partner don't have any related information" do

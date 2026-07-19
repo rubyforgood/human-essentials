@@ -20,14 +20,15 @@
 For details on how to do a bulk import of your partners, please click [here](pm_importing_partners.md)
 
 ## Adding a single Partner
-For your first partner, you can Click on the "Add a Partner" button in your "Getting Started" portion of you dashboard.  
+For your first partner, you can Click on the "Add a single partner" link in your "Getting Started" portion of you dashboard.  
 
-![navigation](images/getting_started/partners/gs_just_starting_step_2.png)
+![navigation](images/getting_started/partners/gs_add_partner_1.png)
 
 
 For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
 
 ![add a partner navigation](images/partners/partners_add_navigation.png)
+
 Further details on adding a partner can be found [here](pm_adding_a_partner.md)
 
-[Prior: Storage Locations](getting_started_storage_locations.md)[Next: Donation Sites](getting_started_donation_sites.md)
+[Prior: User management](getting_started_user_management.md)  [Next:  Everyday Essentials -- your dashboard](essentials_dashboard.md)

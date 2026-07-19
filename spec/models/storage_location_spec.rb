@@ -20,6 +20,7 @@ RSpec.describe StorageLocation, type: :model do
 
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:organization_id).case_insensitive }
     it { is_expected.to validate_presence_of(:address) }
     it "ensures that square_footage cannot be negative" do
       expect(build(:storage_location, square_footage: -1)).not_to be_valid
@@ -96,6 +97,13 @@ RSpec.describe StorageLocation, type: :model do
         create(:audit, storage_location: storage_location2, organization: organization)
         create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
         expect(StorageLocation.with_audits_for(organization).to_a).to match_array([storage_location1, storage_location2])
+      end
+
+      it "returns audited storage locations that have been discarded" do
+        storage_location1 = create(:storage_location, organization: organization, discarded_at: Time.current)
+        create(:storage_location, organization: organization)
+        create(:audit, storage_location: storage_location1, organization: organization)
+        expect(StorageLocation.with_audits_for(organization).to_a).to match_array([storage_location1])
       end
     end
 

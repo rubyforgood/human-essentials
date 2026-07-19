@@ -101,7 +101,7 @@ module Partners
 
     helper_method :sort_column # used in SortableHelper
     def sort_column
-      Child.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+      Child.column_names.include?(params[:sort]) ? params[:sort] : "last_name, id"
     end
 
     helper_method :fetch_valid_item_name

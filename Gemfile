@@ -10,11 +10,11 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.9"
+gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.0.1"
+gem "rails", "~> 8.0.2"
 
 ###### MODELS / DATABASE #######
 
@@ -24,7 +24,7 @@ gem "rails", "~> 8.0.1"
 gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.3'
+gem 'discard', '~> 2.0'
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -51,7 +51,7 @@ gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
 # Use JS import maps to manage JS without transpiling or bundling.
-gem "importmap-rails", "~> 2.1"
+gem "importmap-rails", "~> 2.2"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -61,6 +61,8 @@ gem "filterrific"
 gem "jbuilder"
 # Pagination of models for use in views.
 gem "kaminari"
+# Prevents cookie overflow errors when storing large flash messages.
+gem 'memflash'
 # Web-based authorization framework.
 gem "omniauth"
 # Required to avoid authentication issues with Rails.
@@ -92,6 +94,8 @@ gem "flipper-ui"
 gem "geocoder"
 # Generate .ics calendars for use with Google Calendar
 gem 'icalendar', require: false
+# Offers functionality for date reocccurances
+gem "ice_cube"
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 # Use Newrelic for logs and APM
@@ -107,6 +111,9 @@ gem 'bootsnap', require: false
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
 gem "sprockets", "~> 4.2.2"
+gem "prawn", "~> 2.4.0"
+gem "matrix" # Used by prawn
+gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -144,16 +151,16 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 7.1.0"
+  gem "rspec-rails", "~> 8.0.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.25.1"
+  gem "rubocop-rails", "~> 2.34.3"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.4"
+  gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.40"
+  gem "standard", "~> 1.54"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
@@ -174,7 +181,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.9.0"
+  gem "listen", "~> 3.10.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -201,7 +208,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.24"
+  gem "webmock", "~> 3.26"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests

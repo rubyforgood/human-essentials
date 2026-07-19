@@ -1,7 +1,7 @@
 <tr>
   <td><%= storage_location.name %></td>
   <td><%= storage_location.address %></td>
-  <td><%= storage_location.square_footage %></td>
+  <td class="text-right"><%= storage_location.square_footage %></td>
   <td><%= storage_location.warehouse_type %></td>
   <td class="text-right"><%= @inventory.quantity_for(storage_location: storage_location.id) %></td>
   <td class="text-right"><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
