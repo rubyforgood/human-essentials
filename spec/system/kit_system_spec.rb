@@ -42,8 +42,8 @@ RSpec.describe "Kit management", type: :system do
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_line_items_attributes_0_item_id"
-    find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+    select item.name, from: "kit_item_line_items_attributes_0_item_id"
+    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
 
@@ -73,7 +73,7 @@ RSpec.describe "Kit management", type: :system do
 
     expect(page).to have_content("Barcode Added to Inventory")
     # Check that item details have been filled in via javascript
-    expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity)
+    expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity)
     # Check that new field has been added via javascript
     expect(page).to have_css(".line_item_section", count: 2)
   end
@@ -84,7 +84,7 @@ RSpec.describe "Kit management", type: :system do
     click_on 'Modify Allocation'
 
     inventory = View::Inventory.new(organization.id)
-    original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+    original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
     original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
     original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -102,7 +102,7 @@ RSpec.describe "Kit management", type: :system do
     inventory.reload
 
     # Check that the kit quantity increased by the expected amount
-    expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(2)
+    expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(2)
 
     # Ensure each of the contained items decrease the correct amount
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(40)
@@ -116,7 +116,7 @@ RSpec.describe "Kit management", type: :system do
     click_on 'Save'
     inventory.reload
 
-    expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+    expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
     expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
   end
@@ -145,7 +145,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Modify Allocation'
 
       inventory = View::Inventory.new(organization.id)
-      original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+      original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -161,7 +161,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Save'
       inventory.reload
 
-      expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+      expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(0)
     end
@@ -172,7 +172,7 @@ RSpec.describe "Kit management", type: :system do
       # Force there to be no kit quantity available
       TestInventory.create_inventory(organization, {
         storage_location.id => {
-          existing_kit.item.id => 0,
+          existing_kit.kit_item.id => 0,
           existing_kit_item_1.id => 50,
           existing_kit_item_2.id => 50
         }
@@ -185,7 +185,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Modify Allocation'
 
       inventory = View::Inventory.new(organization.id)
-      original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+      original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -201,7 +201,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Save'
       inventory.reload
 
-      expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+      expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
     end
@@ -216,14 +216,58 @@ RSpec.describe "Kit management", type: :system do
 
       item = Item.last
       quantity_per_kit = 5
-      select item.name, from: "kit_line_items_attributes_0_item_id"
-      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
       click_button "Save"
 
       expect(page.find(".alert")).to have_content "Name can't be blank"
       expect(page).to have_content(kit_traits[:quantity])
       expect(page).to have_content(item.name)
+    end
+  end
+
+  describe "when duplicate items" do
+    it "detects duplicate items and shows modal", js: true do
+      visit new_kit_path
+      click_link "New Kit"
+
+      kit_traits = attributes_for(:kit)
+      fill_in "Name", with: kit_traits[:name]
+      find(:css, '#kit_value_in_dollars').set('10.10')
+
+      item = Item.last
+
+      # Add first entry for the item
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      fill_in "kit_item_line_items_attributes_0_quantity", with: "10"
+
+      # Add a new line item row
+      find("[data-form-input-target='addButton']").click
+
+      # Add second entry for the same item
+      within all('.line_item_section').last do
+        item_select = find('select[name*="[item_id]"]')
+        select item.name, from: item_select[:id]
+        quantity_input = find('input[name*="[quantity]"]')
+        fill_in quantity_input[:id], with: "15"
+      end
+
+      # Try to save - should trigger duplicate detection modal
+      click_button "Save"
+
+      # JavaScript modal should appear
+      expect(page).to have_css("#duplicateItemsModal", visible: true)
+      expect(page).to have_content("Multiple Item Entries Detected")
+      expect(page).to have_content("Merge Items")
+      expect(page).to have_content("Make Changes")
+
+      # Test merge functionality
+      click_button "Merge Items"
+
+      expect(page.find(".alert")).to have_content "Kit created successfully"
+      expect(page).to have_content(kit_traits[:name])
+      expect(page).to have_content("25 #{item.name}")
     end
   end
 end

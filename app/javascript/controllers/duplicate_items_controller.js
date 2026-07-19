@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["itemSubmitButton"]
+
   connect() {
     this.boundHandleSubmit = this.handleSubmit.bind(this)
     this.element.addEventListener("submit", this.boundHandleSubmit)
@@ -18,11 +20,7 @@ export default class extends Controller {
   handleSubmit(event) {
     const submitter = event.submitter
 
-    if (!submitter?.name) return
-    if (!submitter.name.includes('save_progress') && 
-        !submitter.name.includes('confirm_audit')) {
-      return
-    }
+    if (!this.itemSubmitButtonTargets.includes(submitter)) return
 
     event.preventDefault()
     

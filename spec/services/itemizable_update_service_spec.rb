@@ -5,6 +5,7 @@ RSpec.describe ItemizableUpdateService do
   let(:item1) { create(:item, organization: organization, name: "My Item 1") }
   let(:item2) { create(:item, organization: organization, name: "My Item 2") }
   let(:item3) { create(:item, organization: organization, name: "My Item 3") }
+
   before(:each) do
     TestInventory.create_inventory(storage_location.organization, {
       storage_location.id => {
@@ -16,6 +17,9 @@ RSpec.describe ItemizableUpdateService do
         item2.id => 10
       }
     })
+    # Make sure any other events that come after have their own event_time
+    # to avoid possible flaky tests due to event order
+    travel 1.second
   end
 
   around(:each) do |ex|
@@ -44,7 +48,7 @@ RSpec.describe ItemizableUpdateService do
       }
     end
 
-    subject do
+    def call_update_service
       described_class.call(itemizable: itemizable,
         params: attributes,
         event_class: DonationEvent)
@@ -53,7 +57,7 @@ RSpec.describe ItemizableUpdateService do
     it "should update quantity in same storage location" do
       expect(storage_location.size).to eq(20)
       expect(new_storage_location.size).to eq(20)
-      subject
+      call_update_service
       expect(itemizable.reload.line_items.count).to eq(2)
       expect(itemizable.line_items.sum(&:quantity)).to eq(4)
       expect(storage_location.size).to eq(14)
@@ -65,7 +69,7 @@ RSpec.describe ItemizableUpdateService do
     it "fails with a validation message for donation events with invalid issued_at" do
       attributes[:issued_at] = ""
 
-      expect { subject }.to raise_error do |e|
+      expect { call_update_service }.to raise_error do |e|
         expect(e).to be_a(ActiveRecord::RecordInvalid)
         expect(e.message).to eq("Validation failed: Issue date can't be blank")
       end
@@ -75,7 +79,7 @@ RSpec.describe ItemizableUpdateService do
       context "when there is no intervening audit" do
         it "should update quantity in different locations" do
           attributes[:storage_location_id] = new_storage_location.id
-          subject
+          call_update_service
           expect(itemizable.reload.line_items.count).to eq(2)
           expect(itemizable.line_items.sum(&:quantity)).to eq(4)
           expect(storage_location.size).to eq(10)
@@ -89,7 +93,7 @@ RSpec.describe ItemizableUpdateService do
                 "If you need to change the storage location, please delete this donation and create a new donation with the new storage location."
           create(:audit, :with_items, item: itemizable.items.first, organization: organization, storage_location: storage_location, status: "finalized")
           attributes[:storage_location_id] = new_storage_location.id
-          expect { subject }.to raise_error(msg)
+          expect { call_update_service }.to raise_error(msg)
         end
       end
     end
@@ -97,7 +101,7 @@ RSpec.describe ItemizableUpdateService do
     it "should raise an error if any item is inactive" do
       item1.update!(active: false)
       msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
-      expect { subject }.to raise_error(msg)
+      expect { call_update_service }.to raise_error(msg)
     end
   end
 
@@ -121,14 +125,14 @@ RSpec.describe ItemizableUpdateService do
       }
     end
 
-    subject do
+    def call_update_service
       described_class.call(itemizable: itemizable, params: attributes, event_class: DistributionEvent)
     end
 
     it "should update quantity in same storage location" do
       expect(storage_location.size).to eq(20)
       expect(new_storage_location.size).to eq(20)
-      subject
+      call_update_service
       expect(itemizable.reload.line_items.count).to eq(2)
       expect(itemizable.line_items.sum(&:quantity)).to eq(4)
       expect(storage_location.size).to eq(26)
@@ -139,7 +143,7 @@ RSpec.describe ItemizableUpdateService do
     it "fails with a validation message for distribution events with invalid issued_at" do
       attributes[:issued_at] = ""
 
-      expect { subject }.to raise_error do |e|
+      expect { call_update_service }.to raise_error do |e|
         expect(e).to be_a(ActiveRecord::RecordInvalid)
         expect(e.message).to eq("Validation failed: Distribution date and time can't be blank")
       end
@@ -149,7 +153,7 @@ RSpec.describe ItemizableUpdateService do
       context "when there is no intervening audit" do
         it "should update quantity in different locations" do
           attributes[:storage_location_id] = new_storage_location.id
-          subject
+          call_update_service
           expect(itemizable.reload.line_items.count).to eq(2)
           expect(itemizable.line_items.sum(&:quantity)).to eq(4)
           expect(storage_location.size).to eq(30)
@@ -163,7 +167,7 @@ RSpec.describe ItemizableUpdateService do
                 "If you need to change the storage location, please reclaim this distribution and create a new distribution from the new storage location."
           create(:audit, :with_items, item: itemizable.items.first, organization: organization, storage_location: storage_location, status: "finalized")
           attributes[:storage_location_id] = new_storage_location.id
-          expect { subject }.to raise_error(msg)
+          expect { call_update_service }.to raise_error(msg)
         end
       end
     end
@@ -171,7 +175,7 @@ RSpec.describe ItemizableUpdateService do
     it "should raise an error if any item is inactive" do
       item1.update!(active: false)
       msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
-      expect { subject }.to raise_error(msg)
+      expect { call_update_service }.to raise_error(msg)
     end
   end
 
@@ -194,6 +198,7 @@ RSpec.describe ItemizableUpdateService do
           line_items_attributes: {"0": {item_id: item1.id, quantity: 5}, "1": {item_id: item3.id, quantity: 50}}
         }
       end
+
       it "should send an itemizable event if it already exists" do
         DonationEvent.publish(itemizable)
         expect(DonationEvent.count).to eq(1)
@@ -234,14 +239,8 @@ RSpec.describe ItemizableUpdateService do
         expect(DonationEvent.count).to eq(2)
       end
     end
+
     describe "with distributions" do
-      before(:each) do
-        TestInventory.create_inventory(storage_location.organization, {
-          storage_location.id => {
-            item3.id => 10
-          }
-        })
-      end
       let(:itemizable) do
         line_items = [
           create(:line_item, item_id: item1.id, quantity: 5),
@@ -259,6 +258,15 @@ RSpec.describe ItemizableUpdateService do
           line_items_attributes: {"0": {item_id: item1.id, quantity: 2}, "1": {item_id: item3.id, quantity: 6}}
         }
       end
+
+      before(:each) do
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item3.id => 10
+          }
+        })
+      end
+
       it "should send an itemizable event if it already exists" do
         DistributionEvent.publish(itemizable)
         expect(DistributionEvent.count).to eq(1)

@@ -22,7 +22,7 @@ FactoryBot.define do
     source { Donation::SOURCES[:misc] }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { Time.current }
+    issued_at { DateTime.current }
 
     factory :manufacturer_donation do
       manufacturer

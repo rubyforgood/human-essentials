@@ -23,8 +23,8 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
       disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
       another_disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, :distribution, quantity: 10, item: disposable_kit.item, itemizable: disposable_kit_item_distribution)
-      create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.item, itemizable: another_disposable_kit_item_distribution)
+      create(:line_item, :distribution, quantity: 10, item: disposable_kit.kit_item, itemizable: disposable_kit_item_distribution)
+      create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.kit_item, itemizable: another_disposable_kit_item_distribution)
       # Total disposable items distributed so far: 5*10 + 5*10 = 100
 
       # create disposable and non disposable items

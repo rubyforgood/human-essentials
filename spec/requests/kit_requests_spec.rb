@@ -40,7 +40,7 @@ RSpec.describe "/kits", type: :request do
           storage_location = create(:storage_location)
           TestInventory.create_inventory(kit.organization, {
             storage_location.id => {
-              kit.item.id => 10
+              kit.kit_item.id => 10
             }
           })
           get kits_url
@@ -83,7 +83,7 @@ RSpec.describe "/kits", type: :request do
       it "cannot reactivate if it has an inactive item" do
         kit.deactivate
         expect(kit).not_to be_active
-        kit.line_items.first.item.update!(active: false)
+        kit.kit_item.line_items.first.item.update!(active: false)
 
         put reactivate_kit_url(kit)
         expect(kit.reload).not_to be_active
@@ -98,6 +98,33 @@ RSpec.describe "/kits", type: :request do
         expect(kit.reload).to be_active
         expect(response).to redirect_to(dashboard_path)
         expect(flash[:notice]).to eq("Kit has been reactivated!")
+      end
+    end
+
+    context "when accessing a kit from another organization" do
+      let(:other_organization) { create(:organization) }
+      let(:other_kit) { create_kit(organization: other_organization) }
+
+      it "does not allow deactivating a kit from another organization" do
+        put deactivate_kit_url(other_kit)
+        expect(response.status).to eq(404)
+      end
+
+      it "does not allow reactivating a kit from another organization" do
+        other_kit.deactivate
+        put reactivate_kit_url(other_kit)
+        expect(response.status).to eq(404)
+      end
+
+      it "does not allow viewing allocations for a kit from another organization" do
+        get allocations_kit_url(other_kit)
+        expect(response.status).to eq(404)
+      end
+
+      it "does not allow allocating for a kit from another organization" do
+        storage_location = create(:storage_location, organization: organization)
+        post allocate_kit_url(other_kit), params: {kit_adjustment: {storage_location_id: storage_location.id, change_by: 5}}
+        expect(response.status).to eq(404)
       end
     end
   end
