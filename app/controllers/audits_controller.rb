@@ -32,7 +32,7 @@ class AuditsController < ApplicationController
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
   rescue => e
-    redirect_back(fallback_location: audits_path, alert: "Could not finalize audit: #{e.message}")
+    redirect_back_or_to(audits_path, alert: "Could not finalize audit: #{e.message}")
   end
 
   def update

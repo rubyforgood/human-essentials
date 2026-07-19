@@ -17,6 +17,14 @@ RSpec.describe "Annual Reports", type: :request do
         get reports_annual_reports_path(default_params)
         expect(response).to have_http_status(:success)
       end
+
+      it "displays the first day of the following year as the date when the report will be available" do
+        travel_to Time.zone.local(2026, 12, 31)
+
+        get reports_annual_reports_path(default_params)
+
+        expect(response.body).to include("available on January 1, 2027")
+      end
     end
 
     describe "GET /show" do

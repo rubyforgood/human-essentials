@@ -254,6 +254,10 @@
               <p>
                 <%= humanize_boolean(@organization.include_in_kind_values_in_exported_files) %>
               </p>
+              <h6 class='font-weight-bold'>Include packages in distribution export:</h6>
+              <p>
+                <%= humanize_boolean(@organization.include_packages_in_distribution_export) %>
+              </p>
             </div>
 
             <h4>Annual Survey</h4>

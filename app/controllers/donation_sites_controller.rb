@@ -26,7 +26,7 @@ class DonationSitesController < ApplicationController
       else
         flash.now[:error] = "Something didn't work quite right -- try again?"
         if request.format.turbo_stream?
-          format.html { render partial: "donation_sites/new_modal", status: :unprocessable_entity }
+          format.html { render partial: "donation_sites/new_modal", status: :unprocessable_content }
         end
 
         format.html do
@@ -69,7 +69,7 @@ class DonationSitesController < ApplicationController
       donation_site.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: donation_sites_path)
+      redirect_back_or_to(donation_sites_path)
       return
     end
 
@@ -83,7 +83,7 @@ class DonationSitesController < ApplicationController
       donation_site.reactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: donation_sites_path)
+      redirect_back_or_to(donation_sites_path)
       return
     end
 

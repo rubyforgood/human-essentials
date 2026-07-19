@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
   def session_expired
     flash[:error] = "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
-    redirect_back fallback_location: root_path
+    redirect_back_or_to(root_path)
   end
 
   def current_organization
@@ -144,6 +144,15 @@ class ApplicationController < ActionController::Base
     @selected_date_interval = helpers.selected_interval
     @selected_date_range = helpers.selected_interval.map { |d| d.to_fs(:long) }.join(" - ")
     @selected_date_range_label = helpers.date_range_label
+  end
+
+  def handle_csv_export
+    return unless params[:export_csv]
+
+    flash[:trigger_csv_download] = true
+    clean_params = request.query_parameters.except("export_csv")
+    redirect_url = clean_params.any? ? "#{request.path}?#{clean_params.to_query}" : request.path
+    redirect_to redirect_url
   end
 
   def configure_permitted_parameters
