@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -27,6 +28,7 @@ class Item < ApplicationRecord
   include Filterable
   include Exportable
   include Valuable
+  include Itemizable
 
   after_initialize :set_default_distribution_quantity, if: :new_record?
   after_update :update_associated_kit_name, if: -> { kit.present? }
@@ -45,12 +47,13 @@ class Item < ApplicationRecord
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
   validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :reporting_category, presence: true, unless: proc { |i| i.kit }
+  validate -> { line_items_quantity_is_at_least(1) }
 
-  has_many :line_items, dependent: :destroy
+  has_many :used_line_items, dependent: :destroy, class_name: "LineItem"
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
-  has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
-  has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
+  has_many :donations, through: :used_line_items, source: :itemizable, source_type: "::Donation"
+  has_many :distributions, through: :used_line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
@@ -103,17 +106,17 @@ class Item < ApplicationRecord
 
   def is_in_kit?(kits = nil)
     if kits
-      kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
+      kits.any? { |k| k.kit_item.line_items.map(&:item_id).include?(id) }
     else
       organization.kits
         .active
-        .joins(:line_items)
+        .joins(kit_item: :line_items)
         .where(line_items: { item_id: id}).any?
     end
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
+    can_deactivate_or_delete?(inventory, kits) && used_line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
   end
 
   # @return [Boolean]

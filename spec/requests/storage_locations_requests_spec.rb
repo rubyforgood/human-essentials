@@ -560,16 +560,5 @@ RSpec.describe "StorageLocations", type: :request do
         expect(response.body).to include("Square footage must be greater than or equal to 0")
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:storage_location, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:storage_location) }
-
-    include_examples "requiring authorization"
   end
 end

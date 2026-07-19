@@ -96,8 +96,11 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with changes that happened in the distribution" do
         distribution = create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner, delivery_method: :delivery)
         mail = DistributionMailer.partner_mailer(organization, distribution, 'test subject', distribution_changes)
-        expect(mail.body.encoded).to match(distribution_changes[:removed][0][:name])
-        expect(mail.body.encoded).to match(distribution_changes[:updates][0][:name])
+        html = html_body(mail)
+
+        expect(html).to match(distribution_changes[:removed][0][:name])
+        expect(html).to match(distribution_changes[:updates][0][:name])
+        expect(html).to match("We've had to change some items on your distribution")
       end
     end
 

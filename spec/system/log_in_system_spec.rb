@@ -34,7 +34,7 @@ RSpec.describe "Authentication", type: :system, js: true do
       fill_in "user_email", with: "deactivated@example.com"
       fill_in "user_password", with: DEFAULT_USER_PASSWORD
       find('input[name="commit"]').click
-      expect(page).to have_content("Invalid Email or password")
+      expect(page).to have_content("Invalid email or password")
     end
   end
 
