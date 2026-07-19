@@ -21,7 +21,7 @@ module Clockwork
     Rails.logger.info("Done!")
   end
 
-  every(1.day, "Periodically reset seed data in staging", at: "00:00") do
+  every(1.day, "Periodically reset seed data in staging", at: "01:00") do
     if ENV["RAILS_ENV"] == "staging"
       rake = Rake.application
       rake.init

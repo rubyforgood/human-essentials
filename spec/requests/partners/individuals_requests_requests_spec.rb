@@ -1,5 +1,5 @@
 RSpec.describe Partners::IndividualsRequestsController, type: :request do
-  let(:organization) { create(:organization, :with_items) }
+  let(:organization) { create(:organization, :with_items, email: "email@testthis.com") }
   let(:partner) { create(:partner, status: :approved, organization: organization) }
   let(:partner_user) { partner.primary_user }
 

@@ -107,4 +107,36 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
       expect(response).to have_http_status(:redirect)
     end
   end
+
+  context "when accessing an announcement from another organization" do
+    let(:other_organization) { create(:organization) }
+    let(:other_announcement) {
+      BroadcastAnnouncement.create!(
+        expiry: Time.zone.today,
+        link: "http://example.com",
+        message: "other org announcement",
+        user_id: create(:user, organization: other_organization).id,
+        organization_id: other_organization.id
+      )
+    }
+
+    it "does not allow editing an announcement from another organization" do
+      get edit_broadcast_announcement_url(other_announcement)
+      expect(response.status).to eq(404)
+    end
+
+    it "does not allow updating an announcement from another organization" do
+      patch broadcast_announcement_url(other_announcement), params: {broadcast_announcement: {message: "hacked"}}
+      expect(response.status).to eq(404)
+      expect(other_announcement.reload.message).to eq("other org announcement")
+    end
+
+    it "does not allow destroying an announcement from another organization" do
+      other_announcement # ensure created
+      expect {
+        delete broadcast_announcement_url(other_announcement)
+      }.not_to change(BroadcastAnnouncement, :count)
+      expect(response.status).to eq(404)
+    end
+  end
 end

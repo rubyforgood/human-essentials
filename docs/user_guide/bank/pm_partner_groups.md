@@ -30,7 +30,11 @@ they will not be able to request any Items that are not in a category
 For clarity - if you do not choose any categories, they will not be able to choose any items, so if you are using Partner Groups, you have to use Item Categories.
 
 ### Do you want to send deadline reminders to them every month?
-This works in conjunction with "Reminder day" and "Deadline day", which is set on an organization level (see [Getting Started - Customization](getting_started_customization.md))
+If enabled, you may configure how frequently you would like reminders to be sent to Partners who are part of this Partner Group.
+
+This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and the Partner specific configuration (see [Adding a single Partner](pm_adding_a_partner.md)).
+
+For a full description of how the reminder schedules work, and how the different configurations interact, see [Partner Reminder Emails](pm_partner_reminders.md).
 
 # What  if a partner isn't in a group?
 If a Partner is not in a Partner Group,  they can request any item that is visible to partners.

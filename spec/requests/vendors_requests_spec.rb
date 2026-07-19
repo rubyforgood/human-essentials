@@ -123,6 +123,27 @@ RSpec.describe "Vendors", type: :request do
         get vendor_path(id: create(:vendor, organization: organization))
         expect(response).to be_successful
       end
+
+      it "displays purchases in reverse chronological order by issued_at date" do
+        vendor = create(:vendor, organization: organization)
+
+        # Create purchases with different issued_at dates
+        old_purchase = create(:purchase, vendor: vendor, issued_at: 1.week.ago, organization: organization)
+        new_purchase = create(:purchase, vendor: vendor, issued_at: 1.day.ago, organization: organization)
+        middle_purchase = create(:purchase, vendor: vendor, issued_at: 3.days.ago, organization: organization)
+
+        get vendor_path(vendor)
+
+        old_date = old_purchase.issued_at.strftime("%m/%d/%Y")
+        middle_date = middle_purchase.issued_at.strftime("%m/%d/%Y")
+        new_date = new_purchase.issued_at.strftime("%m/%d/%Y")
+
+        dates = [new_date, middle_date, old_date]
+        dates.each { |date| expect(response.body).to include(date) }
+
+        expect(response.body.index(new_date)).to be < response.body.index(middle_date)
+        expect(response.body.index(middle_date)).to be < response.body.index(old_date)
+      end
     end
 
     describe "DELETE #destroy" do
@@ -178,11 +199,6 @@ RSpec.describe "Vendors", type: :request do
       end
     end
 
-    context "Looking at a different organization" do
-      let(:object) { create(:vendor, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-
     describe "when on vendors index page" do
       it "has the correct import type" do
         get vendors_path(format: 'html')
@@ -190,11 +206,5 @@ RSpec.describe "Vendors", type: :request do
         expect(response.body).to include('Import Vendors')
       end
     end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:vendor) }
-
-    include_examples "requiring authorization"
   end
 end

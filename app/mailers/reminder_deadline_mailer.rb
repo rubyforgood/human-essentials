@@ -15,7 +15,7 @@ class ReminderDeadlineMailer < ApplicationMailer
   private
 
   def deadline_date(partner)
-    date = DeadlineService.new(partner: partner).next_deadline
+    date = DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline
 
     return date if date
 

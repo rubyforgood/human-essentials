@@ -12,4 +12,4 @@ This is a two-stage process where
 Please refer to the full information on audits, [here](inventory_audits.md).
 
 
-[Prior: Donation Sites](getting_started_donation_sites.md) [Next: Customization and other organizational-level info](getting_started_customization.md)
+[Prior: Storage Locations](getting_started_storage_locations.md) [Next: Customization and other organizational-level info](getting_started_customization.md)

@@ -1,20 +1,5 @@
 # [Super Admin] This is for administrating organizations at a global level. We can create, view, modify, etc.
 class Admin::OrganizationsController < AdminController
-  def edit
-    @organization = Organization.find(params[:id])
-  end
-
-  def update
-    @organization = Organization.find(params[:id])
-
-    if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to admin_organizations_path, notice: "Updated organization!"
-    else
-      flash.now[:error] = @organization.errors.full_messages.join("\n")
-      render :edit
-    end
-  end
-
   def index
     @filterrific = initialize_filterrific(
       Organization.alphabetized,
@@ -45,9 +30,9 @@ class Admin::OrganizationsController < AdminController
   end
 
   def create
-    @organization = Organization.new(organization_params)
     @user = User.new(user_params)
-
+    @organization = Organization.new(organization_params)
+    @organization.reminder_schedule.assign_attributes(reminder_schedule_params)
     if @organization.save
       Organization.seed_items(@organization)
       UserInviteService.invite(name: user_params[:name],
@@ -86,8 +71,13 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :reminder_day, :deadline_day,
+          .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :bank_is_set_up,
+                  :reminder_schedule_definition, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
+  end
+
+  def reminder_schedule_params
+    params.require(:organization).fetch(:reminder_schedule_service, {}).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def user_params

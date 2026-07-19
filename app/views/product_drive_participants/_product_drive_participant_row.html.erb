@@ -3,8 +3,8 @@
   <td><%= product_drive_participant_row&.contact_name %></td>
   <td><%= product_drive_participant_row&.phone %></td>
   <td><%= product_drive_participant_row&.email %></td>
-  <td><%= product_drive_participant_row&.volume %></td>
-  <td class="text-center">
+  <td class="text-right"><%= product_drive_participant_row&.volume %></td>
+  <td class="text-right">
     <%= view_button_to product_drive_participant_row %>
     <%= edit_button_to edit_product_drive_participant_path(product_drive_participant_row) %>
   </td>

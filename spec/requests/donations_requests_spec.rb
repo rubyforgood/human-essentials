@@ -69,7 +69,9 @@ RSpec.describe "Donations", type: :request do
         end
 
         context "when given a misc donation" do
-          let(:full_comment) { Faker::Lorem.paragraph }
+          # Comment must be longer than the 140 characters the Comments column
+          # truncates at, so that asserting the full comment is absent is meaningful.
+          let(:full_comment) { Faker::Lorem.paragraph_by_chars(number: 200) }
           let(:donation) { create(:donation, source: "Misc. Donation", comment: full_comment) }
 
           it "should display Misc Donation and a truncated comment" do
@@ -99,6 +101,15 @@ RSpec.describe "Donations", type: :request do
       it { is_expected.to be_successful }
       it "should include the storage location name" do
         expect(subject.body).to include("Pawane Location")
+      end
+
+      context "when creating a new donation" do
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false) }
+
+        it "does not include inactive donation sites" do
+          subject
+          expect(response.body).not_to include(inactive_donation_site.name)
+        end
       end
     end
 
@@ -187,6 +198,24 @@ RSpec.describe "Donations", type: :request do
           expect(flash[:alert]).to include("Money raised must be greater than or equal to 0")
         end
       end
+
+      context 'without line items - with intervening snapshot' do
+        it 'should save the other parameters' do
+          donation = FactoryBot.create(:donation,
+            :with_items,
+            organization: organization,
+            created_at: 1.week.ago)
+          SnapshotEvent.create!(organization_id: organization.id,
+            created_at: 1.day.ago,
+            event_time: 1.day.ago,
+            eventable: organization,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id, storage_locations: {}
+            ))
+          put donation_path({ id: donation.id, donation: {comment: "A new comment"}})
+          expect(donation.reload.comment).to eq("A new comment")
+        end
+      end
     end
 
     describe "GET #print" do
@@ -208,6 +237,34 @@ RSpec.describe "Donations", type: :request do
         page = Nokogiri::HTML(response.body)
         pdf = page.at_css("a[href*='#{print_donation_path(id: donation.id)}']")
         expect(pdf.text).to include("Print")
+      end
+
+      context "with a donation from a product drive participant" do
+        let(:participant) do
+          create(:product_drive_participant, business_name: "Acme Diaper Drive", organization: organization)
+        end
+        let!(:donation) do
+          create(:product_drive_donation, :with_items, item: item, product_drive_participant: participant, organization: organization)
+        end
+
+        it "shows the participant in the Drive Participant column" do
+          get donation_path(id: donation.id)
+          page = Nokogiri::HTML(response.body)
+          headers = page.at_css("table thead").css("th").map(&:text)
+          cells = page.at_css("table tbody").css("td").map(&:text)
+          expect(headers.index("Drive Participant")).to eq(headers.index("Donation Site") + 1)
+          expect(cells[headers.index("Drive Participant")]).to eq("Acme Diaper Drive")
+        end
+      end
+
+      context "with a donation that has no product drive participant" do
+        it "shows N/A in the Drive Participant column" do
+          get donation_path(id: donation.id)
+          page = Nokogiri::HTML(response.body)
+          headers = page.at_css("table thead").css("th").map(&:text)
+          cells = page.at_css("table tbody").css("td").map(&:text)
+          expect(cells[headers.index("Drive Participant")]).to eq("N/A")
+        end
       end
 
       it "shows an enabled edit button" do
@@ -242,7 +299,7 @@ RSpec.describe "Donations", type: :request do
           get donation_path(donation.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_donation_path(donation.id)}']")
-          delete = page.at_css("a.btn-danger[href='#{donation_path(donation.id)}']")
+          delete = page.at_css("form[action='#{donation_path(donation.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(delete.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
@@ -250,49 +307,168 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
-    describe "GET #edit" do
-      context "when an finalized audit has been performed on the donated items" do
-        it "shows a warning" do
-          item = create(:item, organization: organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-          donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
-          create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+    describe "when accessing a donation from another organization" do
+      let(:other_organization) { create(:organization) }
+      let(:other_donation) { create(:donation, organization: other_organization, comment: "Original comment") }
 
+      it "returns not found for show" do
+        get donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for edit" do
+        get edit_donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for print" do
+        get print_donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for update and does not change donation" do
+        put donation_path(id: other_donation.id, donation: {comment: "Changed comment"})
+
+        expect(response).to have_http_status(:not_found)
+        expect(other_donation.reload.comment).to eq("Original comment")
+      end
+    end
+
+    describe "GET #edit" do
+      it 'should not allow edits if there is an intervening snapshot' do
+        donation = FactoryBot.create(:donation,
+          :with_items,
+          organization: organization,
+          created_at: 1.week.ago)
+        SnapshotEvent.create!(organization_id: organization.id,
+          created_at: 1.day.ago,
+          event_time: 1.day.ago,
+          eventable: organization,
+          data: EventTypes::Inventory.new(
+            organization_id: organization.id, storage_locations: {}
+          ))
+        get edit_donation_path(id: donation.id)
+        expect(response.body)
+          .to include('This donation is too old to edit inventory. You can only change non-inventory fields.')
+        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Remove Item')
+        parsed_body = Nokogiri::HTML(response.body)
+        expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
+      end
+    end
+
+    describe 'DELETE #destroy' do
+      subject { delete donation_path(id: donation.id) }
+
+      let!(:donation) { create(:donation, organization: organization, created_at: 1.week.ago) }
+
+      before(:each) do
+        sign_in(organization_admin)
+      end
+
+      it "deletes the donation" do
+        expect { subject }.to change { Donation.count }.by(-1)
+        expect(response).to redirect_to(donations_path)
+        expect(flash[:notice]).to include("Donation #{donation.id} has been removed!")
+      end
+
+      it "does not delete the donation if there is an intervening snapshot" do
+        data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+        travel(-1.day) do
+          SnapshotEvent.create!(organization_id: organization.id,
+            eventable: organization,
+            data: data,
+            event_time: Time.zone.now)
+        end
+        expect { subject }.not_to change { Donation.count }
+        expect(flash[:error]).to eq("We can't delete donations entered before #{1.day.ago.to_date}.")
+      end
+
+      include_examples "restricts access to organization users/admins"
+    end
+
+    describe 'audit warnings' do
+      let!(:item) { create(:item, organization: organization, name: "Brightbloom Seed") }
+      let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: organization) }
+      let!(:donation) { create(:donation, :with_items, item: item, storage_location: storage_location, created_at: 1.week.ago) }
+
+      context "when an finalized audit has been performed on the purchased items" do
+        before(:each) do
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+        end
+
+        it "shows a warning" do
           get edit_donation_path(donation)
 
           expect(response.body).to include("You’ve had an audit since this donation was started.")
-          expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
+          expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,")
           expect(response.body).to include("you’ll need to make an adjustment to the inventory as well.")
         end
       end
-    end
 
-    context "when an non-finalized audit has been performed on the donated items" do
-      it "does not shows a warning" do
-        item = create(:item, organization: organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
-        create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+      context "when editing a donation with an inactive donation site" do
+        let!(:active_donation_site) { create(:donation_site, organization: organization, name: "Active Donation Site") }
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false, name: "Inactive Donation Site") }
+        let!(:donation_with_inactive_site) { create(:donation, organization: organization, donation_site: inactive_donation_site) }
 
-        get edit_donation_path(donation)
+        it "includes the inactive donation site in the dropdown" do
+          get edit_donation_path(donation_with_inactive_site)
+          expect(response.body).to include(inactive_donation_site.name)
+        end
 
-        expect(response.body).to_not include("You’ve had an audit since this donation was started.")
-        expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
-        expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+        it "displays the donation site names alphabetically" do
+          get edit_donation_path(donation_with_inactive_site)
+
+          # Get all donation site names that should be in the dropdown and sort them
+          donation_sites = [active_donation_site, inactive_donation_site]
+          sorted_names = donation_sites.map(&:name).sort
+
+          # Verify that the donation sites are alphabetized
+          expect(sorted_names[0]).to eq(active_donation_site.name)
+          expect(sorted_names[1]).to eq(inactive_donation_site.name)
+        end
+
+        context 'with an intervening snapshot' do
+          it 'does not show a warning' do
+            SnapshotEvent.create!(organization_id: organization.id,
+              created_at: 1.day.ago,
+              event_time: 1.day.ago,
+              eventable: organization,
+              data: EventTypes::Inventory.new(
+                organization_id: organization.id, storage_locations: {}
+              ))
+
+            get edit_donation_path(donation)
+
+            expect(response.body).not_to include("You’ve had an audit since this donation was started.")
+          end
+        end
       end
-    end
 
-    context "when no audit has been performed" do
-      it "doesn't show a warning" do
-        item = create(:item, organization: organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
+      context "when non-finalized audit has been performed on the purchased items" do
+        before(:each) do
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+        end
+        it "does not show a warning" do
+          get edit_donation_path(donation)
 
-        get edit_donation_path(donation)
+          expect(response.body).to_not include("You’ve had an audit since this donation was started.")
+          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+        end
+      end
 
-        expect(response.body).to_not include("You’ve had an audit since this donation was started.")
-        expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
-        expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+      context "when no audit has been performed" do
+        it "does not show a warning" do
+          get edit_donation_path(donation)
+
+          expect(response.body).to_not include("You’ve had an audit since this donation was started.")
+          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+        end
       end
     end
 

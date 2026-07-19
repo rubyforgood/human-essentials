@@ -6,7 +6,6 @@
 #  active                       :boolean          default(TRUE)
 #  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
@@ -14,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -43,6 +43,9 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_length_of(:additional_info).is_at_most(500) }
     it { should validate_numericality_of(:package_size).is_greater_than_or_equal_to(0) }
+    it 'should be a concrete item by default' do
+      expect(build(:item)).to be_a_kind_of(ConcreteItem)
+    end
   end
 
   context "Filtering >" do
@@ -50,28 +53,18 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    specify "->by_size returns all items with the same size, per their BaseItem parent" do
-      size4 = create(:base_item, size: "4", name: "Size 4 Diaper")
-      size_z = create(:base_item, size: "Z", name: "Size Z Diaper")
-
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size_z, organization: organization)
-      expect(Item.by_size("4").length).to eq(2)
-    end
-
-    specify "->housing_a_kit returns all items which belongs_to (house) a kit" do
+    specify "Kit returns all items which house a kit" do
       name = "test kit"
       kit_params = attributes_for(:kit, name: name)
       kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}] # shouldn't be counted
       KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
 
       create(:item) # shouldn't be counted
-      expect(Item.housing_a_kit.count).to eq(1)
-      expect(Item.housing_a_kit.first.name = name)
+      expect(Kit.count).to eq(1)
+      expect(Kit.first.name).to eq(name)
     end
 
-    specify "->loose returns all items which do not belongs_to a kit" do
+    specify "ConcreteItem returns all items which do not house a kit" do
       name = "A"
       item = create(:item, name: name, organization: organization)
 
@@ -79,8 +72,8 @@ RSpec.describe Item, type: :model do
       kit_params[:line_items_attributes] = [{item_id: item.id, quantity: 1}]
       KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call # shouldn't be counted
 
-      expect(Item.loose.count).to eq(1)
-      expect(Item.loose.first.name = name)
+      expect(organization.concrete_items.count).to eq(1)
+      expect(organization.concrete_items.first.name).to eq(name)
     end
 
     specify "->alphabetized retrieves items in alphabetical order" do
@@ -132,6 +125,15 @@ RSpec.describe Item, type: :model do
         end.to change { Item.active.size }.by(2)
 
         expect(Item.by_partner_key("foo").size).to eq(1)
+      end
+    end
+
+    describe "->by_reporting_category" do
+      it "shows the items for a particular reporting category" do
+        diaper = create(:item, reporting_category: :cloth_diapers, organization: organization)
+        create(:item, reporting_category: :adult_incontinence, organization: organization)
+
+        expect(Item.by_reporting_category(:cloth_diapers)).to eq([diaper])
       end
     end
 
@@ -308,13 +310,11 @@ RSpec.describe Item, type: :model do
           expect { item.deactivate! }.to change { item.active }.from(true).to(false)
         end
 
-        it 'deactivates the kit if it exists' do
+        it 'deactivates a kit item' do
           kit = create(:kit)
-          item = create(:item, kit: kit)
           expect(kit).to be_active
-          item.deactivate!
-          expect(item).not_to be_active
-          expect(kit).not_to be_active
+          kit.deactivate!
+          expect(kit.reload).not_to be_active
         end
       end
 
@@ -341,7 +341,7 @@ RSpec.describe Item, type: :model do
         it "should not succeed" do
           allow(item).to receive(:can_delete?).and_return(false)
           expect { item.destroy! }
-            .to raise_error(/Failed to destroy Item/)
+            .to raise_error(/Failed to destroy ConcreteItem/)
             .and not_change { Item.count }
           expect(item.errors.full_messages).to eq(["Cannot delete item - it has already been used!"])
         end
@@ -409,6 +409,22 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "reporting_category_humanized" do
+    it "returns reporting_category to title case" do
+      item = create(:item, name: "InControl BeDry", reporting_category: "adult_incontinence")
+
+      expect(item.reporting_category).to eq("adult_incontinence")
+      expect(item.reporting_category_humanized).to eq("Adult Incontinence")
+    end
+
+    it "returns empty string when no reporting_category exists" do
+      item = Kit.new(organization: organization)
+
+      expect(item.reporting_category).to eq(nil)
+      expect(item.reporting_category_humanized).to eq("")
+    end
+  end
+
   describe "when distribution_quantity is set by default" do
     it "should set distribution_quantity to 50 for regular items" do
       item = Item.new
@@ -416,9 +432,7 @@ RSpec.describe Item, type: :model do
     end
 
     it "should set distribution_quantity to 1 for kits" do
-      organization = create(:organization)
-      kit = create(:kit, organization: organization)
-      item = Item.new(kit: kit)
+      item = Kit.new
       expect(item.distribution_quantity).to eq(1)
     end
   end
@@ -430,40 +444,6 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "after update" do
-    let(:item) { create(:item, name: "my item", kit: kit) }
-
-    context "when item has the kit" do
-      let(:kit) { create(:kit, name: "my kit") }
-
-      it "updates kit name" do
-        name = "my new name"
-        item.update(name: name)
-        expect(kit.name).to eq name
-      end
-    end
-
-    context "when item does not have kit" do
-      let(:kit) { nil }
-
-      it "does not raise any errors" do
-        allow_any_instance_of(Kit).to receive(:update).and_return(true)
-        expect {
-          item.update(name: "my new name")
-        }.not_to raise_error
-      end
-    end
-  end
-
-  describe "after create" do
-    let(:base_item) { create(:base_item, size: "4", name: "Tampons") }
-    let(:item) { create(:item, name: "Period product", base_item:) }
-
-    it "sets the reporting category" do
-      expect(item.reporting_category).to eq("tampons")
-    end
-  end
-
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
@@ -472,17 +452,16 @@ RSpec.describe Item, type: :model do
     context "with kit and regular items" do
       let(:organization) { create(:organization) }
       let(:base_item) { create(:base_item, name: "Kit") }
-      let(:kit) { create(:kit, organization: organization) }
-      let(:kit_item) { create(:item, kit: kit, organization: organization, base_item: base_item) }
+      let(:kit) { create(:kit, organization: organization, base_item: base_item) }
       let(:regular_item) { create(:item, organization: organization) }
 
       it "has no reporting category" do
-        expect(kit_item.reporting_category).to be(nil)
+        expect(kit.reporting_category).to be(nil)
       end
 
       describe "#can_delete?" do
         it "returns false for kit items" do
-          expect(kit_item.can_delete?).to be false
+          expect(kit.can_delete?).to be false
         end
 
         it "returns true for regular items" do
@@ -491,9 +470,8 @@ RSpec.describe Item, type: :model do
       end
 
       describe "#deactivate!" do
-        it "deactivates both the kit item and its associated kit" do
-          kit_item.deactivate!
-          expect(kit_item.reload.active).to be false
+        it "deactivates the kit item" do
+          kit.deactivate!
           expect(kit.reload.active).to be false
         end
 
@@ -505,8 +483,8 @@ RSpec.describe Item, type: :model do
 
       describe "#validate_destroy" do
         it "prevents deletion of kit items" do
-          expect { kit_item.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
-          expect(kit_item.errors[:base]).to include("Cannot delete item - it has already been used!")
+          expect { kit.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+          expect(kit.errors[:base]).to include("Cannot delete item - it has already been used!")
         end
 
         it "allows deletion of regular items" do

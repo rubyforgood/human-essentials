@@ -1,28 +1,32 @@
 # == Schema Information
 #
-# Table name: kits
+# Table name: items
 #
-#  id                  :bigint           not null, primary key
-#  active              :boolean          default(TRUE)
-#  name                :string           not null
-#  value_in_cents      :integer          default(0)
-#  visible_to_partners :boolean          default(TRUE), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organization_id     :integer          not null
+#  id                           :integer          not null, primary key
+#  active                       :boolean          default(TRUE)
+#  additional_info              :text
+#  barcode_count                :integer
+#  distribution_quantity        :integer
+#  name                         :string
+#  on_hand_minimum_quantity     :integer          default(0), not null
+#  on_hand_recommended_quantity :integer
+#  package_size                 :integer
+#  partner_key                  :string
+#  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
+#  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  item_category_id             :integer
+#  kit_id                       :integer
+#  organization_id              :integer
 #
-#  id                  :bigint           not null, primary key
-#  active              :boolean          default(TRUE)
-#  name                :string           not null
-#  value_in_cents      :integer          default(0)
-#  visible_to_partners :boolean          default(TRUE), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organization_id     :integer          not null
-
 FactoryBot.define do
   factory :kit do
-    sequence(:name) { |n| "Default Kit Name #{n} - Don't Match" }
+    sequence(:name) { |n| "#{n} - Dont test this" }
+    partner_key { "kit" }
+    reporting_category { nil }
     organization
 
     after(:build) do |instance, _|
@@ -30,9 +34,5 @@ FactoryBot.define do
         instance.line_items << build(:line_item, item: create(:item, organization: instance.organization), itemizable: nil)
       end
     end
-
-    # See #3652, changes to this factory are in progress
-    # For now, to create corresponding item and line item and persist to database call create_kit
-    # from spec/support/kit_helper.rb
   end
 end

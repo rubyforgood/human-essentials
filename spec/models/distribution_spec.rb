@@ -57,6 +57,20 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
+    it "ensures there is no intervening snapshot on destroy" do
+      distribution = create(:distribution, organization: organization, created_at: 1.week.ago)
+      data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+      travel(-1.day) do
+        SnapshotEvent.create!(organization_id: organization.id,
+          eventable: organization,
+          data: data,
+          event_time: Time.zone.now)
+      end
+
+      expect { distribution.destroy }
+        .to raise_error("We can't delete distributions entered before #{1.day.ago.to_date}.")
+    end
+
     context "when delivery method is shipped" do
       context "shipping cost is negative" do
         let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13) }

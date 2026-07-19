@@ -20,10 +20,9 @@
 FactoryBot.define do
   factory :donation do
     source { Donation::SOURCES[:misc] }
-    comment { "It's a fine day for diapers." }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { Time.current }
+    issued_at { DateTime.current }
 
     factory :manufacturer_donation do
       manufacturer

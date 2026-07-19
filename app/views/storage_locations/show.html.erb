@@ -36,6 +36,7 @@
                 <th>Address</th>
                 <th>Square Footage</th>
                 <th>Warehouse Type</th>
+                <th>Fair Market Value</th>
               </tr>
               </thead>
               <tbody>
@@ -44,6 +45,7 @@
                 <td><%= @storage_location.address %></td>
                 <td><%= @storage_location.square_footage %></td>
                 <td><%= @storage_location.warehouse_type %></td>
+                <td><%= number_to_currency @storage_location.inventory_total_value_in_dollars %></td>
               </tr>
               </tbody>
             </table>

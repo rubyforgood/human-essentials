@@ -7,11 +7,6 @@ class PartnerInviteService
   end
 
   def call
-    existing_user = User.find_by(email: partner.email)
-    if existing_user && existing_user.partner_id.nil?
-      existing_user.update!(partner_id: partner.profile.id)
-    end
-
     partner.update!(status: 'invited')
     UserInviteService.invite(email: partner.email,
       name: partner.name,

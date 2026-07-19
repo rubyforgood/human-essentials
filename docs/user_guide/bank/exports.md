@@ -7,6 +7,7 @@ Many of these can be filtered down to the information you might need for a speci
 The exports available include (in alphabetical order):
 - Adjustments
 - Annual Survey
+- Audits
 - Barcode Items
 - Distributions
 - Donations
@@ -27,9 +28,10 @@ The exports available include (in alphabetical order):
 Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments",
 
 ### Contents of adjustment export
-Creation date, Organization, Storage Area, Comment, # of changes.
-
-[! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
+- Creation date
+- Storage Area, Comment
+- # of changes
+- the quantity of each of your organization's Items in the adjustments
 
 ## Annual Survey
 ### Navigating to export annual survey
@@ -88,6 +90,19 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - % difference in yearly Donations,
 - % difference in total money donated,
 - % difference in disposable diaper Donations
+
+## Audits
+### Navigating to export Audits
+Click "Inventory", then "Inventory Audit" in the left-hand menu. Then click "Export Audits".
+
+### Contents of Audit exports
+For each Audit of Storage Location in the list:
+- Audit Date
+- Audit Status
+- Storage Location Name
+- Audited Items
+- Quantity for each of the audited items.
+
 ## Barcode Items
 ### Navigating to export barcode Items
 Click "Inventory" then "Barcode Items" in the left-hand menu.   Then click "Export Barcode Items."
@@ -133,6 +148,13 @@ The default export includes the number of items exported, but not the values. If
 Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
 
 [!NOTE] Setting this affects both the donation and distribution exports.
+
+### Add Package Counts for each item
+If you want to also have the export include the package count for each item in the distributions, you can set that option.
+- Click "My Organization" in the left hand menu. 
+- Click "Edit" button. 
+- Set the "Include packages in distribution export" to "yes"
+- Click "Save"
 
 ## Donations
 
@@ -296,7 +318,7 @@ Population Served
 - % Greater than 2 times FPL,
 - % Poverty Unknown
 
-Executive Director
+Contacts
 - Executive Director Name,
 - Executive Director Phone,
 - Executive Director Email,
@@ -382,7 +404,7 @@ Click 'Requests' in the left-hand menu, then "Export Requests"
 You can filter the exported Requests by the following:
 - Item
 - Partner
-- Status (Pending, Started, Fulfilled, Discarded)
+- Status (Pending, Started, Fulfilled, Cancelled)
 - Date Range
 Make your selection, then click 'Filter' before clicking 'Export Requests'
 
@@ -412,7 +434,8 @@ For each Storage Location in the filtered list:
 - Address,
 - Square Footage,
 - Warehouse Type,
-- Total Inventory, and
+- Total Inventory,
+- Fair Market Value,
 - Quantity for each of the organization's Items.
 
 ## Transfers

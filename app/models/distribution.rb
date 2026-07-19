@@ -41,6 +41,7 @@ class Distribution < ApplicationRecord
   validates :delivery_method, presence: true
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
+  before_destroy :check_no_intervening_snapshot
 
   before_save :combine_distribution, :reset_shipping_cost
 
@@ -53,6 +54,7 @@ class Distribution < ApplicationRecord
   scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_item_category_id, ->(item_category_id) { includes(:items).where(items: { item_category_id: item_category_id }) }
+  scope :by_reporting_category, ->(reporting_category) { includes(:items).where(items: { reporting_category: reporting_category }) }
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
@@ -171,6 +173,13 @@ class Distribution < ApplicationRecord
 
   def line_items_quantity_is_positive
     line_items_quantity_is_at_least(1)
+  end
+
+  def check_no_intervening_snapshot
+    intervening = SnapshotEvent.intervening(self)
+    if intervening
+      raise "We can't delete distributions entered before #{intervening.event_time.to_date}."
+    end
   end
 
   def reset_shipping_cost

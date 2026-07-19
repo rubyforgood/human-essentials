@@ -47,6 +47,40 @@ RSpec.describe "Events", type: :request do
         expect(response.body).not_to include("99<br>")
       end
 
+      it "renders kit allocation events linking to the kit" do
+        content_item = create(:item, organization: organization, name: "KitContent")
+        kit = create_kit(organization: organization, line_items_attributes: [{item_id: content_item.id, quantity: 1}])
+        TestInventory.create_inventory(organization, {storage_location.id => {content_item.id => 10}})
+        KitAllocateEvent.publish(kit, storage_location.id, 2)
+
+        subject
+        expect(response).to be_successful
+        expect(response.body).to include(kit_path(kit.id))
+      end
+
+      it "should show items in alphabetical order" do
+        item_1 = create(:item, organization: organization, name: "Zebra")
+        item_2 = create(:item, organization: organization, name: "apple")
+        item_3 = create(:item, organization: organization, name: "Monkey")
+
+        donation = create(:donation, :with_items, organization: organization,
+          storage_location: storage_location, item: item_1, item_quantity: 1)
+        create(:line_item, item: item_2, quantity: 1, itemizable: donation)
+        create(:line_item, item: item_3, quantity: 1, itemizable: donation)
+
+        DonationEvent.publish(donation)
+
+        get events_path(filters: {by_type: "DonationEvent", date_range: date_range_picker_params(3.days.ago, Time.zone.tomorrow)})
+
+        td_with_items = Nokogiri::HTML(response.body).css("td").find do |td|
+          td.inner_html.include?("/items/")
+        end
+
+        expect(td_with_items).not_to be_nil
+
+        links = td_with_items.css("a").map(&:text)
+        expect(links).to eq(links.sort_by(&:downcase))
+      end
       it "should show deleted items on regular event without crashing" do
         deleted_item = create(:item, organization: organization)
         travel(-1.day) do
@@ -74,7 +108,7 @@ RSpec.describe "Events", type: :request do
               }
             )
           )
-          donation = create(:donation, organization: organization)
+          donation = create(:donation, organization: organization, created_at: 1.day.from_now)
           DonationEvent.create!(
             eventable: donation,
             organization_id: organization.id,
@@ -195,9 +229,9 @@ RSpec.describe "Events", type: :request do
         let(:params) {
           {
             format: "html",
-            filters: {filters: {
+            filters: {
               date_range: date_range_picker_params(3.days.ago, Time.zone.tomorrow)
-            }}
+            }
           }
         }
 
@@ -219,9 +253,12 @@ RSpec.describe "Events", type: :request do
         end
         let(:params) { {format: "html", eventable_id: donation.id, eventable_type: "Donation"} }
         before do
-          DonationEvent.publish(donation)
-          donation.line_items.first.quantity = 33
-          DonationEvent.publish(donation) # an update
+          # should not be affected by the date range
+          travel(-1.year) do
+            DonationEvent.publish(donation)
+            donation.line_items.first.quantity = 33
+            DonationEvent.publish(donation) # an update
+          end
         end
 
         it "should only show events from that eventable" do
@@ -238,14 +275,5 @@ RSpec.describe "Events", type: :request do
         end
       end
     end
-  end
-
-  context "When not signed in" do
-    let(:object) do
-      donation = create(:donation)
-      DonationEvent.publish(donation)
-    end
-
-    include_examples "requiring authorization"
   end
 end

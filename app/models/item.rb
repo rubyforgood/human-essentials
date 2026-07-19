@@ -6,7 +6,6 @@
 #  active                       :boolean          default(TRUE)
 #  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
@@ -14,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -28,15 +28,13 @@ class Item < ApplicationRecord
   include Filterable
   include Exportable
   include Valuable
+  include Itemizable
 
   after_initialize :set_default_distribution_quantity, if: :new_record?
-  after_update :update_associated_kit_name, if: -> { kit.present? }
-  before_create :set_reporting_category
   before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
-  belongs_to :kit, optional: true
+  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items, optional: true
   belongs_to :item_category, optional: true
 
   validates :additional_info, length: { maximum: 500 }
@@ -46,27 +44,23 @@ class Item < ApplicationRecord
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
   validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
+  validate -> { line_items_quantity_is_at_least(1) }
 
-  has_many :line_items, dependent: :destroy
+  has_many :used_line_items, dependent: :destroy, class_name: "LineItem"
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
-  has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
-  has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
+  has_many :donations, through: :used_line_items, source: :itemizable, source_type: "::Donation"
+  has_many :distributions, through: :used_line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
-
-  # :housing_a_kit are items which house a kit, NOT items is_in_kit
-  scope :housing_a_kit, -> { where.not(kit_id: nil) }
-  scope :loose, -> { where(kit_id: nil) }
   scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
+  scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
-
-  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
 
   scope :period_supplies, -> {
     where(reporting_category: [:pads, :tampons, :period_liners, :period_underwear, :period_other])
@@ -76,14 +70,19 @@ class Item < ApplicationRecord
     adult_incontinence: "adult_incontinence",
     cloth_diapers: "cloth_diapers",
     disposable_diapers: "disposable_diapers",
-    menstrual: "menstrual",
-    other_categories: "other",
     pads: "pads",
     period_liners: "period_liners",
     period_other: "period_other",
     period_underwear: "period_underwear",
-    tampons: "tampons"
-  }, instance_methods: false
+    tampons: "tampons",
+    other_categories: "other"
+  }, instance_methods: false, validate: { allow_nil: true }
+
+  def self.reporting_categories_for_select
+    reporting_categories.map do |key, value|
+      Option.new(id: key, name: value.titleize)
+    end
+  end
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
@@ -110,7 +109,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
+    can_deactivate_or_delete?(inventory, kits) && used_line_items.none? && !barcode_count&.positive? && !in_request?
   end
 
   # @return [Boolean]
@@ -135,11 +134,12 @@ class Item < ApplicationRecord
     unless can_deactivate_or_delete?
       raise "Cannot deactivate item - it is in a storage location or kit!"
     end
-    if kit
-      kit.deactivate
-    else
-      update!(active: false)
-    end
+    update!(active: false)
+  end
+
+  # @return [String]
+  def reporting_category_humanized
+    Item.reporting_categories[reporting_category].to_s.titleize
   end
 
   def other?
@@ -157,7 +157,7 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Barcodes", "Base Item", "Quantity"]
+    ["Name", "Barcodes", "Quantity"]
   end
 
   # @param items [Array<Item>]
@@ -167,7 +167,7 @@ class Item < ApplicationRecord
     item_quantities = items.to_h { |i| [i.id, inventory.quantity_for(item_id: i.id)] }
     CSV.generate(headers: true) do |csv|
       csv_data = items.map do |item|
-        attributes = [item.name, item.barcode_count, item.base_item.name, item_quantities[item.id]]
+        attributes = [item.name, item.barcode_count, item_quantities[item.id]]
         attributes.map { |attr| normalize_csv_attribute(attr) }
       end
       ([csv_export_headers] + csv_data).each { |row| csv << row }
@@ -187,19 +187,12 @@ class Item < ApplicationRecord
 
   private
 
-  # Sets reporting_category according to reporting_category of base item.
-  # TODO: Remove once items can be created with a reporting category.
-  def set_reporting_category
-    return unless reporting_category.blank?
-
-    self.reporting_category = base_item.reporting_category if base_item.reporting_category
-  end
-
   def set_default_distribution_quantity
-    self.distribution_quantity ||= kit_id.present? ? 1 : 50
+    self.distribution_quantity ||= default_distribution_quantity
   end
 
-  def update_associated_kit_name
-    kit.update(name: name)
+  # Overridden in Kit (kits default to 1).
+  def default_distribution_quantity
+    50
   end
 end

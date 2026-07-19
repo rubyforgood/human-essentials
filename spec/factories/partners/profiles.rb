@@ -37,7 +37,6 @@
 #  new_client_times               :string
 #  no_social_media_presence       :boolean
 #  other_agency_type              :string
-#  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
 #  pick_up_name                   :string
 #  pick_up_phone                  :string
@@ -81,7 +80,10 @@ FactoryBot.define do
   factory :partner_profile, class: Partners::Profile do
     partner { Partner.first || create(:partner) }
     essentials_bank_id { Organization.try(:first).id || create(:organization).id }
-    website { "http://some-site.org" }
+    # While not strictly necessary to initialize a Profile object, various update
+    # requests will fail if no_social_media_presence does not match the absence of
+    # website, twitter, facebook, or instagram.
+    no_social_media_presence { true }
     primary_contact_email { Faker::Internet.email }
     primary_contact_name { Faker::Name.name }
   end

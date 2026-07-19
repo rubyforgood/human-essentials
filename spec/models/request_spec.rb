@@ -29,6 +29,47 @@ RSpec.describe Request, type: :model do
         expect(Request.status_started).to eq([request_started])
         expect(Request.status_fulfilled).to eq([request_fulfilled])
       end
+
+      it "does not regress from fulfilled to started" do
+        expect { request_fulfilled.status_started! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once fulfilled/)
+      end
+
+      it "does not regress from fulfilled to pending" do
+        expect { request_fulfilled.status_pending! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once fulfilled/)
+      end
+
+      it "does not regress from fulfilled to cancelled" do
+        expect { request_fulfilled.status_cancelled! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once fulfilled/)
+      end
+
+      it "does not regress from cancelled to started" do
+        cancelled_request = create(:request, :cancelled)
+
+        expect { cancelled_request.status_started! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once cancelled/)
+      end
+
+      it "does not regress from cancelled to pending" do
+        cancelled_request = create(:request, :cancelled)
+
+        expect { cancelled_request.status_pending! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once cancelled/)
+      end
+
+      it "does not regress from cancelled to fulfilled" do
+        cancelled_request = create(:request, :cancelled)
+
+        expect { cancelled_request.status_fulfilled! }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once cancelled/)
+      end
+
+      it "allows normal transitions" do
+        expect { request_pending.status_started! }.not_to raise_error
+        expect { request_started.status_fulfilled! }.not_to raise_error
+      end
     end
   end
 

@@ -291,14 +291,52 @@ RSpec.describe "ProductDrives", type: :request do
 
         expect(response.body).to include("4862167")
       end
+
+      context "csv" do
+        it 'is successful' do
+          product_drive = create(:product_drive, organization: organization)
+
+          get product_drive_path(id: product_drive.id, format: :csv)
+
+          expect(response).to be_successful
+          expect(response.header['Content-Type']).to include 'text/csv'
+
+          expected_headers = Exports::ExportProductDriveParticipantsCSVService::HEADERS
+          expect(response.body.chomp.split(",")).to eq(expected_headers)
+        end
+
+        it 'returns ONLY the associated product drive participants' do
+          product_drive = create(:product_drive, organization: organization)
+          participant = create(:product_drive_participant, business_name: "Associated Participant")
+          create(:donation, product_drive: product_drive, product_drive_participant: participant)
+
+          other_participant = create(:product_drive_participant, business_name: "Unassociated Participant")
+          create(:donation, product_drive: create(:product_drive, organization: organization), product_drive_participant: other_participant)
+
+          get product_drive_path(id: product_drive.id, format: :csv)
+
+          expect(response.body).to include("Associated Participant")
+          expect(response.body).not_to include("Unassociated Participant")
+        end
+      end
     end
 
     describe "DELETE #destroy" do
-      it "redirects to the index" do
-        product_drive = create(:product_drive, organization: organization)
+      let(:product_drive) { create(:product_drive, organization: organization) }
 
+      it "redirects to the index" do
         delete product_drive_path(id: product_drive.id)
         expect(response).to redirect_to(product_drives_path)
+      end
+
+      context "when the product drive has associated donations" do
+        it "does not delete and redirects with an error" do
+          create(:donation, product_drive: product_drive)
+
+          delete product_drive_path(id: product_drive.id)
+          expect(response).to redirect_to(product_drive_path(product_drive))
+          expect(flash[:error]).to eq("Cannot delete record because dependent donations exist")
+        end
       end
     end
   end

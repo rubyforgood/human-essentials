@@ -42,6 +42,7 @@ This brings up the "New Kit" form, which has the following info:
 To add the rest of your Items,  click "+Add Another Item."  If you need to remove an Item, click "Remove" under it.
 
 Once you are satisfied with the definition of your Kit,  click "Save".  This will return you to the Kits screen, where you'll see your new Kit.
+You will not be able to change the composition of the kit once saved. Partner visibility and name can be changed via the kit's item.
 
 ## Allocating Kits
 

@@ -3,7 +3,7 @@ class DashboardController < ApplicationController
   respond_to :html, :js
 
   def index
-    @org_stats = OrganizationStats.new(current_organization, inventory)
+    @org_is_set_up = current_organization.bank_is_set_up
     @partners_awaiting_review = current_organization.partners.awaiting_review
     @outstanding_requests = current_organization
       .ordered_requests

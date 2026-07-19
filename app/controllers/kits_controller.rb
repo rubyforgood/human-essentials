@@ -1,4 +1,8 @@
 class KitsController < ApplicationController
+  def show
+    redirect_to allocations_kit_path
+  end
+
   def index
     @kits = current_organization.kits.includes(line_items: :item).class_filter(filter_params)
     @inventory = View::Inventory.new(current_organization.id)
@@ -27,8 +31,8 @@ class KitsController < ApplicationController
         .map { |error| formatted_error_message(error) }
         .join(", ")
 
-      @kit = Kit.new(kit_params)
       load_form_collections
+      @kit = current_organization.kits.new(kit_params)
       @kit.line_items.build if @kit.line_items.empty?
 
       render :new
@@ -36,23 +40,23 @@ class KitsController < ApplicationController
   end
 
   def deactivate
-    @kit = Kit.find(params[:id])
-    @kit.deactivate
-    redirect_back(fallback_location: dashboard_path, notice: "Kit has been deactivated!")
+    @kit = current_organization.kits.find(params[:id])
+    @kit.deactivate!
+    redirect_back_or_to(dashboard_path, notice: "Kit has been deactivated!")
   end
 
   def reactivate
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     if @kit.can_reactivate?
       @kit.reactivate
-      redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
+      redirect_back_or_to(dashboard_path, notice: "Kit has been reactivated!")
     else
-      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
+      redirect_back_or_to(dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
     end
   end
 
   def allocations
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     @storage_locations = current_organization.storage_locations.active
     @inventory = View::Inventory.new(current_organization.id)
 
@@ -60,7 +64,7 @@ class KitsController < ApplicationController
   end
 
   def allocate
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     @storage_location = current_organization.storage_locations.active.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
     begin
@@ -88,7 +92,7 @@ class KitsController < ApplicationController
       :visible_to_partners,
       :value_in_dollars,
       line_items_attributes: [:item_id, :quantity, :_destroy]
-    )
+    ).to_h
   end
 
   def kit_adjustment_params

@@ -47,6 +47,7 @@ class VendorsController < ApplicationController
 
   def show
     @vendor = current_organization.vendors.includes(:purchases).find(params[:id])
+    @purchases = @vendor.purchases.order(issued_at: :desc)
   end
 
   def update
@@ -67,7 +68,7 @@ class VendorsController < ApplicationController
       vendor.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: vendors_path)
+      redirect_back_or_to(vendors_path)
       return
     end
 
@@ -81,7 +82,7 @@ class VendorsController < ApplicationController
       vendor.reactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: vendors_path)
+      redirect_back_or_to(vendors_path)
       return
     end
 

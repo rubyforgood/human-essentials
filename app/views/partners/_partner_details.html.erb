@@ -1,0 +1,44 @@
+<div>
+  <label>Email: </label> <%= @partner.email %>
+</div>
+<div>
+  <label>Default Storage Location: </label> <%= @partner.default_storage_location&.name || 'None' %>
+</div>
+<div>
+  <label>Partner Group: </label> <%= @partner.partner_group&.name || 'None' %>
+</div>
+<div>
+  <label>Do you want this partner to receive emails for distributions and reminders from the system? </label> <%= @partner.send_reminders ? 'Yes' : 'No' %>
+</div>
+<div>
+  <label>Notes: </label> <%= @partner.notes %>
+</div>
+<div>
+  <label> Documents: </label>
+  <% if @partner.documents.present? %>
+    <% @partner.documents.each do |doc| %>
+      <li><%= link_to doc.blob.filename.to_s, rails_blob_path(doc) %></li>
+    <% end %>
+    </ul>
+  <% else %>
+    <span>None</span>
+  <% end %>
+</div>
+<div>
+  <label>Requestable Item Categories: </label>
+  <% if @partner.item_categories.present? %>
+    <ul class='list-disc ml-3'>
+      <% @partner.item_categories.each do |ic| %>
+        <li>
+          <span><%= ic.name %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% elsif @partner.partner_group.present? %>
+    <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
+  <% else %>
+    <span class='text-blue-600 text-bold font-italic'>All Items Requestable</span>
+  <% end %>
+</div>
+
+<%= edit_button_to edit_partner_path(@partner), { text: "Edit details", icon: "pencil-square-o", type: "primary", size: "m" } %>

@@ -3,6 +3,7 @@
 module Partners
   module UpdateFamily
     extend ServiceObjectErrorsMixin
+
     # rubocop:disable Rails/SkipsModelValidations
     def self.archive(family)
       if family.children.exists?

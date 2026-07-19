@@ -28,4 +28,24 @@ RSpec.describe ItemCategory, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
+
+  describe "delete" do
+    let(:item_category) { create(:item_category) }
+    let(:partner_group) { create(:partner_group, item_categories: [item_category]) }
+
+    before do
+      partner_group
+    end
+
+    it "should not delete if associated with partner groups" do
+      expect(item_category.partner_groups).not_to be_empty
+      expect { item_category.destroy }.not_to change(ItemCategory, :count)
+      expect(item_category.errors.full_messages).to include("Cannot delete item category with associated partner groups")
+    end
+
+    it "should delete if not associated with partner groups" do
+      item_category.partner_groups.destroy_all
+      expect { item_category.destroy }.to change(ItemCategory, :count).by(-1)
+    end
+  end
 end

@@ -34,11 +34,11 @@ module DateRangeHelper
   end
 
   def selected_interval
-    date_range_params.split(" - ").map do |d|
-      Date.strptime(d, "%B %d, %Y")
-    rescue
-      raise "Invalid date: #{d} in #{date_range_params}"
-    end
+    start_date, end_date = date_range_params.split(" - ")
+    [Date.strptime(start_date.to_s, "%B %d, %Y"), Date.strptime(end_date.to_s, "%B %d, %Y")]
+  rescue
+    flash.now[:notice] = "Invalid Date range provided. Reset to default date range"
+    default_date.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") }
   end
 
   def selected_range

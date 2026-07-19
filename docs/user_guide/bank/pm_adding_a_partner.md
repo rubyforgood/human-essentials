@@ -16,7 +16,12 @@ What Partner Group, if any, does the Partner belong to.  Partner Groups are very
 [!NOTE] Partners who belong to Partner Groups can *only* choose the Items that have the Item Categories specified for their Partner Group.
 
 ### Do you want this Partner to receive emails for Distributions and Reminders from the system?
-See also the questions about customizing reminders in [your organization](getting_started_customization.md)
+If enabled, the Partner may receive reminders if your organization, or the Partner's Partner Group is configured with a reminder schedule.
+
+This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and partner group level (see [Adding a single Partner](pm_adding_a_partner.md)).
+
+For a full description of how the reminder schedules work, and how the different configurations interact, see [Partner Reminder Emails](pm_partner_reminders.md).
+
 
 ### Quota
 This is an information-only quota -- it is meant to be total Items per request. We give a friendly "are you sure you wanted to order that much?" kind of warning on the partner's confirmation screen if they over order, but there is *no* actual enforcement.  If entered, this value is also displayed in your view of the requests.

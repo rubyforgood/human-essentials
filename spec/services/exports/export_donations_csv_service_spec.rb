@@ -1,7 +1,7 @@
 RSpec.describe Exports::ExportDonationsCSVService do
   describe '#generate_csv' do
     let(:organization) { create(:organization) }
-    let(:storage_location) { create(:storage_location, organization: organization) }
+    let(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
 
     subject { described_class.new(donation_ids: donation_ids, organization: organization).generate_csv }
     let(:donation_ids) { donations.map(&:id) }
@@ -38,7 +38,8 @@ RSpec.describe Exports::ExportDonationsCSVService do
           items_quantities[:source],
           storage_location: storage_location,
           organization: organization,
-          issued_at: "2025-01-01"
+          issued_at: "2025-01-01",
+          comment: "It's a fine day for diapers."
         )
 
         items_quantities[:items].each do |line_item|
@@ -63,10 +64,10 @@ RSpec.describe Exports::ExportDonationsCSVService do
       it 'should match the expected content without in-kind value of each item for the csv' do
         csv = <<~CSV
           Source,Date,Details,Storage Location,Quantity of Items,Variety of Items,In-Kind Total,Comments,A Item,B Item,C Item,Dupe Item,E Item
-          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,0,0,8,0
-          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,1,0,0,0
-          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0,2,0,0
-          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0,0,0,3
+          Product Drive,2025-01-01,#{source_name(donations[0])},Test Storage Location,15,2,94.0,It's a fine day for diapers.,7,0,0,8,0
+          Manufacturer,2025-01-01,#{source_name(donations[1])},Test Storage Location,1,1,20.0,It's a fine day for diapers.,0,1,0,0,0
+          Donation Site,2025-01-01,#{source_name(donations[2])},Test Storage Location,2,1,60.0,It's a fine day for diapers.,0,0,2,0,0
+          Misc. Donation,2025-01-01,It's a fine day for...,Test Storage Location,3,1,120.0,It's a fine day for diapers.,0,0,0,0,3
         CSV
         expect(subject).to eq(csv)
       end
@@ -78,10 +79,10 @@ RSpec.describe Exports::ExportDonationsCSVService do
 
         csv = <<~CSV
           Source,Date,Details,Storage Location,Quantity of Items,Variety of Items,In-Kind Total,Comments,A Item,A Item In-Kind Value,B Item,B Item In-Kind Value,C Item,C Item In-Kind Value,Dupe Item,Dupe Item In-Kind Value,E Item,E Item In-Kind Value
-          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
-          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
-          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
-          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
+          Product Drive,2025-01-01,#{source_name(donations[0])},Test Storage Location,15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
+          Manufacturer,2025-01-01,#{source_name(donations[1])},Test Storage Location,1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
+          Donation Site,2025-01-01,#{source_name(donations[2])},Test Storage Location,2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
+          Misc. Donation,2025-01-01,It's a fine day for...,Test Storage Location,3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
         CSV
         expect(subject).to eq(csv)
       end

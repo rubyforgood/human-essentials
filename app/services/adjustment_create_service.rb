@@ -2,6 +2,7 @@
 
 class AdjustmentCreateService
   include ServiceObjectErrorsMixin
+
   attr_reader :adjustment
 
   def initialize(adjustment_or_params)

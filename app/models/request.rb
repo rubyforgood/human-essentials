@@ -31,16 +31,20 @@ class Request < ApplicationRecord
   accepts_nested_attributes_for :item_requests, allow_destroy: true, reject_if: proc { |attributes| attributes["quantity"].blank? }
   has_many :child_item_requests, through: :item_requests
 
-  enum :status, { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, prefix: true
+  enum :status, { pending: 0, started: 1, fulfilled: 2, cancelled: 3 }, prefix: true
   enum :request_type, %w[quantity individual child].map { |v| [v, v] }.to_h
 
   validates :distribution_id, uniqueness: true, allow_nil: true
   validate :item_requests_uniqueness_by_item_id
   validate :not_completely_empty
+  validate :cannot_change_status_once_fulfilled,
+    :cannot_change_status_once_cancelled,
+    on: :update
 
   after_validation :sanitize_items_data
 
   include Filterable
+
   # add request item scope to allow filtering distributions by request item
   scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
   # partner scope to allow filtering by partner
@@ -83,6 +87,18 @@ class Request < ApplicationRecord
   def not_completely_empty
     if comments.blank? && item_requests.blank?
       errors.add(:base, "completely empty request")
+    end
+  end
+
+  def cannot_change_status_once_fulfilled
+    if status_changed? && status_was == "fulfilled"
+      errors.add(:status, "cannot be changed once fulfilled")
+    end
+  end
+
+  def cannot_change_status_once_cancelled
+    if status_changed? && status_was == "cancelled"
+      errors.add(:status, "cannot be changed once cancelled")
     end
   end
 end

@@ -20,7 +20,8 @@ The Comment field is a good place to note the reason for the Transfer, but you c
 
 Then select the Item and quantity for each Item that is being Transferred.  If you have [barcodes](inventory_barcodes.md) set up,  you can use your barcode reader to "boop" in the materials being Transferred.
 
-When you are done, click "Save".  The system will check that you have enough inventory in "From" to cover the Transfer.  If so, the inventory changes will take place immediately.
+When you are done, click "Save". If so, a confirmation modal will pop up. Review the contents of the transfer and click the 'Yes, it's correct' button to begin the transfer. The system will check that you have enough inventory in "From" to cover the Transfer before the inventory changes take place.
+![Transfer Modal](images/inventory/inventory_transfers_confirmation_modal.png)
 
 ## Viewing the details of a Transfer
 To view the details of a Transfer, click the "view" button beside it in the Transfers list.

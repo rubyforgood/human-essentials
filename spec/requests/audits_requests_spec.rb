@@ -1,11 +1,11 @@
 RSpec.describe "Audits", type: :request do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
-
+  let(:storage_location) { create(:storage_location, organization: organization) }
   let(:valid_attributes) do
     {
       organization_id: organization.id,
-      storage_location_id: create(:storage_location, organization: organization).id,
+      storage_location_id: storage_location.id,
       user_id: create(:organization_admin, organization: organization).id
     }
   end
@@ -30,10 +30,34 @@ RSpec.describe "Audits", type: :request do
     end
 
     describe "GET #index" do
-      it "is successful" do
-        Audit.create! valid_attributes
-        get audits_path
-        expect(response).to be_successful
+      context "html" do
+        it "is successful" do
+          Audit.create! valid_attributes
+          get audits_path
+          expect(response).to be_successful
+        end
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+        let(:csv_body) { "Stubbed CSV" }
+
+        before do
+          allow(Audit).to receive(:generate_csv).and_return(csv_body)
+        end
+
+        it "succeeds" do
+          get audits_path(format: response_format)
+          expect(response.content_type).to eq("text/csv")
+          expect(response).to be_successful
+        end
+
+        it "returns a CSV" do
+          get audits_path(format: response_format)
+
+          expect(Audit).to have_received(:generate_csv)
+          expect(response.body).to eq(csv_body)
+        end
       end
     end
 

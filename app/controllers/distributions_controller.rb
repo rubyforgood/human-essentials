@@ -9,12 +9,13 @@ class DistributionsController < ApplicationController
   include Validatable
 
   before_action :enable_turbo!, only: %i[new show]
+  before_action :handle_csv_export, only: [:index]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
   skip_before_action :require_organization, only: %i(calendar)
 
   def print
-    @distribution = Distribution.find(params[:id])
+    @distribution = current_organization.distributions.find(params[:id])
     respond_to do |format|
       format.any do
         pdf = DistributionPdf.new(current_organization, @distribution)
@@ -27,12 +28,14 @@ class DistributionsController < ApplicationController
   end
 
   def destroy
-    result = DistributionDestroyService.new(params[:id]).call
+    distribution = current_organization.distributions.find(params[:id])
+    service = DistributionDestroyService.new(distribution.id)
+    result = service.call
 
     if result.success?
       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     else
-      flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
+      flash[:error] = result.error.message
     end
 
     redirect_to distributions_path
@@ -61,6 +64,8 @@ class DistributionsController < ApplicationController
     @total_value_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:value)
     @total_items_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:quantity)
     @selected_item_category = filter_params[:by_item_category_id].presence
+    @reporting_categories = Item.reporting_categories_for_select
+    @selected_reporting_category = filter_params[:by_reporting_category].presence
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -166,7 +171,7 @@ class DistributionsController < ApplicationController
   end
 
   def show
-    @distribution = Distribution.includes(:storage_location, line_items: :item).find(params[:id])
+    @distribution = current_organization.distributions.includes(:storage_location, line_items: :item).find(params[:id])
     @line_items = @distribution.line_items
 
     @total_quantity = @distribution.total_quantity
@@ -177,7 +182,7 @@ class DistributionsController < ApplicationController
   end
 
   def edit
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = current_organization.distributions.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
@@ -185,9 +190,10 @@ class DistributionsController < ApplicationController
       @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
+      @changes_disallowed = SnapshotEvent.intervening(@distribution).present?
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
-        .where("updated_at > ?", @distribution.created_at).any?
+        .where("updated_at > ?", @distribution.created_at).any? && !@changes_disallowed
       inventory = View::Inventory.new(@distribution.organization_id)
       @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         !inventory.quantity_for(storage_location: storage_loc.id).negative?
@@ -199,7 +205,7 @@ class DistributionsController < ApplicationController
   end
 
   def update
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = current_organization.distributions.includes(:line_items).includes(:storage_location).find(params[:id])
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
@@ -267,7 +273,7 @@ class DistributionsController < ApplicationController
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
-    redirect_back(fallback_location: distribution_path)
+    redirect_back_or_to(distribution_path)
   end
 
   def pickup_day
@@ -323,7 +329,7 @@ class DistributionsController < ApplicationController
 
     params
       .require(:filters)
-      .permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
+      .permit(:by_item_id, :by_item_category_id, :by_reporting_category, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check
