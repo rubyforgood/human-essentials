@@ -6,11 +6,9 @@ class Reports::AnnualReportsController < ApplicationController
     # 2813_update_annual_report -- changed to earliest_reporting_year
     # so that we can do system tests and staging
     @foundation_year = current_organization.earliest_reporting_year
-    @current_year = Time.current.year
+    @actual_year = Time.current.year
 
-    @years = (@foundation_year...@current_year).to_a
-
-    @month_remaining_to_report = 12 - Time.current.month
+    @years = (@foundation_year...@actual_year).to_a
   end
 
   def show

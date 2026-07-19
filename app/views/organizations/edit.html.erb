@@ -171,6 +171,7 @@
 
                 <h4>Exports</h4>
                 <%= f.input :include_in_kind_values_in_exported_files, label: 'Include in-kind value in donation and distribution exports?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :include_packages_in_distribution_export, label: 'Include packages in distribution export?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <h4>Annual Survey</h4>
                 <%= f.input :repackage_essentials, label: 'Does your Bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>

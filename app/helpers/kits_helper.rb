@@ -2,7 +2,7 @@ module KitsHelper
   def deactivate_kit_button(kit, inventory)
     options = {class: "deactivate-kit-button"}
     span_options = {}
-    unless kit.can_deactivate?(inventory)
+    unless kit.can_deactivate_or_delete?(inventory)
       msg = "Can't deactivate while a storage location still has kits."
       options[:enabled] = false
       span_options = {title: msg, class: "tooltip-target"}

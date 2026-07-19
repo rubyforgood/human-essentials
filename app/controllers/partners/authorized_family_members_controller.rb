@@ -38,7 +38,7 @@ module Partners
       @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
       if @authorized_family_member.present?
         @authorized_family_member.destroy
-        redirect_back fallback_location: partners_families_url, notice: "Authorized family member removed."
+        redirect_back_or_to(partners_families_url, notice: "Authorized family member removed.")
       end
     end
 

@@ -8,7 +8,9 @@ module UsersHelper
 
   def reinvite_user_link(user)
     if user.reinvitable?
-      link_to tag.i("", class: 'fa fa-envelope', alt: "Re-send invitation", title: "Re-send invitation"), resend_user_invitation_organization_path(user_id: user.id), method: :post
+      button_to resend_user_invitation_organization_path(user_id: user.id), class: "btn btn-outline-primary btn-xs", data: {disable_with: "Please wait..."}, alt: "Re-send invitation", title: "Re-send invitation" do
+        fa_icon "envelope"
+      end
     end
   end
 end

@@ -25,12 +25,12 @@
     <div class="row">
       <div class="col-md-12 mb-2">
         <h5 class="mb-1">Reports are available at the end of every year.</h5>
-        <span class="text-muted"> <%= "#{@actual_year} (available in #{pluralize(@month_remaining_to_report, 'month')})" %> </span>
+        <span class="text-muted"> <%= "#{@actual_year} (available on #{available_date})" %> </span>
       </div>
       <div class="col-md-12 mb-2">
         <%=
             download_button_to(
-              range_reports_annual_reports_path(year_start: @foundation_year, year_end: (@current_year - 1), format: :csv),
+              range_reports_annual_reports_path(year_start: @foundation_year, year_end: (@actual_year - 1), format: :csv),
               text: "Export Yearly Reports"
             )
         %>

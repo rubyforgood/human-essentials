@@ -14,7 +14,7 @@ class UsersController < ApplicationController
     role = Role.find(params[:role_id])
     unless current_user.roles.include?(role)
       error_message = "Attempted to switch to a role that doesn't belong to you!"
-      redirect_back(fallback_location: root_path, alert: error_message)
+      redirect_back_or_to(root_path, alert: error_message)
       return
     end
 
@@ -27,8 +27,7 @@ class UsersController < ApplicationController
   def partner_user_reset_password
     partner = current_organization.partners.find_by(id: params[:partner_id])
     if partner.nil?
-      redirect_back(fallback_location: root_path,
-        alert: "Could not find partner, or you do not have access to this partner!")
+      redirect_back_or_to(root_path, alert: "Could not find partner, or you do not have access to this partner!")
       return
     end
 
@@ -36,12 +35,11 @@ class UsersController < ApplicationController
       .where("LOWER(email) = ?", params[:email].downcase)
       .first
     if user.nil?
-      redirect_back(fallback_location: root_path,
-        alert: "Could not find partner user for this partner with email #{params[:email]}!")
+      redirect_back_or_to(root_path, alert: "Could not find partner user for this partner with email #{params[:email]}!")
       return
     end
 
     user.send_reset_password_instructions
-    redirect_back(fallback_location: root_path, notice: "Password e-mail sent!")
+    redirect_back_or_to(root_path, notice: "Password e-mail sent!")
   end
 end

@@ -17,7 +17,7 @@ The Partner's profile is viewable by clicking Partner Agencies in the left hand 
 
 More information about the partner profile can be found under "Editing a Partner's Profile", below.
 # Editing a Partner's Profile
-You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit Information."
+You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit partner profile"
 
 
 ![Partner Profile Edit Navigation 1](images/partners/partners_profile_edit_navigation_1.png)
