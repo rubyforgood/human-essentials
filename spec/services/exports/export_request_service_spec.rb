@@ -109,7 +109,7 @@ RSpec.describe Exports::ExportRequestService do
   end
 
   subject do
-    described_class.new(Request.all, organization: org).generate_csv_data
+    described_class.new(Request.all, org).generate_csv_data
   end
 
   context "with custom units feature enabled" do

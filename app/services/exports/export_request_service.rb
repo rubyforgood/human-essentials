@@ -87,11 +87,10 @@ module Exports
         end
       end
 
-      # Include inactive items or items that are otherwise not in any item_requests
+      # Include inactive items or items that are otherwise not in any item_requests;
+      # item_names is a Set, so duplicates are handled automatically.
       @organization_items.each do |item|
-        if item_names.exclude?(item.name)
-          item_names << item.name
-        end
+        item_names << item.name
       end
 
       # Adding this to handle cases in which a requested item
