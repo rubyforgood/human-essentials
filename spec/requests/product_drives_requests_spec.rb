@@ -291,6 +291,34 @@ RSpec.describe "ProductDrives", type: :request do
 
         expect(response.body).to include("4862167")
       end
+
+      context "csv" do
+        it 'is successful' do
+          product_drive = create(:product_drive, organization: organization)
+
+          get product_drive_path(id: product_drive.id, format: :csv)
+
+          expect(response).to be_successful
+          expect(response.header['Content-Type']).to include 'text/csv'
+
+          expected_headers = Exports::ExportProductDriveParticipantsCSVService::HEADERS
+          expect(response.body.chomp.split(",")).to eq(expected_headers)
+        end
+
+        it 'returns ONLY the associated product drive participants' do
+          product_drive = create(:product_drive, organization: organization)
+          participant = create(:product_drive_participant, business_name: "Associated Participant")
+          create(:donation, product_drive: product_drive, product_drive_participant: participant)
+
+          other_participant = create(:product_drive_participant, business_name: "Unassociated Participant")
+          create(:donation, product_drive: create(:product_drive, organization: organization), product_drive_participant: other_participant)
+
+          get product_drive_path(id: product_drive.id, format: :csv)
+
+          expect(response.body).to include("Associated Participant")
+          expect(response.body).not_to include("Unassociated Participant")
+        end
+      end
     end
 
     describe "DELETE #destroy" do

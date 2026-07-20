@@ -1,0 +1,5 @@
+Source,Date,Details,Storage Location,Quantity of Items,Variety of Items,In-Kind Total,Comments,A Item,A Item In-Kind Value,B Item,B Item In-Kind Value,C Item,C Item In-Kind Value,Dupe Item,Dupe Item In-Kind Value,E Item,E Item In-Kind Value,Inactive Item,Inactive Item In-Kind Value
+Product Drive,2025-01-01,Test Product Drive,Test Storage Location,15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00,0,0.00
+Manufacturer,2025-01-01,Test Manufacturer,Test Storage Location,1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00,0,0.00
+Donation Site,2025-01-01,Test Donation Site,Test Storage Location,2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00,0,0.00
+Misc. Donation,2025-01-01,It's a fine day for...,Test Storage Location,3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00,0,0.00
