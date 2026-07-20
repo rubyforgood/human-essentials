@@ -20,5 +20,7 @@
   </div>
 </section>
 
-<%= render 'form' %>
+<div data-controller="confirmation" data-confirmation-pre-check-path-value="<%= validate_kits_path(format: :json) %>">
+  <%= render 'form' %>
+</div>
 <%= render partial: "barcode_items/barcode_modal" %>

@@ -72,8 +72,8 @@ RSpec.describe "Kit management", type: :system do
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_item_line_items_attributes_0_item_id"
-    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
+    select item.name, from: "kit_line_items_attributes_0_item_id"
+    find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
 
@@ -86,7 +86,7 @@ RSpec.describe "Kit management", type: :system do
     expect(page).to have_current_path(new_kit_path)
     expect(page).to have_no_content("Kit created successfully")
     expect(page).to have_field("Name", with: kit_traits[:name])
-    expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity_per_kit.to_s)
+    expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity_per_kit.to_s)
   end
 
   it "can add items correctly" do
@@ -247,7 +247,6 @@ RSpec.describe "Kit management", type: :system do
   describe "when missing required fields" do
     it "displays error indicating missing field and preserves filled out fields" do
       visit new_kit_path
-      kit_traits = attributes_for(:kit)
 
       find(:css, '#kit_value_in_dollars').set('10.10')
 
@@ -258,13 +257,9 @@ RSpec.describe "Kit management", type: :system do
 
       click_button "Save"
 
-      expect(page).to have_css("#kitConfirmationModal", visible: true)
-      within "#kitConfirmationModal" do
-        click_button "Yes, it's correct"
-      end
-
+      expect(page).to have_no_css("#kitConfirmationModal", visible: true)
       expect(page.find(".alert")).to have_content "Name can't be blank"
-      expect(page).to have_content(kit_traits[:quantity])
+      expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity_per_kit.to_s)
       expect(page).to have_content(item.name)
     end
   end

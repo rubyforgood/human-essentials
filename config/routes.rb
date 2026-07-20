@@ -187,6 +187,9 @@ Rails.application.routes.draw do
   end
 
   resources :kits do
+    collection do
+      post :validate
+    end
     member do
       get :allocations
       post :allocate
