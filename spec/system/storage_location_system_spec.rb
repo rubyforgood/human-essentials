@@ -191,20 +191,27 @@ RSpec.describe "Storage Locations", type: :system, js: true do
         {
           item_id: items[0].id,
           item_name: items[0].name,
+          quantity_start: 0,
           quantity_in: 10,
           quantity_out: 5,
+          quantity_adjustment: 0,
           change: 5,
-          total_quantity_in: 16,
+          quantity_end: 5,
+          total_quantity_in: 13,
           total_quantity_out: 7,
           total_change: 9
         },
         {
+          # The adjustment (+3) shows in the adjustment column, not as in.
           item_id: items[1].id,
           item_name: items[1].name,
-          quantity_in: 6,
+          quantity_start: 0,
+          quantity_in: 3,
           quantity_out: 2,
+          quantity_adjustment: 3,
           change: 4,
-          total_quantity_in: 16,
+          quantity_end: 4,
+          total_quantity_in: 13,
           total_quantity_out: 7,
           total_change: 9
         }

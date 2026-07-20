@@ -11,25 +11,38 @@ RSpec.describe ItemsFlowQuery do
       {
         item_id: items[0].id,
         item_name: items[0].name,
+        quantity_start: 0,
         quantity_in: 10,
         quantity_out: 5,
+        quantity_adjustment: 0,
         change: 5,
-        total_quantity_in: 16,
-        total_quantity_out: 8,
-        total_change: 8
+        quantity_end: 5,
+        total_quantity_start: 0,
+        total_quantity_in: 13,
+        total_quantity_out: 7,
+        total_quantity_adjustment: 2,
+        total_change: 8,
+        total_quantity_end: 8
       },
       {
-        # Donation (+3) and adjustment (+3) flow in; the transfer (-2) flows
-        # out. The audit counts an absolute quantity of 3 when the running
-        # quantity is 4, so it contributes its delta: 1 more out.
+        # Donation (+3) flows in and the transfer (-2) flows out. The
+        # adjustment (+3) lands in the adjustment column, as does the audit:
+        # it counts an absolute quantity of 3 when the running quantity is 4,
+        # so it contributes its delta of -1, netting +2.
         item_id: items[1].id,
         item_name: items[1].name,
-        quantity_in: 6,
-        quantity_out: 3,
+        quantity_start: 0,
+        quantity_in: 3,
+        quantity_out: 2,
+        quantity_adjustment: 2,
         change: 3,
-        total_quantity_in: 16,
-        total_quantity_out: 8,
-        total_change: 8
+        quantity_end: 3,
+        total_quantity_start: 0,
+        total_quantity_in: 13,
+        total_quantity_out: 7,
+        total_quantity_adjustment: 2,
+        total_change: 8,
+        total_quantity_end: 8
       }
     ].map(&:with_indifferent_access)
   end
@@ -66,6 +79,7 @@ RSpec.describe ItemsFlowQuery do
       create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
       Event.last.update(event_time: 10.days.ago)
       create(:donation, :with_items, item: old_items[1], item_quantity: 8, storage_location: storage_location)
+      Event.last.update(event_time: 12.days.ago)
       distribution = create(:distribution, :with_items, item: old_items[1], item_quantity: 5, storage_location: storage_location)
       DistributionEvent.publish(distribution)
       Event.last.update(event_time: 10.days.ago)
@@ -76,22 +90,36 @@ RSpec.describe ItemsFlowQuery do
         {
           item_id: old_items[0].id,
           item_name: old_items[0].name,
+          quantity_start: 0,
           quantity_in: 10,
           quantity_out: 0,
+          quantity_adjustment: 0,
           change: 10,
+          quantity_end: 10,
+          total_quantity_start: 8,
           total_quantity_in: 10,
           total_quantity_out: 5,
-          total_change: 5
+          total_quantity_adjustment: 0,
+          total_change: 5,
+          total_quantity_end: 13
         },
         {
+          # Donated (+8) before the window, so it only shows in the starting
+          # quantity; the in-window distribution (-5) flows out.
           item_id: old_items[1].id,
           item_name: old_items[1].name,
+          quantity_start: 8,
           quantity_in: 0,
           quantity_out: 5,
+          quantity_adjustment: 0,
           change: -5,
+          quantity_end: 3,
+          total_quantity_start: 8,
           total_quantity_in: 10,
           total_quantity_out: 5,
-          total_change: 5
+          total_quantity_adjustment: 0,
+          total_change: 5,
+          total_quantity_end: 13
         }
       ].map(&:with_indifferent_access)
     end
@@ -115,6 +143,7 @@ RSpec.describe ItemsFlowQuery do
 
       row = subject.to_a.find { |r| r["item_id"] == item.id }
       expect(row["quantity_in"]).to eq(25)
+      expect(row["quantity_end"]).to eq(25)
     end
   end
 
@@ -154,8 +183,10 @@ RSpec.describe ItemsFlowQuery do
 
       rows = subject.to_a.index_by { |r| r["item_id"] }
       expect(rows[kit.id]["quantity_in"]).to eq(3)
+      expect(rows[kit.id]["quantity_end"]).to eq(3)
       expect(rows[content_item.id]["quantity_in"]).to eq(10)
       expect(rows[content_item.id]["quantity_out"]).to eq(6)
+      expect(rows[content_item.id]["quantity_end"]).to eq(4)
     end
   end
 end

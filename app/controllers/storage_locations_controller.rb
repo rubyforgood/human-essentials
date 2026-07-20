@@ -59,9 +59,13 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
     @items = ItemsFlowQuery.new(storage_location: @storage_location, organization: current_organization, filter_params: date_range).call.to_a
-    @total_quantity_in = @items.count.positive? ? @items.first["total_quantity_in"].to_i : 0
-    @total_quantity_out = @items.count.positive? ? @items.first["total_quantity_out"].to_i : 0
-    @total_quantity_change = @total_quantity_in - @total_quantity_out
+    totals = @items.first || {}
+    @total_quantity_start = totals["total_quantity_start"].to_i
+    @total_quantity_in = totals["total_quantity_in"].to_i
+    @total_quantity_out = totals["total_quantity_out"].to_i
+    @total_quantity_adjustment = totals["total_quantity_adjustment"].to_i
+    @total_quantity_change = totals["total_change"].to_i
+    @total_quantity_end = totals["total_quantity_end"].to_i
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else

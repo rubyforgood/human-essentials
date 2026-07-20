@@ -146,9 +146,12 @@
                   <thead>
                   <tr>
                     <th>Item</th>
+                    <th>Quantity at Start</th>
                     <th>Quantity In</th>
                     <th>Quantity Out</th>
-                    <th>Change</th>
+                    <th>Quantity Adjustment/Audit</th>
+                    <th>Quantity Change</th>
+                    <th>Quantity at End</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -157,10 +160,13 @@
                   <tfoot>
                   <tr>
                     <td>Total</td>
+                    <td><%= @total_quantity_start %></td>
                     <td><%= @total_quantity_in %></td>
                     <td><%= @total_quantity_out %></td>
+                    <td><%= @total_quantity_adjustment %></td>
                     <% css_class = @total_quantity_change.negative? ? 'modal-body-warning-text' : '' %>
                     <td class="<%= css_class %>"><%= @total_quantity_change %></td>
+                    <td><%= @total_quantity_end %></td>
                   </tr>
                   </tfoot>
                 </table>
