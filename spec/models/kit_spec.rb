@@ -1,21 +1,32 @@
 # == Schema Information
 #
-# Table name: kits
+# Table name: items
 #
-#  id                  :bigint           not null, primary key
-#  active              :boolean          default(TRUE)
-#  name                :string           not null
-#  value_in_cents      :integer          default(0)
-#  visible_to_partners :boolean          default(TRUE), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organization_id     :integer          not null
+#  id                           :integer          not null, primary key
+#  active                       :boolean          default(TRUE)
+#  additional_info              :text
+#  barcode_count                :integer
+#  distribution_quantity        :integer
+#  name                         :string
+#  on_hand_minimum_quantity     :integer          default(0), not null
+#  on_hand_recommended_quantity :integer
+#  package_size                 :integer
+#  partner_key                  :string
+#  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
+#  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  item_category_id             :integer
+#  kit_id                       :integer
+#  organization_id              :integer
 #
 
 RSpec.describe Kit, type: :model do
   let(:organization) { create(:organization) }
 
-  let(:kit) { build(:kit, name: "Test Kit") }
+  let(:kit) { build(:kit, name: "Test Kit", organization: organization) }
 
   context "Validations >" do
     subject { build(:kit, organization: organization) }
@@ -32,18 +43,18 @@ RSpec.describe Kit, type: :model do
     end
 
     it "ensures the associated line_items are invalid with a nil quantity" do
-      kit.kit_item.line_items << build(:line_item, quantity: nil)
-      expect(kit.kit_item).not_to be_valid
+      kit.line_items << build(:line_item, quantity: nil)
+      expect(kit).not_to be_valid
     end
 
     it "ensures the associated line_items are invalid with a zero quantity" do
-      kit.kit_item.line_items << build(:line_item, quantity: 0)
-      expect(kit.kit_item).not_to be_valid
+      kit.line_items << build(:line_item, quantity: 0)
+      expect(kit).not_to be_valid
     end
 
     it "ensures the associated line_items are valid with a one quantity" do
-      kit.kit_item.line_items << build(:line_item, quantity: 1)
-      expect(kit.kit_item).to be_valid
+      kit.line_items = [build(:line_item, quantity: 1, item: create(:item, organization: organization))]
+      expect(kit).to be_valid
     end
   end
 
@@ -56,24 +67,31 @@ RSpec.describe Kit, type: :model do
       a_name = "KitA"
       b_name = "KitB"
       c_name = "KitC"
-      create(:kit, name: c_name)
-      create(:kit, name: b_name)
-      create(:kit, name: a_name)
+      create(:kit, name: c_name, organization: organization)
+      create(:kit, name: b_name, organization: organization)
+      create(:kit, name: a_name, organization: organization)
       alphabetized_list = [a_name, b_name, c_name]
 
-      expect(Kit.alphabetized.count).to eq(3)
-      expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
+      expect(organization.kits.alphabetized.count).to eq(3)
+      expect(organization.kits.alphabetized.map(&:name)).to eq(alphabetized_list)
+    end
+
+    it "->by_name filters by name" do
+      create(:kit, name: "Newborn Kit", organization: organization)
+      create(:kit, name: "Toddler Kit", organization: organization)
+
+      expect(organization.kits.by_name("newborn").map(&:name)).to eq(["Newborn Kit"])
     end
   end
 
   context "Value >" do
-    describe ".value_per_itemizable" do
+    describe "#value_per_itemizable" do
       it "calculates values from associated items" do
-        kit.kit_item.line_items = [
-          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100)),
-          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90))
+        kit.line_items = [
+          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100, organization: organization)),
+          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90, organization: organization))
         ]
-        expect(kit.kit_item.value_per_itemizable).to eq(190)
+        expect(kit.value_per_itemizable).to eq(190)
       end
     end
 
@@ -88,41 +106,49 @@ RSpec.describe Kit, type: :model do
     end
   end
 
-  describe '#can_deactivate?' do
+  describe "#can_deactivate_or_delete?" do
     let(:kit) { create_kit(organization: organization) }
 
-    context 'with inventory' do
-      it 'should return false' do
-        item = create(:item, :active, organization: organization, kit: kit)
-        storage_location = create(:storage_location, :with_items, organization: organization, item: item)
-        kit.reload
+    context "with inventory" do
+      it "should return false" do
+        storage_location = create(:storage_location, organization: organization)
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {
-            kit.kit_item.id => 10
+            kit.id => 10
           }
         })
-        expect(kit.reload.can_deactivate?).to eq(false)
+        expect(kit.reload.can_deactivate_or_delete?).to eq(false)
       end
     end
 
-    context 'without inventory items' do
-      it 'should return true' do
-        expect(kit.reload.can_deactivate?).to eq(true)
+    context "without inventory items" do
+      it "should return true" do
+        expect(kit.reload.can_deactivate_or_delete?).to eq(true)
       end
     end
   end
 
-  specify 'deactivate and reactivate' do
+  describe "#can_reactivate?" do
+    let(:kit) { create_kit(organization: organization) }
+
+    it "is true when all contained items are active" do
+      expect(kit.can_reactivate?).to eq(true)
+    end
+
+    it "is false when a contained item is inactive" do
+      kit.line_items.first.item.update!(active: false)
+      expect(kit.reload.can_reactivate?).to eq(false)
+    end
+  end
+
+  specify "deactivate and reactivate" do
     kit = create_kit(organization: organization)
     expect(kit.active).to eq(true)
-    expect(kit.kit_item.active).to eq(true)
-    kit.deactivate
-    expect(kit.active).to eq(false)
-    expect(kit.kit_item.active).to eq(false)
+    kit.deactivate!
+    expect(kit.reload.active).to eq(false)
     kit.reactivate
-    expect(kit.active).to eq(true)
-    expect(kit.kit_item.active).to eq(true)
+    expect(kit.reload.active).to eq(true)
   end
 
   describe "versioning" do
