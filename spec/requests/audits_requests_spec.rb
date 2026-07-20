@@ -6,7 +6,7 @@ RSpec.describe "Audits", type: :request do
     {
       organization_id: organization.id,
       storage_location_id: storage_location.id,
-      user_id: create(:organization_admin, organization: organization).id
+      user_id: organization_admin.id
     }
   end
 
@@ -14,15 +14,13 @@ RSpec.describe "Audits", type: :request do
     {
       organization_id: organization.id,
       storage_location_id: nil,
-      user_id: create(:organization_admin, organization: organization).id
+      user_id: organization_admin.id
     }
   end
 
   let(:invalid_attributes) do
     { organization_id: nil }
   end
-
-  let(:valid_session) { {} }
 
   describe "while signed in as an organization admin" do
     before do
@@ -109,6 +107,40 @@ RSpec.describe "Audits", type: :request do
       end
     end
 
+    describe "PUT #update" do
+      it "confirms the updated audit and redirects to the audit" do
+        audit = create(:audit, organization: organization, status: :in_progress)
+        item = create(:item)
+        audit.line_items << create(:line_item, quantity: 3, item: item)
+
+        put audit_path(id: audit.to_param, audit: {
+          storage_location_id: storage_location.id,
+          line_items_attributes: {"0" => {"item_id" => item.id, "quantity" => "4"}}
+        })
+
+        expect(response).to redirect_to(audit_path(audit))
+        expect(flash[:notice]).to include("Audit is confirmed.")
+        expect(audit.reload).to be_confirmed
+      end
+
+      context "when the audit has already been finalized" do
+        it "does not allow updates and redirects to the finalized audit" do
+          finalized_audit = create(:audit, organization: organization, status: :finalized)
+          item = create(:item)
+          finalized_audit.line_items << create(:line_item, quantity: 3, item: item)
+
+          put audit_path(id: finalized_audit.to_param, audit: {
+            storage_location_id: storage_location.id,
+            line_items_attributes: {"0" => {"item_id" => item.id, "quantity" => "4"}}
+          })
+
+          expect(response).to redirect_to(audit_path(finalized_audit))
+          expect(flash[:error]).to include("This audit has been finalized and cannot be edited.")
+          expect(finalized_audit.line_items.first.quantity).to eq(3)
+        end
+      end
+    end
+
     describe "POST #create" do
       context "with valid params" do
         it "creates a new Audit" do
@@ -121,6 +153,7 @@ RSpec.describe "Audits", type: :request do
           expect do
             post audits_path(audit: valid_attributes, save_progress: '')
             expect(Audit.last.in_progress?).to be_truthy
+            expect(flash[:notice]).to include("Audit's progress was successfully saved.")
           end.to change(Audit.in_progress, :count).by(1)
         end
 
@@ -169,6 +202,19 @@ RSpec.describe "Audits", type: :request do
         post audit_finalize_path(audit_id: audit.to_param)
         expect(audit.reload).to be_finalized
         expect(AuditEvent.count).to eq(1)
+      end
+
+      context "when the audit has already been finalized" do
+        it "does not create a new AuditEvent and redirects to the finalized audit" do
+          finalized_audit = create(:audit, organization: organization, status: :finalized)
+
+          expect do
+            post audit_finalize_path(audit_id: finalized_audit.to_param)
+          end.not_to change(AuditEvent, :count)
+
+          expect(response).to redirect_to(audit_path(finalized_audit))
+          expect(flash[:error]).to include("This audit has been finalized and cannot be edited.")
+        end
       end
     end
 
