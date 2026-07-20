@@ -22,6 +22,36 @@
   </div><!-- /.container-fluid -->
 </section>
 
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Product Drive Participants Filters</h3>
+        </div>
+        <div class="card-body">
+          <%= form_tag(product_drive_participants_path, method: :get) do |f| %>
+            <div class="row">
+              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <%= filter_text(label: "Filter By Business Name", scope: :by_business_name, selected: @products.selected_business_name) %>
+              </div>
+              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <%= filter_text(label: "Filter By Contact Name", scope: :by_contact_name, selected: @products.selected_contact_name) %>
+              </div>
+            </div>
+            </div>
+            <div class="card-footer">
+              <%= filter_button %>
+              <%= clear_filter_button %>
+            </div>
+          <% end %>
+          </div>
+    </div>
+    <div class="col-md-6">
+    </div>
+  </div>
+</div>
+
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -31,8 +61,8 @@
         <div class="card card-primary">
           <div class="card-footer">
             <div class="pull-right">
-              <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Product Drive Participants", size: "md"}) if @product_drive_participants.empty? %>
-              <%= download_button_to(product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Product Drive Participants", size: "md"}) if @product_drive_participants.any? %>
+              <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Product Drive Participants", size: "md"}) if @products.participants.empty? %>
+              <%= download_button_to(product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Product Drive Participants", size: "md"}) if @products.participants.any? %>
 
               <%= new_button_to new_product_drive_participant_path, text: "New Product Drive Participant" %>
             </div>
@@ -64,7 +94,7 @@
               </tr>
               </thead>
               <tbody>
-              <%= render partial: "product_drive_participant_row", collection: @product_drive_participants %>
+              <%= render partial: "product_drive_participant_row", collection: @products.participants %>
               </tbody>
             </table>
           </div>
