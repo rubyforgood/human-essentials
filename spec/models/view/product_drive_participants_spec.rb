@@ -1,4 +1,6 @@
 RSpec.describe View::ProductDriveParticipants do
+  # filtering logic is covered by the ProductDriveParticipant model and ProductDriveParticipants request specs
+
   describe "selected filter params" do
     it "returns the given filter params" do
       organization = build(:organization)

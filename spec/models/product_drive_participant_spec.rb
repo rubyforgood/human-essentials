@@ -19,6 +19,8 @@
 RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 
+  it { expect(ProductDriveParticipant).to respond_to :class_filter }
+
   context "Validations" do
     it "is invalid unless it has either a phone number or an email" do
       expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry")).not_to be_valid
