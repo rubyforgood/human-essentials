@@ -143,6 +143,15 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
 
+        it "keeps its label after the modal is dismissed" do
+          expect(page).to have_select("partner_id")
+          within("#newRequest") { find("button[aria-label='Close']").click }
+
+          trigger = find("a[href='#newRequest']")
+          expect(trigger).to have_text("New Quantity Request")
+          expect(trigger).to have_no_text("Please wait...")
+        end
+
         context "selecting a partner" do
           it "redirects to new partner request page" do
             select(partner1.name, from: "partner_id")

@@ -137,5 +137,38 @@ RSpec.describe UiHelper, type: :helper do
       end
     end
   end
-end
 
+  describe 'modal_button_to' do
+    context 'with default options' do
+      subject { helper.modal_button_to("#newRequest", text: "New Quantity Request", icon: "plus", type: "success") }
+
+      it 'renders a link that toggles the Bootstrap modal' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button).to_not be_nil
+        expect(button.attributes["href"].value).to eq("#newRequest")
+        expect(button.attributes["data-bs-toggle"].value).to eq("modal")
+        expect(button.attributes["class"].value).to include("btn btn-success")
+        expect(button.text.strip).to eq("New Quantity Request")
+      end
+
+      # Regression test for #5632: a modal-toggle button never navigates, so it must not carry
+      # rails-ujs' `data-disable-with` attribute, otherwise it stays stuck on "Please wait..."
+      # after the modal is dismissed.
+      it 'does not set data-disable-with' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button.attributes["data-disable-with"]).to be_nil
+      end
+    end
+
+    context 'when the caller passes custom data' do
+      subject { helper.modal_button_to("#newRequest", text: "New Quantity Request", data: {test: "test"}) }
+
+      it 'keeps the custom data and still omits data-disable-with' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button.attributes["data-test"].value).to eq("test")
+        expect(button.attributes["data-bs-toggle"].value).to eq("modal")
+        expect(button.attributes["data-disable-with"]).to be_nil
+      end
+    end
+  end
+end
