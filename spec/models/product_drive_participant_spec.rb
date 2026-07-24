@@ -19,6 +19,17 @@
 RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 
+  describe "encrypts phone and email at rest" do
+    let(:participant) { create(:product_drive_participant, phone: "555-123-4567", email: "person@example.com") }
+
+    it "stores phone and email as ciphertext but round-trips them" do
+      expect(participant.reload.phone).to eq("555-123-4567")
+      expect(participant.email).to eq("person@example.com")
+      expect(participant.ciphertext_for(:phone)).not_to include("555-123-4567")
+      expect(participant.ciphertext_for(:email)).not_to include("person@example.com")
+    end
+  end
+
   context "Validations" do
     it "is invalid unless it has either a phone number or an email" do
       expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry")).not_to be_valid

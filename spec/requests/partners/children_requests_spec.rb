@@ -57,5 +57,26 @@ RSpec.describe "/partners/children", type: :request do
       CSV
       expect(response.body).to eq(csv)
     end
+
+    # date_of_birth is encrypted (non-deterministic) => SQL ORDER BY sorts ciphertext.
+    # The controller must sort by the decrypted date in Ruby instead.
+    describe "sorting by the encrypted date_of_birth" do
+      let!(:child_no_dob) do
+        create(:partners_child, first_name: "Nodob", last_name: "Smith", date_of_birth: nil, family: family)
+      end
+
+      it "sorts ascending by actual date, with nils last" do
+        get partners_children_path(sort: "date_of_birth", direction: "asc")
+        body = response.body
+        expect(body.index("Jane")).to be < body.index("John")   # 2018 before 2019
+        expect(body.index("John")).to be < body.index("Nodob")  # nil date last
+      end
+
+      it "sorts descending by actual date" do
+        get partners_children_path(sort: "date_of_birth", direction: "desc")
+        body = response.body
+        expect(body.index("John")).to be < body.index("Jane")   # 2019 before 2018
+      end
+    end
   end
 end

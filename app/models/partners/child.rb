@@ -7,7 +7,7 @@
 #  archived             :boolean
 #  child_lives_with     :jsonb
 #  comments             :text
-#  date_of_birth        :date
+#  date_of_birth        :string
 #  first_name           :string
 #  gender               :string
 #  health_insurance     :jsonb
@@ -26,6 +26,9 @@ module Partners
     belongs_to :family
     has_many :child_item_requests, dependent: :destroy
     has_and_belongs_to_many :requested_items, class_name: 'Item'
+
+    attribute :date_of_birth, :date
+    encrypts :date_of_birth
 
     include Filterable
     include Exportable
