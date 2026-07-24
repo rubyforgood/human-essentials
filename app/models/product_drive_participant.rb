@@ -50,4 +50,8 @@ class ProductDriveParticipant < ApplicationRecord
 
     "#{contact_name} (participant)"
   end
+
+  def display_name
+    business_name.presence || contact_name
+  end
 end
