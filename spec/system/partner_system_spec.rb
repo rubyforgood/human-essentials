@@ -589,6 +589,29 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content(partner_user.name)
           expect(page).to have_content(partner_user.email)
         end
+
+        it 'checks an existing user when leaving the email field', js: true do
+          existing_user = create(:user, name: nil, email: "existing@example.com")
+          visit subject
+
+          fill_in "Email", with: existing_user.email
+          find_field("Email").send_keys(:tab)
+
+          expect(page).to have_content("This user already exists. The submitted name will only be used if their profile has no name yet.")
+          expect(page).to have_field("Name", disabled: false)
+        end
+
+        it 'keeps the name of an existing named user', js: true do
+          existing_user = create(:user, name: "Existing Name", email: "named@example.com")
+          visit subject
+
+          fill_in "Name", with: "Replacement Name"
+          fill_in "Email", with: existing_user.email
+          find_field("Email").send_keys(:tab)
+
+          expect(page).to have_content("This user already exists. The submitted name will only be used if their profile has no name yet.")
+          expect(page).to have_field("Name", with: "Replacement Name", disabled: false)
+        end
       end
 
       context "when partner has :awaiting_review status" do

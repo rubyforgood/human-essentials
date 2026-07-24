@@ -36,6 +36,23 @@ RSpec.describe PartnerUsersController, type: :request do
     end
   end
 
+  describe "GET #lookup" do
+    before do
+      sign_in(org_admin)
+    end
+
+    it "reports when a user already exists" do
+      existing_user = create(:user, name: nil, email: "existing@example.com")
+
+      get lookup_partner_users_path(
+        default_params.merge(partner_id: partner, email: existing_user.email.upcase)
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("exists" => true)
+    end
+  end
+
   describe "POST #create" do
     let(:valid_user_params) do
       {
