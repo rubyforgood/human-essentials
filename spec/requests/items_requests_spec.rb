@@ -361,7 +361,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('2348')
         expect(response.body).to include('Package Size')
         expect(response.body).to include('100')
-        expect(response.body).not_to include('Custom Units')
+        expect(response.body).to include('Custom Units')
         expect(response.body).not_to include("#ITEM1; ITEM2")
         expect(response.body).to include('Item is visible to partners')
         expect(response.body).to include('Yes')
