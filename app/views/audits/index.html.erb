@@ -47,7 +47,7 @@
                 <%= clear_filter_button %>
 
                 <span class="float-right">
-                  <%= download_button_to(audits_path(format: :csv), {text: "Export Audits", size: "md"}) %>
+                  <%= download_button_to(audits_path(format: :csv), {text: "Export Audits", size: "md", data: {controller: "csv-download-button", disable_with: nil}}) %>
                   <%= new_button_to new_audit_path, {text: "New Audit"} %>
                 </span>
             <% end # form %>
