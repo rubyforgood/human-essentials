@@ -48,11 +48,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
         end
       end
 
-      context 'when custom request units are specified and enabled' do
-        before do
-          Flipper.enable(:enable_packs)
-        end
-
+      context 'when custom request units are specified' do
         it 'returns the names of items correctly' do
           expect(subject.keys).to eq([
             "item_name_0",
