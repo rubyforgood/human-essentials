@@ -73,16 +73,14 @@ module Exports
         if item_request.item
           item = item_request.item
           item_names << item.name
-          if Flipper.enabled?(:enable_packs)
-            item.request_units.each do |unit|
-              item_names << "#{item.name} - #{unit.name.pluralize}"
-            end
+          item.request_units.each do |unit|
+            item_names << "#{item.name} - #{unit.name.pluralize}"
+          end
 
-            # It's possible that the unit is no longer valid, so we'd
-            # add that individually
-            if item_request.request_unit.present?
-              item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
-            end
+          # It's possible that the unit is no longer valid, so we'd
+          # add that individually
+          if item_request.request_unit.present?
+            item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
           end
         end
       end

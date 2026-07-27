@@ -1111,8 +1111,6 @@ end
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
-Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
-Flipper.enable(:enable_packs)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------

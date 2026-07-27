@@ -108,40 +108,20 @@ describe PicklistsPdf do
     end
   end
 
-  context "When packs are not enabled" do
-    specify "#data_no_units" do
-      request = create(:request, :pending, organization: organization)
-      create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5)
-      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
-      pdf = described_class.new(organization, [request])
-      data = pdf.data_no_units(request.item_requests)
+  specify "#data_with_units" do
+    item_with_units = create(:item, name: "Item with units", organization: organization)
+    create(:item_unit, item: item_with_units, name: "Pack")
+    request = create(:request, :pending, organization: organization)
+    create(:item_request, request: request, item: item_with_units, name: "Item with units", request_unit: "Pack", quantity: 5)
+    create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
+    pdf = described_class.new(organization, [request])
+    data = pdf.data_with_units(request.item_requests)
 
-      expect(data).to eq([
-        ["Items Requested", "Quantity", "[X]", "Differences / Comments"],
-        ["Item 1", "5", "[  ]", ""],
-        ["Item 2", "10", "[  ]", ""]
-      ])
-    end
-  end
-
-  context "When packs are enabled" do
-    before { Flipper.enable(:enable_packs) }
-
-    specify "#data_with_units" do
-      item_with_units = create(:item, name: "Item with units", organization: organization)
-      create(:item_unit, item: item_with_units, name: "Pack")
-      request = create(:request, :pending, organization: organization)
-      create(:item_request, request: request, item: item_with_units, name: "Item with units", request_unit: "Pack", quantity: 5)
-      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
-      pdf = described_class.new(organization, [request])
-      data = pdf.data_with_units(request.item_requests)
-
-      expect(data).to eq([
-        ["Items Requested", "Quantity", "Unit (if applicable)", "[X]", "Differences / Comments"],
-        ["Item with units", "5", "Packs", "[  ]", ""],
-        ["Item 2", "10", nil, "[  ]", ""]
-      ])
-    end
+    expect(data).to eq([
+      ["Items Requested", "Quantity", "Unit (if applicable)", "[X]", "Differences / Comments"],
+      ["Item with units", "5", "Packs", "[  ]", ""],
+      ["Item 2", "10", nil, "[  ]", ""]
+    ])
   end
 
   describe "picklist pdf output" do
@@ -150,18 +130,12 @@ describe PicklistsPdf do
       begin
         # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
-        # => Flipper.enable(:enable_packs)
         # => PDFComparisonTestFactory.create_comparison_pdfs
         expect(pdf_file).to eq(IO.binread(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
         Rails.root.join("tmp", "failed_match_picklist_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
         raise e.class, "PDF does not match, written to tmp/", cause: nil
       end
-    end
-
-    # The generated PDFs (PDFs to use for comparison) are expecting the packs feature to be enabled.
-    before(:each) do
-      Flipper.enable(:enable_packs)
     end
 
     let(:storage_creation) { PDFComparisonTestFactory.create_organization_storage_items }
