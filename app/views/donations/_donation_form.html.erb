@@ -40,7 +40,7 @@
       </div>
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :product_drive_participant,
-                          collection: @product_drive_participants,
+                          collection: @product_drive_participants.sort_by { |x| x.business_name.upcase + x.contact_name.upcase },
                           selected: donation_form.product_drive_participant_id,
                           include_blank: true,
                           label_method: lambda { |x| "#{x.try(:business_name).presence || x.try(:contact_name)}" },

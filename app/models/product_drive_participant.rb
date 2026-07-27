@@ -29,7 +29,7 @@ class ProductDriveParticipant < ApplicationRecord
   validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |pdp| pdp.contact_name.blank? }
   validates :comment, length: { maximum: 500 }
 
-  scope :alphabetized, -> { order(:contact_name) }
+  scope :alphabetized, -> { order(:business_name) }
   scope :with_volumes, -> {
     left_joins(donations: :line_items)
       .select("product_drive_participants.*, SUM(COALESCE(line_items.quantity, 0)) AS volume")
