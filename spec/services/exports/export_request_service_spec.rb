@@ -112,306 +112,162 @@ RSpec.describe Exports::ExportRequestService do
     described_class.new(Request.all, org).generate_csv_data
   end
 
-  context "with custom units feature enabled" do
-    before do
-      Flipper.enable(:enable_packs)
+  describe ".generate_csv_data" do
+    it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
+      expect(subject.first).to eq([
+        "Date",
+        "Requestor",
+        "Type",
+        "Status",
+        "2T Diapers -- UPDATED",
+        "3T Diapers",
+        "4T Diapers",
+        "4T Diapers - packs",
+        "apple",
+        "Banana",
+        "Inactive Item",
+        "Unrequested Item",
+        "Zebra",
+        "<DELETED_ITEMS>"
+      ])
     end
 
-    describe ".generate_csv_data" do
-      it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
-        expect(subject.first).to eq([
-          "Date",
-          "Requestor",
-          "Type",
-          "Status",
-          "2T Diapers -- UPDATED",
-          "3T Diapers",
-          "4T Diapers",
-          "4T Diapers - packs",
-          "apple",
-          "Banana",
-          "Inactive Item",
-          "Unrequested Item",
-          "Zebra",
-          "<DELETED_ITEMS>"
-        ])
-      end
-
-      it "includes rows for each request" do
-        expect(subject.count).to eq(8)
-      end
-
-      it "has expected data for the 3T Diapers request" do
-        expect(subject).to include([
-          request_3t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Child",
-          "Started",
-          0,   # 2T Diapers
-          150, # 3T Diapers
-          0,   # 4T Diapers
-          0,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the 2T Diapers request" do
-        expect(subject).to include([
-          request_2t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Individual",
-          "Fulfilled",
-          100, # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          0,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the request with deleted items" do
-        expect(subject).to include([
-          request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          nil,
-          "Fulfilled",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          0,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          400  # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the request with multiple items" do
-        expect(subject).to include([
-          request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          nil,
-          "Started",
-          3,   # 2T Diapers
-          2,   # 3T Diapers
-          0,   # 4T Diapers
-          4,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the request with 4T diapers without pack unit" do
-        expect(subject).to include([
-          request_4t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Quantity",
-          "Started",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          77,  # 4T Diapers
-          0,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the request with 4T diapers with pack unit" do
-        expect(subject).to include([
-          request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Quantity",
-          "Started",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          1,   # 4T Diapers - packs
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data even when the unit was deleted" do
-        item_4t.request_units.destroy_all
-        expect(subject).to include([
-          request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Quantity",
-          "Started",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          1, # 4T Diapers - packs
-          0, # apple
-          0, # Banana
-          0, # Inactive Item
-          0, # Unrequested Item
-          0, # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-    end
-  end
-
-  context "with custom units feature disabled" do
-    before do
-      Flipper.disable(:enable_packs)
+    it "includes rows for each request" do
+      expect(subject.count).to eq(8)
     end
 
-    describe ".generate_csv_data" do
-      it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
-        expect(subject.first).to eq([
-          "Date",
-          "Requestor",
-          "Type",
-          "Status",
-          "2T Diapers -- UPDATED",
-          "3T Diapers",
-          "4T Diapers",
-          "apple",
-          "Banana",
-          "Inactive Item",
-          "Unrequested Item",
-          "Zebra",
-          "<DELETED_ITEMS>"
-        ])
-      end
+    it "has expected data for the 3T Diapers request" do
+      expect(subject).to include([
+        request_3t.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        "Child",
+        "Started",
+        0,   # 2T Diapers
+        150, # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      it "includes rows for each request" do
-        expect(subject.count).to eq(8)
-      end
+    it "has expected data for the 2T Diapers request" do
+      expect(subject).to include([
+        request_2t.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        "Individual",
+        "Fulfilled",
+        100, # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      it "has expected data for the 3T Diapers request" do
-        expect(subject).to include([
-          request_3t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Child",
-          request_3t.status.humanize,
-          0,   # 2T Diapers
-          150, # 3T Diapers
-          0,   # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
+    it "has expected data for the request with deleted items" do
+      expect(subject).to include([
+        request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        nil,
+        "Fulfilled",
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        400  # <DELETED_ITEMS>
+      ])
+    end
 
-      it "has expected data for the 2T Diapers request" do
-        expect(subject).to include([
-          request_2t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Individual",
-          "Fulfilled",
-          100, # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
+    it "has expected data for the request with multiple items" do
+      expect(subject).to include([
+        request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        nil,
+        "Started",
+        3,   # 2T Diapers
+        2,   # 3T Diapers
+        0,   # 4T Diapers
+        4,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      it "has expected data for the request with deleted items" do
-        expect(subject).to include([
-          request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          nil,
-          "Fulfilled",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          0,   # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          400  # <DELETED_ITEMS>
-        ])
-      end
+    it "has expected data for the request with 4T diapers without pack unit" do
+      expect(subject).to include([
+        request_4t.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        "Quantity",
+        "Started",
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        77,  # 4T Diapers
+        0,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      it "has expected data for the request with multiple items" do
-        expect(subject).to include([
-          request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          nil,
-          "Started",
-          3,   # 2T Diapers
-          2,   # 3T Diapers
-          4,   # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
+    it "has expected data for the request with 4T diapers with pack unit" do
+      expect(subject).to include([
+        request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        "Quantity",
+        "Started",
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        1,   # 4T Diapers - packs
+        0,   # apple
+        0,   # Banana
+        0,   # Inactive Item
+        0,   # Unrequested Item
+        0,   # Zebra
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      it "has expected data for the request with 4T diapers without pack unit" do
-        expect(subject).to include([
-          request_4t.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Quantity",
-          "Started",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          77,  # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
-
-      it "has expected data for the request with 4T diapers with pack unit" do
-        expect(subject).to include([
-          request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
-          "Howdy Partner",
-          "Quantity",
-          "Started",
-          0,   # 2T Diapers
-          0,   # 3T Diapers
-          1,   # 4T Diapers
-          0,   # apple
-          0,   # Banana
-          0,   # Inactive Item
-          0,   # Unrequested Item
-          0,   # Zebra
-          0    # <DELETED_ITEMS>
-        ])
-      end
+    it "has expected data even when the unit was deleted" do
+      item_4t.request_units.destroy_all
+      expect(subject).to include([
+        request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
+        "Howdy Partner",
+        "Quantity",
+        "Started",
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        1, # 4T Diapers - packs
+        0, # apple
+        0, # Banana
+        0, # Inactive Item
+        0, # Unrequested Item
+        0, # Zebra
+        0    # <DELETED_ITEMS>
+      ])
     end
   end
 end

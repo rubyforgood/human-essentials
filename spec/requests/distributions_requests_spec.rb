@@ -452,10 +452,6 @@ RSpec.describe "Distributions", type: :request do
       end
 
       context 'with units' do
-        before(:each) do
-          Flipper.enable(:enable_packs)
-        end
-
         it 'should behave correctly' do
           get new_distribution_path(default_params)
           expect(response).to be_successful
@@ -907,7 +903,6 @@ RSpec.describe "Distributions", type: :request do
           ]
         }
         before(:each) do
-          Flipper.enable(:enable_packs)
           create(:line_item, itemizable: distribution, item_id: items[0].id, quantity: 25)
           create(:line_item, itemizable: distribution, item_id: items[2].id, quantity: 10)
         end
