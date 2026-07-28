@@ -49,7 +49,7 @@ describe DistributionPdf do
     context "with request data" do
       describe "#hide_columns" do
         context "when enable_packs is enabled" do
-          it "hides value and package columns when true on organization" do
+          it "hides value and package columns when true on organization, and includes the request unit info" do
             Flipper.enable(:enable_packs)
 
             pdf = described_class.new(org_hiding_packages_and_values, distribution)

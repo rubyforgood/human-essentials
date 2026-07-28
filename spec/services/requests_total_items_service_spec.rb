@@ -33,6 +33,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
         context 'when the items have request units' do
           it 'return items with correct quantities calculated, grouped by packs' do
             Flipper.enable(:enable_packs)
+
             requests = [
               create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20, "request_unit" => "bundle"} }),
               create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10, "request_unit" => "bundle" } }),
@@ -59,6 +60,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
         context 'when the items have request units' do
           it 'return items with correct quantities calculated, grouped by packs' do
             Flipper.disable(:enable_packs)
+
             requests = [
               create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20, "request_unit" => "bundle"} }),
               create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10, "request_unit" => "bundle" } }),
@@ -118,6 +120,8 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       context 'when enable_packs is enabled' do
         context 'when the request unit is present' do
           it 'returns item with correct quantity calculated' do
+            Flipper.enable(:enable_packs)
+
             item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
             request = create(
               :request,
@@ -126,14 +130,14 @@ RSpec.describe RequestsTotalItemsService, type: :service do
             )
             item.destroy
 
-            Flipper.enable(:enable_packs)
-
             expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper - packs" => 10})
           end
         end
 
         context 'when the request unit is not present' do
           it 'returns item with correct quantity calculated, without the request unit' do
+            Flipper.enable(:enable_packs)
+
             item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
             request = create(
               :request,
@@ -141,8 +145,6 @@ RSpec.describe RequestsTotalItemsService, type: :service do
               request_items: [{"item_id" => item.id, "quantity" => 10}]
             )
             item.destroy
-
-            Flipper.enable(:enable_packs)
 
             expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper" => 10})
           end
@@ -152,6 +154,8 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       context 'when enable_packs is disabled' do
         context 'when the request unit is present' do
           it 'returns item with correct quantity calculated, without the request unit' do
+            Flipper.disable(:enable_packs)
+
             item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
             request = create(
               :request,
@@ -160,14 +164,14 @@ RSpec.describe RequestsTotalItemsService, type: :service do
             )
             item.destroy
 
-            Flipper.disable(:enable_packs)
-
             expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper" => 10})
           end
         end
 
         context 'when the request unit is not present' do
           it 'returns item with correct quantity calculated, without the request unit' do
+            Flipper.disable(:enable_packs)
+
             item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
             request = create(
               :request,
@@ -175,8 +179,6 @@ RSpec.describe RequestsTotalItemsService, type: :service do
               request_items: [{"item_id" => item.id, "quantity" => 10}]
             )
             item.destroy
-
-            Flipper.disable(:enable_packs)
 
             expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper" => 10})
           end

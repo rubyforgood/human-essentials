@@ -29,6 +29,8 @@ RSpec.describe ItemCreateService, type: :service do
     context 'when enable_packs is disabled' do
       context 'when there are no issues' do
         it 'should return a result object with success? returning true and the item' do
+          Flipper.disable(:enable_packs)
+
           expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(true)
           expect(subject.value).to eq(fake_organization_item)
@@ -43,6 +45,8 @@ RSpec.describe ItemCreateService, type: :service do
           end
 
           it 'should return a result object with an ActiveRecord::RecordNotFound error' do
+            Flipper.disable(:enable_packs)
+
             expect(subject).to be_a_kind_of(Result)
             expect(subject.success?).to eq(false)
             expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
