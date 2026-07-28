@@ -81,6 +81,8 @@ RSpec.describe Partners::ItemRequest, type: :model do
     context 'when enable_packs is disabled' do
       context 'when there is a request unit' do
         it 'returns only the quantity' do
+          Flipper.disable(:enable_packs)
+
           item = create(:item, organization: organization)
           create(:item_unit, item:, name: 'flat')
           request = create(:request, organization: organization)
@@ -92,6 +94,8 @@ RSpec.describe Partners::ItemRequest, type: :model do
 
       context 'when there is no request unit' do
         it 'returns only the quantity' do
+          Flipper.disable(:enable_packs)
+
           item = create(:item, organization: organization)
           create(:item_unit, item:, name: 'flat')
           request = create(:request, organization: organization)
@@ -135,6 +139,8 @@ RSpec.describe Partners::ItemRequest, type: :model do
     context 'when enable_packs is disabled' do
       context 'when there is a request unit' do
         it 'returns only the item_name' do
+          Flipper.disable(:enable_packs)
+
           item = create(:item, organization: organization, name: 'Item name')
           create(:item_unit, item:, name: 'flat')
           request = create(:request, organization: organization)
@@ -146,6 +152,8 @@ RSpec.describe Partners::ItemRequest, type: :model do
 
       context 'when there is no request unit' do
         it 'returns only the item_name' do
+          Flipper.disable(:enable_packs)
+
           item = create(:item, organization: organization, name: 'Item name')
           create(:item_unit, item:, name: 'flat')
           request = create(:request, organization: organization)
