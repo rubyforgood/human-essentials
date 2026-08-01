@@ -4,7 +4,14 @@ export default class extends Controller {
   static targets = ["email", "name", "message"]
   static values = { lookupUrl: String }
 
+  disconnect() {
+    this.abortController?.abort()
+  }
+
   async lookup() {
+    this.abortController?.abort()
+    this.abortController = new AbortController()
+
     const email = this.emailTarget.value.trim()
 
     if (email === "") {
@@ -14,7 +21,8 @@ export default class extends Controller {
 
     try {
       const response = await fetch(`${this.lookupUrlValue}?email=${encodeURIComponent(email)}`, {
-        headers: { "Accept": "application/json" }
+        headers: { "Accept": "application/json" },
+        signal: this.abortController.signal
       })
       if (!response.ok || this.emailTarget.value.trim() !== email) return
 
@@ -23,10 +31,10 @@ export default class extends Controller {
         this.resetNameField()
       } else {
         this.nameTarget.disabled = false
-        this.messageTarget.textContent = "This user already exists. The submitted name will only be used if their profile has no name yet."
+        this.messageTarget.textContent = "This user already exists. Their current profile name will be kept; the submitted name is used only if their profile has no name yet."
       }
-    } catch (_error) {
-      this.resetNameField()
+    } catch (error) {
+      if (error.name !== "AbortError") this.messageTarget.textContent = ""
     }
   }
 

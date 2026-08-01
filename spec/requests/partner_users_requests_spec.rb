@@ -51,6 +51,15 @@ RSpec.describe PartnerUsersController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to eq("exists" => true)
     end
+
+    it "reports when a user does not exist" do
+      get lookup_partner_users_path(
+        default_params.merge(partner_id: partner, email: "missing@example.com")
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("exists" => false)
+    end
   end
 
   describe "POST #create" do
