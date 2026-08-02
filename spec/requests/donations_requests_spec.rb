@@ -69,7 +69,9 @@ RSpec.describe "Donations", type: :request do
         end
 
         context "when given a misc donation" do
-          let(:full_comment) { Faker::Lorem.paragraph }
+          # Comment must be longer than the 140 characters the Comments column
+          # truncates at, so that asserting the full comment is absent is meaningful.
+          let(:full_comment) { Faker::Lorem.paragraph_by_chars(number: 200) }
           let(:donation) { create(:donation, source: "Misc. Donation", comment: full_comment) }
 
           it "should display Misc Donation and a truncated comment" do
@@ -235,6 +237,34 @@ RSpec.describe "Donations", type: :request do
         page = Nokogiri::HTML(response.body)
         pdf = page.at_css("a[href*='#{print_donation_path(id: donation.id)}']")
         expect(pdf.text).to include("Print")
+      end
+
+      context "with a donation from a product drive participant" do
+        let(:participant) do
+          create(:product_drive_participant, business_name: "Acme Diaper Drive", organization: organization)
+        end
+        let!(:donation) do
+          create(:product_drive_donation, :with_items, item: item, product_drive_participant: participant, organization: organization)
+        end
+
+        it "shows the participant in the Drive Participant column" do
+          get donation_path(id: donation.id)
+          page = Nokogiri::HTML(response.body)
+          headers = page.at_css("table thead").css("th").map(&:text)
+          cells = page.at_css("table tbody").css("td").map(&:text)
+          expect(headers.index("Drive Participant")).to eq(headers.index("Donation Site") + 1)
+          expect(cells[headers.index("Drive Participant")]).to eq("Acme Diaper Drive")
+        end
+      end
+
+      context "with a donation that has no product drive participant" do
+        it "shows N/A in the Drive Participant column" do
+          get donation_path(id: donation.id)
+          page = Nokogiri::HTML(response.body)
+          headers = page.at_css("table thead").css("th").map(&:text)
+          cells = page.at_css("table tbody").css("td").map(&:text)
+          expect(cells[headers.index("Drive Participant")]).to eq("N/A")
+        end
       end
 
       it "shows an enabled edit button" do

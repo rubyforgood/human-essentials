@@ -21,6 +21,10 @@ module DonationsHelper
     current_organization.product_drives.within_date_range(formatted_range).count
   end
 
+  def drive_participant_view(donation)
+    donation.product_drive_participant.nil? ? "N/A" : donation.product_drive_participant.display_name
+  end
+
   def options_with_new(records)
     model_class = records.klass
     label = "---Create New #{model_class.model_name.human}---"

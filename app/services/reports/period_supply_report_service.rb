@@ -118,7 +118,7 @@ module Reports
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND items.kit_id IS NOT NULL
+          AND items.type = 'Kit'
           AND kit_items.reporting_category IN ('pads', 'tampons', 'period_liners', 'period_underwear', 'period_other')
           AND kit_line_items.itemizable_type = 'Item';
       SQL
