@@ -323,7 +323,7 @@ GEM
       logger
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    icalendar (2.12.1)
+    icalendar (2.12.3)
       base64
       ice_cube (~> 0.16)
       logger
