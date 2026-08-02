@@ -249,6 +249,145 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.longitude).not_to eq(nil)
       end
     end
+
+    describe "to_csv" do
+      let(:organization) { create(:organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:item1) { create(:item, name: "Item 1", organization: organization) }
+      let(:item2) { create(:item, name: "Item 2", organization: organization) }
+      let(:item3) { create(:item, name: "Item 3", organization: organization) }
+
+      before do
+        # Create items in the organization
+        [item1, item2, item3]
+      end
+
+      it "generates a CSV with the correct headers and data" do
+        csv_data = storage_location.to_csv
+        parsed_csv = CSV.parse(csv_data, headers: true)
+
+        # Check headers
+        expect(parsed_csv.headers).to eq(["Quantity", "DO NOT CHANGE ANYTHING IN THIS COLUMN"])
+
+        # Check data rows
+        expect(parsed_csv.count).to eq(3) # One row per item
+        expect(parsed_csv.map { |row| row["DO NOT CHANGE ANYTHING IN THIS COLUMN"] }).to match_array([item1.name, item2.name, item3.name])
+        expect(parsed_csv.map { |row| row["Quantity"] }).to all(eq(""))
+      end
+
+      it "includes all organization items in the CSV" do
+        csv_data = storage_location.to_csv
+        parsed_csv = CSV.parse(csv_data, headers: true)
+
+        # Get all item names from the CSV
+        csv_item_names = parsed_csv.map { |row| row["DO NOT CHANGE ANYTHING IN THIS COLUMN"] }
+
+        # Check that all organization items are included
+        expect(csv_item_names).to match_array(organization.items.pluck(:name))
+      end
+
+      it "generates a valid CSV string" do
+        csv_data = storage_location.to_csv
+
+        # Verify it's a valid CSV string
+        expect { CSV.parse(csv_data) }.not_to raise_error
+
+        # Verify it has the correct number of lines (header + items)
+        expect(csv_data.lines.count).to eq(organization.items.count + 1)
+      end
+    end
+
+    describe "generate_csv_from_inventory" do
+      let(:organization) { create(:organization) }
+      let(:storage_location1) {
+        create(:storage_location, name: "Location 1", address: "100 Test St", square_footage: 500,
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES[0], organization: organization)
+      }
+      let(:storage_location2) {
+        create(:storage_location, name: "Location 2", address: "200 Test St", square_footage: 600,
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES[1], organization: organization)
+      }
+      let(:item1) { create(:item, name: "Item 1", value_in_cents: 100, organization: organization) }
+      let(:item2) { create(:item, name: "Item 2", value_in_cents: 200, organization: organization) }
+      let(:item3) { create(:item, name: "Item 3", value_in_cents: 300, organization: organization) }
+      let(:inventory) { View::Inventory.new(organization.id) }
+
+      before do
+        # Create inventory for both storage locations
+        TestInventory.create_inventory(organization, {
+          storage_location1.id => {
+            item1.id => 10,
+            item2.id => 20
+          },
+          storage_location2.id => {
+            item2.id => 30,
+            item3.id => 40
+          }
+        })
+      end
+
+      def expected_csv(fixture_name)
+        Rails.root.join("spec/fixtures/files", fixture_name).read
+      end
+
+      it "generates CSV with correct headers and data" do
+        csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+
+        expect(csv_data).to eq(expected_csv("storage_locations_export.csv"))
+      end
+
+      context "when an organization's item exists but isn't in any storage location" do
+        it "includes the unused item as a column with 0 quantities" do
+          create(:item, name: "Unused Item", organization: organization)
+
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+
+          expect(csv_data).to eq(expected_csv("storage_locations_export_with_unused_item.csv"))
+        end
+      end
+
+      context "when an organization's item is inactive" do
+        it "includes the inactive item as a column with 0 quantities" do
+          create(:item, name: "Inactive Item", active: false, organization: organization)
+
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+
+          expect(csv_data).to eq(expected_csv("storage_locations_export_with_inactive_item.csv"))
+        end
+
+        context "when inactive item has the same name as an inventoried item" do
+          it "includes the inventory data from the active item without duplicating the column" do
+            # Item validates name uniqueness case-insensitively, but legacy
+            # duplicates exist in production data, so bypass validation.
+            build(:item, name: "Item 1", active: false, organization: organization).save!(validate: false)
+
+            csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+
+            expect(csv_data).to eq(expected_csv("storage_locations_export.csv"))
+          end
+        end
+      end
+
+      context "when items have different cases" do
+        let(:storage_location3) {
+          create(:storage_location, name: "Location 3", address: "300 Test St", square_footage: 700,
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES[3], organization: organization)
+        }
+
+        it "sorts item columns case-insensitively, ASC" do
+          # Create the extra items in reverse-ASCII order to prove the sort is
+          # case-insensitive rather than relying on creation order or ASCII
+          # order (which would put "Zebra" before "apple").
+          create(:item, name: "apple", organization: organization)
+          create(:item, name: "Zebra", organization: organization)
+          create(:item, name: "Banana", organization: organization)
+
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location3], inventory, organization)
+
+          expect(csv_data).to eq(expected_csv("storage_locations_export_case_insensitive_sort.csv"))
+        end
+      end
+    end
   end
 
   describe "versioning" do
