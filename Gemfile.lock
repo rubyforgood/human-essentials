@@ -569,7 +569,7 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-erd (2.0.2)
+    rails-erd (2.1.0)
       activerecord (>= 7.0)
       activesupport (>= 7.0)
       choice (~> 0.2.0)
