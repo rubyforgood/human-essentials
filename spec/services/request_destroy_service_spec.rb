@@ -1,8 +1,9 @@
 RSpec.describe RequestDestroyService, type: :service do
   describe '#call' do
-    subject { described_class.new(request_id: request_id).call }
+    subject { described_class.new(request_id: request_id, reason: reason).call }
     let(:request_id) { request.id }
     let(:request) { create(:request) }
+    let(:reason) { 'Partner no longer needs these items' }
 
     it 'should return an instance of itself' do
       expect(subject).to be_a_kind_of(RequestDestroyService)
@@ -26,6 +27,30 @@ RSpec.describe RequestDestroyService, type: :service do
       end
     end
 
+    context 'when the cancellation reason is blank' do
+      let(:reason) { '   ' }
+
+      it 'should not be successful and have errors indicating a reason is required' do
+        expect(subject.errors.full_messages).to eq(['a cancellation reason is required'])
+      end
+
+      it 'should have the same errors when no reason is given at all' do
+        svc = described_class.new(request_id: request_id).call
+
+        expect(svc.errors.full_messages).to eq(['a cancellation reason is required'])
+      end
+
+      it 'should not cancel the request' do
+        expect { subject }.not_to change { request.reload.discarded? }
+        expect(request.reload).to be_status_pending
+      end
+
+      it 'should not send a email notification to the partner' do
+        expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
+        subject
+      end
+    end
+
     context 'when there are no validation errors' do
       let(:fake_mailer) { double('fake_mailer', deliver_later: -> {}) }
       before do
@@ -38,6 +63,10 @@ RSpec.describe RequestDestroyService, type: :service do
 
       it 'should update the status column on the request' do
         expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
+      end
+
+      it 'should store the cancellation reason on the request' do
+        expect { subject }.to change { request.reload.discard_reason }.from(nil).to(reason)
       end
 
       it 'should send a email notification to the partner' do

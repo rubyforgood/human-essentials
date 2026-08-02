@@ -264,6 +264,24 @@ RSpec.describe "Requests", type: :system, js: true do
         expect(request.reload.discard_reason).to eq(reason)
       end
 
+      it 'should not submit the form until a reason is given' do
+        click_on 'Cancel'
+
+        # the browser blocks the submission while the required reason is empty
+        expect(page).to have_field('Cancellation reason *', valid: false)
+
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_field('Cancellation reason *')
+        expect(request.reload.discarded_at).to eq(nil)
+
+        fill_in 'Cancellation reason *', with: reason
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_content("Request #{request.id} has been removed")
+        expect(request.reload.discard_reason).to eq(reason)
+      end
+
       it 'should show the partners name, requesters email, request date, comments' do
         click_on 'Cancel'
 
