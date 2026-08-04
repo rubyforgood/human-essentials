@@ -706,8 +706,26 @@ RSpec.feature "Distributions", type: :system do
       expect(@request.distribution_id).to eq @distribution.id
       expect(@request).to be_status_fulfilled
     end
-  end
 
+    it "keeps the item dropdown within the form width when the window is narrowed" do
+      item_id = storage_location.items.first.id
+      request_items = [{ "item_id" => item_id, "quantity" => 10 }]
+      @request = create(:request, organization:, request_items:, partner:)
+      create(:item_request, request: @request, item_id:, quantity: 10)
+
+      visit request_path(id: @request.id)
+      click_on "Fulfill request"
+
+      expect(page).to have_css(".li-name .select2-container")
+
+      current_window.resize_to(600, 800)
+
+      dropdown_width = page.evaluate_script("document.querySelector('.li-name .select2-container').offsetWidth")
+      column_width = page.evaluate_script("document.querySelector('.li-name').offsetWidth")
+
+      expect(dropdown_width).to be <= column_width
+    end
+  end
   context "via barcode entry" do
     let(:existing_barcode) { create(:barcode_item, quantity: 50) }
     let(:item_with_barcode) { existing_barcode.item }
