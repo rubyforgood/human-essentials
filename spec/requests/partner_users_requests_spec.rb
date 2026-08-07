@@ -1,7 +1,7 @@
 # spec/requests/partner_users_controller_spec.rb
 
 RSpec.describe PartnerUsersController, type: :request do
-  let!(:partner) { create(:partner) } # Assuming you have a factory for creating partners
+  let!(:partner) { create(:partner, organization: organization) }
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:org_admin) { create(:organization_admin, organization: organization) }
@@ -49,7 +49,18 @@ RSpec.describe PartnerUsersController, type: :request do
       )
 
       expect(response).to have_http_status(:ok)
-      expect(response.parsed_body).to eq("exists" => true)
+      expect(response.parsed_body).to eq("exists" => true, "has_name" => false)
+    end
+
+    it "reports when an existing user has a name" do
+      existing_user = create(:user, name: "Existing Name", email: "named@example.com")
+
+      get lookup_partner_users_path(
+        default_params.merge(partner_id: partner, email: existing_user.email)
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("exists" => true, "has_name" => true)
     end
 
     it "reports when a user does not exist" do
@@ -58,7 +69,7 @@ RSpec.describe PartnerUsersController, type: :request do
       )
 
       expect(response).to have_http_status(:ok)
-      expect(response.parsed_body).to eq("exists" => false)
+      expect(response.parsed_body).to eq("exists" => false, "has_name" => false)
     end
   end
 

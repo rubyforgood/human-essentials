@@ -31,7 +31,9 @@ export default class extends Controller {
         this.resetNameField()
       } else {
         this.nameTarget.disabled = false
-        this.messageTarget.textContent = "This user already exists. Their current profile name will be kept; the submitted name is used only if their profile has no name yet."
+        this.messageTarget.textContent = user.has_name
+          ? "This user already exists. Their current profile name will be kept."
+          : "This user already exists. The submitted name will be used because their profile has no name yet."
       }
     } catch (error) {
       if (error.name !== "AbortError") this.messageTarget.textContent = ""

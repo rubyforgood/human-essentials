@@ -597,7 +597,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           fill_in "Email", with: existing_user.email
           find_field("Email").send_keys(:tab)
 
-          expect(page).to have_content("This user already exists. The submitted name will only be used if their profile has no name yet.")
+          expect(page).to have_content("This user already exists. The submitted name will be used because their profile has no name yet.")
           expect(page).to have_field("Name", disabled: false)
         end
 
@@ -609,7 +609,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           fill_in "Email", with: existing_user.email
           find_field("Email").send_keys(:tab)
 
-          expect(page).to have_content("This user already exists. The submitted name will only be used if their profile has no name yet.")
+          expect(page).to have_content("This user already exists. Their current profile name will be kept.")
           expect(page).to have_field("Name", with: "Replacement Name", disabled: false)
         end
       end

@@ -11,7 +11,7 @@ class PartnerUsersController < ApplicationController
 
   def lookup
     user = User.find_by("LOWER(email) = ?", params[:email].to_s.downcase)
-    render json: {exists: user.present?}
+    render json: {exists: user.present?, has_name: user&.name.present?}
   end
 
   def create
@@ -69,7 +69,7 @@ class PartnerUsersController < ApplicationController
   private
 
   def set_partner
-    @partner = Partner.find(params[:partner_id])
+    @partner = current_organization.partners.find(params[:partner_id])
   end
 
   def user_params
