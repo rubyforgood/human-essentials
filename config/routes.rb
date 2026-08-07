@@ -207,6 +207,9 @@ Rails.application.routes.draw do
 
   resources :partners do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
+      collection do
+        get :lookup
+      end
       member do
         post :resend_invitation
         post :reset_password

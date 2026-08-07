@@ -3,13 +3,28 @@
     <h3 class="card-title">Invite New User</h3>
   </div>
 
-  <%= simple_form_for user, url: partner_users_path(partner) do |f| %>
+  <%= simple_form_for user,
+    url: partner_users_path(partner),
+    html: {
+      data: {
+        controller: "existing-user",
+        existing_user_lookup_url_value: lookup_partner_users_path(partner)
+      }
+    } do |f| %>
     <div class="card-body">
       <div class="form-group">
-        <%= f.input :name, label: "Name", placeholder: "Name", required: true %>
+        <%= f.input :name, label: "Name", placeholder: "Name", required: true,
+          input_html: {data: {existing_user_target: "name"}} %>
       </div>
       <div class="form-group">
-        <%= f.input :email, label: "Email", placeholder: "Email", required: true %>
+        <%= f.input :email, label: "Email", placeholder: "Email", required: true,
+          input_html: {
+            data: {
+              existing_user_target: "email",
+              action: "blur->existing-user#lookup"
+            }
+          } %>
+        <small class="form-text text-muted" data-existing-user-target="message" role="status" aria-live="polite" aria-atomic="true"></small>
       </div>
     </div>
 
