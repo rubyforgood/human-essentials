@@ -766,9 +766,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             visit partners_path
 
             click_on 'Groups'
-            assert page.has_content? existing_partner_group.name, wait: page_content_wait
-
-            click_on 'Edit'
+            within '#nav-partner-groups', wait: page_content_wait do
+              assert page.has_content? existing_partner_group.name
+              click_on 'Edit'
+            end
             post_refresh
           end
 
