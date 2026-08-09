@@ -19,8 +19,9 @@
 class ProductDriveParticipant < ApplicationRecord
   has_paper_trail
   encrypts :phone, :email
-  include Provideable
+  include Filterable
   include Geocodable
+  include Provideable
 
   has_many :donations, inverse_of: :product_drive_participant, dependent: :destroy
 
@@ -31,6 +32,8 @@ class ProductDriveParticipant < ApplicationRecord
   validates :comment, length: { maximum: 500 }
 
   scope :alphabetized, -> { order(:contact_name) }
+  scope :by_business_name, ->(business_name) { where("business_name ILIKE ?", "%#{business_name}%") }
+  scope :by_contact_name, ->(contact_name) { where("contact_name ILIKE ?", "%#{contact_name}%") }
   scope :with_volumes, -> {
     left_joins(donations: :line_items)
       .select("product_drive_participants.*, SUM(COALESCE(line_items.quantity, 0)) AS volume")
