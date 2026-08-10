@@ -30,7 +30,27 @@ class ProductDriveParticipant < ApplicationRecord
   validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |pdp| pdp.contact_name.blank? }
   validates :comment, length: { maximum: 500 }
 
-  scope :alphabetized, -> { order(:contact_name) }
+  # Orders on the name the drop-downs actually show - `display_name`, which is
+  # `business_name` falling back to `contact_name` - rather than on the database
+  # collation, which is not the same everywhere: a `C.UTF-8` cluster puts every
+  # capitalised name before every lowercase one and the `en_US.utf8` image CI
+  # runs does not. Runs of digits are zero padded so that they compare by value
+  # and "Store 9" comes before "Store 10".
+  #
+  # Written as a literal because the schema is maintained as `schema.rb`, which
+  # carries neither a Postgres function nor an ICU collation - both would
+  # disappear on `db:schema:load`.
+  DISPLAY_NAME_ORDER = Arel.sql(<<~SQL.squish)
+    (SELECT string_agg(
+              CASE WHEN chunk[1] ~ '^[0-9]' THEN lpad(chunk[1], 20, '0') ELSE chunk[1] END,
+              '' ORDER BY idx)
+       FROM regexp_matches(
+              lower(coalesce(NULLIF(business_name, ''), contact_name, '')),
+              '[0-9]+|[^0-9]+', 'g')
+       WITH ORDINALITY AS chunks(chunk, idx))
+  SQL
+
+  scope :alphabetized, -> { order(DISPLAY_NAME_ORDER) }
   scope :by_business_name, ->(business_name) { where("business_name ILIKE ?", "%#{business_name}%") }
   scope :by_contact_name, ->(contact_name) { where("contact_name ILIKE ?", "%#{contact_name}%") }
   scope :with_volumes, -> {

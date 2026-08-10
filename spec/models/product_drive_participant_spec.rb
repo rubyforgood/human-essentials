@@ -71,6 +71,24 @@ RSpec.describe ProductDriveParticipant, type: :model do
         expect(ProductDriveParticipant.by_contact_name("Shellstrop")).to match_array([eleanor, donna])
       end
     end
+
+    describe ".alphabetized" do
+      it "orders by the name that is displayed, falling back to contact name" do
+        zebra = create(:product_drive_participant, business_name: "Zebra Foods", contact_name: "adam")
+        no_business = create(:product_drive_participant, business_name: nil, contact_name: "molly")
+        aardvark = create(:product_drive_participant, business_name: "Aardvark Supplies", contact_name: "zoe")
+
+        expect(ProductDriveParticipant.alphabetized).to eq([aardvark, no_business, zebra])
+      end
+
+      it "orders numbers by value rather than by digit" do
+        tenth = create(:product_drive_participant, business_name: "Store 10")
+        second = create(:product_drive_participant, business_name: "Store 2")
+        ninth = create(:product_drive_participant, business_name: "Store 9")
+
+        expect(ProductDriveParticipant.alphabetized).to eq([second, ninth, tenth])
+      end
+    end
   end
 
   context "Methods" do
