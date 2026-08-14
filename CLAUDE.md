@@ -22,6 +22,14 @@ bundle exec rspec spec/models/item_spec.rb:42  # Run a single test at line
 bundle exec rspec spec/models/                 # Run a directory of tests
 ```
 
+### Quality gate
+**Run the quality gate before committing.** Run `bin/rake quality:local` while iterating and `bin/rake quality` (full, includes mutation testing) before declaring a task complete. Do not commit if any gate fails. Report the gate numbers in your response so regressions are visible.
+
+```bash
+bundle exec rake quality:local   # Fast local gate (~15s, no mutation)
+bundle exec rake quality         # Full gate, includes mutation testing
+```
+
 CI splits tests into two workflows: `rspec` (unit tests, excludes system/request specs) and `rspec-system` (system and request specs only, 6 parallel nodes). System tests use Capybara with Cuprite (headless Chrome).
 
 ### Linting

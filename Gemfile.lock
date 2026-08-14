@@ -295,6 +295,10 @@ GEM
       rack-protection (>= 1.5.3, < 5.0.0)
       rack-session (>= 1.0.2, < 3.0.0)
       sanitize (< 8)
+    flog (4.9.4)
+      path_expander (~> 2.0)
+      prism (~> 1.7)
+      sexp_processor (~> 4.8)
     foreman (0.90.0)
       thor (~> 1.4)
     formatador (1.1.0)
@@ -402,7 +406,6 @@ GEM
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
@@ -422,6 +425,17 @@ GEM
     multipart-post (2.4.1)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
+    mutant (0.16.3)
+      diff-lcs (>= 1.6, < 3)
+      irb (~> 1.15)
+      parser (~> 3.3.10)
+      regexp_parser (~> 2.10)
+      securerandom (>= 0.3)
+      sorbet-runtime (~> 0.6.0)
+      unparser (>= 0.8.2, < 0.10)
+    mutant-rspec (0.16.3)
+      mutant (= 0.16.3)
+      rspec-core (>= 3.8.0, < 5.0.0)
     nenv (0.3.0)
     net-http-persistent (4.0.8)
       connection_pool (>= 2.2.4, < 4)
@@ -437,9 +451,6 @@ GEM
     newrelic_rpm (10.6.0)
       logger
     nio4r (2.7.5)
-    nokogiri (1.19.4)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-darwin)
@@ -484,6 +495,7 @@ GEM
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
+    path_expander (2.0.1)
     pdf-core (0.9.0)
     pdf-reader (2.15.1)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
@@ -668,6 +680,7 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.4.1)
+    sexp_processor (4.17.5)
     shellany (0.0.1)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
@@ -696,6 +709,7 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
+    sorbet-runtime (0.6.13426)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -741,6 +755,10 @@ GEM
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
     uniform_notifier (1.18.0)
+    unparser (0.9.0)
+      diff-lcs (>= 1.6, < 3)
+      parser (>= 3.3.0)
+      prism (>= 1.5.1)
     uri (1.1.1)
     useragent (0.16.11)
     version_gem (1.1.9)
@@ -766,7 +784,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
@@ -803,6 +820,7 @@ DEPENDENCIES
   flipper
   flipper-active_record
   flipper-ui
+  flog
   foreman
   geocoder
   guard-rspec
@@ -821,6 +839,8 @@ DEPENDENCIES
   memflash
   memory_profiler
   money-rails
+  mutant
+  mutant-rspec
   newrelic_rpm
   nokogiri (>= 1.10.4)
   omniauth

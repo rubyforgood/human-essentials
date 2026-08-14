@@ -38,6 +38,36 @@ AllCops:
 
 Rails:
   Enabled: true
+
+Metrics/ClassLength:
+  Enabled: true
+  Max: 100
+  Exclude:
+    - "spec/**/*"
+    - "db/**/*"
+
+Metrics/ModuleLength:
+  Enabled: true
+  Max: 100
+  Exclude:
+    - "spec/**/*"
+    - "db/**/*"
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 15
+
+Metrics/AbcSize:
+  Enabled: true
+  Max: 15
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 6
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 7
 Rails/FilePath:
   Enabled: false
 Rails/PluralizationGrammar:

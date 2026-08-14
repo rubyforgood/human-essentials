@@ -1,0 +1,20 @@
+---
+coverage:
+  line_min: 36.3
+  branch_min: 100.0
+flog:
+  method_max: 286.81
+  class_max: 625.27
+rubocop_metrics:
+  class_length_max: 100
+  module_length_max: 100
+  method_length_max: 15
+  abc_size_max: 15
+  cyclomatic_complexity_max: 6
+  perceived_complexity_max: 7
+mutation:
+  kill_ratio_min:
+brakeman:
+  warnings_max: 0
+rubocop:
+  offenses_max: 0

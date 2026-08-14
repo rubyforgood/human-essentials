@@ -165,6 +165,8 @@ group :development, :test do
   gem "standard-performance"
   # Erb linter.
   gem "erb_lint"
+  # Detect N+1 and other slow queries (used in development and the quality gate specs).
+  gem "bullet"
 end
 
 group :development do
@@ -174,8 +176,6 @@ group :development do
   gem "binding_of_caller"
   # Show a better error page on development, including a REPL.
   gem "better_errors"
-  # Detect N+1 and other slow queries.
-  gem "bullet"
   # Run multiple processes from a Procfile (web, jobs, etc.)
   gem 'foreman'
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
@@ -213,6 +213,11 @@ group :test do
   gem "cuprite"
   # Read PDF files for tests
   gem "pdf-reader"
+  # Measure ABC complexity (quality gate).
+  gem "flog"
+  # Mutation testing (quality gate).
+  gem "mutant"
+  gem "mutant-rspec"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
