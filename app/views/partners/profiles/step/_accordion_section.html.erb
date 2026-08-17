@@ -1,24 +1,27 @@
 <%# locals: (f:, partner:, section_id:, section_title:, icon_class:, partial_name:, sections_with_errors:) %>
+<% open = section_with_errors?(section_id, sections_with_errors) %>
 
-<div class="accordion-item">
-  <h2 class="accordion-header">
-    <button
-      class="accordion-button <%= section_with_errors?(section_id, sections_with_errors) ? '' : 'collapsed' %>"
-      type="button" data-bs-toggle="collapse" data-bs-target="#<%= section_id %>"
-      aria-expanded="<%= section_with_errors?(section_id, sections_with_errors) %>"
-      aria-controls="<%= section_id %>">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <div class="fs-4">
-          <i class="fa <%= icon_class %> mr-2"></i>
-          <%= section_title %>
-        </div>
-      </div>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <h2>
+    <button type="button"
+            class="flex w-full items-center justify-between gap-3 px-5 py-4 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-expanded="<%= open %>"
+            aria-controls="<%= section_id %>"
+            data-action="click->disclosure#toggle">
+      <span class="flex min-w-0 items-center gap-2">
+        <i class="<%= icon_class %> shrink-0 text-slate-500" aria-hidden="true"></i>
+        <span class="text-base font-semibold text-slate-900"><%= section_title %></span>
+        <% if open %>
+          <%# A section is opened on load precisely because it has errors, so say so. %>
+          <%= essentials_status_pill("Needs attention", tone: :danger, icon: "bi-exclamation-triangle") %>
+        <% end %>
+      </span>
+      <i class="bi-chevron-down shrink-0 text-sm text-slate-500 transition-transform <%= "rotate-180" if open %>"
+         data-disclosure-chevron aria-hidden="true"></i>
     </button>
   </h2>
-  <div id="<%= section_id %>"
-    class="accordion-collapse collapse <%= section_with_errors?(section_id, sections_with_errors) ? 'show' : '' %>">
-    <div class="accordion-body">
-      <%= render "partners/profiles/step/#{partial_name}_form" , f: f, partner: partner, profile: partner.profile %>
-    </div>
+
+  <div id="<%= section_id %>" class="border-t border-slate-200 px-5 py-4 <%= "hidden" unless open %>">
+    <%= render "partners/profiles/step/#{partial_name}_form", f: f, partner: partner, profile: partner.profile %>
   </div>
 </div>

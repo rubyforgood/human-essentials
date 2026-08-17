@@ -1,43 +1,70 @@
+<%#
+  Repeatable line-item rows, shared by the donation, purchase, distribution, transfer,
+  adjustment, audit and kit forms.
+
+  The JS hooks here are load-bearing: .__barcode_item_lookup and the
+  "_barcode-lookup-#{index}" id are read by utils/barcode_items.js, .line_item_name and
+  .quantity by utils/donations.js and friends, and the "section" container selector by the
+  form-input Stimulus controller's remove action.
+%>
 <% if local_assigns[:changes_disallowed] %>
-  <div class="alert alert-warning">This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.</div>
+  <div class="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+    <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+    <span>This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.</span>
+  </div>
 <% end %>
-<%= form.simple_fields_for :line_items, defined?(object) ? object : nil  do |field| %>
+
+<%= form.simple_fields_for :line_items, defined?(object) ? object : nil do |field| %>
   <% requested = field.object.requested_item %>
-  <section class="nested-fields line_item_section">
-    <div class="grid gap-6 mt-2 d-flex flex-row align-items-center justify-content-between">
-      <div class='d-flex flex-column justify-content-center'>
-        <% if requested.blank? %>
-          <% unless local_assigns[:changes_disallowed] %>
-          <div class='d-flex flex-row align-items-center'>
-            <%= render partial: "barcode_items/barcode_item_lookup",
-              locals: { index: field&.options[:child_index] || "new_item"  } %>
-              <div id="barcode-scanner-btn" class="bi-upc-scan barcode-scanner mx-2"> </div>
+  <% lookup_index = field&.options&.dig(:child_index) || "new_item" %>
+  <section class="nested-fields line_item_section border-b border-slate-200 py-4 first:pt-0 last:border-b-0">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div class="flex min-w-0 flex-1 flex-wrap items-end gap-3">
+        <% if requested.blank? && !local_assigns[:changes_disallowed] %>
+          <div class="min-w-[12rem]">
+            <%= label_tag "_barcode-lookup-#{lookup_index}", "Scan a barcode", class: "block text-sm font-medium text-slate-700" %>
+            <div class="mt-1.5 flex items-center gap-2">
+              <input type="text"
+                     id="_barcode-lookup-<%= lookup_index %>"
+                     class="__barcode_item_lookup block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+                     value="" placeholder="Barcode entry" autocomplete="on">
+              <button type="button" id="barcode-scanner-btn"
+                      class="barcode-scanner rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                      aria-label="Scan a barcode with the camera">
+                <i class="bi-upc-scan" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
-          <label class='my-1 mx-auto font-weight-normal'>OR</label>
-          <% end %>
+          <span class="pb-2 text-xs font-medium uppercase tracking-wide text-slate-500">or</span>
         <% end %>
-        <div class='d-flex flex-row'>
-          <span class="li-name w-100">
-            <%= field.input :item_id,
-                            disabled: requested.present? || local_assigns[:changes_disallowed],
-                            collection: @item_labels_with_quantities || @items, prompt: "Choose an item",
-                            include_blank: "",
-                            label: false,
-                            input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
-            <% if requested.present? %>
-              <%= field.input :item_id, as: :hidden %>
-            <% end %>
-          </span>
-          <div class="li-quantity mx-2">
-            <%= field.input :quantity,
-                            as: :string,
-                            disabled: local_assigns[:changes_disallowed],
-                            placeholder: "Quantity",
-                            label: false,
-                            input_html: { class: "quantity my-0", data: { quantity: "" } } %>
-          </div>
-          <% if form.object.respond_to?(:request) && form.object.request %>
-            <div class="li-requested mx-2">
+
+        <div class="li-name min-w-[14rem] flex-1">
+          <%= field.input :item_id,
+                disabled: requested.present? || local_assigns[:changes_disallowed],
+                collection: @item_labels_with_quantities || @items,
+                prompt: "Choose an item",
+                include_blank: "",
+                label: "Item",
+                wrapper: :essentials,
+                input_html: {class: "line_item_name", "data-controller": "select2"} %>
+          <% if requested.present? %>
+            <%= field.input :item_id, as: :hidden %>
+          <% end %>
+        </div>
+
+        <div class="li-quantity w-32">
+          <%= field.input :quantity, as: :string,
+                disabled: local_assigns[:changes_disallowed],
+                placeholder: "Quantity",
+                label: "Quantity",
+                wrapper: :essentials,
+                input_html: {class: "quantity", data: {quantity: ""}} %>
+        </div>
+
+        <% if form.object.respond_to?(:request) && form.object.request %>
+          <div class="li-requested pb-6">
+            <p class="text-xs font-medium text-slate-500">Requested</p>
+            <p class="text-sm font-semibold text-slate-900">
               <% if requested&.request_unit.present? %>
                 <%= pluralize(requested.quantity, requested.request_unit) %>
               <% elsif requested %>
@@ -45,15 +72,18 @@
               <% else %>
                 N/A
               <% end %>
-            </div>
-          <% end %>
-        </div>
+            </p>
+          </div>
+        <% end %>
       </div>
 
       <% unless local_assigns[:changes_disallowed] %>
-        <%= remove_element_button "Remove", container_selector: "section" %>
+        <div class="pb-4">
+          <%= remove_element_button "Remove", container_selector: "section",
+                class: essentials_button_classes(variant: :ghost, size: :sm, extra: "text-rose-700 hover:bg-rose-50"),
+                style: nil %>
+        </div>
       <% end %>
     </div>
-    <hr class="line-item-separator">
   </section>
 <% end %>

@@ -1,42 +1,43 @@
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="card card-info mt-2">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Frequently Asked Questions for Banks</h2>
-          </div>
-          <div class="px-5 py-4">
-            <ul class="list-inside my-2 list-decimal space-y-5">
-              <%= new_button_to new_admin_question_path, { text: "Write A New Question And Answer", class: "mb-3" } %>
+<% content_for :title, "Questions" %>
 
-              <% @bank_questions.each do |bank_question| %>
-                <div class="accordion" id="accordion">
-                  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    <div class="border-b border-slate-200 px-5 py-4" id="heading">
-                      <h2 class="mb-0">
-                        <button class="text-left text-2xl" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= bank_question.id %>" aria-expanded="false" aria-controls="collapse<%= bank_question.id %>">
-                          <%= bank_question.title %>
-                        </button>
-                        <div class="mt-2">
-                          <%= edit_button_to edit_admin_question_path(bank_question) %>
-                          <%= delete_button_to admin_question_path(bank_question) %>
-                        </div>
-                      </h2>
-                    </div>
-                    <div id="collapse<%= bank_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
-                      <div class="px-5 py-4">
-                        <%= bank_question.answer %>
-                      </div>
-                    </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Questions and answers",
+        subtitle: "The FAQ shown to banks and partners.",
+        actions: essentials_link_button("Write a new question and answer", new_admin_question_path, variant: :primary, icon: "bi-plus-lg") %>
+
+  <% if @bank_questions.blank? %>
+    <%= render "shared/essentials/card" do %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No questions yet",
+            body: "Questions you write here appear in the in-app help for banks and partners.",
+            action: essentials_link_button("Write a new question and answer", new_admin_question_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% end %>
+  <% else %>
+    <div class="space-y-4" data-controller="disclosure">
+      <% @bank_questions.each do |question| %>
+              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div class="flex flex-wrap items-start justify-between gap-3 px-5 py-4">
+                  <button type="button"
+                          class="flex min-w-0 flex-1 items-center justify-between gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                          aria-expanded="false"
+                          aria-controls="collapse<%= question.id %>"
+                          data-action="click->disclosure#toggle">
+                    <span class="text-base font-semibold text-slate-900"><%= question.title %></span>
+                    <i class="bi-chevron-down shrink-0 text-sm text-slate-500 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
+                  </button>
+                  <div class="flex gap-1.5">
+                    <%= essentials_link_button "Edit", edit_admin_question_path(question), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    <%= essentials_action_button "Delete", admin_question_path(question), method: :delete,
+                          variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                          confirm: confirm_delete_msg(question.title) %>
                   </div>
                 </div>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
+                <div id="collapse<%= question.id %>" class="hidden border-t border-slate-200 px-5 py-4 text-sm text-slate-700">
+                  <%= question.answer %>
+                </div>
+              </div>
+      <% end %>
     </div>
-  </div>
-</section>
+  <% end %>
+</div>

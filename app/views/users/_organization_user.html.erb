@@ -1,39 +1,31 @@
 <tr>
-  <td>
-    <%= user.display_name %>
-  </td>
+  <td class="font-medium text-slate-900"><%= user.display_name %></td>
   <td><%= user.email %></td>
-  <td><%= user.org_role %> </td>
-  <td><%= user.current_sign_in_at&.strftime('%Y/%m/%d') %></td>
+  <td><%= user.org_role %></td>
+  <td class="date"><%= user.current_sign_in_at&.strftime("%Y/%m/%d") %></td>
   <td><%= user.invitation_status %></td>
-  <td nowrap><%= reinvite_user_link(user) %></td>
-  <td>
-    <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-      <div class="dropdown">
-        <button class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          Actions
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <%= edit_button_to(
-              promote_to_org_admin_organization_path(user_id: user.id),
-              {text: 'Promote to Admin'},
-              {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
-            ) %>
-          </li>
-          <li>
-            <%= delete_button_to remove_user_organization_path(user_id: user.id),
-              {id: dom_id(user), method: :post, class: 'deactivate', text: "Remove User", rel: "nofollow", data: {confirm: 'This will revoke the user\'s organization permissions. Are you sure that you want to submit this?', size: 'xs'}} %>
-          </li>
-        </ul>
-      </div>
-
-    <% end %>
-    <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to demote_to_user_organization_path(user_id: user.id, organization_id: current_organization.id),
-                 {text: 'Demote to User'},
-                 {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
-    <% end %>
+  <td class="whitespace-nowrap"><%= reinvite_user_link(user) %></td>
+  <td class="text-right">
+    <%#
+      The AdminLTE version hid these behind a Bootstrap dropdown, whose JS is not on a design
+      system page -- the menu would never have opened. There are at most two actions, so they
+      are shown inline instead of behind a menu that has to be built and named.
+    %>
+    <div class="flex flex-wrap justify-end gap-1.5">
+      <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+        <%= essentials_action_button "Promote to admin", promote_to_org_admin_organization_path(user_id: user.id), method: :post,
+              variant: :ghost, size: :sm, icon: "bi-arrow-up-circle",
+              confirm: "This will promote the user to admin status. Are you sure that you want to submit this?" %>
+        <%= essentials_action_button "Remove user", remove_user_organization_path(user_id: user.id), method: :post,
+              variant: :ghost, size: :sm, icon: "bi-person-dash",
+              class: "deactivate text-rose-700 hover:bg-rose-50", id: dom_id(user),
+              confirm: "This will revoke the user's organization permissions. Are you sure that you want to submit this?" %>
+      <% end %>
+      <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) && user.id != current_user.id %>
+        <%= essentials_action_button "Demote to user", demote_to_user_organization_path(user_id: user.id, organization_id: current_organization.id), method: :post,
+              variant: :ghost, size: :sm, icon: "bi-arrow-down-circle",
+              confirm: "This will demote the admin to user status. Are you sure that you want to submit this?" %>
+      <% end %>
+    </div>
   </td>
 </tr>

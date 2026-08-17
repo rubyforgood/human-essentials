@@ -10,9 +10,9 @@
 
   <%# Hidden triggers driven by the donations-modal Stimulus controller when "Add new…" is
       chosen in a select. They are not user-facing links. %>
-  <%= link_to "Add product drive", new_product_drive_path, remote: true, "data-bs-target": "#modal-window", id: "new_product_drive", class: "hidden", "aria-hidden": true, tabindex: -1 %>
-  <%= link_to "Add product drive participant", new_product_drive_participant_path, remote: true, "data-bs-target": "#modal-window", id: "new_participant", class: "hidden", "aria-hidden": true, tabindex: -1 %>
-  <%= link_to "Add manufacturer", new_manufacturer_path, remote: true, "data-bs-target": "#modal-window", id: "new_manufacturer", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add product drive", new_product_drive_path, remote: true, id: "new_product_drive", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add product drive participant", new_product_drive_participant_path, remote: true, id: "new_participant", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add manufacturer", new_manufacturer_path, remote: true, id: "new_manufacturer", class: "hidden", "aria-hidden": true, tabindex: -1 %>
 </div>
 
 <%= render partial: "barcode_items/barcode_modal" %>

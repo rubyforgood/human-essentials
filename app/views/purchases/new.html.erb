@@ -9,7 +9,7 @@
   <%= render partial: "purchase_form", object: @purchase %>
 
   <%# Hidden trigger driven by JS when "Add new vendor" is chosen in the vendor select. %>
-  <%= link_to "Add vendor", new_vendor_path, remote: true, "data-bs-target": "#modal-window", id: "new_vendor", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add vendor", new_vendor_path, remote: true, id: "new_vendor", class: "hidden", "aria-hidden": true, tabindex: -1 %>
 </div>
 
 <%= render partial: "barcode_items/barcode_modal" %>

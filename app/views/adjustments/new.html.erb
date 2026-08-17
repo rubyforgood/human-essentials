@@ -26,13 +26,13 @@
         <fieldset class="px-5 py-4">
           <legend class="sr-only">Items in this adjustment</legend>
           <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
-            <%= render "line_items/essentials_line_item_fields", form: f %>
+            <%= render "line_items/line_item_fields", form: f %>
           </div>
           <div class="mt-4">
             <%= add_element_button "Add another item", container_selector: "#adjustment_line_items",
                   id: "__add_line_item",
                   class: essentials_button_classes(variant: :secondary, size: :md) do %>
-              <%= render "line_items/essentials_line_item_fields", form: f, object: LineItem.new %>
+              <%= render "line_items/line_item_fields", form: f, object: LineItem.new %>
             <% end %>
           </div>
         </fieldset>

@@ -252,7 +252,7 @@ RSpec.describe "Organizations", type: :request do
       it "can see 'Demote to User' button for admins" do
         create(:organization_admin, organization: organization, name: "ADMIN USER")
         get organization_path
-        expect(response.body).to include "Demote to User"
+        expect(response.body).to include "Demote to user"
       end
 
       it "can see 'Promote to User' button for users" do

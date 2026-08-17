@@ -28,7 +28,7 @@
           <td class="p-4">
             <% comment = partner_request.comments %>
             <% if comment.present? %>
-              <div class="mb-2" data-bs-toggle="tooltip" data-bs-title="<%= comment %>">
+              <div class="mb-2">
                 <%= truncate(comment, length: 20) %>
               </div>
             <% end %>
@@ -42,7 +42,7 @@
 
 <script type="module">
   $(document).ready(function() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipTriggerList = document.querySelectorAll('[]');
     [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
   })
 </script>

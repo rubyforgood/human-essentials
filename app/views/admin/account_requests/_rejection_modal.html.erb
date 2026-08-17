@@ -5,7 +5,7 @@
       <div class="border-b border-slate-200 px-5 py-4">
         <h4 class="modal-title" style="text-transform:capitalize">
         </h4>
-        <button type="button" class="close btn-close" data-bs-dismiss="modal">&times;</button>
+        <button type="button" class="close btn-close" onclick="this.closest('dialog').close()">&times;</button>
       </div>
       <div class="">
         <%= essentials_form_for AccountRequest.new, url: '', method: :post do |f| %>

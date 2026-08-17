@@ -1,7 +1,9 @@
 <div data-controller="highchart" data-highchart-config-value="<%= config %>">
   <div data-highchart-target="chart"></div>
-  <div class="pl-3">
-    <button type="button" class="btn btn-sm btn-secondary" data-action="click->highchart#selectAll">Select All</button>
-    <button type="button" class="btn btn-sm btn-info" data-action="click->highchart#deselectAll">Deselect All</button>
+  <div class="mt-3 flex flex-wrap gap-2">
+    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
+            data-action="click->highchart#selectAll">Select all</button>
+    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
+            data-action="click->highchart#deselectAll">Deselect all</button>
   </div>
 </div>

@@ -2,7 +2,7 @@
     <div class="">
       <div class="border-b border-slate-200 px-5 py-4">
         <h5 class="modal-title">Request Confirmation</h5>
-        <button id="modalClose" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button id="modalClose" type="button" class="btn-close" onclick="this.closest('dialog').close()" aria-label="Close"></button>
       </div>
       <div class="" style="max-height: 60vh; overflow-y: auto;">
         <%# Items and quantities %>
@@ -46,7 +46,7 @@
 
       <%# Actions %>
       <div class="border-t border-slate-200 px-5 py-3">
-        <button id="modalNo" type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
+        <button id="modalNo" type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" onclick="this.closest('dialog').close()" aria-label="No I need to make changes">No, I need to make changes</button>
         <button id="modalYes" type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-action="confirmation#submitForm">Yes, it's correct</button>
       </div>
     </div>

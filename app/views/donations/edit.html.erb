@@ -21,7 +21,7 @@
   <%= render partial: "donation_form", object: @previous_input.presence || @donation %>
 
   <%# Hidden trigger driven by the donations-modal Stimulus controller. %>
-  <%= link_to "Add vendor", new_vendor_path, remote: true, "data-bs-toggle": "modal", "data-bs-target": "#modal-window", id: "new_vendor", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add vendor", new_vendor_path, remote: true, id: "new_vendor", class: "hidden", "aria-hidden": true, tabindex: -1 %>
 </div>
 
 <%= render partial: "barcode_items/barcode_modal" %>

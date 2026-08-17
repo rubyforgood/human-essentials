@@ -141,10 +141,12 @@ RSpec.describe "Admin::Organizations", type: :request do
         it "provides links to edit the user" do
           get admin_organization_path({ id: organization.id })
 
-          expect(response.body).to include("Actions")
-          expect(response.body).to include('Promote to Admin')
+          # The actions were behind a Bootstrap dropdown labelled "Actions", whose JS is not
+          # loaded on a design system page -- the menu would never have opened. With at most
+          # two actions they are shown inline instead, so there is no "Actions" trigger.
+          expect(response.body).to include('Promote to admin')
           expect(response.body).to include(promote_to_org_admin_organization_path(user_id: user.id))
-          expect(response.body).to include('Remove User')
+          expect(response.body).to include('Remove user')
           expect(response.body).to include(remove_user_organization_path(user_id: user.id))
         end
       end

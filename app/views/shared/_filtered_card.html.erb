@@ -1,37 +1,31 @@
+<%#
+  A report: a date-range filter above one card of results.
+  Locals: filter_url, title, subtitle (optional), footer (optional), id (optional).
+%>
 <%
   id ||= nil
   title ||= nil
   subtitle ||= nil
   footer ||= nil
 %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header", title: title, subtitle: subtitle %>
 
-<div class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="description-block border-right">
-          <%= simple_form_for :filters, url: filter_url, method: :get, html: {class: 'd-flex'} do |f| %>
-            <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control col-10"} %><br>
-            <%= filter_button class: 'col-2' %>
-          <% end %>
-        </div>
+  <%= form_tag filter_url, method: :get, class: "mb-4" do %>
+    <div class="flex flex-wrap items-end gap-3">
+      <div class="min-w-[16rem]">
+        <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
       </div>
+      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>">
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <%= render("shared/card",
-          id: id,
-          gradient: "secondary",
-          title: title,
-          subtitle: subtitle,
-          footer_options: { class: "text-center" },
-          footer: footer
-          ) do
+  <% end %>
 
-            yield
-
-          end %>
-      </div>
+  <%= render "shared/essentials/card", card_class: (id ? nil : nil), footer: footer do %>
+    <div<%= " id=#{id.to_json.html_safe}".html_safe if id %>>
+      <%= yield %>
     </div>
-  </div>
+  <% end %>
 </div>
