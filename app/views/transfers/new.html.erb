@@ -1,92 +1,59 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Transfers - Inventory - #{current_organization.name}" %>
-        <h1>
-          New Inventory Transfer
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Inventory Transfers", transfers_path %></li>
-          <li class="breadcrumb-item"><a href="#">New Transfer</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "New Transfer - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary"
-            data-controller="confirmation"
-            data-confirmation-pre-check-path-value="<%= validate_transfers_path(format: :json) %>">
-          <!-- /.card-header -->
-          <!-- form start -->
-            <div class="card-body">
-              <!-- Default box -->
-              <div class="box">
-                <div class="box-header with-border">
-                  <p class="box-title">Create a <strong>Transfer</strong> to move quantities of inventory from one
-                    storage location to another.</p>
-                </div>
-                <div class="box-body">
-                  <%= simple_form_for @transfer,
-                    data: { controller: "form-input", confirmation_target: "form" },
-                    html: { class: "storage-location-required", id: "new_transfer" } do |f| %>
-                    <%= render partial: "storage_locations/source", object: f, locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
+<div class="px-4 py-6 sm:px-6 lg:px-8"
+     data-controller="confirmation"
+     data-confirmation-pre-check-path-value="<%= validate_transfers_path(format: :json) %>">
+  <%= render "shared/essentials/page_header",
+        title: "New transfer",
+        subtitle: "Move quantities of inventory from one storage location to another.",
+        back: {path: transfers_path, label: "Back to transfers"} %>
 
-                    <%= f.association :to,
-                                      collection: @storage_locations,
-                                      label: "To storage location",
-                                      error: "Which location is receiving this?" %>
+  <%= essentials_form_for @transfer,
+        data: {controller: "form-input", confirmation_target: "form"},
+        html: {class: "storage-location-required", id: "new_transfer"} do |f| %>
+    <div class="space-y-6">
+      <%= essentials_error_summary(@transfer) %>
 
-                    <%= f.input :comment %>
-
-                    <fieldset style="margin-bottom: 2rem;" class='w-70'>
-                      <legend>Items in this transfer</legend>
-                      <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
-                        <%= render 'line_items/line_item_fields', form: f %>
-                      </div>
-                      <div class="row links justify-content-end">
-                        <div class="col-xs-12">
-                          <%= add_element_button "Add Another Item", container_selector: "#transfer_line_items", id: "__add_line_item" do %>
-                            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-                          <% end %>
-                        </div>
-                      </div>
-
-                    </fieldset>
-
-                    </div>
-                    <div class="card-footer">
-                      <%= submit_button({}, { action: "click->confirmation#openModal" }) %>
-                    </div>
-                  <% end %>
-                  </div>
-                <div
-                  id="transferConfirmationModal"
-                  class="modal confirm"
-                  aria-labelledby="transferConfirmationModal"
-                  aria-hidden="true"
-                  tabindex="-1"
-                  data-bs-backdrop="static"
-                  data-confirmation-target="modal">
-                </div>
-            </div><!-- /.box -->
+      <%= render "shared/essentials/card", title: "Where the inventory is moving" do %>
+        <div class="grid gap-x-5 sm:grid-cols-2">
+          <%= render partial: "storage_locations/source", object: f,
+                locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
+          <%= f.association :to, collection: @storage_locations, label: "To storage location",
+                hint: "Which location is receiving this?" %>
         </div>
+        <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
+      <% end %>
+
+      <%= render "shared/essentials/card", title: "Items in this transfer", padded: false do %>
+        <fieldset class="px-5 py-4">
+          <legend class="sr-only">Items in this transfer</legend>
+          <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
+            <%= render "line_items/essentials_line_item_fields", form: f %>
+          </div>
+          <div class="mt-4">
+            <%= add_element_button "Add another item", container_selector: "#transfer_line_items",
+                  id: "__add_line_item",
+                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
+              <%= render "line_items/essentials_line_item_fields", form: f, object: LineItem.new %>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+
+      <div class="flex items-center gap-2">
+        <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md),
+              data: {disable_with: "Saving...", action: "click->confirmation#openModal"} %>
+        <%= essentials_link_button "Cancel", transfers_path, variant: :ghost, size: :md %>
       </div>
     </div>
-  </div>
-  <%= render partial: "barcode_items/barcode_modal" %>
-</section>
+  <% end %>
+
+  <%# Confirmation dialog, populated by confirmation_controller.js from
+      transfers_controller#validate; body in transfers/_validate_modal. %>
+  <dialog id="transferConfirmationModal"
+          class="confirm w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+          aria-labelledby="transferConfirmationTitle"
+          data-confirmation-target="modal"></dialog>
+</div>
+
+<%= render partial: "barcode_items/barcode_modal" %>

@@ -1,5 +1,8 @@
 # Provides limited CRUD for Adjustments, which are the way that Essentials Banks fix incorrect inventory totals at Storage Locations
 class AdjustmentsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   # GET /adjustments
   # GET /adjustments.json
 

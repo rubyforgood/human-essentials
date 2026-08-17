@@ -1,86 +1,49 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Transfers - Inventory - #{current_organization.name}" %>
-        <h1>
-          Inventory Transfers
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Transfers</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Transfers - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Transfer Filters</h3>
-          </div>
-          <div class="card-body">
-            <%= form_tag(transfers_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                </div>
-              </div><!-- /.row -->
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                <%= download_button_to(transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Transfers", size: "md"}) if @transfers.any? %>
-                  <%= new_button_to new_transfer_path, {text: "New Transfer"} %>
-                  </span>
-              </div>
-            <% end # form %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Transfers",
+        subtitle: "Inventory moved between your own storage locations.",
+        actions: capture {
+          if @transfers.any?
+            concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          concat essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>From</th>
-                <th>To</th>
-                <th>Date</th>
-                <th>Comment</th>
-                <th class="text-right">Total Moved</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "transfer_row", collection: @transfers %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+  <%= render "shared/essentials/filter_bar", url: transfers_path do %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %></div>
+    <div class="min-w-[15rem]">
+      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
-  </div>
-</section>
+  <% end %>
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @transfers.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No transfers match those filters" : "No transfers yet",
+            body: filter_params.present? ? "Clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
+            action: filter_params.present? ? nil : essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Inventory transfers between storage locations</caption>
+          <thead>
+            <tr>
+              <th scope="col">From</th>
+              <th scope="col">To</th>
+              <th scope="col" class="date">Date</th>
+              <th scope="col">Comment</th>
+              <th scope="col" class="quantity">Total moved</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "transfer_row", collection: @transfers %></tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+</div>

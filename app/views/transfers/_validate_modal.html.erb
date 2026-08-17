@@ -1,42 +1,47 @@
-<div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Transfer Confirmation</h5>
-        <button id="modalClose" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-        <%# Items and quantities %>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Item Name</th>
-              <th>Total Items</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @transfer.line_items.each do |line_item| %>
-              <tr>
-                <td><%= line_item.name %></td>
-                <td><%= line_item.quantity %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+<%# Body injected into the confirmation <dialog> by confirmation_controller.js. %>
+<div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+  <h2 id="transferConfirmationTitle" class="text-base font-semibold text-slate-900">Confirm this transfer</h2>
+  <button id="modalClose" type="button"
+          class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          aria-label="Close dialog"
+          onclick="this.closest('dialog').close()">
+    <i class="bi-x-lg text-sm" aria-hidden="true"></i>
+  </button>
+</div>
 
-        <% if @transfer.comment.present? %>
-          <p><strong>Note:</strong> <%= @transfer.comment %></p>
+<div class="max-h-[60vh] overflow-y-auto px-5 py-4">
+  <div class="overflow-hidden rounded-xl border border-slate-200">
+    <table class="data-table">
+      <caption>Items to be transferred</caption>
+      <thead>
+        <tr>
+          <th scope="col">Item name</th>
+          <th scope="col" class="quantity">Total items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @transfer.line_items.each do |line_item| %>
+          <tr>
+            <td class="font-medium text-slate-900"><%= line_item.name %></td>
+            <td class="quantity"><%= number_with_delimiter(line_item.quantity) %></td>
+          </tr>
         <% end %>
-
-      <%# Confirmation message %>
-      <div class="message fs-5">
-        <p>Please confirm that the above list is what you meant to transfer and that the comment is correct.</p>
-      </div>
-    </div>
-
-    <%# Actions %>
-    <div class="modal-footer">
-      <button id="modalNo" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
-      <button id="modalYes" type="button" class="btn btn-success" data-action="confirmation#submitForm">Yes, it's correct</button>
-    </div>
+      </tbody>
+    </table>
   </div>
+
+  <% if @transfer.comment.present? %>
+    <p class="mt-4 text-sm text-slate-700"><span class="font-semibold">Note:</span> <%= @transfer.comment %></p>
+  <% end %>
+
+  <p class="message mt-4 text-sm text-slate-600">
+    Please confirm that the list above is what you meant to transfer and that the comment is correct.
+  </p>
+</div>
+
+<div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 px-5 py-3">
+  <button id="modalNo" type="button" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>"
+          onclick="this.closest('dialog').close()">No, I need to make changes</button>
+  <button id="modalYes" type="button" class="<%= essentials_button_classes(variant: :primary, size: :md) %>"
+          data-action="confirmation#submitForm">Yes, it’s correct</button>
 </div>

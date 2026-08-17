@@ -1,79 +1,49 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Adjustments - Inventory - #{current_organization.name}" %>
-        <h1>
-          New Inventory Adjustment
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Inventory Adjustments", (adjustments_path) %></li>
-          <li class="breadcrumb-item"><a href="#">New Adjustment</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "New Adjustment - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
-          <!-- form start -->
-            <div class="card-body">
-              <!-- Default box -->
-              <div class="box">
-                <div class="box-header with-border">
-                  <p class="box-title">Create an <strong>Adjustment</strong> to manually increase (+) or decrease (-)
-                    the amount of inventory in a particular storage location.</p>
-                </div>
-                <div class="box-body">
-                  <p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract that
-                    kind of item.</p>
-                  <p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.
-                  </p>
-                  <%= simple_form_for @adjustment,
-                    data: { controller: "form-input" },
-                    html: { class: "storage-location-required", id: 'new_adjustment'} do |f| %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New inventory adjustment",
+        subtitle: "Manually increase or decrease the amount of inventory at a storage location.",
+        back: {path: adjustments_path, label: "Back to adjustments"} %>
 
-                    <%= render partial: "storage_locations/source", object: f, locals: { include_omitted_items: true } %>
+  <%= essentials_form_for @adjustment,
+        data: {controller: "form-input"},
+        html: {class: "storage-location-required", id: "new_adjustment"} do |f| %>
+    <div class="space-y-6">
+      <%= essentials_error_summary(@adjustment) %>
 
-                    <%= f.input :comment %>
-
-                    <fieldset style="margin-bottom: 2rem;" class='w-70'>
-                      <legend>Items in this adjustment</legend>
-                      <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
-                        <%= render 'line_items/line_item_fields', form: f %>
-                      </div>
-                      <div class="row links justify-content-end">
-                        <%= add_element_button "Add Another Item", container_selector: "#adjustment_line_items", id: "__add_line_item" do %>
-                          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-                        <% end %>
-                      </div>
-
-                    </fieldset>
-
-                    </div>
-                    <div class="card-footer">
-                      <%= submit_button %>
-                    </div>
-                  <% end %>
-              </div>
-            </div><!-- /.box -->
+      <%= render "shared/essentials/card", title: "Where to adjust" do %>
+        <div class="max-w-md">
+          <%= render partial: "storage_locations/source", object: f, locals: {include_omitted_items: true} %>
         </div>
+        <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
+      <% end %>
+
+      <%= render "shared/essentials/card",
+            title: "Items in this adjustment",
+            subtitle: "Enter a negative quantity to subtract that item, or a plain amount to add it.",
+            padded: false do %>
+        <fieldset class="px-5 py-4">
+          <legend class="sr-only">Items in this adjustment</legend>
+          <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
+            <%= render "line_items/essentials_line_item_fields", form: f %>
+          </div>
+          <div class="mt-4">
+            <%= add_element_button "Add another item", container_selector: "#adjustment_line_items",
+                  id: "__add_line_item",
+                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
+              <%= render "line_items/essentials_line_item_fields", form: f, object: LineItem.new %>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+
+      <div class="flex items-center gap-2">
+        <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", adjustments_path, variant: :ghost, size: :md %>
       </div>
     </div>
-  </div>
-  <%= render partial: "barcode_items/barcode_modal" %>
-</section>
+  <% end %>
+</div>
+
+<%= render partial: "barcode_items/barcode_modal" %>

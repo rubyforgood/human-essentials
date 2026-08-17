@@ -1,80 +1,57 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
-        <h1>
-          Inventory Adjustment
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Adjustments", (adjustments_path) %></li>
-          <li class="breadcrumb-item"><a href="#">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Adjustment - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h2 class="card-title">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</h2>
-          </div>
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>&nbsp;</th>
-                <th>Item</th>
-                <th>Quantity</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @adjustment.line_items.each do |line_item| %>
-                <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
-                  <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
-                  <td><%= line_item.item.name %></td>
-                  <td><%= line_item.quantity.abs %></td>
-                </tr>
-              <% end %>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Organization:</td>
-                <td><%= @adjustment.organization.name %></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Storage location:</td>
-                <td><%= @adjustment.storage_location.name %></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Comments:</td>
-                <td><%= @adjustment.comment %></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Adjustment (#{@adjustment.created_at.strftime("%m/%d/%Y")})",
+        back: {path: adjustments_path, label: "Back to adjustments"} %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Organization</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @adjustment.organization.name %></dd>
         </div>
-        <!-- /.card -->
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Storage location</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @adjustment.storage_location.name %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Comments</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @adjustment.comment.presence || "—" %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Changes made", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Items added and removed by this adjustment</caption>
+          <thead>
+            <tr>
+              <th scope="col">Direction</th>
+              <th scope="col">Item</th>
+              <th scope="col" class="quantity">Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @adjustment.line_items.each do |line_item| %>
+              <% added = line_item.quantity > 0 %>
+              <%# Direction was signalled by a green/red row tint alone. It is a pill with an
+                  icon and the word now, and the row keeps a soft tint as reinforcement. %>
+              <tr class="<%= added ? "positive bg-emerald-50/50" : "negative bg-rose-50/50" %>">
+                <td>
+                  <%= essentials_status_pill(added ? "Added" : "Removed",
+                        tone: added ? :success : :danger,
+                        icon: added ? "bi-plus-circle" : "bi-dash-circle") %>
+                </td>
+                <td class="font-medium text-slate-900"><%= line_item.item.name %></td>
+                <td class="quantity"><%= number_with_delimiter(line_item.quantity.abs) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
+    <% end %>
   </div>
-</section>
+</div>

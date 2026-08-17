@@ -1,5 +1,8 @@
 # Provides partial CRUD for managing Transfers, which move inventory from one storage location to another
 class TransfersController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     setup_date_range_picker
 
