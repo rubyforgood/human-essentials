@@ -33,7 +33,7 @@
                   <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com" do %>
-                  <span class="input-group-text"><i class="fa fa-link"></i></span>
+                  <span class="input-group-text"></span>
                   <%= f.input_field :url, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :email do %>
@@ -42,7 +42,7 @@
                 <% end %>
 
                 <%= f.input :address do %>
-                  <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                  <span class="input-group-text"></span>
                   <%= f.input_field :street, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "street" %>
                   <%= f.input_field :city, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "city" %>
                   <%= f.input_field :state, collection: us_states, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "state" %>
@@ -74,7 +74,7 @@
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
-                        <div class="modal-dialog">
+                        <div class="">
                           <%= image_tag @organization.logo, class: "thumbnail" %>
                           <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-dismiss="modal">Close</button>
                         </div>

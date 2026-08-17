@@ -6,17 +6,17 @@
         <%= render 'served_areas/served_area_fields', form: pf %>
       </div>
 
-      <div class="partner-served_areas-total-row row">
+      <div class="partner-served_areas-total-row grid gap-6">
         <div class="partners-served-areas-total-prompt col-w">Total is:</div>
-        <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value col-2 numeric" data-area-served-target="total">
+        <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value min-w-0 numeric" data-area-served-target="total">
           <%= @client_share_total %> %
         </span>
-        <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning col-8" data-area-served-target="warning">
+        <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning min-w-0" data-area-served-target="warning">
           The total client share must be either 0 or 100 %.
         </div>
       </div>
 
-      <div class="row links justify-content-end">
+      <div class="grid gap-6 links justify-content-end">
         <%= add_element_button "Add Another County", container_selector: "#served_areas", id: "__add_partner_served_area" do %>
           <%= render 'served_areas/served_area_fields', form: pf, object: Partners::ServedArea.new %>
         <% end %>

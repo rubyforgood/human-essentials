@@ -1,3 +1,15 @@
-<h1 class="text-2xl font-bold tracking-tight text-slate-900">Stop right there!</h1>
+<% content_for :title, "Access denied" %>
 
-<p>You aren't allowed to look here.</p>
+<div class="px-4 py-16 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-md text-center">
+    <%= essentials_icon_tile("bi-shield-lock", tone: :warning) %>
+    <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-900">Access denied</h1>
+    <p class="mt-2 text-sm text-slate-600">
+      You don't have permission to view this page. If you think you should, ask an
+      administrator at your organization.
+    </p>
+    <div class="mt-6">
+      <%= essentials_link_button "Back to dashboard", dashboard_path_from_current_role, variant: :primary, icon: "bi-house" %>
+    </div>
+  </div>
+</div>

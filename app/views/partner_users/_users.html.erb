@@ -4,7 +4,7 @@
   </div>
 
   <div class="px-5 py-4">
-    <table class="table table-hover text-nowrap">
+    <table class="data-table text-nowrap">
       <thead>
         <tr>
           <th>Name & Email</th>
@@ -34,7 +34,7 @@
             <td>
               <% if user.invitation_accepted_at %>
                 <span class="badge bg-success">
-                  <i class="fas fa-check"></i> Accepted
+                   Accepted
                 </span>
               <% else %>
                 <div class='d-flex flex-column justify-content-center align-items-start'>
@@ -54,10 +54,10 @@
                 <% end %>
               <% end %>
               <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                  <i class="fa fa-key"></i> Reset Password
+                   Reset Password
               <% end %>
               <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" do %>
-                  <i class="fa fa-ban"></i> Remove Access
+                  <i class="bi-slash-circle"></i> Remove Access
               <% end %>
 
             </td>

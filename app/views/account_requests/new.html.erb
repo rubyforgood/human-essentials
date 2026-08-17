@@ -1,17 +1,17 @@
 <% unless Rails.env.staging? %>
-  <div class="bg-white account-request">
+  <div class="account-request">
     <div class="p-3">
       <div class="mb-10">
         <h1 class="text-2xl font-bold tracking-tight text-slate-900">Essentials Bank Account Request Form</h1>
       </div>
 
-      <div class="form-check">
-        <%= radio_button_tag(:account, :bank, @bank_selected, class: 'form-check-input account_type') %>
-        <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: 'form-check-label') %>
+      <div class="mb-3 flex items-start gap-2">
+        <%= radio_button_tag(:account, :bank, @bank_selected, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
+        <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
       </div>
-      <div class="form-check">
-        <%= radio_button_tag(:account, :partner, false, class: 'form-check-input account_type') %>
-        <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
+      <div class="mb-3 flex items-start gap-2">
+        <%= radio_button_tag(:account, :partner, false, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
+        <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
       </div>
 
       <%# Hide #partner_info and #create_bank selections unless radio button selected %>
@@ -25,13 +25,13 @@
         }
       </style>
 
-      <div class='card-text' id='partner_info'>
-        <p class='p-2'>Are you a current partner to diaper and/or period supply banks? If so please go <a href='https://humanessentials.app/users/sign_in'>here</a> to login.</p>
-        <p class='p-2'>If you are wishing to receive diapers/period supplies and partner to a local diaper/period supply bank please contact your local bank. They are the only ones able create your account.</p>
-        <p class='p-2'>If you are looking for an essentials bank that distributes diapers, please refer to the <a href='https://nationaldiaperbanknetwork.org/member-directory/'>NDBN member directory</a>. If you are, instead, looking for an essentials bank that deals in period supplies, please refer to the <a href='https://allianceforperiodsupplies.org/allied-programs/'>Alliance for Period Supplies directory</a>.</p>
+      <div class="text-sm text-slate-700" id='partner_info'>
+        <p class="mt-2">Are you a current partner to diaper and/or period supply banks? If so please go <a href='https://humanessentials.app/users/sign_in'>here</a> to login.</p>
+        <p class="mt-2">If you are wishing to receive diapers/period supplies and partner to a local diaper/period supply bank please contact your local bank. They are the only ones able create your account.</p>
+        <p class="mt-2">If you are looking for an essentials bank that distributes diapers, please refer to the <a href='https://nationaldiaperbanknetwork.org/member-directory/'>NDBN member directory</a>. If you are, instead, looking for an essentials bank that deals in period supplies, please refer to the <a href='https://allianceforperiodsupplies.org/allied-programs/'>Alliance for Period Supplies directory</a>.</p>
       </div>
 
-      <div class='card-text' id='create_bank'>
+      <div class="text-sm text-slate-700" id='create_bank'>
         <p class='p-2 bg-yellow-200'>
           Fill out the details below about your bank to request a free account to use Human Essentials for your organization's essentials bank.
           <br><br>
@@ -88,7 +88,7 @@
         <h3>Request an account</h3>
       </div>
 
-      <div class='card-text'>
+      <div class="text-sm text-slate-700">
         <p> Hey there, it looks like you're trying to request an account, but you're not currently on the live version of Human Essentials </p>
         <p> To request an account, <%= link_to 'click here', 'https://humanessentials.app/account_requests/new' %> to head on over to the Human Essentials website</p>
       </div>

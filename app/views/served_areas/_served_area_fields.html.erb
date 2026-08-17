@@ -1,6 +1,6 @@
 <%= form.fields_for :served_areas, defined?(object) ? object : nil  do |fsa| %>
   <section class="nested-fields partner_served_area" data-controller="served-area">
-    <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
+    <div class="grid gap-6 mt-2 d-flex flex-row align-items-center justify-content-between">
       <div class='d-flex flex-column justify-content-center'>
         <div class='d-flex flex-row'>
           <span class="pc-name">
@@ -15,7 +15,7 @@
           </div>
           <div class="mx-2">
             <%= remove_element_button "Remove", container_selector: "section",
-              class: "btn btn-sm btn-danger remove_served_area",
+              class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
               data: { action: "click->form-input#removeItem:prevent click->served-area#zeroShareValue click->area-served#calculateClientShareTotal",
                       remove_parent_selector: "section", remove_soft: false } %>
           </div>

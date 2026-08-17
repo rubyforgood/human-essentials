@@ -1,14 +1,13 @@
 class AccountRequestsController < ApplicationController
-  # Migrated to the Ruby for Good design system (ADR 0011).
-  layout "essentials_app"
-
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
   skip_before_action :require_organization
 
   before_action :set_account_request_from_token, only: [:received, :confirmation, :confirm]
 
-  layout 'devise'
+  # Requesting an account is a public, signed-out flow, so it renders on the auth shell
+  # rather than the app shell. Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_auth"
 
   def received; end
 

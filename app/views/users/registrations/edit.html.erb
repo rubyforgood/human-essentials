@@ -39,7 +39,7 @@
                   <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :current_password, label: "Current Password:" do %>
-                  <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                  <span class="input-group-text"></span>
                   <%= f.input_field :current_password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <p class="help-block" id="password-confirmation-help"><em>We need your current password to confirm your
@@ -48,12 +48,12 @@
               </div>
 
               <div class="min-w-0">
-                <div class="card card-primary card-outline collapsed-card">
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm collapsed-card">
                   <div class="border-b border-slate-200 px-5 py-4">
                     <h5 class="m-0">Change Password</h5>
                     <span class="card-tools">
                       <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
-                        <i class="fas fa-plus"></i>
+
                       </button>
                     </span>
 

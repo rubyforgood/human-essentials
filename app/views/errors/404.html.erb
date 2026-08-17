@@ -1,3 +1,14 @@
-<h1 class="text-2xl font-bold tracking-tight text-slate-900">Still haven't found what you're looking for</h1>
+<% content_for :title, "Page not found" %>
 
-<p>Are you sure it's there? I can't find it.</p>
+<div class="px-4 py-16 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-md text-center">
+    <%= essentials_icon_tile("bi-compass", tone: :neutral) %>
+    <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-900">Page not found</h1>
+    <p class="mt-2 text-sm text-slate-600">
+      That page doesn't exist, or you don't have access to it.
+    </p>
+    <div class="mt-6">
+      <%= essentials_link_button "Back to dashboard", dashboard_path_from_current_role, variant: :primary, icon: "bi-house" %>
+    </div>
+  </div>
+</div>

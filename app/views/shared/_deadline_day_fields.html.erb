@@ -17,7 +17,7 @@
 
     <div data-deadline-day-target="dayOfMonthFields">
       <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder day of month' do %>
-        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        <span class="input-group-text"><i class="bi-calendar"></i></span>
         <%= f.number_field :day_of_month,
           min: ReminderScheduleService::MIN_DAY_OF_MONTH,
           max: ReminderScheduleService::MAX_DAY_OF_MONTH,
@@ -49,7 +49,7 @@
   <% end %>
 
   <%= parent_form.input :deadline_day, wrapper: :input_group, wrapper_html: { min: 0, max: 28 }, label: 'Deadline day in reminder email' do %>
-      <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+      <span class="input-group-text"><i class="bi-calendar"></i></span>
       <%= parent_form.number_field :deadline_day,
         min: ReminderScheduleService::MIN_DAY_OF_MONTH,
         max: ReminderScheduleService::MAX_DAY_OF_MONTH,

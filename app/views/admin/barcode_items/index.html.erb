@@ -22,19 +22,19 @@
           <div class="px-5 py-4">
             <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
               <div class="grid gap-6">
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group min-w-0">
                   <%= label_tag "Filter By Item Category" %>
                   <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                 </div>
               </div>
               <div class="border-t border-slate-200 px-5 py-3">
                 <%= button_tag type: "submit", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                  <i class="fa fa-filter"></i> Filter
+                   Filter
                 <% end %>
                 <%= link_to admin_barcode_items_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                  <i class="fa fa-ban"></i> Clear Filters
+                  <i class="bi-slash-circle"></i> Clear Filters
                 <% end %>
-                <span class="float-right">
+                <span class="ml-auto">
                     <%= modal_button_to("#newBarcode", {text: "Add New Barcode", icon: "check-circle", size: "md", type: "success"}) %>
                   </span>
               </div>

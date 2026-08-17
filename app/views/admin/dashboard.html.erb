@@ -15,7 +15,7 @@
   <div class="grid gap-6">
     <div class="min-w-0">
       <div class="info-box">
-        <span class="info-box-icon bg-blue"><i class="fa fa-gratipay"></i></span>
+        <span class="info-box-icon bg-blue"></span>
         <div class="info-box-content">
           <span class="info-box-text">Donations</span>
           <span class="info-box-number"><%= @donation_count %></span>
@@ -27,7 +27,7 @@
 
     <div class="min-w-0">
       <div class="info-box">
-        <span class="info-box-icon bg-red"><i class="fa fa-money"></i></span>
+        <span class="info-box-icon bg-red"><i class="bi-cash"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Distributions</span>
           <span class="info-box-number"><%= @distribution_count %></span>
@@ -53,7 +53,7 @@
 
     <div class="min-w-0">
       <div class="info-box">
-        <span class="info-box-icon bg-yellow"><i class="fa fa-institution text-white"></i></span>
+        <span class="info-box-icon bg-yellow"><i class="bi-bank text-white"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Total Organizations</span>
           <span class="info-box-number"><%= @organization_count %></span>
@@ -73,10 +73,10 @@
           <div class="card-tools">
             <span class="badge badge-danger bg-danger"><%= pluralize(@recent_users.count, "New User") %></span>
             <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
+              <i class="bi-dash-lg"></i>
             </button>
             <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="remove">
-              <i class="fas fa-times"></i>
+              <i class="bi-x-lg"></i>
             </button>
           </div>
         </div>
@@ -112,10 +112,10 @@
           <div class="card-tools">
             <span class="badge badge-danger bg-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
             <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
+              <i class="bi-dash-lg"></i>
             </button>
             <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="remove">
-              <i class="fas fa-times"></i>
+              <i class="bi-x-lg"></i>
             </button>
           </div>
         </div>
@@ -149,10 +149,10 @@
         <h3 class="text-base font-semibold text-slate-900"><strong>Top 10 Uses of Other</strong></h3>
         <div class="card-tools">
           <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
+            <i class="bi-dash-lg"></i>
           </button>
           <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="remove">
-            <i class="fas fa-times"></i>
+            <i class="bi-x-lg"></i>
           </button>
         </div>
       </div>
@@ -190,10 +190,10 @@
         <h3 class="text-base font-semibold text-slate-900"><strong>Recently Active Users</strong></h3>
         <div class="card-tools">
           <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
+            <i class="bi-dash-lg"></i>
           </button>
           <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="remove">
-            <i class="fas fa-times"></i>
+            <i class="bi-x-lg"></i>
           </button>
         </div>
       </div>

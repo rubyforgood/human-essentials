@@ -1,3 +1,14 @@
-<h1 class="text-2xl font-bold tracking-tight text-slate-900">OH NO!</h1>
+<% content_for :title, "Something went wrong" %>
 
-<p>Everything is on fire and people are dying!</p>
+<div class="px-4 py-16 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-md text-center">
+    <%= essentials_icon_tile("bi-exclamation-triangle", tone: :danger) %>
+    <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-900">Something went wrong</h1>
+    <p class="mt-2 text-sm text-slate-600">
+      We hit an unexpected error. The team has been notified — please try again in a moment.
+    </p>
+    <div class="mt-6">
+      <%= essentials_link_button "Back to dashboard", dashboard_path_from_current_role, variant: :primary, icon: "bi-house" %>
+    </div>
+  </div>
+</div>

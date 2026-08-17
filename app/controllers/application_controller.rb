@@ -115,7 +115,7 @@ class ApplicationController < ActionController::Base
 
   def not_found!
     respond_to do |format|
-      format.html { render template: "errors/404", layout: "layouts/application", status: :not_found }
+      format.html { render template: "errors/404", layout: "layouts/essentials_app", status: :not_found }
       format.json { render body: nil, status: :not_found }
     end
   end
@@ -129,7 +129,9 @@ class ApplicationController < ActionController::Base
 
   def omgwtfbbq!
     respond_to do |format|
-      format.html { render template: "errors/500", layout: "layouts/error", status: :internal_server_error }
+      # "layouts/error" has never existed -- this raised a missing-template error on top of
+      # whatever caused the 500 in the first place.
+      format.html { render template: "errors/500", layout: "layouts/essentials_app", status: :internal_server_error }
       format.json { render nothing: true, status: :internal_server_error }
     end
   end
