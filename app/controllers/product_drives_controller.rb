@@ -1,4 +1,7 @@
 class ProductDrivesController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   before_action :set_product_drive, only: [:show, :edit, :update, :destroy]

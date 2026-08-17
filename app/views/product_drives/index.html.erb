@@ -1,131 +1,72 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Product Drives - #{current_organization.name}" %>
-        <h1>
-          Product Drives
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Product Drives</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Product Drive Filters</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(product_drives_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                </div>
-              </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <%=
-                    if @product_drives.length > 0
-                      download_button_to(
-                        product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
-                        text: "Export Product Drives"
-                      )
-                    end
-                  %>
-                  <%= new_button_to new_product_drive_path, {text: "New Product Drive"} %>
-                  </span>
-              </div>
-            <% end # form %>
-            </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
-      <!-- right column -->
-      <div class="col-md-6">
+<% content_for :title, "Product Drives - Community - #{current_organization.name}" %>
 
-      </div>
-      <!--/.col (right) -->
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Product drives",
+        subtitle: "Collection drives run for #{current_organization.name}.",
+        actions: capture {
+          if @product_drives.length > 0
+            concat essentials_link_button("Export", product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          concat essentials_link_button("New product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+  <%= render "shared/essentials/filter_bar", url: product_drives_path do %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Name", scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
+    <div class="min-w-[15rem]">
+      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+    </div>
+  <% end %>
+
+  <%= render "shared/essentials/card", padded: false,
+        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
+    <% if @paginated_product_drives.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No product drives match those filters" : "No product drives yet",
+            body: filter_params.present? ? "Clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
+            action: filter_params.present? ? nil : essentials_link_button("New product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Product drives with their totals</caption>
+          <thead>
+            <tr>
+              <th scope="col">Product drive name</th>
+              <th scope="col" class="date">Start date</th>
+              <th scope="col" class="date">End date</th>
+              <th scope="col">Tags</th>
+              <th scope="col">Held virtually?</th>
+              <th scope="col" class="quantity">Quantity of items</th>
+              <th scope="col" class="quantity">Variety of items</th>
+              <th scope="col" class="numeric">In-kind value</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @paginated_product_drives.each do |product_drive| %>
               <tr>
-                <th>Product Drive Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Tags</th>
-                <th>Held Virtually?</th>
-                <th class="numeric">Quantity of Items</th>
-                <th class="numeric">Variety of Items</th>
-                <th class="numeric">In-kind Value</th>
-                <th class="text-right">Actions</th>
+                <td class="font-medium text-slate-900">
+                  <%= link_to product_drive.name, product_drive_path(product_drive.id), class: "text-brand-700 hover:text-brand-800" %>
+                </td>
+                <td class="date"><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
+                <td class="date"><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
+                <td><%= product_drive.tags_for_display %></td>
+                <td><%= is_virtual(product_drive: product_drive) %></td>
+                <td class="quantity"><%= number_with_delimiter(@summary[product_drive.id].quantity) %></td>
+                <td class="quantity"><%= @summary[product_drive.id].unique_item_count %></td>
+                <td class="numeric"><%= dollar_value(@summary[product_drive.id].value) %></td>
+                <td class="text-right">
+                  <%= essentials_link_button "View", product_drive_path(product_drive.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                </td>
               </tr>
-              </thead>
-              <tbody>
-              <% @paginated_product_drives.each do |product_drive| %>
-                <tr>
-                  <td><%= product_drive.name %></td>
-                  <td class="date text-left"><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
-                  <td class="date text-left"><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
-                  <td><%= product_drive.tags_for_display %></td>
-                  <td><%= is_virtual(product_drive: product_drive) %></td>
-                  <td class="text-right"><%= @summary[product_drive.id].quantity %></td>
-                  <td class="text-right"><%= @summary[product_drive.id].unique_item_count %></td>
-                  <td class="text-right"><strong><%= dollar_value(@summary[product_drive.id].value) %></strong></td>
-                  <td class="text-right"><%= view_button_to product_drive_path(product_drive.id) %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer clearfix">
-            <%= paginate @paginated_product_drives %>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

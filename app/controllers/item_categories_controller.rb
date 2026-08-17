@@ -1,4 +1,7 @@
 class ItemCategoriesController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def new
     @item_category = ItemCategory.new
   end

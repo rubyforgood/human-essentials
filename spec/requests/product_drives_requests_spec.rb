@@ -183,7 +183,7 @@ RSpec.describe "ProductDrives", type: :request do
 
           # Select the Product Drives table, which is the only table in the view
           # and count the rows
-          product_drives_table = parsed_html.at_css("table.table")
+          product_drives_table = parsed_html.at_css("table.data-table")
           row_count = product_drives_table.css("tbody tr").size
 
           # There should be 2 rows on the first page--the default per page configured above
@@ -289,7 +289,9 @@ RSpec.describe "ProductDrives", type: :request do
 
         get product_drive_path(id: product_drive.id)
 
-        expect(response.body).to include("4862167")
+        # Quantities are delimited now -- these are diaper counts that routinely run to six
+        # or seven figures, and 4862167 is not a number anyone can read at a glance.
+        expect(response.body).to include("4,862,167")
       end
     end
 

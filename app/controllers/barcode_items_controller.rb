@@ -1,6 +1,9 @@
 # Provides full CRUD+ for Barcode Items. These barcode items are all associated with regular Items. The one
 # anomaly here is the :find action, which has some special logic built-in to it, see the comments below.
 class BarcodeItemsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :load_items, only: %i[edit new]
   def index
     @items = current_organization.items.joins(:barcode_items)

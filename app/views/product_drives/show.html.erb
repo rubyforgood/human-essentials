@@ -1,148 +1,110 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Product Drive - #{@product_drive.name} - #{current_organization.name}" %>
-        <h1>
-          Product Drive
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drives", product_drives_path %></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "#{@product_drive.name} - Product Drives - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Tags</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-              <td><%= @product_drive.name %></td>
-              <td><%= @product_drive.tags_for_display %></td>
-              <td class="text-left" class="date"><%= @product_drive.start_date.strftime("%m-%d-%Y") %></td>
-              <td class="text-left"><%= @product_drive.end_date&.strftime("%m-%d-%Y") %></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @product_drive.name,
+        back: {path: product_drives_path, label: "Back to product drives"},
+        actions: capture {
+          concat essentials_link_button("Make a correction", edit_product_drive_path(@product_drive), variant: :secondary, icon: "bi-pencil")
+          if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+            concat essentials_action_button("Delete", product_drive_path(@product_drive), method: :delete,
+                     variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                     confirm: "Are you sure you want to permanently remove this product drive?")
+          end
+        } %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card-footer clearfix">
-          <%= edit_button_to edit_product_drive_path(@product_drive), { text: "Make a correction", size: "md" } %>
-          <%= delete_button_to product_drive_path(@product_drive), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Tags</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @product_drive.tags_for_display.presence || "—" %></dd>
         </div>
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Start date</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @product_drive.start_date.strftime("%m-%d-%Y") %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">End date</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @product_drive.end_date&.strftime("%m-%d-%Y") || "—" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Held virtually?</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= is_virtual(product_drive: @product_drive) %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Donations", padded: @product_drive.donations.blank? do %>
+      <% if @product_drive.donations.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No donations from this drive yet" %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Donations credited to <%= @product_drive.name %></caption>
+            <thead>
               <tr>
-              <th>Donation Id</th>
-              <th>Product Drive Participant</th>
-              <th>Storage Location</th>
-              <th>Quantity</th>
-              <th>In Kind Value</th>
+                <th scope="col">Donation ID</th>
+                <th scope="col">Participant</th>
+                <th scope="col">Storage location</th>
+                <th scope="col" class="quantity">Quantity</th>
+                <th scope="col" class="numeric">In-kind value</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @product_drive.donations.each do |donation| %>
                 <tr>
-                  <td><%= link_to donation.id, donation %></td>
-                  <td><%= donation.product_drive_participant_id ? donation.product_drive_participant.business_name : nil %></td>
+                  <td><%= link_to donation.id, donation, class: "font-medium text-brand-700 hover:text-brand-800" %></td>
+                  <td><%= donation.product_drive_participant&.business_name %></td>
                   <td><%= donation.storage_location.name %></td>
-                  <td><%= donation.line_items.count(&:quantity) %></td>
-                  <td><strong><%= dollar_value(donation.value_per_itemizable) %></strong></td>
+                  <td class="quantity"><%= donation.line_items.count(&:quantity) %></td>
+                  <td class="numeric"><%= dollar_value(donation.value_per_itemizable) %></td>
                 </tr>
               <% end %>
-              </tbody>
-            </table>
-          </div>
-          <hr>
-          <p style="text-align: center">
-            To add additional donations to this product drive, please edit that donation and select this product drive from the appropriate dropdown.
-          </p>
-          <!-- /.card-footer-->
+            </tbody>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+      <% end %>
+    <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+    <%= render "shared/essentials/card", title: "Participants", padded: @product_drive.product_drive_participants.blank? do %>
+      <% if @product_drive.product_drive_participants.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No participants recorded for this drive yet" %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Participants in <%= @product_drive.name %></caption>
+            <thead>
               <tr>
-                <th>Business Name</th>
-                <th>Contact Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Items for this Drive</th>
-                <th>Total Items (for all drives)</th>
-                <th>Comment</th>
+                <th scope="col">Business name</th>
+                <th scope="col">Contact name</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Email</th>
+                <th scope="col">Address</th>
+                <th scope="col" class="quantity">Volume this drive</th>
+                <th scope="col" class="quantity">Volume all time</th>
+                <th scope="col">Comment</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @product_drive.product_drive_participants.each do |participant| %>
                 <tr>
-                  <td><%= participant.business_name %></td>
+                  <td class="font-medium text-slate-900"><%= participant.business_name %></td>
                   <td><%= participant.contact_name %></td>
                   <td><%= participant.phone %></td>
                   <td><%= participant.email %></td>
                   <td><%= participant.address %></td>
-                  <td><%= participant.volume_by_product_drive(@product_drive.id) %></td>
-                  <td><%= participant.volume %></td>
-                  <td><%= participant.comment %></td>
+                  <td class="quantity"><%= number_with_delimiter(participant.volume_by_product_drive(@product_drive.id)) %></td>
+                  <td class="quantity"><%= number_with_delimiter(participant.volume) %></td>
+                  <td class="max-w-prose text-slate-600"><%= participant.comment %></td>
                 </tr>
               <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
+            </tbody>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

@@ -1,24 +1,8 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Edit - Barcode Items - #{@barcode_item.item.name} - Inventory - #{current_organization.name}" %>
-        <h1>
-          Editing Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Barcodes", barcode_items_path %></li>
-          <li class="breadcrumb-item"><a href="#">Editing Barcode</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Edit barcode - Inventory - #{current_organization.name}" %>
 
-<%= render partial: "form", object: @barcode_item %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit barcode",
+        back: {path: barcode_items_path, label: "Back to barcode items"} %>
+  <%= render partial: "form", object: @barcode_item %>
+</div>

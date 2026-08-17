@@ -1,9 +1,16 @@
 <tr>
-  <td><%= barcode_item_row.barcodeable.name %></td>
-  <td class="text-right"><%= barcode_item_row.quantity %></td>
-  <td class="text-left"><%= barcode_item_row.value %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to barcode_item_row.barcodeable.name, barcode_item_path(barcode_item_row), class: "text-brand-700 hover:text-brand-800" %>
+  </td>
+  <td class="quantity"><%= number_with_delimiter(barcode_item_row.quantity) %></td>
+  <td class="font-mono text-xs"><%= barcode_item_row.value %></td>
   <td class="text-right">
-      <%= view_button_to barcode_item_path(barcode_item_row) %>
-      <%= edit_button_to edit_barcode_item_path(barcode_item_row) %>
-      <%= delete_button_to barcode_item_path(barcode_item_row), { confirm: confirm_delete_msg(barcode_item_row.item.name) } %>
- </tr>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <%= essentials_action_button "Delete", barcode_item_path(barcode_item_row), method: :delete,
+            variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+            confirm: confirm_delete_msg(barcode_item_row.item.name) %>
+    </div>
+  </td>
+</tr>

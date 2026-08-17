@@ -1,60 +1,23 @@
-<%= simple_form_for @product_drive, remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body">
-              <div class="form-group">
-                <%= f.input :name %>
-              </div>
-              <div class="form-group">
-                <%= f.input :start_date,
-                            label: "Start Date",
-                            as: :date,
-                            html5: true %>
-              </div>
-              <div class="form-group">
-                <%= f.input :end_date,
-                            label: "End Date",
-                            as: :date,
-                            html5: true %>
-              </div>
-              <div class="form-group">
-                <%= f.input :tags,
-                  collection: @tags,
-                  value_method: :name,
-                  multiple: true,
-                  selected: @product_drive.tags.map(&:name),
-                  wrapper: :input_group,
-                  input_html: {
-                    "data-controller": "select2",
-                    "data-select2-config-value": '{"selectOnClose": "true", "width": "100%", "placeholder":"Add a tag", "tags": "true", "tokenSeparators": [",", "\t"]}'
-                  } %>
-              </div>
-              <div class="form-group">
-                <%= f.input :virtual, label: "Product Drive is Virtual?", wrapper: :input_group do %>
-                  <%= f.check_box :virtual, {class: "input-group-text", id: "virtual"}, "true" %>
-                <% end %>
-              </div>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-              <%= f.button :submit, :class => 'diaper-drive-submit btn btn-success', :id => 'product_drive_submit' %>
-            </div>
-          </div>
-          <!-- /.card -->
-        </div>
-        <div class="col-md-6">
+<div class="max-w-2xl">
+  <%= essentials_error_summary(@product_drive) %>
 
-        </div>
-        <!--/.col (right) -->
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @product_drive, remote: request.xhr? do |f| %>
+      <%= f.input :name, label: "Name" %>
+      <%= f.input :start_date, label: "Start date", as: :date, html5: true %>
+      <%= f.input :end_date, label: "End date", as: :date, html5: true %>
+      <%= f.input :tags, collection: @tags, value_method: :name, multiple: true,
+            selected: @product_drive.tags.map(&:name),
+            input_html: {
+              "data-controller": "select2",
+              "data-select2-config-value": '{"selectOnClose": "true", "width": "100%", "placeholder":"Add a tag", "tags": "true", "tokenSeparators": [",", "\t"]}'
+            } %>
+      <%= f.input :virtual, label: "Product drive is virtual?", as: :boolean %>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md) + " diaper-drive-submit", id: "product_drive_submit", data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", product_drives_path, variant: :ghost, size: :md %>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,57 +1,25 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Barcode Items - #{@barcode_item.item.name} - Inventory - #{current_organization.name}" %>
-        <h1>
-          Barcode Information
-          <small>for <%= @barcode_item.item.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Barcodes", barcode_items_path %></li>
-          <li class="breadcrumb-item"><a href="#">Viewing Barcode</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Barcode - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h2 class="card-title"><%= @barcode_item.item.name %></h2>
-          </div>
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Quantity</th>
-                <th>Barcode</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @barcode_item.quantity %></td>
-                <td><%= @barcode_item.value %></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @barcode_item.barcodeable.name,
+        back: {path: barcode_items_path, label: "Back to barcode items"},
+        actions: essentials_link_button("Edit", edit_barcode_item_path(@barcode_item), variant: :secondary, icon: "bi-pencil") %>
+
+  <%= render "shared/essentials/card", title: "Details" do %>
+    <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div>
+        <dt class="text-xs font-medium text-slate-500">Item type</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= @barcode_item.barcodeable.name %></dd>
       </div>
-    </div>
-  </div>
-</section>
+      <div>
+        <dt class="text-xs font-medium text-slate-500">Quantity in the box</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= number_with_delimiter(@barcode_item.quantity) %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium text-slate-500">Barcode</dt>
+        <dd class="mt-0.5 font-mono text-sm text-slate-900"><%= @barcode_item.value %></dd>
+      </div>
+    </dl>
+  <% end %>
+</div>

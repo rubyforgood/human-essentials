@@ -1,88 +1,44 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Barcode Items - Inventory - #{current_organization.name}" %>
-        <h1>
-          Barcode Items
-          <small>(unique to <%= current_organization.name %>)</small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Barcode Items</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Barcode Items - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Barcode Filters</h3>
-          </div>
-          <div class="card-body">
-            <%= form_with(url: barcode_items_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Item Category", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %>
-                </div>
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Base Item", scope: :by_item_partner_key, collection: @base_items.order('name'), key: :partner_key, value: :name, selected: @selected_partner_key) %>
-                </div>
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_text(label: "Filter By Barcode (Boop it!)", scope: :by_value, selected: @selected_barcode_id) %>
-                </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <%= download_button_to(barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Barcode Items", size: "md"}) if @barcode_items.any? %>
-                  <%= download_button_to(font_barcode_items_path, {text: "Download Barcode Font"}) %>
-                  <%= new_button_to new_barcode_item_path, {text: "New Barcode"} %>
-                  </span>
-              </div>
-            <% end # form %>
-          </div>
-        </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Barcode items",
+        subtitle: "Barcodes that map a scan to an item and a quantity.",
+        actions: capture {
+          if @barcode_items.any?
+            concat essentials_link_button("Export", barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          concat essentials_link_button("New barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-        <!-- /.card -->
-      </div>
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+  <%= render "shared/essentials/filter_bar", url: barcode_items_path do %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Base item", scope: :by_item_partner_key, collection: @base_items.order("name"), key: :partner_key, value: :name, selected: @selected_partner_key) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_text(label: "Barcode (boop it!)", scope: :by_value, selected: @selected_barcode_id) %></div>
+  <% end %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Item Type</th>
-                  <th class="text-right">Quantity in the Box</th>
-                  <th class="text-left">Barcode</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "barcode_item_row", collection: @barcode_items %>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @barcode_items.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No barcodes match those filters" : "No barcodes yet",
+            body: filter_params.present? ? "Clear the filters to see every barcode." : "Register a barcode so scanning a box fills in the item and quantity for you.",
+            action: filter_params.present? ? nil : essentials_link_button("New barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Registered barcodes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item type</th>
+              <th scope="col" class="quantity">Quantity in the box</th>
+              <th scope="col">Barcode</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "barcode_item_row", collection: @barcode_items %></tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>
