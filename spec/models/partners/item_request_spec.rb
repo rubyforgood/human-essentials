@@ -77,34 +77,6 @@ RSpec.describe Partners::ItemRequest, type: :model do
         end
       end
     end
-
-    context 'when enable_packs is disabled' do
-      context 'when there is a request unit' do
-        it 'returns only the quantity' do
-          Flipper.disable(:enable_packs)
-
-          item = create(:item, organization: organization)
-          create(:item_unit, item:, name: 'flat')
-          request = create(:request, organization: organization)
-          item_request = create(:item_request, request:, item: item, request_unit: 'flat', name: "Item 1", quantity: 10)
-
-          expect(item_request.quantity_with_units).to eq('10')
-        end
-      end
-
-      context 'when there is no request unit' do
-        it 'returns only the quantity' do
-          Flipper.disable(:enable_packs)
-
-          item = create(:item, organization: organization)
-          create(:item_unit, item:, name: 'flat')
-          request = create(:request, organization: organization)
-          item_request = create(:item_request, request:, item: item, name: "Item 1", quantity: 10)
-
-          expect(item_request.quantity_with_units).to eq("10")
-        end
-      end
-    end
   end
 
   describe '#name_with_unit' do
@@ -125,34 +97,6 @@ RSpec.describe Partners::ItemRequest, type: :model do
       context 'when there is no request unit' do
         it 'returns only the item name' do
           Flipper.enable(:enable_packs)
-
-          item = create(:item, organization: organization, name: 'Item name')
-          create(:item_unit, item:, name: 'flat')
-          request = create(:request, organization: organization)
-          item_request = create(:item_request, request:, item: item, name: 'Item 1', quantity: 10)
-
-          expect(item_request.name_with_unit).to eq('Item name')
-        end
-      end
-    end
-
-    context 'when enable_packs is disabled' do
-      context 'when there is a request unit' do
-        it 'returns only the item_name' do
-          Flipper.disable(:enable_packs)
-
-          item = create(:item, organization: organization, name: 'Item name')
-          create(:item_unit, item:, name: 'flat')
-          request = create(:request, organization: organization)
-          item_request = create(:item_request, request:, item: item, request_unit: 'flat', name: "Item 1", quantity: 10)
-
-          expect(item_request.name_with_unit).to eq('Item name')
-        end
-      end
-
-      context 'when there is no request unit' do
-        it 'returns only the item_name' do
-          Flipper.disable(:enable_packs)
 
           item = create(:item, organization: organization, name: 'Item name')
           create(:item_unit, item:, name: 'flat')
