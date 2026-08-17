@@ -1,6 +1,6 @@
 module Partners
   class DashboardsController < BaseController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     protect_from_forgery with: :exception
 

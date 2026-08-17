@@ -1,56 +1,30 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Editing - #{current_partner.name}" %>
-        <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit My Profile&nbsp;&nbsp;&nbsp;
-          <%= partner_status_badge(current_partner) %>
-          <small>for <%= current_partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item">
-            <a href="<%= edit_partners_profile_path %>"><%= "#{current_partner.name}" %></a></li>
-          <li class="breadcrumb-item"><a href="#">Edit</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Editing - #{current_partner.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <div class="card-transparent">
-          <%= simple_form_for current_partner, url: partners_profile_path,
-            data: { controller: "form-input" },
-            html: {role: 'form', class: 'form-horizontal'} do |form| %>
-            <%= form.simple_fields_for :profile, current_partner.profile do |profile_form| %>
-              <div class="row">
-                <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, profile: current_partner.profile, profile_form: profile_form} %>
-                </div>
-                <% current_partner.partials_to_show.each do |partial| %>
-                  <div class="col-6">
-                    <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, f: profile_form, profile: current_partner.profile} %>
-                  </div>
-                <% end %>
-                <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form, profile: current_partner.profile} %>
-                </div>
-              </div>
-              <div class="card-footer">
-                <%= form.submit("Update Information", class: "btn btn-primary") %>
-                <%= link_to "Cancel Update", partners_profile_path, class: "btn btn-danger float-right" %>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit my profile",
+        subtitle: current_partner.name,
+        back: {path: partners_profile_path, label: "Back to my profile"},
+        actions: essentials_partner_status_pill(current_partner.status) %>
+
+  <%= essentials_form_for current_partner, url: partners_profile_path,
+        data: {controller: "form-input"}, html: {role: "form"} do |form| %>
+    <%= form.simple_fields_for :profile, current_partner.profile do |profile_form| %>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <%= render partial: "partners/profiles/edit/agency_information",
+              locals: {form: form, profile: current_partner.profile, profile_form: profile_form} %>
+        <% current_partner.partials_to_show.each do |partial| %>
+          <%= render partial: "partners/profiles/edit/#{partial}",
+                locals: {form: profile_form, f: profile_form, profile: current_partner.profile} %>
+        <% end %>
+        <%= render partial: "partners/profiles/edit/partner_settings",
+              locals: {form: profile_form, profile: current_partner.profile} %>
       </div>
-    </div>
-  </div>
-</section>
+
+      <div class="mt-6 flex items-center gap-2">
+        <%= form.submit "Update information", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_profile_path, variant: :ghost, size: :md %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

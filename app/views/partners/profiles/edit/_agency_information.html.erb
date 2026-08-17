@@ -1,21 +1,15 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-white">
-            <h3 class="card-title"><strong>Agency Information</strong></h3>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Agency Information</h2>
           </div>
-          <div class="card-body">
-            <%= form.input :name, label: "Agency Name", class: "form-control", wrapper: :input_group %>
+          <div class="px-5 py-4">
+            <%= form.input :name, label: "Agency Name" %>
             <%= profile_form.input :agency_type,
             # Symbolize keys, because simple_form will only do a I18n lookup for
             # symbols
               collection: Partners::Profile.agency_types_for_selection,
-              label: "Agency Type",
-              class: "form-control",
-              wrapper: :input_group %>
-            <%= profile_form.input :other_agency_type, label: "Other Agency Type", class: "form-control", wrapper: :input_group %>
+              label: "Agency Type" %>
+            <%= profile_form.input :other_agency_type, label: "Other Agency Type" %>
 
             <%= render "shared/custom_file_input",
               form_builder: profile_form,
@@ -24,12 +18,12 @@
               label_for: "partner_profile_proof_of_partner_status",
               label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
 
-            <%= profile_form.input :agency_mission, label: "Agency Mission", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :city, label: "City", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :state, label: "State", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :agency_mission, label: "Agency Mission" %>
+            <%= profile_form.input :address1, label: "Address (line 1)" %>
+            <%= profile_form.input :address2, label: "Address (line 2)" %>
+            <%= profile_form.input :city, label: "City" %>
+            <%= profile_form.input :state, label: "State" %>
+            <%= profile_form.input :zip_code, label: "Zip Code" %>
           </div>
         </div>
       </div>
@@ -40,19 +34,15 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="bg-white card-header">
-            <h3 class="card-title"><strong>Program / Delivery Address (if different)</strong></h3>
+            <h2 class="text-base font-semibold text-slate-900">Program / Delivery Address (if different)</h2>
           </div>
-          <div class="card-body">
-            <%= profile_form.input :program_address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :program_address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :program_city, label: "City", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :program_state, label: "State", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :program_zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
+          <div class="px-5 py-4">
+            <%= profile_form.input :program_address1, label: "Address (line 1)" %>
+            <%= profile_form.input :program_address2, label: "Address (line 2)" %>
+            <%= profile_form.input :program_city, label: "City" %>
+            <%= profile_form.input :program_state, label: "State" %>
+            <%= profile_form.input :program_zip_code, label: "Zip Code" %>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>

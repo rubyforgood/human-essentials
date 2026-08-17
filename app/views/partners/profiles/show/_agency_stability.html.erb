@@ -1,44 +1,44 @@
 <div class="mb-4 card">
   <h5 class="text-white card-header bg-primary">Agency Stability</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Year Founded</dt>
-      <dd><%= profile.founded %></dd>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Year Founded</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.founded %></dd>
 
-      <dt>Form 990 Filed</dt>
-      <dd><%= humanize_boolean_3state(profile.form_990) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Form 990 Filed</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.form_990) %></dd>
 
-      <dt>Form 990</dt>
+      <dt class="text-xs font-medium text-slate-500">Form 990</dt>
       <% if profile.proof_of_form_990.attached? %>
-        <dd>Attached
-          file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-weight-bold" %></dd>
+        <dd class="mt-0.5 text-sm text-slate-900">Attached
+          file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-medium text-brand-700 hover:text-brand-800" %></dd>
       <% else %>
-        <dd>Form 990 not on file</dd>
+        <dd class="mt-0.5 text-sm text-slate-900">Form 990 not on file</dd>
       <% end %>
 
-      <dt>Program Name(s)</dt>
-      <dd><%= profile.program_name %></dd>
+      <dt class="text-xs font-medium text-slate-500">Program Name(s)</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_name %></dd>
 
-      <dt>Program Description(s)</dt>
-      <dd><%= profile.program_description %></dd>
+      <dt class="text-xs font-medium text-slate-500">Program Description(s)</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_description %></dd>
 
-      <dt>Agency Age</dt>
-      <dd><%= profile.program_age %></dd>
+      <dt class="text-xs font-medium text-slate-500">Agency Age</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_age %></dd>
 
-      <dt>Case Management</dt>
-      <dd><%= humanize_boolean_3state(profile.case_management) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Case Management</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.case_management) %></dd>
 
-      <dt>Evidence Based</dt>
-      <dd><%= humanize_boolean_3state(profile.evidence_based) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Evidence Based</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.evidence_based) %></dd>
 
-      <dt>How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
-      <dd><%= profile.essentials_use %></dd>
+      <dt class="text-xs font-medium text-slate-500">How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.essentials_use %></dd>
 
-      <dt>Do You Receive Essentials From Other Sources?</dt>
-      <dd><%= profile.receives_essentials_from_other %></dd>
+      <dt class="text-xs font-medium text-slate-500">Do You Receive Essentials From Other Sources?</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.receives_essentials_from_other %></dd>
 
-      <dt>Current Providing Diapers</dt>
-      <dd><%= humanize_boolean_3state(profile.currently_provide_diapers) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Current Providing Diapers</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.currently_provide_diapers) %></dd>
     </dl>
   </div>
 </div>

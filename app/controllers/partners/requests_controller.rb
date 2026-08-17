@@ -118,7 +118,8 @@ module Partners
     end
 
     def layout
-      @layout ||= current_partner ? "partners/application" : "application"
+      # Bank admins can reach this action too, so it falls back to the bank shell.
+      @layout ||= current_partner ? "essentials_partner" : "essentials_app"
     end
   end
 end

@@ -1,18 +1,18 @@
 <div class="mb-4 card">
   <h5 class="text-white card-header bg-primary">Settings</h5>
-  <div class="card-body">
-    <dl>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
       <% if profile.organization.enable_quantity_based_requests? %>
-        <dt>Uses Quantity Based Requests</dt>
-        <dd><%= humanize_boolean(profile.enable_quantity_based_requests) %></dd>
+        <dt class="text-xs font-medium text-slate-500">Uses Quantity Based Requests</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_quantity_based_requests) %></dd>
       <% end %>
       <% if profile.organization.enable_child_based_requests? %>
-        <dt>Uses Child Based Requests</dt>
-        <dd><%= humanize_boolean(profile.enable_child_based_requests) %></dd>
+        <dt class="text-xs font-medium text-slate-500">Uses Child Based Requests</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_child_based_requests) %></dd>
       <% end %>
       <% if profile.organization.enable_individual_requests? %>
-        <dt>Uses Individual Requests</dt>
-        <dd><%= humanize_boolean(profile.enable_individual_requests) %></dd>
+        <dt class="text-xs font-medium text-slate-500">Uses Individual Requests</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_individual_requests) %></dd>
       <% end %>
     </dl>
   </div>

@@ -1,47 +1,27 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "My Organization - #{current_partner.name}" %>
-        <% if current_partner.status == "recertification_required" %>
-          <div class="alert alert-danger"><i class="fa fa-warning"></i>&nbsp;
-            Please review your application details and submit for approval.</div>
-        <% end %>
-        <h1><i class="fa fa-building"></i>&nbsp;&nbsp;Profile&nbsp;&nbsp;&nbsp;
-          <%= partner_status_badge(current_partner) %>
-          <small>for <%= current_partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item"><a href="#">Profile</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "My Organization - #{current_partner.name}" %>
 
-<%= render 'actions', partner: current_partner %>
-
-<div class="row">
-  <div class="col-md-12">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-6">
-            <%= render partial: "partners/profiles/show/agency_information", locals: { profile: @profile } %>
-          </div>
-          <% current_partner.partials_to_show.each do |partial| %>
-            <div class="col-6">
-              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: @profile } %>
-            </div>
-          <% end %>
-          <div class="col-6">
-            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: @profile } %>
-          </div>
-        </div>
-      </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <% if current_partner.status == "recertification_required" %>
+    <div class="mb-6 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
+      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-rose-600" aria-hidden="true"></i>
+      <span>Please review your application details and submit them for approval.</span>
     </div>
+  <% end %>
+
+  <%= render "shared/essentials/page_header",
+        title: "Profile",
+        subtitle: current_partner.name,
+        actions: essentials_partner_status_pill(current_partner.status) %>
+
+  <div class="mb-6"><%= render "actions", partner: current_partner %></div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <%= render partial: "partners/profiles/show/agency_information", locals: {profile: @profile} %>
+    <% current_partner.partials_to_show.each do |partial| %>
+      <%= render partial: "partners/profiles/show/#{partial}", locals: {profile: @profile} %>
+    <% end %>
+    <%= render partial: "partners/profiles/show/partner_settings", locals: {profile: @profile} %>
+  </div>
+
+  <div class="mt-6"><%= render "actions", partner: current_partner %></div>
 </div>
-
-<%= render 'actions', partner: current_partner %>

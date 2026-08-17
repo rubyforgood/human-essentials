@@ -92,6 +92,28 @@ module EssentialsNavHelper
     ].reject { |group| group.items.empty? }
   end
 
+  # --- Partner portal -------------------------------------------------------
+  #
+  # The partner rail is short enough to stay flat: seven destinations at most, so there is
+  # nothing to collapse and no group labels to add. Partners see their own vocabulary
+  # ("Essentials requests", not "Requests") -- that is deliberate and is carried over from
+  # the AdminLTE rail unchanged.
+  def essentials_partner_nav_items
+    items = [
+      NavItem.new(label: "Dashboard", path: partner_user_root_path, active_on: %w[partners/dashboards]),
+      NavItem.new(label: "My profile", path: partners_profile_path, active_on: %w[partners/profiles]),
+      NavItem.new(label: "Essentials requests", path: partners_requests_path, active_on: %w[partners/requests partners/family_requests partners/individuals_requests]),
+      NavItem.new(label: "Distributions", path: partners_distributions_path, active_on: %w[partners/distributions])
+    ]
+
+    if current_partner&.profile&.enable_child_based_requests?
+      items << NavItem.new(label: "Families", path: partners_families_path, active_on: %w[partners/families])
+      items << NavItem.new(label: "Children", path: partners_children_path, active_on: %w[partners/children partners/authorized_family_members])
+    end
+
+    items
+  end
+
   # A group opens on load when it holds the current page, so a user never has to hunt for
   # where they already are.
   def essentials_nav_group_open?(group)

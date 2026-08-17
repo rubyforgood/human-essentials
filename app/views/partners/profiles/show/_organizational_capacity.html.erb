@@ -1,15 +1,15 @@
 <div class="mb-4 card">
   <h5 class="text-white card-header bg-primary">Organizational Capacity</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Client Capacity</dt>
-      <dd><%= profile.client_capacity %></dd>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Client Capacity</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.client_capacity %></dd>
 
-      <dt>Storage Space</dt>
-      <dd><%= humanize_boolean_3state(profile.storage_space) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Storage Space</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.storage_space) %></dd>
 
-      <dt>Storage Space Description</dt>
-      <dd><%= profile.describe_storage_space %></dd>
+      <dt class="text-xs font-medium text-slate-500">Storage Space Description</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.describe_storage_space %></dd>
     </dl>
   </div>
 </div>

@@ -77,8 +77,9 @@ RSpec.describe "/partners/dashboard", type: :request do
 
       get partners_dashboard_path
 
-      expect(response.body).not_to include("User Guide")
-      expect(response.body).to include("Need Help?")
+      # Sentence case per the design system (ADR 0011).
+      expect(response.body).not_to include("User guide")
+      expect(response.body).to include("Need help?")
     end
   end
 

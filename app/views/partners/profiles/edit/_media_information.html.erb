@@ -1,21 +1,13 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-white">
-            <h3 class="card-title"><strong>Media Information</strong></h3>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Media Information</h2>
           </div>
-          <div class="card-body">
-            <%= form.input :website, label: "Website", class: "form-control", wrapper: :input_group %>
-            <%= form.input :facebook, label: "Facebook", class: "form-control", wrapper: :input_group %>
-            <%= form.input :twitter, label: "Twitter", class: "form-control", wrapper: :input_group %>
-            <%= form.input :instagram, label: "Instagram", class: "form-control", wrapper: :input_group %>
+          <div class="px-5 py-4">
+            <%= form.input :website, label: "Website" %>
+            <%= form.input :facebook, label: "Facebook" %>
+            <%= form.input :twitter, label: "Twitter" %>
+            <%= form.input :instagram, label: "Instagram" %>
             <%= form.check_box :no_social_media_presence, as: :boolean %>&nbsp;
             <%= form.label :no_social_media_presence, "No Social Media Presence" %>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>

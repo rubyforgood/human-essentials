@@ -1,7 +1,7 @@
 # for 2858 Partners View Pdfs
 module Partners
   class DistributionsController < BaseController
-    layout "partners/application"
+    layout "essentials_partner"
 
     protect_from_forgery with: :exception
 

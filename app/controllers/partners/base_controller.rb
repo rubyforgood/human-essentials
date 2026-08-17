@@ -1,6 +1,6 @@
 module Partners
   class BaseController < ApplicationController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     before_action :require_partner
     skip_before_action :require_organization
@@ -35,7 +35,7 @@ module Partners
 
     def not_found!
       respond_to do |format|
-        format.html { render template: "errors/404", layout: "layouts/partners/application", status: :not_found }
+        format.html { render template: "errors/404", layout: "layouts/essentials_partner", status: :not_found }
         format.json { render body: nil, status: :not_found }
       end
     end

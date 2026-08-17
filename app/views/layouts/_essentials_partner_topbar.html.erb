@@ -1,0 +1,65 @@
+<header class="relative z-[25] border-b border-slate-200 bg-white/80 backdrop-blur">
+  <div class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <button type="button"
+            class="rounded-lg p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 lg:hidden"
+            aria-label="Open navigation"
+            aria-expanded="false"
+            aria-controls="essentials-sidebar"
+            data-shell-target="drawerToggle"
+            data-action="click->shell#toggleDrawer">
+      <i class="bi-list text-lg" aria-hidden="true"></i>
+    </button>
+
+    <div class="hidden min-w-0 flex-1 lg:block"></div>
+
+    <div class="flex items-center gap-2">
+      <%= link_to partners_help_path, class: "hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:block" do %>
+        <i class="bi-question-circle mr-1" aria-hidden="true"></i>Need help?
+      <% end %>
+
+      <div class="relative">
+        <button type="button"
+                class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                data-shell-target="accountToggle"
+                data-action="click->shell#toggleAccount">
+          <span class="grid h-8 w-8 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">
+            <%= essentials_avatar_initials(current_user.display_name.presence || current_user.email) %>
+          </span>
+          <span class="hidden max-w-[14rem] truncate font-medium text-slate-700 sm:block"><%= current_user.email %></span>
+          <i class="bi-chevron-down text-xs text-slate-500" aria-hidden="true"></i>
+        </button>
+
+        <div class="absolute right-0 mt-2 hidden w-64 rounded-2xl border border-slate-200 bg-white py-2 shadow-lg"
+             role="menu"
+             data-shell-target="accountMenu">
+          <div class="border-b border-slate-100 px-4 pb-2">
+            <p class="truncate text-sm font-semibold text-slate-900"><%= current_user.display_name.presence || current_user.email %></p>
+            <p class="truncate text-xs text-slate-500"><%= current_user.email %></p>
+            <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">Partner</span>
+          </div>
+
+          <%= link_to "My co-workers", partners_users_path, role: "menuitem",
+                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
+          <%= link_to "My account", edit_partners_user_path(current_user), role: "menuitem",
+                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
+
+          <% current_user.switchable_roles.each do |role| %>
+            <% next if role == current_role %>
+            <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
+                  class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" do %>
+              Switch to <%= role.resource.name %>
+            <% end %>
+          <% end %>
+
+          <div class="my-1 border-t border-slate-100"></div>
+
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, role: "menuitem",
+                form_class: "block", data: {disable_with: "Please wait..."},
+                class: "block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

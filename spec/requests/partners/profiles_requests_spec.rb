@@ -15,17 +15,22 @@ RSpec.describe "/partners/profiles", type: :request do
     it "shows correct values for yes/no buttons" do
       partner.profile.update!(currently_provide_diapers: nil, form_990: false, income_verification: true)
       get partners_profile_path(partner)
-      expect(response.body).to include("<dt>Current Providing Diapers</dt>\n      <dd>Unspecified</dd>")
-      expect(response.body).to include("<dt>Form 990 Filed</dt>\n      <dd>No</dd>")
-      expect(response.body).to include("<dt>Do You Verify The Income Of Your Clients</dt>\n      <dd>Yes</dd>")
+      # <dt>/<dd> carry design system classes now, so read the pairs rather than matching
+      # bare markup.
+      page = Nokogiri::HTML(response.body)
+      pairs = page.css("dt").to_h { |dt| [dt.text.strip, dt.at_xpath("following-sibling::dd[1]")&.text&.strip] }
+      expect(pairs["Current Providing Diapers"]).to eq("Unspecified")
+      expect(pairs["Form 990 Filed"]).to eq("No")
+      expect(pairs["Do You Verify The Income Of Your Clients"]).to eq("Yes")
     end
 
     it "renders show partner settings partial with enabled request types only" do
       partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
       get partners_profile_path(partner)
       expect(response).to render_template(partial: "partners/profiles/show/_partner_settings")
-      expect(response.body).to include("<dt>Uses Quantity Based Requests</dt>")
-      expect(response.body).not_to include("<dt>Uses Child Based Requests</dt>")
+      terms = Nokogiri::HTML(response.body).css("dt").map { |dt| dt.text.strip }
+      expect(terms).to include("Uses Quantity Based Requests")
+      expect(terms).not_to include("Uses Child Based Requests")
     end
   end
 

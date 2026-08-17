@@ -1,6 +1,6 @@
 module Partners
   class AuthorizedFamilyMembersController < BaseController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     def new
       @authorized_family_member = family.authorized_family_members.new

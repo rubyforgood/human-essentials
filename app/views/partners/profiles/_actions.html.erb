@@ -1,31 +1,15 @@
 <%# locals: (partner:) %>
+<div class="flex flex-wrap items-center gap-2">
+  <% if partner.approved? %>
+    <%= essentials_status_pill("Approved", tone: :success, icon: "bi-check-circle") %>
+  <% elsif partner.awaiting_review? %>
+    <%= essentials_status_pill("Pending approval", tone: :warning, icon: "bi-hourglass-split") %>
+  <% else %>
+    <%# The AdminLTE version rendered the approved/pending states as disabled buttons, which
+        look like controls you could press. They are statuses, so they are pills. %>
+    <%= essentials_action_button "Submit for approval", partners_approval_request_path, method: :post,
+          variant: :primary, icon: "bi-send" %>
+  <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-footer">
-            <% if partner.approved? %>
-              <%= link_to '', class: 'btn btn-info disabled' do %>
-                <i class="fa fa-check"></i> Approved
-              <% end %>
-            <% elsif partner.awaiting_review? %>
-              <%= link_to '', class: "btn btn-warning disabled" do %>
-                <i class="fa fa-clock"></i> Pending Approval
-              <% end %>
-            <% else %>
-              <%= button_to partners_approval_request_path, method: :post, data: {disable_with: "Please wait..."}, class: "btn btn-success", form_class: "d-inline-block" do %>
-                <i class="fa fa-paper-plane"></i> Submit for Approval
-              <% end %>
-            <% end %>
-
-            <%= link_to edit_partners_profile_path, class: 'btn btn-primary' do %>
-              <i class="fa fa-pencil"></i> Update Information
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  <%= essentials_link_button "Update information", edit_partners_profile_path, variant: :secondary, icon: "bi-pencil" %>
+</div>

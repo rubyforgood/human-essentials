@@ -1,7 +1,7 @@
 require "csv"
 module Partners
   class FamiliesController < BaseController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     helper_method :sort_column, :sort_direction
 

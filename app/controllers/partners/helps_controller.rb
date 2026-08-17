@@ -1,6 +1,6 @@
 module Partners
   class HelpsController < BaseController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     def show
       @bank = current_partner.organization

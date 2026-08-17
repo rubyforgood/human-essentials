@@ -1,53 +1,53 @@
 <div class="mb-4 card">
   <h5 class="text-white card-header bg-primary">Population Served</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Clients Have An Income Requirement to Work With You</dt>
-      <dd><%= humanize_boolean_3state(profile.income_requirement_desc) %></dd>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Clients Have An Income Requirement to Work With You</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_requirement_desc) %></dd>
 
-      <dt>Do You Verify The Income Of Your Clients</dt>
-      <dd><%= humanize_boolean_3state(profile.income_verification) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Do You Verify The Income Of Your Clients</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_verification) %></dd>
 
       <h6>Race/Ethnicity of Client Base</h6>
-      <dt>African American</dt>
-      <dd><%= profile.population_black || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">African American</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_black || t(:not_provided) %></dd>
 
-      <dt>Caucasian</dt>
-      <dd><%= profile.population_white || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Caucasian</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_white || t(:not_provided) %></dd>
 
-      <dt>Hispanic</dt>
-      <dd><%= profile.population_hispanic || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Hispanic</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_hispanic || t(:not_provided) %></dd>
 
-      <dt>Asian</dt>
-      <dd><%= profile.population_asian || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Asian</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_asian || t(:not_provided) %></dd>
 
-      <dt>American Indian</dt>
-      <dd><%= profile.population_american_indian || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">American Indian</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_american_indian || t(:not_provided) %></dd>
 
-      <dt>Pacific Islander</dt>
-      <dd><%= profile.population_island || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Pacific Islander</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_island || t(:not_provided) %></dd>
 
-      <dt>Multi-racial</dt>
-      <dd><%= profile.population_multi_racial || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Multi-racial</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_multi_racial || t(:not_provided) %></dd>
 
-      <dt>Other</dt>
-      <dd><%= profile.population_other || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Other</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_other || t(:not_provided) %></dd>
 
-      <dt>Zip Codes Served</dt>
-      <dd><%= profile.zips_served %></dd>
+      <dt class="text-xs font-medium text-slate-500">Zip Codes Served</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.zips_served %></dd>
 
       <h6>Poverty Information of Those Served</h6>
-      <dt>At FPL or below</dt>
-      <dd><%= profile.at_fpl_or_below || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">At FPL or below</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.at_fpl_or_below || t(:not_provided) %></dd>
 
-      <dt>Above 1-2 times FPL</dt>
-      <dd><%= profile.above_1_2_times_fpl || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Above 1-2 times FPL</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.above_1_2_times_fpl || t(:not_provided) %></dd>
 
-      <dt>Greater than 2 times FPL</dt>
-      <dd><%= profile.greater_2_times_fpl || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Greater than 2 times FPL</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.greater_2_times_fpl || t(:not_provided) %></dd>
 
-      <dt>Poverty Unknown</dt>
-      <dd><%= profile.poverty_unknown || t(:not_provided) %></dd>
+      <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.poverty_unknown || t(:not_provided) %></dd>
     </dl>
   </div>
 </div>

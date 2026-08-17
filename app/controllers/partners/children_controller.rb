@@ -1,7 +1,7 @@
 require "csv"
 module Partners
   class ChildrenController < BaseController
-    layout 'partners/application'
+    layout 'essentials_partner'
 
     def index
       @filterrific = initialize_filterrific(

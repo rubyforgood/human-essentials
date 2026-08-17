@@ -1,18 +1,18 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-primary text-white">Sources of Funding</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Sources of Funding</dt>
-      <dd><%= profile.sources_of_funding %></dd>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Sources of Funding</h2>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Sources of Funding</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.sources_of_funding %></dd>
 
-      <dt>How do you currently obtain diapers?</dt>
-      <dd><%= profile.sources_of_diapers %></dd>
+      <dt class="text-xs font-medium text-slate-500">How do you currently obtain diapers?</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.sources_of_diapers %></dd>
 
-      <dt>Essentials Budget</dt>
-      <dd><%= profile.essentials_budget %></dd>
+      <dt class="text-xs font-medium text-slate-500">Essentials Budget</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.essentials_budget %></dd>
 
-      <dt>Essentials Funding Source</dt>
-      <dd><%= profile.essentials_funding_source %></dd>
+      <dt class="text-xs font-medium text-slate-500">Essentials Funding Source</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.essentials_funding_source %></dd>
     </dl>
   </div>
 </div>

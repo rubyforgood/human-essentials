@@ -1,21 +1,21 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-primary text-white">Media Information</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Website</dt>
-      <dd><%= profile.website %></dd>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Media Information</h2>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Website</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.website %></dd>
 
-      <dt>Facebook</dt>
-      <dd><%= profile.facebook %></dd>
+      <dt class="text-xs font-medium text-slate-500">Facebook</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.facebook %></dd>
 
-      <dt>Twitter</dt>
-      <dd><%= profile.twitter %></dd>
+      <dt class="text-xs font-medium text-slate-500">Twitter</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.twitter %></dd>
 
-      <dt>Instagram</dt>
-      <dd><%= profile.instagram %></dd>
+      <dt class="text-xs font-medium text-slate-500">Instagram</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.instagram %></dd>
 
-      <dt>No Social Media Presence</dt>
-      <dd><%= humanize_boolean(profile.no_social_media_presence) %></dd>
+      <dt class="text-xs font-medium text-slate-500">No Social Media Presence</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.no_social_media_presence) %></dd>
     </dl>
   </div>
 </div>

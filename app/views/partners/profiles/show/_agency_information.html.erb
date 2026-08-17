@@ -1,30 +1,30 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-primary text-white">Agency Information</h5>
-  <div class="card-body">
-    <dl>
-      <dt>Name</dt>
-      <dd><%= profile.partner.name %></dd>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Agency Information</h2>
+  <div class="px-5 py-4">
+    <dl class="space-y-3">
+      <dt class="text-xs font-medium text-slate-500">Name</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.partner.name %></dd>
 
-      <dt>Agency Type</dt>
-      <dd><%= t profile.agency_type, scope: :partners_profile %></dd>
+      <dt class="text-xs font-medium text-slate-500">Agency Type</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= t profile.agency_type, scope: :partners_profile %></dd>
       <% if profile.agency_type&.to_sym == :other %>
-        <dt>Other Agency Type</dt>
-        <dd><%= profile.other_agency_type %></dd>
+        <dt class="text-xs font-medium text-slate-500">Other Agency Type</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= profile.other_agency_type %></dd>
       <% end %>
 
-      <dt>Status</dt>
-      <dd><%= profile.partner.display_status %></dd>
+      <dt class="text-xs font-medium text-slate-500">Status</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.partner.display_status %></dd>
 
-      <dt>501(c)(3) IRS Determination Letter or other Proof of Agency Status</dt>
+      <dt class="text-xs font-medium text-slate-500">501(c)(3) IRS Determination Letter or other Proof of Agency Status</dt>
       <% if profile.proof_of_partner_status.attached? %>
-        <dd>Attached
-          file: <%= link_to profile.proof_of_partner_status.blob['filename'], rails_blob_path(profile.proof_of_partner_status), class: "font-weight-bold" %></dd>
+        <dd class="mt-0.5 text-sm text-slate-900">Attached
+          file: <%= link_to profile.proof_of_partner_status.blob['filename'], rails_blob_path(profile.proof_of_partner_status), class: "font-medium text-brand-700 hover:text-brand-800" %></dd>
       <% else %>
-        <dd>Documentation not on file</dd>
+        <dd class="mt-0.5 text-sm text-slate-900">Documentation not on file</dd>
       <% end %>
 
-      <dt>Agency Mission</dt>
-      <dd><%= profile.agency_mission %></dd>
+      <dt class="text-xs font-medium text-slate-500">Agency Mission</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= profile.agency_mission %></dd>
 
       <address>
         <strong>Address</strong> <br>

@@ -1,20 +1,11 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-white">
-            <h3 class="card-title"><strong>Sources of Funding</strong></h3>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Sources of Funding</h2>
           </div>
-          <div class="card-body">
-            <%= form.input :sources_of_funding, label: "Sources Of Funding", class: "form-control", wrapper: :input_group %>
-            <%= form.input :sources_of_diapers, label: "How do you currently obtain diapers?",
-                           class: "form-control", wrapper: :input_group %>
-            <%= form.input :essentials_budget, label: "Essentials Budget", class: "form-control", wrapper: :input_group %>
-            <%= form.input :essentials_funding_source, label: "Essentials Funding Source", class: "form-control", wrapper: :input_group %>
+          <div class="px-5 py-4">
+            <%= form.input :sources_of_funding, label: "Sources Of Funding" %>
+            <%= form.input :sources_of_diapers, label: "How do you currently obtain diapers?" %>
+            <%= form.input :essentials_budget, label: "Essentials Budget" %>
+            <%= form.input :essentials_funding_source, label: "Essentials Funding Source" %>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
