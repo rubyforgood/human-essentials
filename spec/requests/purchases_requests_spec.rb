@@ -28,7 +28,9 @@ RSpec.describe "Purchases", type: :request do
           item = create(:item, value_in_cents: 42, organization: organization)
           create(:line_item, item: item, itemizable: purchase, quantity: 2)
 
-          expect(subject.body).to include("FMV")
+          # Header reads "Fair market value" rather than the FMV abbreviation: the design
+          # system spells out jargon, and the same column in storage_locations always did.
+          expect(subject.body).to include("Fair market value")
           expect(subject.body).to include("$0.84")
         end
 
@@ -396,12 +398,12 @@ RSpec.describe "Purchases", type: :request do
         end
       end
 
-      it "shows an enabled edit button" do
+      it "shows an edit action" do
         get purchase_path(id: purchase.id)
         expect(response).to be_successful
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
-        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(edit).to be_present
         expect(response.body).not_to match(/please make the following items active:/)
       end
 
@@ -410,11 +412,13 @@ RSpec.describe "Purchases", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit button" do
+        it "omits the edit action and says why" do
           get purchase_path(id: purchase.id)
           page = Nokogiri::HTML(response.body)
+          # An anchor cannot be disabled -- it stays focusable and clickable by keyboard and
+          # announces nothing -- so the unavailable action is omitted and a banner says why.
           edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
-          expect(edit.attr("class")).to match(/disabled/)
+          expect(edit).to be_nil
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
@@ -425,13 +429,13 @@ RSpec.describe "Purchases", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit and delete buttons" do
+        it "omits both the edit and delete actions and says why" do
           get purchase_path(purchase.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_purchase_path(purchase.id)}']")
-          delete = page.at_css("form[action='#{purchase_path(purchase.id)}'] .btn-danger")
-          expect(edit.attr("class")).to match(/disabled/)
-          expect(delete.attr("class")).to match(/disabled/)
+          delete = page.at_css("form[action='#{purchase_path(purchase.id)}'] button")
+          expect(edit).to be_nil
+          expect(delete).to be_nil
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end

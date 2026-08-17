@@ -1,4 +1,4 @@
 <tr>
-  <td><%= purchase_item_row.item.name %></td>
-  <td><%= purchase_item_row.quantity %></td>
+  <td class="font-medium text-slate-900"><%= purchase_item_row.item.name %></td>
+  <td class="quantity"><%= number_with_delimiter(purchase_item_row.quantity) %></td>
 </tr>

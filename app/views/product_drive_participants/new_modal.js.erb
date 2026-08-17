@@ -1,2 +1,4 @@
-$("#modal_new").html("<%= j (render "product_drive_participants/new_modal") %>");
-$("#modal_new").modal("show");
+// Injects the dialog and opens it. showModal() supplies the backdrop, focus trap and
+// Escape handling that the Bootstrap modal used to approximate in JS.
+document.getElementById("modal_new").innerHTML = "<%= j(render "product_drive_participants/new_modal") %>";
+document.querySelector("#modal_new dialog").showModal();

@@ -1,5 +1,8 @@
 # Provides full CRUD for Purchases, which are a way for Diaperbanks to track inventory that they purchase from vendors
 class PurchasesController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :authorize_admin, only: [:destroy]
 
   def index

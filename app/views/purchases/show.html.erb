@@ -1,101 +1,76 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Purchases - #{@purchase.purchased_from} - #{current_organization.name}" %>
-        <h1>
-          Purchase
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.issued_at.to_fs(:distribution_date) %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Purchase - #{current_organization.name}" %>
+<% inactive = @purchase.has_inactive_item? %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Date of Purchase:</th>
-                  <th>Vendor:</th>
-                  <th>Storage Location:</th>
-                </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @purchase.issued_at.to_fs(:distribution_date) %> (entered: <%= @purchase.created_at.to_fs(:distribution_date) %>)</td>
-                <td><%= @purchase.purchased_from_view %></td>
-                <td><%= @purchase.storage_view %></td>
-              </tr>
-            </table>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Comment:</th>
-                </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @purchase.comment || '' %></td>
-              </tr>
-            </table>
-          </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Purchase",
+        subtitle: "From #{@purchase.purchased_from_view} on #{@purchase.issued_at.to_fs(:distribution_date)}.",
+        back: {path: purchases_path, label: "Back to purchases"} %>
+
+  <div class="space-y-6">
+    <% if inactive %>
+      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+        <div>
+          <p class="font-semibold">This purchase cannot be corrected or deleted</p>
+          <p class="mt-1">
+            Purchases can only be changed while all of their items are active. To delete this
+            purchase or make a correction,
+            please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
+          </p>
         </div>
       </div>
-    </div>
-  </div>
+    <% end %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "purchase_item_row", collection: @line_items %>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer">
-            <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction",
-                                                                enabled: !@purchase.has_inactive_item?,
-                                                                size: "md" } %>
-            <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= delete_button_to purchase_path(@purchase), {
-                size: "md",
-                enabled: !@purchase.has_inactive_item?,
-                confirm: "Are you sure you want to permanently remove this purchase?" } %>
-            <% end %>
-            <% if @purchase.has_inactive_item? %>
-              <div class="low_priority_warning">
-                You can only delete or correct purchases where all the items are active.
-                If you need to delete this purchase or make a correction, please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
-              </div>
-            <% end %>
-          </div>
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Date of purchase</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @purchase.issued_at.to_fs(:distribution_date) %> (entered: <%= @purchase.created_at.to_fs(:distribution_date) %>)</dd>
         </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Vendor</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @purchase.purchased_from_view %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Storage location</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @purchase.storage_view %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Amount spent</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= dollar_value(@purchase.amount_spent_in_cents) %></dd>
+        </div>
+        <div class="sm:col-span-2 lg:col-span-4">
+          <dt class="text-xs font-medium text-slate-500">Comment</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @purchase.comment.presence || "—" %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Items purchased", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Items in this purchase</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="quantity">Quantity</th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "purchase_item_row", collection: @line_items %></tbody>
+        </table>
       </div>
-    </div>
+    <% end %>
+
+    <% unless inactive %>
+      <div class="flex flex-wrap items-center gap-2">
+        <%= essentials_link_button "Make a correction", edit_purchase_path(@purchase), variant: :secondary, icon: "bi-pencil" %>
+        <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+          <%= essentials_action_button "Delete", purchase_path(@purchase), method: :delete,
+                variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                confirm: "Are you sure you want to permanently remove this purchase?" %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
-</section>
+</div>

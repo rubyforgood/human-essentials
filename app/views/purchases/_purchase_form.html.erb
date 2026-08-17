@@ -1,101 +1,56 @@
-<%= simple_form_for @purchase, data: { controller: "form-input" } do |f| %>
-  <div class="box-body">
+<%= essentials_form_for @purchase, data: {controller: "form-input"} do |f| %>
+  <div class="space-y-6">
+    <%= essentials_error_summary(@purchase) %>
 
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.association :vendor,
-                          collection: @vendors,
-                          label_method: lambda { |x| "#{x.try(:business_name) }" },
-                          label: "Vendor #{purchased_from(@purchase)}",
-                          error: "Which vendor was this from?",
-                          wrapper: :input_group %>
-      </div>
-    </div>
+    <%= render "shared/essentials/card", title: "Purchase details" do %>
+      <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+        <%= f.association :vendor, collection: @vendors,
+              label_method: ->(x) { x.try(:business_name).to_s },
+              label: "Vendor #{purchased_from(@purchase)}",
+              hint: "Which vendor was this from?" %>
 
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.association :storage_location,
-                          collection: @storage_locations,
-                          label: "Storage Location",
-                          error: "Where is it being stored?",
-                          selected: default_location(@purchase),
-                          wrapper: :input_group %>
-      </div>
-    </div>
+        <%= f.association :storage_location, collection: @storage_locations,
+              label: "Storage location", hint: "Where is it being stored?",
+              selected: default_location(@purchase) %>
 
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :amount_spent,
-                    label: "Purchase Total",
-                    wrapper: :input_group,
-                    required: true %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :amount_spent_on_diapers,
-                    label: "Purchase Total for Diapers",
-                    wrapper: :input_group %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :amount_spent_on_adult_incontinence,
-                    label: "Purchase Total for Adult Incontinence Products",
-                    wrapper: :input_group %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :amount_spent_on_period_supplies,
-                    label: "Purchase Total for Period Supplies",
-                    wrapper: :input_group %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :amount_spent_on_other,
-                    label: "Purchase Total for Other Products",
-                    wrapper: :input_group %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6">
-        <%= f.input :comment,
-                    wrapper: :input_group %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :issued_at,
-                    label: "Purchase date",
-                    as: :date,
-                    html5: true,
-                    wrapper: :input_group %>
-      </div>
-    </div>
-
-    <fieldset style="margin-bottom: 2rem;" class='w-70'>
-      <legend>Items in this purchase</legend>
-      <div id="purchase_line_items" data-capture-barcode="true">
-
-        <%= render 'line_items/line_item_fields', form: f, changes_disallowed: @changes_disallowed %>
+        <%= f.input :issued_at, label: "Purchase date", as: :date, html5: true %>
       </div>
 
-      <% unless @changes_disallowed %>
-        <div class="row links justify-content-end">
-          <%= add_element_button "Add Another Item", container_selector: "#purchase_line_items", id: "__add_line_item" do %>
-            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-          <% end %>
+      <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Amounts spent",
+          subtitle: "The category totals help with NDBN reporting." do %>
+      <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+        <%= f.input :amount_spent, label: "Purchase total", required: true %>
+        <%= f.input :amount_spent_on_diapers, label: "Purchase total for diapers" %>
+        <%= f.input :amount_spent_on_adult_incontinence, label: "Purchase total for adult incontinence products" %>
+        <%= f.input :amount_spent_on_period_supplies, label: "Purchase total for period supplies" %>
+        <%= f.input :amount_spent_on_other, label: "Purchase total for other products" %>
+      </div>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Items in this purchase", padded: false do %>
+      <fieldset class="px-5 py-4">
+        <legend class="sr-only">Items in this purchase</legend>
+        <div id="purchase_line_items" data-capture-barcode="true">
+          <%= render "line_items/essentials_line_item_fields", form: f, changes_disallowed: @changes_disallowed %>
         </div>
-      <% end %>
-    </fieldset>
+        <% unless @changes_disallowed %>
+          <div class="mt-4">
+            <%= add_element_button "Add another item", container_selector: "#purchase_line_items",
+                  id: "__add_line_item",
+                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
+              <%= render "line_items/essentials_line_item_fields", form: f, object: LineItem.new %>
+            <% end %>
+          </div>
+        <% end %>
+      </fieldset>
+    <% end %>
 
-    <div class="card-footer">
-      <%= submit_button %>
+    <div class="flex items-center gap-2">
+      <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", purchases_path, variant: :ghost, size: :md %>
     </div>
-  </div><!-- /.box-body.container -->
+  </div>
 <% end %>

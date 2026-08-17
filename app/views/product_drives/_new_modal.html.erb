@@ -1,27 +1,31 @@
-<div class="modal-dialog">
-
-  <!-- Modal content-->
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-      <h4 class="modal-title" id="mainModalLabel">
-        New Product Drive
-      </h4>
-    </div>
-    <div class="modal-body">
-      <% flash.each do |key, value| %>
-        <div class="<%= flash_class(key) %> alert-dismissible">
-          <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-          <%= value %>
-        </div>
-      <% end %>
-
-      <%= render partial: "form", object: @product_drive %>
-
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-    </div>
+<%#
+  "New product drive" form, injected into #modal_new by product_drives/new_modal.js.erb.
+  A native <dialog> -- Bootstrap's modal CSS is not loaded on design system pages.
+%>
+<dialog id="modal_new_dialog"
+        class="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+        aria-labelledby="modal_new_title">
+  <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+    <h2 id="modal_new_title" class="text-base font-semibold text-slate-900">New product drive</h2>
+    <button type="button"
+            class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-label="Close dialog"
+            onclick="this.closest('dialog').close()">
+      <i class="bi-x-lg text-sm" aria-hidden="true"></i>
+    </button>
   </div>
 
-</div>
+  <div class="px-5 py-4">
+    <% flash.each do |key, value| %>
+      <% tone = essentials_flash_tone(key) %>
+      <% style = essentials_flash_style(tone) %>
+      <div class="mb-4 flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %>"
+           role="<%= [:warning, :danger].include?(tone) ? "alert" : "status" %>">
+        <i class="<%= style[:icon] %> mt-0.5 shrink-0" aria-hidden="true"></i>
+        <span><%= value %></span>
+      </div>
+    <% end %>
+
+    <%= render partial: "form", object: @product_drive %>
+  </div>
+</dialog>

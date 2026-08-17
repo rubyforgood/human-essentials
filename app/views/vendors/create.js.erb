@@ -1,7 +1,15 @@
+<%# Closes the dialog, then refreshes the select it was opened from and selects the new
+    record. $("#modal_new").modal("hide") is gone with the Bootstrap modal. %>
 <% flash.discard %>
-$("#modal_new").modal("hide");
-$("#purchase_vendor_id").empty();
-$("#purchase_vendor_id").
-html('<%= j options_from_collection_for_select(current_organization.vendors, :id, :business_name) %>');
-$("#purchase_vendor_id").append('<option value="">---Not Listed---</option>');
-$("#purchase_vendor_id").val('<%= @vendor[:id] %>');
+document.querySelector("#modal_new dialog")?.close();
+(function () {
+  const select = document.getElementById("purchase_vendor_id");
+  if (!select) return;
+  select.innerHTML = '<%= j options_from_collection_for_select(current_organization.vendors, :id, :business_name) %>';
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = "---Not Listed---";
+  select.appendChild(blank);
+  select.value = "<%= @vendor[:id] %>";
+  select.dispatchEvent(new Event("change", { bubbles: true }));
+})();
