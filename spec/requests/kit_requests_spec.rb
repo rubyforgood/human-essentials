@@ -32,7 +32,9 @@ RSpec.describe "/kits", type: :request do
         expect(response.body).not_to include("DOOBIE")
         expect(page.css(".deactivate-kit-button")).not_to be_empty
         expect(page.css(".reactivate-kit-button")).to be_empty
-        expect(page.css(".deactivate-kit-button.disabled")).to be_empty
+        # The disabled state is an attribute, not a class: the design system's button classes
+        # carry Tailwind `disabled:` variants, so a class match would hit in both states.
+        expect(page.css(".deactivate-kit-button[disabled]")).to be_empty
       end
 
       context "when it cannot be deactivated" do
@@ -46,7 +48,7 @@ RSpec.describe "/kits", type: :request do
           get kits_url
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
-          expect(page.css(".deactivate-kit-button.disabled")).not_to be_empty
+          expect(page.css(".deactivate-kit-button[disabled]")).not_to be_empty
           expect(page.css(".reactivate-kit-button")).to be_empty
         end
       end

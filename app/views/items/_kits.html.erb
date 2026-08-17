@@ -1,7 +1,6 @@
-<div class="tab-pane fade" id="custom-tabs-three-kits" role="tabpanel" aria-labelledby="custom-tabs-three-kits-tab">
-  <div class='flex justify-end mb-4'>
-    <%= new_button_to new_kit_path, {text: "New Kit"} %>
+<div id="panel-kits" role="tabpanel" aria-labelledby="tab-kits" data-tabs-target="panel" class="hidden">
+  <div class="flex justify-end border-b border-slate-200 px-5 py-3">
+    <%= essentials_link_button "New kit", new_kit_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
-
-  <%= render partial: 'kits/table' %>
+  <%= render partial: "kits/table" %>
 </div>

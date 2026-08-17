@@ -1,46 +1,43 @@
-<%= simple_form_for @kit, remote: request.xhr?, data: { controller: "form-input duplicate-items" }, html: { class: 'form-horizontal' } do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card card-primary">
-            <div class="card-body">
-              <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-tag"></i></span>
-                <%= f.input_field :name, class: "form-control" %>
-              <% end %>
+<%= essentials_form_for @kit, remote: request.xhr?, data: {controller: "form-input duplicate-items"} do |f| %>
+  <div class="max-w-2xl space-y-6">
+    <%= essentials_error_summary(@kit) %>
 
-              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
-                <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
-              <% end %>
+    <%= render "shared/essentials/card", title: "Kit details" do %>
+      <%= f.input :name, label: "Name" %>
+      <%= f.input :visible_to_partners, label: "Kit is visible to partners?", as: :boolean %>
+      <%= f.input :value_in_dollars, label: "Value for kit", input_html: {min: 0} %>
+    <% end %>
 
-              <%= f.input :value_in_cents, label: "Value for kit", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-dollar"></i></span>
-                <%= f.input_field :value_in_dollars, class: "form-control", min: 0 %>
-              <% end %>
-
-              <%= fields_for @kit.kit_item do |ff| %>
-                <fieldset style="margin-bottom: 2rem;" class='w-70'>
-                  <legend>Items in this Kit</legend>
-                  <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
-                    <%= render 'line_items/line_item_fields', form: ff %>
-                  </div>
-                  <div class="row links col-xs-12 justify-content-end">
-                    <%= add_element_button "Add Another Item", container_selector: "#kit_line_items", id: "__add_line_item" do %>
-                      <%= render 'line_items/line_item_fields', form: ff, object: LineItem.new %>
-                    <% end %>
-                  </div>
-                </fieldset>
-            <% end %>
-
-            </div>
-            <div class="card-footer">
-              <p><b>NB: You will not be able to change the composition of the kit once saved. Partner visibility and name can be changed via the kit's item.</b></p>
-              <%= submit_button({}, {"duplicate-items-target": "itemSubmitButton"}) %>
-            </div>
+    <%= fields_for @kit.kit_item do |ff| %>
+      <%= render "shared/essentials/card", title: "Items in this kit", padded: false do %>
+        <fieldset class="px-5 py-4">
+          <legend class="sr-only">Items in this kit</legend>
+          <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
+            <%= render "line_items/essentials_line_item_fields", form: ff %>
           </div>
-        </div>
-      </div>
+          <div class="mt-4">
+            <%= add_element_button "Add another item", container_selector: "#kit_line_items",
+                  id: "__add_line_item",
+                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
+              <%= render "line_items/essentials_line_item_fields", form: ff, object: LineItem.new %>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+    <% end %>
+
+    <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+      <span>
+        You will not be able to change the composition of the kit once it is saved.
+        Partner visibility and name can be changed later via the kit’s item.
+      </span>
     </div>
-  </section>
+
+    <div class="flex items-center gap-2">
+      <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md),
+            data: {disable_with: "Saving...", "duplicate-items-target": "itemSubmitButton"} %>
+      <%= essentials_link_button "Cancel", kits_path, variant: :ghost, size: :md %>
+    </div>
+  </div>
 <% end %>

@@ -1,27 +1,27 @@
-<div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
-  <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_path, {text: "New Item"} %>
+<div id="panel-item-list" role="tabpanel" aria-labelledby="tab-item-list" data-tabs-target="panel">
+  <div class="flex justify-end border-b border-slate-200 px-5 py-3">
+    <%= essentials_link_button "New item", new_item_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
-
-  <table id='items-table' class="table">
-    <thead>
-    <tr>
-      <th>Category</th>
-      <th>Name</th>
-      <th>NDBN Reporting Category</th>
-      <th>Add. Info</th>
-      <th class="text-right">Quantity Per Individual</th>
-      <th class="text-right">Fair Market Value (per item)</th>
-      <% if Flipper.enabled?(:enable_packs) %>
-        <% unless current_organization.request_units.empty? %>
-          <th>Custom Request Units</th>
-        <% end %>
-      <% end %>
-      <th class="text-right">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-      <%= render partial: "items/item_row", collection: items, as: :item_row, locals: { inventory: inventory, kits: kits } %>
-    </tbody>
-  </table>
-</div><!-- /.box-body.table-responsive -->
+  <div class="table-scroll">
+    <table id="items-table" class="data-table">
+      <caption>Every item this organization stocks</caption>
+      <thead>
+        <tr>
+          <th scope="col">Category</th>
+          <th scope="col">Name</th>
+          <th scope="col">NDBN reporting category</th>
+          <th scope="col">Additional info</th>
+          <th scope="col" class="quantity">Quantity per individual</th>
+          <th scope="col" class="numeric">Fair market value (per item)</th>
+          <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.any? %>
+            <th scope="col">Custom request units</th>
+          <% end %>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "items/item_row", collection: items, as: :item_row, locals: {inventory: inventory, kits: kits} %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,41 +1,9 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Audits - Inventory - #{current_organization.name}" %>
-        <h1>
-          New Inventory Audit
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Inventory Audits", audits_path %></li>
-          <li class="breadcrumb-item"><a href="#">New Audit</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Edit Audit - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="callout callout-info">
-          <h5><i class="fas fa-info"></i> Note:</h5>
-          <p class="help">Edit the <strong>Audit</strong> recording the inventory present in a particular storage location.</p>
-          <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in the storage location</p>
-          <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
-          <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<%= render partial: "audits/form" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Resume audit",
+        subtitle: "Started #{@audit.created_at.strftime("%B %e, %Y").squeeze(" ")}.",
+        back: {path: audits_path, label: "Back to audits"} %>
+  <%= render partial: "audits/form" %>
+</div>

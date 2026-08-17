@@ -1,11 +1,25 @@
+<% below_minimum = quantity_below_minimum?(row_item) %>
 <tr>
-<td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
-<% @storages.each do |storage| %>
-  <td class="numeric">
-    <%= row_item[:locations].find { |location| location[:id] == storage.id }&.dig(:quantity) || "0" %>
+  <td class="font-medium text-slate-900">
+    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "text-brand-700 hover:text-brand-800" %>
   </td>
-<% end %>
-<td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
-<td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
-<td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum?(row_item) %>" data-column="total"><%= row_item[:quantity] %></td>
+  <% @storages.each do |storage| %>
+    <td class="quantity">
+      <%= number_with_delimiter(row_item[:locations].find { |location| location[:id] == storage.id }&.dig(:quantity) || 0) %>
+    </td>
+  <% end %>
+  <td class="quantity"><%= number_with_delimiter(row_item[:item_on_hand_minimum_quantity]) %></td>
+  <td class="quantity"><%= number_with_delimiter(row_item[:item_on_hand_recommended_quantity]) %></td>
+  <td class="quantity" data-column="total">
+    <% if below_minimum %>
+      <%# Below minimum is not signalled by colour alone: the number is joined by a pill
+          carrying an icon and the word. %>
+      <span class="inline-flex items-center gap-1.5">
+        <span class="font-semibold text-rose-700"><%= number_with_delimiter(row_item[:quantity]) %></span>
+        <%= essentials_status_pill("Below minimum", tone: :danger, icon: "bi-exclamation-triangle") %>
+      </span>
+    <% else %>
+      <%= number_with_delimiter(row_item[:quantity]) %>
+    <% end %>
+  </td>
 </tr>

@@ -1,174 +1,107 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Items - #{@item.name} - Inventory - #{current_organization.name}" %>
-        <h1>
-          Item Information
-          <small>for <%= @item.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Item Types", items_path %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @item.name %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "#{@item.name} - Items - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @item.name,
+        subtitle: @item.item_category&.name,
+        back: {path: items_path, label: "Back to items"},
+        actions: essentials_link_button("Edit", edit_item_path(@item), variant: :secondary, icon: "bi-pencil") %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        <%
+          details = {
+            "Category" => @item.item_category&.name,
+            "NDBN reporting category" => "#{@item.reporting_category_humanized}#{@reporting_category_hint}",
+            "Value per item" => dollar_value(@item.value_in_cents || 0),
+            "Quantity per individual" => (@item.distribution_quantity || 0).to_s,
+            "On hand minimum quantity" => (@item.on_hand_minimum_quantity || 0).to_s,
+            "On hand recommended quantity" => (@item.on_hand_recommended_quantity || 0).to_s,
+            "Package size" => (@item.package_size || 0).to_s,
+            "Visible to partners" => (@item.visible_to_partners ? "Yes" : "No")
+          }
+          if Flipper.enabled?(:enable_packs)
+            details["Custom units"] = @item.request_units&.pluck("item_units.name")&.join("; ")
+          end
+        %>
+        <% details.each do |label, value| %>
+          <div>
+            <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= value.presence || "—" %></dd>
+          </div>
+        <% end %>
+        <div class="sm:col-span-2 lg:col-span-3">
+          <dt class="text-xs font-medium text-slate-500">Additional information (bank use only)</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @item.additional_info.presence || "—" %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Where this item is stored",
+          padded: @storage_locations_containing.blank? do %>
+      <% if @storage_locations_containing.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "Not held at any storage location",
+              body: "This item appears here once a donation, purchase or audit puts it into a location." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Storage locations holding <%= @item.name %></caption>
+            <thead>
+              <tr>
+                <th scope="col">Storage location</th>
+                <th scope="col" class="quantity">Quantity</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr>
-                <th>Name</th>
-                <td><%= @item.name %></td>
-              </tr>
-              <tr>
-                <th>Category</th>
-                <td><%= @item&.item_category&.name %></td>
-              </tr>
-              <tr>
-                <th>NDBN Reporting Category</th>
-                <td><%= @item.reporting_category_humanized %><%= @reporting_category_hint %></td>
-              </tr>
-              <tr>
-                <th>Value Per Item</th>
-                <td><%= dollar_value(@item.value_in_cents || 0 ) %></td>
-              </tr>
-              <tr>
-                <th>Quantity per Individual</th>
-                <td><%= @item.distribution_quantity || 0 %></td>
-              </tr>
-              <tr>
-                <th>On hand minimum quantity</th>
-                <td><%= @item.on_hand_minimum_quantity || 0 %></td>
-              </tr>
-              <tr>
-                <th>On hand recommended quantity</th>
-                <td><%= @item.on_hand_recommended_quantity || 0 %></td>
-              </tr>
-              <tr>
-                <th>Package Size</th>
-                <td><%= @item.package_size || 0 %></td>
-              </tr>
-              <tr>
-                <% if Flipper.enabled?(:enable_packs) %>
-                  <th>Custom Units</th>
-                  <% item_units = @item.request_units&.pluck("item_units.name") %>
-                  <td><%= item_units&.join("; ") %></td>
-                <% end %>
-              </tr>
-              <tr>
-                <th>Item is visible to partners</th>
-                <td><%= @item.visible_to_partners ? 'Yes' : 'No' %></td>
-              </tr>
-              <tr>
-                <th>Additional Information (Bank Use Only)</th>
-                <td><%= @item.additional_info %></td>
-              </tr>
+              <% total = 0 %>
+              <% @storage_locations_containing.each do |storage| %>
+                <% location_quantity = @inventory ? @inventory.quantity_for(item_id: @item.id, storage_location: storage.id) : storage.item_total(@item) %>
+                <% total += location_quantity %>
+                <tr>
+                  <td class="font-medium text-slate-900">
+                    <%= link_to storage.name, storage_location_path(storage), class: "text-brand-700 hover:text-brand-800" %>
+                  </td>
+                  <td class="quantity"><%= number_with_delimiter(location_quantity) %></td>
+                </tr>
+              <% end %>
             </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td class="quantity"><%= number_with_delimiter(total) %></td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+      <% end %>
+    <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card card-info">
-          <div class="card-header">
-            <h2 class="card-title">This Item Is Contained In These Inventories</h2>
-          </div>
-          <div class="card-body p-0">
-            <% if @storage_locations_containing.present? %>
-              <h4></h4>
-              <table class="table">
-                <thead>
+    <% if @barcodes_for.present? %>
+      <%= render "shared/essentials/card", title: "Barcodes for this item", padded: false do %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Barcodes registered against <%= @item.name %></caption>
+            <thead>
+              <tr>
+                <th scope="col">Barcode value</th>
+                <th scope="col" class="quantity">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @barcodes_for.each do |barcode_item| %>
                 <tr>
-                  <th>Storage location</th>
-                  <th>Quantity</th>
+                  <td class="font-mono text-xs">
+                    <%= link_to barcode_item.value, barcode_item_path(barcode_item), class: "text-brand-700 hover:text-brand-800" %>
+                  </td>
+                  <td class="quantity"><%= number_with_delimiter(barcode_item.quantity) %></td>
                 </tr>
-                </thead>
-                <tbody>
-                <% total = 0; @storage_locations_containing.each do |storage|
-                  location_quantity = if @inventory
-                    @inventory.quantity_for(item_id: @item.id, storage_location: storage.id)
-                  else
-                    storage.item_total(@item)
-                  end
-                  total += location_quantity %>
-                  <tr>
-                    <td><%= link_to storage.name, storage_location_path(storage) %></td>
-                    <td class="text-left"><%= location_quantity %></td>
-                  </tr>
-                <% end %>
-                <tr>
-                  <td class="text-left">Total</td>
-                  <td class="text-left"><%= total %></td>
-                </tr>
-                </tbody>
-              </table>
-            <% end %>
-          </div>
-          <!-- /.card-footer-->
+              <% end %>
+            </tbody>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
-
-<% if @barcodes_for.present? %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <!-- Default box -->
-          <div class="card card-primary">
-            <div class="card-header">
-              <h2 class="card-title">Barcodes Associated With This Item</h2>
-            </div>
-            <div class="card-body p-0">
-              <table class="table">
-                <thead>
-                <tr>
-                  <th>Barcode value</th>
-                  <th>Quantity</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% @barcodes_for.each do |barcode_item| %>
-                  <tr>
-                    <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
-                    <td><%= barcode_item.quantity %></td>
-                  </tr>
-                <% end %>
-                </tbody>
-              </table>
-<% end %>
 </div>
-</div>
-</div>
-</div>
-</div>
-</section>

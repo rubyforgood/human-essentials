@@ -1,102 +1,66 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
-        <h1>
-          Inventory Audits
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Audits</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Audit Filters</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(audits_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Storage Location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %>
-                </div>
-              </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
+<% content_for :title, "Inventory Audits - #{current_organization.name}" %>
 
-                <span class="float-right">
-                  <%= download_button_to(audits_path(format: :csv), {text: "Export Audits", size: "md"}) %>
-                  <%= new_button_to new_audit_path, {text: "New Audit"} %>
-                </span>
-            <% end # form %>
-            </div>
-          </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
-      <!-- right column -->
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Inventory audits",
+        subtitle: "Counts that set inventory levels at a storage location.",
+        actions: capture {
+          concat essentials_link_button("Export", audits_path(format: :csv), variant: :secondary, icon: "bi-download")
+          concat essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Created</th>
-                <th>Organization</th>
-                <th>Storage location</th>
-                <th>Summary</th>
-                <th>Status</th>
-                <th class="text-center">Actions</th>
+  <%= render "shared/essentials/filter_bar", url: audits_path do %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
+  <% end %>
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @audits.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No audits match those filters" : "No audits yet",
+            body: filter_params.present? ? "Clear the filters to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
+            action: filter_params.present? ? nil : essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Inventory audits and their status</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="date">Created</th>
+              <th scope="col">Organization</th>
+              <th scope="col">Storage location</th>
+              <th scope="col">Summary</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @audits.each do |audit| %>
+              <%# Status was a green/red/yellow row tint alone; it is a pill with an icon and
+                  the word now, and the row keeps a soft tint as reinforcement. %>
+              <% tone, icon, tint = if audit.finalized?
+                                      [:success, "bi-check-circle", "positive bg-emerald-50/50"]
+                                    elsif audit.in_progress?
+                                      [:warning, "bi-hourglass-split", "negative bg-amber-50/50"]
+                                    else
+                                      [:info, "bi-clipboard-check", "highlight bg-sky-50/50"]
+                                    end %>
+              <tr class="<%= tint %>">
+                <td class="date">
+                  <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y").squeeze(" ") %></time>
+                </td>
+                <td><%= audit.organization.name %></td>
+                <td class="font-medium text-slate-900"><%= audit.storage_location.name %></td>
+                <td><%= pluralize(audit.line_items.count, "item") %></td>
+                <td><%= essentials_status_pill(audit.status.titleize, tone: tone, icon: icon) %></td>
+                <td class="text-right">
+                  <%= essentials_link_button "View", audit, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                </td>
               </tr>
-              </thead>
-              <tbody>
-              <% @audits.each do |audit| %>
-                <tr class="<%= (audit.finalized?) ? 'positive' : (audit.in_progress?) ? 'negative' : 'highlight' %>">
-                  <td>
-                    <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time>
-                  </td>
-                  <td><%= audit.organization.name %></td>
-                  <td><%= audit.storage_location.name %></td>
-                  <td><%= pluralize(audit.line_items.count, 'item') %></td>
-                  <td><%= audit.status.titleize %></td>
-                  <td class="text-center"><%= view_button_to audit %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- /.card -->
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

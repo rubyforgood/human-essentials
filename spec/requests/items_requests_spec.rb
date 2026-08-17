@@ -32,10 +32,17 @@ RSpec.describe "Items", type: :request do
           create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons)
 
           get items_path(format: response_format)
-          # Inside Item Inventory Tab
-          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-inventory"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
-          # Inside Items, Quantity and Location Tab
-          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-profile"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
+          page = Nokogiri::HTML(response.body)
+
+          # Below-minimum totals are no longer flagged by red bold text alone: the cell pairs
+          # the number with a "Below minimum" pill carrying an icon and the word, so it
+          # survives greyscale and colour blindness. Both tab panels flag the same item.
+          %w[panel-item-inventory panel-quantity-location].each do |panel_id|
+            cell = page.at_css("##{panel_id} td[data-column='total']")
+            expect(cell.text).to include("59")
+            expect(cell.text).to include("Below minimum")
+            expect(cell.at_css(".text-rose-700")).to be_present
+          end
         end
       end
 
@@ -294,14 +301,18 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include("NODEACTIVATE")
         expect(response.body).to include("NODELETE")
         expect(response.body).not_to include("NOSIR")
-        button1 = page.css("form[action='/items/#{item.id}'] .btn.btn-danger")
+        # Buttons are found by their form and element rather than by Bootstrap classes, and
+        # the disabled state is read from the attribute rather than matched against the class
+        # string -- the design system's `disabled:` Tailwind variants would match either way.
+        button1 = page.at_css("form[action='/items/#{item.id}'] button")
         expect(button1.text.strip).to eq("Delete")
-        button2 = page.css("form[action='/items/#{non_delete_item.id}/deactivate'] .btn")
+        button2 = page.at_css("form[action='/items/#{non_delete_item.id}/deactivate'] button")
         expect(button2.text.strip).to eq("Deactivate")
-        expect(button2.attr('class')).not_to match(/disabled/)
-        button3 = page.css("form[action='/items/#{non_deactivate_item.id}/deactivate'] .btn")
-        expect(button3.text.strip).to eq("Deactivate")
-        expect(button3.attr('class')).to match(/disabled/)
+        expect(button2.attr("disabled")).to be_nil
+        button3 = page.at_css("form[action='/items/#{non_deactivate_item.id}/deactivate'] button")
+        # The unavailable control keeps the visible word and appends an sr-only reason.
+        expect(button3.text.strip).to start_with("Deactivate")
+        expect(button3.attr("disabled")).to eq("disabled")
       end
 
       context "when filtering by reporting category" do
@@ -334,7 +345,7 @@ RSpec.describe "Items", type: :request do
           end
           expect(item.request_units).not_to be_empty
           get items_path
-          expect(response.body).to include("Custom Request Units")
+          expect(response.body).to include("Custom request units")
           expect(response.body).to include(item.request_units.pluck(:name).join(', '))
         end
       end
@@ -351,25 +362,26 @@ RSpec.describe "Items", type: :request do
 
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)
-        expect(response.body).to include('Name')
-        expect(response.body).to include("ACTIVEITEM")
+        # The item name is the page heading rather than a repeated "Name" field, and the
+        # field labels are sentence case per the design system.
+        expect(Nokogiri::HTML(response.body).at_css("h1").text.strip).to eq("ACTIVEITEM")
         expect(response.body).to include('Category')
         expect(response.body).to include('CURRENTCATEGORY')
-        expect(response.body).to include('NDBN Reporting Category')
+        expect(response.body).to include('NDBN reporting category')
         expect(response.body).to include('Adult Incontinence')
-        expect(response.body).to include('Value Per Item')
+        expect(response.body).to include('Value per item')
         expect(response.body).to include('$200.00')
-        expect(response.body).to include('Quantity per Individual')
+        expect(response.body).to include('Quantity per individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')
         expect(response.body).to include('1200')
         expect(response.body).to include('On hand recommended quantity')
         expect(response.body).to include('2348')
-        expect(response.body).to include('Package Size')
+        expect(response.body).to include('Package size')
         expect(response.body).to include('100')
-        expect(response.body).not_to include('Custom Units')
+        expect(response.body).not_to include('Custom units')
         expect(response.body).not_to include("#ITEM1; ITEM2")
-        expect(response.body).to include('Item is visible to partners')
+        expect(response.body).to include('Visible to partners')
         expect(response.body).to include('Yes')
       end
 
@@ -377,7 +389,7 @@ RSpec.describe "Items", type: :request do
         Flipper.enable(:enable_packs)
         get item_path(id: item.id)
 
-        expect(response.body).to include('Custom Units')
+        expect(response.body).to include('Custom units')
         expect(response.body).to include("ITEM1; ITEM2")
       end
 

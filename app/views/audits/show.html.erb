@@ -1,74 +1,78 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
-        <h1>
-          Inventory Audit
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Audits", audits_path %></li>
-          <li class="breadcrumb-item">Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>) - <%= @audit.status.titleize %></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Audit - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-header border-0">
-            <h3 class="card-title">
-                <p>
-                  <strong>Organization:</strong>
-                <%= @audit.organization.name %>
-                </p>
-              <p>
-                <strong>Storage location:</strong>
-                <%= @audit.storage_location.name %>
-              </p>
-            </h3>
-          </div>
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Item</th>
-                <th>Audit Quantity</th>
-                <th class="text-right">Quantity in Records</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @items.each do |inventory_item| %>
-                <% line_item = @audit.line_items.find { |i| i.item_id == inventory_item.item_id } %>
-                <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
-                  <td><%= inventory_item.name %></td>
-                  <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
-                  <td class="text-right"><%= inventory_item.quantity %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-footer-->
-          <div class="card-footer text-right">
-            <%= edit_button_to :edit_audit, {text: 'Resume Audit', size: 'md'} if @audit.in_progress? %>
-            <%= delete_button_to :audit, {text: 'Delete Audit', size: 'md'} if @audit.in_progress? || @audit.confirmed? %>
-            <%= submit_button_to audit_finalize_path(@audit.id), {text: 'Finalize Audit', size: 'md'}, {data: {confirm: 'This will adjust the inventory permanently. Are you sure that you want to submit this?'}} if @audit.confirmed? %>          </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Audit (#{@audit.created_at.strftime("%m/%d/%Y")})",
+        subtitle: "#{@audit.storage_location.name} — #{@audit.status.titleize}",
+        back: {path: audits_path, label: "Back to audits"},
+        actions: capture {
+          if @audit.in_progress?
+            concat essentials_link_button("Resume audit", edit_audit_path(@audit), variant: :primary, icon: "bi-pencil")
+          end
+          if @audit.confirmed?
+            concat essentials_action_button("Finalize audit", audit_finalize_path(@audit.id), method: :post,
+                     variant: :primary, icon: "bi-check-circle",
+                     confirm: "This will adjust the inventory permanently. Are you sure that you want to submit this?")
+          end
+          if @audit.in_progress? || @audit.confirmed?
+            concat essentials_action_button("Delete audit", audit_path(@audit), method: :delete,
+                     variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                     confirm: "Are you sure?")
+          end
+        } %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Organization</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @audit.organization.name %></dd>
         </div>
-        <!-- /.card -->
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Storage location</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= @audit.storage_location.name %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Status</dt>
+          <dd class="mt-1"><%= essentials_status_pill(@audit.status.titleize, tone: @audit.finalized? ? :success : (@audit.in_progress? ? :warning : :info), icon: @audit.finalized? ? "bi-check-circle" : (@audit.in_progress? ? "bi-hourglass-split" : "bi-clipboard-check")) %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Counted items", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Audited quantities against the quantities on record</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="quantity">Audit quantity</th>
+              <th scope="col" class="quantity">Quantity in records</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @items.each do |inventory_item| %>
+              <% line_item = @audit.line_items.find { |i| i.item_id == inventory_item.item_id } %>
+              <%# The match/mismatch/not-audited state was a row tint alone. It carries a pill
+                  with an icon and a word now; the tint stays as reinforcement. %>
+              <% if line_item.nil? %>
+                <% tint, tone, icon, label = ["negative bg-slate-50", :neutral, "bi-dash-circle", "Not audited"] %>
+              <% elsif line_item.quantity == inventory_item.quantity %>
+                <% tint, tone, icon, label = ["positive bg-emerald-50/50", :success, "bi-check-circle", "Matches records"] %>
+              <% else %>
+                <% tint, tone, icon, label = ["highlight bg-amber-50/50", :warning, "bi-exclamation-triangle", "Differs from records"] %>
+              <% end %>
+              <tr class="<%= tint %>">
+                <td class="font-medium text-slate-900"><%= inventory_item.name %></td>
+                <td class="quantity"><%= line_item ? number_with_delimiter(line_item.quantity.abs) : "—" %></td>
+                <td class="quantity"><%= number_with_delimiter(inventory_item.quantity) %></td>
+                <td><%= essentials_status_pill(label, tone: tone, icon: icon) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
+    <% end %>
   </div>
-</section>
+</div>

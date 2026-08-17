@@ -1,43 +1,23 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Audits - Inventory - #{current_organization.name}" %>
-        <h1>
-          New Inventory Audit
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Inventory Audits", audits_path %></li>
-          <li class="breadcrumb-item"><a href="#">New Audit</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "New Audit - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="callout callout-info">
-          <h5><i class="fas fa-info"></i> Note:</h5>
-          <p class="box-title">Create an <strong>Audit</strong> recording the inventory present in a
-            particular storage location.</p>
-            <p class="help">Enter the <em>items</em> with their corresponding <em>quantity</em> that are present in the storage location. You can do a partial audit - if you do not enter a new value, the level in the records will not be changed.</p>
-          <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
-          <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
-          <p class="help">After you <em>Confirm</em> the audit, an administrator must <em>Finalize</em> the audit for it to take effect. We <em>strongly</em> recommend that you do not do any transactions (donations, distributions, etc) before the audit is finalized, as the audit sets the inventory levels.</p>
-        </div>
-      </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New inventory audit",
+        subtitle: "Record the inventory actually present at a storage location.",
+        back: {path: audits_path, label: "Back to audits"} %>
+
+  <div class="mb-6 flex gap-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3">
+    <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
+    <div class="text-sm text-sky-900">
+      <p class="font-semibold">How an audit works</p>
+      <ul class="mt-2 space-y-1">
+        <li>Enter the items and quantities present at the storage location. A partial audit is fine — anything you leave out keeps its recorded level.</li>
+        <li><strong>Save progress</strong> keeps a draft you can resume later.</li>
+        <li>After you <strong>confirm</strong> the audit, an administrator must <strong>finalize</strong> it before it takes effect.</li>
+        <li>We strongly recommend not recording donations, distributions or other transactions until the audit is finalized, since the audit sets the inventory levels.</li>
+      </ul>
     </div>
   </div>
-</section>
 
-<%= render partial: "audits/form" %>
+  <%= render partial: "audits/form" %>
+</div>

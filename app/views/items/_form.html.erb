@@ -1,77 +1,40 @@
-<%= simple_form_for @item.becomes(Item), remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body">
-              <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-tag"></i></span>
-                <%= f.input_field :name, class: "form-control" %>
-              <% end %>
+<div class="max-w-2xl">
+  <%= essentials_error_summary(@item) %>
 
-              <div class='w-1/4'>
-                <%= f.input :item_category_id, label: 'Category', collection: @item_categories, hint: 'Categories can help organize and identify items' %>
-              </div>
-              <div class='w-1/4'>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @item.becomes(Item), remote: request.xhr? do |f| %>
+      <%= f.input :name, label: "Name" %>
+      <%= f.input :item_category_id, label: "Category", collection: @item_categories,
+            hint: "Categories help organize and identify items" %>
+      <%= f.input :reporting_category, label: "NDBN reporting category",
+            collection: Item.reporting_categories_for_select,
+            disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
+      <%= f.input :value_in_dollars, label: "Value per item" %>
+      <%= f.input :distribution_quantity, label: "Quantity per individual" %>
 
-                <%= f.input :reporting_category, label: 'NDBN Reporting Category', collection: Item.reporting_categories_for_select, disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
-              </div>
+      <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+        <%= f.input :on_hand_minimum_quantity, label: "On hand minimum quantity" %>
+        <%= f.input :on_hand_recommended_quantity, label: "On hand recommended quantity" %>
+      <% end %>
 
-              <%= f.input :name, label: "Value per item", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-money"></i></span>
-                <%= f.input_field :value_in_dollars, class: "form-control" %>
-              <% end %>
+      <%= f.input :package_size, label: "Package size", input_html: {min: 0} %>
 
-              <%= f.input :name, label: "Quantity Per Individual", wrapper: :input_group do %>
-                <%= f.input_field :distribution_quantity, class: "form-control" %>
-              <% end %>
+      <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
+        <%= f.association :request_units, as: :check_boxes, label: "Additional custom request units",
+              collection: current_organization.request_units,
+              checked: selected_item_request_units(@item),
+              label_method: :name, value_method: :id %>
+      <% end %>
 
-              <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-                <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
-                  <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
-                <% end %>
-                <%= f.input :name, label: "On hand recommended quantity", wrapper: :input_group do %>
-                  <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
-                <% end %>
-              <% end %>
+      <%= f.input :visible_to_partners, label: "Item is visible to partners?", as: :boolean %>
 
-              <%= f.input :name, label: "Package size", wrapper: :input_group do %>
-                <%= f.input_field :package_size, class: "form-control", min: 0 %>
-              <% end %>
+      <%= f.input :additional_info, label: "Additional information (bank use only)", as: :text,
+            maxlength: 500, hint: "500 character maximum", input_html: {rows: 3} %>
 
-              <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
-                <%= f.input :request_units, label: "Additional Custom Request Units" do %>
-                  <%= f.association :request_units, as: :check_boxes, collection: current_organization.request_units, checked: selected_item_request_units(@item), label_method: :name, value_method: :id, class: "form-check-input" %>
-                <% end %>
-              <% end %>
-
-              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
-                <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
-              <% end %>
-
-              <%= f.label :additional_info, "Additional Information (Bank Use Only) " %> <i>(500 character max)</i>
-              <%= f.input :additional_info, label: false, maxlength: 500, wrapper: :input_group %>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-              <%= submit_button %>
-            </div>
-          </div>
-          <!-- /.card -->
-        </div>
-        <!--/.col (left) -->
-        <!-- right column -->
-        <div class="col-md-6">
-
-        </div>
-        <!--/.col (right) -->
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

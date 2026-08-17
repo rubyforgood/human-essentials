@@ -1,54 +1,65 @@
-<table class="table table-items-location">
-<thead>
-<tr>
-  <th>Name</th>
-  <th>Items</th>
-  <th>Allocations</th>
-  <th class="text-right">Actions</th>
-</tr>
-</thead>
-<tbody>
-  <% @kits.each do |kit| %>
-    <tr>
-      <td><%= kit.name %></td>
-      <td>
-        <ul>
-          <% kit.kit_item.line_items.quantities_by_name.map do |id, item_hash| %>
-            <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
-          <% end %>
-        </ul>
-      </td>
-      <td class='d-flex flex-column'>
-        <table>
-          <thead>
-            <tr>
-              <td> Storage Location </td>
-              <td class="text-right"> Quantity </td>
-            </tr>
-          </thead>
-          <% @inventory.all_items.select { |i| i.item_id == kit.kit_item.id}.each do |item| %>
-            <tr>
-              <td><%= @inventory.storage_location_name(item.storage_location_id) %></td>
-              <td class="text-right"><%= item.quantity %></td>
-            </tr>
-          <% end %>
-        </table>
-      </td>
-      <td class="text-right">
-        <% if kit.active %>
-          <%= deactivate_kit_button(kit, @inventory) %>
-        <% else %>
-          <%= reactivate_button_to reactivate_kit_path(kit),
-                                   { confirm: confirm_reactivate_msg(kit.name),
-                                     class: 'reactivate-kit-button',
-                                     size: 'xs' } %>
+<% if @kits.blank? %>
+  <%= render "shared/essentials/empty_state", kind: :cold_start,
+        title: "No kits yet",
+        body: "A kit bundles several items together so they can be distributed as one unit.",
+        action: essentials_link_button("New kit", new_kit_path, variant: :primary, icon: "bi-plus-lg") %>
+<% else %>
+  <div class="table-scroll">
+    <table class="data-table table-items-location">
+      <caption>Kits, what they contain and where they are allocated</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Items</th>
+          <th scope="col">Allocations</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @kits.each do |kit| %>
+          <tr>
+            <td class="font-medium text-slate-900">
+              <%= kit.name %>
+              <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless kit.active %>
+            </td>
+            <td>
+              <ul class="space-y-0.5 text-sm text-slate-700">
+                <% kit.kit_item.line_items.quantities_by_name.map do |_id, item_hash| %>
+                  <li><%= "#{number_with_delimiter(item_hash[:quantity])} #{item_hash[:name]}" %></li>
+                <% end %>
+              </ul>
+            </td>
+            <td>
+              <% allocations = @inventory.all_items.select { |i| i.item_id == kit.kit_item.id } %>
+              <% if allocations.empty? %>
+                <p class="text-sm italic text-slate-500">Not allocated anywhere</p>
+              <% else %>
+                <ul class="space-y-0.5 text-sm text-slate-700">
+                  <% allocations.each do |item| %>
+                    <li class="flex justify-between gap-3">
+                      <span><%= @inventory.storage_location_name(item.storage_location_id) %></span>
+                      <span class="tabular-nums font-medium"><%= number_with_delimiter(item.quantity) %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </td>
+            <td class="text-right">
+              <div class="flex flex-wrap justify-end gap-1.5">
+                <%= essentials_link_button "Modify allocation", allocations_kit_path(kit), variant: :ghost, size: :sm, icon: "bi-sliders" %>
+                <% if kit.active %>
+                  <%= deactivate_kit_button(kit, @inventory) %>
+                <% else %>
+                  <%= essentials_action_button "Reactivate", reactivate_kit_path(kit), method: :put,
+                        variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
+                        class: "reactivate-kit-button",
+                        confirm: confirm_reactivate_msg(kit.name) %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
         <% end %>
-        <%= edit_button_to allocations_kit_path(kit), { text: "Modify Allocation" } %>
-      </td>
-    </tr>
-  <% end %>
-</tbody>
-</table>
-<script type="module">
-  $('.tooltip-target').tooltip();
-</script>
+      </tbody>
+    </table>
+  </div>
+<% end %>

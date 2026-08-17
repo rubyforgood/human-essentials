@@ -1,20 +1,22 @@
-<div class="tab-pane fade" id="custom-tabs-three-inventory" role="tabpanel" aria-labelledby="custom-tabs-three-inventory-tab">
-  <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_path, {text: "New Item"} %>
+<div id="panel-item-inventory" role="tabpanel" aria-labelledby="tab-item-inventory" data-tabs-target="panel" class="hidden">
+  <div class="flex justify-end border-b border-slate-200 px-5 py-3">
+    <%= essentials_link_button "New item", new_item_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
-
-  <table class="table table-items-location">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Name</th>
-      <th class="numeric">Quantity</th>
-      <th class="numeric">Minimum Quantity</th>
-      <th class="numeric">Recommended Quantity</th>
-    </tr>
-    </thead>
-    <tbody>
-      <%= render partial: "item_row_inventory", collection: @items_by_storage_collection_and_quantity, as: :row %>
-    </tbody>
-  </table>
-</div><!-- /.box-body.table-responsive -->
+  <div class="table-scroll" data-controller="expandable">
+    <table class="data-table table-items-location">
+      <caption>Item inventory, expandable to show each storage location</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="sr-only">Expand</span></th>
+          <th scope="col">Name</th>
+          <th scope="col" class="quantity">Quantity</th>
+          <th scope="col" class="quantity">Minimum quantity</th>
+          <th scope="col" class="quantity">Recommended quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "item_row_inventory", collection: @items_by_storage_collection_and_quantity, as: :row %>
+      </tbody>
+    </table>
+  </div>
+</div>

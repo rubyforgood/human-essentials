@@ -1,6 +1,9 @@
 # Provides full CRUD to Items. Every item is rooted in a BaseItem, but Diaperbanks have full control to do whatever
 # they like with their own Items.
 class ItemsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     @items = current_organization
       .items

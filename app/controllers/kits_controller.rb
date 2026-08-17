@@ -1,4 +1,7 @@
 class KitsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def show
     redirect_to allocations_kit_path
   end

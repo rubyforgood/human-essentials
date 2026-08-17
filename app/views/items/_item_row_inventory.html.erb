@@ -1,18 +1,44 @@
 <% row_item = row.last %>
-<tr data-widget="expandable-table" aria-expanded="false">
-  <td><i class="fa" /></td>
-  <td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
-  <td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum?(row_item) %>" data-column="total"><%= row_item[:quantity] %></td>
-  <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
-  <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
-</tr>
-<tr class="expandable-body">
-  <td colspan="5">
-    <p>
-    <% row_item[:locations].each do |location| %>
-      <%= link_to(location[:name], storage_location_url(location[:id])) %>
-      <%= " - #{location[:quantity]} units" %><br>
+<% below_minimum = quantity_below_minimum?(row_item) %>
+<% detail_id = "item-locations-#{row_item[:item_id]}" %>
+<tr>
+  <td class="w-10">
+    <%# The AdminLTE widget put aria-expanded on the <tr> and the affordance on a ::before
+        glyph, which no keyboard user could reach. This is a real button. %>
+    <button type="button"
+            class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-expanded="false"
+            aria-controls="<%= detail_id %>"
+            data-action="click->expandable#toggle">
+      <span class="sr-only">Show storage locations for <%= row_item[:item_name] %></span>
+      <i class="bi-chevron-right text-xs transition-transform" data-expandable-chevron aria-hidden="true"></i>
+    </button>
+  </td>
+  <td class="font-medium text-slate-900">
+    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "text-brand-700 hover:text-brand-800" %>
+  </td>
+  <td class="quantity" data-column="total">
+    <% if below_minimum %>
+      <span class="inline-flex items-center gap-1.5">
+        <span class="font-semibold text-rose-700"><%= number_with_delimiter(row_item[:quantity]) %></span>
+        <%= essentials_status_pill("Below minimum", tone: :danger, icon: "bi-exclamation-triangle") %>
+      </span>
+    <% else %>
+      <%= number_with_delimiter(row_item[:quantity]) %>
     <% end %>
-    </p>
+  </td>
+  <td class="quantity"><%= number_with_delimiter(row_item[:item_on_hand_minimum_quantity]) %></td>
+  <td class="quantity"><%= number_with_delimiter(row_item[:item_on_hand_recommended_quantity]) %></td>
+</tr>
+<tr id="<%= detail_id %>" class="expandable-body hidden bg-slate-50">
+  <td colspan="5">
+    <ul class="space-y-1 text-sm text-slate-700">
+      <% row_item[:locations].each do |location| %>
+        <li>
+          <%= link_to location[:name], storage_location_url(location[:id]), class: "font-medium text-brand-700 hover:text-brand-800" %>
+          — <%= number_with_delimiter(location[:quantity]) %> units
+        </li>
+      <% end %>
+    </ul>
   </td>
 </tr>

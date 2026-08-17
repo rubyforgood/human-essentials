@@ -1,39 +1,53 @@
-<div class="tab-pane fade" id="custom-tabs-three-categories" role="tabpanel" aria-labelledby="custom-tabs-three-categories">
-
-  <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_category_path, {text: "New Item Category"} %>
+<div id="panel-item-categories" role="tabpanel" aria-labelledby="tab-item-categories" data-tabs-target="panel" class="hidden">
+  <div class="flex justify-end border-b border-slate-200 px-5 py-3">
+    <%= essentials_link_button "New item category", new_item_category_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Items In Category</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% item_categories.each do |item_category| %>
-        <tr class='hover:bg-gray-100' data-item-category-id="<%= item_category.id %>">
-          <td class='w-1/12'><%= item_category.name %></td>
-          <td class='w-4/12'><%= item_category.description %></td>
-          <td class='w-5/12'>
-            <ul>
-              <% item_category.items.each do |item| %>
-                <li>
-                  <%= link_to(item.name, item_path(item.id), class: 'text-blue-500') %>
-                </li>
-              <% end %>
-            </ul>
-          </td>
-          <td class="text-right">
-            <%= view_button_to item_category_path(item_category) %>
-            <%= edit_button_to edit_item_category_path(item_category.id) %>
-            <%= delete_button_to(item_category_path(item_category.id), { confirm: confirm_delete_msg(item_category.name) }) if (item_category.items.count <= 0) %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div><!-- /.box-body.table-responsive -->
+  <% if item_categories.blank? %>
+    <%= render "shared/essentials/empty_state", kind: :cold_start,
+          title: "No item categories yet",
+          body: "Categories group related items together and make reporting easier.",
+          action: essentials_link_button("New item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg") %>
+  <% else %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption>Item categories and the items in each</caption>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Items in category</th>
+            <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% item_categories.each do |item_category| %>
+            <tr data-item-category-id="<%= item_category.id %>">
+              <td class="font-medium text-slate-900">
+                <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
+              </td>
+              <td class="max-w-prose text-slate-600"><%= item_category.description %></td>
+              <td>
+                <ul class="space-y-0.5">
+                  <% item_category.items.each do |item| %>
+                    <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
+                  <% end %>
+                </ul>
+              </td>
+              <td class="text-right">
+                <div class="flex justify-end gap-1.5">
+                  <%= essentials_link_button "View", item_category_path(item_category), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  <%= essentials_link_button "Edit", edit_item_category_path(item_category.id), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                  <% if item_category.items.count <= 0 %>
+                    <%= essentials_action_button "Delete", item_category_path(item_category.id), method: :delete,
+                          variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                          confirm: confirm_delete_msg(item_category.name) %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
