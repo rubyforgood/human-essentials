@@ -1,13 +1,14 @@
-<header class="container mx-auto mb-8">
-  <h1 class="block font-bold mb-1">Dashboard - <%= @partner.name %></h1>
-  <h3><button class="bg-yellow-400 mx-auto p-2 font-bold rounded-2xl">
-    <%= @partner.display_status %> Partner</button></h3>
-</header>
+<% content_for :title, "Distributions - #{@partner.name}" %>
 
-<section class="container mx-auto my-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Distributions",
+        subtitle: "Essentials your agency has received.",
+        actions: essentials_partner_status_pill(@partner.status) %>
+
   <%= render partial: "distribution_section",
-             locals: {distributions: @distributions,
-                      title: "Distributions",
-                      date_header: "Distribution date",
-                      item_header: "Items"} %>
-</section>
+        locals: {distributions: @distributions,
+                 title: "Distributions",
+                 date_header: "Distribution date",
+                 item_header: "Items"} %>
+</div>

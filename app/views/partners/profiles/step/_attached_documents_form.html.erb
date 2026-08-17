@@ -14,7 +14,7 @@
                 <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
                 <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
               </div>
-              <%= remove_element_button "Remove", container_selector: "li", class: "btn btn-sm btn-danger" %>
+              <%= remove_element_button "Remove", container_selector: "li", class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
             </li>
           <% end %>
         <% end %>
@@ -33,11 +33,11 @@
     <%= pf.file_field :documents,
       multiple: true,
       direct_upload: true,
-      class: "form-control-file d-none",
+      class: "-file d-none block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
       data: { file_input_target: "input" } %>
 
     <%# Custom button to trigger file selection %>
-    <button type="button" class="btn btn-outline-primary" data-action="click->file-input#triggerFileSelection">
+    <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-action="click->file-input#triggerFileSelection">
       Choose Files
     </button>
 

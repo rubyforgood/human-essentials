@@ -5,18 +5,18 @@
       <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},
                        data: { :'item-units-target' => 'itemSelect',
                                action: 'change->item-units#itemSelected'},
-                               class: 'form-control form-select' %>
+                               class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
-      <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
+      <%= field.number_field :quantity, label: false, step: 1, min: 1, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
     </td>
 
     <% if Flipper.enabled?(:enable_packs) && (current_partner ? current_partner.organization.request_units.any? : current_organization.request_units.any?) %>
       <td>
         <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
         <%= field.select :request_unit, [], {include_blank: 'units'},
-                         { :'data-item-units-target' => 'requestSelect', class: 'form-control form-select'} %>
+                         { :'data-item-units-target' => 'requestSelect', class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
 
       </td>
     <% end %>

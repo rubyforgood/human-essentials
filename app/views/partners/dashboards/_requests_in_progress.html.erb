@@ -1,57 +1,57 @@
-<section class="container mx-auto my-5">
-  <h2 class="font-weight-bold">Requests In Progress</h2>
-
-  <table class="rounded-3 w-100 shadow-lg bg-white">
-    <thead>
-      <tr class="border-bottom border-dark">
-        <th scope="col" class="p-4" style='width:150px'>Request Date</th>
-        <th scope="col" class="p-4">Number of Items Requested</th>
-        <th scope="col" class="p-4">Items Requested</th>
-        <th scope="col" class="p-4">Comment and Sender</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% @requests_in_progress.each do |request| %>
-        <tr class="border-bottom last:border-none">
-          <td class="p-4">
-            <p>
-              <span class="d-inline-block text-primary far fa-file-alt mr-1"></span>
-              <span class="d-inline-block"><%= request.created_at.strftime("%m/%d/%Y") %></span>
-            </p>
-          </td>
-
-          <td class="p-4"><%= request.total_items %></td>
-          <td class="p-4 d-flex flex-wrap">
-            <% request.item_requests.each do |item_request| %>
-              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-1">
-                <% if Flipper.enabled?(:enable_packs) && item_request.request_unit %>
-                  <%= pluralize(item_request.quantity, item_request.request_unit) %>
-                  —
-                <% else %>
-                  <%= item_request.quantity %>
+<%= render "shared/essentials/card", title: "Requests in progress", padded: @requests_in_progress.blank? do %>
+  <% if @requests_in_progress.blank? %>
+    <%= render "shared/essentials/empty_state", kind: :all_clear,
+          title: "No requests in progress",
+          body: "Requests you submit will appear here until they are fulfilled." %>
+  <% else %>
+    <div class="data-table">
+      <table class="data-table">
+        <caption>Requests you have submitted that are not yet fulfilled</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="date">Request date</th>
+            <th scope="col" class="quantity">Items requested</th>
+            <th scope="col">What was requested</th>
+            <th scope="col">Comment and sender</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @requests_in_progress.each do |request| %>
+            <tr>
+              <td class="date font-medium text-slate-900"><%= request.created_at.strftime("%m/%d/%Y") %></td>
+              <td class="quantity"><%= number_with_delimiter(request.total_items) %></td>
+              <td>
+                <div class="flex flex-wrap gap-1.5">
+                  <% request.item_requests.each do |item_request| %>
+                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                      <% if Flipper.enabled?(:enable_packs) && item_request.request_unit %>
+                        <%= pluralize(item_request.quantity, item_request.request_unit) %> — <%= item_request.item.name %>
+                      <% else %>
+                        <%= number_with_delimiter(item_request.quantity) %> <%= item_request.item.name %>
+                      <% end %>
+                    </span>
+                  <% end %>
+                </div>
+              </td>
+              <td>
+                <% if (comment = request.comments).present? %>
+                  <%# The comment was truncated behind a Bootstrap tooltip, which is
+                      hover-only and unreachable by keyboard or touch. It is a <details>
+                      disclosure now, so the full text is available to everyone. %>
+                  <details class="mb-2">
+                    <summary class="cursor-pointer text-sm text-slate-700 marker:text-slate-400">
+                      <%= truncate(comment, length: 20) %>
+                    </summary>
+                    <p class="mt-1 max-w-prose text-sm text-slate-600"><%= comment %></p>
+                  </details>
                 <% end %>
-                <%= item_request.item.name %>
-              </span>
-            <% end %>
-          </td>
-          <td class="p-4">
-            <% comment = request.comments %>
-            <% if comment.present? %>
-              <div class="mb-2" data-bs-toggle="tooltip" data-bs-title="<%= comment %>">
-                <%= truncate(comment, length: 20) %>
-              </div>
-            <% end %>
-            <a href="mailto:<%= request.requester.email %>"><%= request.requester.email %></a>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</section>
-
-<script type="module">
-  $(document).ready(function() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-  })
-</script>
+                <%= link_to request.requester.email, "mailto:#{request.requester.email}",
+                      class: "text-sm text-brand-700 hover:text-brand-800" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% end %>

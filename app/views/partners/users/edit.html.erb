@@ -1,21 +1,25 @@
-<h1>Edit User Information</h1>
+<% content_for :title, "Edit user - #{current_partner.name}" %>
 
-<%= form_for @user, html: {method: :patch}, url: partners_user_path(@user) do |form| %>
-  <div class="p-3">
-    <% if @user.errors.any? %>
-      <div id="error_explanation">
-        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
-        <ul>
-          <% @user.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit user information",
+        back: {path: partners_users_path, label: "Back to users"} %>
+
+  <div class="max-w-2xl">
+    <%= essentials_error_summary(@user) %>
+
+    <%= render "shared/essentials/card" do %>
+      <%= form_for @user, html: {method: :patch}, url: partners_user_path(@user) do |form| %>
+        <div>
+          <%= form.label :name, class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+        </div>
+
+        <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+          <%= form.submit "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+          <%= essentials_link_button "Cancel", partners_users_path, variant: :ghost, size: :md %>
+        </div>
+      <% end %>
     <% end %>
-    <div class="form-group row">
-      <%= form.label :name, class: "col-md-3" %>
-      <%= form.text_field :name, class: "col-md-8 form-control" %>
-    </div>
-    <%= form.submit(class: 'btn btn-primary') %>
   </div>
-<% end %>
+</div>

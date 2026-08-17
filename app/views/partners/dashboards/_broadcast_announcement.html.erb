@@ -1,21 +1,19 @@
-<br>
-<div class="card">
-  <h5 class="card-header bg-primary text-white">Announcements from <%= @parent_org.name %></h5>
-  <ul class="list-group list-group-flush">
+<%= render "shared/essentials/card", title: "Announcements from #{@parent_org.name}" do %>
+  <ul class="divide-y divide-slate-100">
     <% @broadcast_announcements.each do |announcement| %>
-      <li class="list-group-item">
-        <strong><%= if announcement.created_at.strftime("%Y") == DateTime.now.strftime("%Y")
-                      announcement.created_at.strftime("%B %d")
-                    else
-                      announcement.created_at.strftime("%B %d %Y")
-                    end %></strong>
-        <br>
-        <%= announcement.message %>
-        <% unless announcement.link == '' %>
-          <br>
-          <a href="<%= announcement.link %>" class="btn btn-primary">more info</a>
-        <% end %>
-      <% end %>
+      <li class="flex gap-3 py-3 first:pt-0 last:pb-0">
+        <%= essentials_icon_tile("bi-megaphone", tone: :warning) %>
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-medium text-slate-500">
+            <%= announcement.created_at.strftime(announcement.created_at.year == Date.current.year ? "%B %-d" : "%B %-d %Y") %>
+          </p>
+          <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
+          <% if announcement.link.present? %>
+            <%= link_to "More info", announcement.link,
+                  class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800" %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
   </ul>
-  <br>
-</div>
+<% end %>

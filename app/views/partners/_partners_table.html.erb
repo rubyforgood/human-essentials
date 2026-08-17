@@ -10,7 +10,7 @@
           body: filter_params.present? ? "Choose Active above to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
           action: filter_params.present? ? nil : essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
-    <div class="table-scroll">
+    <div class="data-table">
       <table class="data-table">
         <caption>Partner agencies and their current status</caption>
         <thead>

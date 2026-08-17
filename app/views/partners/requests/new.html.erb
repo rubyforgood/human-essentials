@@ -1,43 +1,37 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "New Request - #{current_partner ? current_user.display_name : @partner.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          New Request
-          <small>for <%= current_partner ? current_user.display_name : @partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">New Request</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner ? current_user.display_name : @partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= current_partner ? partner_user_root_path : dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item"><a href="#">New Essentials Request</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card"
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
           data-controller="confirmation"
           data-confirmation-pre-check-path-value="<%= validate_partners_requests_path(format: :json) %>">
-          <div class="card-body">
+          <div class="px-5 py-4">
 
             <% if @errors.present? %>
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request),
+            <%= essentials_form_for @partner_request, url: partners_requests_path(@partner_request),
               html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input', confirmation_target: "form" } do |form| %>
-              <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
+              <%= form.input :comments, label: "Comments:", as: :text, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
               <%= hidden_field_tag :partner_id, params[:partner_id] %>
 
-              <table class='table'>
+              <table class="data-table">
                 <thead>
                 <tr>
                   <th>Item Requested</th>
@@ -60,9 +54,9 @@
               <hr>
 
           </div>
-              <div class="card-footer">
+              <div class="border-t border-slate-200 px-5 py-3">
                 <!-- TODO(chaserx): we should add some js to prevent submission if the items selected are the blank option or any item has an empty quantity -->
-                <%= form.submit("Submit Essentials Request", class: "btn btn-success", data: { action: "click->confirmation#openModal" }) %> <%= link_to "Cancel Request", (current_partner ? partners_requests_path : requests_path), class: "btn btn-danger" %>
+                <%= form.submit("Submit Essentials Request", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", data: { action: "click->confirmation#openModal" }) %> <%= link_to "Cancel Request", (current_partner ? partners_requests_path : requests_path), class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
               </div>
             <% end %>
 

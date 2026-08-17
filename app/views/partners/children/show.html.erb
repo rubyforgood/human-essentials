@@ -1,38 +1,27 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Children - #{current_partner.name}" %>
-        <h1><i class="fa fa-child"></i>&nbsp;&nbsp;
-          Child Details
-          <small>for <%= current_partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Child Details</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-home fa-lg"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="<%= partners_family_path(@child.family) %>">
-            The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
-          <li class="breadcrumb-item"><a href="#">View Child</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card-transparent">
-          <div class="row">
-            <div class="col-3">
+          <div class="grid gap-6">
+            <div class="min-w-0">
               <div class="card mb-6">
-                <h5 class="card-header bg-primary text-white">Child Information</h5>
-                <div class="card-body">
+                <h5 class="border-b border-slate-200 px-5 py-4">Child Information</h5>
+                <div class="px-5 py-4">
                   <dl>
                     <dt>First name</dt>
                     <dd><%= @child.first_name %></dd>
@@ -68,12 +57,12 @@
               </div>
             </div>
 
-            <div class="col-9">
+            <div class="min-w-0">
               <div class="card mb-6">
-                <h5 class="card-header bg-primary text-white">Requested Items</h5>
-                <div class="card-body">
+                <h5 class="border-b border-slate-200 px-5 py-4">Requested Items</h5>
+                <div class="px-5 py-4">
                   <% if @child.child_item_requests.count > 0 %>
-                    <table class="table table-striped">
+                    <table class="data-table">
                       <thead>
                       <tr>
                         <th scope="col">Request Date</th>
@@ -119,9 +108,9 @@
               </div>
             </div>
           </div>
-          <div class="card-footer">
-            <%= link_to 'Edit Child Details', edit_partners_child_path(@child), class: "btn btn-success" %>
-            <%= link_to 'All Children', partners_children_path, class: "btn btn-info" %>
+          <div class="border-t border-slate-200 px-5 py-3">
+            <%= link_to 'Edit Child Details', edit_partners_child_path(@child), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+            <%= link_to 'All Children', partners_children_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           </div>
         </div>
       </div>

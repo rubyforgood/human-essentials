@@ -1,40 +1,40 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
           <!-- form start -->
-          <div class="card-body">
-            <%= simple_form_for family, html: {role: 'form', class: 'form-horizontal'} do |f| %>
-              <%= f.input :guardian_first_name, label: "Guardian First Name", class: "form-control", wrapper: :input_group %>
+          <div class="px-5 py-4">
+            <%= essentials_form_for family, html: {role: 'form', class: 'form-horizontal'} do |f| %>
+              <%= f.input :guardian_first_name, label: "Guardian First Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
-              <%= f.input :guardian_last_name, label: "Guardian Last Name", class: "form-control", wrapper: :input_group %>
+              <%= f.input :guardian_last_name, label: "Guardian Last Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
-              <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: "form-control", wrapper: :input_group %>
+              <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :guardian_county, "Guardian County" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_county, class: "form-control" %>
+              <%# <i class="bi-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_county, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :guardian_phone, "Guardian Phone" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_phone, class: "form-control" %>
+              <%# <i class="bi-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_phone, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :case_manager, "Case Manager" %>
-              <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
-              <%= f.text_field :case_manager, class: "form-control" %>
+              <i class="bi-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
+              <%= f.text_field :case_manager, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
-              <%= f.number_field :home_adult_count, class: "form-control" %>
+              <%= f.number_field :home_adult_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :home_child_count, 'How Many Children (5-17) Live In The Home?' %>
-              <%= f.number_field :home_child_count, class: "form-control" %>
+              <%= f.number_field :home_child_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :home_young_child_count, 'How Many Children (under 5) Live In The Home?' %>
-              <%= f.number_field :home_young_child_count, class: "form-control" %>
+              <%= f.number_field :home_young_child_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :sources_of_income, "Sources of Income" %>
               <br>
@@ -63,8 +63,8 @@
               <br>
 
               <%= f.label :guardian_monthly_pay, "Guardian's Monthly Income" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_monthly_pay, class: "form-control" %>
+              <%# <i class="bi-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_monthly_pay, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
               <br>
@@ -82,20 +82,20 @@
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, false %> <strong>No</strong>
               <br>
               <%= f.label :comments %>
-              <%= f.text_area :comments, class: "form-control" %>
+              <%= f.text_area :comments, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
               <%= f.label :archived %>
               <%= f.check_box :archived %>
               </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <%= f.submit(class: 'btn btn-primary') %>
+
+              <div class="border-t border-slate-200 px-5 py-3">
+                <%= f.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
               </div>
             <% end %>
             </div>
-        <!-- /.card -->
+
       </div>
 
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+
+  </div>
 </section>

@@ -15,13 +15,19 @@ RSpec.describe "/partners/distributions", type: :request do
     end
 
     it "should display the distribution's ID" do
+      # A distribution has to exist for the table to render at all: with none, the page shows
+      # an empty state rather than bare table chrome, so this used to assert a column header
+      # on a page that had no data in it.
+      distribution = create(:distribution, :with_items, partner: partner)
+
       subject.call
 
       page = Nokogiri::HTML(response.body)
-      header = page.css("table thead tr th")
-      id_field_order = 1
+      headers = page.css("table thead tr th").map { |th| th.text.strip }
+      ids = page.css("table tbody tr td").map { |td| td.text.strip }
 
-      expect(header[id_field_order].text).to eq("ID")
+      expect(headers).to include("ID")
+      expect(ids).to include(distribution.id.to_s)
     end
   end
 

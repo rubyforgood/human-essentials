@@ -1,24 +1,36 @@
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th scope="col"><%= sortable "guardian_last_name", "Guardian last name" %></th>
-    <th scope="col"><%= sortable "guardian_first_name", "Guardian first name" %></th>
-    <th scope="col"><%= sortable "case_manager", "Case Manager" %></th>
-    <th scope="col">Comments</th>
-    <th scope="col" colspan="2">
-      <%= link_to 'Export Results To CSV', partners_families_path(nil, format: :csv), class: "btn btn-info pull-right" %>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <% @families.each do |family| %>
-    <tr>
-      <td><%= family.guardian_last_name %></td>
-      <td><%= family.guardian_first_name %></td>
-      <td><%= family.case_manager %></td>
-      <td><%= family.comments %></td>
-      <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
-      <td><%= link_to 'Edit Family Details', edit_partners_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
-  <% end %>
-  </tbody>
-</table>
+<% if @families.blank? %>
+  <%= render "shared/essentials/empty_state", kind: :no_results,
+        title: "No families match those filters",
+        body: "Reset the search to see everyone, or add a new family." %>
+<% else %>
+  <div class="data-table">
+    <table class="data-table">
+      <caption>Families your agency serves</caption>
+      <thead>
+        <tr>
+          <th scope="col"><%= sortable "guardian_last_name", "Guardian last name" %></th>
+          <th scope="col"><%= sortable "guardian_first_name", "Guardian first name" %></th>
+          <th scope="col"><%= sortable "case_manager", "Case manager" %></th>
+          <th scope="col">Comments</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @families.each do |family| %>
+          <tr>
+            <td class="font-medium text-slate-900"><%= family.guardian_last_name %></td>
+            <td><%= family.guardian_first_name %></td>
+            <td><%= family.case_manager %></td>
+            <td class="max-w-prose text-slate-600"><%= family.comments %></td>
+            <td class="text-right">
+              <div class="flex justify-end gap-1.5">
+                <%= essentials_link_button "View", family, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                <%= essentials_link_button "Edit", edit_partners_family_path(family), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

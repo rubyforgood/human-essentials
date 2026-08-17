@@ -6,7 +6,7 @@
       </div>
       <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
         <%# Items and quantities %>
-        <table class="table">
+        <table class="data-table">
           <thead>
             <tr>
               <th>Item Name</th>
@@ -46,8 +46,8 @@
 
       <%# Actions %>
       <div class="modal-footer">
-        <button id="modalNo" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
-        <button id="modalYes" type="button" class="btn btn-success" data-action="confirmation#submitForm">Yes, it's correct</button>
+        <button id="modalNo" type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
+        <button id="modalYes" type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-action="confirmation#submitForm">Yes, it's correct</button>
       </div>
     </div>
   </div>

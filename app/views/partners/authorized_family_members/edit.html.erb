@@ -1,26 +1,15 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1><i class="fa fa-user"></i>&nbsp;&nbsp;
-          Edit Authorized Family Member
-          <small>for <%= current_partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Edit Authorized Family Member</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-home fa-lg"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="<%= partners_family_path(@authorized_family_member.family) %>">The <%= "#{@authorized_family_member.family.guardian_last_name}" %> Family</a></li>
-          <li class="breadcrumb-item"><a href="<%= partners_authorized_family_member_path(@authorized_family_member) %>">View Authorized Family Member</a></li>
-          <li class="breadcrumb-item"><a href="#">Edit</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
 <%= render 'form', authorized_family_member: @authorized_family_member %>

@@ -1,56 +1,41 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Users - #{current_partner.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          Users
-          <small>for <%= current_partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-home fa-lg"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Users</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Users - #{current_partner.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-white">
-            <h3 class="card-title"><%= current_partner.name %>
-              Users </h3><%= link_to "Invite new user", new_partners_user_path, class: "btn btn-outline-info pull-right" %>
-          </div>
-          <div class="card-body">
-            <table class="table table-striped">
-              <thead>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Users",
+        subtitle: "People at #{current_partner.name} who can sign in.",
+        actions: essentials_link_button("Invite new user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
+
+  <%= render "shared/essentials/card", padded: @users.blank? do %>
+    <% if @users.blank? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No users yet",
+            body: "Invite a colleague so they can make requests on your agency's behalf.",
+            action: essentials_link_button("Invite new user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
+    <% else %>
+      <div class="data-table">
+        <table class="data-table">
+          <caption>Users at <%= current_partner.name %></caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
               <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
+                <td class="font-medium text-slate-900"><%= user.display_name %></td>
+                <td><%= user.email %></td>
+                <td class="text-right">
+                  <%= essentials_link_button "Edit", edit_partners_user_path(user), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                </td>
               </tr>
-              </thead>
-              <tbody>
-              <% @users.each do |user| %>
-                <tr>
-                  <td><%= user.display_name %></td>
-                  <td><%= user.email %></td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-            <hr>
-          </div>
-        </div>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

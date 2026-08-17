@@ -1,32 +1,26 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Bulk Request - #{current_partner.name}" %>
-        <h1><i class="fa fa-doc"></i>&nbsp;&nbsp;
-          Request
-          <small>for <%= current_partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= partners_dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item"><a href="#">Request</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-primary">
-            <h3 class="card-title">Request Details</h3>
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-base font-semibold text-slate-900">Request Details</h3>
           </div>
-          <div class="card-body">
+          <div class="px-5 py-4">
 
             <% if flash[:success] %>
               <%= render partial: 'partners/requests/success' %>
@@ -67,7 +61,7 @@
               <span class='text-2xl font-bold'>Submitted:</span>
               <p class='text-lg'><%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
             </div>
-            <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'btn btn-success' %></p>
+            <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %></p>
           </div>
         </div>
       </div>

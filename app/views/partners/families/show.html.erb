@@ -1,37 +1,27 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          Family Details
-          <small>for <%= current_partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Family Details</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-home fa-lg"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="<%= partners_families_path %>">All Families</a></li>
-          <li class="breadcrumb-item"><a href="#">The <%= "#{@family.guardian_last_name}" %> Family</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="card-header bg-primary text-white">Family Information
-            <%= link_to 'Add An Authorized Member To This Family', new_partners_authorized_family_member_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
-            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right" %>
+          <h5 class="border-b border-slate-200 px-5 py-4">Family Information
+            <%= link_to 'Add An Authorized Member To This Family', new_partners_authorized_family_member_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", style: "margin-left:10px;" %>
+            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           </h5>
-          <div class="card-body">
+          <div class="px-5 py-4">
             <dl>
               <dt>Guardian First Name:</dt>
               <dd><%= @family.guardian_first_name %></dd>
@@ -82,10 +72,10 @@
               <dd><%= @family.comments %></dd>
             </dl>
           </div>
-          <div class="card-footer">
-            <%= link_to 'Edit This Family', edit_partners_family_path(@family), class: "btn btn-sm btn-primary" %>
-            <%= link_to 'Back to Families', partners_families_path, class: "btn btn-sm btn-info pull-right" %>
-            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "btn btn-sm btn-success" %>
+          <div class="border-t border-slate-200 px-5 py-3">
+            <%= link_to 'Edit This Family', edit_partners_family_path(@family), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+            <%= link_to 'Back to Families', partners_families_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           </div>
         </div>
       </div>
@@ -93,13 +83,13 @@
   </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="card-header bg-primary text-white">Children Information</h5>
-          <table class="table table-striped">
+          <h5 class="border-b border-slate-200 px-5 py-4">Children Information</h5>
+          <table class="data-table">
             <thead>
             <tr>
               <th style="width: 13.33%">First Name</th>
@@ -116,7 +106,7 @@
                 <td><%= child.last_name %></td>
                 <td><%= child.date_of_birth %></td>
                 <td><%= child.gender %></td>
-                <td><%= link_to 'Edit', edit_partners_child_path(child), class: "btn btn-sm btn-outline-primary" %></td>
+                <td><%= link_to 'Edit', edit_partners_child_path(child), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %></td>
             <% end %>
             </tbody>
           </table>
@@ -125,13 +115,13 @@
     </div>
   </div>
 </section>
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="card-header bg-primary text-white">Authorized Members for Pick Up</h5>
-          <table class="table table-striped">
+          <h5 class="border-b border-slate-200 px-5 py-4">Authorized Members for Pick Up</h5>
+          <table class="data-table">
             <thead>
             <tr>
               <th style="width: 13.33%">First Name</th>
@@ -149,9 +139,9 @@
                 <td><%= member.date_of_birth %></td>
                 <td><%= member.comments %></td>
                 <td>
-                  <%= link_to 'Edit', edit_partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-primary" %>
-                  <%= link_to 'View', partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-info" %>
-                  <%= link_to 'Delete', partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-danger",
+                  <%= link_to 'Edit', edit_partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+                  <%= link_to 'View', partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+                  <%= link_to 'Delete', partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600",
                        data: { confirm: "Are you sure?" }, method: :delete %>
                 </td>
             <% end %>

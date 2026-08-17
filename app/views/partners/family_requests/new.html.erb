@@ -1,44 +1,38 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          Family Details
-          <small>for <%= current_partner.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Family Details</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item"><a href="#">New Family Request</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header bg-primary">
-            <h3 class="card-title">Filters</h3>
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-base font-semibold text-slate-900">Filters</h3>
           </div>
-          <div class="card-body">
+          <div class="px-5 py-4">
             <%= form_for_filterrific @filterrific do |f| %>
-              <div class="row">
-                <div class="col-3">
+              <div class="grid gap-6">
+                <div class="min-w-0">
                   <%= f.label :search_families, "Search By Guardian Name" %>
                   <%= f.text_field(
                           :search_families,
-                          class: 'filterrific-periodically-observed form-control'
+                          class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
                       ) %>
                 </div>
-                <div class="col-3">
+                <div class="min-w-0">
                   <%= f.label :search_names, "Search By Child Name" %>
                   <%= f.text_field(
                           :search_names,
-                          class: 'filterrific-periodically-observed form-control'
+                          class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
                       ) %>
                 </div>
-                <div class="col-3">
+                <div class="min-w-0">
                   <%= f.label :search_active, "Show Active Only?" %>
                   <br>
                   <%= f.check_box(
@@ -46,29 +40,29 @@
                           class: 'filterrific-periodically-observed'
                       ) %>
                 </div>
-                <div class="col-3">
+                <div class="min-w-0">
                   <%= render_filterrific_spinner %>
                 </div>
               </div>
-              </div><!-- /.row -->
-              <div class="card-footer">
+              </div>
+              <div class="border-t border-slate-200 px-5 py-3">
                 <%= link_to(
                         'Reset Search',
                         reset_filterrific_url,
-                        class: 'btn btn-danger'
+                        class: 'inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600'
                     ) %>
             <% end %>
           </div>
         </div>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card mb-4"
           data-controller="confirmation"
           data-confirmation-pre-check-path-value="<%= validate_partners_family_requests_path(format: :json) %>">
@@ -82,9 +76,9 @@
 
             <hr>
 
-            <div class="card-footer">
-              <%= submit_tag("Submit Essentials Request", class: "btn btn-success", data: { action: "click->confirmation#openModal" }) %>
-              <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
+            <div class="border-t border-slate-200 px-5 py-3">
+              <%= submit_tag("Submit Essentials Request", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", data: { action: "click->confirmation#openModal" }) %>
+              <%= link_to "Cancel Request", partners_requests_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
             </div>
           <% end %>
 

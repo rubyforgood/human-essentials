@@ -1,48 +1,32 @@
-<section class="container mx-auto my-5">
-  <h2 class="font-weight-bold">Make a request</h2>
-
-  <div class="d-flex">
-
-    <% if current_partner.profile.enable_quantity_based_requests? %>
-      <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
-        <div>
-          <h3 class='mb-0'>Quantity</h3>
-          <p>Specify quantity for each product.</p>
-        </div>
-
-        <%= link_to "Create Request",
-            new_partners_request_path,
-            class: "btn btn-primary w-100 py-2 px-4 rounded",
-            "aria-label": "Create a request by quantity" %>
-      </article>
-    <% end %>
-
-    <% if current_partner.profile.enable_child_based_requests? %>
-      <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
-        <div>
-          <h3 class='mb-0'>Child</h3>
-          <p>Specify the family and child you are requesting for.</p>
-        </div>
-
-        <%= link_to "Create Request",
-            new_partners_family_request_path,
-            class: "mt-2 btn btn-primary w-100 py-2 px-4 rounded",
-            "aria-label": "Create a request for a child or family" %>
-      </article>
-    <% end %>
-
-    <% if current_partner.profile.enable_individual_requests? %>
-      <article class="col d-flex flex-column justify-content-between p-4 border border-primary rounded shadow">
-        <div>
-          <h3 class='mb-0'># of Individuals</h3>
-          <p>Specify the number of individuals for each product.</p>
-        </div>
-
-        <%= link_to "Create Request",
-            new_partners_individuals_request_path,
-            class: "btn btn-primary w-100 py-2 px-4 rounded",
-            "aria-label": "Create a request by number of individuals" %>
-      </article>
-    <% end %>
-  </div>
-</section>
+<%
+  options = []
+  if current_partner.profile.enable_quantity_based_requests?
+    options << {title: "Quantity", body: "Specify a quantity for each product.", path: new_partners_request_path, aria: "Create a request by quantity", icon: "bi-123"}
+  end
+  if current_partner.profile.enable_child_based_requests?
+    options << {title: "Child", body: "Specify the family and child you are requesting for.", path: new_partners_family_request_path, aria: "Create a request for a child or family", icon: "bi-person-arms-up"}
+  end
+  if current_partner.profile.enable_individual_requests?
+    options << {title: "Number of individuals", body: "Specify the number of individuals for each product.", path: new_partners_individuals_request_path, aria: "Create a request by number of individuals", icon: "bi-people"}
+  end
+%>
+<% if options.any? %>
+  <%= render "shared/essentials/card", title: "Make a request" do %>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-<%= options.size %>">
+      <% options.each do |option| %>
+        <article class="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 p-4">
+          <div class="flex gap-3">
+            <%= essentials_icon_tile(option[:icon], tone: :brand) %>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold text-slate-900"><%= option[:title] %></h3>
+              <p class="mt-0.5 text-sm text-slate-600"><%= option[:body] %></p>
+            </div>
+          </div>
+          <%= essentials_link_button "Create request", option[:path],
+                variant: :primary, size: :md, icon: "bi-plus-lg",
+                class: "w-full", "aria-label": option[:aria] %>
+        </article>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

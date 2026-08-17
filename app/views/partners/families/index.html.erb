@@ -1,103 +1,42 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          Families
-          <small>for <%= current_partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Families</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Families - #{current_partner.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card">
-          <div class="card-header bg-primary">
-            <h3 class="card-title">Filters</h3>
-          </div>
-          <div class="card-body">
-            <%= form_for_filterrific @filterrific, remote: true do |f| %>
-              <div class="row">
-                <div class="col-3">
-                  <%= f.label :search_guardian_names, "Search By Guardian Name" %>
-                  <%= f.text_field(
-                          :search_guardian_names,
-                          class: 'filterrific-periodically-observed form-control'
-                      ) %>
-                </div>
-                <div class="col-3">
-                  <%= f.label :search_agency_guardians, "Search By Case Manager" %>
-                  <%= f.text_field(
-                          :search_agency_guardians,
-                          class: 'filterrific-periodically-observed form-control'
-                      ) %>
-                </div>
-                <div class="col-2">
-                  <%= f.label :include_archived, "Include Archived?" %>
-                  <br>
-                  <%= f.check_box(
-                          :include_archived,
-                          class: 'filterrific-periodically-observed',
-                      ) %>
-                </div>
-                <div class="col-3">
-                  <%= render_filterrific_spinner %>
-                </div>
-              </div>
-              </div><!-- /.row -->
-              <div class="card-footer">
-                <%= link_to(
-                        'Reset Search',
-                        reset_filterrific_url,
-                        class: 'btn btn-danger'
-                    ) %>
-                <span class="float-right">
-                  <%= link_to 'Add New Family', new_partners_family_path, class: "btn btn-info" %>
-                </span>
-            <% end %>
-            </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Families",
+        subtitle: "Families your agency serves.",
+        actions: capture {
+          concat essentials_link_button("Export to CSV", partners_families_path(nil, format: :csv), variant: :secondary, icon: "bi-download")
+          concat essentials_link_button("Add new family", new_partners_family_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <%= render "shared/essentials/card", title: "Filters" do %>
+    <%= form_for_filterrific @filterrific, remote: true do |f| %>
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="min-w-[14rem]">
+          <%= f.label :search_guardian_names, "Search by guardian name", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+          <%= f.text_field :search_guardian_names, class: "filterrific-periodically-observed #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}" %>
         </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-</section>
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body">
-            <div id="filterrific_results">
-              <%= render(
-                      partial: 'partners/families/list',
-                      locals: {families: @families}
-                  ) %>
-            </div>
-          </div>
+        <div class="min-w-[14rem]">
+          <%= f.label :search_agency_guardians, "Search by case manager", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+          <%= f.text_field :search_agency_guardians, class: "filterrific-periodically-observed #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}" %>
         </div>
-        <!-- /.card -->
+        <div class="flex items-center gap-2 pb-2">
+          <%= f.check_box :include_archived, class: "filterrific-periodically-observed h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30" %>
+          <%= f.label :include_archived, "Include archived", class: "text-sm text-slate-700" %>
+        </div>
+        <div class="pb-2"><%= render_filterrific_spinner %></div>
+        <div class="pb-1">
+          <%= link_to "Reset search", reset_filterrific_url, class: essentials_button_classes(variant: :ghost, size: :md) %>
+        </div>
       </div>
-    </div>
+    <% end %>
+  <% end %>
+
+  <div class="mt-6">
+    <%= render "shared/essentials/card", padded: false do %>
+      <div id="filterrific_results">
+        <%= render partial: "partners/families/list", locals: {families: @families} %>
+      </div>
+    <% end %>
   </div>
-</section>
+</div>

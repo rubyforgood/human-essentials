@@ -1,25 +1,25 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= simple_form_for authorized_family_member, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-              <%= form.input :first_name, label: "First Name", class: "form-control", wrapper: :input_group %>
-              <%= form.input :last_name, label: "Last Name", class: "form-control", wrapper: :input_group %>
+          <!-- form start -->
+          <div class="px-5 py-4">
+            <%= essentials_form_for authorized_family_member, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+
+              <%= form.input :first_name, label: "First Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+              <%= form.input :last_name, label: "Last Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
               <%= form.input :date_of_birth, as: :date, start_year: 100.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
-              <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
-              <%= form.input :comments, label: "Comments", as: :text, class: "form-control", wrapper: :input_group %>
+              <%= form.input :gender, collection: ["Male", "Female"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+              <%= form.input :comments, label: "Comments", as: :text, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
               <%= hidden_field_tag :family_id, authorized_family_member.family.id %>
 
               </div>
-              <div class="card-footer">
-                <%= form.submit(class: 'btn btn-primary') %>
+              <div class="border-t border-slate-200 px-5 py-3">
+                <%= form.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
               </div>
             <% end %>
             </div>

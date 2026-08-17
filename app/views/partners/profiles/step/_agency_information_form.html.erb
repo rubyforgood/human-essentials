@@ -1,5 +1,5 @@
 <div class="form-group">
-  <%= f.input :name, label: "Agency Name", required: true, class: "form-control" %>
+  <%= f.input :name, label: "Agency Name", required: true, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 </div>
 
 <%= f.fields_for :profile, profile do |pf| %>
@@ -9,13 +9,12 @@
       <%= pf.input :agency_type,
         collection: Partners::Profile.agency_types_for_selection,
         label: "Agency Type",
-        class: "form-control",
-        wrapper: :input_group,
+        class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
         input_html: { data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
     </div>
 
     <div class="form-group" data-hide-by-source-val-target="destination">
-      <%= pf.input :other_agency_type, label: "Other Agency Type", class: "form-control" %>
+      <%= pf.input :other_agency_type, label: "Other Agency Type", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
     </div>
   </div>
 
@@ -27,26 +26,26 @@
            label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
 
   <div class="form-group">
-    <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: "form-control" %>
+    <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="form-group">
-    <%= pf.input :address1, label: "Address (line 1)", class: "form-control" %>
+    <%= pf.input :address1, label: "Address (line 1)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="form-group">
-    <%= pf.input :address2, label: "Address (line 2)", class: "form-control" %>
+    <%= pf.input :address2, label: "Address (line 2)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="form-group">
-    <%= pf.input :city, label: "City", class: "form-control" %>
+    <%= pf.input :city, label: "City", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="form-group">
-    <%= pf.input :state, label: "State", class: "form-control" %>
+    <%= pf.input :state, label: "State", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="form-group">
-    <%= pf.input :zip_code, label: "Zip Code", class: "form-control" %>
+    <%= pf.input :zip_code, label: "Zip Code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

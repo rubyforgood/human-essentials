@@ -1,20 +1,20 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-            <%= simple_form_for child, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+          <!-- form start -->
+          <div class="px-5 py-4">
+
+            <%= essentials_form_for child, html: {role: 'form', class: 'form-horizontal'} do |form| %>
               <%= form.label :first_name, "First Name" %>
-              <%= form.text_field :first_name, class: "form-control" %>
+              <%= form.text_field :first_name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= form.label :last_name, "Last Name" %>
-              <%= form.text_field :last_name, class: "form-control" %>
+              <%= form.text_field :last_name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= @requestable_items.map(&:last).intersect?(child.requested_item_ids) %>
               <div class="requestable-items-container">
@@ -25,7 +25,7 @@
                   { include_hidden: true },
                   {
                     multiple: true,
-                    class: "form-control custom-select",
+                    class: "custom-select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
                     "data-controller": "select2",
                     "data-select2-config-value": "{}",
                   },
@@ -34,7 +34,7 @@
               </div>
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
-              <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
+              <%= form.input :gender, collection: ["Male", "Female"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= form.label :child_lives_with, "Child Lives With" %><br>
 
@@ -43,18 +43,18 @@
                 <%= form.label "#{a_value}" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <% end %>
               <br>
-              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "form-control", :include_blank => true %>
-              <%= form.input :agency_child_id, class: "form-control", label: "Agency Child ID" %>
+              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, :include_blank => true %>
+              <%= form.input :agency_child_id, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, label: "Agency Child ID" %>
               <%#= form.label :health_insurance, 'Health Insurance' %>
               <%= form.input :health_insurance, as: :radio_buttons,
                              collection: [['Private Insurance', 'Private Insurance'],
                                           ['Medicaid', 'Medicaid'],
                                           ['Uninsured', 'Uninsured']],
                              label: "Health Insurance",
-                              class: "form-control" %>
+                              class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= form.label :comments %><br>
-              <%= form.text_area :comments, class: "form-control" %>
+              <%= form.text_area :comments, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 
               <%= hidden_field_tag :family_id, child.family.id %>
               <br>
@@ -64,15 +64,15 @@
               <%= form.label "Archived?" %>&nbsp;
               <%= form.check_box :archived %>
 
-              <div class="card-footer">
-                <%= form.submit(class: 'btn btn-primary') %>
+              <div class="border-t border-slate-200 px-5 py-3">
+                <%= form.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
               </div>
             <% end %>
           </div>
         </div>
       </div>
-      <!-- /.card -->
+
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+
+  </div>
 </section>
