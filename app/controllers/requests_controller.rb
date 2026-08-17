@@ -1,7 +1,7 @@
 # Provides Read-only access to Requests, which are created via an API. Requests are transformed into Distributions.
 class RequestsController < ApplicationController
-    # Migrated to the Ruby for Good design system (ADR 0011).
-    layout "essentials_app"
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
 
   def index
     setup_date_range_picker
