@@ -1,45 +1,36 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Estimated Distributions by County - #{current_organization.name}" %>
-        <h1>
-          Estimated Distributions by County for <%= current_organization.name %>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Estimated Distributions by County for <%= current_organization.name %></h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Distributions</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="row">
-            <div class="col-sm-3 col-6">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="grid gap-6">
+            <div class="min-w-0">
               <div class="description-block border-right">
-                <%= simple_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %><br>
+                <%= essentials_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %><br>
                   <%= filter_button %>
                 <% end %>
               </div>
-              <!-- /.description-block -->
+
             </div>
           </div>
 
-          <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
               <tr>
                 <th>County</th>
@@ -61,7 +52,7 @@
             </table>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>

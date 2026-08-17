@@ -1,9 +1,9 @@
-<div class="card card-success">
-  <div class="card-header">
-    <h3 class="card-title">Users</h3>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="border-b border-slate-200 px-5 py-4">
+    <h3 class="text-base font-semibold text-slate-900">Users</h3>
   </div>
 
-  <div class="card-body table-responsive p-0">
+  <div class="px-5 py-4">
     <table class="table table-hover text-nowrap">
       <thead>
         <tr>
@@ -49,14 +49,14 @@
             </td>
             <td class='d-flex flex-column'>
               <% unless user.invitation_accepted_at %>
-                <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "btn btn-warning btn-xs mb-2" do %>
-                  <i class="fa fa-envelope"></i> Resend Invitation
+                <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                  <i class="bi-envelope"></i> Resend Invitation
                 <% end %>
               <% end %>
-              <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "btn btn-info btn-xs mb-2" do %>
+              <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
                   <i class="fa fa-key"></i> Reset Password
               <% end %>
-              <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "btn btn-danger btn-xs" do %>
+              <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" do %>
                   <i class="fa fa-ban"></i> Remove Access
               <% end %>
 

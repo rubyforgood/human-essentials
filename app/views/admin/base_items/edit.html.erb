@@ -1,52 +1,42 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Edit - Items - #{@base_item.name} - Inventory" %>
-        <h1>
-          Editing Base Item
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing Base Item</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Base Items", (admin_base_items_path) %></li>
-          <li class="breadcrumb-item"><a href="#">Editing <%= @base_item.name %></a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary card-outline">
-          <div class="card-header">
-            <h5 class="card-title">Update <%= @base_item.name %>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h5 class="text-base font-semibold text-slate-900">Update <%= @base_item.name %>
             </h5>
           </div>
-          <!-- /.card-header -->
+
           <!-- form start -->
-          <div class="card-body">
-            <%= simple_form_for [:admin, @base_item], html: {class: 'form-horizontal'}, url: admin_base_item_path(@base_item) do |f| %>
+          <div class="px-5 py-4">
+            <%= essentials_form_for [:admin, @base_item], html: {class: 'form-horizontal'}, url: admin_base_item_path(@base_item) do |f| %>
               <%= render partial: "form", object: f %>
               </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
+
+              <div class="border-t border-slate-200 px-5 py-3">
                 <%= submit_button %>
               </div>
               </div>
             <% end %>
-            <!-- /.card -->
+
             </div>
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+
+  </div>
 </section>

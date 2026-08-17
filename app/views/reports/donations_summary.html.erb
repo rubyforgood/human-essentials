@@ -19,7 +19,7 @@
     <%= dollar_presentation(total_received_money_donations) %>
     raised  <%= @selected_date_range_label %>
   </h4>
-  <div class="box-body">
+  <div class="px-5 py-4">
     <h4>Recent Donations</h4>
     <%= render partial: "donation", collection: @recent_donations, as: :donation %>
   </div>

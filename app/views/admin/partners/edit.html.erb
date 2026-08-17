@@ -1,61 +1,52 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
-        <h1>
-          Updating Partner Information
-          <small>for <%= @partner.name %></small></h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Updating Partner Information</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= @partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Partners", (admin_partners_path) %></li>
-          <li class="breadcrumb-item"><a href="#">Updating Partner</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<%= simple_form_for @partner, url: admin_partner_path do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
+<%= essentials_form_for @partner, url: admin_partner_path do |f| %>
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="min-w-0">
           <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
             <!-- form start -->
-            <div class="card-body">
-              <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-user"></i></span>
-                <%= f.input_field :name, class: "form-control" %>
+            <div class="px-5 py-4">
+              <%= f.input :name, label: "Name" do %>
+                <span class="input-group-text"><i class="bi-person"></i></span>
+                <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
-              <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                <%= f.input_field :email, class: "form-control" %>
+              <%= f.input :email, label: "E-mail" do %>
+                <span class="input-group-text"><i class="bi-envelope"></i></span>
+                <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
-              <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
+              <%= f.input :send_reminders, label: "Send Reminders?" do %>
                 <div class="form-check">
                   <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
                 </div>
               <% end %>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
+
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= submit_button %>
             </div>
           </div>
-          <!-- /.card -->
+
         </div>
 
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+    </div>
   </section>
 <% end %>

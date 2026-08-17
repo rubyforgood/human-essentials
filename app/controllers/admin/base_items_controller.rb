@@ -3,6 +3,9 @@
 #
 # See #4656, BaseItems are pending significant changes/possible deletion
 class Admin::BaseItemsController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def edit
     @base_item = BaseItem.find(params[:id])
   end

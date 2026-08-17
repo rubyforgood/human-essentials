@@ -17,70 +17,61 @@
     border-color: #999;
   }
 </style>
-<section class="content-header">
-  <div class="container-fluid">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
     <div class="mb-2 row">
-      <div class="col-sm-6">
+      <div class="min-w-0">
         <% content_for :title, "Edit - Organizations - #{@organization.name} - " %>
-        <h1>
-          Editing
-          <small><%= current_organization.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing</h1>
+<p class="mt-1 text-sm text-slate-600"><%= current_organization.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Editing <%= current_organization.name %></a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<%= simple_form_for current_organization,
+<%= essentials_form_for current_organization,
   data: { controller: "form-input" },
   url: {controller: "organizations", action: "update"} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="min-w-0">
           <!-- jquery validation -->
-          <div class="card card-primary card-outline">
-            <!-- /.card-header -->
-            <div class="card-header">
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            <div class="border-b border-slate-200 px-5 py-4">
               <h3>Update record for <%= current_organization.name %></h3>
             </div>
             <!-- form start -->
-            <div class="card-body">
+            <div class="px-5 py-4">
               <div class="form-inputs">
                 <h4>Basic information</h4>
-                <%= f.input :name, required: true, autofocus: true, wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                  <%= f.input_field :name, class: "form-control" %>
+                <%= f.input :name, required: true, autofocus: true do %>
+                  <span class="input-group-text"><i class="bi-person"></i></span>
+                  <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
-                <%= f.input :ndbn_member, label: "NDBN membership ID", wrapper: :input_group do %>
+                <%= f.input :ndbn_member, label: "NDBN membership ID" do %>
                   <div class="mb-n3"> <%# Removes "margin-bottom: 1rem" added by "form-group" class below %>
                     <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
                   </div>
                 <% end %>
-                <%= f.input :url, label: "URL", wrapper: :input_group do %>
+                <%= f.input :url, label: "URL" do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
-                  <%= f.input_field :url, class: "form-control", placeholder: "http://www.example.com" %>
+                  <%= f.input_field :url, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "http://www.example.com" %>
                 <% end %>
-                <%= f.input :email, wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                  <%= f.input_field :email, class: "form-control" %>
+                <%= f.input :email do %>
+                  <span class="input-group-text"><i class="bi-envelope"></i></span>
+                  <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :address do %>
                   <span class="input-group-text"><i class="fa fa-address-book"></i></span>
-                  <%= f.input_field :street, class: "form-control", placeholder: "street" %>
-                  <%= f.input_field :city, class: "form-control", placeholder: "city" %>
-                  <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
-                  <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
+                  <%= f.input_field :street, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "street" %>
+                  <%= f.input_field :city, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "city" %>
+                  <%= f.input_field :state, collection: us_states, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "state" %>
+                  <%= f.input_field :zipcode, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "zipcode" %>
                 <% end %>
                 <%= f.input :logo do %>
                   <% if current_organization.logo.attached? %>
@@ -89,14 +80,14 @@
                         <%= image_tag current_organization.logo, class: "main_logo" %>
                       </p>
                       <p>
-                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
+                        <a href="#showTheLogo" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-toggle="modal">
                           View Original
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
                         <div class="modal-dialog gap-2">
                           <%= image_tag current_organization.logo, class: "thumbnail" %>
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>
@@ -111,17 +102,17 @@
                 <hr>
 
                 <h4>Storage</h4>
-                <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default intake Storage Location (for Donations and Purchases)", :include_blank => true, wrapper: :input_group %>
-                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default intake Storage Location (for Donations and Purchases)", :include_blank => true %>
+                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true %>
                 <hr>
 
                 <h4>Partner approval process</h4>
                 <%= f.input :one_step_partner_invite, label: 'Use one-step Partner invite and approve process?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
-                <%= f.input :invitation_text, label: "Custom Partner invitation message", wrapper: :input_group do %>
-                  <%= f.text_area :invitation_text, class: "form-control" %>
+                <%= f.input :invitation_text, label: "Custom Partner invitation message" do %>
+                  <%= f.text_area :invitation_text, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.label :partner_form_fields, 'Partner Profile sections' %>
-                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
+                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: "custom-select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
                 <br>
                 <hr>
 
@@ -141,7 +132,7 @@
                     ),
                     {
                       multiple: true,
-                      class: 'form-control custom-select',
+                      class: "custom-select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
                       'data-controller': 'select2',
                       'data-select2-hide-dropdown-value': true,
                       'data-select2-config-value': '{"selectOnClose": "true", "tags": "true", "tokenSeparators": [",", "\t"]}'
@@ -178,14 +169,14 @@
                 <%= f.input :distribute_monthly, label: 'Does your Bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
               </div>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
+
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= submit_button %>
             </div>
           </div>
-          <!-- /.card -->
+
         </div>
       </div>
-    </div><!-- /.container-fluid -->
+    </div>
 <% end %>
 </section>

@@ -1,18 +1,18 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary card-outline">
-          <div class="card-header">
-            <h5 class="card-title"><%= user.display_name %> - Roles
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h5 class="text-base font-semibold text-slate-900"><%= user.display_name %> - Roles
             </h5>
           </div>
-          <!-- /.card-header -->
+
           <!-- form start -->
-          <div class="card-body">
-            <table class="table">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
                 <tr>
                   <th>Role Type</th>
@@ -43,7 +43,7 @@
                   <label>Type</label>
                   <div class="input-group">
                     <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-                                     class: 'select form-control',
+                                     class: "select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
                                      data: { 'double-select-target': 'source',
                                              'action': 'double-select#sourceChanged'
                                      } %>
@@ -52,13 +52,13 @@
                 <div class="form-group">
                   <label>Resource</label>
                   <div class="input-group">
-                    <%= select_tag :resource_id, [], class: 'form-control', data: {
+                    <%= select_tag :resource_id, [], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
                       'double-select-target': 'destination'
                     } %>
                   </div>
                 </div>
               </div>
-              <%= submit_tag 'Add Role', class: 'btn btn-md btn-primary' %>
+              <%= submit_tag 'Add Role', class: 'inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %>
             <% end %>
           </div>
         </div>

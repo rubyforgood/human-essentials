@@ -25,7 +25,7 @@
     <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %>
   </span>
   </h3>
-  <div class="box-body">
+  <div class="px-5 py-4">
     <h4>Recent Manufacturer Donations</h4>
     <%= render partial: "manufacturer", collection: @recent_manufacturers, as: :manufacturer %>
   </div>

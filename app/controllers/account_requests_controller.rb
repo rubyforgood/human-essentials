@@ -1,4 +1,7 @@
 class AccountRequestsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
   skip_before_action :require_organization

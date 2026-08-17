@@ -1,43 +1,42 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-12">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Editing - #{@partner.name}" %>
-        <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Editing Partner - <%= @partner.name %>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing Partner - <%= @partner.name %></h1>
       </div>
     </div>
   </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card-transparent">
-          <%= simple_form_for @partner, url: profile_path,
+          <%= essentials_form_for @partner, url: profile_path,
             data: { controller: "form-input" },
             html: {role: 'form', class: 'form-horizontal'} do |form| %>
             <%= form.simple_fields_for :profile, @partner.profile do |profile_form| %>
-              <div class="row">
-                <div class="col-6">
+              <div class="grid gap-6">
+                <div class="min-w-0">
                   <%= render partial: "partners/profiles/edit/agency_information",
                              locals: {form: form, partner: @partner, profile: @partner.profile, profile_form: profile_form} %>
                 </div>
                 <% @partner.partials_to_show.each do |partial| %>
-                  <div class="col-6">
+                  <div class="min-w-0">
                     <%= render partial: "partners/profiles/edit/#{partial}",
                                locals: {form: profile_form, f: profile_form, partner: @partner, profile: @partner.profile} %>
                   </div>
                 <% end %>
-                <div class="col-6">
+                <div class="min-w-0">
                   <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form } %>
                 </div>
               <% end %>
             </div>
-            <div class="card-footer">
-              <%= form.submit("Update Information", class: "btn btn-primary") %>
-              <%= link_to "Cancel Update", partner_path(@partner), class: "btn btn-danger float-right" %>
+            <div class="border-t border-slate-200 px-5 py-3">
+              <%= form.submit("Update Information", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600") %>
+              <%= link_to "Cancel Update", partner_path(@partner), class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
             </div>
           <% end %>
         </div>

@@ -1,47 +1,37 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Admin - Barcode Items" %>
-        <h1>
-          Barcode Items - Global
-
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Barcode Items - Global</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Barcode Items</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Barcode Filters</h3>
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-base font-semibold text-slate-900">Barcode Filters</h3>
           </div>
-          <div class="card-body">
+          <div class="px-5 py-4">
             <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
-              <div class="row">
+              <div class="grid gap-6">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter By Item Category" %>
-                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
+                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                 </div>
               </div>
-              <div class="card-footer">
-                <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+              <div class="border-t border-slate-200 px-5 py-3">
+                <%= button_tag type: "submit", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
                   <i class="fa fa-filter"></i> Filter
                 <% end %>
-                <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                <%= link_to admin_barcode_items_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
                   <i class="fa fa-ban"></i> Clear Filters
                 <% end %>
                 <span class="float-right">
@@ -52,19 +42,18 @@
           </div>
         </div>
 
-        <!-- /.card -->
       </div>
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+  </div>
+
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
               <tr>
                 <th>Item Type</th>

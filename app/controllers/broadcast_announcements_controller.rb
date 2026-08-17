@@ -1,4 +1,7 @@
 class BroadcastAnnouncementsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :set_broadcast_announcement, only: %i[edit update destroy]
 
   def index

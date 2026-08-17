@@ -10,7 +10,7 @@
   <td>
     <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
       <div class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <button class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           Actions
           <span class="caret"></span>
         </button>

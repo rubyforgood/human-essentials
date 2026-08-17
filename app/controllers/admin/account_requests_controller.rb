@@ -1,4 +1,7 @@
 class Admin::AccountRequestsController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :set_account_request, only: [:reject, :close]
 
   def index

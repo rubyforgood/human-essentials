@@ -1,38 +1,38 @@
-<%= simple_form_for [:admin, form], html: {role: "form"} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
+<%= essentials_form_for [:admin, form], html: {role: "form"} do |f| %>
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="min-w-0">
           <!-- jquery validation -->
-          <div class="card card-primary card-outline">
-            <div class="card-header">
-              <h5 class="card-title">New Barcode
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 px-5 py-4">
+              <h5 class="text-base font-semibold text-slate-900">New Barcode
               </h5>
             </div>
-            <!-- /.card-header -->
+
             <!-- form start -->
-            <div class="card-body">
-              <%= f.input :quantity, label: "Quantity", wrapper: :input_group do %>
+            <div class="px-5 py-4">
+              <%= f.input :quantity, label: "Quantity" do %>
                 <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
-                <%= f.input_field :quantity, class: "form-control" %>
+                <%= f.input_field :quantity, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
-              <%= f.association :barcodeable, collection: @base_items, label: "Item", wrapper: :input_group %>
-              <%= f.input :value, label: "Barcode", wrapper: :input_group do %>
+              <%= f.association :barcodeable, collection: @base_items, label: "Item" %>
+              <%= f.input :value, label: "Barcode" do %>
                 <span class="input-group-text"><i class="fa fa-barcode"></i></span>
-                <%= f.input_field :value, class: "form-control" %>
+                <%= f.input_field :value, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
+
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= submit_button %>
             </div>
           </div>
-          <!-- /.card -->
+
         </div>
 
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+    </div>
   </section>
 <% end %>

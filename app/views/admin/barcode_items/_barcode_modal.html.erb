@@ -8,24 +8,24 @@
         </button>
       </div>
       <div class="modal-body">
-        <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path, html: {method: :post} do |f| %>
-          <div class="box-body ">
-            <div class="row">
-              <%= f.input :quantity, label: "Quantity", wrapper: :input_group do %>
+        <%= essentials_form_for BarcodeItem.new, url: admin_barcode_items_path, html: {method: :post} do |f| %>
+          <div class="px-5 py-4">
+            <div class="grid gap-6">
+              <%= f.input :quantity, label: "Quantity" do %>
                 <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
-                <%= f.input_field :quantity, class: "form-control" %>
+                <%= f.input_field :quantity, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
-            </div><!-- /.row -->
-            <div class="row">
+            </div>
+            <div class="grid gap-6">
               <%= f.association :barcodeable, collection: @items, label: "Item" %>
             </div>
-            <div class="row">
-              <%= f.input :value, label: "Barcode", wrapper: :input_group do %>
-                <%= f.input_field :value, class: "form-control" %>
+            <div class="grid gap-6">
+              <%= f.input :value, label: "Barcode" do %>
+                <%= f.input_field :value, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-text"></div>
               <% end %>
-            </div><!-- /.row -->
-          </div><!-- /.box-body -->
+            </div>
+          </div>
           <input type="hidden" value="" id="trigger-field-id">
           </div>
           <div class="modal-footer justify-content-between">

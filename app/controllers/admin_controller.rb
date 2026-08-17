@@ -1,5 +1,8 @@
 # [Super Admin] This is the parent controller for the Admin namespace, and also provides the Dashboard data for SuperAdmins.
 class AdminController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :require_admin
   skip_before_action :require_organization
 

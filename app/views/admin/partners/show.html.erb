@@ -1,37 +1,28 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
-        <h1>
-          Partner Information
-          <small>for <%= @partner.name %></small></h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Partner Information</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= @partner.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "All Partners", (admin_partners_path) %></li>
-          <li class="breadcrumb-item"><a href="#">Viewing Partner</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title"></h2>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900"></h2>
           </div>
-          <div class="card-body p-0">
-            <table class="table">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
               <tr>
                 <th>Partner Name</th>
@@ -49,10 +40,9 @@
               </tbody>
             </table>
           </div>
-          <!-- /.card-body -->
-          <!-- /.card-footer-->
+
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>

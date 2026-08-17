@@ -1,6 +1,11 @@
 # frozen_String_literal: true
 
 class PartnerUsersController < ApplicationController
+
+  # Migrated to the Ruby for Good design system (ADR 0011).
+
+  layout "essentials_app"
+
   before_action :authorize_admin
   before_action :set_partner, only: %i[index create destroy resend_invitation]
 

@@ -1,45 +1,36 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Users" %>
-        <h1>
-          Users
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Users</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">All users</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-header">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
             <%= form_for_filterrific @filterrific, remote: true, html: { id: 'filterrific-form' } do |f| %>
               <div class="row flex-row justify-content-between align-items-center">
-                <div class="col-3">
+                <div class="min-w-0">
                   <%= f.label :search_name, "Search By User Name" %>
-                  <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
+                  <%= f.text_field(:search_name, class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                 </div>
-                <div class="col-3">
+                <div class="min-w-0">
                   <%= f.label :search_email, "Search By Email" %>
-                  <%= f.text_field(:search_email, class: 'filterrific-periodically-observed form-control') %>
+                  <%= f.text_field(:search_email, class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                 </div>
-                <div class="col-5">
+                <div class="min-w-0">
                   <div class="float-right">
-                    <h2 class="card-title">
+                    <h2 class="text-base font-semibold text-slate-900">
                       <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>
                     </h2>
                   </div>
@@ -47,16 +38,16 @@
               </div>
             <% end %>
           </div>
-          <div class="card-body p-0">
+          <div class="px-5 py-4">
             <div id="filterrific_results">
               <%= render( partial: 'list', locals: { users: @users }) %>
             </div>
           </div>
-          <div class="card-footer clearfix">
+          <div class="border-t border-slate-200 px-5 py-3">
             <%= paginate @users %>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>

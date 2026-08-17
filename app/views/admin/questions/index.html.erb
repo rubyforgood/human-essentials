@@ -1,20 +1,20 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
         <div class="card card-info mt-2">
-          <div class="card-header">
-            <h2 class="card-title">Frequently Asked Questions for Banks</h2>
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Frequently Asked Questions for Banks</h2>
           </div>
-          <div class="card-body p-4">
+          <div class="px-5 py-4">
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= new_button_to new_admin_question_path, { text: "Write A New Question And Answer", class: "mb-3" } %>
 
               <% @bank_questions.each do |bank_question| %>
                 <div class="accordion" id="accordion">
-                  <div class="card">
-                    <div class="card-header" id="heading">
+                  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="border-b border-slate-200 px-5 py-4" id="heading">
                       <h2 class="mb-0">
                         <button class="text-left text-2xl" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= bank_question.id %>" aria-expanded="false" aria-controls="collapse<%= bank_question.id %>">
                           <%= bank_question.title %>
@@ -26,7 +26,7 @@
                       </h2>
                     </div>
                     <div id="collapse<%= bank_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
-                      <div class="card-body">
+                      <div class="px-5 py-4">
                         <%= bank_question.answer %>
                       </div>
                     </div>

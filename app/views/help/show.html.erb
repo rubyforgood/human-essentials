@@ -6,23 +6,23 @@
         list-style: inside;
     }
 </style>
-<div class="container-fluid">
-  <section class="content">
-    <div class="row">
-      <div class="col-12">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <section>
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card card-primary mt-2">
-          <div class="card-header">
-            <h2 class="card-title">Frequently Asked Questions</h2>
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Frequently Asked Questions</h2>
           </div>
-          <div class="card-body p-4">
+          <div class="px-5 py-4">
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= form_for_filterrific @filterrific, remote: true do |f| %>
                 <div class="row flex-row justify-content-between align-items-center">
-                  <div class='col-3'>
+                  <div class="min-w-0">
                     <%= f.label :search_title, "Search By Question" %>
-                    <%= f.text_field(:search_title, class: 'filterrific-periodically-observed form-control') %>
+                    <%= f.text_field(:search_title, class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                   </div>
-                  <div class="col-3">
+                  <div class="min-w-0">
                     <%= render_filterrific_spinner %>
                   </div>
                 </div>
@@ -34,9 +34,9 @@
     </div>
   </section>
 
-  <section class="content">
-    <div class="row">
-      <div class="col-12" id="accordion">
+  <section>
+    <div class="grid gap-6">
+      <div class="min-w-0" id="accordion">
         <div id="filterrific_results">
           <%= render(partial: 'bank_questions', locals: { bank_questions: @bank_questions }) %>
         </div>
@@ -44,9 +44,9 @@
     </div>
   </section>
 
-  <section class="content">
-    <div class="row">
-      <div class="col-12">
+  <section>
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <div class="card card-primary mt-2">
           <div class="col-12 mt-3 text-center">
             <p class="lead">

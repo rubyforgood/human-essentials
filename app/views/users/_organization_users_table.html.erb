@@ -1,14 +1,14 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-          <div class="card-header">
-            <h2 class="card-title">Users</h2>
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Users</h2>
           </div>
 
-          <div class="card-body">
+          <div class="px-5 py-4">
             <table class="table border">
               <thead>
                 <tr>
@@ -32,7 +32,7 @@
           </div>
 
           <% if can_administrate? %>
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= modal_button_to("#addUserModal", {text: "Invite User to this Organization", class: "float-right"}) %>
             </div>
           <% end %>

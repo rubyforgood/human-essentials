@@ -1,10 +1,10 @@
-<div class="card card-primary">
-  <div class="card-header">
-    <h3 class="card-title">Invite New User</h3>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="border-b border-slate-200 px-5 py-4">
+    <h3 class="text-base font-semibold text-slate-900">Invite New User</h3>
   </div>
 
-  <%= simple_form_for user, url: partner_users_path(partner) do |f| %>
-    <div class="card-body">
+  <%= essentials_form_for user, url: partner_users_path(partner) do |f| %>
+    <div class="px-5 py-4">
       <div class="form-group">
         <%= f.input :name, label: "Name", placeholder: "Name", required: true %>
       </div>
@@ -13,8 +13,8 @@
       </div>
     </div>
 
-    <div class="card-footer">
-      <%= f.submit "Invite User", class: 'btn btn-primary float-right' %>
+    <div class="border-t border-slate-200 px-5 py-3">
+      <%= f.submit "Invite User", class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %>
     </div>
   <% end %>
 </div>

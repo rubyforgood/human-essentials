@@ -1,6 +1,9 @@
 # [Super Admin] - Manage globally available barcodes. The key difference here is that these barcodes
 # will be associated with BaseItems, whereas user-barcodes are associated with regular Items.
 class Admin::BarcodeItemsController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :load_base_items, only: %i(edit index new)
   before_action :load_barcode_item, only: %i(edit update show destroy)
 

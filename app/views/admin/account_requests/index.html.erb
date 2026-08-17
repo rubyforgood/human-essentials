@@ -1,24 +1,22 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Account Requests" %>
-        <h1>
-          Open Account Requests
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Open Account Requests</h1>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table" id="open-account-requests">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="px-5 py-4">
+            <table class="data-table" id="open-account-requests">
               <thead>
               <tr>
                 <th>Date Submitted</th>
@@ -33,11 +31,11 @@
               <%= render partial: 'open_account_request', collection: @open_account_requests %>
             </table>
           </div>
-          <div class="card-footer clearfix">
+          <div class="border-t border-slate-200 px-5 py-3">
             <%= paginate @open_account_requests, param_name: 'open_page' %>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>
@@ -45,26 +43,24 @@
 
 <%= render partial: 'rejection_modal' %>
 
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>
-          Closed Account Requests
-        </h1>
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Closed Account Requests</h1>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table" id="closed-account-requests">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="px-5 py-4">
+            <table class="data-table" id="closed-account-requests">
               <thead>
               <tr>
                 <th>Organization Details</th>
@@ -94,11 +90,11 @@
               </tbody>
             </table>
           </div>
-          <div class="card-footer clearfix">
+          <div class="border-t border-slate-200 px-5 py-3">
             <%= paginate @closed_account_requests, param_name: 'close_page' %>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>

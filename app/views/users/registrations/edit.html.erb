@@ -1,92 +1,82 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Edit - Users" %>
-        <h1>
-          Editing
-          <small>your profile</small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing</h1>
+<p class="mt-1 text-sm text-slate-600">your profile</p>
         <% if Rails.env.staging? %>
           <div class="staging-warning">
             <p> <strong> You are accessing a demo version which does not allow changes to the demo account credentials </strong> </p>
           </div>
         <% end %>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item">Editing <%= current_user.display_name %></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title"><%= current_user.display_name %></h5>
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h5 class="text-base font-semibold text-slate-900"><%= current_user.display_name %></h5>
           </div>
-          <%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
+          <%= essentials_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
 
-        <!-- /.card-header -->
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                  <%= f.input_field :name, class: "form-control" %>
+          <div class="px-5 py-4">
+            <div class="grid gap-6">
+              <div class="min-w-0">
+                <%= f.input :name, label: "Name:", required: true, autofocus: true do %>
+                  <span class="input-group-text"><i class="bi-person"></i></span>
+                  <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
-                <%= f.input :email, label: "Email:", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                  <%= f.input_field :email, class: "form-control" %>
+                <%= f.input :email, label: "Email:" do %>
+                  <span class="input-group-text"><i class="bi-envelope"></i></span>
+                  <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
-                <%= f.input :current_password, label: "Current Password:", wrapper: :input_group do %>
+                <%= f.input :current_password, label: "Current Password:" do %>
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                  <%= f.input_field :current_password, class: "form-control" %>
+                  <%= f.input_field :current_password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <p class="help-block" id="password-confirmation-help"><em>We need your current password to confirm your
                   changes</em></p>
-                <!-- /.chart-responsive -->
+
               </div>
-              <!-- /.col -->
-              <div class="col-md-6">
+
+              <div class="min-w-0">
                 <div class="card card-primary card-outline collapsed-card">
-                  <div class="card-header">
+                  <div class="border-b border-slate-200 px-5 py-4">
                     <h5 class="m-0">Change Password</h5>
                     <span class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-card-widget="collapse">
                         <i class="fas fa-plus"></i>
                       </button>
                     </span>
 
                   </div>
-                  <div class="card-body">
+                  <div class="px-5 py-4">
                     <p class="help-block" id="password-help">Leave this blank if you don't want to change it</p>
 
-                    <%= f.input :password, label: "New Password:", wrapper: :input_group do %>
+                    <%= f.input :password, label: "New Password:" do %>
                       <span class="input-group-text"><%= fa_icon "lock" %></span>
-                      <%= f.input_field :password, class: "form-control" %>
+                      <%= f.input_field :password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                     <% end %>
-                    <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :input_group do %>
+                    <%= f.input :password_confirmation, label: "New Password Confirmation:" do %>
                       <span class="input-group-text"><%= fa_icon "check" %></span>
-                      <%= f.input_field :password_confirmation, class: "form-control" %>
+                      <%= f.input_field :password_confirmation, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                     <% end %>
                   </div>
                 </div>
               </div>
-              <!-- /.col -->
+
             </div>
-            <!-- /.row -->
+
           </div>
-            <div class="card-footer text-right">
+            <div class="border-t border-slate-200 px-5 py-3">
             <% unless Rails.env.staging? %>
               <%= submit_button %>
               <% else %>
@@ -94,11 +84,11 @@
               <% end %>
             </div>
           <!-- ./card-body -->
-          <!-- /.card-footer -->
+
         </div>
-        <!-- /.card -->
+
       </div>
-      <!-- /.col -->
+
     </div>
 <% end %>
   </div>

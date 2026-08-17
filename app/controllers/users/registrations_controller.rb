@@ -2,7 +2,9 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
-  layout "application"
+  # Account settings is an in-app page for a signed-in user, so it renders on the app shell
+  # rather than the auth shell. Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
 
   def edit
     super

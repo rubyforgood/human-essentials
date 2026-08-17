@@ -1,23 +1,23 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Reject Account Request" %>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
 <% if @account_request %>
 
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
+        <div class="min-w-0">
           <!-- Default box -->
-          <div class="card">
-            <div class="card-body p-0">
-              <table class="table" id="open-account-requests">
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="px-5 py-4">
+              <table class="data-table" id="open-account-requests">
                 <thead>
                 <tr>
                   <th>Date Submitted</th>
@@ -33,7 +33,7 @@
               </table>
             </div>
           </div>
-          <!-- /.card -->
+
         </div>
       </div>
     </div>
@@ -41,5 +41,5 @@
 
   <%= render partial: 'rejection_modal' %>
 <% else %>
-  <h1>Account Request not found!</h1>
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Account Request not found!</h1>
 <% end %>

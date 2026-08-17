@@ -1,41 +1,31 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "New - Organizations" %>
-        <h1>
-          New Organization
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">New Organization</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Administration", (admin_organizations_path) %></li>
-          <li class="breadcrumb-item"><a href="#">New Organization</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<%= simple_form_for @organization, url: admin_organizations_path do |f| %>
+<%= essentials_form_for @organization, url: admin_organizations_path do |f| %>
 
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="min-w-0">
           <!-- jquery validation -->
-          <div class="card card-primary card-outline">
-            <!-- /.card-header -->
-            <div class="card-header">
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            <div class="border-b border-slate-200 px-5 py-4">
               <h3>Create New Organization</h3>
             </div>
             <!-- form start -->
-            <div class="card-body">
+            <div class="px-5 py-4">
 
               <div class="form-inputs">
                 <%= f.hidden_field :account_request_id, value: @organization.account_request_id %>
@@ -45,11 +35,11 @@
                 <%= f.input :email %>
                 <%= f.input :street %>
                 <%= f.input :city %>
-                <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
+                <%= f.input :state, collection: us_states, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "state" %>
                 <%= f.input :zipcode %>
                 <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: @organization %>
                 <%= f.simple_fields_for :account_request do |account_request| %>
-                  <%= account_request.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                  <%= account_request.input :ndbn_member, label: 'NDBN Membership' do %>
                     <%= account_request.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
                   <% end %>
                 <% end %>
@@ -59,7 +49,7 @@
                   pixels).
                   Only jpeg/png format is supported.
                 </p>
-                <h1>Add a user</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add a user</h1>
                 <%= f.simple_fields_for :user, @user do |user| %>
                   <%= render 'admin/users/user_form_fields', f: user %>
                 <% end %>
@@ -67,12 +57,12 @@
               </div>
             </div>
 
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= submit_button %>
             </div>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </section>

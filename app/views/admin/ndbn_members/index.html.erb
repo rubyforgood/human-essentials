@@ -1,43 +1,36 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "Community - NDBN Member Upload" %>
-        <h1>NDBN Member Upload</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">NDBN Member Upload</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_ndbn_members_path) do %>
-              <i class="fa fa-dashboard"></i>
-              Home
-            <% end %>
-          </li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Upload NDBN Members</h3>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-base font-semibold text-slate-900">Upload NDBN Members</h3>
           </div>
-          <!-- /.card-header --> <!-- form start -->
-          <div class="card-body">
-            <div class="row">
+           <!-- form start -->
+          <div class="px-5 py-4">
+            <div class="grid gap-6">
               <p>The Current NDBN member list is found at
                 <a
                   href="https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915.">this link.</a>
                 Export the list as CSV and remove the initial 'Updated' row before uploading.</p>
             </div>
             <%= form_with(url: upload_csv_admin_ndbn_members_path) do |form| %>
-              <div class="row">
+              <div class="grid gap-6">
                 <%= form.label :member_file, "Select CSV File to Upload" %>
               </div>
               <%= form.file_field :member_file, required: true, accept: "text/csv" %>
@@ -45,19 +38,19 @@
             <% end %>
           </div>
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
-    <!-- /.row -->
+
   </div>
-  <!-- /.container-fluid -->
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
                 <tr>
                   <th>NDBN Member Number</th>
@@ -78,4 +71,4 @@
       </div>
     </div>
   </div>
-</section><!-- /.content -->
+</section>

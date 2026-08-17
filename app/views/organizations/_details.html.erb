@@ -1,19 +1,19 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <% if can_administrate? %>
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= edit_button_to(edit_organization_path, {size: "md"}) %>
             </div>
           <% end %>
 
-          <div class="card-header">
-            <h2 class="card-title">Organization Info</h2>
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-900">Organization Info</h2>
           </div>
 
-          <div class="card-body md:flex sm:block">
+          <div class="px-5 py-4">
             <h4>Basic information</h4>
             <div>
               <h6 class="font-weight-bold">Name</h6>
@@ -68,14 +68,14 @@
                     <%= image_tag @organization.logo, class: "main_logo" %>
                   </p>
                   <p>
-                    <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
+                    <a href="#showTheLogo" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-toggle="modal">
                       View Original
                     </a>
                   </p>
                   <div id="showTheLogo" class="modal fade">
                     <div class="modal-dialog gap-2">
                       <%= image_tag @organization.logo, class: "thumbnail" %>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-bs-dismiss="modal">Close</button>
                     </div>
                   </div>
                 </div>
@@ -278,7 +278,7 @@
           </div>
 
           <% if can_administrate? %>
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= edit_button_to(edit_organization_path, {size: "md"}) %>
             </div>
           <% end %>

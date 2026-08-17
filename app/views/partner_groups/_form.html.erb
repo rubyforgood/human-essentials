@@ -1,17 +1,17 @@
-<%= simple_form_for @partner_group, html: { class: 'form-horizontal' } do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
+<%= essentials_form_for @partner_group, html: { class: 'form-horizontal' } do |f| %>
+  <section>
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid gap-6">
         <!-- left column -->
-        <div class="col-md-12">
+        <div class="min-w-0">
           <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
             <!-- form start -->
-            <div class="card-body w-1/2">
-              <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-user"></i></span>
-                <%= f.input_field :name, class: "form-control" %>
+            <div class="px-5 py-4">
+              <%= f.input :name, label: "Name" do %>
+                <span class="input-group-text"><i class="bi-person"></i></span>
+                <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
 
               <div class='mt-3'>
@@ -35,16 +35,15 @@
               </div>
             </div>
 
-            <!-- /.card-body -->
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= submit_button(submit_btn_options) %>
             </div>
           </div>
-          <!-- /.card -->
+
         </div>
 
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+    </div>
   </section>
 <% end %>

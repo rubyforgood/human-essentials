@@ -1,42 +1,33 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "New - User" %>
-        <h1>
-          Add a User
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add a User</h1>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Admin Dashboard
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">New Users</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
           <!-- form start -->
-            <div class="card-body">
+            <div class="px-5 py-4">
               <!-- Default box -->
               <div class="box">
                 <div class="box-header with-border">
                 </div>
-                <div class="box-body">
+                <div class="px-5 py-4">
 
-                  <%= simple_form_for @user, url: admin_users_path do |f| %>
+                  <%= essentials_form_for @user, url: admin_users_path do |f| %>
                     <div class="form-inputs">
 
                       <%= render 'admin/users/user_form_fields', f: f %>
@@ -46,7 +37,7 @@
                         data-hide-by-source-val-values-to-hide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>">
                         <label>Role Type</label>
                           <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-                            class: 'select form-control', data: {
+                            class: "select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
                               'double-select-target': 'source',
                               'hide-by-source-val-target': 'source',
                               'action': 'hide-by-source-val#sourceChanged double-select#sourceChanged'
@@ -54,7 +45,7 @@
                         <div data-hide-by-source-val-target="destination">
                           <label>Resource</label>
                           <div class="input-group">
-                            <%= select_tag :resource_id, [], class: 'form-control', data: {
+                            <%= select_tag :resource_id, [], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
                               'double-select-target': 'destination'
                             } %>
                           </div>
@@ -62,12 +53,12 @@
                       </div>
 
                     </div>
-                    <div class="card-footer">
+                    <div class="border-t border-slate-200 px-5 py-3">
                       <%= submit_button %>
                     </div>
                   <% end %>
                 </div>
-              </div><!-- /.box -->
+              </div>
             </div>
         </div>
       </div>

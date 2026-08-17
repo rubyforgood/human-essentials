@@ -1,4 +1,7 @@
 class Admin::QuestionsController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     @bank_questions = Question.all
   end

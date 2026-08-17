@@ -15,7 +15,7 @@ module Diaper
       Devise::PasswordsController.layout "essentials_auth"
       Devise::ConfirmationsController.layout "essentials_auth"
       Devise::UnlocksController.layout "essentials_auth"
-      Devise::RegistrationsController.layout "application"
+      Devise::RegistrationsController.layout "essentials_app"
     end
 
     # Initialize configuration defaults for originally generated Rails version.

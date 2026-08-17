@@ -1,4 +1,7 @@
 class ProfilesController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def edit
     @partner = current_organization.partners.find(params[:id])
     @counties = County.in_category_name_order

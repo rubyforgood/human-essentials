@@ -1,15 +1,15 @@
-  <%= simple_form_for @broadcast_announcement, html: { class: 'form-horizontal' } do |f| %>
+  <%= essentials_form_for @broadcast_announcement, html: { class: 'form-horizontal' } do |f| %>
     <%= f.error_notification %>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
+    <section>
+      <div class="px-4 py-6 sm:px-6 lg:px-8">
+        <div class="grid gap-6">
           <!-- left column -->
-          <div class="col-md-12">
+          <div class="min-w-0">
             <!-- jquery validation -->
-            <div class="card card-primary">
-              <!-- /.card-header -->
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
               <!-- form start -->
-              <div class="card-body w-50">
+              <div class="px-5 py-4">
                 <%= f.hidden_field :user_id, value: current_user.id %>
                 <%= f.hidden_field :organization_id, value: current_organization.id %>
                 <%= f.label :message, "Announcement " %> <i>(500 character max)</i>
@@ -20,16 +20,16 @@
                   label: "Expiration date",
                   as: :date,
                   html5: true %>
-                <!-- /.card-body -->
-                <div class="card-footer">
+
+                <div class="border-t border-slate-200 px-5 py-3">
                   <%= submit_button({ text: "Broadcast Announcement", icon: "envelope" }) %>
                 </div>
               </div>
             </div>
-            <!-- /.card -->
+
           </div>
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
+
+      </div>
     </section>
   <% end %>

@@ -1,5 +1,8 @@
 # Provides scope-limited access to viewing the data of other users
 class UsersController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   skip_before_action :require_organization, only: [:switch_to_role]
 
   def index

@@ -1,5 +1,8 @@
 # [Super Admin] This is for administrating organizations at a global level. We can create, view, modify, etc.
 class Admin::OrganizationsController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     @filterrific = initialize_filterrific(
       Organization.alphabetized,

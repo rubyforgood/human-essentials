@@ -1,4 +1,7 @@
 class Admin::PartnersController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     @partners = Partner.all.includes(:organization).order("LOWER(name)")
   end

@@ -1,5 +1,8 @@
 # [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :load_organizations, only: %i[create edit update]
   before_action :user_params, only: %i[create update]
 

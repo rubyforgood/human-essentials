@@ -3,12 +3,12 @@
   <td><%= barcode_item_row.quantity %></td>
   <td><%= barcode_item_row.value %></td>
   <td class="text-right">
-    <%= link_to admin_barcode_item_path(barcode_item_row), class: "btn btn-primary btn-xs" do %>
-      <i class="fa fa-search"></i> View
+    <%= link_to admin_barcode_item_path(barcode_item_row), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+      <i class="bi-search"></i> View
     <% end %>
-    <%= link_to edit_admin_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" do %>
-      <i class="fa fa-edit"></i> Edit
+    <%= link_to edit_admin_barcode_item_path(barcode_item_row), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+      <i class="bi-pencil"></i> Edit
     <% end %>
-    <%= delete_button_to admin_barcode_item_path(barcode_item_row), { method: :delete, class: "btn btn-danger btn-xs", data: {confirm: confirm_delete_msg(barcode_item_row.item.name)} } %>
+    <%= delete_button_to admin_barcode_item_path(barcode_item_row), { method: :delete, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600", data: {confirm: confirm_delete_msg(barcode_item_row.item.name)} } %>
   </td>
 </tr>

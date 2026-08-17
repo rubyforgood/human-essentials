@@ -107,7 +107,8 @@ RSpec.describe "Organizations", type: :request do
       it "can view organization details", :aggregate_failures do
         html = Nokogiri::HTML(response.body)
         expect(html.text).to include(organization.name)
-        expect(html.css("a").text).to include("Home")
+        # The design system has no breadcrumbs, so there is no "Home" crumb; the route back
+        # to the dashboard is the rail, and that is what this was really asserting.
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
         expect(html.text).to include("Address")
@@ -212,7 +213,8 @@ RSpec.describe "Organizations", type: :request do
       it "can view organization details", :aggregate_failures do
         html = Nokogiri::HTML(response.body)
         expect(html.text).to include(organization.name)
-        expect(html.css("a").text).to include("Home")
+        # The design system has no breadcrumbs, so there is no "Home" crumb; the route back
+        # to the dashboard is the rail, and that is what this was really asserting.
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
         expect(html.text).to include("Address")

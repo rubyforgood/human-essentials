@@ -1,28 +1,28 @@
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary card-outline">
-          <!-- /.card-header -->
-          <div class="card-header">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+          <div class="border-b border-slate-200 px-5 py-4">
             <h3>FAQ Entry</h3>
           </div>
           <!-- form start -->
-          <div class="card-body">
+          <div class="px-5 py-4">
             <div class="form-inputs">
               <%= f.input :title %>
               <div class="font-bold mb-2">Answer</div>
               <%= f.rich_text_area :answer %>
             </div>
           </div>
-          <div class="card-footer">
+          <div class="border-t border-slate-200 px-5 py-3">
             <%= submit_button %>
           </div>
         </div>
       </div>
-      <!-- /.card -->
+
     </div>
   </div>
 </section>

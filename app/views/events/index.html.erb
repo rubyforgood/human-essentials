@@ -1,45 +1,36 @@
 <!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
+<section class="mb-6">
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-2">
+      <div class="min-w-0">
         <% content_for :title, "History - #{current_organization.name}" %>
-        <h1>
-          History
-          <small>for <%= current_organization.name %></small>
-        </h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">History</h1>
+<p class="mt-1 text-sm text-slate-600">for <%= current_organization.name %></p>
       </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">History</a></li>
-        </ol>
+      <div class="min-w-0">
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 <!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
+<section>
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
       <!-- left column -->
-      <div class="col-md-12">
+      <div class="min-w-0">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">History Filter</h3>
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h3 class="text-base font-semibold text-slate-900">History Filter</h3>
           </div>
-          <!-- /.card-header -->
+
           <!-- form start -->
-          <div class="card-body">
+          <div class="px-5 py-4">
             <%= form_tag(events_path, method: :get) do |f| %>
-              <div class="row">
+              <div class="grid gap-6">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= filter_select(scope: :by_type, collection: Event.types_for_select, key: :id, value: :name,
@@ -55,31 +46,31 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer">
+            <div class="border-t border-slate-200 px-5 py-3">
               <%= filter_button %>
               <%= clear_filter_button %>
             </div>
             <% end # form %>
             </div>
-        <!-- /.card -->
+
       </div>
       <!--/.col (left) -->
       <!-- right column -->
-      <div class="col-md-6">
+      <div class="min-w-0">
 
       </div>
       <!--/.col (right) -->
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
+  </div>
+
+  <div class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6">
+      <div class="min-w-0">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="px-5 py-4">
+            <table class="data-table">
               <thead>
               <tr>
                 <th>User</th>
@@ -96,13 +87,13 @@
               </tbody>
             </table>
           </div>
-          <!-- /.card-body -->
-          <div class="card-footer clearfix">
+
+          <div class="border-t border-slate-200 px-5 py-3">
             <%= paginate @events %>
           </div>
-          <!-- /.card-footer-->
+
         </div>
-        <!-- /.card -->
+
       </div>
     </div>
   </div>
