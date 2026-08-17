@@ -1,8 +1,12 @@
 <tr>
-  <td><%= manufacturer_row&.name %></td>
-  <td class="numeric"><%= manufacturer_row&.volume %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to manufacturer_row.name, manufacturer_row, class: "text-brand-700 hover:text-brand-800" %>
+  </td>
+  <td class="quantity"><%= number_with_delimiter(manufacturer_row&.volume) %></td>
   <td class="text-right">
-    <%= view_button_to manufacturer_row %>
-    <%= edit_button_to edit_manufacturer_path(manufacturer_row) %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", manufacturer_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_manufacturer_path(manufacturer_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+    </div>
   </td>
 </tr>

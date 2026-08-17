@@ -1,63 +1,38 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Manufacturers - #{@manufacturer.name} - Agencies - #{current_organization.name}" %>
-        <h1>
-          Manufacturer Information
-          <small>for <%= @manufacturer.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Manufacturers", manufacturers_path %></li>
-          <li class="breadcrumb-item"><%= @manufacturer.name %></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "#{@manufacturer.name} - Manufacturers - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-header border-0 bg-gradient-info">
-            <h3 class="card-title">Past Donations from <%= @manufacturer.name %>
-            </h3>
-          </div>
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @manufacturer.name,
+        back: {path: manufacturers_path, label: "Back to manufacturers"},
+        actions: essentials_link_button("Edit", edit_manufacturer_path(@manufacturer), variant: :secondary, icon: "bi-pencil") %>
+
+  <%= render "shared/essentials/card", title: "Past donations", padded: @manufacturer.donations.blank? do %>
+    <% if @manufacturer.donations.blank? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No donations from this manufacturer yet",
+            body: "Donations attributed to #{@manufacturer.name} will be listed here." %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Donations from <%= @manufacturer.name %></caption>
+          <thead>
+            <tr>
+              <th scope="col" class="date">Date</th>
+              <th scope="col" class="quantity">Volume</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @manufacturer.donations.each do |donation| %>
               <tr>
-                <th>Date</th>
-                <th>Volume</th>
-                <th>Details</th>
+                <td class="date"><%= donation.created_at.strftime("%m/%d/%Y") %></td>
+                <td class="quantity"><%= number_with_delimiter(donation.line_items.total) %></td>
+                <td class="text-right"><%= essentials_link_button "View donation", donation, variant: :ghost, size: :sm, icon: "bi-eye" %></td>
               </tr>
-              </thead>
-              <tbody>
-              <% @manufacturer.donations.each do |donation| %>
-                <tr>
-                  <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= donation.line_items.total %></td>
-                  <td>
-                    <%= view_button_to donation, { text: "View donation details" } %>
-                  </td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

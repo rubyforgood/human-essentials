@@ -1,25 +1,8 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Donation Sites - Agencies - #{current_organization.name}" %>
-        <h1>
-          Donation Site
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Donation Sites", donation_sites_path %></li>
-          <li class="breadcrumb-item"><a href="#">New Donation Site</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "New donation site" %>
 
-<%= render partial: "form", object: @donation_site %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New donation site",
+        back: {path: donation_sites_path, label: "Back to donation sites"} %>
+  <%= render partial: "form", object: @donation_site %>
+</div>

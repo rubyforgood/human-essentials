@@ -1,11 +1,16 @@
 <tr>
-  <td><%= product_drive_participant_row&.business_name %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to product_drive_participant_row.business_name.presence || product_drive_participant_row.contact_name.presence || "Unnamed participant",
+          product_drive_participant_row, class: "text-brand-700 hover:text-brand-800" %>
+  </td>
   <td><%= product_drive_participant_row&.contact_name %></td>
   <td><%= product_drive_participant_row&.phone %></td>
   <td><%= product_drive_participant_row&.email %></td>
-  <td class="text-right"><%= product_drive_participant_row&.volume %></td>
+  <td class="quantity"><%= number_with_delimiter(product_drive_participant_row&.volume) %></td>
   <td class="text-right">
-    <%= view_button_to product_drive_participant_row %>
-    <%= edit_button_to edit_product_drive_participant_path(product_drive_participant_row) %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", product_drive_participant_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_product_drive_participant_path(product_drive_participant_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+    </div>
   </td>
 </tr>

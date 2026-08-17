@@ -1,6 +1,9 @@
 # Provides (nearly) full CRUD for ProductDriveParticipants, which are the community entities that yield inventory during
 # a Product Drive.
 class ProductDriveParticipantsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   # TODO: Should there be a :destroy action for this?

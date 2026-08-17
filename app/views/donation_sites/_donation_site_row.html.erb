@@ -1,20 +1,25 @@
 <tr class="<%= local_assigns[:class] %>">
-  <td><%= donation_site_row.name %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to donation_site_row.name, donation_site_row, class: "text-brand-700 hover:text-brand-800" %>
+    <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless donation_site_row.active? %>
+  </td>
   <td><%= donation_site_row.address %></td>
   <td><%= donation_site_row.contact_name %></td>
   <td><%= donation_site_row.email %></td>
   <td><%= donation_site_row.phone %></td>
   <td class="text-right">
-    <%= view_button_to donation_site_row %>
-    <%= edit_button_to edit_donation_site_path(donation_site_row) %>
-    <% if donation_site_row.active? %>
-      <%= deactivate_button_to deactivate_donation_site_path(donation_site_row),
-            text: "Deactivate",
-            confirm: confirm_deactivate_msg(donation_site_row.name) %>
-    <% else %>
-      <%= reactivate_button_to reactivate_donation_site_path(donation_site_row),
-            text: "Restore",
-            confirm: confirm_reactivate_msg(donation_site_row.name) %>
-    <% end %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", donation_site_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_donation_site_path(donation_site_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <% if donation_site_row.active? %>
+        <%= essentials_action_button "Deactivate", deactivate_donation_site_path(donation_site_row), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-slash-circle",
+              confirm: confirm_deactivate_msg(donation_site_row.name) %>
+      <% else %>
+        <%= essentials_action_button "Restore", reactivate_donation_site_path(donation_site_row), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
+              confirm: confirm_reactivate_msg(donation_site_row.name) %>
+      <% end %>
+    </div>
   </td>
 </tr>

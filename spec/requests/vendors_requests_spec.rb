@@ -203,7 +203,8 @@ RSpec.describe "Vendors", type: :request do
       it "has the correct import type" do
         get vendors_path(format: 'html')
 
-        expect(response.body).to include('Import Vendors')
+        # Sentence case per the design system (ADR 0011).
+        expect(response.body).to include('Import vendors')
       end
     end
   end

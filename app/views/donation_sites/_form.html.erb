@@ -1,51 +1,20 @@
-<%= simple_form_for form, html: {role: "form"} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body">
-              <%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
-                <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                  <%= f.input_field :name, class: "form-control" %>
-                <% end %>
+<%# One form. The AdminLTE version nested a second simple_form_for inside the first, which
+    is invalid HTML -- the inner <form> swallowed the outer one's fields. %>
+<div class="max-w-2xl">
+  <%= essentials_error_summary(form) %>
 
-                <%= f.input :address, label: "Address", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
-                  <%= f.input_field :address, class: "form-control" %>
-                <% end %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+      <%= f.input :name, label: "Name" %>
+      <%= f.input :address, label: "Address" %>
+      <%= f.input :contact_name, label: "Contact name" %>
+      <%= f.input :email, label: "Email" %>
+      <%= f.input :phone, label: "Phone" %>
 
-                <%= f.input :contact_name, label: "Contact Name", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
-                  <%= f.input_field :contact_name, class: "form-control" %>
-                <% end %>
-
-                <%= f.input :email, label: "Email", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                  <%= f.input_field :email, class: "form-control" %>
-                <% end %>
-
-                <%= f.input :phone, label: "Phone", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                  <%= f.input_field :phone, class: "form-control" %>
-                <% end %>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <%= submit_button %>
-                </div>
-              <% end %>
-              </div>
-          <!-- /.card -->
-        </div>
-
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :submit, "Save", id: "donation-site-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", donation_sites_path, variant: :ghost, size: :md %>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

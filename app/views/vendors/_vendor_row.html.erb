@@ -1,26 +1,32 @@
 <tr>
-  <td><%= vendor_row&.business_name %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to vendor_row.business_name.presence || "Unnamed vendor", vendor_row, class: "text-brand-700 hover:text-brand-800" %>
+    <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless vendor_row.active? %>
+  </td>
   <td><%= vendor_row&.contact_name %></td>
   <td><%= vendor_row&.phone %></td>
   <td><%= vendor_row&.email %></td>
-  <td class="text-right"><%= vendor_row&.volume %></td>
+  <td class="quantity"><%= number_with_delimiter(vendor_row&.volume) %></td>
   <td class="text-right">
-    <%= view_button_to vendor_row %>
-    <%= edit_button_to edit_vendor_path(vendor_row) %>
-    <% if vendor_row.active? %>
-      <% if vendor_row&.purchases&.none? %>
-        <%= delete_button_to vendor_path(vendor_row),
-                          text: 'Delete',
-                          confirm: confirm_delete_msg(vendor_row.business_name) %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", vendor_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_vendor_path(vendor_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <% if vendor_row.active? %>
+        <% if vendor_row&.purchases&.none? %>
+          <%= essentials_action_button "Delete", vendor_path(vendor_row), method: :delete,
+                variant: :ghost, size: :sm, icon: "bi-trash",
+                class: "text-rose-700 hover:bg-rose-50",
+                confirm: confirm_delete_msg(vendor_row.business_name) %>
+        <% else %>
+          <%= essentials_action_button "Deactivate", deactivate_vendor_path(vendor_row), method: :put,
+                variant: :ghost, size: :sm, icon: "bi-slash-circle",
+                confirm: confirm_deactivate_msg(vendor_row.business_name) %>
+        <% end %>
       <% else %>
-        <%= deactivate_button_to deactivate_vendor_path(vendor_row),
-                              text: 'Deactivate',
-                              confirm: confirm_deactivate_msg(vendor_row.business_name) %>
+        <%= essentials_action_button "Reactivate", reactivate_vendor_path(vendor_row), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
+              confirm: confirm_reactivate_msg(vendor_row.business_name) %>
       <% end %>
-    <% else %>
-      <%= reactivate_button_to reactivate_vendor_path(vendor_row),
-                             text: 'Reactivate',
-                             confirm: confirm_reactivate_msg(vendor_row.business_name) %>
-    <% end %>
+    </div>
   </td>
 </tr>

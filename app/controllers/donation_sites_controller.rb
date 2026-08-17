@@ -1,6 +1,9 @@
 # Provides full CRUD for DonationSites. Donation sites are the locations where people in the community can drop off
 # donations.
 class DonationSitesController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   def index

@@ -1,5 +1,8 @@
 # Provides full CRUD of the Vendor Resource
 class VendorsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   def index

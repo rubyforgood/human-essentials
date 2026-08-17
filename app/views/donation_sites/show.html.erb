@@ -1,95 +1,54 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Donation Sites - #{@donation_site.name} - Agencies - #{current_organization.name}" %>
-        <h1>
-          Donation Site Information
-          <small>for <%= @donation_site.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Donation Sites", donation_sites_path %></li>
-          <li class="breadcrumb-item"><%= @donation_site.name %></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "#{@donation_site.name} - Donation Sites - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Donation Site Name</th>
-                  <th>Donation Site Address</th>
-                  <th>Contact Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><%= @donation_site.name %></td>
-                  <td><%= @donation_site.address %></td>
-                  <td><%= @donation_site.contact_name || "N/A" %></td>
-                  <td><%= @donation_site.email || "N/A" %></td>
-                  <td><%= @donation_site.phone || "N/A" %></td>
-                </tr>
-              </tbody>
-            </table>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @donation_site.name,
+        subtitle: @donation_site.address.presence,
+        back: {path: donation_sites_path, label: "Back to donation sites"},
+        actions: essentials_link_button("Edit", edit_donation_site_path(@donation_site), variant: :secondary, icon: "bi-pencil") %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <% {"Contact name" => @donation_site.contact_name, "Email" => @donation_site.email, "Phone" => @donation_site.phone}.each do |label, value| %>
+          <div>
+            <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= value.presence || "—" %></dd>
           </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+        <% end %>
+      </dl>
+    <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+    <%= render "shared/essentials/card", title: "Donations received here", padded: @donation_site.donations.blank? do %>
+      <% if @donation_site.donations.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No donations from this site yet",
+              body: "Donations recorded against this site will be listed here." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Donations received at <%= @donation_site.name %></caption>
+            <thead>
               <tr>
-                <th>Storage Location</th>
-                <th>Quantity of Items</th>
-                <th>Variety of Items</th>
-                <th>Source</th>
+                <th scope="col">Storage location</th>
+                <th scope="col" class="quantity">Quantity of items</th>
+                <th scope="col" class="quantity">Variety of items</th>
+                <th scope="col">Source</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @donation_site.donations.each do |donation| %>
                 <tr>
                   <td><%= donation.storage_location&.name %></td>
-                  <td><%= donation.line_items.total %></td>
-                  <td><%= donation.line_items.size %></td>
-                  <td><%= link_to "View donation details", donation %></td>
+                  <td class="quantity"><%= number_with_delimiter(donation.line_items.total) %></td>
+                  <td class="quantity"><%= donation.line_items.size %></td>
+                  <td><%= donation.source %></td>
                 </tr>
               <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-footer-->
+            </tbody>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

@@ -1,55 +1,25 @@
-<%= simple_form_for form, remote: request.xhr?, html: {class: 'form'} do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body">
-              <%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
-                <%= f.input :business_name, label: "Business Name*", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-suitcase"></i></span>
-                  <%= f.input_field :business_name, class: "form-control" %>
-                <% end %>
+<%# One form. The AdminLTE version nested a second simple_form_for inside the first, which
+    is invalid HTML -- the inner <form> swallowed the outer one's fields. %>
+<div class="max-w-2xl">
+  <%= essentials_error_summary(form) %>
 
-                <%= f.input :contact_name, label: "Contact Name*", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                  <%= f.input_field :contact_name, class: "form-control" %>
-                <% end %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+      <%# The "or" requirements here are conditional (presence: if the other is blank), which
+          simple_form deliberately does not infer, and `required: true` would set the HTML5
+          required attribute and block a valid submission. Stated in the label instead --
+          see docs/design-decisions.md. %>
+      <%= f.input :business_name, label: "Business name* (business or contact name required)" %>
+      <%= f.input :contact_name, label: "Contact name* (business or contact name required)" %>
+      <%= f.input :phone, label: "Phone* (phone or email required)" %>
+      <%= f.input :email, label: "Email* (phone or email required)" %>
+      <%= f.input :address, label: "Address" %>
+      <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
 
-                <%= f.input :phone, label: "Phone* (phone number or e-mail required)", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                  <%= f.input_field :phone, class: "form-control" %>
-                <% end %>
-
-                <%= f.input :email, label: "E-mail* (phone number or e-mail required)", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                  <%= f.input_field :email, class: "form-control" %>
-                <% end %>
-
-                <%= f.input :address, label: "Address", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-home"></i></span>
-                  <%= f.input_field :address, class: "form-control" %>
-                <% end %>
-                <%= f.input :comment, label: "Comment", wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-comment"></i></span>
-                  <%= f.input_field :comment, as: :text, class: "form-control" %>
-                <% end %>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <%= submit_button({id: "product-drive-participant-submit"}) %>
-                </div>
-              <% end %>
-              </div>
-          <!-- /.card -->
-        </div>
-
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :submit, "Save", id: "product-drive-participant-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", product_drive_participants_path, variant: :ghost, size: :md %>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,82 +1,45 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Manufacturers - Agencies - #{current_organization.name}" %>
-        <h1>
-          Manufacturers
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Manufacturers</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Manufacturers - Community - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-footer">
-            <div class="pull-right">
-              <%= new_button_to new_manufacturer_path, text: "New Manufacturer" %>
-            </div>
-          </div>
-        </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
+<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+  <%= render "shared/essentials/page_header",
+        title: "Manufacturers",
+        subtitle: "Companies that donate product directly to #{current_organization.name}.",
+        actions: capture {
+          concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+            concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
+            concat " Import manufacturers"
+          end)
+          concat essentials_link_button("New manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th class="text-right">Total Items</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "manufacturer_row", collection: @manufacturers %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- /.card -->
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @manufacturers.empty? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No manufacturers yet",
+            body: "Add manufacturers so donations made directly by a company can be attributed to them.",
+            action: essentials_link_button("New manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Manufacturers and the total items donated by each</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col" class="quantity">Total items donated</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "manufacturer_row", collection: @manufacturers %></tbody>
+        </table>
       </div>
-    </div>
-  </div>
-  <%= render(
-          layout: "shared/csv_import_modal",
-          locals: {
-            import_type: "Manufacturers",
-            csv_template_url: "/manufacturers.csv",
-            csv_import_url: import_csv_manufacturers_path
-          }
-      ) do %>
-    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter the Manufacturer names, emails and phone numbers in the appropriate columns.</li>
-    <li>Save the file as a csv file.</li>
+    <% end %>
   <% end %>
-</section>
+
+  <%= render layout: "shared/essentials/csv_import_modal", locals: {
+        import_type: "Manufacturers", csv_template_url: "/manufacturers.csv", csv_import_url: import_csv_manufacturers_path
+      } do %>
+    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter the manufacturer names, emails and phone numbers in the matching columns.</li>
+    <li>Save the file as a CSV.</li>
+  <% end %>
+</div>

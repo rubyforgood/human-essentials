@@ -1,93 +1,53 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Vendors - #{@vendor.contact_name} - #{current_organization.name}" %>
-        <h1>
-          Vendor Information
-          <small>for <%= @vendor.contact_name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Vendors", vendors_path %></li>
-          <li class="breadcrumb-item"><%= @vendor.contact_name %></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "#{@vendor.business_name} - Vendors - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Business Name</th>
-                <th>Contact Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Address</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @vendor.business_name %></td>
-                <td><%= @vendor.contact_name %></td>
-                <td><%= @vendor.phone %></td>
-                <td><%= @vendor.email %></td>
-                <td><%= @vendor.address %></td>
-              </tr>
-              </tbody>
-            </table>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @vendor.business_name.presence || "Vendor",
+        back: {path: vendors_path, label: "Back to vendors"},
+        actions: essentials_link_button("Edit", edit_vendor_path(@vendor), variant: :secondary, icon: "bi-pencil") %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <% {"Contact name" => @vendor.contact_name, "Phone" => @vendor.phone, "Email" => @vendor.email, "Address" => @vendor.address}.each do |label, value| %>
+          <div>
+            <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= value.presence || "—" %></dd>
           </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+        <% end %>
+      </dl>
+    <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+    <%= render "shared/essentials/card", title: "Purchases from this vendor", padded: @purchases.blank? do %>
+      <% if @purchases.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No purchases from this vendor yet",
+              body: "Purchases recorded against this vendor will be listed here." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Purchases made from <%= @vendor.business_name %></caption>
+            <thead>
               <tr>
-                <th>Date</th>
-                <th>Volume</th>
-                <th>Details</th>
+                <th scope="col" class="date">Date</th>
+                <th scope="col" class="quantity">Volume</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @purchases.each do |purchase| %>
                 <tr>
-                  <td><%= purchase.issued_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= purchase.line_items.total %></td>
-                  <td><%= view_button_to purchase, { text: "View purchase details" } %></td>
+                  <td class="date"><%= purchase.issued_at.strftime("%m/%d/%Y") %></td>
+                  <td class="quantity"><%= number_with_delimiter(purchase.line_items.total) %></td>
+                  <td class="text-right">
+                    <%= essentials_link_button "View purchase", purchase, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  </td>
                 </tr>
               <% end %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-footer-->
+            </tbody>
+          </table>
         </div>
-        <!-- /.card -->
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

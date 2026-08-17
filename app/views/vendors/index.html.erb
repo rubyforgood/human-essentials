@@ -1,103 +1,58 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Vendors - #{current_organization.name}" %>
-        <h1>
-          Vendors
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Vendors</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Vendors - Community - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Vendor Filter</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(vendors_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
-                </div>
-              </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <%= download_button_to(vendors_path(format: :csv, filters: filter_params.merge(date_range: date_range_params, include_inactive_vendors: @include_inactive_vendors)), {text: "Export Vendors", size: "md"}) if @vendors.any? %>
-                  <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Vendors", size: "md"}) if @vendors.empty? %>
-                  <%= new_button_to new_vendor_path, text: "New Vendor" %>
-                </span>
-              </div>
-            <% end # form %>
-            </div>
-        <!-- /.card -->
-      </div>
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-</section>
+<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+  <%= render "shared/essentials/page_header",
+        title: "Vendors",
+        subtitle: "Businesses #{current_organization.name} buys essentials from.",
+        actions: capture {
+          if @vendors.any?
+            concat essentials_link_button("Export", vendors_path(format: :csv, filters: filter_params.merge(date_range: date_range_params, include_inactive_vendors: @include_inactive_vendors)), variant: :secondary, icon: "bi-download")
+          else
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+              concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
+              concat " Import vendors"
+            end)
+          end
+          concat essentials_link_button("New vendor", new_vendor_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Business Name</th>
-                <th>Contact Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th class="text-right">Total Items</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "vendor_row", collection: @vendors %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- /.card -->
-      </div>
+  <%= render "shared/essentials/filter_bar", url: vendors_path do %>
+    <div class="pb-2">
+      <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
     </div>
-  </div>
-  <%= render(
-          layout: "shared/csv_import_modal",
-          locals: {
-            import_type: "Vendors",
-            csv_template_url: "/vendors.csv",
-            csv_import_url: import_csv_vendors_path
-          }
-      ) do %>
-    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter vendors names, emails and phone numbers in the appropriate columns.</li>
-    <li>Save the file as a csv file.</li>
   <% end %>
-</section>
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @vendors.empty? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No vendors yet",
+            body: "Add the businesses you purchase essentials from so purchases can be attributed to them.",
+            action: essentials_link_button("New vendor", new_vendor_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Vendors and the total items purchased from each</caption>
+          <thead>
+            <tr>
+              <th scope="col">Business name</th>
+              <th scope="col">Contact name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Email</th>
+              <th scope="col" class="quantity">Total items</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "vendor_row", collection: @vendors %></tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render layout: "shared/essentials/csv_import_modal", locals: {
+        import_type: "Vendors", csv_template_url: "/vendors.csv", csv_import_url: import_csv_vendors_path
+      } do %>
+    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your vendor names, emails and phone numbers in the matching columns.</li>
+    <li>Save the file as a CSV.</li>
+  <% end %>
+</div>
