@@ -1,64 +1,41 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "#{current_organization.name} - Distributions - Edit" %>
-        <h1>
-          Edit Distribution
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
-          <li class="breadcrumb-item"><a href="#">Edit Distribution</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Edit Distribution - #{current_organization.name}" %>
 
-<section class="content">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Editing distribution",
+        subtitle: "To #{@distribution.partner.name}.",
+        back: {path: distributions_path, label: "Back to distributions"} %>
 
-  <% if @distribution.issued_at && !@distribution.future? %>
-    <div class="alert alert-warning" role="alert">
-      The current date is past the date this distribution was scheduled for.
-      Please be very careful when editing this record;
-      the contents should match what was given to the recipient.
-    </div>
-  <% end %>
-  <% if @audit_warning %>
-    <div class="alert alert-warning" role="alert">
-      You’ve had an audit since this distribution was started.
-      In the rare case that you are correcting a typo,
-      rather than recording that the physical amounts being distributed have changed,
-      you’ll need to make an adjustment to the inventory as well.
-    </div>
-  <% end %>
-
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <!-- Default box -->
-            <div class="box">
-              <div class="box-body">
-                <%= render 'form', distribution: @distribution, date_place_holder: @distribution.issued_at %>
-              </div>
-            </div><!-- /.box -->
-          </div>
-        </div>
+  <div class="space-y-4">
+    <% if @distribution.issued_at && !@distribution.future? %>
+      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
+        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+        <span>
+          The current date is past the date this distribution was scheduled for.
+          Please be very careful when editing this record;
+          the contents should match what was given to the recipient.
+        </span>
       </div>
-    </div>
+    <% end %>
+
+    <% if @audit_warning %>
+      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+        <span>
+          You’ve had an audit since this distribution was started.
+          In the rare case that you are correcting a typo,
+          rather than recording that the physical amounts being distributed have changed,
+          you’ll need to make an adjustment to the inventory as well.
+        </span>
+      </div>
+    <% end %>
   </div>
-  <%= render partial: "barcode_items/barcode_modal" %>
-</section>
+
+  <div class="mt-6"
+       data-controller="confirmation"
+       data-confirmation-pre-check-path-value="<%= validate_distributions_path(format: :json) %>">
+    <%= render "form", distribution: @distribution, date_place_holder: @distribution.issued_at %>
+  </div>
+</div>
+
+<%= render partial: "barcode_items/barcode_modal" %>

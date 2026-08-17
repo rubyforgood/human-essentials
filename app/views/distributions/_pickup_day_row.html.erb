@@ -1,17 +1,22 @@
 <tr>
-  <td><%= pickup_day_row.partner.name %></td>
-  <td><%= pickup_day_row.issued_at.strftime("%l:%M %p") %> </td>
+  <td class="font-medium text-slate-900"><%= pickup_day_row.partner.name %></td>
+  <td class="date"><%= pickup_day_row.issued_at.strftime("%l:%M %p").strip %></td>
   <td><%= pickup_day_row.storage_location.name %></td>
-  <td><%= pickup_day_row.line_items.total %></td>
+  <td class="quantity"><%= number_with_delimiter(pickup_day_row.line_items.total) %></td>
   <td>
     <% if pickup_day_row.complete? %>
-      Complete
+      <%= essentials_status_pill("Complete", tone: :success, icon: "bi-check-circle") %>
     <% else %>
-      Scheduled
+      <%= essentials_status_pill("Scheduled", tone: :info, icon: "bi-calendar-event") %>
     <% end %>
   </td>
   <td class="text-right">
-    <%= update_button_to picked_up_distribution_path(pickup_day_row), {text: "Distribution Complete", size: "xs"} if !pickup_day_row.complete? %>
-    <%= view_button_to distribution_path(pickup_day_row) %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", distribution_path(pickup_day_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <% unless pickup_day_row.complete? %>
+        <%= essentials_action_button "Mark complete", picked_up_distribution_path(pickup_day_row), method: :patch,
+              variant: :secondary, size: :sm, icon: "bi-check-circle" %>
+      <% end %>
+    </div>
   </td>
 </tr>

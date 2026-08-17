@@ -1,104 +1,70 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "#{@distribution.storage_location.name} - Distributions - #{current_organization.name}" %>
-        <h1>
-          Distribution
-          <small>from <%= @distribution.storage_location.name %> to <b><%= @distribution.partner.name %></b></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @distribution.partner.name %>
-            <% if @distribution.persisted? %>
-              <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
-            <% end %></a></li>
-            </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Distribution to #{@distribution.partner.name} - #{current_organization.name}" %>
+<% inactive = @distribution.has_inactive_item? %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>ID</th>
-                <th>Source location:</th>
-                <th>Agency representative:</th>
-                <th>Delivery method:</th>
-                <th>Shipping cost:</th>
-                <th>Comments:</th>
-                <th>Status:</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @distribution.id %></td>
-                <td><%= @distribution.storage_location.name %></td>
-                <td><%= @distribution.agency_rep %></td>
-                <td><%= @distribution.delivery_method.humanize %></td>
-                <td><%= distribution_shipping_cost(@distribution.shipping_cost) %></td>
-                <td><%= @distribution.comment %></td>
-                <td><%= @distribution.state&.humanize %></td>
-              </tr>
-            </table>
-          </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Distribution to #{@distribution.partner.name}",
+        subtitle: (@distribution.persisted? ? "Created #{@distribution.created_at.strftime("%m/%d/%Y")}." : nil),
+        back: {path: distributions_path, label: "Back to distributions"},
+        actions: capture {
+          concat essentials_link_button("Print", print_distribution_path(@distribution, format: :pdf), variant: :secondary, icon: "bi-printer")
+          if @distribution.scheduled?
+            concat essentials_action_button("Distribution complete", picked_up_distribution_path(@distribution), method: :patch, variant: :primary, icon: "bi-check-circle")
+          end
+          if !inactive && (@distribution.future? || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization))
+            concat essentials_link_button("Make a correction", edit_distribution_path(@distribution), variant: :secondary, icon: "bi-pencil")
+          end
+        } %>
+
+  <div class="space-y-6">
+    <% if inactive %>
+      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+        <div>
+          <p class="font-semibold">This distribution cannot be corrected</p>
+          <p class="mt-1">
+            Distributions can only be corrected while all of their items are active.
+            If you need to make a correction,
+            please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
+          </p>
         </div>
       </div>
-    </div>
-  </div>
+    <% end %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Item</th>
-                <th>Value per item</th>
-                <th>Total value</th>
-                <th>Quantity</th>
-                <th>Package count</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "distribution_item_row", collection: @line_items %>
-              <%= render partial: "distribution_item_total" %>
-              </tbody>
-            </table>
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <% {"ID" => @distribution.id.to_s,
+            "Source location" => @distribution.storage_location.name,
+            "Agency representative" => @distribution.agency_rep,
+            "Delivery method" => @distribution.delivery_method.humanize,
+            "Shipping cost" => distribution_shipping_cost(@distribution.shipping_cost),
+            "Status" => @distribution.state&.humanize,
+            "Comments" => @distribution.comment}.each do |label, value| %>
+          <div>
+            <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= value.presence || "—" %></dd>
           </div>
-          <div class="card-footer">
-            <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
-            <% if @distribution.future? || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= edit_button_to edit_distribution_path(@distribution), {
-                text: "Make a Correction",
-                enabled: !@distribution.has_inactive_item?,
-                size: "md"} %>
-            <% end %>
-            <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
-          </div>
-          <% if @distribution.has_inactive_item? %>
-            <div class="low_priority_warning">
-              You can only correct distributions where all the items are active.
-              If you need to make a correction, please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
-            </div>
-          <% end %>
-        </div>
+        <% end %>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Items distributed", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Items in this distribution</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="numeric">Value per item</th>
+              <th scope="col" class="numeric">Total value</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="quantity">Package count</th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "distribution_item_row", collection: @line_items %></tbody>
+          <tfoot><%= render partial: "distribution_item_total" %></tfoot>
+        </table>
       </div>
-    </div>
+    <% end %>
   </div>
-</section>
+</div>

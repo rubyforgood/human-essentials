@@ -1,171 +1,79 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Distributions - #{current_organization.name}" %>
-        <h1>
-          Distributions
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Distributions</a></li>
-        </ol>
-      </div>
+<% content_for :title, "Distributions - #{current_organization.name}" %>
+<%
+  filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : nil
+  filtered_category_name = @selected_item_category ? @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name : nil
+  filtered_reporting_category_name = @selected_reporting_category ? @reporting_categories.find { |rc| rc.id == filter_params[:by_reporting_category] }&.name : nil
+  quantity_label = filtered_item_name || (filtered_category_name && "in #{filtered_category_name}") || filtered_reporting_category_name || "Items"
+%>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Distributions",
+        subtitle: "Essentials sent out to partner agencies.",
+        actions: capture {
+          if @distributions.any?
+            concat essentials_link_button("Export", distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          concat essentials_link_button("New distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <%= render "shared/essentials/filter_bar", url: distributions_path do %>
+    <% if @items.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :by_item_id, collection: @items, selected: @selected_item) %></div>
+    <% end %>
+    <% if @item_categories.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
+    <% end %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Reporting category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %></div>
+    <% if @partners.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %></div>
+    <% end %>
+    <% if @storage_locations.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Source inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %></div>
+    <% end %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %></div>
+    <div class="min-w-[15rem]">
+      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
-  </div><!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Distribution Filters</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(distributions_path, method: :get) do |f| %>
-              <div class="row">
-                <% if @items.present? %>
-                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
-                  </div>
-                <% end %>
-                <% if @item_categories.present? %>
-                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Item Category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
-                  </div>
-                <% end %>
-                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Reporting Category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %>
-                </div>
-                <% if @partners.present? %>
-                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %>
-                  </div>
-                <% end %>
-                <% if @storage_locations.present? %>
-                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Source Inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %>
-                  </div>
-                <% end %>
-                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range", "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                </div>
-              </div><!-- /.row -->
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <%=
-                    if @distributions.any?
-                      download_button_to(
-                        distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
-                        text: "Export Distributions"
-                      )
-                    end
-                  %>
-                  <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
-                </span>
-              </div>
-            <% end # form %>
-          </div>
-        </div>
+  <% end %>
+
+  <%= render "shared/essentials/card", padded: false,
+        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_distributions)) } do %>
+    <% if @paginated_distributions.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No distributions match those filters" : "No distributions yet",
+            body: filter_params.present? ? "Clear the filters to see every distribution." : "A distribution records essentials leaving your bank for a partner agency.",
+            action: filter_params.present? ? nil : essentials_link_button("New distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Distributions to partner agencies</caption>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Partner</th>
+              <th scope="col" class="date">Initial allocation</th>
+              <th scope="col" class="date">Date of distribution</th>
+              <th scope="col">Source inventory</th>
+              <th scope="col" class="quantity">
+                <%= filtered_item_name ? "Total #{filtered_item_name}" : (filtered_category_name ? "Total in #{filtered_category_name}" : (filtered_reporting_category_name ? "Total #{filtered_reporting_category_name}" : "Total items")) %>
+              </th>
+              <th scope="col" class="numeric">
+                <%= filtered_item_name ? "Value of #{filtered_item_name}" : (filtered_category_name ? "Value of #{filtered_category_name}" : (filtered_reporting_category_name ? "Value of #{filtered_reporting_category_name}" : "Total value")) %>
+              </th>
+              <th scope="col">Delivery method</th>
+              <th scope="col" class="numeric">Shipping cost</th>
+              <th scope="col">Comments</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "distribution_row", collection: @paginated_distributions %></tbody>
+          <tfoot><%= render partial: "distribution_total", locals: {quantity_label: quantity_label} %></tfoot>
+        </table>
       </div>
-    </div><!-- /.container-fluid -->
-  </div>
-</section>
-
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
-              <thead>
-              <tr>
-                <th>ID</th>
-                <th>Partner</th>
-                <th class="date text-left">Initial Allocation</th>
-                <th class="date text-left">Date of Distribution</th>
-                <th>Source Inventory</th>
-
-                <% filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : nil %>
-                <% filtered_category_name = @selected_item_category ? @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name : nil %>
-                <% filtered_reporting_category_name = @selected_reporting_category ? @reporting_categories.find { |rc| rc.id == filter_params[:by_reporting_category] }&.name : nil %>
-
-                <!-- Quantity -->
-                <% if filtered_item_name %>
-                  <th class="numeric">Total <%= filtered_item_name %></th>
-                <% elsif filtered_category_name %>
-                  <th class="numeric">Total in <%= filtered_category_name %></th>
-                <% elsif filtered_reporting_category_name %>
-                  <th class="numeric">Total <%= filtered_reporting_category_name %></th>
-                <% else %>
-                  <th class="numeric">Total Items</th>
-                <% end %>
-                <!-- End Quantity -->
-
-                <!-- Value -->
-                <% if filtered_item_name %>
-                  <th class="numeric">Value of <%= filtered_item_name %></th>
-                <% elsif filtered_category_name %>
-                  <th class="numeric">Value of <%= filtered_category_name %></th>
-                <% elsif filtered_reporting_category_name %>
-                  <th class="numeric">Value of <%= filtered_reporting_category_name %></th>
-                <% else %>
-                  <th class="numeric">Total Value</th>
-                <% end %>
-                <!-- End Value -->
-
-                <th>Delivery Method</th>
-                <th class="text-right">Shipping Cost</th>
-                <th>Comments</th>
-                <th>Status</th>
-                <th class="text-right" style="width: 400px">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "distribution_row", collection: @paginated_distributions %>
-              </tbody>
-              <tfoot>
-              <% if filtered_item_name %>
-                <% quantity_label = filtered_item_name %>
-              <% elsif filtered_category_name %>
-                <% quantity_label = "in #{filtered_category_name}" %>
-              <% elsif filtered_reporting_category_name %>
-                <% quantity_label = filtered_reporting_category_name %>
-              <% else %>
-                <% quantity_label = "Items" %>
-              <% end %>
-              <%= render partial: "distribution_total", locals: { quantity_label: quantity_label } %>
-              </tfoot>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer">
-            <%= paginate @paginated_distributions %>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

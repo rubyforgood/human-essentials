@@ -91,14 +91,14 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:total_items_paginated_distributions)).to eq(22)
       end
 
-      it "shows an enabled edit and reclaim button" do
+      it "shows edit and reclaim actions" do
         get distributions_path
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-        reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
-        expect(edit.attr("class")).not_to match(/disabled/)
-        expect(reclaim.attr("class")).not_to match(/disabled/)
-        expect(response.body).not_to match(/Has Inactive Items/)
+        reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] button")
+        expect(edit).to be_present
+        expect(reclaim).to be_present
+        expect(response.body).not_to match(/Has inactive items/)
       end
 
       context "with a disabled item" do
@@ -106,14 +106,16 @@ RSpec.describe "Distributions", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit and reclaim button" do
+        it "omits the edit and reclaim actions and says why" do
           get distributions_path
           page = Nokogiri::HTML(response.body)
+          # An anchor cannot be disabled -- it stays focusable and clickable by keyboard and
+          # announces nothing -- so the unavailable actions are omitted and the row says why.
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-          reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
-          expect(edit.attr("class")).to match(/disabled/)
-          expect(reclaim.attr("class")).to match(/disabled/)
-          expect(response.body).to match(/Has Inactive Items/)
+          reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] button")
+          expect(edit).to be_nil
+          expect(reclaim).to be_nil
+          expect(response.body).to match(/Has inactive items/)
         end
       end
 
@@ -147,7 +149,7 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
-          item_quantity, item_value = page.css("table tbody tr td.numeric")
+          item_quantity, item_value = [page.at_css("table tbody tr td.quantity"), page.at_css("table tbody tr td.numeric")]
 
           # total value/quantity of distribution
           expect(distribution.total_quantity).to eq(20)
@@ -162,10 +164,10 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
-          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+          item_total_header, item_value_header = [page.at_css("table thead tr th.quantity"), page.at_css("table thead tr th.numeric")]
 
-          expect(item_total_header.text).to eq("Total #{item.name}")
-          expect(item_value_header.text).to eq("Value of #{item.name}")
+          expect(item_total_header.text.strip).to eq("Total #{item.name}")
+          expect(item_value_header.text.strip).to eq("Value of #{item.name}")
         end
       end
 
@@ -196,9 +198,9 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
-          quantity_header, value_header = page.css("table thead tr th.numeric")
-          expect(quantity_header.text).to eq("Total Pads")
-          expect(value_header.text).to eq("Value of Pads")
+          quantity_header, value_header = [page.at_css("table thead tr th.quantity"), page.at_css("table thead tr th.numeric")]
+          expect(quantity_header.text.strip).to eq("Total Pads")
+          expect(value_header.text.strip).to eq("Value of Pads")
         end
 
         it "exports only matching distributions to CSV with annotated headers and a Reporting Category column" do
@@ -219,9 +221,9 @@ RSpec.describe "Distributions", type: :request do
             get distributions_path, params: combined_params
 
             page = Nokogiri::HTML(response.body)
-            quantity_header, value_header = page.css("table thead tr th.numeric")
-            expect(quantity_header.text).to eq("Total #{item_pads.name}")
-            expect(value_header.text).to eq("Value of #{item_pads.name}")
+            quantity_header, value_header = [page.at_css("table thead tr th.quantity"), page.at_css("table thead tr th.numeric")]
+            expect(quantity_header.text.strip).to eq("Total #{item_pads.name}")
+            expect(value_header.text.strip).to eq("Value of #{item_pads.name}")
           end
         end
       end
@@ -241,7 +243,7 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
-          item_quantity, item_value = page.css("table tbody tr td.numeric")
+          item_quantity, item_value = [page.at_css("table tbody tr td.quantity"), page.at_css("table tbody tr td.numeric")]
 
           # total value/quantity of distribution
           expect(distribution.total_quantity).to eq(20)
@@ -256,10 +258,10 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
-          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+          item_total_header, item_value_header = [page.at_css("table thead tr th.quantity"), page.at_css("table thead tr th.numeric")]
 
-          expect(item_total_header.text).to eq("Total in #{item_category.name}")
-          expect(item_value_header.text).to eq("Value of #{item_category.name}")
+          expect(item_total_header.text.strip).to eq("Total in #{item_category.name}")
+          expect(item_value_header.text.strip).to eq("Value of #{item_category.name}")
         end
 
         it "doesn't show duplicate distributions" do
@@ -516,11 +518,11 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:total_package_count)).to eq(item_quantity / package_size)
       end
 
-      it "shows an enabled edit button" do
+      it "shows an edit action" do
         get distribution_path(id: distribution.id)
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(edit).to be_present
         expect(response.body).not_to match(/please make the following items active:/)
       end
 
@@ -529,11 +531,11 @@ RSpec.describe "Distributions", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit button" do
+        it "omits the edit action and says why" do
           get distribution_path(id: distribution.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-          expect(edit.attr("class")).to match(/disabled/)
+          expect(edit).to be_nil
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end

@@ -1,5 +1,5 @@
 <tr>
-  <td><%= daily_item_row[:name] %></td>
-  <td><%= daily_item_row[:quantity] %></td>
-  <td><%= daily_item_row[:package_count] %></td>
+  <td class="font-medium text-slate-900"><%= daily_item_row[:name] %></td>
+  <td class="quantity"><%= number_with_delimiter(daily_item_row[:quantity]) %></td>
+  <td class="quantity"><%= daily_item_row[:package_count] %></td>
 </tr>

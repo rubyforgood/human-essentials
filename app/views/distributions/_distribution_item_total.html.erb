@@ -1,7 +1,7 @@
 <tr>
-  <td><strong>Total:</strong></td>
+  <td>Total</td>
   <td></td>
-  <td><strong><%= dollar_value(@distribution.value_per_itemizable) %></strong></td>
-  <td><strong><%= @total_quantity %></strong></td>
-  <td><strong><%= @total_package_count %></strong></td>
+  <td class="numeric"><%= dollar_value(@distribution.value_per_itemizable) %></td>
+  <td class="quantity"><%= number_with_delimiter(@total_quantity) %></td>
+  <td class="quantity"><%= @total_package_count %></td>
 </tr>

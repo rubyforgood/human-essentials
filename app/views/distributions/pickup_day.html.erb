@@ -1,87 +1,56 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Distribution Schedule for #{@selected_date.strftime("%B %e, %Y")}" %>
-        <h1>
-          Distribution Schedule for <%= @selected_date.strftime("%B %e, %Y") %>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
-          <li class="breadcrumb-item"><%= link_to "Schedule", schedule_distributions_path %></li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Pick ups for #{@selected_date.strftime("%B %e, %Y")} - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Pick ups for #{@selected_date.strftime("%B %e, %Y").squeeze(" ")}",
+        back: {path: schedule_distributions_path, label: "Back to the calendar"} %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Scheduled distributions", padded: @pick_ups.blank? do %>
+      <% if @pick_ups.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "Nothing scheduled for this day" %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Distributions scheduled for <%= @selected_date.strftime("%B %e, %Y").squeeze(" ") %></caption>
+            <thead>
               <tr>
-                <th>Partner</th>
-                <th>Time of Distribution</th>
-                <th>Source Inventory</th>
-                <th>Total items</th>
-                <th>Status</th>
-                <th class="text-right">Actions</th>
+                <th scope="col">Partner</th>
+                <th scope="col" class="date">Time of distribution</th>
+                <th scope="col">Source inventory</th>
+                <th scope="col" class="quantity">Total items</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "pickup_day_row", collection: @pick_ups %>
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody><%= render partial: "pickup_day_row", collection: @pick_ups %></tbody>
+          </table>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      <% end %>
+    <% end %>
 
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>
-          Item totals for <%= @selected_date.strftime("%B %e, %Y") %>
-        </h1>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
+    <%= render "shared/essentials/card",
+          title: "Item totals for #{@selected_date.strftime("%B %e, %Y").squeeze(" ")}",
+          padded: @daily_items.blank? do %>
+      <% if @daily_items.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "No items going out on this day" %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Total items going out on <%= @selected_date.strftime("%B %e, %Y").squeeze(" ") %></caption>
+            <thead>
               <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Number of Packages</th>
+                <th scope="col">Item</th>
+                <th scope="col" class="quantity">Quantity</th>
+                <th scope="col" class="quantity">Number of packages</th>
               </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "daily_item_row", collection: @daily_items %>
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody><%= render partial: "daily_item_row", collection: @daily_items %></tbody>
+          </table>
         </div>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

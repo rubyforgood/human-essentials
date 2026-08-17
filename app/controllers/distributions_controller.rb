@@ -4,6 +4,9 @@
 # Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include DateRangeHelper
   include DistributionHelper
   include Validatable

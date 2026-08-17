@@ -15,6 +15,10 @@ import { Controller } from "@hotwired/stimulus"
 
  * If the user clicks the "Yes..." button from the modal, it submits the form.
  * If the user clicks the "No..." button from the modal, it closes and user remains on the same url.
+ *
+ * The modal target is a native <dialog>: showModal() supplies the backdrop, focus trap and
+ * Escape handling that the Bootstrap modal approximated in JS, and Bootstrap's modal CSS is
+ * not loaded on design system pages.
  */
 export default class extends Controller {
   static targets = [
@@ -47,7 +51,7 @@ export default class extends Controller {
     .then((data) => {
       if (data.valid) {
         this.modalTarget.innerHTML = data.body;
-        $(this.modalTarget).modal("show");
+        this.modalTarget.showModal();
       } else {
         this.formTarget.requestSubmit();
       }
@@ -102,10 +106,11 @@ export default class extends Controller {
   }
 
   submitForm() {
-    $(this.modalTarget).find('#modalClose').prop('disabled', true);
-    $(this.modalTarget).find('#modalYes').prop('disabled', true);
-    $(this.modalTarget).find('#modalNo').prop('disabled', true);
-    $(this.modalTarget).modal("hide");
+    // Disable the dialog's controls before submitting so a second click cannot double-submit.
+    this.modalTarget
+      .querySelectorAll("#modalClose, #modalYes, #modalNo")
+      .forEach((button) => { button.disabled = true; });
+    this.modalTarget.close();
     this.formTarget.requestSubmit();
   }
 }
