@@ -100,7 +100,7 @@ module EssentialsUiHelper
   def essentials_avatar_initials(name)
     return "?" if name.blank?
 
-    name.to_s.split(/\s+/).reject(&:blank?).first(2).map { |part| part[0] }.join.upcase
+    name.to_s.split(/\s+/).compact_blank.first(2).map { |part| part[0] }.join.upcase
   end
 
   def essentials_role_label(role)
@@ -135,6 +135,44 @@ module EssentialsUiHelper
 
   def essentials_flash_style(tone)
     FLASH_STYLES.fetch(tone.to_sym)
+  end
+
+  # --- Forms ----------------------------------------------------------------
+
+  # Which wrapper each input type gets. Lives here rather than on SimpleForm itself: the
+  # wrappers are defined in config/initializers/simple_form_essentials.rb, but adding a
+  # method to a gem's module to hold app config is a monkeypatch nobody would think to
+  # look for.
+  WRAPPER_MAPPINGS = {
+    boolean: :essentials_boolean,
+    check_boxes: :essentials_collection,
+    radio_buttons: :essentials_collection,
+    file: :essentials_file
+  }.freeze
+
+  # simple_form_for with the design system's wrappers already applied. Use this rather than
+  # passing `wrapper:` at every call site -- forgetting it silently renders a Bootstrap form
+  # on a page with no Bootstrap CSS, which looks like an unstyled browser default.
+  def essentials_form_for(record, options = {}, &block)
+    simple_form_for(
+      record,
+      options.deep_merge(wrapper: :essentials, wrapper_mappings: WRAPPER_MAPPINGS),
+      &block
+    )
+  end
+
+  # The error summary that sits above a form. Named the field, has role="alert", and links
+  # each message to its input so a keyboard user can jump straight to the problem.
+  def essentials_error_summary(record)
+    return if record.blank? || record.errors.empty?
+
+    tag.div(class: "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3", role: "alert") do
+      concat tag.p("#{pluralize(record.errors.count, "error")} prevented this from being saved:",
+        class: "flex items-center gap-2 text-sm font-semibold text-rose-900")
+      concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-rose-800") do
+        safe_join(record.errors.map { |error| tag.li(error.full_message) })
+      end)
+    end
   end
 
   # --- Top bar help link ----------------------------------------------------

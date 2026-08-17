@@ -1,58 +1,48 @@
-<style>
-    .password-input-wrapper {
-        position: relative;
-    }
+<% content_for :title, "Log in - Human Essentials" %>
 
-    .toggle-password {
-        position: absolute;
-        right: 10px;
-        top: 70%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #999;
-    }
-</style>
-<%= render partial: "shared/flash" %>
-<%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="login-box w-100">
-    <!-- /.login-logo -->
-    <div class="card">
-      <div class="card-body login-card-body">
-        <p class="login-box-msg">Sign in to start your session</p>
-        <% if @failed_login %>
-         <p class="failed-login-banner">Invalid Credentials.</p>
-        <% end %>
-        <div class="form-inputs">
-          <%= f.input :email, autofocus: true %>
-        </div>
-        <div class="form-inputs" data-controller="password-visibility">
-          <div class="password-input-wrapper">
-            <%= f.input :password, autofocus: true, required: true, input_html: { data: { password_visibility_target: 'password' } } %>
-            <span class="toggle-password">
-              <i class="fas fa-eye-slash" data-action="click->password-visibility#toggle" data-password-visibility-target="icon"></i>
-            </span>
-          </div>
-        </div>
-        <div class="col-12 text-center">
-          <%= f.button :submit, "Log in", class: "btn btn-primary btn-block" %>
-        </div>
-        <!-- /.col -->
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-3">
-        </div>
-        <div class="col-9">
-          <p class="mb-1">
-            <%= render "users/shared/links" %>
-          </p>
-        </div>
-      </div>
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Log in</h1>
+<p class="mt-1 text-sm text-slate-600">Sign in to your bank's account.</p>
+
+<% if @failed_login %>
+  <div class="mt-5 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
+    <i class="bi-x-circle mt-0.5 shrink-0 text-rose-600" aria-hidden="true"></i>
+    <span>Invalid credentials. Check your email and password and try again.</span>
+  </div>
+<% end %>
+
+<%= essentials_form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "mt-6"}) do |f| %>
+  <%= f.input :email, autofocus: true, input_html: {autocomplete: "email"} %>
+
+  <div data-controller="password-visibility">
+    <div class="relative">
+      <%= f.input :password, required: true,
+            input_html: {autocomplete: "current-password", class: "pr-10", data: {password_visibility_target: "password"}} %>
+      <%# The toggle is a real button so it is reachable by keyboard, and it is named,
+          because an eye glyph on its own tells a screen reader nothing. %>
+      <button type="button"
+              class="absolute right-2 top-8 rounded p-1.5 text-slate-500 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              aria-label="Show password"
+              data-action="click->password-visibility#toggle">
+        <i class="bi-eye-slash" data-password-visibility-target="icon" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
-  </div>
+
+  <%= f.button :submit, "Log in", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>
 
-<%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, class: "btn btn-block", form_class: "d-inline-block", data: {disable_with: "Please wait..."} do %>
-  <img src="../img/btn_google_signin_dark_focus_web@2x.png" alt="Sign in with Google" class="d-block w-100">
+<div class="my-6 flex items-center gap-3">
+  <span class="h-px flex-1 bg-slate-200"></span>
+  <span class="text-xs font-medium uppercase tracking-wide text-slate-500">or</span>
+  <span class="h-px flex-1 bg-slate-200"></span>
+</div>
+
+<%= button_to user_google_oauth2_omniauth_authorize_path, method: :post,
+      class: essentials_button_classes(variant: :secondary, size: :md, extra: "w-full"),
+      form_class: "block", data: {disable_with: "Please wait..."} do %>
+  <i class="bi-google" aria-hidden="true"></i>Sign in with Google
 <% end %>
+
+<div class="mt-6 space-y-1 text-sm">
+  <%= render "users/shared/links" %>
+</div>

@@ -1,54 +1,17 @@
-<%= render partial: "shared/flash" %>
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: {method: :post}) do |f| %>
-  <div class="login-box">
-    <!-- /.login-logo -->
-    <div class="card">
-      <div class="card-body login-card-body">
-        <h2 class="login-box-msg">Forgot your password?</h2>
+<% content_for :title, "Forgot your password? - Human Essentials" %>
 
-        <div class="form-inputs">
-          <%= f.input :email, autofocus: true %>
-        </div>
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Forgot your password?</h1>
+<p class="mt-1 text-sm text-slate-600">
+  Enter the email you sign in with and we'll send you a link to reset it.
+</p>
 
-        <div class="row">
-          <div class="col-12 text-center">
-            <%= f.button :submit, "Send me reset password instructions", class: "btn btn-info btn-block" %>
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col-12 text-center">
-            <%= link_to "Return to log in page", new_session_path(resource_name), class: "btn btn-primary btn-block" %>
-          </div>
-        </div>
-      </div>
-      <!-- /.login-card-body -->
-    </div>
-  </div>
+<%= essentials_form_for(resource, as: resource_name, url: password_path(resource_name), html: {method: :post, class: "mt-6"}) do |f| %>
+  <%= f.input :email, autofocus: true, input_html: {autocomplete: "email"} %>
+  <%= f.button :submit, "Send reset instructions", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>
-<script type="module">
-  $(document).ready(function () {
 
-    if (document.URL == "https://diaperbase.org/users/sign_in") {
-      $('#exampleModal').modal('show');
-    }
-  });
-</script>
-
-<!-- Modal -->
-<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="exampleModalLabel">Demo Site Reminder</h3>
-      </div>
-      <div class="modal-body">
-        Please be aware that staging.humanessentials.app is a demo/test server for <a href="https://humanessentials.app">humanessentials.app</a>.
-        Multiple people have access to the test accounts so please do not save or upload any sensitive data.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
-      </div>
-    </div>
-  </div>
+<div class="mt-6 text-sm">
+  <%= link_to new_session_path(resource_name), class: "inline-flex items-center gap-1 font-medium text-slate-500 hover:text-slate-700" do %>
+    <i class="bi-chevron-left text-xs" aria-hidden="true"></i>Back to log in
+  <% end %>
 </div>

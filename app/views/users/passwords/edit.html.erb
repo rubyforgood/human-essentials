@@ -1,17 +1,20 @@
-<h2>Change your password</h2>
+<% content_for :title, "Change your password - Human Essentials" %>
 
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Change your password</h1>
+
+<%= essentials_form_for(resource, as: resource_name, url: password_path(resource_name), html: {method: :put, class: "mt-6"}) do |f| %>
   <%= f.input :reset_password_token, as: :hidden %>
-  <%= f.full_error :reset_password_token %>
+  <%= f.full_error :reset_password_token, class: "mb-4 block text-sm font-medium text-rose-700" %>
 
-  <div class="form-inputs">
-    <%= f.input :password, label: "New password", required: true, autofocus: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
-    <%= f.input :password_confirmation, label: "Confirm your new password", required: true %>
-  </div>
+  <%= f.input :password, label: "New password", required: true, autofocus: true,
+        hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
+        input_html: {autocomplete: "new-password"} %>
+  <%= f.input :password_confirmation, label: "Confirm your new password", required: true,
+        input_html: {autocomplete: "new-password"} %>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Change my password" %>
-  </div>
+  <%= f.button :submit, "Change my password", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>
 
-<%= render "users/shared/links" %>
+<div class="mt-6 space-y-1 text-sm">
+  <%= render "users/shared/links" %>
+</div>

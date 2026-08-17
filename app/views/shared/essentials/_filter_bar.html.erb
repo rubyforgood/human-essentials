@@ -1,0 +1,22 @@
+<%#
+  Filter bar. A plain (borderless) bar sits 16px above the table it filters; wrap it in a
+  card only when it is a section in its own right.
+
+    render "shared/essentials/filter_bar", url: donations_path do
+      ... filter controls ...
+    end
+
+  Filters submit with GET so the filtered view stays a shareable, bookmarkable URL.
+%>
+<% clear_path ||= request.path %>
+<%= form_tag url, method: :get, class: "mb-4" do %>
+  <div class="flex flex-wrap items-end gap-3">
+    <%= yield %>
+    <div class="flex items-center gap-2">
+      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>">
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
+      <%= essentials_link_button "Clear", clear_path, variant: :ghost, size: :md %>
+    </div>
+  </div>
+<% end %>

@@ -1,7 +1,7 @@
 # This exists so that we can override some of the devise resource
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
-  layout "devise"
+  layout "essentials_auth"
   before_action :check_failed_login
   before_action :sign_out_if_signed_in, only: [:create]
   skip_before_action :authorize_user

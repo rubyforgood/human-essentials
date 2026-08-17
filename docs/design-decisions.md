@@ -93,3 +93,112 @@ every request runs at Rails' `:en` default. But the repo ships `es.yml`, `devise
 
 **Follow-up noted, not actioned.** Those Spanish translations are currently unreachable. Either
 wire up locale selection or delete them; leaving them is a trap for the next contributor.
+
+---
+
+# Ruby for Good design system migration (ADR 0011)
+
+## 2026-08-17 · Build with `tailwindcss-rails`, not `cssbundling-rails` + npm
+
+**Decision.** Tailwind v4 comes from the `tailwindcss-rails` gem's standalone CLI. CASA uses
+`cssbundling-rails` with an npm `build:css` script; Human Essentials does not.
+
+**Rationale.** This repo has no `package.json`, no `node_modules` and no Node anywhere in its
+deploy path (`.cloud66`, `Procfile`). `docs/code_standards.md` is explicit that dependencies need
+strong justification. The standalone CLI emits byte-identical Tailwind v4 output with no new
+runtime, and `tailwindcss:build` already hooks `assets:precompile`, so deploys need no change.
+
+**Consequence, stated plainly.** The two apps' asset pipelines are no longer copy-pasteable —
+only their tokens and components are. That is the intended scope of a shared *design* system.
+
+**Alternative rejected.** Matching CASA exactly. It would have meant adding Node to production
+for one CSS build, which is a permanent operational cost paid for a one-time consistency win.
+
+## 2026-08-17 · `config.assets.css_compressor = nil`
+
+**Decision.** Turn off Sprockets' CSS compressor application-wide.
+
+**Rationale.** `sassc-rails` defaults it to `:sass` in the test environment, and libsass cannot
+parse what Tailwind v4 emits — `@layer`, `@property`, `oklch()`, `color-mix()`. The first request
+for `tailwind.css` dies with `SassC::SyntaxError: Internal Error: Not enough space`. Nothing is
+lost: the Tailwind CLI minifies its own output, and production has had this line commented out
+for years, so only the test environment was applying it at all.
+
+## 2026-08-17 · Data tables are component classes, not utility strings
+
+**Decision.** `.data-table` and friends live in `@layer components` in `application.css`. Tables
+are written `<table class="data-table">`, not with a dozen utilities per element.
+
+**Rationale.** CASA writes tables with utilities, and at CASA's size that is right. Human
+Essentials has ~90 tables across 393 views. A twelve-class string repeated ninety times is a
+copy-paste contract with no enforcement, and it drifts on the first hurried PR — which is exactly
+how this codebase ended up with three CSS frameworks. A component class is one definition and
+ninety call sites.
+
+**Bonus, and the reason it is safe.** The column classes keep the names the app already uses:
+`.numeric` and `.quantity` right-align, `.date` doesn't wrap. Those meant the same thing under
+Bootstrap, so a migrated table carries its alignment semantics across instead of re-deciding
+them cell by cell.
+
+## 2026-08-17 · Sidebar groups collapse; CASA's stay open
+
+**Decision.** Each middle nav group is a disclosure, closed by default, opening automatically
+when it contains the current page. CASA's equivalent groups are always open under a static label.
+
+**Rationale.** CASA's rail has ~11 destinations. Human Essentials has **34**. Always-open groups
+would make the rail roughly three screens tall, so the pinned settings item and half the
+destinations would sit below the fold on a laptop. Collapsing is also closer to what Human
+Essentials users already have — the AdminLTE rail used `treeview` accordions — so the muscle
+memory survives the reskin. Collapsible nav sections are standard at this density (GitLab, the
+Azure and AWS consoles).
+
+**With JS off every group renders open**, so the rail degrades to a plain list rather than to
+nothing.
+
+## 2026-08-17 · Information architecture is unchanged; "New X" items are not
+
+**Decision.** The migrated rail has the same destinations, grouping and ordering as the AdminLTE
+one. The only removals are the "New donation" / "New purchase" child items.
+
+**Rationale.** Which items exist in the navigation is a product decision affecting 200+
+organizations' muscle memory; a design system governs how they *look and behave*. Conflating the
+two would smuggle a product change into a styling PR. Re-grouping the rail may well be worth
+doing — it is a separate change with separate review.
+
+The "New X" removals are the exception because they are a design-system rule rather than a
+product change: a create action belongs on its index page as the primary CTA, where it sits next
+to the thing it creates, not duplicated in the rail. Both destinations are one click from the
+index.
+
+## 2026-08-17 · `essentials_form_for` rather than per-call-site wrappers
+
+**Decision.** Migrated forms use `essentials_form_for`, which applies `wrapper: :essentials` and
+the wrapper mappings for you. The Bootstrap `simple_form` wrappers are untouched.
+
+**Rationale.** The failure mode of forgetting `wrapper:` is silent and ugly: simple_form falls
+back to the Bootstrap wrapper, which emits `form-group` and `form-control` markup onto a page
+that loads no Bootstrap CSS, so the form renders as unstyled browser defaults. A helper that
+cannot be called wrongly is better than a convention that must be remembered 57 times.
+
+**Note.** The wrapper mappings are a constant in `EssentialsUiHelper`, not a method added to
+`SimpleForm`. The first attempt monkeypatched the gem's module, which worked but put app
+configuration somewhere no contributor would think to look.
+
+## 2026-08-17 · Password visibility toggle is a real button
+
+**Decision.** The show/hide password control on the sign-in form is a `<button type="button">`
+with `aria-label`, not a `<span>` wrapping an icon.
+
+**Rationale.** The original was a `<span class="toggle-password">` with a click handler: not
+focusable, not operable by keyboard, and announced as nothing. This is a control, so it is a
+button. The icon inside is `aria-hidden`, and the button carries the name.
+
+## 2026-08-17 · Dropped the dead staging modal from the password reset page
+
+**Decision.** `users/passwords/new` shipped a "Demo Site Reminder" Bootstrap modal gated on
+`document.URL == "https://diaperbase.org/users/sign_in"`. Not migrated — deleted.
+
+**Rationale.** The condition can never be true: it tests for the *sign-in* URL on the *password
+reset* page, and on a domain the app no longer uses. The staging warning that actually works is
+the one in `layouts/_devise_shared`, gated on `Rails.env.staging?`. Migrating dead code just
+moves it.

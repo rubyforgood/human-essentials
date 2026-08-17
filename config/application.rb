@@ -10,8 +10,11 @@ module Diaper
   # Bootstraps the application
   class Application < Rails::Application
     config.to_prepare do
-      Devise::SessionsController.layout "devise"
-      Devise::PasswordsController.layout "devise"
+      # Auth screens are migrated to the Ruby for Good design system (ADR 0011).
+      Devise::SessionsController.layout "essentials_auth"
+      Devise::PasswordsController.layout "essentials_auth"
+      Devise::ConfirmationsController.layout "essentials_auth"
+      Devise::UnlocksController.layout "essentials_auth"
       Devise::RegistrationsController.layout "application"
     end
 

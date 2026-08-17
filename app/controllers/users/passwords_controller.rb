@@ -1,6 +1,6 @@
 # This exists so that we can override some of the devise resource
 class Users::PasswordsController < Devise::PasswordsController
-  layout "devise"
+  layout "essentials_auth"
   # GET /resource/password/new
   def new
     super

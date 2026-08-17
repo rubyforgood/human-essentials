@@ -1,15 +1,13 @@
-<h2>Resend unlock instructions</h2>
+<% content_for :title, "Resend unlock instructions - Human Essentials" %>
 
-<%= simple_form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= f.full_error :unlock_token %>
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Resend unlock instructions</h1>
 
-  <div class="form-inputs">
-    <%= f.input :email, required: true, autofocus: true %>
-  </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Resend unlock instructions" %>
-  </div>
+<%= essentials_form_for(resource, as: resource_name, url: unlock_path(resource_name), html: {method: :post, class: "mt-6"}) do |f| %>
+  <%= f.full_error :unlock_token, class: "mb-4 block text-sm font-medium text-rose-700" %>
+  <%= f.input :email, required: true, autofocus: true, input_html: {autocomplete: "email"} %>
+  <%= f.button :submit, "Resend unlock instructions", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>
 
-<%= render "users/shared/links" %>
+<div class="mt-6 space-y-1 text-sm">
+  <%= render "users/shared/links" %>
+</div>
