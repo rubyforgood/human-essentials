@@ -2,6 +2,9 @@
 # Though the functionality of Partners is actually fleshed out in PartnerBase, in HumanEssentials, we maintain a collection
 # of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   before_action :validate_user_role, only: :show

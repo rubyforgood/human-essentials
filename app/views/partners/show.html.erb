@@ -1,223 +1,146 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
-        <h1>
-          Partner Administration
-          <small>for <%= @partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
+<% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+  <%= render "shared/essentials/page_header",
+        title: @partner.name,
+        subtitle: "Partner administration.",
+        back: {path: partners_path, label: "Back to partner agencies"},
+        actions: capture {
+          concat essentials_partner_status_pill(@partner.status)
+          if !@partner.approved? && can_administrate?
+            if @partner.approvable?
+              concat essentials_action_button("Approve partner", approve_application_partner_path(@partner), method: :post,
+                       variant: :primary, icon: "bi-hand-thumbs-up")
+            end
+          end
+          if @partner.deactivated?
+            concat essentials_action_button("Reactivate", reactivate_partner_path(@partner), method: :put,
+                     variant: :secondary, icon: "bi-arrow-counterclockwise",
+                     confirm: confirm_reactivate_msg(@partner.name))
+          else
+            concat essentials_action_button("Deactivate partner", deactivate_partner_path(@partner), method: :put,
+                     variant: :ghost, icon: "bi-slash-circle", class: "text-rose-700 hover:bg-rose-50",
+                     confirm: confirm_deactivate_msg(@partner.name))
+          end
+        } %>
+
+  <div class="space-y-6">
+    <% if @partner.uninvited? %>
+      <%= render "uninvited_header", partner: @partner %>
+    <% else %>
+      <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
+
+      <div class="grid gap-6 lg:grid-cols-2">
+        <%= render "shared/essentials/card", title: "Partner details" do %>
+          <%= render "partner_details", partner: @partner %>
+          <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+            <div class="mt-4 border-t border-slate-200 pt-4">
+              <%= essentials_link_button "Manage users", partner_users_path(@partner), variant: :secondary, size: :sm, icon: "bi-people" %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%= render "shared/essentials/card", title: "Contact information" do %>
+          <div class="space-y-5">
+            <% [["Executive director", :executive_director_name, :executive_director_email, :executive_director_phone, nil],
+                ["Program manager", :primary_contact_name, :primary_contact_email, :primary_contact_phone, :primary_contact_mobile],
+                ["Pickup person", :pick_up_name, :pick_up_email, :pick_up_phone, nil]].each do |title, name, email, phone, mobile| %>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900"><%= title %></h3>
+                <dl class="mt-2 grid gap-x-4 gap-y-2 sm:grid-cols-2">
+                  <div>
+                    <dt class="text-xs font-medium text-slate-500">Name</dt>
+                    <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@partner.profile.public_send(name)) %></dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium text-slate-500">Email</dt>
+                    <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@partner.profile.public_send(email)) %></dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium text-slate-500">Phone</dt>
+                    <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@partner.profile.public_send(phone)) %></dd>
+                  </div>
+                  <% if mobile %>
+                    <div>
+                      <%# Mobile appears only for the program manager because the table has no
+                          mobile column for the other two contacts. %>
+                      <dt class="text-xs font-medium text-slate-500">Mobile</dt>
+                      <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@partner.profile.public_send(mobile)) %></dd>
+                    </div>
+                  <% end %>
+                </dl>
+              </div>
             <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Partners", partners_path %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @partner.name %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
-
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-
-        <% unless @partner.uninvited? %>
-
-      <section class="card card-info card-outline">
-          <div class="card-body p-3">
-            <div class="row px-2">
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Partner Details </h4>
-                </div>
-                <%= render "partner_details", partner: @partner %>
-                <br>
-                <br>
-                <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-                 <%= edit_button_to partner_users_path(@partner), { text: "Manage Users", icon: "pencil-square-o", type: "primary", size: "m" } %>
-                <% end %>
-              </div>
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Partner Status </h4>
-                </div>
-                <div>
-                  <label>Status:</label> <%= @partner.display_status %>
-                </div>
-
-                <% if @partner.deactivated? %>
-                  <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
-                <% else %>
-                  <%= deactivate_button_to deactivate_partner_path(@partner), { text: "Deactivate Partner", confirm: confirm_deactivate_msg(@partner.name), size: 'm' } %>
-                <% end %>
-                <br>
-                <br>
-                <% unless @partner.approved? %>
-                  <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "m", enabled: @partner.approvable? } if can_administrate? %>
-                <% end %>
-              </div>
-            </div>
           </div>
-        </section>
-        <% end %>
-        <!-- Default box -->
-        <% if @partner.uninvited? %>
-          <%= render "uninvited_header", partner: @partner %>
-        <% else %>
-          <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
-        <% end %>
-
-        <section class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title fs-3">Contact Information</h2>
-          </div>
-          <div class="card-body p-3">
-            <div class="row px-2">
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Executive Director </h4>
-                  <div>
-                    <label>Name:</label> <%= optional_data_text(@partner.profile.executive_director_name) %>
-                  </div>
-                  <div>
-                    <label>Email:</label> <%= optional_data_text(@partner.profile.executive_director_email) %>
-                  </div>
-                  <div>
-                    <label>Phone:</label> <%= optional_data_text(@partner.profile.executive_director_phone) %>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Program Manager </h4>
-                  <div>
-                    <label>Name:</label> <%= optional_data_text(@partner.profile.primary_contact_name) %>
-                  </div>
-                  <div>
-                    <label>Email:</label> <%= optional_data_text(@partner.profile.primary_contact_email) %>
-                  </div>
-                  <div>
-                    <label>Phone:</label> <%= optional_data_text(@partner.profile.primary_contact_phone) %>
-                  </div>
-                  <div>
-                    <%# NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
-                    <%# because the existing table doesn't have the mobile field for the others %>
-                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.primary_contact_mobile) %>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Pickup Person </h4>
-                  <div>
-                    <label>Name:</label> <%= optional_data_text(@partner.profile.pick_up_name) %>
-                  </div>
-                  <div>
-                    <label>Email:</label> <%= optional_data_text(@partner.profile.pick_up_email) %>
-                  </div>
-                  <div>
-                    <label>Phone:</label> <%= optional_data_text(@partner.profile.pick_up_phone) %>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title fs-3">Partner Specific Information</h2>
-          </div>
-          <div class="card-body p-2">
-            <div class="row">
-              <div class="col-xs-12 col-sm-12" id="info-for-partner">
-                <% if @partner.info_for_partner %>
-                  <p><%= simple_format(@partner.info_for_partner) %></p>
-                <% else %>
-                  <p> None provided </p>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card card-info card-outline" id='partner-information'>
-          <div class="card-header">
-            <div class="clearfix">
-              <h2 class="card-title fs-3">Partner Profile</h2>
-            </div>
-            <div class='pull-right'>
-              <% unless @partner.approved? %>
-                <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.approvable? } %>
-              <% end %>
-              <%= edit_button_to edit_profile_path(@partner), { text: "Edit Partner Profile", size: "md" } %>
-            </div>
-          </div>
-          <div class="card-body p-2">
-            <div class="row">
-              <div class="col-xs-12 col-sm-12 p-4">
-                <%= render partial: 'profiles/show', locals: { partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields } %>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <% if @partner.documents.present? %>
-          <%= render "documents", partner: @partner %>
         <% end %>
       </div>
-    </div>
-  </div>
-</section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card card-primary card-outline">
-          <div class="card-header">
-            <span class="float-right">
-              <%= download_button_to(partner_path(@partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Distributions", size: "md"}) if @partner_distributions.any? %>
-            </span>
-            <h2 class="card-title fs-3">Prior Distributions</h2>
-          </div>
-          <div class="card-body p-0">
-            <div class="tab-content" id="custom-tabs-three-tabContent">
-              <table class="table">
-                <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Source Inventory</th>
-                  <th>Total items</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% @partner_distributions.each do |dist| %>
-                  <tr>
-                    <td><%= dist.issued_at.strftime("%m/%d/%Y") %></td>
-                    <td><%= dist.storage_location.name %></td>
-                    <td><%= dist.line_items.total %></td>
-                    <td class="text-right">
-                      <%= view_button_to distribution_path(dist) %>
-                      <%= print_button_to print_distribution_path(dist, format: :pdf) %>
-                    </td>
-                  </tr>
-                  </tbody>
-                <% end %>
-                </table>
-            </div><!-- /.box-body.table-responsive -->
-          </div>
+      <%= render "shared/essentials/card", title: "Partner specific information" do %>
+        <div id="info-for-partner" class="text-sm text-slate-700">
+          <% if @partner.info_for_partner %>
+            <%= simple_format(@partner.info_for_partner) %>
+          <% else %>
+            <p class="italic text-slate-500">None provided</p>
+          <% end %>
         </div>
-      </div>
-    </div>
-  </div>
+      <% end %>
 
-</section>
+      <section id="partner-information">
+        <%= render "shared/essentials/card",
+              title: "Partner profile",
+              actions: capture {
+                if !@partner.approved? && @partner.approvable?
+                  concat essentials_action_button("Approve partner", approve_application_partner_path(@partner), method: :post,
+                           variant: :primary, size: :sm, icon: "bi-hand-thumbs-up")
+                end
+                concat essentials_link_button("Edit partner profile", edit_profile_path(@partner), variant: :secondary, size: :sm, icon: "bi-pencil")
+              } do %>
+          <%= render partial: "profiles/show", locals: {partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields} %>
+        <% end %>
+      </section>
+
+      <% if @partner.documents.present? %>
+        <%= render "documents", partner: @partner %>
+      <% end %>
+    <% end %>
+
+    <%= render "shared/essentials/card",
+          title: "Prior distributions",
+          padded: @partner_distributions.blank?,
+          actions: (@partner_distributions.any? ? essentials_link_button("Export distributions", partner_path(@partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, size: :sm, icon: "bi-download") : nil) do %>
+      <% if @partner_distributions.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No distributions to this partner yet" %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Distributions previously sent to <%= @partner.name %></caption>
+            <thead>
+              <tr>
+                <th scope="col" class="date">Date</th>
+                <th scope="col">Source inventory</th>
+                <th scope="col" class="quantity">Total items</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @partner_distributions.each do |dist| %>
+                <tr>
+                  <td class="date"><%= dist.issued_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= dist.storage_location.name %></td>
+                  <td class="quantity"><%= number_with_delimiter(dist.line_items.total) %></td>
+                  <td class="text-right">
+                    <div class="flex justify-end gap-1.5">
+                      <%= essentials_link_button "View", distribution_path(dist), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                      <%= essentials_link_button "Print", print_distribution_path(dist, format: :pdf), variant: :ghost, size: :sm, icon: "bi-printer" %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

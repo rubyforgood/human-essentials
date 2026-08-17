@@ -1,36 +1,44 @@
 <% status = partner_row.status %>
-<% can_one_step_invite_and_approve = partner_row.organization.one_step_partner_invite %>
-
+<% one_step = partner_row.organization.one_step_partner_invite %>
 <tr>
-  <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
-  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
-  <td><%= partner_row.partner_group&.name %></td>
-  <td class="text-right"><%= partner_row.quota %></td>
-  <td>
-   <%= partner_status_label(status) %>
+  <td class="font-medium text-slate-900">
+    <%= link_to partner_row.name, partner_path(partner_row), class: "text-brand-700 hover:text-brand-800" %>
   </td>
+  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}", class: "text-brand-700 hover:text-brand-800" %></td>
+  <td><%= partner_row.partner_group&.name %></td>
+  <td class="quantity"><%= partner_row.quota %></td>
+  <td><%= essentials_partner_status_pill(status) %></td>
   <td class="text-right">
-    <% case status %>
-    <% when "uninvited" %>
-      <% if can_one_step_invite_and_approve %>
-        <% button_options = { icon: "envelope", type: "warning", text: "Invite and Approve", size: "xs", confirm: "Send an invitation to #{partner_row.name} to begin making requests in the application?" } %>
-        <%= invite_button_to(invite_and_approve_partner_path(partner_row), button_options) %>
-      <% else %>
-        <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?") %>
+    <div class="flex flex-wrap justify-end gap-1.5">
+      <% case status %>
+      <% when "uninvited" %>
+        <% if one_step %>
+          <%= essentials_action_button "Invite and approve", invite_and_approve_partner_path(partner_row), method: :post,
+                variant: :secondary, size: :sm, icon: "bi-envelope",
+                confirm: "Send an invitation to #{partner_row.name} to begin making requests in the application?" %>
+        <% else %>
+          <%= essentials_action_button "Invite", invite_partner_path(partner_row), method: :post,
+                variant: :secondary, size: :sm, icon: "bi-envelope",
+                confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?" %>
+        <% end %>
+      <% when "invited" %>
+        <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
+              variant: :secondary, size: :sm, icon: "bi-check2" %>
+        <%= essentials_action_button "Re-send invite", invite_partner_path(partner_row), method: :post,
+              variant: :ghost, size: :sm, icon: "bi-envelope",
+              confirm: "Re-send an invitation to #{partner_row.name}?" %>
+      <% when "awaiting_review" %>
+        <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
+              variant: :secondary, size: :sm, icon: "bi-check2" %>
+      <% when "approved" %>
+        <%= essentials_action_button "Request recertification", recertify_partner_partner_path(partner_row), method: :post,
+              variant: :ghost, size: :sm, icon: "bi-arrow-repeat",
+              confirm: "Recertify partner #{partner_row.name}?" %>
+      <% when "deactivated" %>
+        <%= essentials_action_button "Reactivate", reactivate_partner_path(partner_row), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
+              confirm: confirm_reactivate_msg(partner_row.name) %>
       <% end %>
-    <% when "invited" %>
-      <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Applicant's Profile", icon: "check", type: "warning" } %>
-      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
-    <% when "awaiting_review" %>
-      <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Applicant's Profile", icon: "check", type: "warning" } %>
-    <% when "approved" %>
-      <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?", disable_with: "Please wait..."}, class: "btn btn-xs bg-red" do %>
-        <i class="fa fa-refresh"></i> Request Recertification
-      <% end %>
-    <% when "deactivated" %>
-      <%= reactivate_button_to reactivate_partner_path(partner_row), {confirm: confirm_reactivate_msg(partner_row.name)} %>
-    <% else %>
-      &nbsp;
-    <% end %>
+    </div>
   </td>
 </tr>

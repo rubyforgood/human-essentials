@@ -1,46 +1,32 @@
-<div class="tab-pane fade show active" id="nav-partners" role="tabpanel" aria-labelledby="nav-partners-tab">
-  <div class="col-md-12">
-    <div class="card card-primary card-outline">
-      <div class="card-header">
-        <h3 class="card-title">Partner Filters</h3>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <%= render partial: "statuses", object: @partner_status_counts, as: :status_counts %>
-        </div>
-        <div class="card-footer">
-          <div class="pull-right">
-            <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) %>
-            <%= download_button_to(partners_path(format: :csv, filters: filter_params), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
-            <%= new_button_to new_partner_path, {text: "New Partner Agency"} %>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead class='sticky top-0 bg-white'>
-                <tr>
-                  <th>Partner</th>
-                  <th>E-mail</th>
-                  <th>Group</th>
-                  <th class="text-right">Quota</th>
-                  <th>Status</th>
-                  <th class="text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "partner_row", collection: partners %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="panel-partners" role="tabpanel" aria-labelledby="tab-partners" data-tabs-target="panel">
+  <div class="border-b border-slate-200 px-5 py-4">
+    <%= render partial: "statuses", object: @partner_status_counts, as: :status_counts %>
   </div>
+
+  <% if partners.blank? %>
+    <%= render "shared/essentials/empty_state",
+          kind: filter_params.present? ? :no_results : :cold_start,
+          title: filter_params.present? ? "No partners match that status" : "No partner agencies yet",
+          body: filter_params.present? ? "Choose Active above to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
+          action: filter_params.present? ? nil : essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
+  <% else %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption>Partner agencies and their current status</caption>
+        <thead>
+          <tr>
+            <th scope="col">Partner</th>
+            <th scope="col">Email</th>
+            <th scope="col">Group</th>
+            <th scope="col" class="quantity">Quota</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "partner_row", collection: partners %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>

@@ -1,16 +1,10 @@
-<div class="card card-info card-outline">
-  <div class="card-header">
-    <h2 class="card-title fs-3"><%= partner.name %></h2>
-  </div>
-  <div class="card-body p-0">
-  </div>
-  <!-- /.card-body -->
-  <div class="card-footer">
-    <%= render "partner_details", partner: partner %>
-    <% if partner.deletable? %>
-      <%= delete_button_to partner_path(partner), {confirm: confirm_delete_msg(partner.name)} %>
-    <% end %>
-    <span class="float-right">
-    </span>
-  </div>
-</div>
+<%= render "shared/essentials/card", title: "Partner details" do %>
+  <%= render "partner_details", partner: partner %>
+  <% if partner.deletable? %>
+    <div class="mt-4 border-t border-slate-200 pt-4">
+      <%= essentials_action_button "Delete partner", partner_path(partner), method: :delete,
+            variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+            confirm: confirm_delete_msg(partner.name) %>
+    </div>
+  <% end %>
+<% end %>

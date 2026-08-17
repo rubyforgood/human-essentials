@@ -1,80 +1,92 @@
-<div class="tab-pane fade active" id="nav-partner-groups" role="tabpanel" aria-labelledby="nav-partner-groups">
-  <div class="col-md-12">
-    <div class="row">
-
-      <div class="col-12">
-        <!-- Default box -->
-        <div class='flex justify-end mb-2'>
-          <%= new_button_to new_partner_group_path, {text: "New Partner Group"} %>
-        </div>
-
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Group Name</th>
-                  <th>Members</th>
-                  <th>Requestable Item Categories</th>
-                  <th>Send Reminders?</th>
-                  <th class='pull-right'>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <% @partner_groups.each do |pg| %>
-                  <tr>
-                    <td><%= pg.name %></td>
-                    <td>
-                      <ul class='list-disc'>
-                        <% pg.partners.each do |partner| %>
-                          <li> <%= partner.name %> </li>
-                        <% end %>
-                      </ul>
-                    </td>
-                    <td>
-                      <% if pg.item_categories.present? %>
-                        <ul class='list-disc'>
-                          <% pg.item_categories.each do |ic| %>
-                            <li> <%= ic.name %> </li>
-                          <% end %>
-                        </ul>
-                      <% else %>
-                        <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
-                      <% end %>
-                    </td>
-                    <td>
-                      <% if pg.send_reminders %>
-                        <% if pg.reminder_schedule.valid? %>
-                          <span>Reminder emails are sent <strong class='text-bold text-red-600'><%= pg.reminder_schedule&.show_description %></strong>. </span>
-                          <small class="mb-3 d-block text-muted">
-                            <%= "Your next reminder date is #{pg.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
-                          </small>
-                          <br>
-                        <% end %>
-                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> after the reminder. </span>
-                        <% if pg.deadline_day && pg.reminder_schedule.valid? %>
-                          <small class="mb-3 d-block text-muted">
-                            <%= "The deadline on your next reminder email will be #{DeadlineService.new(
-                              deadline_day: pg.deadline_day,
-                              today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
-                          </small>
-                        <% end %>
-                      <% else %>
-                        <span class='text-gray-600 text-bold font-italic'>No</span>
-                      <% end %>
-                    </td>
-                    <td class="text-left">
-                      <%= edit_button_to edit_partner_group_path(pg) %>
-                      <%= delete_button_to(partner_group_path(pg),{confirm: confirm_delete_msg(pg.name)}) if pg.partners.none? %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="panel-partner-groups" role="tabpanel" aria-labelledby="tab-partner-groups" data-tabs-target="panel" class="hidden">
+  <div class="flex justify-end border-b border-slate-200 px-5 py-3">
+    <%= essentials_link_button "New partner group", new_partner_group_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
+
+  <% if @partner_groups.blank? %>
+    <%= render "shared/essentials/empty_state", kind: :cold_start,
+          title: "No partner groups yet",
+          body: "Groups let you set requestable item categories and reminder schedules for several partners at once.",
+          action: essentials_link_button("New partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg") %>
+  <% else %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption>Partner groups, their members and reminder settings</caption>
+        <thead>
+          <tr>
+            <th scope="col">Group name</th>
+            <th scope="col">Members</th>
+            <th scope="col">Requestable item categories</th>
+            <th scope="col">Send reminders?</th>
+            <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @partner_groups.each do |pg| %>
+            <tr>
+              <td class="font-medium text-slate-900"><%= pg.name %></td>
+              <td>
+                <% if pg.partners.any? %>
+                  <ul class="space-y-0.5 text-sm text-slate-700">
+                    <% pg.partners.each do |partner| %>
+                      <li><%= partner.name %></li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <span class="text-sm italic text-slate-500">No members</span>
+                <% end %>
+              </td>
+              <td>
+                <% if pg.item_categories.present? %>
+                  <ul class="space-y-0.5 text-sm text-slate-700">
+                    <% pg.item_categories.each do |ic| %>
+                      <li><%= ic.name %></li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <%# "No items requestable" was red italic text alone; it is a pill with an
+                      icon and the word now. %>
+                  <%= essentials_status_pill("No items requestable", tone: :danger, icon: "bi-exclamation-triangle") %>
+                <% end %>
+              </td>
+              <td>
+                <% if pg.send_reminders %>
+                  <%= essentials_status_pill("Yes", tone: :success, icon: "bi-bell") %>
+                  <% if pg.reminder_schedule.valid? %>
+                    <p class="mt-1.5 text-xs text-slate-700">
+                      Reminder emails are sent <strong class="font-semibold"><%= pg.reminder_schedule&.show_description %></strong>.
+                    </p>
+                    <p class="mt-0.5 text-xs text-slate-500">
+                      Your next reminder date is <%= pg.reminder_schedule.next_occurrence&.strftime("%a %b %d %Y") %>.
+                    </p>
+                  <% end %>
+                  <p class="mt-1 text-xs text-slate-700">
+                    Deadlines are the <strong class="font-semibold"><%= pg.deadline_day.ordinalize %></strong> after the reminder.
+                  </p>
+                  <% if pg.deadline_day && pg.reminder_schedule.valid? %>
+                    <p class="mt-0.5 text-xs text-slate-500">
+                      The deadline on your next reminder email will be
+                      <%= DeadlineService.new(deadline_day: pg.deadline_day, today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime("%a %b %d %Y") %>.
+                    </p>
+                  <% end %>
+                <% else %>
+                  <%= essentials_status_pill("No", tone: :neutral, icon: "bi-bell-slash") %>
+                <% end %>
+              </td>
+              <td class="text-right">
+                <div class="flex justify-end gap-1.5">
+                  <%= essentials_link_button "Edit", edit_partner_group_path(pg), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                  <% if pg.partners.none? %>
+                    <%= essentials_action_button "Delete", partner_group_path(pg), method: :delete,
+                          variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                          confirm: confirm_delete_msg(pg.name) %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>

@@ -51,6 +51,22 @@ module PartnersHelper
     end
   end
 
+  # Design system status pill for a partner. One mapping, used by the partner list, the
+  # partner row and the dashboard, so the six states cannot drift apart.
+  ESSENTIALS_PARTNER_STATUS = {
+    "uninvited" => {tone: :neutral, icon: "bi-slash-circle"},
+    "invited" => {tone: :info, icon: "bi-envelope"},
+    "awaiting_review" => {tone: :warning, icon: "bi-question-circle"},
+    "approved" => {tone: :success, icon: "bi-check-circle"},
+    "recertification_required" => {tone: :danger, icon: "bi-exclamation-triangle"},
+    "deactivated" => {tone: :neutral, icon: "bi-dash-circle"}
+  }.freeze
+
+  def essentials_partner_status_pill(status)
+    config = ESSENTIALS_PARTNER_STATUS[status.to_s] || {tone: :neutral, icon: "bi-question-circle"}
+    essentials_status_pill(status.to_s.humanize, tone: config[:tone], icon: config[:icon])
+  end
+
   def partner_status_label(status)
     status_options = {
       "uninvited" => {icon: "exclamation-circle"},

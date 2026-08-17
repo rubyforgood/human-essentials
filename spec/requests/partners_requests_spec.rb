@@ -377,7 +377,8 @@ RSpec.describe "Partners", type: :request do
         end
         it 'should show the manage users button' do
           expect(subject).to be_successful
-          expect(subject.body).to include("Manage Users")
+          # Sentence case per the design system (ADR 0011).
+          expect(subject.body).to include("Manage users")
         end
       end
 

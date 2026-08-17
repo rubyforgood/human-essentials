@@ -1,77 +1,158 @@
-<div class="row">
-  <div class="col-md-6">
+<div class="grid gap-x-8 gap-y-6 lg:grid-cols-2">
+  <div class="space-y-4">
     <!-- /.box-header -->
-    <h4 class='text-2xl underline'>Agency Information</h4>
+    <h3 class="text-base font-semibold text-slate-900">Agency Information</h3>
     <%# The field for inputting the name registers it as partner.name,  %>
     <%# not partner_profile.name, so this pulls from partner.name %>
-    <p>Name: <%= @partner.name %></p>
-    <p>Agency Type: <%= t partner_profile.agency_type, scope: :partners_profile %>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Name</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.name %></dd>
+    </dl>
+    <p class="text-sm text-slate-700">Agency Type: <%= t partner_profile.agency_type, scope: :partners_profile %>
     <% if partner_profile.agency_type&.to_sym == :other && partner_profile.other_agency_type %>
       (<%= partner_profile.other_agency_type %>)
     <% end %>
     </p>
-    <p>501(c)(3) IRS Determination Letter or other Proof of Agency Status:
+    <p class="text-sm text-slate-700">501(c)(3) IRS Determination Letter or other Proof of Agency Status:
     <% if partner_profile.proof_of_partner_status.attached? %>
       <!-- NOTE: The actual download link may not work in local storage mode due to file locations being separate locally. -->
       (Link): <%= link_to partner_profile.proof_of_partner_status.filename, rails_blob_path(partner_profile.proof_of_partner_status, disposition: 'inline') %>
   <% end %>
     </p>
-    <p>Agency Mission: <%= partner_profile.agency_mission %></p>
-    <p>Address Line 1: <%= partner_profile.address1 %></p>
-    <p>Address Line 2: <%= partner_profile.address2 %></p>
-    <p>City: <%= partner_profile.city %></p>
-    <p>State: <%= partner_profile.state %></p>
-    <p>Zip Code: <%= partner_profile.zip_code %></p>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Agency Mission</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.agency_mission %></dd>
+    </dl>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Address Line 1</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.address1 %></dd>
+    </dl>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Address Line 2</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.address2 %></dd>
+    </dl>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">City</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.city %></dd>
+    </dl>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">State</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.state %></dd>
+    </dl>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Zip Code</dt>
+      <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zip_code %></dd>
+    </dl>
     <br>
     <br>
     <% if partner_profile.program_address1.present? || partner_profile.program_address2.present? || partner_profile.program_city.present? || partner_profile.program_state.present? || partner_profile.program_zip_code.present? %>
-      <h4>Program / Delivery Address (if different)</h4>
-      <p>Program Address: <%= partner_profile.program_address1 %></p>
-      <p>Program Address: <%= partner_profile.program_address2 %></p>
-      <p>Program City: <%= partner_profile.program_city %></p>
-      <p>Program State: <%= partner_profile.program_state %></p>
-      <p>Program Zip Code: <%= partner_profile.program_zip_code %></p>
+      <h3 class="text-base font-semibold text-slate-900">Program / Delivery Address (if different)</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program Address</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_address1 %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program Address</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_address2 %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program City</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_city %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program State</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_state %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program Zip Code</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_zip_code %></dd>
+      </dl>
       <br>
     <% end %>
 
     <% if partner_profile_fields.include?('media_information') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Media Information</h4>
-      <p>Website: <%= partner_profile.website %></p>
-      <p>Facebook: <%= partner_profile.facebook %></p>
-      <p>Twitter: <%= partner_profile.twitter %></p>
-      <p>Instagram: <%= partner_profile.instagram %></p>
-      <p>No Social Media Presence: <%= humanize_boolean(partner_profile.no_social_media_presence) %></p>
+      <h3 class="text-base font-semibold text-slate-900">Media Information</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Website</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.website %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Facebook</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.facebook %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Twitter</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.twitter %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Instagram</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.instagram %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">No Social Media Presence</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.no_social_media_presence) %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Agency Stability</h4>
-      <p>Founded <%= partner_profile.founded %></p>
-      <p>Form 990: <%= humanize_boolean(partner_profile.proof_of_form_990.attached?) %></p>
-      <p>Form 990
+      <h3 class="text-base font-semibold text-slate-900">Agency Stability</h3>
+      <p class="text-sm text-slate-700">Founded <%= partner_profile.founded %></p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Form 990</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.proof_of_form_990.attached?) %></dd>
+      </dl>
+      <p class="text-sm text-slate-700">Form 990
       <% if partner_profile.proof_of_form_990.attached? %>
         <!-- NOTE: The actual download link may not work in local storage mode due to file locations being separate locally. -->
         (Link): <%= link_to partner_profile.proof_of_form_990.filename, rails_blob_path(partner_profile.proof_of_form_990, disposition: 'attachment') %>
     <% end %>
       </p>
-      <p>Program Name(s): <%= partner_profile.program_name %></p>
-      <p>Program Description(s): <%= partner_profile.program_description %></p>
-      <p>Agency Age: <%= partner_profile.program_age %></p>
-      <p>Case Management: <%= humanize_boolean_3state(partner_profile.case_management) %></p>
-      <p>Evidence Based: <%= humanize_boolean_3state(partner_profile.evidence_based) %></p>
-      <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
-      <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
-      <p>Currently Providing Diapers: <%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program Name(s)</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_name %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Program Description(s)</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_description %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Agency Age</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_age %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Case Management</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.case_management) %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Evidence Based</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.evidence_based) %></dd>
+      </dl>
+      <p class="text-sm text-slate-700">How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
+      <p class="text-sm text-slate-700">Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Currently Providing Diapers</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></dd>
+      </dl>
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Organizational Capacity</h4>
-      <p>Client Capacity: <%= partner_profile.client_capacity %></p>
-      <p>Storage Space: <%= humanize_boolean_3state(partner_profile.storage_space) %></p>
-      <p>Storage Space Description: <%= partner_profile.describe_storage_space %></p>
+      <h3 class="text-base font-semibold text-slate-900">Organizational Capacity</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Client Capacity</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.client_capacity %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Storage Space</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.storage_space) %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Storage Space Description</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.describe_storage_space %></dd>
+      </dl>
       <br>
     <% end %>
 
     <% if partner_profile_fields.include?('area_served') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Area Served</h4>
+      <h3 class="text-base font-semibold text-slate-900">Area Served</h3>
       <table>
         <th class="county-heading">County</th><th class="county-heading">% of Clients in county</th>
 
@@ -86,89 +167,190 @@
     <% end %>
 
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Population Served</h4>
-      <p>Income Requirement: <%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></p>
-      <p>Income Verification: <%= humanize_boolean_3state(partner_profile.income_verification) %></p>
+      <h3 class="text-base font-semibold text-slate-900">Population Served</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Income Requirement</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Income Verification</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_verification) %></dd>
+      </dl>
       <br>
     <% end %>
   </div>
-  <div class="col-md-6">
+  <div class="space-y-4">
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Race/Ethnicity of Client Base</h4>
-      <p>African American: <%= partner_profile.population_black %></p>
-      <p>Caucasian: <%= partner_profile.population_white %></p>
-      <p>Hispanic: <%= partner_profile.population_hispanic %></p>
-      <p>Asian: <%= partner_profile.population_asian %></p>
-      <p>American Indian: <%= partner_profile.population_american_indian %></p>
-      <p>Pacific Island: <%= partner_profile.population_island %></p>
-      <p>Multi-Racial: <%= partner_profile.population_multi_racial %></p>
-      <p>Other: <%= partner_profile.population_other %></p>
+      <h3 class="text-base font-semibold text-slate-900">Race/Ethnicity of Client Base</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">African American</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_black %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Caucasian</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_white %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Hispanic</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_hispanic %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Asian</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_asian %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">American Indian</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_american_indian %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Pacific Island</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_island %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Multi-Racial</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_multi_racial %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Other</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_other %></dd>
+      </dl>
       <br>
-      <h4>Zip Codes Served</h4>
-      <p>Zips: <%= partner_profile.zips_served %></p>
+      <h3 class="text-base font-semibold text-slate-900">Zip Codes Served</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Zips</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zips_served %></dd>
+      </dl>
       <br>
-      <h4>Poverty Information of Those Served</h4>
-      <p>At FPL or Below: <%= partner_profile.at_fpl_or_below %></p>
-      <p>Above 1-2 times
-      FPL: <%= partner_profile.above_1_2_times_fpl %></p>
-      <p>Greater 2 times
-      FPL: <%= partner_profile.greater_2_times_fpl %></p>
-      <p>Poverty Unknown: <%= partner_profile.poverty_unknown %></p>
+      <h3 class="text-base font-semibold text-slate-900">Poverty Information of Those Served</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">At FPL or Below</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.at_fpl_or_below %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Above 1-2 times
+      FPL</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.above_1_2_times_fpl %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Greater 2 times
+      FPL</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.greater_2_times_fpl %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.poverty_unknown %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('contacts') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Contacts</h4>
+      <h3 class="text-base font-semibold text-slate-900">Contacts</h3>
       <strong>Executive Director</strong>
-      <p>Executive Director Name: <%= partner_profile.executive_director_name %></p>
-      <p>Executive Director Phone: <%= partner_profile.executive_director_phone %></p>
-      <p>Executive Director Email: <%= partner_profile.executive_director_email %></p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Executive Director Name</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_name %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Executive Director Phone</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_phone %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Executive Director Email</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_email %></dd>
+      </dl>
       <br>
       <strong>Primary Contact Person</strong>
-      <p>Primary Contact Name: <%= partner_profile.primary_contact_name %></p>
-      <p>Primary Contact Phone: <%= partner_profile.primary_contact_phone %></p>
-      <p>Primary Contact Mobile: <%= partner_profile.primary_contact_mobile %></p>
-      <p>Primary Contact Email: <%= partner_profile.primary_contact_email %> </p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Primary Contact Name</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_name %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Primary Contact Phone</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_phone %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Primary Contact Mobile</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_mobile %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Primary Contact Email</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_email %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('pick_up_person') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Pick Up Person</h4>
-      <p>Pick Up Name: <%= partner_profile.pick_up_name %></p>
-      <p>Pick Up Phone: <%= partner_profile.pick_up_phone %></p>
-      <p>Pick Up Email: <%= partner_profile.pick_up_email %></p>
+      <h3 class="text-base font-semibold text-slate-900">Pick Up Person</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Pick Up Name</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_name %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Pick Up Phone</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_phone %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Pick Up Email</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_email %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_distribution_information') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Agency Distribution Information</h4>
-      <p>Distribution Times: <%= partner_profile.distribution_times %> </p>
-      <p>New Client Times: <%= partner_profile.new_client_times %></p>
-      <p>More Docs Required: <%= partner_profile.more_docs_required %></p>
+      <h3 class="text-base font-semibold text-slate-900">Agency Distribution Information</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Distribution Times</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.distribution_times %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">New Client Times</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.new_client_times %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">More Docs Required</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.more_docs_required %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('sources_of_funding') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Sources of Funding</h4>
-      <p>Sources of Funding: <%= partner_profile.sources_of_funding %></p>
-      <p>How do you currently obtain diapers? <%= partner_profile.sources_of_diapers %> </p>
-      <p>Essentials Budget:<%= partner_profile.essentials_budget %></p>
-      <p>Essentials Funding Source: <%= partner_profile.essentials_funding_source %></p>
+      <h3 class="text-base font-semibold text-slate-900">Sources of Funding</h3>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Sources of Funding</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.sources_of_funding %></dd>
+      </dl>
+      <p class="text-sm text-slate-700">How do you currently obtain diapers? <%= partner_profile.sources_of_diapers %> </p>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Essentials Budget</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.essentials_budget %></dd>
+      </dl>
+      <dl>
+        <dt class="text-xs font-medium text-slate-500">Essentials Funding Source</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.essentials_funding_source %></dd>
+      </dl>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Other Documents</h4>
+      <h3 class="text-base font-semibold text-slate-900">Other Documents</h3>
         <% partner_profile.documents.each do |document| %>
-          <p><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
+          <p class="text-sm text-slate-700"><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
         <% end %>
         <br>
-    <h4 class='text-2xl underline'>Settings</h4>
+    <h3 class="text-base font-semibold text-slate-900">Settings</h3>
         <% if partner_profile.organization.enable_child_based_requests? %>
-          <p>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></p>
+          <dl>
+            <dt class="text-xs font-medium text-slate-500">Uses Child Based Requests</dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_child_based_requests) %></dd>
+          </dl>
         <% end %>
         <% if partner_profile.organization.enable_individual_requests? %>
-          <p>Uses Individual Requests: <%= humanize_boolean(partner_profile.enable_individual_requests) %></p>
+          <dl>
+            <dt class="text-xs font-medium text-slate-500">Uses Individual Requests</dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_individual_requests) %></dd>
+          </dl>
         <% end %>
         <% if partner_profile.organization.enable_quantity_based_requests? %>
-          <p>Uses Quantity Based Requests: <%= humanize_boolean(partner_profile.enable_quantity_based_requests) %></p>
+          <dl>
+            <dt class="text-xs font-medium text-slate-500">Uses Quantity Based Requests</dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_quantity_based_requests) %></dd>
+          </dl>
         <% end %>
-      <br>
 <% end %>
-<!-- /.box -->
+</div>
 </div>

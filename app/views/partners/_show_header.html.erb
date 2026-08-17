@@ -1,64 +1,38 @@
-<div class="card card-info card-outline">
-  <div class="card-header">
-    <h2 class="card-title fs-3"><%= partner.name %></h2>
-  </div>
-  <div class="card-body p-0">
-    <div class="row">
-      <div class="<%= show_header_column_class(partner) %>">
-        <div class="description-block border-right">
-          <h1 class='text-2xl' style="color:purple"><%= total_on_hand(impact_metrics[:families_served] || 0) %> </h1>
-          <h5 class='text-lg'>Families served</h5>
-        </div>
-        <!-- /.description-block -->
+<%# Impact metrics. Each figure is an icon tile plus a number and a label -- the tile marks
+    a stat, which is what these are. %>
+<%
+  metrics = [
+    {icon: "bi-people", tone: :brand, value: total_on_hand(impact_metrics[:families_served] || 0), label: "Families served"},
+    {icon: "bi-person-arms-up", tone: :info, value: total_on_hand(impact_metrics[:children_served] || 0), label: "Children served"},
+    {icon: "bi-geo-alt", tone: :success, value: total_on_hand(impact_metrics[:family_zipcodes] || 0), label: "Zipcodes served"}
+  ]
+  metrics << {icon: "bi-speedometer", tone: :warning, value: number_with_delimiter(partner.quota), label: "Monthly limit"} if partner.quota.present?
+%>
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-<%= metrics.size %>">
+  <% metrics.each do |metric| %>
+    <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <%= essentials_icon_tile(metric[:icon], tone: metric[:tone]) %>
+      <div class="min-w-0">
+        <p class="text-2xl font-bold tracking-tight text-slate-900"><%= metric[:value] %></p>
+        <p class="text-sm text-slate-600"><%= metric[:label] %></p>
       </div>
-      <!-- /.col -->
-      <div class="<%= show_header_column_class(partner) %>">
-        <div class="description-block border-right">
-          <h1 class='text-2xl' style="color:purple"><%= total_on_hand(impact_metrics[:children_served] || 0) %> </h1>
-          <h5 class='text-lg'>Children served</h5>
-        </div>
-        <!-- /.description-block -->
-      </div>
-      <!-- /.col -->
-      <div class="<%= show_header_column_class(partner) %>">
-        <div class="description-block border-right">
-          <h1 class='text-2xl' style="color:purple"><%= total_on_hand(impact_metrics[:family_zipcodes] || 0) %> </h1>
-          <h5 class='text-lg'>Zipcodes served</h5>
-          <%= modal_button_to("#seeZipcodes", {text: "See Zipcodes?", size: "xs"}) if impact_metrics[:family_zipcodes_list].present? %>
-        </div>
-        <!-- /.description-block -->
-      </div>
-
-      <% if partner.quota.present? %>
-        <!-- /.col -->
-        <div class="<%= show_header_column_class(partner) %>">
-          <div class="description-block border-right">
-            <h1 class='text-2xl' style="color:purple"><%= partner.quota %> </h1>
-            <h5 class='text-lg'>Monthly Limit</h5>
-          </div>
-          <!-- /.description-block -->
-        </div>
-      <% end %>
     </div>
-  </div>
-  <!-- /.card-body -->
+  <% end %>
 </div>
-<div id="seeZipcodes" class="modal fade">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Serviced zipcodes</h4>
-      </div><!-- modal-header -->
-      <div class="modal-body">
-        <div class="box-body">
-          <ul>
-            <% @impact_metrics[:family_zipcodes_list].each do |zipcode| %>
-              <li><%= zipcode %></li>
-            <% end %>
-          </ul>
-        </div><!-- box-body -->
-      </div><!-- modal-body -->
-    </div><!-- modal-content -->
-  </div><!-- modal-dialog -->
-</div><!-- seeZipcodes -->
+
+<% if impact_metrics[:family_zipcodes_list].present? %>
+  <div class="mt-3">
+    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
+            data-action="click->dialog#open" data-dialog-id-param="see-zipcodes">
+      <i class="bi-geo-alt" aria-hidden="true"></i>See zipcodes
+    </button>
+  </div>
+
+  <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Serviced zipcodes" do %>
+    <ul class="grid grid-cols-3 gap-1 text-sm text-slate-700 sm:grid-cols-4">
+      <% impact_metrics[:family_zipcodes_list].each do |zipcode| %>
+        <li class="tabular-nums"><%= zipcode %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>

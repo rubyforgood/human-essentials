@@ -1,84 +1,73 @@
-<%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- jquery validation -->
-          <div class="card card-primary">
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body w-50">
-              <%= f.input :name, label: "Name", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-user"></i></span>
-                <%= f.input_field :name, class: "form-control" %>
-              <% end %>
-              <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                <%= f.input_field :email, class: "form-control" %>
-              <% end %>
-              <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.active.alphabetized,
-                          :label_method => :name,
-                          :value_method => :id,
-                          :label => "Default Storage Location",
-                          :include_blank => true,
-                          wrapper: :input_group %>
-              <div class='w-50'>
-                <%= f.input :partner_group_id, label: "Group", wrapper: :input_group do %>
-                  <%= f.input_field :partner_group_id, collection: @partner_groups, class: "form-control", include_blank: "None" %>
-                <% end %>
-              </div>
+<div class="max-w-2xl">
+  <%= essentials_error_summary(form) %>
 
-              <div data-controller='checkbox-with-nested-element'>
-                <%= f.input :send_reminders, label: "Do you want this partner to receive emails for distributions and reminders from the system?", wrapper: :input_group do %>
-                  <%= f.check_box :send_reminders, { class: "input-group-text", id: "send_reminders", data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisibility', 'checkbox-with-nested-element-target': 'checkbox' } }, "true", "false" %>
-                 <% end %>
-                 <div class="callout callout-info d-none" data-checkbox-with-nested-element-target='nestedElement'>
-                   <h5 class='text-uppercase font-weight-bold'>Reminder</h5>
-                   <p>Please note that reminders will be sent out according to the settings of their partner group OR organization. This won't work unless you've set up at least one.</p>
-                 </div>
-              </div>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for form, data: {controller: "checkbox-with-nested-element"} do |f| %>
+      <%= f.input :name, label: "Name" %>
+      <%= f.input :email, label: "Email" %>
+      <%= f.input :default_storage_location_id, label: "Default storage location",
+            collection: current_organization.storage_locations.active.alphabetized,
+            label_method: :name, value_method: :id, include_blank: true %>
+      <%= f.input :partner_group_id, label: "Group", collection: @partner_groups, include_blank: "None" %>
 
-              <%= f.input :quota, label: "Quota", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-warning"></i></span>
-                <%= f.input_field :quota, class: "form-control" %>
-              <% end %>
-              <%= f.input :notes, label: "Notes", wrapper: :input_group do %>
-                <%= f.input_field :notes, class: "form-control" %>
-              <% end %>
-              <%= f.input :info_for_partner, label: "Partner specific information (500 characters)", wrapper: :input_group do %>
-                <%= f.input_field :info_for_partner, class: "form-control", "aria-describedby": "info-for-partner-note", maxlength: 500 %>
-              <% end %>
-                <p class="form-text" id="info-for-partner-note">Note: The partner can see, but cannot change this information.</p>
-              <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
-                <% if @partner.documents.present? %>
-                  <ul class="list-unstyled w-100">
-                    <% @partner.documents.each do |doc| %>
-                      <% if doc.persisted? %>
-                        <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
-                          <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold w-75 text-truncate" %>
-                          <%= f.hidden_field :documents, multiple: true, value: doc.signed_id %>
-                          <%= f.button :button, formmethod: :delete, formaction: attachment_path(doc), class: "btn btn-danger btn-md", data: {disable_with: "Please wait..."} do
-                            fa_icon "trash", text: "Remove"
-                          end %>
-                        </li>
-                      <% end %>
-                    <% end %>
-                  </ul>
-                <% end %>
-                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control-file h-auto" %>
-              <% end %>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-              <%= submit_button(submit_btn_options) %>
-            </div>
+      <div>
+        <%= f.input :send_reminders, as: :boolean,
+              label: "Do you want this partner to receive emails for distributions and reminders from the system?",
+              input_html: {
+                id: "send_reminders",
+                data: {
+                  action: "click->checkbox-with-nested-element#toggleNestedElementVisibility",
+                  "checkbox-with-nested-element-target": "checkbox"
+                }
+              } %>
+        <div class="mb-4 hidden gap-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900"
+             data-checkbox-with-nested-element-target="nestedElement">
+          <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
+          <div>
+            <p class="font-semibold">Reminder</p>
+            <p class="mt-1">
+              Reminders are sent according to the settings of the partner's group or of your
+              organization. This won't work unless you have set up at least one.
+            </p>
           </div>
-          <!-- /.card -->
         </div>
-
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-<% end %>
+
+      <%= f.input :quota, label: "Quota" %>
+      <%= f.input :notes, label: "Notes", as: :text, input_html: {rows: 3} %>
+      <%= f.input :info_for_partner, label: "Partner specific information", as: :text,
+            hint: "The partner can see, but cannot change, this information. 500 characters maximum.",
+            input_html: {rows: 3, maxlength: 500, "aria-describedby": "info-for-partner-note"} %>
+
+      <div class="mb-4">
+        <span class="block text-sm font-medium text-slate-700">Documents</span>
+        <% if @partner.documents.present? %>
+          <ul class="mt-2 space-y-2">
+            <% @partner.documents.select(&:persisted?).each do |doc| %>
+              <li class="attached-document flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"
+                  data-document-id="<%= doc.signed_id %>">
+                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc),
+                      class: "min-w-0 flex-1 truncate font-medium text-brand-700 hover:text-brand-800" %>
+                <%= f.hidden_field :documents, multiple: true, value: doc.signed_id %>
+                <%= f.button :button, formmethod: :delete, formaction: attachment_path(doc),
+                      class: essentials_button_classes(variant: :ghost, size: :sm, extra: "text-rose-700 hover:bg-rose-50"),
+                      data: {disable_with: "Please wait..."} do %>
+                  <i class="bi-trash" aria-hidden="true"></i>Remove
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+        <%= f.input_field :documents, as: :file, multiple: true,
+              accept: Partner::ALLOWED_MIME_TYPES.join(","),
+              class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
+      </div>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :submit, (submit_btn_options[:text] || "Save"),
+              class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_path, variant: :ghost, size: :md %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
