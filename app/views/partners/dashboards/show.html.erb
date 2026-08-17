@@ -5,8 +5,7 @@
   <%= @partner.display_status %> Partner</button></h3>
 </header>
 
-<main>
-  <% if @partner.info_for_partner.present? %>
+<% if @partner.info_for_partner.present? %>
     <section class="container mx-auto my-5">
       <h2 class="font-weight-bold">Information from <%= @parent_org.name %></h2>
 
@@ -43,4 +42,3 @@
   <section class="container mx-auto my-5">
     <%= render partial: "family_details" %>
   </section>
-</main>

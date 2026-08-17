@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Human Essentials</title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
 
   <%= csrf_meta_tags %>
 
@@ -30,6 +30,7 @@
   <%= render 'magic_test/support' if Rails.env.test? %>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -70,7 +71,9 @@
         <%= sanitize(value, tags: %w(ul li)) %>
       </div>
     <% end %>
-    <%= yield %>
+    <main id="main-content" tabindex="-1">
+      <%= yield %>
+    </main>
   </div>
 
   <footer class="main-footer">

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
   <%= csrf_meta_tags %>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
@@ -54,6 +54,7 @@
 </head>
 <body data-turbo="<%= @turbo %>" data-controller='turbo'
   id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -106,9 +107,9 @@
   <div class="content-wrapper">
     <%= render partial: "shared/flash" %>
 
-    <div>
+    <main id="main-content" tabindex="-1">
       <%= yield %>
-    </div>
+    </main>
   </div>
 
   <footer class="main-footer">

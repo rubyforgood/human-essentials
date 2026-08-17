@@ -116,3 +116,26 @@
 .cursor-default {
     cursor: default !important;
 }
+
+// Skip link (WCAG 2.1 AA, 2.4.1 Bypass Blocks). Hidden until focused, then pinned to the
+// top-left of the viewport. Deliberately not Bootstrap's .sr-only-focusable, which reveals
+// itself with `position: static` and so shoves the whole page down when it takes focus.
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 2000;
+  padding: 0.75rem 1rem;
+  background-color: $diaper-color-white;
+  color: $diaper-color-blue-26;
+  font-weight: 700;
+  text-decoration: underline;
+
+  &:focus {
+    top: 0;
+    // A dark ring rather than a brand colour: #222 is 15.9:1 on white, where the amber
+    // $diaper-color-orange-51 is 2.15:1 and fails 1.4.11 non-text contrast.
+    outline: 3px solid $diaper-color-neutral-13;
+    outline-offset: 0;
+  }
+}

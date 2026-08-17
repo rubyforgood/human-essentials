@@ -4,12 +4,10 @@
     <%= @partner.display_status %> Partner</button></h3>
 </header>
 
-<main>
-  <section class="container mx-auto my-8">
-    <%= render partial: "distribution_section",
-               locals: {distributions: @distributions,
-             title: "Distributions",
-             date_header: "Distribution date",
-             item_header: "Items"} %>
-  </section>
-</main>
+<section class="container mx-auto my-8">
+  <%= render partial: "distribution_section",
+             locals: {distributions: @distributions,
+                      title: "Distributions",
+                      date_header: "Distribution date",
+                      item_header: "Items"} %>
+</section>
