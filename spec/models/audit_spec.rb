@@ -92,6 +92,23 @@ RSpec.describe Audit, type: :model do
 
       expect(audit.save).to be_truthy
     end
+
+    describe '#status' do
+      it "does not regress from finalized to another status" do
+        finalized_audit = create(:audit, organization:, status: :finalized)
+
+        expect { finalized_audit.update!(status: :confirmed) }
+          .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once finalized/)
+      end
+
+      it "allows normal transitions" do
+        in_progress_audit = create(:audit, organization:, status: :in_progress)
+        confirmed_audit = create(:audit, organization:, status: :confirmed)
+
+        expect { in_progress_audit.update!(status: :confirmed) }.not_to raise_error
+        expect { confirmed_audit.update!(status: :finalized) }.not_to raise_error
+      end
+    end
   end
 
   context "Scopes >" do

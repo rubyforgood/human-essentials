@@ -3,14 +3,12 @@
 class ProductDriveParticipantsController < ApplicationController
   include Importable
 
-  # TODO: Should there be a :destroy action for this?
-
   def index
-    @product_drive_participants = current_organization.product_drive_participants.includes(:donations).with_volumes.order(:business_name)
+    @products = View::ProductDriveParticipants.new(params: params, organization: current_organization)
 
     respond_to do |format|
       format.html
-      format.csv { send_data ProductDriveParticipant.generate_csv(@product_drive_participants), filename: "ProductDriveParticipants-#{Time.zone.today}.csv" }
+      format.csv { send_data ProductDriveParticipant.generate_csv(@products.participants), filename: "ProductDriveParticipants-#{Time.zone.today}.csv" }
     end
   end
 
@@ -65,6 +63,8 @@ class ProductDriveParticipantsController < ApplicationController
 
   helper_method \
     def filter_params
-    {}
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:by_business_name, :by_contact_name)
   end
 end
