@@ -1,0 +1,76 @@
+/*
+ * Human Essentials — Tailwind v4 entry point.
+ *
+ * This is the Ruby for Good design system (see design.md). It is compiled by the
+ * tailwindcss-rails gem to app/assets/builds/tailwind.css and served ONLY by the
+ * Tailwind layouts (layouts/essentials_app, layouts/essentials_auth). Bootstrap and
+ * AdminLTE are NOT loaded on those pages — never load both resets in one document.
+ */
+
+@import "tailwindcss";
+
+/* Self-hosted, no CDN. Binaries live in public/vendor/. */
+@import "./vendor/figtree.css";
+@import "./vendor/bootstrap-icons.css";
+
+/* Tailwind v4 scans these for class names. Rails puts markup outside the CSS tree,
+   so the automatic source detection can't find it. */
+@source "../../views";
+@source "../../helpers";
+@source "../../javascript";
+@source "../../components";
+
+@theme {
+  /* Typeface: Figtree, a warm humanist sans — friendly but credible. */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Brand = indigo. Neutrals = slate (Tailwind default, not redeclared). */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+}
+
+@layer base {
+  /* The page surface. Every Tailwind layout sets this on <body>. */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Bootstrap Icons are decorative by default; give them the same optical
+     alignment everywhere rather than per-call-site margin fiddling. */
+  [class^="bi-"]::before,
+  [class*=" bi-"]::before {
+    vertical-align: -0.125em;
+  }
+}
+
+@layer components {
+  /*
+   * Skip link. Same contract as the Bootstrap shell's .skip-link so both halves of
+   * the app behave identically for keyboard users during the migration.
+   */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 60;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-white);
+    color: var(--color-brand-700);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-slate-900);
+    outline-offset: 0;
+  }
+}

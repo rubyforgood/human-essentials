@@ -278,6 +278,7 @@ GEM
       webrick (~> 1.7)
       websocket-driver (~> 0.7)
     ffi (1.17.4)
+    ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-arm64-darwin)
     ffi (1.17.4-x86_64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
@@ -438,6 +439,8 @@ GEM
     nokogiri (1.19.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    nokogiri (1.19.0-aarch64-linux-gnu)
+      racc (~> 1.4)
     nokogiri (1.19.0-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.0-x86_64-darwin)
@@ -490,6 +493,7 @@ GEM
       ruby-rc4
       ttfunk
     pg (1.6.3)
+    pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
@@ -725,6 +729,14 @@ GEM
     stringio (3.2.0)
     strong_migrations (2.7.0)
       activerecord (>= 7.2)
+    tailwindcss-rails (4.6.0)
+      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.3.3)
+    tailwindcss-ruby (4.3.3-aarch64-linux-gnu)
+    tailwindcss-ruby (4.3.3-arm64-darwin)
+    tailwindcss-ruby (4.3.3-x86_64-darwin)
+    tailwindcss-ruby (4.3.3-x86_64-linux-gnu)
     terser (1.2.7)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
@@ -765,6 +777,8 @@ GEM
     zeitwerk (2.8.2)
 
 PLATFORMS
+  aarch64-linux
+  aarch64-linux-gnu
   arm64-darwin
   ruby
   x86_64-darwin
@@ -859,6 +873,7 @@ DEPENDENCIES
   standard-rails
   stimulus-rails
   strong_migrations
+  tailwindcss-rails (~> 4.6)
   terser
   ttfunk (~> 1.7.0)
   turbo-rails

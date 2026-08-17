@@ -35,5 +35,13 @@ module Diaper
     config.action_mailer.deliver_later_queue_name = 'default'
 
     config.active_support.to_time_preserves_timezone = :zone # New default starting in Rails 8.1
+
+    # sassc-rails defaults config.assets.css_compressor to :sass, and libsass cannot parse
+    # the CSS that Tailwind v4 emits (@layer, @property, oklch(), color-mix()) -- it dies
+    # with "Internal Error: Not enough space" the first time anything asks Sprockets for
+    # tailwind.css. Nothing is lost by turning it off: the Tailwind CLI already minifies its
+    # own output, and production has had this compressor commented out for years, so only
+    # the test environment was ever applying it.
+    config.assets.css_compressor = nil
   end
 end

@@ -90,3 +90,8 @@ out/
 .vscode/
 .aider*
 .claude
+
+# Tailwind v4 build output. Compiled from app/assets/tailwind/application.css by the
+# tailwindcss-rails gem, which hooks assets:precompile, so it is built on deploy.
+/app/assets/builds/*
+!/app/assets/builds/.keep
