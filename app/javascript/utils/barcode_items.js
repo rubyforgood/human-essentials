@@ -93,7 +93,8 @@ $(document).ready(function() {
     $("#barcode_item_value").val(value);
     // Saving this to the modal so the modal knows which field to trigger when it's done.
     $("#trigger-field-id").val($(src).attr('id'));
-    new bootstrap.Modal('#newBarcode').show()
+    // Native <dialog>: Bootstrap modal JS is no longer loaded.
+    document.getElementById("newBarcode")?.showModal();
     $("#barcode_item_quantity").focus();
   }
 });

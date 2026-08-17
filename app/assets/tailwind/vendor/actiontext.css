@@ -1,0 +1,54 @@
+/*
+ * ActionText / Trix. Carried over from app/javascript/stylesheets/actiontext.scss when the
+ * Sass pipeline was retired; the nesting is flattened so this is plain CSS.
+ *
+ * The override exists because trix.css caps gallery images at 33% width, and ActionText
+ * wraps each attachment in an <action-text-attachment> element that the rule does not
+ * account for -- without this, gallery images are squished.
+ */
+
+.trix-content a {
+  color: var(--color-brand-700);
+  text-decoration: underline;
+}
+
+.trix-content .attachment-gallery > action-text-attachment,
+.trix-content .attachment-gallery > .attachment {
+  flex: 1 0 33%;
+  padding: 0 0.5em;
+  max-width: 33%;
+}
+
+.trix-content .attachment-gallery.attachment-gallery--2 > action-text-attachment,
+.trix-content .attachment-gallery.attachment-gallery--2 > .attachment,
+.trix-content .attachment-gallery.attachment-gallery--4 > action-text-attachment,
+.trix-content .attachment-gallery.attachment-gallery--4 > .attachment {
+  flex-basis: 50%;
+  max-width: 50%;
+}
+
+.trix-content action-text-attachment .attachment {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+/* The Trix editor itself, so it matches the design system's inputs. */
+trix-editor {
+  min-height: 8rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-300);
+  background-color: var(--color-white);
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+  color: var(--color-slate-900);
+}
+
+trix-editor:focus {
+  outline: none;
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-brand-500) 30%, transparent);
+}
+
+trix-toolbar .trix-button-group {
+  border-color: var(--color-slate-300);
+}

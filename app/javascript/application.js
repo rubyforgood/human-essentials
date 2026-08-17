@@ -6,7 +6,6 @@ window.$ = jQuery
 
 import "startup"
 import "jquery-ui"
-import 'admin-lte'
 import 'filterrific'
 import("@hotwired/turbo-rails").then(({ Turbo }) => {
   // Disable turbo by default to avoid issues with turbolinks
@@ -15,7 +14,6 @@ import("@hotwired/turbo-rails").then(({ Turbo }) => {
 
 import "trix"
 import "@rails/actiontext"
-import "bootstrap-select"
 
 import {DateTime} from "luxon";
 import 'litepicker';
@@ -26,8 +24,6 @@ import listPlugin from '@fullcalendar/list';
 import toastr from 'toastr';
 import 'litepicker/ranges';
 
-import 'popper'
-import 'bootstrap'
 import 'controllers'
 
 import 'utils/barcode_items'

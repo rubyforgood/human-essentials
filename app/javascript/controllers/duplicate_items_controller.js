@@ -64,46 +64,48 @@ export default class extends Controller {
       const entries = item.entries
       const total = entries.reduce((sum, entry) => sum + entry.quantity, 0)
       const rows = entries.map(entry => {
-        const barcodeLine = entry.barcode ? `<div class="duplicate-barcode">Barcode: ${entry.barcode}</div>` : ''
-        return `<div class="duplicate-entry">❐ ${item.name} : ${entry.quantity}${barcodeLine}</div>`
+        const barcodeLine = entry.barcode ? `<div class="duplicate-barcode text-xs text-slate-500">Barcode: ${entry.barcode}</div>` : ''
+        return `<div class="duplicate-entry text-sm text-slate-700">❐ ${item.name} : ${entry.quantity}${barcodeLine}</div>`
       }).join('')
-      return `<div class="duplicate-container">${rows}<div class="duplicate-merged">→ Merged Result: ${item.name} : ${total}</div></div>`
+      return `<div class="duplicate-container rounded-xl border border-slate-200 p-3">${rows}<div class="duplicate-merged mt-1 text-sm font-semibold text-slate-900">→ Merged Result: ${item.name} : ${total}</div></div>`
     }).join('')
 
-    const modalHtml = `
-      <div class="modal fade" id="duplicateItemsModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Multiple Item Entries Detected</h5>
-              <button type="button" class="close" data-bs-dismiss="modal">
-                <span>&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p><strong>The following items have multiple entries:</strong></p>
-              <div class="duplicate-items-list">${itemRows}</div>
-            </div>
-            <div class="modal-footer duplicate-modal-footer">
-              <p class="duplicate-modal-text">
-                Choose <strong>Merge Items</strong> to combine quantities and continue, or <strong>Make Changes</strong> to go back and edit.
-              </p>
-              <div class="duplicate-modal-buttons">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Make Changes</button>
-                <button type="button" class="btn btn-success" id="confirmMerge">Merge Items</button>
-              </div>
-            </div>
-          </div>
-        </div>
+// Native <dialog>: Bootstrap's modal JS and CSS are no longer loaded, so showModal()
+// supplies the backdrop, focus trap and Escape key instead.
+const modalHtml = `
+  <dialog id="duplicateItemsModal"
+          class="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+          aria-labelledby="duplicateItemsTitle">
+    <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+      <h2 id="duplicateItemsTitle" class="text-base font-semibold text-slate-900">Multiple item entries detected</h2>
+      <button type="button"
+              class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              aria-label="Close dialog"
+              onclick="this.closest('dialog').close()">
+        <i class="bi-x-lg text-sm" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="max-h-[60vh] overflow-y-auto px-5 py-4">
+      <p class="text-sm font-semibold text-slate-900">The following items have multiple entries:</p>
+      <div class="duplicate-items-list mt-3 space-y-3">${itemRows}</div>
+    </div>
+    <div class="border-t border-slate-200 px-5 py-3">
+      <p class="duplicate-modal-text text-sm text-slate-600">
+        Choose <strong>Merge items</strong> to combine quantities and continue, or <strong>Make changes</strong> to go back and edit.
+      </p>
+      <div class="duplicate-modal-buttons mt-3 flex flex-wrap justify-end gap-2">
+        <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" onclick="this.closest('dialog').close()">Make changes</button>
+        <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-brand-700" id="confirmMerge">Merge items</button>
       </div>
-    `
+    </div>
+  </dialog>
+`
 
     document.getElementById('duplicateItemsModal')?.remove()
     document.body.insertAdjacentHTML('beforeend', modalHtml)
     
-    const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
-    modal.show()
-    
+    document.getElementById('duplicateItemsModal').showModal()
+
     document.getElementById('confirmMerge').addEventListener('click', () => {
       this.mergeAndSubmit(duplicates, buttonName)
     })
@@ -123,9 +125,8 @@ export default class extends Controller {
       remainingEntries.forEach(entry => entry.section.remove())
     })
 
-    const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
-    modal.hide()
-    
+    document.getElementById('duplicateItemsModal')?.close()
+
     this.submitForm(buttonName)
   }
 

@@ -13,6 +13,11 @@
 @import "./vendor/figtree.css";
 @import "./vendor/bootstrap-icons.css";
 
+/* Trix, for the rich-text fields on organization settings and admin questions.
+   Vendored from the trix npm package rather than imported from a CDN. */
+@import "./vendor/trix.css";
+@import "./vendor/actiontext.css";
+
 /* Tailwind v4 scans these for class names. Rails puts markup outside the CSS tree,
    so the automatic source detection can't find it. */
 @source "../../views";
@@ -155,5 +160,47 @@
   /* Horizontal scroll container for a table inside a card. */
   .table-scroll {
     overflow-x: auto;
+  }
+
+  /*
+   * App-specific rules carried over from the AdminLTE stylesheet. These are the only ones
+   * that survived: everything else in application.scss was Bootstrap, AdminLTE, or styling
+   * for markup that no longer exists.
+   */
+
+  /* The camera-scan trigger beside a barcode field. */
+  .barcode-scanner {
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 1000px) {
+    /* Bigger tap target on a phone, which is where scanning actually happens. */
+    .barcode-scanner {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* FullCalendar needs an explicit height to render into. */
+  #calendar {
+    width: 100%;
+    min-height: 36rem;
+    background-color: var(--color-white);
+  }
+
+  /*
+   * The account request form is wider than the auth column it sits in, so it breaks out.
+   * Below the breakpoint it stays inside, because otherwise the text is cut off.
+   */
+  .account-request {
+    width: 35rem;
+    margin-left: calc((360px - 35rem) / 2);
+  }
+
+  @media (max-width: 620px) {
+    .account-request {
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+    }
   }
 }

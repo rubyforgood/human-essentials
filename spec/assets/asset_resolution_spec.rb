@@ -1,17 +1,14 @@
 require "rails_helper"
 
-# The Tailwind design system and the legacy Bootstrap stylesheet both live under
-# app/assets and both answer to the logical name "application.css". Sprockets resolves
-# by load-path order, and the two halves of the app are one bad resolution away from
-# every Bootstrap page rendering unstyled. These pin the contract.
+# The design system stylesheet is now the only one the app serves. These pin the things that
+# would break it silently: serving the uncompiled Tailwind source, letting the Bootstrap
+# stylesheet back in, or referencing a font the repo does not actually vendor.
 RSpec.describe "Asset resolution", type: :request do
   let(:assets) { Rails.application.assets }
 
-  it "resolves application.css to the Bootstrap/AdminLTE manifest, not the Tailwind source" do
-    asset = assets.find_asset("application.css")
-
-    expect(asset).not_to be_nil
-    expect(asset.filename.to_s).to end_with("app/assets/stylesheets/application.scss")
+  it "serves no Bootstrap or AdminLTE stylesheet" do
+    expect(assets.find_asset("application.css")).to be_nil
+    expect(Rails.root.join("app/assets/stylesheets")).not_to exist
   end
 
   it "resolves tailwind.css to the compiled build, not the Tailwind source" do

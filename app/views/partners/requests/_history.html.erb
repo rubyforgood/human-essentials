@@ -28,9 +28,12 @@
           <td class="p-4">
             <% comment = partner_request.comments %>
             <% if comment.present? %>
-              <div class="mb-2">
-                <%= truncate(comment, length: 20) %>
-              </div>
+              <%# Bootstrap tooltips are hover-only and unreachable by keyboard or touch,
+                  so the full comment is behind a <details> disclosure instead. %>
+              <details class="mb-2">
+                <summary class="cursor-pointer text-sm text-slate-700 marker:text-slate-400"><%= truncate(comment, length: 20) %></summary>
+                <p class="mt-1 max-w-prose text-sm text-slate-600"><%= comment %></p>
+              </details>
             <% end %>
             <a href="mailto:<%= partner_request.requester.email %>"><%= partner_request.requester.email %></a>
           </td>
@@ -39,10 +42,3 @@
     </tbody>
   </table>
 </section>
-
-<script type="module">
-  $(document).ready(function() {
-    const tooltipTriggerList = document.querySelectorAll('[]');
-    [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-  })
-</script>

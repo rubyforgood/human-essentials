@@ -40,10 +40,11 @@ gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
-# Bootstrap is a library for HTML, CSS and JS.
-gem 'bootstrap', '~> 5.2'
-# SASS CSS framework (nested selectors, variables, etc.)
-gem "sass-rails"
+# The Ruby for Good design system is built with Tailwind v4 (ADR 0011). This gem ships the
+# standalone Tailwind CLI, so no Node is needed at build or deploy time.
+gem "tailwindcss-rails", "~> 4.6"
+# The asset pipeline that serves the compiled stylesheet and the importmap.
+gem "sprockets-rails", "~> 3.5"
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -222,5 +223,3 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
-
-gem "tailwindcss-rails", "~> 4.6"

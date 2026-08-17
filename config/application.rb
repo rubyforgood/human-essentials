@@ -46,5 +46,14 @@ module Diaper
     # own output, and production has had this compressor commented out for years, so only
     # the test environment was ever applying it.
     config.assets.css_compressor = nil
+
+    # Keep Sprockets away from the Tailwind SOURCE. tailwindcss-rails hardcodes its input to
+    # app/assets/tailwind/application.css, and Sprockets picks up every app/assets/* directory
+    # -- so "application.css" resolves to a file whose first line is `@import "tailwindcss"`,
+    # which Sprockets cannot process. Only the compiled app/assets/builds/tailwind.css is
+    # ever served. Pinned by spec/assets/asset_resolution_spec.rb.
+    initializer "human_essentials.hide_tailwind_source_from_sprockets", after: :append_assets_path do |app|
+      app.config.assets.paths.reject! { |path| path.to_s.end_with?("app/assets/tailwind") }
+    end
   end
 end
