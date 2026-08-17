@@ -8,7 +8,7 @@
           if @product_drive_participants.any?
             concat essentials_link_button("Export", product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
           else
-            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import participants"
             end)

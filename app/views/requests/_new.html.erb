@@ -1,20 +1,13 @@
-<div id="newRequest" class="modal fade">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">New Quantity Request</h4>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body p-4">
-        <%= form_with(url: new_partners_request_path, method: :get) do |form| %>
-          <div class="form-group">
-            <%= form.collection_select(:partner_id, @requests_info.partners.active, :id, :name, {include_blank: "Select a partner", required: true}, {class: "form-control mb-2"} ) %>
-          </div>
-          <%= submit_button({text: "Next", icon: nil, name: ""}) %>
-        <% end %>
-      </div>
+<%= render "shared/essentials/modal", id: "new-request",
+      title: "New quantity request",
+      subtitle: "Choose the partner you are raising this request on behalf of." do %>
+  <%= form_with(url: new_partners_request_path, method: :get, class: "space-y-4") do |form| %>
+    <div>
+      <%= form.label :partner_id, "Partner", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.collection_select(:partner_id, @requests_info.partners.active, :id, :name,
+            {include_blank: "Select a partner", required: true},
+            {class: "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"}) %>
     </div>
-  </div>
-</div>
+    <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>" data-disable-with="Please wait...">Next</button>
+  <% end %>
+<% end %>

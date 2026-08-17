@@ -1,131 +1,73 @@
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Requests - #{current_organization.name}" %>
-        <h1>
-          Requests
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Requests</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Request Filter</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(requests_path, method: :get) do |f| %>
-              <div class="row">
-                <% if @requests_info.items.present? %>
-                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by item", scope: :by_request_item_id, collection: @requests_info.items, selected: @requests_info.selected_request_item) %>
-                  </div>
-                <% end %>
-                <% if @requests_info.partners.present? %>
-                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_partner, collection: @requests_info.partners, selected: @requests_info.selected_partner) %>
-                  </div>
-                <% end %>
-                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_request_type, collection: @requests_info.request_types, key: :last, value: :first, selected: @requests_info.selected_request_type) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_status, collection: @requests_info.statuses, key: :last, value: :first, selected: @requests_info.selected_status) %>
-                </div>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                </div>
-            </div>
-          </div>
-              <div class="card-footer">
-                <div class="d-flex flex-wrap justify-content-between gap-2">
-                  <div class="d-flex flex-wrap gap-2">
-                    <%= filter_button %>
-                    <%= clear_filter_button %>
-                    <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
-                  </div>
-                  <div class="d-flex flex-wrap gap-2">
-                    <% if @requests_info.unfulfilled_requests_count > 0 %>
-                      <%= print_button_to(
-                        print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params)),
-                        text: "Print Unfulfilled Picklists (#{@requests_info.unfulfilled_requests_count})",
-                        size: "md") %>
-                    <% end %>
-                    <%= download_button_to(requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests_info.requests.any? %>
-                    <%= modal_button_to("#newRequest", text: "New Quantity Request", icon: "plus", type: "success") if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-                  </div>
-                </div>
-              </div>
-            <% end # form %>
-            </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
-      <!-- right column -->
-      <div class="col-md-6">
+<% content_for :title, "Requests - #{current_organization.name}" %>
+<% info = @requests_info %>
 
-      </div>
-      <!--/.col (right) -->
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
+<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+  <%= render "shared/essentials/page_header",
+        title: "Requests",
+        subtitle: "Essentials requested by partner agencies.",
+        actions: capture {
+          if info.unfulfilled_requests_count > 0
+            concat essentials_link_button("Print unfulfilled picklists (#{info.unfulfilled_requests_count})",
+                     print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params)),
+                     variant: :secondary, icon: "bi-printer")
+          end
+          if info.requests.any?
+            concat essentials_link_button("Export", requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          if current_user.has_role?(Role::ORG_ADMIN, current_organization)
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "new-request"}) do
+              concat tag.i(nil, class: "bi-plus-lg", aria: {hidden: true})
+              concat " New quantity request"
+            end)
+          end
+        } %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th style="width: 10px">Date</th>
-                <th>Request was sent by:</th>
-                <th>Request Sender</th>
-                <th class="text-right"># of Items (Request Limit)</th>
-                <th>Comments</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "request_row", collection: @requests_info.paginated_requests %>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer clearfix">
-            <%= paginate @requests_info.paginated_requests %>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
+  <%= render "shared/essentials/filter_bar", url: requests_path do %>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
+    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
+    <div class="min-w-[15rem]">
+      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
-  </div>
-  <%= render partial: "calculate_product_totals" %>
-  <%= render partial: "new" %>
-</section>
+    <div class="pb-1">
+      <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>"
+              data-action="click->dialog#open" data-dialog-id-param="calculate-totals">
+        <i class="bi-calculator" aria-hidden="true"></i>Calculate product totals
+      </button>
+    </div>
+  <% end %>
+
+  <%= render "shared/essentials/card", padded: false,
+        footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_requests)) } do %>
+    <% if info.paginated_requests.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :all_clear,
+            title: filter_params.present? ? "No requests match those filters" : "No requests right now",
+            body: filter_params.present? ? "Clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Requests from partner agencies</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="date">Date</th>
+              <th scope="col">Request was sent by</th>
+              <th scope="col">Request sender</th>
+              <th scope="col" class="quantity">Items requested</th>
+              <th scope="col">Comments</th>
+              <th scope="col">Type</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "request_row", collection: info.paginated_requests %></tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render "calculate_product_totals" %>
+  <%= render "new" if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+</div>

@@ -45,8 +45,11 @@ RSpec.describe 'Requests', type: :request do
 
         get requests_path
 
-        expect(response.body).to include('Print Unfulfilled Picklists (2)')
-        expect(response.body).to match(%r{<span class="badge badge-danger bg-danger">\s*Cancelled\s*</span>})
+        expect(response.body).to include('Print unfulfilled picklists (2)')
+        # Status is a design system pill, and it no longer relies on colour alone -- the
+        # cancelled state carries an icon and the word.
+        statuses = Nokogiri::HTML(response.body).css("table tbody td span").map { |s| s.text.strip }
+        expect(statuses).to include("Cancelled")
       end
 
       context "when filtering by Cancelled" do
@@ -82,7 +85,7 @@ RSpec.describe 'Requests', type: :request do
 
           get requests_path({ filters: { by_status: :started} })
 
-          expect(response.body).to include("Print Unfulfilled Picklists (1)")
+          expect(response.body).to include("Print unfulfilled picklists (1)")
           expect(response.body).to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
           expect(response.body).not_to include("Cancelled request - a comment")

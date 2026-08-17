@@ -8,7 +8,7 @@
           if @donation_sites.any?
             concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-download")
           else
-            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import donation sites"
             end)

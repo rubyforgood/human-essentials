@@ -1,121 +1,94 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Requests - #{@request_info.request.id} - #{current_organization.name}" %>
-        <h1>
-          Request
-          <small>from <%= @request_info.request.partner.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Requests", requests_path %></li>
-          <li class="breadcrumb-item"><a href="#"> Request from <%= @request_info.request.partner.name %>
-            at <%= @request_info.request.created_at.to_fs(:distribution_date) %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% info = @request_info %>
+<% request = info.request %>
+<% content_for :title, "Request from #{request.partner.name} - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">This request was sent on <%= @request_info.request.created_at.to_fs(:distribution_date) %></h3>
-          </div>
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-                <tr>
-                <th>Request was sent by:</th>
-                <th>Request Sender:</th>
-                <th>Request Type:</th>
-                <th>Request Status:</th>
-                <th>Comments:</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><%= @request_info.request.partner.name %></td>
-                <td><%= @request_info.request.partner_user&.formatted_email %></td>
-                <td><%= @request_info.request.request_type&.humanize %></td>
-                <td><%= render partial: "status", locals: {status: @request_info.request.status} %></td>
-                <td><%= @request_info.request.comments || 'None' %></td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Request from #{request.partner.name}",
+        subtitle: "Sent on #{request.created_at.to_fs(:distribution_date)}.",
+        back: {path: requests_path, label: "Back to requests"},
+        actions: capture {
+          concat essentials_link_button("Print", print_picklist_request_path(request), variant: :secondary, icon: "bi-printer")
+          if request.distribution
+            concat essentials_link_button("View associated distribution", distribution_path(request.distribution), variant: :secondary, icon: "bi-box-arrow-up-right")
+          elsif !request.status_cancelled?
+            concat essentials_action_button("Fulfill request", start_request_path(request), method: :post, variant: :primary, icon: "bi-check-circle")
+          end
+          if info.cancellable?
+            concat essentials_link_button("Cancel request", new_request_cancelation_path(request_id: request.id),
+                     variant: :ghost, icon: "bi-x-circle", class: "text-rose-700 hover:bg-rose-50")
+          end
+        } %>
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <% if @request_info.custom_units %>
-                  <th>Units (if applicable)</th>
-                <% end %>
-                <% if @request_info.default_storage_location %>
-                  <th>Default storage location inventory</th>
-                <% end %>
-                <th>Total Inventory</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @request_info.item_requests.each do |item_request| %>
-                <tr>
-                  <td><%= item_request.item_name %></td>
-                  <td><%= item_request.quantity %></td>
-                  <% if @request_info.custom_units %>
-                    <td><%= item_request.request_unit&.pluralize(item_request.quantity.to_i) %></td>
-                  <% end %>
-                  <% if @request_info.default_storage_location %>
-                    <% on_hand_for_location = @request_info.inventory.quantity_for(storage_location: @request_info.location&.id, item_id: item_request.item_id) %>
-                    <td><%= on_hand_for_location&.positive? ? on_hand_for_location : 'N/A' %></td>
-                  <% end %>
-                  <% on_hand = @request_info.inventory.quantity_for(item_id: item_request.item_id) %>
-                  <td><%= on_hand || 0 %></td>
-                </tr>
-              <% end %>
-              <tr>
-                <td>Total (Quota)</td>
-                <td>
-                  <%= @request_info.request.total_items %>
-                  <%= quota_display(@request_info.request.partner) %>
-                </td>
-                <td />
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer flex flex-row space-x-2">
-            <% unless @request_info.request.status_cancelled? %>
-              <%= submit_button_to start_request_path(@request_info.request), {text: "Fulfill request", size: "md"} unless @request_info.request.distribution %>
-            <% end %>
-            <%= view_button_to(distribution_path(@request_info.request.distribution), {text: "View Associated Distribution", size: "md"}) if @request_info.request.distribution %>
-            <%= print_button_to print_picklist_request_path(@request_info.request), { format: :pdf, text: "Print", size: "md" } %>
-            <% if @request_info.cancellable? %>
-              <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request_info.request.id),
-                            method: :get, data: { disable_with: "Please wait..." }, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
-            <% end %>
-          </div>
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Request details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Request was sent by</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= request.partner.name %></dd>
         </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Request sender</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= request.partner_user&.formatted_email || "—" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Request type</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= request.request_type&.humanize || "—" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-slate-500">Status</dt>
+          <dd class="mt-1"><%= render partial: "status", locals: {status: request.status} %></dd>
+        </div>
+        <div class="sm:col-span-2 lg:col-span-4">
+          <dt class="text-xs font-medium text-slate-500">Comments</dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= request.comments.presence || "None" %></dd>
+        </div>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Items requested", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Items requested, with inventory on hand</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <% if info.custom_units %><th scope="col">Units (if applicable)</th><% end %>
+              <% if info.default_storage_location %><th scope="col" class="quantity">Default storage location inventory</th><% end %>
+              <th scope="col" class="quantity">Total inventory</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% info.item_requests.each do |item_request| %>
+              <tr>
+                <td class="font-medium text-slate-900"><%= item_request.item_name %></td>
+                <td class="quantity"><%= number_with_delimiter(item_request.quantity) %></td>
+                <% if info.custom_units %>
+                  <td><%= item_request.request_unit&.pluralize(item_request.quantity.to_i) %></td>
+                <% end %>
+                <% if info.default_storage_location %>
+                  <% on_hand_for_location = info.inventory.quantity_for(storage_location: info.location&.id, item_id: item_request.item_id) %>
+                  <td class="quantity"><%= on_hand_for_location&.positive? ? number_with_delimiter(on_hand_for_location) : "N/A" %></td>
+                <% end %>
+                <td class="quantity"><%= number_with_delimiter(info.inventory.quantity_for(item_id: item_request.item_id) || 0) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td class="quantity">
+                <%= number_with_delimiter(request.total_items) %>
+                <% if request.partner.quota.present? %>
+                  <span class="block text-xs font-normal text-slate-500">limit <%= number_with_delimiter(request.partner.quota) %></span>
+                <% end %>
+              </td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-    </div>
+    <% end %>
   </div>
-</section>
+</div>

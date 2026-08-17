@@ -8,7 +8,7 @@
         actions: capture {
           concat essentials_link_button("Edit", edit_storage_location_path(@storage_location), variant: :secondary, icon: "bi-pencil")
           if @storage_location.items.empty?
-            concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open"}) do
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import baseline inventory"
             end)

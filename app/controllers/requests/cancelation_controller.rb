@@ -1,5 +1,8 @@
 module Requests
   class CancelationController < ApplicationController
+    # Migrated to the Ruby for Good design system (ADR 0011).
+    layout "essentials_app"
+
     def new
       @request = Request.find(params[:request_id])
     end

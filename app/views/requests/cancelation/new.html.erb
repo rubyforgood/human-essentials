@@ -1,48 +1,32 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Do you want to cancel request #{@request.partner.name}?" %>
-        <span class='text-red-600 text-4xl'>
-          Do you want to cancel the request made for <%= @request.partner.name %> by <%= @request.requester.email %> on <%= @request.created_at.to_fs(:distribution_date) %>, with comment: <%= @request.comments %>?
-        </span>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-            <i class="fa fa-dashboard"></i> Home
-          <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Requests", requests_path %></li>
-          <li class="breadcrumb-item"><a href="#"> Request Cancelation </a></li>
-        </ol>
+<% content_for :title, "Cancel request from #{@request.partner.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Cancel this request?",
+        back: {path: request_path(@request), label: "Back to the request"} %>
+
+  <div class="max-w-2xl space-y-6">
+    <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
+      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+      <div>
+        <p class="font-semibold">This cannot be undone.</p>
+        <p class="mt-1">
+          You are cancelling the request made for <strong><%= @request.partner.name %></strong>
+          by <%= @request.requester.email %> on <%= @request.created_at.to_fs(:distribution_date) %><%= ", with comment: #{@request.comments}" if @request.comments.present? %>.
+        </p>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
-</section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-body">
-            <div class="box w-1/2">
-              <%= simple_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
-                <div class='flex flex-col'>
-                  <%= f.input :reason, label: "Cancellation reason" %>
-                  <div class='font-light text-md text-yellow-600'>This will be included in the email notification we send to the partner</div>
-                  <div class="font-light text-sm text-red">Note: cancellation emails will not be sent to deactivated partners</div>
-                </div>
+    <%= render "shared/essentials/card" do %>
+      <%= essentials_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+        <%= f.input :reason, label: "Cancellation reason", as: :text, input_html: {rows: 3},
+              hint: "This is included in the email notification we send to the partner. Cancellation emails are not sent to deactivated partners." %>
 
-                <div class='flex flex-row justify-end pt-2'>
-                  <%= f.submit 'Yes. Cancel Request', class: 'btn btn-primary' %>
-                </div>
-              <% end %>
-            </div>
-          </div>
+        <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+          <%= f.submit "Yes, cancel this request", class: essentials_button_classes(variant: :danger, size: :md), data: {disable_with: "Please wait..."} %>
+          <%= essentials_link_button "No, keep it", request_path(@request), variant: :ghost, size: :md %>
         </div>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

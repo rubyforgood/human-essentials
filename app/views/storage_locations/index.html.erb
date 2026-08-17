@@ -8,7 +8,7 @@
           if @storage_locations.any?
             concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
           else
-            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import storage locations"
             end)

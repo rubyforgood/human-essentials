@@ -1,30 +1,30 @@
-<div id="calculateTotals" class="modal fade">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Product Totals</h4>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body p-4">
-        <table class="table table-hover striped">
-          <thead>
+<%= render "shared/essentials/modal", id: "calculate-totals", size: :lg,
+      title: "Product totals",
+      subtitle: "Across every request matching the current filters." do %>
+  <% totals = @requests_info.calculate_product_totals.sort_by { |name, _| name.downcase } %>
+  <% if totals.empty? %>
+    <%= render "shared/essentials/empty_state", kind: :no_results,
+          title: "Nothing to total",
+          body: "No requests match the current filters." %>
+  <% else %>
+    <div class="max-h-96 overflow-y-auto">
+      <table class="data-table">
+        <caption>Total quantity requested per item</caption>
+        <thead>
           <tr>
-            <th>Item</th>
-            <th>Quantity</th>
+            <th scope="col">Item</th>
+            <th scope="col" class="quantity">Quantity</th>
           </tr>
-          </thead>
-          <tbody>
-            <% @requests_info.calculate_product_totals.sort_by { |name, quantity| name.downcase }.each do |name, quantity| %>
-              <tr>
-                <td><%= name %></td>
-                <td><%= quantity %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+        </thead>
+        <tbody>
+          <% totals.each do |name, quantity| %>
+            <tr>
+              <td class="font-medium text-slate-900"><%= name %></td>
+              <td class="quantity"><%= number_with_delimiter(quantity) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
-  </div>
-</div>
+  <% end %>
+<% end %>

@@ -1,30 +1,32 @@
+<% over_quota = request_row.partner.quota.present? && request_row.total_items.to_i >= request_row.partner.quota %>
 <tr>
   <td class="date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
-  <td><%= request_row.partner.name %> </td>
+  <td class="font-medium text-slate-900"><%= request_row.partner.name %></td>
   <td>
     <% partner_user = @requests_info.partner_users.find { |pu| pu.id == request_row.partner_user_id } %>
-    <%= "#{partner_user&.formatted_email}" %>
+    <%= partner_user&.formatted_email %>
   </td>
-  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %> text-right">
-    <%= request_row.total_items %>
-    <%= quota_display(request_row.partner) %>
-  </td>
-  <td>
-    <%= request_row.comments %>
-  </td>
-  <td>
-    <abbr class="text-decoration-none" title="<%= request_row.request_type&.humanize %>">
-      <%= request_row.request_type_label %>
-    </abbr>
-  </td>
-  <td>
-    <%= render partial: "status", locals: {status: request_row.status} %>
-  </td>
-  <td class="text-right">
-    <%= view_button_to request_path(request_row) %>
-    <% unless request_row.status_cancelled? || request_row.status_fulfilled? %>
-      <%= cancel_button_to new_request_cancelation_path(request_id: request_row.id), method: :get, data: { disable_with: "Please wait..."  }, size: "xs", type: "danger" %>
+  <td class="quantity <%= "font-semibold italic" if over_quota %>">
+    <%= number_with_delimiter(request_row.total_items) %>
+    <% if request_row.partner.quota.present? %>
+      <span class="block text-xs font-normal not-italic text-slate-500">
+        limit <%= number_with_delimiter(request_row.partner.quota) %>
+      </span>
     <% end %>
-    <%= print_button_to print_picklist_request_path(request_row), { format: :pdf, text: "Print", size: "xs" } %>
+  </td>
+  <td class="max-w-prose text-slate-600"><%= request_row.comments %></td>
+  <td>
+    <abbr class="no-underline" title="<%= request_row.request_type&.humanize %>"><%= request_row.request_type_label %></abbr>
+  </td>
+  <td><%= render partial: "status", locals: {status: request_row.status} %></td>
+  <td class="text-right">
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", request_path(request_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <% unless request_row.status_cancelled? || request_row.status_fulfilled? %>
+        <%= essentials_link_button "Cancel", new_request_cancelation_path(request_id: request_row.id),
+              variant: :ghost, size: :sm, icon: "bi-x-circle", class: "text-rose-700 hover:bg-rose-50" %>
+      <% end %>
+      <%= essentials_link_button "Print", print_picklist_request_path(request_row), variant: :ghost, size: :sm, icon: "bi-printer" %>
+    </div>
   </td>
 </tr>

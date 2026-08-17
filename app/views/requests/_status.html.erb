@@ -1,10 +1,8 @@
-<% case status %>
-<% when "pending" %>
-    <span class="badge badge-warning bg-warning">Pending</span>
-<% when "started" %>
-    <span class="badge badge-primary bg-primary">Started</span>
-<% when "fulfilled" %>
-    <span class="badge badge-success bg-success">Fulfilled</span>
-<% else %>
-    <span class="badge badge-danger bg-danger">Cancelled</span>
-<% end %>
+<%# Status pill. Colour never alone: each tone carries an icon and the word. %>
+<% tone, icon = case status
+                when "pending" then [:warning, "bi-hourglass-split"]
+                when "started" then [:info, "bi-play-circle"]
+                when "fulfilled" then [:success, "bi-check-circle"]
+                else [:danger, "bi-x-circle"]
+                end %>
+<%= essentials_status_pill(status.to_s.humanize, tone: tone, icon: icon) %>
