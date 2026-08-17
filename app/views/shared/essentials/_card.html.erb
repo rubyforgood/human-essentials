@@ -1,0 +1,38 @@
+<%#
+  Surface. White, hairline border, soft shadow, 2xl radius.
+  Render it with a block:  render "shared/essentials/card", title: "Filters" do ... end
+
+  Locals: title, subtitle, actions, footer, card_class, and `padded: false` when the body
+  is a table that should meet the card edges.
+%>
+<%
+  title ||= nil
+  subtitle ||= nil
+  actions ||= nil
+  footer ||= nil
+  padded = true if defined?(padded).nil? || padded.nil?
+  card_class ||= nil
+%>
+<section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm <%= card_class %>">
+  <% if title || actions %>
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+      <div class="min-w-0">
+        <% if title %>
+          <h2 class="text-base font-semibold text-slate-900"><%= title %></h2>
+        <% end %>
+        <% if subtitle %>
+          <p class="mt-0.5 text-sm text-slate-600"><%= subtitle %></p>
+        <% end %>
+      </div>
+      <% if actions %>
+        <div class="flex flex-wrap items-center gap-2"><%= actions %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="<%= "p-5" if padded %>"><%= yield %></div>
+
+  <% if footer %>
+    <div class="border-t border-slate-200 px-5 py-3"><%= footer %></div>
+  <% end %>
+</section>

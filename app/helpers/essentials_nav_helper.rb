@@ -1,0 +1,104 @@
+# Navigation model for the Ruby for Good design system shell (layouts/essentials_app).
+#
+# The sidebar is data, not markup: each group is rendered by layouts/_essentials_nav_group
+# and each item by layouts/_essentials_nav_link, so ordering, role gating and active-state
+# logic live in one testable place instead of being spread across 300 lines of ERB.
+#
+# Ordering is by task frequency, not alphabetical. Dashboard is ungrouped and first;
+# settings is pinned to the bottom. See design.md, "App shell".
+module EssentialsNavHelper
+  NavItem = Data.define(:label, :path, :active_on) do
+    def active?(controller_path)
+      active_on.include?(controller_path)
+    end
+  end
+
+  NavGroup = Data.define(:label, :icon, :items)
+
+  # The single item above the groups.
+  def essentials_nav_dashboard
+    NavItem.new(label: "Dashboard", path: dashboard_path, active_on: %w[dashboard])
+  end
+
+  # The item pinned to the bottom of the rail, below its own divider.
+  # Organization settings are admin-only, so org users get no pinned item at all.
+  def essentials_nav_settings
+    return nil unless can_administrate?
+
+    NavItem.new(label: "My organization", path: organization_path, active_on: %w[organizations])
+  end
+
+  # The middle of the rail. Groups with no visible items render nothing -- no orphan label.
+  def essentials_nav_groups
+    [
+      NavGroup.new(
+        label: "Operations",
+        icon: "bi-box-seam",
+        items: [
+          NavItem.new(label: "Donations", path: donations_path, active_on: %w[donations]),
+          NavItem.new(label: "Purchases", path: purchases_path, active_on: %w[purchases]),
+          NavItem.new(label: "Requests", path: requests_path, active_on: %w[requests]),
+          NavItem.new(label: "Distributions", path: distributions_path, active_on: %w[distributions]),
+          NavItem.new(label: "Pick ups & deliveries", path: schedule_distributions_path, active_on: %w[distributions/schedule])
+        ]
+      ),
+      NavGroup.new(
+        label: "Inventory",
+        icon: "bi-boxes",
+        items: [
+          NavItem.new(label: "Items & inventory", path: items_path, active_on: %w[items]),
+          NavItem.new(label: "Kits", path: kits_path, active_on: %w[kits]),
+          NavItem.new(label: "Storage locations", path: storage_locations_path, active_on: %w[storage_locations]),
+          NavItem.new(label: "Transfers", path: transfers_path, active_on: %w[transfers]),
+          NavItem.new(label: "Inventory adjustments", path: adjustments_path, active_on: %w[adjustments]),
+          (NavItem.new(label: "Inventory audit", path: audits_path, active_on: %w[audits]) if can_administrate?),
+          NavItem.new(label: "Barcode items", path: barcode_items_path, active_on: %w[barcode_items])
+        ].compact
+      ),
+      NavGroup.new(
+        label: "Network",
+        icon: "bi-people",
+        items: [
+          NavItem.new(label: "Partner agencies", path: partners_path, active_on: %w[partners]),
+          NavItem.new(label: "Partner announcements", path: broadcast_announcements_path, active_on: %w[broadcast_announcements]),
+          NavItem.new(label: "Donation sites", path: donation_sites_path, active_on: %w[donation_sites]),
+          NavItem.new(label: "Product drives", path: product_drives_path, active_on: %w[product_drives]),
+          NavItem.new(label: "Product drive participants", path: product_drive_participants_path, active_on: %w[product_drive_participants]),
+          NavItem.new(label: "Manufacturers", path: manufacturers_path, active_on: %w[manufacturers]),
+          NavItem.new(label: "Vendors", path: vendors_path, active_on: %w[vendors])
+        ]
+      ),
+      NavGroup.new(
+        label: "Reporting",
+        icon: "bi-graph-up",
+        items: [
+          NavItem.new(label: "Activity graph", path: reports_activity_graph_path, active_on: %w[reports/activity_graph]),
+          NavItem.new(label: "Annual survey", path: reports_annual_reports_path, active_on: %w[reports/annual_reports]),
+          NavItem.new(label: "History", path: events_path, active_on: %w[events]),
+          NavItem.new(label: "Distributions — summary", path: reports_distributions_summary_path, active_on: %w[reports/distributions_summary]),
+          NavItem.new(label: "Distributions — by county", path: distributions_by_county_report_path(filters: {date_range: date_range_params}), active_on: %w[distributions_by_county]),
+          NavItem.new(label: "Distributions — itemized", path: reports_itemized_distributions_path, active_on: %w[reports/itemized_distributions]),
+          NavItem.new(label: "Distributions — trends", path: historical_trends_distributions_path, active_on: %w[historical_trends/distributions]),
+          NavItem.new(label: "Donations — summary", path: reports_donations_summary_path, active_on: %w[reports/donations_summary]),
+          NavItem.new(label: "Donations — itemized", path: reports_itemized_donations_path, active_on: %w[reports/itemized_donations]),
+          NavItem.new(label: "Donations — manufacturer", path: reports_manufacturer_donations_summary_path, active_on: %w[reports/manufacturer_donations_summary]),
+          NavItem.new(label: "Donations — trends", path: historical_trends_donations_path, active_on: %w[historical_trends/donations]),
+          NavItem.new(label: "Product drives — summary", path: reports_product_drives_summary_path, active_on: %w[reports/product_drives_summary]),
+          NavItem.new(label: "Purchases — summary", path: reports_purchases_summary_path, active_on: %w[reports/purchases_summary]),
+          NavItem.new(label: "Purchases — trends", path: historical_trends_purchases_path, active_on: %w[historical_trends/purchases]),
+          NavItem.new(label: "Requests — itemized", path: reports_itemized_requests_path, active_on: %w[reports/itemized_requests])
+        ]
+      )
+    ].reject { |group| group.items.empty? }
+  end
+
+  # A group opens on load when it holds the current page, so a user never has to hunt for
+  # where they already are.
+  def essentials_nav_group_open?(group)
+    group.items.any? { |item| item.active?(params[:controller]) }
+  end
+
+  def essentials_nav_item_active?(item)
+    item.active?(params[:controller])
+  end
+end

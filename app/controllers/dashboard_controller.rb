@@ -2,6 +2,9 @@
 class DashboardController < ApplicationController
   respond_to :html, :js
 
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   def index
     @org_is_set_up = current_organization.bank_is_set_up
     @partners_awaiting_review = current_organization.partners.awaiting_review

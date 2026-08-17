@@ -1,0 +1,26 @@
+<%#
+  Flash strip. A message bar gets a PLAIN glyph, never an icon tile: a soft -50 tile on a
+  -50 surface is invisible, and a filled one shouts and adds height. Tint, hairline border
+  and a leading glyph carry the semantics.
+
+  role="status" for informational tones, role="alert" for warning/danger, so a screen
+  reader interrupts only when something actually went wrong.
+%>
+<%= turbo_frame_tag "flash" do %>
+  <% if flash.any? %>
+    <div class="px-4 pt-6 sm:px-6 lg:px-8">
+      <div class="space-y-3">
+        <% flash.each do |key, message| %>
+          <% next if message.blank? %>
+          <% tone = essentials_flash_tone(key) %>
+          <% style = essentials_flash_style(tone) %>
+          <div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %>"
+               role="<%= [:warning, :danger].include?(tone) ? "alert" : "status" %>">
+            <i class="<%= style[:icon] %> mt-0.5 shrink-0" aria-hidden="true"></i>
+            <div class="min-w-0 flex-1 whitespace-pre-line"><%= sanitize(message.to_s, tags: %w[ul ol li strong em a], attributes: %w[href]) %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -4,7 +4,7 @@ Date: Oct 2022
 
 ## Status
 
-Accepted
+Superseded by [11. Adopt the Ruby for Good design system (Tailwind v4)](0011-adopt-the-ruby-for-good-design-system.md)
 
 ## Context
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <%= render "layouts/essentials_head" %>
+</head>
+<body data-turbo="<%= @turbo %>"
+      id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/, '_') %>"
+      class="<%= params.fetch(:action, '') %> min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div data-controller="shell turbo">
+    <%# Scrim sits below the drawer (z-40) but above the top bar (z-25) so an open
+        drawer dims the header too. %>
+    <div class="fixed inset-0 z-30 hidden bg-slate-900/40 lg:hidden"
+         data-shell-target="scrim"
+         data-action="click->shell#closeDrawer"
+         aria-hidden="true"></div>
+
+    <div class="flex min-h-screen">
+      <%= render "layouts/essentials_sidebar" %>
+
+      <div class="flex min-w-0 flex-1 flex-col">
+        <%= render "layouts/essentials_topbar" %>
+
+        <main id="main-content" tabindex="-1" class="flex-1">
+          <%= render "shared/essentials/flash" %>
+          <%= yield %>
+        </main>
+
+        <footer class="border-t border-slate-200 px-4 py-5 text-xs text-slate-500 sm:px-6 lg:px-8">
+          Built by <%= link_to "Ruby for Good", "https://rubyforgood.org", class: "font-medium text-brand-700 hover:text-brand-800" %>.
+          <% if ENV["GIT_SHA"].present? %>
+            <span class="ml-2 text-slate-400">Version <%= ENV["GIT_SHA"] %></span>
+          <% end %>
+        </footer>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

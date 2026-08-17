@@ -34,7 +34,7 @@ RSpec.describe "Asset resolution", type: :request do
     referenced = css.scan(%r{url\("?(/vendor/[^")]+)"?\)}).flatten.uniq
 
     expect(referenced).not_to be_empty
-    missing = referenced.reject { |path| Rails.root.join("public", path.delete_prefix("/")).exist? }
+    missing = referenced.reject { |path| Rails.public_path.join(path.delete_prefix("/")).exist? }
     expect(missing).to be_empty, "font files referenced but not vendored: #{missing.inspect}"
   end
 end

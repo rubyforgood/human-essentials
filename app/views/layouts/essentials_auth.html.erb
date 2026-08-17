@@ -1,0 +1,32 @@
+<%#
+  Split auth shell: brand panel on the left at `lg`, form on the right.
+  No skip link -- there is no repeated navigation block ahead of the content to bypass.
+%>
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <%= render "layouts/essentials_head" %>
+</head>
+<body class="min-h-screen bg-white font-sans text-slate-900 antialiased">
+  <div class="flex min-h-screen">
+    <div class="hidden w-1/2 flex-col justify-between bg-brand-700 p-12 text-white lg:flex">
+      <img src="/img/essentials.svg" alt="" aria-hidden="true" class="h-10 w-auto">
+      <div>
+        <p class="text-3xl font-bold tracking-tight">Human Essentials</p>
+        <p class="mt-3 max-w-md text-base text-brand-100">
+          Inventory, distributions and partner management for diaper banks and essentials banks.
+        </p>
+      </div>
+      <p class="text-sm text-brand-200">Built by Ruby for Good.</p>
+    </div>
+
+    <main id="main-content" class="flex w-full flex-col justify-center px-6 py-12 lg:w-1/2 lg:px-16">
+      <div class="mx-auto w-full max-w-sm">
+        <img src="/img/essentials.svg" alt="Human Essentials" class="mb-8 h-10 w-auto lg:hidden">
+        <%= render "shared/essentials/flash" %>
+        <%= yield %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

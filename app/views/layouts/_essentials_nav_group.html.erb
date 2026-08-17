@@ -1,0 +1,28 @@
+<%#
+  A collapsible sidebar section. `group` is an EssentialsNavHelper::NavGroup.
+
+  Human Essentials has ~34 nav destinations against CASA's ~11, so the groups collapse
+  rather than sitting permanently open (see docs/design-decisions.md). A group opens on
+  load when it contains the current page, and with JS off every group renders open.
+%>
+<% open = essentials_nav_group_open?(group) %>
+<% panel_id = "nav-group-#{group.label.parameterize}" %>
+<div class="mt-4">
+  <button type="button"
+          class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          aria-expanded="<%= open %>"
+          aria-controls="<%= panel_id %>"
+          data-action="click->shell#toggleGroup">
+    <i class="<%= group.icon %> text-sm" aria-hidden="true"></i>
+    <span class="flex-1 text-left"><%= group.label %></span>
+    <i class="bi-chevron-down text-xs transition-transform <%= "rotate-180" if open %>"
+       data-shell-chevron
+       aria-hidden="true"></i>
+  </button>
+
+  <ul id="<%= panel_id %>" class="mt-1 space-y-0.5 <%= "hidden" unless open %>">
+    <% group.items.each do |item| %>
+      <%= render "layouts/essentials_nav_link", item: item %>
+    <% end %>
+  </ul>
+</div>

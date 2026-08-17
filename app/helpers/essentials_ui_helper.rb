@@ -1,0 +1,154 @@
+# Component helpers for the Ruby for Good design system (see design.md).
+#
+# These are the Tailwind counterparts of UiHelper. UiHelper stays untouched and keeps
+# serving the un-migrated Bootstrap pages; nothing here is used on a Bootstrap page and
+# nothing there is used on a Tailwind page. When the last Bootstrap page is migrated,
+# UiHelper is deleted and these lose the `essentials_` prefix.
+module EssentialsUiHelper
+  # --- Buttons --------------------------------------------------------------
+  #
+  # One treatment per role. The variant carries the meaning, the size carries the
+  # context (`sm` for a row action, `md` for a page or section action).
+
+  BUTTON_BASE = "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium " \
+                "transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 " \
+                "disabled:cursor-not-allowed disabled:opacity-60"
+
+  BUTTON_VARIANTS = {
+    primary: "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600",
+    secondary: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:outline-brand-600",
+    danger: "bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600",
+    ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600"
+  }.freeze
+
+  BUTTON_SIZES = {
+    sm: "px-2.5 py-1.5 text-xs",
+    md: "px-3.5 py-2 text-sm"
+  }.freeze
+
+  def essentials_button_classes(variant: :primary, size: :md, extra: nil)
+    [
+      BUTTON_BASE,
+      BUTTON_VARIANTS.fetch(variant.to_sym),
+      BUTTON_SIZES.fetch(size.to_sym),
+      extra
+    ].compact.join(" ")
+  end
+
+  # A link styled as a button. Use for navigation (GET).
+  def essentials_link_button(label, path, variant: :primary, size: :md, icon: nil, **html_attrs)
+    classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
+    link_to path, class: classes, **html_attrs do
+      safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+    end
+  end
+
+  # A real button that submits or mutates. `method:` routes it through button_to so the
+  # verb, CSRF token and disable_with guard are all handled.
+  def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil, confirm: nil, **html_attrs)
+    classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
+    data = {disable_with: "Please wait..."}.merge(html_attrs.delete(:data) || {})
+    data[:turbo_confirm] = confirm if confirm
+
+    button_to path, method: method, class: classes, form_class: "inline-block",
+      data: data, **html_attrs do
+      safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+    end
+  end
+
+  # --- Status pills ---------------------------------------------------------
+  #
+  # Never colour alone: every tone pairs its colour with a word, and callers may add an
+  # icon. Text tones are the -700 step because -600 fails 4.5:1 for small text.
+
+  PILL_TONES = {
+    neutral: "bg-slate-100 text-slate-700",
+    info: "bg-sky-50 text-sky-700",
+    success: "bg-emerald-50 text-emerald-700",
+    warning: "bg-amber-50 text-amber-700",
+    danger: "bg-rose-50 text-rose-700",
+    brand: "bg-brand-50 text-brand-700"
+  }.freeze
+
+  def essentials_status_pill(label, tone: :neutral, icon: nil)
+    tag.span(class: "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium #{PILL_TONES.fetch(tone.to_sym)}") do
+      safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+    end
+  end
+
+  # --- Icon tile ------------------------------------------------------------
+  #
+  # A soft coloured tile behind an icon means "a stat or a status". A person is an
+  # initials avatar instead. Keeping these disjoint is what makes either one readable.
+  def essentials_icon_tile(icon, tone: :brand)
+    tone_classes = {
+      brand: "bg-brand-50 text-brand-600",
+      info: "bg-sky-50 text-sky-600",
+      success: "bg-emerald-50 text-emerald-600",
+      warning: "bg-amber-50 text-amber-600",
+      danger: "bg-rose-50 text-rose-600",
+      neutral: "bg-slate-100 text-slate-600"
+    }.fetch(tone.to_sym)
+
+    tag.span(tag.i(nil, class: icon, aria: {hidden: true}),
+      class: "grid h-9 w-9 shrink-0 place-items-center rounded-xl #{tone_classes}")
+  end
+
+  # --- Identity -------------------------------------------------------------
+
+  # Up to two initials. Presentation only -- never mutate the stored name.
+  def essentials_avatar_initials(name)
+    return "?" if name.blank?
+
+    name.to_s.split(/\s+/).reject(&:blank?).first(2).map { |part| part[0] }.join.upcase
+  end
+
+  def essentials_role_label(role)
+    case role.name
+    when Role::ORG_ADMIN.to_s then "Organization admin"
+    when Role::ORG_USER.to_s then "Organization user"
+    when Role::SUPER_ADMIN.to_s then "Super admin"
+    when Role::PARTNER.to_s then "Partner"
+    else role.name.to_s.humanize
+    end
+  end
+
+  # --- Flash ----------------------------------------------------------------
+  #
+  # Mirrors ApplicationHelper#flash_class, which maps the same four keys for the
+  # Bootstrap shell. Both must stay in step until the Bootstrap shell is gone.
+  def essentials_flash_tone(key)
+    case key.to_s
+    when "success" then :success
+    when "error" then :danger
+    when "alert" then :warning
+    else :info
+    end
+  end
+
+  FLASH_STYLES = {
+    info: {bar: "border-sky-200 bg-sky-50 text-sky-900", icon: "bi-info-circle text-sky-600"},
+    success: {bar: "border-emerald-200 bg-emerald-50 text-emerald-900", icon: "bi-check-circle text-emerald-600"},
+    warning: {bar: "border-amber-200 bg-amber-50 text-amber-900", icon: "bi-exclamation-triangle text-amber-600"},
+    danger: {bar: "border-rose-200 bg-rose-50 text-rose-900", icon: "bi-x-circle text-rose-600"}
+  }.freeze
+
+  def essentials_flash_style(tone)
+    FLASH_STYLES.fetch(tone.to_sym)
+  end
+
+  # --- Top bar help link ----------------------------------------------------
+
+  def help_link_path
+    if current_user&.has_cached_role?(Role::ORG_ADMIN, current_organization) ||
+        current_user&.has_cached_role?(Role::ORG_USER, current_organization)
+      "https://rubyforgood.github.io/human-essentials/user_guide/bank/"
+    else
+      help_path
+    end
+  end
+
+  def help_link_label
+    (help_link_path == help_path) ? "Need help?" : "User guide"
+  end
+end

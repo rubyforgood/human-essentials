@@ -1,0 +1,14 @@
+<%#
+  One sidebar link. `item` is an EssentialsNavHelper::NavItem.
+  Active state is colour AND aria-current, never colour alone.
+%>
+<% active = essentials_nav_item_active?(item) %>
+<li>
+  <%= link_to item.label, item.path,
+        "aria-current": (active ? "page" : nil),
+        class: [
+          "block rounded-lg px-3 py-2 text-sm transition-colors",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
+          (active ? "bg-brand-50 font-semibold text-brand-700" : "font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900")
+        ] %>
+</li>

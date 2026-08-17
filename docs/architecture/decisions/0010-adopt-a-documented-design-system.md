@@ -4,7 +4,13 @@ Date: 2026-08-17
 
 ## Status
 
-Accepted
+Accepted, and amended by [11. Adopt the Ruby for Good design system (Tailwind v4)](0011-adopt-the-ruby-for-good-design-system.md)
+
+The decision below — that `design.md` is normative, is kept current in the same pull request as
+the change it describes, and carries its own backlog — still stands. What changed is the system
+`design.md` specifies: ADR 0011 supersedes ADR 0009 and moves the target from Bootstrap +
+AdminLTE to the Ruby for Good Tailwind system, so the "no second CSS framework" clause in point 2
+no longer applies as written. See ADR 0011.
 
 Amplifies [9. Sticking with AdminLTE for design needs.](0009-stick-with-adminlte-for-app-design.md)
 

@@ -1,0 +1,29 @@
+<%#
+  Empty state. Three flavours, and every screen must pick one deliberately:
+
+    kind: :cold_start  -- nothing exists yet. Explain and offer the create action.
+    kind: :no_results  -- a filter matched nothing. Say so and offer to clear it.
+    kind: :all_clear   -- there is genuinely nothing to do. Reassure.
+
+  Never render bare empty table chrome.
+%>
+<%
+  kind ||= :cold_start
+  action ||= nil
+  icon ||= case kind
+           when :no_results then "bi-search"
+           when :all_clear then "bi-check2-circle"
+           else "bi-inbox"
+           end
+  tone = (kind == :all_clear) ? :success : :neutral
+%>
+<div class="flex flex-col items-center justify-center px-6 py-12 text-center">
+  <%= essentials_icon_tile(icon, tone: tone) %>
+  <p class="mt-3 text-sm font-semibold text-slate-900"><%= title %></p>
+  <% if defined?(body) && body.present? %>
+    <p class="mt-1 max-w-prose text-sm text-slate-600"><%= body %></p>
+  <% end %>
+  <% if action %>
+    <div class="mt-4"><%= action %></div>
+  <% end %>
+</div>
