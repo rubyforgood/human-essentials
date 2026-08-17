@@ -1,114 +1,75 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
-        <h1>
-          Storage Locations
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Storage Locations</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Storage Location Filters</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(storage_locations_path, method: :get) do |f| %>
-              <div class="row">
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Item", scope: :containing, collection: @items, selected: @selected_item_category) %>
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_checkbox(label: "include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
-                </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Storage Locations"}) if @storage_locations.empty? %>
-                  <%= download_button_to(storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Storage Locations", size: "md"}) if @storage_locations.any? %>
-                  <%= new_button_to new_storage_location_path, {text: "New Storage Location"} %>
-                  </span>
-              </div>
-            <% end # form %>
-          </div>
-        </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+  <%= render "shared/essentials/page_header",
+        title: "Storage locations",
+        subtitle: "Where #{current_organization.name} physically keeps inventory.",
+        actions: capture {
+          if @storage_locations.any?
+            concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          else
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open"}) do
+              concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
+              concat " Import storage locations"
+            end)
+          end
+          concat essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
 
-        <!-- /.card -->
-      </div>
+  <%= render "shared/essentials/filter_bar", url: storage_locations_path do %>
+    <div class="min-w-[16rem]">
+      <%= filter_select(label: "Containing item", scope: :containing, collection: @items, selected: @selected_item_category) %>
     </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th class="text-right">Square Footage</th>
-                <th>Warehouse Type</th>
-                <th class="text-right">Total Inventory</th>
-                <th class="text-right">Fair Market Value</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
-              <tr>
-                <td colspan="4"><strong>Total</strong></td>
-                <td class="text-right">
-                  <%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %>
-                </td>
-                <td class="text-right"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
-                <td></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class="pb-2">
+      <%= filter_checkbox(label: "Include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
     </div>
-  </div>
-  <%= render(
-          layout: "shared/csv_import_modal",
-          locals: {
-            import_type: 'Storage Locations',
-            csv_template_url: "/storage_locations_template.csv",
-            csv_import_url: import_csv_storage_locations_path
-          }
-      ) do %>
-    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter your storage location names and addresses in the appropriate columns.</li>
-    <li>Save the file as a csv file.</li>
   <% end %>
-</section><!-- /.content -->
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if @storage_locations.empty? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No storage locations match those filters" : "No storage locations yet",
+            body: filter_params.present? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
+            action: filter_params.present? ? nil : essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Storage locations with their current inventory totals</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Address</th>
+              <th scope="col" class="numeric">Square footage</th>
+              <th scope="col">Warehouse type</th>
+              <th scope="col" class="quantity">Total inventory</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4">Total</td>
+              <td class="quantity"><%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %></td>
+              <td class="numeric"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render layout: "shared/essentials/csv_import_modal", locals: {
+        import_type: "Storage locations",
+        csv_template_url: "/storage_locations_template.csv",
+        csv_import_url: import_csv_storage_locations_path
+      } do %>
+    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your storage location names and addresses in the matching columns.</li>
+    <li>Save the file as a CSV.</li>
+  <% end %>
+</div>

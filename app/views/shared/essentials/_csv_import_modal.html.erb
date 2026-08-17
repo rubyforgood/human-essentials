@@ -1,0 +1,36 @@
+<%#
+  The shared CSV import dialog. Locals: import_type, csv_template_url, csv_import_url.
+  Yields the per-type instructions as <li> items.
+%>
+<%= render "shared/essentials/modal", id: "csv-import-modal", size: :lg,
+      title: "Import #{import_type.downcase}",
+      subtitle: "Download the template, fill it in, then upload it." do %>
+  <ol class="space-y-5">
+    <li class="flex gap-3">
+      <%= essentials_icon_tile("bi-download", tone: :brand) %>
+      <div class="min-w-0 flex-1">
+        <h3 class="text-sm font-semibold text-slate-900">1. Download an example CSV file</h3>
+        <ul class="mt-2 space-y-1 text-sm text-slate-600">
+          <%= yield %>
+        </ul>
+        <%= essentials_link_button "Download example CSV", csv_template_url,
+              variant: :secondary, size: :sm, icon: "bi-download", class: "mt-3" %>
+      </div>
+    </li>
+
+    <li class="flex gap-3">
+      <%= essentials_icon_tile("bi-upload", tone: :brand) %>
+      <div class="min-w-0 flex-1">
+        <h3 class="text-sm font-semibold text-slate-900">2. Upload your CSV file</h3>
+        <%= form_with(url: csv_import_url, class: "mt-3 space-y-3") do |f| %>
+          <%= f.label :file, "Choose your saved CSV file", class: "block text-sm font-medium text-slate-700" %>
+          <%= f.file_field :file, accept: "text/csv",
+                class: "block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
+          <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>" data-disable-with="Importing...">
+            <i class="bi-upload" aria-hidden="true"></i>Import CSV
+          </button>
+        <% end %>
+      </div>
+    </li>
+  </ol>
+<% end %>

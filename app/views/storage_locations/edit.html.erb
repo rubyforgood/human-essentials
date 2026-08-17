@@ -1,25 +1,8 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Edit - Storage Locations - #{@storage_location.name} - Inventory - #{current_organization.name}" %>
-        <h1>
-          Updating Storage Location
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Storage Locations", storage_locations_path %></li>
-          <li class="breadcrumb-item"><a href="#">Editing <%= @storage_location.name %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Edit #{@storage_location.name} - Storage Locations - Inventory - #{current_organization.name}" %>
 
-<%= render partial: "form", object: @storage_location %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit #{@storage_location.name}",
+        back: {path: storage_locations_path, label: "Back to storage locations"} %>
+  <%= render partial: "form", object: @storage_location %>
+</div>

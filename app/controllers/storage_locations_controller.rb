@@ -1,5 +1,8 @@
 # Provides Full CRUD+ for Storage Locations, which are digital representations of inventory holdings
 class StorageLocationsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   include Importable
 
   Struct.new('OmittedInventoryItem', :item) do

@@ -45,9 +45,11 @@ RSpec.describe "StorageLocations", type: :request do
           get storage_locations_path(format: response_format)
           page = Nokogiri::HTML(response.body)
 
-          total_row = page.at("table tbody tr:last-child")
-          total_inventory = total_row.css("td.text-right")[0].text.strip
-          total_value = total_row.css("td.text-right")[1].text.strip
+          # The totals live in <tfoot>, and the columns are identified by their semantic
+          # classes (.quantity / .numeric) rather than by a presentational alignment class.
+          total_row = page.at("table tfoot tr")
+          total_inventory = total_row.at_css("td.quantity").text.strip
+          total_value = total_row.at_css("td.numeric").text.strip
 
           expect(total_inventory).to eq("6")
           expect(total_value).to eq("$7.00")
@@ -74,7 +76,9 @@ RSpec.describe "StorageLocations", type: :request do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
             deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
-            expect(deactivate_link.attr("class")).not_to match(/disabled/)
+            # Assert the attribute, not the class string: the design system's button classes
+            # include Tailwind `disabled:` variants, so /disabled/ matches either state.
+            expect(deactivate_link).not_to have_attribute("disabled")
           end
         end
 
@@ -88,7 +92,7 @@ RSpec.describe "StorageLocations", type: :request do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
             deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
-            expect(deactivate_link.attr("class")).to match(/disabled/)
+            expect(deactivate_link).to have_attribute("disabled")
           end
         end
       end

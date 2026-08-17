@@ -1,0 +1,38 @@
+<%#
+  Modal built on the native <dialog>. Wrap the trigger and the dialog in one element that
+  carries data-controller="dialog".
+
+  Locals: id, title, subtitle (optional), footer (optional), size (:md or :lg)
+%>
+<%
+  subtitle ||= nil
+  footer ||= nil
+  size ||= :md
+  width = (size.to_sym == :lg) ? "max-w-3xl" : "max-w-lg"
+%>
+<dialog id="<%= id %>"
+        data-dialog-target="dialog"
+        data-action="click->dialog#closeOnBackdrop close->dialog#restoreFocus"
+        aria-labelledby="<%= id %>-title"
+        class="w-full <%= width %> rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40">
+  <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+    <div class="min-w-0">
+      <h2 id="<%= id %>-title" class="text-base font-semibold text-slate-900"><%= title %></h2>
+      <% if subtitle %>
+        <p class="mt-0.5 text-sm text-slate-600"><%= subtitle %></p>
+      <% end %>
+    </div>
+    <button type="button"
+            class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-label="Close dialog"
+            data-action="click->dialog#close">
+      <i class="bi-x-lg text-sm" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="px-5 py-4"><%= yield %></div>
+
+  <% if footer %>
+    <div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 px-5 py-3"><%= footer %></div>
+  <% end %>
+</dialog>

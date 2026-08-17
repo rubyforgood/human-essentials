@@ -1,0 +1,23 @@
+<%#
+  Tab strip. Pass `tabs:` as an array of {id:, label:} and render each panel with
+  data-tabs-target="panel" in the same order.
+
+    render "shared/essentials/tabs", tabs: [{id: "a", label: "One"}, {id: "b", label: "Two"}]
+%>
+<div class="border-b border-slate-200">
+  <div class="-mb-px flex flex-wrap gap-1" role="tablist">
+    <% tabs.each_with_index do |tab, index| %>
+      <button type="button"
+              role="tab"
+              id="tab-<%= tab[:id] %>"
+              aria-controls="panel-<%= tab[:id] %>"
+              aria-selected="<%= index.zero? %>"
+              tabindex="<%= index.zero? ? 0 : -1 %>"
+              data-tabs-target="tab"
+              data-action="click->tabs#activate keydown->tabs#navigate"
+              class="border-b-2 px-4 py-2.5 text-sm font-medium transition-colors hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= index.zero? ? "border-brand-600 text-brand-700" : "border-transparent text-slate-600" %>">
+        <%= tab[:label] %>
+      </button>
+    <% end %>
+  </div>
+</div>

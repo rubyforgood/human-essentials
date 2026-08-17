@@ -1,18 +1,39 @@
+<% quantity = @inventory.quantity_for(storage_location: storage_location.id) %>
 <tr>
-  <td><%= storage_location.name %></td>
-  <td><%= storage_location.address %></td>
-  <td class="text-right"><%= storage_location.square_footage %></td>
-  <td><%= storage_location.warehouse_type %></td>
-  <td class="text-right"><%= @inventory.quantity_for(storage_location: storage_location.id) %></td>
-  <td class="text-right"><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
-  <td class="text-right">
-    <%= view_button_to storage_location %>
-    <%= edit_button_to edit_storage_location_path(storage_location) %>
+  <td class="font-medium text-slate-900">
+    <%= link_to storage_location.name, storage_location, class: "text-brand-700 hover:text-brand-800" %>
     <% if storage_location.discarded? %>
-      <%= reactivate_button_to storage_location_reactivate_path(storage_location), { confirm: confirm_reactivate_msg(storage_location.name) } %>
-    <% else %>
-      <%= deactivate_button_to storage_location_deactivate_path(storage_location),
-        { confirm: confirm_deactivate_msg(storage_location.name), enabled: @inventory.quantity_for(storage_location: storage_location.id).zero? } %>
+      <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") %>
     <% end %>
+  </td>
+  <td><%= storage_location.address %></td>
+  <td class="numeric"><%= storage_location.square_footage %></td>
+  <td><%= storage_location.warehouse_type %></td>
+  <td class="quantity"><%= quantity %></td>
+  <td class="numeric"><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
+  <td class="text-right">
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "View", storage_location, variant: :ghost, size: :sm, icon: "bi-eye" %>
+      <%= essentials_link_button "Edit", edit_storage_location_path(storage_location), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <% if storage_location.discarded? %>
+        <%= essentials_action_button "Reactivate", storage_location_reactivate_path(storage_location), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
+              confirm: confirm_reactivate_msg(storage_location.name) %>
+      <% elsif quantity.zero? %>
+        <%= essentials_action_button "Deactivate", storage_location_deactivate_path(storage_location), method: :put,
+              variant: :ghost, size: :sm, icon: "bi-slash-circle",
+              confirm: confirm_deactivate_msg(storage_location.name) %>
+      <% else %>
+        <%# A location that still holds stock cannot be deactivated. This stays a real
+            <button disabled> inside its form rather than becoming a styled <span>: the
+            disabled state is then exposed to assistive tech, and the reason is given as
+            sr-only text so it is not carried by a hover-only title. %>
+        <%= button_to storage_location_deactivate_path(storage_location), method: :put,
+              disabled: true, form_class: "inline-block",
+              class: essentials_button_classes(variant: :ghost, size: :sm) do %>
+          <i class="bi-slash-circle" aria-hidden="true"></i>Deactivate<span class="sr-only">&nbsp;— unavailable while this location still holds inventory</span>
+        <% end %>
+      <% end %>
+    </div>
   </td>
 </tr>
