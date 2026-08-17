@@ -35,12 +35,14 @@ RSpec.describe "Dashboard", type: :request do
         end
       end
 
-      it "displays User Guide link" do
+      it "displays User guide link" do
         get dashboard_path
 
-        expect(response.body).to include('User Guide')
+        # Sentence case per the design system (ADR 0011); this read "User Guide" on the
+        # AdminLTE shell.
+        expect(response.body).to include('User guide')
         expect(response.body).to include('https://rubyforgood.github.io/human-essentials/user_guide/bank/')
-        expect(response.body).not_to include('Need Help?')
+        expect(response.body).not_to include('Need help?')
       end
     end
 

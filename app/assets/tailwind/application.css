@@ -73,4 +73,87 @@
     outline: 3px solid var(--color-slate-900);
     outline-offset: 0;
   }
+
+  /*
+   * Data tables.
+   *
+   * Deliberately component classes rather than repeated utility strings. CASA writes its
+   * tables with utilities because CASA has a few dozen pages; Human Essentials has ~90
+   * tables across 393 views, and a 12-class string copy-pasted 90 times drifts on the
+   * first hurried PR. See docs/design-decisions.md.
+   *
+   * Column semantics reuse the class names the app already uses -- .numeric, .quantity
+   * and .date meant right/right/centre under Bootstrap and mean the same here -- so a
+   * migrated table keeps its meaning instead of re-deciding alignment cell by cell.
+   */
+  .data-table {
+    width: 100%;
+    text-align: left;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+
+  .data-table caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .data-table thead th {
+    border-bottom: 1px solid var(--color-slate-200);
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: none;
+    color: var(--color-slate-500);
+    white-space: nowrap;
+  }
+
+  .data-table tbody tr {
+    border-bottom: 1px solid var(--color-slate-100);
+  }
+
+  .data-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .data-table tbody tr:hover {
+    background-color: var(--color-slate-50);
+  }
+
+  .data-table tbody td {
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    color: var(--color-slate-700);
+    vertical-align: top;
+  }
+
+  .data-table tfoot td,
+  .data-table tfoot th {
+    border-top: 1px solid var(--color-slate-200);
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    font-weight: 600;
+    color: var(--color-slate-900);
+  }
+
+  .data-table .numeric,
+  .data-table .quantity,
+  .data-table .percent {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-table .date {
+    white-space: nowrap;
+  }
+
+  /* Horizontal scroll container for a table inside a card. */
+  .table-scroll {
+    overflow-x: auto;
+  }
 }

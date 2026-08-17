@@ -1,41 +1,15 @@
-<div class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><%= current_organization.name %> - Dashboard</h1>
-      </div><!-- /.col -->
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-          <li class="breadcrumb-item active"><%= current_organization.name %></li>
-        </ol>
-      </div><!-- /.col -->
-    </div><!-- /.row -->
-  </div><!-- /.container-fluid -->
-</div>
+<% content_for :title, "Dashboard - #{current_organization.name}" %>
 
-<div class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <%= render partial: "getting_started_prompt", locals: {org_is_set_up: @org_is_set_up} %>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Dashboard",
+        subtitle: "What needs your attention at #{current_organization.name}." %>
 
-<div class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-12">
-
-        <%= render partial: "announcements" %>
-        <%= render partial: "outstanding_requests" %>
-        <%= render partial: "partner_approvals" %>
-        <%= render partial: "low_inventory_report" %>
-
-      </div>
-    </div>
+  <div class="space-y-6">
+    <%= render "getting_started_prompt", org_is_set_up: @org_is_set_up %>
+    <%= render "announcements" %>
+    <%= render "outstanding_requests" %>
+    <%= render "partner_approvals" %>
+    <%= render "low_inventory_report" %>
   </div>
 </div>

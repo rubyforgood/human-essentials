@@ -1,63 +1,53 @@
-
-
+<%# Cold-start guide. Disappears once the organization has storage locations, items and a
+    partner, or once an admin dismisses it. %>
 <% unless org_is_set_up %>
+  <%= render "shared/essentials/card", card_class: "border-brand-200 bg-brand-50/40" do %>
+    <div class="flex gap-4">
+      <%= essentials_icon_tile("bi-rocket-takeoff", tone: :brand) %>
+      <div class="min-w-0 flex-1">
+        <h2 class="text-base font-semibold text-slate-900">Getting started</h2>
+        <p class="mt-1 text-sm text-slate-600">A few steps to set your bank up.</p>
 
-  <%= render(
-    "shared/card",
-    id: "getting-started-guide",
-    header: "Getting Started",
-    type: :plain,
-  ) do %>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box box-primary" id="getting-started-guide">
-          <div class="box-header with-border">
-            <h5>
-              Here are a few steps to help you in getting started
-            </h5>
-          </div>
+        <ol class="mt-4 space-y-3 text-sm text-slate-700">
+          <li class="flex gap-2">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">1</span>
+            <span><%= link_to "Set up storage locations", storage_locations_path, class: "font-medium text-brand-700 hover:text-brand-800" %></span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">2</span>
+            <span>
+              Set up your inventory —
+              <%= link_to "add any custom items", items_path, class: "font-medium text-brand-700 hover:text-brand-800" %>, then
+              <%= link_to "run an audit to set current levels", audits_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              (<%= link_to "user guide", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_inventory.html", class: "underline hover:text-slate-900" %>)
+            </span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">3</span>
+            <span>
+              <%= link_to "Customize your organization", edit_organization_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              (<%= link_to "user guide", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_customization.html", class: "underline hover:text-slate-900" %>)
+            </span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">4</span>
+            <span><%= link_to "Add other users at your bank", new_user_path, class: "font-medium text-brand-700 hover:text-brand-800" %></span>
+          </li>
+          <li class="flex gap-2">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">5</span>
+            <span>
+              <%= link_to "Import partners", partners_path, class: "font-medium text-brand-700 hover:text-brand-800" %> or
+              <%= link_to "add a single partner", new_partner_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+            </span>
+          </li>
+        </ol>
 
-          <hr>
-
-          <div>
-            <ul>
-                <li>
-                    <%= link_to "Set up storage locations", storage_locations_path, target: :_blank %>
-                </li>
-                <li>
-                    Set up your inventory
-                    <ul>
-                        <li>
-                            <%= link_to "Add any custom items", items_path, target: :_blank %>
-                        </li>
-                        <li>
-                            <%= link_to "Do an audit to set up your current inventory levels", audits_path, target: :_blank %>
-                            -
-                            <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_inventory.html", target: :_blank %>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <%= link_to "Customize your organization", edit_organization_path, target: :_blank %>
-                    -
-                    <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_customization.html", target: :_blank %>
-                </li>
-                <li>
-                    <%= link_to "Add other users at your bank", new_user_path, target: :_blank %>
-                </li>
-                <li>
-                    <%= link_to "Import Partners", partners_path, target: :_blank %>
-                    or
-                    <%= link_to "Add a single partner", new_partner_path, target: :_blank %>
-                </li>
-            </ul>
-          </div>
+        <div class="mt-5">
+          <%= essentials_action_button "Dismiss this guide", "/manage", method: :patch,
+                variant: :secondary, size: :md, icon: "bi-check2",
+                params: {organization: {bank_is_set_up: true}} %>
         </div>
       </div>
-
-      <p>When you're done, click this box to hide this section</p>
-      <%= button_to "Dismiss", "/manage", method: :patch, params: {organization: { bank_is_set_up: true }}, class: "btn btn-primary" %>
     </div>
-
   <% end %>
 <% end %>

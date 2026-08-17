@@ -1,32 +1,21 @@
 <% if @broadcast_announcements.any? %>
-  <div class="shared/card" id="distributions">
-    <div class="card-header border-0 bg-gradient-warning">
-      <h3 class="card-title">Announcements
-        <small>from Human Essentials</small></h3>
-      <div class="card-tools">
-        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-          <i class="fas fa-minus"></i>
-        </button>
-      </div>
-    </div>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        <% @broadcast_announcements.each do |announcement| %>
-          <li class="list-group-item">
-            <strong><%= if announcement.created_at.strftime("%Y") == DateTime.now.strftime("%Y")
-                          announcement.created_at.strftime("%B %d")
-                        else
-                          announcement.created_at.strftime("%B %d %Y")
-                        end %></strong>
-            <br>
-            <%= announcement.message %>
-            <% unless announcement.link == '' %>
-              <br>
-              <a href="<%= announcement.link %>" class="btn btn-primary">more info</a>
+  <%= render "shared/essentials/card", title: "Announcements", subtitle: "From the Human Essentials team" do %>
+    <ul class="divide-y divide-slate-100">
+      <% @broadcast_announcements.each do |announcement| %>
+        <li class="flex gap-3 py-3 first:pt-0 last:pb-0">
+          <%= essentials_icon_tile("bi-megaphone", tone: :warning) %>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-medium text-slate-500">
+              <%= announcement.created_at.strftime(announcement.created_at.year == Date.current.year ? "%B %-d" : "%B %-d %Y") %>
+            </p>
+            <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
+            <% if announcement.link.present? %>
+              <%= link_to "More info", announcement.link,
+                    class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
             <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>

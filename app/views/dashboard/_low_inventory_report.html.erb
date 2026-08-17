@@ -1,37 +1,47 @@
-<%= render(
-  "shared/card",
-  id: "low_inventory",
-  gradient: "info",
-  title: "Bank-wide Low inventory"
-) do %>
-  <% if @low_inventory_report.count == 0 %>
-    <p>Inventory is at recommended levels (minimum and recommended levels can be set on each item)</p>
+<%= render "shared/essentials/card",
+      title: "Bank-wide low inventory",
+      subtitle: "Minimum and recommended levels are set per item.",
+      padded: @low_inventory_report.count.zero? do %>
+  <% if @low_inventory_report.count.zero? %>
+    <%= render "shared/essentials/empty_state",
+          kind: :all_clear,
+          title: "Inventory is at recommended levels",
+          body: "Nothing is below its minimum or recommended quantity." %>
   <% else %>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Item Name</th>
-          <th>Quantity</th>
-          <th>Minimum Quantity</th>
-          <th>Recommended Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @low_inventory_report.each do |inventory_item| %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption>Items below their recommended on-hand quantity</caption>
+        <thead>
           <tr>
-            <td><%= inventory_item.name %></td>
-            <td>
-              <% if inventory_item.total_quantity < inventory_item.on_hand_minimum_quantity %>
-                <strong class="text-red" title="Below minimum quantity"><%= inventory_item.total_quantity %></strong>
-              <% else %>
-                <%= inventory_item.total_quantity %>
-              <% end %>
-            </td>
-            <td><%= inventory_item.on_hand_minimum_quantity %></td>
-            <td><%= inventory_item.on_hand_recommended_quantity %></td>
+            <th scope="col">Item name</th>
+            <th scope="col" class="quantity">Quantity</th>
+            <th scope="col" class="quantity">Minimum</th>
+            <th scope="col" class="quantity">Recommended</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @low_inventory_report.each do |inventory_item| %>
+            <% below_minimum = inventory_item.total_quantity < inventory_item.on_hand_minimum_quantity %>
+            <tr>
+              <td class="font-medium text-slate-900"><%= inventory_item.name %></td>
+              <td class="quantity">
+                <% if below_minimum %>
+                  <%# Below minimum is never signalled by colour alone -- the pill carries an
+                      icon and the word, and the raw number stays readable beside it. %>
+                  <span class="inline-flex items-center gap-1.5">
+                    <span class="font-semibold text-rose-700"><%= inventory_item.total_quantity %></span>
+                    <%= essentials_status_pill("Below minimum", tone: :danger, icon: "bi-exclamation-triangle") %>
+                  </span>
+                <% else %>
+                  <%= inventory_item.total_quantity %>
+                <% end %>
+              </td>
+              <td class="quantity"><%= inventory_item.on_hand_minimum_quantity %></td>
+              <td class="quantity"><%= inventory_item.on_hand_recommended_quantity %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 <% end %>
