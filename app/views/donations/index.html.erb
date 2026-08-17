@@ -1,195 +1,95 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Donations - #{current_organization.name}" %>
-        <h1>
-          Donations
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Donations</a></li>
-        </ol>
-      </div>
+<% content_for :title, "Donations - #{current_organization.name}" %>
+<% info = @donation_info %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Donations",
+        subtitle: "Essentials coming in to #{current_organization.name}.",
+        actions: capture {
+          if info.donations.any?
+            concat essentials_link_button("Export", donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+          end
+          concat essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <%= render "shared/essentials/filter_bar", url: donations_path do %>
+    <% if info.storage_locations.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
+    <% end %>
+    <% if info.sources.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Source", scope: :by_source, options: info.sources, selected: info.selected_source) %></div>
+    <% end %>
+    <% if info.product_drives.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Product drive", scope: :by_product_drive, collection: info.product_drives, selected: info.selected_product_drive) %></div>
+    <% end %>
+    <% if info.product_drive_participants.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Product drive participant", scope: :by_product_drive_participant, collection: info.product_drive_participants, value: :business_name, selected: info.selected_product_drive_participant) %></div>
+    <% end %>
+    <% if info.manufacturers.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Manufacturer", scope: :from_manufacturer, collection: info.manufacturers, selected: info.selected_manufacturer) %></div>
+    <% end %>
+    <% if info.donation_sites.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Donation site", scope: :from_donation_site, collection: info.donation_sites, key: :id, value: :name, selected: info.selected_donation_site) %></div>
+    <% end %>
+    <% if info.items.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :by_item_id, collection: info.items, selected: info.selected_item) %></div>
+    <% end %>
+    <% if info.item_categories.present? %>
+      <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
+    <% end %>
+    <div class="min-w-[15rem]">
+      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
-  </div><!-- /.container-fluid -->
-</section>
+  <% end %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Donations Filters</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= form_tag(donations_path, method: :get) do |f| %>
-              <div class="row">
-                <% if @donation_info.storage_locations.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Storage Location",
-                                      scope: :at_storage_location,
-                                      collection: @donation_info.storage_locations,
-                                      selected: @donation_info.selected_storage_location) %>
-                  </div>
-                <% end %>
-                <% if @donation_info.sources.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <% id = "filter_#{SecureRandom.uuid}" %>
-                    <%= label_tag id, "Filter by Source" %>
-                    <%= select_tag "filters[by_source]",
-                    options_for_select(@donation_info.sources, @donation_info.selected_source),
-                    { include_blank: true, class: "form-control", id: id } %>
-                  </div>
-                <% end %>
-                <% if @donation_info.product_drives.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_product_drive,
-                                      collection: @donation_info.product_drives,
-                                      selected: @donation_info.selected_product_drive) %>
-
-                  </div>
-                <% end %>
-                <% if @donation_info.product_drive_participants.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_product_drive_participant,
-                                      collection: @donation_info.product_drive_participants,
-                                      value: :business_name,
-                                      selected: @donation_info.selected_product_drive_participant) %>
-                  </div>
-                <% end %>
-                <% if @donation_info.manufacturers.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by manufacturer",
-                                      scope: :from_manufacturer,
-                                      collection: @donation_info.manufacturers,
-                                      selected: @donation_info.selected_manufacturer) %>
-                  </div>
-                <% end %>
-                <% if @donation_info.donation_sites.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Donation Site",
-                                      scope: :from_donation_site,
-                                      collection: @donation_info.donation_sites,
-                                      key: :id,
-                                      value: :name,
-                                      selected: @donation_info.selected_donation_site) %>
-                  </div>
-                <% end %>
-                <% if @donation_info.items.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @donation_info.items, selected: @donation_info.selected_item) %>
-                  </div>
-                <% end %>
-                <% if @donation_info.item_categories.present? %>
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <% id = "filter_#{SecureRandom.uuid}" %>
-                    <%= label_tag id, "Filter by Category" %>
-                    <%= select_tag "filters[by_category]",
-                    options_for_select(@donation_info.item_categories, @donation_info.selected_item_category),
-                    { include_blank: true, class: "form-control", id: id } %>
-                  </div>
-                <% end %>
-                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range" %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                </div>
-              </div><!-- /.row -->
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-                <span class="float-right">
-                  <% if @donation_info.donations.any? %>
-                    <%= download_button_to(donations_path(format: :csv,
-                                                          filters: filter_params.merge(date_range: date_range_params)),
-                                           {text: "Export Donations", size: "md"}) %>
-                  <% end %>
-                  <%= new_button_to new_donation_path, {text: "New Donation"} %>
-                    </span>
-              </div>
-            <% end %>
-          </div>
-        </div>
+  <%= render "shared/essentials/card", padded: false,
+        footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_donations)) } do %>
+    <% if info.paginated_donations.blank? %>
+      <%= render "shared/essentials/empty_state",
+            kind: filter_params.present? ? :no_results : :cold_start,
+            title: filter_params.present? ? "No donations match those filters" : "No donations recorded yet",
+            body: filter_params.present? ? "Clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
+            action: filter_params.present? ? nil : essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Donations received, most recent first</caption>
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col" class="date">Date</th>
+              <th scope="col">Details</th>
+              <th scope="col">Storage location</th>
+              <th scope="col" class="quantity">Quantity of items</th>
+              <th scope="col" class="numeric">Money raised</th>
+              <th scope="col" class="numeric">In-kind value</th>
+              <th scope="col">Comments</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "donation_row", collection: info.paginated_donations %></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4">Total</td>
+              <td class="quantity">
+                <%= number_with_delimiter(info.paginated_donations_quantity) %>
+                <span class="block text-xs font-normal text-slate-500">this page</span>
+                <span id="donation_quantity" class="mt-1 block"><%= number_with_delimiter(info.donations_quantity) %></span>
+                <span class="block text-xs font-normal text-slate-500">all donations</span>
+              </td>
+              <td class="numeric"><%= dollar_value(info.total_money_raised) %></td>
+              <td class="numeric in-kind">
+                <%= dollar_value(info.paginated_in_kind_value) %>
+                <span class="block text-xs font-normal text-slate-500">this page</span>
+                <span class="mt-1 block"><%= dollar_value(info.total_value_all_donations) %></span>
+                <span class="block text-xs font-normal text-slate-500">all donations</span>
+              </td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-    </div>
-  </div><!-- /.container-fluid -->
-
-</section>
-
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Source</th>
-                  <th>Date</th>
-                  <th>Details</th>
-                  <th>Storage Location</th>
-                  <th class="text-right">Quantity of Items</th>
-                  <th class="text-right">Money Raised</th>
-                  <th class="text-right">In-kind Value</th>
-                  <th>Comments</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "donation_row", collection: @donation_info.paginated_donations %>
-              </tbody>
-              <tfoot>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="numeric">
-                  <%= @donation_info.paginated_donations_quantity %>
-                  <br>
-                  (This page)
-                  <br>
-                  <strong id="donation_quantity">
-                    <%= @donation_info.donations_quantity %>
-                    <br>
-                    (Total)
-                  </strong>
-                </td>
-                <td class="numeric"><strong><%= dollar_value(@donation_info.total_money_raised) %></strong></td>
-                <td class="numeric in-kind">
-                  <%= dollar_value(@donation_info.paginated_in_kind_value) %>
-                  <br>
-                   (This page)
-                  <br>
-                  <strong>
-                    <%= dollar_value(@donation_info.total_value_all_donations) %> (Total)
-                  </strong>
-                </td>
-              </tr>
-              </tfoot>
-            </table>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer clearfix">
-            <%= paginate @donation_info.paginated_donations %>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

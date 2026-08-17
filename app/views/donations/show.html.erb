@@ -1,115 +1,89 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Donations - #{@donation.source} - #{current_organization.name}" %>
-        <h1>
-          Donation
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Donations", donations_path %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_fs(:distribution_date) %></a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "Donation - #{current_organization.name}" %>
+<% inactive = @donation.has_inactive_item? %>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Date</th>
-                <th>Source</th>
-                <th>Donation Site</th>
-                <th>Storage Location</th>
-              </tr>
-              </thead>
-              <tbody>
-              <td><%= @donation.created_at.to_fs(:distribution_date) %></td>
-              <td><%= @donation.source %></td>
-              <td><%= @donation.donation_site_view %></td>
-              <td><%= @donation.storage_view %></td>              </tbody>
-            </table>
-          </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Donation",
+        subtitle: "#{@donation.source} — #{@donation.created_at.to_fs(:distribution_date)}",
+        back: {path: donations_path, label: "Back to donations"},
+        actions: capture {
+          concat essentials_link_button("Print", print_donation_path(@donation, format: :pdf), variant: :secondary, icon: "bi-printer")
+          concat essentials_link_button("Start a distribution", new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <div class="space-y-6">
+    <% if inactive %>
+      <%# The reason edit and delete are unavailable is stated once, up front, rather than
+          left to a disabled control the user has to work out for themselves. %>
+      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+        <div>
+          <p class="font-semibold">This donation cannot be corrected or deleted</p>
+          <p class="mt-1">
+            Donations can only be changed while all of their items are active. To delete this
+            donation or make a correction,
+            please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
+          </p>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>In Kind Value</th>
-              </thead>
-              <tbody>
-              <%= render partial: "donation_item_row", collection: @line_items %>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td><strong><%= @line_items.pluck(:quantity).sum %></strong></td>
-                <td><strong><%= dollar_value(@donation.value_per_itemizable) %></strong></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer">
-            <%= edit_button_to edit_donation_path(@donation), {
-              text: "Make a correction",
-              enabled: !@donation.has_inactive_item?,
-              size: "md" } %>
-            <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
-            <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= delete_button_to donation_path(@donation), {
-                size: "md",
-                enabled: !@donation.has_inactive_item?,
-                confirm: "Are you sure you want to permanently remove this donation?" } %>
-            <% end %>
-            <% if @donation.has_inactive_item? %>
-              <div class="low_priority_warning">
-                You can only delete or correct donations where all the items are active.
-                If you need to delete this donation or make a correction, please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
-              </div>
-            <% end %>
-            <%= print_button_to print_donation_path(@donation, format: :pdf), { size: "md" } %>
-          </div>
-          </div>
-      </div>
-    </div>
-  </div>
+    <% end %>
 
-  <div class="container-fluid">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title font-bold"><strong>Comment</strong></h2>
-      </div>
-      <div class="card-body p-2">
-        <div class="row">
-          <div class="col-xs-12 col-sm-12" id="donation-comment">
-            <% if @donation.comment %>
-              <p><%= simple_format(@donation.comment) %></p>
-            <% else %>
-              <p class='font-italic'> None provided </p>
-            <% end %>
+    <%= render "shared/essentials/card", title: "Details" do %>
+      <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <% {"Date" => @donation.created_at.to_fs(:distribution_date),
+            "Source" => @donation.source,
+            "Donation site" => @donation.donation_site_view,
+            "Storage location" => @donation.storage_view}.each do |label, value| %>
+          <div>
+            <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+            <dd class="mt-0.5 text-sm text-slate-900"><%= value.presence || "—" %></dd>
           </div>
-        </div>
+        <% end %>
+      </dl>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Items donated", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Items in this donation</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">In-kind value</th>
+            </tr>
+          </thead>
+          <tbody><%= render partial: "donation_item_row", collection: @line_items %></tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td class="quantity"><%= number_with_delimiter(@line_items.pluck(:quantity).sum) %></td>
+              <td class="numeric"><%= dollar_value(@donation.value_per_itemizable) %></td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Comment" do %>
+      <div id="donation-comment">
+        <% if @donation.comment.present? %>
+          <div class="text-sm text-slate-700"><%= simple_format(@donation.comment) %></div>
+        <% else %>
+          <p class="text-sm italic text-slate-500">None provided</p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <% unless inactive %>
+        <%= essentials_link_button "Make a correction", edit_donation_path(@donation), variant: :secondary, icon: "bi-pencil" %>
+        <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+          <%= essentials_action_button "Delete", donation_path(@donation), method: :delete,
+                variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                confirm: "Are you sure you want to permanently remove this donation?" %>
+        <% end %>
+      <% end %>
     </div>
   </div>
-</section>
+</div>

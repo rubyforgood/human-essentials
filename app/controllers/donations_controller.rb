@@ -1,5 +1,8 @@
 # Provides CRUD+ for Donations, which are digital representations of one of the ways Diaperbanks take in new inventory
 class DonationsController < ApplicationController
+  # Migrated to the Ruby for Good design system (ADR 0011).
+  layout "essentials_app"
+
   before_action :authorize_admin, only: [:destroy]
 
   def print

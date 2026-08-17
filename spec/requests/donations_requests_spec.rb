@@ -26,8 +26,9 @@ RSpec.describe "Donations", type: :request do
         include_examples "restricts access to organization users/admins"
 
         it "should have the columns source and details" do
-          expect(subject.body).to include("<th>Source</th>")
-          expect(subject.body).to include("<th>Details</th>")
+          # Read the header text rather than exact markup: design system <th>s carry scope="col".
+          headers = Nokogiri::HTML(subject.body).css("table thead th").map { |th| th.text.strip }
+          expect(headers).to include("Source", "Details")
         end
         it "shows a print button" do
           page = Nokogiri::HTML(subject.body)
@@ -41,8 +42,8 @@ RSpec.describe "Donations", type: :request do
 
           it "should display Product Drive and the name of the drive" do
             donation
-            expect(subject.body).to include("<td>Product Drive</td>")
-            expect(subject.body).to include("<td>Drive Name</td>")
+            cells = Nokogiri::HTML(subject.body).css("table tbody td").map { |td| td.text.strip }
+            expect(cells).to include("Product Drive", "Drive Name")
           end
         end
 
@@ -52,8 +53,8 @@ RSpec.describe "Donations", type: :request do
 
           it "should display Donation Site and the name of the site" do
             donation
-            expect(subject.body).to include("<td>Donation Site</td>")
-            expect(subject.body).to include("<td>Site Name</td>")
+            cells = Nokogiri::HTML(subject.body).css("table tbody td").map { |td| td.text.strip }
+            expect(cells).to include("Donation Site", "Site Name")
           end
         end
 
@@ -63,8 +64,8 @@ RSpec.describe "Donations", type: :request do
 
           it "should display Manufacturer and the manufacturer name" do
             donation
-            expect(subject.body).to include("<td>Manufacturer</td>")
-            expect(subject.body).to include("<td>Manufacturer Name</td>")
+            cells = Nokogiri::HTML(subject.body).css("table tbody td").map { |td| td.text.strip }
+            expect(cells).to include("Manufacturer", "Manufacturer Name")
           end
         end
 
@@ -75,9 +76,13 @@ RSpec.describe "Donations", type: :request do
           it "should display Misc Donation and a truncated comment" do
             donation
             short_comment = full_comment.truncate(25, separator: /\s/)
-            expect(subject.body).to include("<td>Misc. Donation</td>")
-            expect(subject.body).to include("<td>#{short_comment}</td>")
-            expect(subject.body).to_not include("<td>#{full_comment}</td>")
+            # Scope to the Details column: the Comments column legitimately shows more of the
+            # comment (it truncates at 140), so a whole-row search would find the full text.
+            row = Nokogiri::HTML(subject.body).css("table tbody tr").find { |tr| tr.text.include?("Misc. Donation") }
+            details = row.css("td")[2].text.strip
+            expect(row.css("td")[0].text.strip).to eq("Misc. Donation")
+            expect(details).to eq(short_comment)
+            expect(details).not_to eq(full_comment)
           end
         end
       end
@@ -237,11 +242,11 @@ RSpec.describe "Donations", type: :request do
         expect(pdf.text).to include("Print")
       end
 
-      it "shows an enabled edit button" do
+      it "shows an edit action" do
         get donation_path(id: donation.id)
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
-        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(edit).to be_present
         expect(response.body).not_to match(/please make the following items active:/)
       end
 
@@ -250,11 +255,14 @@ RSpec.describe "Donations", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit button" do
+        it "omits the edit action and says why" do
           get donation_path(id: donation.id)
           page = Nokogiri::HTML(response.body)
+          # An anchor cannot be disabled -- it stays focusable and clickable by keyboard and
+          # announces nothing -- so the design system omits the unavailable action and states
+          # the reason in a banner instead of shipping a decorative disabled link.
           edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
-          expect(edit.attr("class")).to match(/disabled/)
+          expect(edit).to be_nil
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
@@ -265,13 +273,13 @@ RSpec.describe "Donations", type: :request do
           item.update(active: false)
         end
 
-        it "shows a disabled edit and delete buttons" do
+        it "omits both the edit and delete actions and says why" do
           get donation_path(donation.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_donation_path(donation.id)}']")
-          delete = page.at_css("form[action='#{donation_path(donation.id)}'] .btn-danger")
-          expect(edit.attr("class")).to match(/disabled/)
-          expect(delete.attr("class")).to match(/disabled/)
+          delete = page.at_css("form[action='#{donation_path(donation.id)}'] button")
+          expect(edit).to be_nil
+          expect(delete).to be_nil
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
@@ -498,9 +506,13 @@ RSpec.describe "Donations", type: :request do
 
         expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
 
+        # The page identifies the donation by its ORIGINAL source while the form fields below
+        # hold the user's edited values. The design system replaced the breadcrumb with a back
+        # link and a subtitle, so this reads the heading block rather than breadcrumb markup.
         expect(response.body).to include("Edit - Donations - #{original_source}")
-        expect(response.body).to include("Editing Donation\n          <small>from #{original_source}")
-        expect(response.body).to include("<li class=\"breadcrumb-item\">\n            <a href=\"#\">Editing #{original_source}")
+        page = Nokogiri::HTML(response.body)
+        expect(page.at_css("h1").text.strip).to eq("Editing donation")
+        expect(page.at_css("h1 + p").text).to include(original_source)
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source}\">#{edited_source}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive.id}\">#{edited_source_drive_name}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")

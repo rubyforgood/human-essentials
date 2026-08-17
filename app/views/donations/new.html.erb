@@ -1,46 +1,18 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "New - Donations - #{current_organization.name}" %>
-        <h1>
-          Start a new donation
-          <small>for <%= current_organization.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><%= link_to "Donations", donations_path %></li>
-          <li class="breadcrumb-item"><a href="#">New Donation</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<% content_for :title, "New Donation - #{current_organization.name}" %>
 
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <!-- /.card-header -->
-          <!-- form start -->
-          <div class="card-body">
-            <%= render partial: "donation_form", object: @donation %>
-            <%= link_to "Add product drive", new_product_drive_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_product_drive", "style" => "display: none;"} %>
-            <%= link_to "Add product drive participant", new_product_drive_participant_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_participant", "style" => "display: none;"} %>
-            <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"} %>
-          </div><!-- /.box -->
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New donation",
+        subtitle: "Record essentials coming in to #{current_organization.name}.",
+        back: {path: donations_path, label: "Back to donations"} %>
+
+  <%= render partial: "donation_form", object: @donation %>
+
+  <%# Hidden triggers driven by the donations-modal Stimulus controller when "Add new…" is
+      chosen in a select. They are not user-facing links. %>
+  <%= link_to "Add product drive", new_product_drive_path, remote: true, "data-bs-target": "#modal-window", id: "new_product_drive", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add product drive participant", new_product_drive_participant_path, remote: true, "data-bs-target": "#modal-window", id: "new_participant", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+  <%= link_to "Add manufacturer", new_manufacturer_path, remote: true, "data-bs-target": "#modal-window", id: "new_manufacturer", class: "hidden", "aria-hidden": true, tabindex: -1 %>
+</div>
+
 <%= render partial: "barcode_items/barcode_modal" %>

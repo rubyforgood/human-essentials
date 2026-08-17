@@ -18,7 +18,7 @@
 
   <%= render "shared/essentials/filter_bar", url: vendors_path do %>
     <div class="pb-2">
-      <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
+      <%= essentials_filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
     </div>
   <% end %>
 

@@ -18,7 +18,7 @@
 
   <%= render "shared/essentials/filter_bar", url: donation_sites_path do %>
     <div class="pb-2">
-      <%= filter_checkbox(label: "Also include inactive donation sites", scope: "include_inactive_donation_sites", selected: @include_inactive_donation_sites) %>
+      <%= essentials_filter_checkbox(label: "Also include inactive donation sites", scope: "include_inactive_donation_sites", selected: @include_inactive_donation_sites) %>
     </div>
   <% end %>
 
