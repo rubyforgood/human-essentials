@@ -115,21 +115,32 @@ All passwords are `password!`. Key accounts: `superadmin@example.com`, `org_admi
 
 ## Documentation — keep these current
 
-Four documents describe how this app is built and why. **Update them as part of the work that
-changes them, in the same PR — not afterwards.** A stale document is worse than no document,
+Six documents describe how this app is built and why. **Update them as part of the work that
+changes them, in the same commit — not afterwards.** A stale document is worse than no document,
 because the next person will trust it.
 
 | Document | Update it when |
 | --- | --- |
 | `design.md` | You add or change a component, token, layout or UI convention. It is the normative spec for the design system. |
+| `docs/changelog.md` | Always. Every change gets a row: the commit, and what changed in a sentence that will still mean something in a year. This is the record of what happened and when. |
 | `docs/design-decisions.md` | You make a judgement call worth explaining — why this pattern and not the obvious alternative. Append a dated entry with the reasoning, including alternatives rejected. |
+| `docs/domain-model.md` | You change a model, an association, an enum or a role. Its claims are read off the code — verify with `rails runner`, do not recall them. |
 | `docs/migration-map.md` | You migrate something, retire a legacy pattern, or find a leftover. Keep the translation tables and the "not migrated" list true. |
-| `docs/onboarding.md` | You change setup, testing conventions, the domain model or how the code is organised. Counts and claims in it are read off the code — re-check them rather than guessing. |
+| `docs/onboarding.md` | You change setup, testing conventions, or anything a *user* sees — it has a maintainer half and a user half, and the user half goes stale quietly because contributors do not read it. |
 | `docs/architecture/decisions/` | A structural decision is made. ADRs are historical records: add a new one, supersede an old one, but do not rewrite what a past decision said. |
 
-Two habits that go with this:
+The cadence: **work, then document, then commit and push, at every checkpoint.** Not batched at
+the end. The documentation and the change it describes belong in the same commit, and a
+checkpoint that is not pushed is a checkpoint that can be lost — this workspace has been reset
+out from under the work twice.
+
+Three habits that go with this:
 
 - **Verify claims before writing them down.** Numbers in these documents were measured
-  (`grep`, `bin/design/status.rb`, the specs), not estimated. If you state one, measure it.
+  (`grep`, `bin/design/status.rb`, `rails runner`, the specs), not estimated. If you state a
+  number, measure it in the same session you write it.
 - **Record the decision where someone will look for it.** A comment explains the line; the
-  decision log explains the choice. Both, when the choice was not obvious.
+  decision log explains the choice; the change log says when it landed. Use all three when the
+  choice was not obvious.
+- **Name what you chose not to do.** A known-inert leftover that is written down costs nothing;
+  the same leftover undocumented costs the next person an afternoon deciding whether it matters.

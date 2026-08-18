@@ -105,6 +105,9 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `b5bc183e6`, `57e8cddc3` | The last references to the design system's origin app removed, including from the ADRs; one sentence mangled by that edit repaired. |
 | `f61d7a22e` | The user-facing half of `onboarding.md`. |
 | `dbe7418b1` | **Four invisible icons** on the bank-side partner profile editor. Found by grepping for undefined classes, not by the tooling. |
+| `3cf21e1f9` | This change log. |
+| `f61a4fd5f` | The migration map brought to the current measured state; the grep for undefined classes promoted into the verification commands. |
+| `943cc447a` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
 
 ---
 

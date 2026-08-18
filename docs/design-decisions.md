@@ -414,3 +414,52 @@ because the next person trusts it and is wrong with confidence.
 **Corollary.** Numbers in these documents are measured, not estimated. Every count in the four
 was read off the code with `grep`, `bin/design/status.rb` or the specs — and two were wrong on
 the first pass and corrected before the commit landed.
+
+## 2026-08-18 · Onboarding is one document with two halves, not two documents
+
+A contributor and a bank user need the same vocabulary. A distribution is not one thing to a
+developer and another to a warehouse manager, and the moment there are two glossaries they
+start to disagree — usually within a release.
+
+So `docs/onboarding.md` is one file: part 1 for maintainers, part 2 for users, with a table of
+contents at the top that sends you to yours. The user half is deliberately about words rather
+than buttons — why a request and a distribution are separate records, what a product drive is
+if it is not an intake, why an audit exists when adjustments already do. Buttons change; those
+distinctions have not.
+
+## 2026-08-18 · The change log is separate from the decision log
+
+They were nearly merged. They answer different questions, and the questions arrive at different
+moments:
+
+- *Why is it like this?* — the decision log, read when you are about to change something.
+- *When did it change, and what do I blame?* — the change log, read when something behaves
+  differently from last week.
+
+Merging them means every "when" question has to be answered by scanning reasoning, and every
+"why" question by scanning dates. `docs/changelog.md` is built from the commit history so it
+cannot drift from what actually happened.
+
+## 2026-08-18 · Grep for undefined classes is a first-class check, not a fallback
+
+The migration had two verification tools, and both missed a real defect. `bin/design/status.rb`
+asks whether a view contains design system markup — the bank-side profile editor contained
+plenty while still passing `fa-edit` into a partial. `bin/design/sweep.js` visits 56 pages in a
+browser, and that page is not one of them.
+
+What found it was grepping for classes nothing defines any more. That check is now written into
+the verification list in both `design.md` and the migration map, ahead of the tooling rather
+than after it. The general point: a tool that asks "does this look migrated?" cannot answer
+"is anything here dead?", and the second question is the one that finds defects.
+
+## 2026-08-18 · Inert leftovers get named, not silently left
+
+`class: 'form-horizontal'` survives on 12 forms. It renders nothing — Bootstrap 5 had already
+dropped it, so it did nothing before this work either.
+
+Removing it means editing option hashes rather than substituting a token, and that class of
+edit has already corrupted markup once on this branch. So it stays, and it is written down in
+the migration map as a known inert leftover. The alternative is that someone finds it in a year,
+cannot tell whether it matters, and either breaks something removing it or leaves it and
+wonders. Naming a thing you chose not to do is cheaper than either.
+

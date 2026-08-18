@@ -7,10 +7,18 @@ document the reference for UI work, and
 Tailwind v4 the system it describes.
 
 If you are building a page, skip to [Building or changing a page](#building-or-changing-a-page).
-If you are new to the app, read [docs/onboarding.md](docs/onboarding.md) first — the components
-below make more sense once you know what a distribution is, and
-[docs/domain-model.md](docs/domain-model.md) is the reference for how the records relate. If you are looking at markup that
-predates this system, [docs/migration-map.md](docs/migration-map.md) says what replaced it.
+Otherwise:
+
+| If you want | Read |
+| --- | --- |
+| To learn the app, as a contributor or a user | [docs/onboarding.md](docs/onboarding.md) |
+| To know how the records relate | [docs/domain-model.md](docs/domain-model.md) |
+| To know what replaced the old markup | [docs/migration-map.md](docs/migration-map.md) |
+| To know what changed and when | [docs/changelog.md](docs/changelog.md) |
+| To know why a call went the way it did | [docs/design-decisions.md](docs/design-decisions.md) |
+
+The components below make more sense once you know what a distribution is, so onboarding first
+is not a formality.
 
 ## What this app is, and what the UI has to do
 
@@ -44,8 +52,14 @@ system layout:
 
 Anything else rendering `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is a defect, not
 a page waiting its turn: none of those classes are defined anywhere any more, so they draw
-nothing at all. `bin/design/status.rb` reports coverage; `bin/design/audit.js` audits a single
-page in a real browser.
+nothing at all. Grep for them — `bin/design/status.rb` reports coverage and
+`bin/design/audit.js` audits a page in a real browser, but neither catches a migrated view that
+passes a dead class into a partial. That is exactly how four icons stayed invisible on the
+bank-side profile editor until after the migration was called complete.
+
+Measured on 2026-08-18: 63 of 65 controllers on a design system layout, 299 of 392 views
+carrying design system markup, 30 Stimulus controllers, and no undefined legacy classes left in
+`app/views`. [docs/changelog.md](docs/changelog.md#current-state) keeps these current.
 
 ## Foundations
 
@@ -593,6 +607,10 @@ Use industry best practice, keep it consistent with the tokens above, and **writ
 you decided and why** in [`docs/design-decisions.md`](docs/design-decisions.md). That file is
 the running log; this file is the settled system. Anything in the log that turns out to be
 general gets promoted into here.
+
+Record the change itself in [`docs/changelog.md`](docs/changelog.md) in the same commit. The two
+files answer different questions and both get asked: the log says why you chose this, the change
+log says when it arrived and what to blame.
 
 ## Backlog
 
