@@ -765,3 +765,27 @@ The user guide is a book. In-app help is a life ring. Neither collides with a st
 While fixing it: `ESSENTIALS_PARTNER_STATUS` still carried an `icon:` for each status, dead
 since the pill stopped rendering one. Removed rather than left, because a dead icon name in a
 status map is exactly the sort of thing the next person builds on.
+
+## 2026-08-18 · Which modulepreloads to keep
+
+Safari warns "preloaded but not used within a few seconds from the window's load event" for
+roughly half the 66 `modulepreload` links this app emits on every page. Most of that warning
+list is not a defect. `importmap-rails` 2.x preloads every pin by default, and
+`eagerLoadControllersFrom` pulls the controllers in with dynamic `import()`, which does not
+consume Safari's preload cache — so every Stimulus controller and everything a controller
+imports (highcharts, select2, rrule, tslib) gets warned about even though it is loaded and
+used on the very next tick. Turning those preloads off would silence the console and make the
+pages slower: the modules would still be fetched, just serially, after the entry point parses.
+The same goes for `turbo.min.js`, which `application.js` imports dynamically on purpose.
+
+Two entries in the list were real, and both are gone:
+
+- `pin "@fullcalendar/core/"` — a trailing slash maps a directory. There is no module at
+  `https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/`, so the preload could never be consumed
+  by anything.
+- `pin "sinon"` — 180KB, imported only by the fake-clock script that runs under
+  `Rails.env.test?`. Default-on preload put it on every page in production.
+
+The rule this leaves: a preload warning is worth acting on when the module is not part of the
+boot graph at all. It is not worth acting on when the module is merely reached through a
+dynamic import.
