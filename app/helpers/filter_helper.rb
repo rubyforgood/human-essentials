@@ -7,13 +7,15 @@
 # EssentialsUiHelper::FILTER_CONTROL_CLASSES is the single definition of what a filter control
 # looks like; these methods and the design system's own essentials_filter_* wrappers share it.
 module FilterHelper
-  def filter_select(scope:, collection:, label: nil, key: :id, value: :name, selected: nil)
+  # `include_blank:` takes a string when the unfiltered view means something specific and the
+  # user should be told what it is -- "Active", rather than an unexplained empty option.
+  def filter_select(scope:, collection:, label: nil, key: :id, value: :name, selected: nil, include_blank: true)
     label ||= "Filter #{scope.to_s.tr("_", " ")}"
     id = "filters_#{scope}_#{SecureRandom.uuid}"
 
     label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
       collection_select(:filters, scope, collection || {}, key, value,
-        {include_blank: true, selected: selected},
+        {include_blank: include_blank, selected: selected},
         {class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, id: id})
   end
 

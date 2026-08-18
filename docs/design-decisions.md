@@ -511,3 +511,32 @@ change to the busiest screen a bank user has and it should be someone's decision
 side-effect of an audit. The options, in preference order: give the chips a control treatment
 (bordered, neutral until selected) and keep the status column; or keep the chips and drop the
 status column, since the strip already communicates the same six states.
+
+## 2026-08-18 · Filter with the shared filter bar, not with status chips
+
+The partner list filtered with a strip of coloured chips. Two of them — the statuses with no
+partners — rendered as greyed, non-interactive spans, which is a disabled control in everything
+but name, and design.md rejects those: "a link cannot be disabled".
+
+The obvious fix was to restyle the chips. The right fix was to notice that this app answered
+the question fifteen times already. **Fifteen index pages filter with
+`shared/essentials/filter_bar`** — a labelled select, a Filter button, Clear filters. Exactly
+one page used chips. `/requests` filters by a status enum with a plain select and always has.
+
+So the chips went. The disabled-control problem does not need solving; it needs deleting,
+because a select has no notion of a control you can see but not use. A status with no partners
+is an ordinary option that yields the "No partners match that status" empty state the app
+already renders — honest, and reachable by keyboard like everything else.
+
+The counts moved into the option labels — `Awaiting review (1)` — which is where a count belongs
+when it describes the thing you are about to pick. `filter_select` gained an `include_blank:`
+label so the unfiltered option can say `Active (6)` rather than being an unexplained empty row.
+
+What is lost is the at-a-glance count of every status without opening the select. That is
+acceptable because it was never this page's job: `dashboard/_partner_approvals` already lists
+partners awaiting review, with a button. The chips were doing the dashboard's work on a page
+whose work is to be a list.
+
+Rejected: keeping chips but hiding the zero-count ones. It removes the rule violation and keeps
+the inconsistency, and it makes the strip change width as data changes, so the control you
+reached for last time is somewhere else today.

@@ -16,6 +16,11 @@ class PartnersController < ApplicationController
     @partner_groups = current_organization.partner_groups.includes(:partners, :item_categories)
     @partner_status_counts = current_organization.partners.group(:status).count
     @active_partner_count = @partner_status_counts.except("deactivated").values.sum
+    # [label, value] pairs for the status filter. Counts travel in the label so the list still
+    # answers "how many are waiting on me?" without a row of chips above the table.
+    @partner_status_options = current_organization.partners.statuses.keys.map do |status|
+      ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
+    end
 
     respond_to do |format|
       format.html

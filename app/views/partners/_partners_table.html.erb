@@ -1,13 +1,9 @@
 <div id="panel-partners" role="tabpanel" aria-labelledby="tab-partners" data-tabs-target="panel">
-  <div class="border-b border-slate-200 px-5 py-4">
-    <%= render partial: "statuses", object: @partner_status_counts, as: :status_counts %>
-  </div>
-
   <% if partners.blank? %>
     <%= render "shared/essentials/empty_state",
           kind: essentials_filtered? ? :no_results : :cold_start,
           title: essentials_filtered? ? "No partners match that status" : "No partner agencies yet",
-          body: essentials_filtered? ? "Choose Active above to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
+          body: essentials_filtered? ? "Clear the filter to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
           action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
     <div class="table-scroll">
