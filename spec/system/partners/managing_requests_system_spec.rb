@@ -110,7 +110,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         context 'THEN a request records will be created ' do
           it "displays confirmation modal with quota warning and creates the correct request" do
             click_button 'Submit Essentials Request'
-            expect(page).to have_selector('.alert-warning')
+            expect(page).to have_selector('[data-flash-tone='warning']')
             expect(page).to have_text('You are ordering')
             expect(page).to have_text('total items, are you sure?')
             expect(page).to have_selector('#partnerRequestConfirmationModal')

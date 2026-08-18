@@ -219,7 +219,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         expect(page).to have_content "Partner #{partner.name} invited!", wait: page_content_wait
-        expect(page.find(".alert")).to have_content "invited!", wait: page_content_wait
+        expect(page.find("[data-flash]")).to have_content "invited!", wait: page_content_wait
       end
 
       it "shows invite button only for unapproved partners" do
@@ -289,7 +289,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it "redirects user to partners page root page (dashboard) with error message" do
           visit partner_path(partner.id)
           expect(page).to have_content("Dashboard - #{partner.name}")
-          expect(page.find(".alert-danger")).to have_content("You must be logged in as the essentials bank's organization administrator to approve partner applications.")
+          expect(page.find("[data-flash-tone='danger']")).to have_content("You must be logged in as the essentials bank's organization administrator to approve partner applications.")
         end
       end
 
@@ -352,14 +352,14 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         check 'send_reminders'
         click_button "Add Partner Agency"
 
-        expect(page.find(".alert")).to have_content "added"
+        expect(page.find("[data-flash]")).to have_content "added"
       end
 
       it "disallows a user from creating a new partner with empty name" do
         visit subject
         click_button "Add Partner Agency"
 
-        expect(page.find(".alert")).to have_content "Failed to add partner due to:"
+        expect(page.find("[data-flash]")).to have_content "Failed to add partner due to:"
       end
 
       it "should not display inactive storage locations in dropdown" do
@@ -389,7 +389,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         fill_in "Name", with: ""
         click_button "Update Partner"
 
-        expect(page.find(".alert")).to have_content "Something didn't work quite right -- try again?"
+        expect(page.find("[data-flash]")).to have_content "Something didn't work quite right -- try again?"
       end
 
       it "User can uncheck send_reminders" do
@@ -397,7 +397,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         uncheck 'send_reminders'
         click_button "Update Partner"
 
-        expect(page.find(".alert")).to have_content "updated"
+        expect(page.find("[data-flash]")).to have_content "updated"
         partner.reload
         expect(partner.send_reminders).to be false
       end
@@ -496,12 +496,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           # Save Progress
           all("input[type='submit'][value='Save Progress']").last.click
-          expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+          expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
           # Save and Review
           all("input[type='submit'][value='Save and Review']").last.click
           expect(current_path).to eq(partner_path(partner.id))
-          expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+          expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
         end
 
         it "displays the edit view with sections containing validation errors expanded" do
@@ -530,7 +530,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           all("input[type='submit'][value='Save Progress']").last.click
 
           # Expect an alert-danger message containing validation errors
-          expect(page).to have_css(".alert-danger", text: /There is a problem/)
+          expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
           expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")
@@ -544,7 +544,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           all("input[type='submit'][value='Save and Review']").last.click
 
           # Expect an alert-danger message containing validation errors
-          expect(page).to have_css(".alert-danger", text: /There is a problem/)
+          expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
           expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")

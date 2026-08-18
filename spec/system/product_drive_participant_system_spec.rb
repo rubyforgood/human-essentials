@@ -58,14 +58,14 @@ RSpec.describe " Participant", type: :system, js: true do
         click_button "Save"
       end.to change { ProductDriveParticipant.count }.by(1)
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "does not allow a user to add a new product drive participant with empty attributes" do
       visit subject
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 
@@ -81,7 +81,7 @@ RSpec.describe " Participant", type: :system, js: true do
       fill_in "Comment", with: new_comment
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
       expect(page).to have_content(product_drive_participant.contact_name)
       expect(page).to have_content(new_email)
 
@@ -95,7 +95,7 @@ RSpec.describe " Participant", type: :system, js: true do
       fill_in "Contact Name", with: ""
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 end

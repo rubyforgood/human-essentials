@@ -81,7 +81,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
       fill_in 'End Date', with: Time.zone.today + 4.hours
       click_button 'Create Product Drive'
 
-      expect(page.find('.alert')).to have_content('added')
+      expect(page.find('[data-flash]')).to have_content('added')
     end
   end
 
@@ -117,7 +117,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
       check 'virtual'
       click_button 'Create Product Drive'
 
-      expect(page.find('.alert')).to have_content('added')
+      expect(page.find('[data-flash]')).to have_content('added')
     end
   end
 

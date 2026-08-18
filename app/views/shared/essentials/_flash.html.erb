@@ -14,7 +14,12 @@
           <% next if message.blank? %>
           <% tone = essentials_flash_tone(key) %>
           <% style = essentials_flash_style(tone) %>
+          <%# data-flash names the flash key and its tone. Specs used to find a flash by its
+              Bootstrap classes (.alert, .alert-danger); these are a stable contract that does
+              not change when the styling does. %>
           <div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %>"
+               data-flash="<%= key %>"
+               data-flash-tone="<%= tone %>"
                role="<%= [:warning, :danger].include?(tone) ? "alert" : "status" %>">
             <i class="<%= style[:icon] %> mt-0.5 shrink-0" aria-hidden="true"></i>
             <div class="min-w-0 flex-1 whitespace-pre-line"><%= sanitize(message.to_s, tags: %w[ul ol li strong em a], attributes: %w[href]) %></div>

@@ -121,7 +121,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
         form.requestSubmit();
       JS
 
-      expect(page).to have_css(".alert.notice", text: "Invalid Date range provided. Reset to default date range")
+      expect(page).to have_css("[data-flash='notice']", text: "Invalid Date range provided. Reset to default date range")
       expect(page).to have_css("table tbody tr", count: 4)
     end
 

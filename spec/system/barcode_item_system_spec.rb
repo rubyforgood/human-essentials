@@ -106,7 +106,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "added to your"
+      expect(page.find("[data-flash]")).to have_content "added to your"
 
       expect(page.find("table")).to have_content "1T Diapers"
 
@@ -125,7 +125,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
         fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
         click_button "Save"
 
-        expect(page.find(".alert")).to have_content "updated"
+        expect(page.find("[data-flash]")).to have_content "updated"
       end
 
       it "fails to save the changes if the attributes are empty" do
@@ -133,7 +133,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
         fill_in "Quantity", id: "barcode_item_quantity", with: ""
         click_button "Save"
 
-        expect(page.find(".alert")).to have_content "didn't work"
+        expect(page.find("[data-flash]")).to have_content "didn't work"
       end
     end
   end
@@ -142,6 +142,6 @@ RSpec.describe "Barcode management", type: :system, js: true do
     visit new_barcode_item_path
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find("[data-flash]")).to have_content "didn't work"
   end
 end

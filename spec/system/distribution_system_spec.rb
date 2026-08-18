@@ -51,7 +51,7 @@ RSpec.feature "Distributions", type: :system do
         end
 
         expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "created"
+        expect(page.find("[data-flash-tone='info']")).to have_content "created"
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.feature "Distributions", type: :system do
 
       click_button "Save"
 
-      expect(page).to have_css('.alert.error', text: /partner/i)
+      expect(page).to have_css('[data-flash='error']', text: /partner/i)
 
       # Fix validation error by filling in a partner
       select "Test Partner", from: "Partner"
@@ -127,7 +127,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content "Distributions"
-      expect(page.find(".alert-info")).to have_content "created"
+      expect(page.find("[data-flash-tone='info']")).to have_content "created"
     end
 
     # Issue #4644
@@ -200,7 +200,7 @@ RSpec.feature "Distributions", type: :system do
         end
 
         expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "created"
+        expect(page.find("[data-flash-tone='info']")).to have_content "created"
       end
     end
 
@@ -300,11 +300,11 @@ RSpec.feature "Distributions", type: :system do
             click_button "Yes, it's correct"
           end
 
-          page.find('.alert')
+          page.find('[data-flash]')
         end.not_to change { Distribution.count }
 
         expect(page).to have_content("New Distribution")
-        expect(page.find(".alert")).to have_content('Could not reduce quantity')
+        expect(page.find("[data-flash]")).to have_content('Could not reduce quantity')
       end
     end
     context "when there is a default storage location" do
@@ -330,7 +330,7 @@ RSpec.feature "Distributions", type: :system do
 
     click_button "Save", match: :first
 
-    expect(page).to have_css('.alert.error', text: /storage location/i)
+    expect(page).to have_css('[data-flash='error']', text: /storage location/i)
 
     # 4438- Bug Fix
     select storage_location.name, from: "From storage location"
@@ -393,7 +393,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
-      within ".alert" do
+      within "[data-flash]" do
         expect(page).to have_content('Could not reduce quantity')
       end
     end
@@ -428,7 +428,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Shipping cost", with: 12.05
         click_on "Save", match: :first
         expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "Distribution updated!"
+        expect(page.find("[data-flash-tone='info']")).to have_content "Distribution updated!"
       end
     end
 
@@ -440,7 +440,7 @@ RSpec.feature "Distributions", type: :system do
           accept_confirm do
             click_on "Reclaim"
           end
-          page.find ".alert"
+          page.find "[data-flash]"
         end.to change { Distribution.count }.by(-1)
         expect(page).to have_content "reclaimed"
       end
@@ -459,9 +459,9 @@ RSpec.feature "Distributions", type: :system do
 
       it "cannot be accessed directly" do
         visit edit_distribution_path(past_distribution.id)
-        expect(page.find(".alert-danger")).to have_content "you must be an organization admin"
+        expect(page.find("[data-flash-tone='danger']")).to have_content "you must be an organization admin"
         visit edit_distribution_path(complete_distribution.id)
-        expect(page.find(".alert-danger")).to have_content "you must be an organization admin"
+        expect(page.find("[data-flash-tone='danger']")).to have_content "you must be an organization admin"
       end
     end
 
@@ -479,13 +479,13 @@ RSpec.feature "Distributions", type: :system do
       it "can click on Edit button and a warning appears " do
         visit distributions_path
         click_on "Edit", match: :first
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
+        expect(page.find("[data-flash-tone='warning']")).to have_content "The current date is past the date this distribution was scheduled for."
       end
 
       it "can be accessed directly" do
         visit edit_distribution_path(distribution.id)
-        expect(page).to have_no_css(".alert-danger")
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
+        expect(page).to have_no_css("[data-flash-tone='danger']")
+        expect(page.find("[data-flash-tone='warning']")).to have_content "The current date is past the date this distribution was scheduled for."
       end
     end
   end
@@ -561,7 +561,7 @@ RSpec.feature "Distributions", type: :system do
 
     it "completes successfully" do
       expect(page).to have_content "Distributions"
-      expect(page.find(".alert-info")).to have_content "reated"
+      expect(page.find("[data-flash-tone='info']")).to have_content "reated"
       expect(Distribution.first.line_items.count).to eq 1
     end
 
@@ -590,7 +590,7 @@ RSpec.feature "Distributions", type: :system do
         expect(page).to have_no_content "Distribution updated!"
         expect(page).to have_content(/Could not reduce quantity/i)
         expect(page).to have_content 999_899, count: 1
-        within ".alert" do
+        within "[data-flash]" do
           expect(page).to have_content 999_899
         end
         expect(Distribution.first.line_items.count).to eq 1

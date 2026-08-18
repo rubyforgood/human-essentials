@@ -14,8 +14,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     it 'can remove that user from the organization' do
       visit organization_path
       accept_confirm do
-        click_button dom_id(managed_user, "dropdownMenu")
-        click_button "Remove User"
+        click_button "Remove user"
       end
 
       expect(page).to have_content("User has been removed!")
@@ -25,8 +24,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can promote that user from the organization" do
       visit organization_path
       accept_confirm do
-        click_button dom_id(managed_user, "dropdownMenu")
-        click_button "Promote to Admin"
+        click_button "Promote to admin"
       end
 
       expect(page).to have_content("User has been promoted!")
@@ -37,7 +35,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       managed_user.add_role(Role::ORG_ADMIN, organization)
       visit organization_path
       accept_confirm do
-        click_button "Demote to User"
+        click_button "Demote to user"
       end
 
       expect(page).to have_content("User has been demoted!")
@@ -60,15 +58,15 @@ RSpec.describe "Organization management", type: :system, js: true do
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "URL", with: "notavalidemail"
         click_on "Save"
-        expect(page.find(".alert")).to have_content "Url it should look like 'http://www.example.com'"
+        expect(page.find("[data-flash]")).to have_content "Url it should look like 'http://www.example.com'"
 
         fill_in "URL", with: "http://www.diaperbase.com"
         click_on "Save"
-        expect(page.find(".alert")).to have_content "Updated"
+        expect(page.find("[data-flash]")).to have_content "Updated"
       end
 
       def post_form_submit
-        expect(page.find(".alert")).to have_content "Updated your organization!"
+        expect(page.find("[data-flash]")).to have_content "Updated your organization!"
       end
 
       it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
@@ -172,10 +170,10 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit organization_path
-      click_on "Invite User to this Organization"
-      within "#addUserModal" do
+      click_on "Invite user to this organization"
+      within "#add-user-modal" do
         fill_in "email", with: "some_new_user@website.com"
-        click_on "Invite User"
+        click_on "Invite user"
       end
       expect(page).to have_content("invited to organization")
     end
@@ -196,7 +194,7 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     before(:each) do
       visit admin_dashboard_path
-      within ".main-header" do
+      within "header" do
         click_on super_admin_org_admin.name.to_s
       end
       click_link "Switch to: #{organization.name}"

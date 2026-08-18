@@ -164,7 +164,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       end
 
       def post_form_submit
-        expect(page.find(".alert")).to have_content "Organization added!"
+        expect(page.find("[data-flash]")).to have_content "Organization added!"
         within(find("td", text: "aaa").sibling(".text-right")) do
           first(:link, "View").click
         end

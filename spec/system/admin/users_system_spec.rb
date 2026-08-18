@@ -21,7 +21,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "Created a new user!"
+      expect(page.find("[data-flash]")).to have_content "Created a new user!"
     end
 
     it "creates a super admin user without specifying a resource" do
@@ -31,7 +31,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "Created a new user!"
+      expect(page.find("[data-flash]")).to have_content "Created a new user!"
     end
 
     it "complains if resource wasn't specified but was needed for the chosen role" do
@@ -83,7 +83,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       # Check if redirected to index page with successful flash message
       expect(page).to have_current_path(admin_users_path)
-      expect(page).to have_css(".alert", text: "TestUser updated")
+      expect(page).to have_css("[data-flash]", text: "TestUser updated")
 
       # Check if user name has changed to TestUser
       users_table = find('#filterrific_results table tbody')
@@ -102,7 +102,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
         find("li.select2-results__option", text: "Partner ABC").click
         click_on 'Add Role'
 
-        expect(page.find('.alert')).to have_content('Role added')
+        expect(page.find('[data-flash]')).to have_content('Role added')
       end
     end
 
@@ -120,7 +120,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
         accept_confirm do
           click_on 'Delete', match: :first # For users that have multiple roles
         end
-        expect(page.find('.alert')).to have_content('Role removed!')
+        expect(page.find('[data-flash]')).to have_content('Role removed!')
       end
     end
 

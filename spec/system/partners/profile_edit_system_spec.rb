@@ -41,12 +41,12 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Submit and Review
       all("input[type='submit'][value='Save and Review']").last.click
       expect(current_path).to eq(partners_profile_path)
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
     end
 
     it "displays the edit view with sections containing validation errors expanded" do
@@ -75,7 +75,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save Progress']").last.click
 
       # Expect an alert-danger message containing validation errors
-      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+      expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
       expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
@@ -89,7 +89,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save and Review']").last.click
 
       # Expect an alert-danger message containing validation errors
-      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+      expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
       expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
@@ -112,7 +112,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify the document is listed
       visit edit_partners_profile_path
@@ -128,7 +128,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify both documents are listed
       visit edit_partners_profile_path
@@ -159,7 +159,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify both documents persist after page reload
       visit edit_partners_profile_path
@@ -179,7 +179,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify only one document remains
       visit edit_partners_profile_path
@@ -209,7 +209,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save Progress']").last.click
 
       # Expect an alert-danger message containing validation errors
-      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+      expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
 
       # Open up Agency Information section and expect the file field to remember users selection
       # but NOT be persisted because there hasn't yet been a successful form submission.
@@ -227,7 +227,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open up Agency Information section and expect file is persisted
       find("button[data-bs-target='#agency_information']").click
@@ -265,7 +265,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save Progress']").last.click
 
       # Expect an alert-danger message containing validation errors
-      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+      expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
 
       # Open attached documents section
       find("button[data-bs-target='#attached_documents']").click
@@ -289,7 +289,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
-      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+      expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open attached documents section
       find("button[data-bs-target='#attached_documents']").click

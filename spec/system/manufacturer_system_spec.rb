@@ -30,14 +30,14 @@ RSpec.describe "Manufacturer", type: :system do
       click_button "Save"
     end.to change { Manufacturer.count }.by(1)
 
-    expect(page.find(".alert")).to have_content "added"
+    expect(page.find("[data-flash]")).to have_content "added"
   end
 
   it "allows a user to add a new manufacturer instance with empty attributes" do
     visit new_manufacturer_path
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find("[data-flash]")).to have_content "didn't work"
   end
 
   it "allows a user to update the contact info for a manufacturer" do
@@ -47,7 +47,7 @@ RSpec.describe "Manufacturer", type: :system do
     fill_in "Name", with: new_name
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "updated"
+    expect(page.find("[data-flash]")).to have_content "updated"
     expect(page).to have_content(new_name)
   end
 
@@ -57,7 +57,7 @@ RSpec.describe "Manufacturer", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find("[data-flash]")).to have_content "didn't work"
   end
 
   context "When the Manufacturers have donations associated with them already" do

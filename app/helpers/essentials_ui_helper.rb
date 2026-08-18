@@ -48,7 +48,9 @@ module EssentialsUiHelper
   def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil, confirm: nil, **html_attrs)
     classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
     data = {disable_with: "Please wait..."}.merge(html_attrs.delete(:data) || {})
-    data[:turbo_confirm] = confirm if confirm
+    # data-confirm, not data-turbo-confirm: rails-ujs is what this app loads, and Turbo would
+    # only act on its own attribute where Turbo Drive is enabled -- which is per-action here.
+    data[:confirm] = confirm if confirm
 
     button_to path, method: method, class: classes, form_class: "inline-block",
       data: data, **html_attrs do

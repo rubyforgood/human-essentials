@@ -82,14 +82,14 @@ RSpec.describe "Audit management", type: :system, js: true do
           accept_confirm do
             click_button "Confirm Audit"
           end
-          expect(page.find(".alert-info")).to have_content "Audit is confirmed"
+          expect(page.find("[data-flash-tone='info']")).to have_content "Audit is confirmed"
           expect(page).to have_content(item.name)
           expect(page).to have_content(audit_quantity)
 
           accept_confirm do
             click_button "Finalize Audit"
           end
-          expect(page.find(".alert-info")).to have_content "Audit is Finalized"
+          expect(page.find("[data-flash-tone='info']")).to have_content "Audit is Finalized"
 
           event = Event.last
           expect(event.type).to eq "AuditEvent"

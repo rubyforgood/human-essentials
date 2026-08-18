@@ -76,14 +76,14 @@ RSpec.describe "Vendor", type: :system, js: true do
         click_button "Save"
       end.to change { Vendor.count }.by(1)
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "cannot add a new vendor instance with empty attributes" do
       visit subject
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 
@@ -97,7 +97,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       fill_in "E-mail", with: new_email
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
       expect(page).to have_content(vendor.contact_name)
       expect(page).to have_content(new_email)
     end
@@ -108,7 +108,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       fill_in "Contact Name", with: ""
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 

@@ -23,6 +23,27 @@
 }
 </script>
 
+<%#
+  Keep the browser's clock in step with Rails' spoofed clock in tests.
+
+  A system spec that calls travel_to only moves Ruby's clock; anything computed in the
+  browser from `new Date()` -- the reminder and deadline dates, for one -- would still be on
+  real time, and the two would disagree by however far the spec travelled. Navigate to the
+  page under test AFTER spoofing, or the fake timer is initialised with the wrong instant.
+%>
+<% if Rails.env.test? %>
+  <script type="module">
+    import sinon from "sinon"
+    if (window.fakeTimerClock) {
+      window.fakeTimerClock.restore();
+    }
+    window.fakeTimerClock = sinon.useFakeTimers({
+      now: <%= Time.now.to_i * 1000 %>,
+      shouldAdvanceTime: true
+    })
+  </script>
+<% end %>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">

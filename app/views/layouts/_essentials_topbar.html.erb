@@ -66,7 +66,7 @@
             <% next if role == current_role %>
             <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
                   class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" do %>
-              Switch to <%= role.resource&.name || "Super admin" %>
+              Switch to: <%= role.resource&.name || "Super admin" %>
             <% end %>
           <% end %>
 

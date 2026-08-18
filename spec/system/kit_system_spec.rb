@@ -47,7 +47,7 @@ RSpec.describe "Kit management", type: :system do
 
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "Kit created successfully"
+    expect(page.find("[data-flash]")).to have_content "Kit created successfully"
     expect(page).to have_content(kit_traits[:name])
     expect(page).to have_content("#{quantity_per_kit} #{item.name}")
   end
@@ -221,7 +221,7 @@ RSpec.describe "Kit management", type: :system do
 
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "Name can't be blank"
+      expect(page.find("[data-flash]")).to have_content "Name can't be blank"
       expect(page).to have_content(kit_traits[:quantity])
       expect(page).to have_content(item.name)
     end
@@ -265,7 +265,7 @@ RSpec.describe "Kit management", type: :system do
       # Test merge functionality
       click_button "Merge Items"
 
-      expect(page.find(".alert")).to have_content "Kit created successfully"
+      expect(page.find("[data-flash]")).to have_content "Kit created successfully"
       expect(page).to have_content(kit_traits[:name])
       expect(page).to have_content("25 #{item.name}")
     end

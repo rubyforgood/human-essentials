@@ -14,14 +14,14 @@ RSpec.describe "Item management", type: :system do
     select "Other", from: "Reporting Category"
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "added"
+    expect(page.find("[data-flash]")).to have_content "added"
   end
 
   it "can't create a new item with empty attributes as a user" do
     visit new_item_path
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "Name can't be blank and Reporting category can't be blank"
+    expect(page.find("[data-flash]")).to have_content "Name can't be blank and Reporting category can't be blank"
   end
 
   it "can create a new item with dollars decimal amount for value field" do
@@ -34,7 +34,7 @@ RSpec.describe "Item management", type: :system do
     select "Other", from: "Reporting Category"
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "added"
+    expect(page.find("[data-flash]")).to have_content "added"
     expect(Item.last.value_in_dollars).to eq(1234.56)
     expect(Item.last.value_in_cents).to eq(123_456)
   end
@@ -44,7 +44,7 @@ RSpec.describe "Item management", type: :system do
     visit edit_item_path(item.id)
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "updated"
+    expect(page.find("[data-flash]")).to have_content "updated"
   end
 
   it "can update an existing item with empty attributes as a user" do
@@ -53,7 +53,7 @@ RSpec.describe "Item management", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find("[data-flash]")).to have_content "didn't work"
   end
 
   it "can make the item invisible to partners" do
@@ -87,7 +87,7 @@ RSpec.describe "Item management", type: :system do
             click_on "Restore", match: :first
           end
         end
-        page.find(".alert-info")
+        page.find("[data-flash-tone='info']")
       end.to change { Item.count }.by(0).and change { Item.active.count }.by(1)
       item.reload
       expect(item).to be_active

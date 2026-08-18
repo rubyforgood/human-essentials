@@ -17,7 +17,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       fill_in "Address", with: storage_location_traits[:address]
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "User creates a new storage location with the same name" do
@@ -51,14 +51,14 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       select StorageLocation::WAREHOUSE_TYPES.sample, from: 'Warehouse Type'
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "User creates a new storage location with empty attributes" do
       visit subject
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 
@@ -73,7 +73,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "User updates an existing storage location with empty name" do
@@ -81,7 +81,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       fill_in "Name", with: ""
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 
@@ -166,13 +166,13 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       visit subject
 
       expect(accept_confirm { click_on "Deactivate", match: :first }).to include "Are you sure you want to deactivate #{location1.name}"
-      expect(page.find(".alert")).to have_content "Storage Location deactivated successfully"
+      expect(page.find("[data-flash]")).to have_content "Storage Location deactivated successfully"
 
       check "include_inactive_storage_locations"
       click_button "Filter"
 
       expect(accept_confirm { click_on "Reactivate", match: :first }).to include "Are you sure you want to reactivate #{location1.name}"
-      expect(page.find(".alert")).to have_content "Storage Location reactivated successfully"
+      expect(page.find("[data-flash]")).to have_content "Storage Location reactivated successfully"
     end
 
     it "Filter list presented to user is in alphabetical order by item name" do

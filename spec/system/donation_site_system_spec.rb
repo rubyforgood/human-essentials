@@ -48,7 +48,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Address", with: donation_site_traits[:address]
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "creates a new donation site as a user with all fields available" do
@@ -61,14 +61,14 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Email", with: donation_site_traits[:email]
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "added"
+      expect(page.find("[data-flash]")).to have_content "added"
     end
 
     it "does not allow creating a new donation site with empty attributes" do
       visit subject
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Name", with: donation_site.name + " new", match: :prefer_exact
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "updates an existing donation site's Address" do
@@ -88,7 +88,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Address", with: "123 Donation Site Way"
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "updates an existing donation site's Contact Name" do
@@ -96,7 +96,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Contact Name", with: "Mr A"
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "updates an existing donation site's Phone" do
@@ -104,7 +104,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Phone", with: "(555) 1122-3322"
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "updates an existing donation site's Email" do
@@ -112,7 +112,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       fill_in "Email", with: "mra_email@gmail.com"
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page.find("[data-flash]")).to have_content "updated"
     end
 
     it "does not allow updating to an existing donation site with empty required attributes[Name]" do
@@ -121,7 +121,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
 
     it "does not allow updating to an existing donation site with empty required attributes[Address]" do
@@ -130,7 +130,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
       click_button "Save"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find("[data-flash]")).to have_content "didn't work"
     end
   end
 end

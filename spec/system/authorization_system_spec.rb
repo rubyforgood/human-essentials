@@ -7,7 +7,7 @@ RSpec.describe "Authorization", type: :system, js: true do
     visit "/admin/dashboard"
 
     expect(page.find("h1")).to have_content "Dashboard"
-    expect(page.find(".alert")).to have_content "Access Denied"
+    expect(page.find("[data-flash]")).to have_content "Access Denied"
   end
 
   it "redirects to the organization dashboard when authorized" do

@@ -387,7 +387,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           click_on "Delete"
         end
 
-        expect(page).to have_css(".alert.error.alert-danger")
+        expect(page).to have_css("[data-flash='error']")
       end
     end
   end

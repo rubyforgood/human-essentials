@@ -94,25 +94,25 @@ module UiHelper
   end
 
   def delete_button_to(link, options = {})
-    data = options[:no_confirm] ? {} : {data: {turbo_confirm: options[:confirm] || "Are you sure?"}}
+    data = options[:no_confirm] ? {} : {data: {confirm: options[:confirm] || "Are you sure?"}}
     properties = {method: options[:method]&.to_sym || :delete, rel: "nofollow"}.merge(data)
     _link_to link, {icon: "trash", type: "danger", text: "Delete", size: "xs"}.merge(options), properties
   end
 
   def deactivate_button_to(link, options = {})
-    data = options[:no_confirm] ? {} : {data: {turbo_confirm: options[:confirm] || "Are you sure?"}}
+    data = options[:no_confirm] ? {} : {data: {confirm: options[:confirm] || "Are you sure?"}}
     properties = {id: options[:id], method: :put, rel: "nofollow"}.merge(data)
     _link_to link, {icon: "ban", type: "danger", text: "Deactivate", size: "xs"}.merge(options), properties
   end
 
   def reactivate_button_to(link, options = {})
-    data = options[:no_confirm] ? {} : {data: {turbo_confirm: options[:confirm] || "Are you sure?"}}
+    data = options[:no_confirm] ? {} : {data: {confirm: options[:confirm] || "Are you sure?"}}
     properties = {id: options[:id], method: :put, rel: "nofollow"}.merge(data)
     _link_to link, {icon: "repeat", type: "success", text: "Reactivate", size: "xs"}.merge(options), properties
   end
 
   def restore_button_to(link, options = {})
-    data = options[:no_confirm] ? {} : {data: {turbo_confirm: options[:confirm] || "Are you sure?"}}
+    data = options[:no_confirm] ? {} : {data: {confirm: options[:confirm] || "Are you sure?"}}
     properties = {rel: "nofollow", method: :patch}.merge(data)
     _link_to link, {icon: "repeat", type: "warning", text: "Restore", size: "xs"}.merge(options), properties
   end
@@ -198,7 +198,7 @@ module UiHelper
 
   def invite_button_to(link, options = {}, properties = {})
     properties = {method: options[:method]&.to_sym || :post, rel: "nofollow",
-                  data: {turbo_confirm: options[:confirm] || "Are you sure?"}}.merge(properties)
+                  data: {confirm: options[:confirm] || "Are you sure?"}}.merge(properties)
     _link_to link, {icon: "envelope", type: "warning", text: "Invite", size: "xs"}.merge(options), properties
   end
 

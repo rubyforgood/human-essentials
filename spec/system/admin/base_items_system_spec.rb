@@ -22,12 +22,12 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
         fill_in "base_item_partner_key", with: base_item_traits[:partner_key]
         click_button "Save"
 
-        expect(page.find(".alert")).to have_content "added"
+        expect(page.find("[data-flash]")).to have_content "added"
       end
 
       it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
-        expect(page.find(".alert")).to have_content "ailed"
+        expect(page.find("[data-flash]")).to have_content "ailed"
       end
     end
 
@@ -39,13 +39,13 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
         click_button "Save"
-        expect(page.find(".alert")).to have_content "pdated"
+        expect(page.find("[data-flash]")).to have_content "pdated"
       end
 
       it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
-        expect(page.find(".alert")).to have_content "ailed"
+        expect(page.find("[data-flash]")).to have_content "ailed"
       end
     end
 
@@ -82,12 +82,12 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
         fill_in "base_item_partner_key", with: base_item_traits[:partner_key]
         click_button "Save"
 
-        expect(page.find(".alert")).to have_content "added"
+        expect(page.find("[data-flash]")).to have_content "added"
       end
 
       it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
-        expect(page.find(".alert")).to have_content "ailed"
+        expect(page.find("[data-flash]")).to have_content "ailed"
       end
     end
 
@@ -99,13 +99,13 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
         click_button "Save"
-        expect(page.find(".alert")).to have_content "pdated"
+        expect(page.find("[data-flash]")).to have_content "pdated"
       end
 
       it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
-        expect(page.find(".alert")).to have_content "ailed"
+        expect(page.find("[data-flash]")).to have_content "ailed"
       end
     end
 
