@@ -112,7 +112,8 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `e0c31a7e9` | All 27 index tables audited for row-action weight and badge density; `docs/table-audit.md` and `bin/design/table-audit.js` added; the row-action and badge rules made explicit in `design.md`. |
 | `bc04f2243` | Corrected the audit: the empty `recertification_required` action cell is right, not a defect. |
 | `a9f8d26ab` | **Every table row action is now `:ghost`.** 13 cells across 12 views moved off the legacy `*_button_to` shims and off `:secondary`. The audit script reports 0 tables with more than one weight, down from 7, and 0 filled buttons in rows, down from 6. |
-| *(preview branch)* | Partner list: status chips replaced by the shared filter bar, matching the other 15 index pages; status tones remapped by who is blocked. Not on `design`. |
+| `e6ac2c21d`&hellip;`011c24fbb` | Partner list rebuilt on the shared filter bar, developed on `design-preview-partner-status` over five review rounds. |
+| *(merge)* | **Merged into `design`.** Status chips replaced by a labelled select; single-filter bars apply on change and drop "Clear filters"; "All statuses" added; status colour now means *who is blocked*; pill icons dropped and pills no longer wrap. Two bugs fixed on the way: a blank status filter matched every partner including deactivated ones, and the select chevron sat 4px from the border because padding does not move a native arrow. |
 
 ---
 
