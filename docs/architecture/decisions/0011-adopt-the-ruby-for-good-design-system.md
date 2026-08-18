@@ -19,12 +19,11 @@ ergonomics, and the cost was rewriting 400 views with volunteer labour. Nothing 
 trade-off was wrong.
 
 What has changed is that the decision is no longer local. Ruby for Good is standardising its
-applications on a single design system — the one built for
-the shared Ruby for Good design system — so that contributors moving between RFG projects meet
-the same components, tokens and conventions, and so that accessibility and design work done once
-benefits every app. Under that constraint, "Bootstrap because it is
-what we already have" stops being the cheaper option: it makes Human Essentials the one app a
-contributor has to learn separately, and it forks every future shared improvement.
+applications on a single shared design system, so that contributors moving between RFG projects
+meet the same components, tokens and conventions, and so that accessibility and design work done
+once benefits every app. Under that constraint, "Bootstrap because it is what we already have"
+stops being the cheaper option: it makes Human Essentials the one app a contributor has to learn
+separately, and it forks every future shared improvement.
 
 The state of the codebase also argues against holding the line. ADR 0009's own stated
 consequence — "Any work that used TailwindCSS would need to be updated to use Bootstrap 4
