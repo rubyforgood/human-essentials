@@ -18,6 +18,10 @@
 @import "./vendor/trix.css";
 @import "./vendor/actiontext.css";
 
+/* select2, for the searchable selects on the admin user form and the line item pickers.
+   AdminLTE used to bundle this; without it .select2-container has no size at all. */
+@import "./vendor/select2.css";
+
 /* Tailwind v4 scans these for class names. Rails puts markup outside the CSS tree,
    so the automatic source detection can't find it. */
 @source "../../views";

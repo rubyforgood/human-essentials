@@ -1,12 +1,16 @@
-<header class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Organizations - #{@organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900"><%= @organization.name %></h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</header>
+<%#
+  Header for an organization page. `link_path` is where "back" goes -- the bank dashboard for
+  an organization looking at itself, the admin dashboard for a super admin looking at one of
+  many.
+
+  The AdminLTE version carried a breadcrumb whose only real link was "Home"; the back link is
+  the design system's equivalent and is the same one destination.
+%>
+<% content_for :title, "Organizations - #{@organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: @organization.name,
+        back: {path: link_path, label: "Back to dashboard"},
+        wrapper_class: "mb-0" %>
+</div>

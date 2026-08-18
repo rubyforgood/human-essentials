@@ -10,7 +10,11 @@
   <% if flash.any? %>
     <div class="px-4 pt-6 sm:px-6 lg:px-8">
       <div class="space-y-3">
-        <% flash.each do |key, message| %>
+        <%# Read through flash[key], not flash.each. The memflash gem stores a large message
+            in the cache and leaves a lookup key in the cookie; only the reader resolves it,
+            so iterating pairs renders the key itself. %>
+        <% flash.keys.each do |key| %>
+          <% message = flash[key] %>
           <% next if message.blank? %>
           <% tone = essentials_flash_tone(key) %>
           <% style = essentials_flash_style(tone) %>

@@ -3,7 +3,7 @@
   utils/barcode_items.js when a scanned barcode is not recognised.
 %>
 <%
-  remote ||= true
+  remote = true if defined?(remote).nil? || remote.nil?
   url ||= barcode_items_path
 %>
 <dialog id="newBarcode"

@@ -23,7 +23,8 @@
   </div>
 
   <%= form_with url: reject_admin_account_requests_path, method: :post,
-                data: {account_request_decision_target: "form"} do %>
+                data: {account_request_decision_target: "form",
+                       action: "submit->account-request-decision#validate"} do %>
     <div class="px-5 py-4">
       <%= hidden_field_tag "account_request[id]", nil, id: "account_request_decision_id",
             data: {account_request_decision_target: "id"} %>
@@ -33,9 +34,14 @@
       <%= text_area_tag "account_request[rejection_reason]", nil,
             id: "account_request_rejection_reason",
             rows: 4,
-            required: true,
+            aria: {describedby: "account_request_rejection_reason_error"},
             data: {account_request_decision_target: "reason"},
             class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+      <%# Not HTML5 `required`: that counts a single space as filled, and its bubble cannot be
+          styled or read back by anything but the browser. The controller trims and shows this. %>
+      <p id="account_request_rejection_reason_error" role="alert"
+         class="mt-1.5 hidden text-xs font-medium text-rose-700"
+         data-account-request-decision-target="error">Reason must be provided</p>
       <p class="mt-1.5 text-xs text-slate-500">The requester is sent this, so write it for them.</p>
     </div>
 

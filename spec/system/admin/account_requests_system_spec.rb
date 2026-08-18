@@ -29,9 +29,9 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should reject the account', js: true do
-        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="reject"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
-        click_on 'Save'
+        click_on 'Reject request'
         expect(request4.reload).to be_rejected
         within "#closed-account-requests" do
           expect(page).to have_content(request4.name)
@@ -42,9 +42,9 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should close the account', js: true do
-        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="close"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
-        click_on 'Save'
+        click_on 'Close request'
         expect(request4.reload).to be_admin_closed
         within "#closed-account-requests" do
           expect(page).to have_content(request4.name)
@@ -69,7 +69,7 @@ RSpec.describe "Account Requests Admin", type: :system do
             expect(page).to have_content(request.organization_name)
             expect(page).to have_content(request.organization_website)
             expect(page).to have_content(request.request_details)
-            expect(page).to have_content(request.status.titleize)
+            expect(page).to have_content(request.status.humanize)
             expect(page).to have_content(request.name)
             expect(page).to have_content(request.email)
           end
@@ -86,7 +86,7 @@ RSpec.describe "Account Requests Admin", type: :system do
             expect(page).to have_content(request.organization_name)
             expect(page).to have_content(request.organization_website)
             expect(page).to have_content(request.request_details)
-            expect(page).to have_content(request.status.titleize)
+            expect(page).to have_content(request.status.humanize)
             expect(page).to have_content(request.name)
             expect(page).to have_content(request.email)
           end
@@ -102,9 +102,9 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should reject the account', js: true do
-        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="reject"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
-        click_on 'Save'
+        click_on 'Reject request'
         expect(request4.reload).to be_rejected
         within "#closed-account-requests" do
           expect(page).to have_content(request4.name)
@@ -115,9 +115,9 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should close the account', js: true do
-        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="close"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
-        click_on 'Save'
+        click_on 'Close request'
         expect(request4.reload).to be_admin_closed
         within "#closed-account-requests" do
           expect(page).to have_content(request4.name)
@@ -128,16 +128,16 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it "should validate the rejection reason on reject modal" do
-        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="reject"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: ''
-        click_on 'Save'
+        click_on 'Reject request'
         expect(page).to have_content('Reason must be provided')
       end
 
       it "should validate the rejection reason on close modal" do
-        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        find(%(button[data-account-request-decision-decision-param="close"][data-account-request-decision-id-param="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: ' '
-        click_on 'Save'
+        click_on 'Close request'
         expect(page).to have_content('Reason must be provided')
       end
     end

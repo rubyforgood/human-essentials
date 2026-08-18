@@ -15,7 +15,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       find('select#resource_type option:first-of-type').select_option
       # The resource_id select input has its options generated dynamically by
       # the double_select_controller using select2 so we need to open the dropdown
-      find("label", text: "Resource").sibling(".input-group").click
+      find("label", text: "Resource").sibling(".select2-container").click
       find('li[role="option"]', text: organization.name).click
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
@@ -41,7 +41,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
 
-      expect(page.find(".error")).to have_content "Failed to create user: Please select an associated resource for the role."
+      expect(page.find("[data-flash-tone='danger']")).to have_content "Failed to create user: Please select an associated resource for the role."
     end
 
     it "clears the resource when the role type changes" do
@@ -49,14 +49,14 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       visit new_admin_user_path
       find('select#resource_type option', exact_text: "Organization").select_option
-      find("label", text: "Resource").sibling(".input-group").click
+      find("label", text: "Resource").sibling(".select2-container").click
       find('li[role="option"]', text: organization.name).click
       find('select#resource_type option', text: "Partner").select_option
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
 
-      expect(page.find(".error")).to have_content(
+      expect(page.find("[data-flash-tone='danger']")).to have_content(
         "Failed to create user: Please select an associated resource for the role."
       )
       expect(User.find_by(email: "testuser@example.com")).to be_nil
@@ -98,9 +98,9 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
         visit edit_admin_user_path(user_to_modify)
         expect(page).to have_content('User to modify')
         select "Partner", from: "resource_type"
-        find("div.input-group:has(.select2-container)").click
+        find(".select2-container").click
         find("li.select2-results__option", text: "Partner ABC").click
-        click_on 'Add Role'
+        click_on 'Add role'
 
         expect(page.find('[data-flash]')).to have_content('Role added')
       end
@@ -168,7 +168,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       it "can see link to switch to the other role" do
         visit admin_dashboard_path
-        click_link "Administrative User", match: :first
+        find("[data-shell-target='accountToggle']").click
         expect(page).to have_content "Switch to: #{organization.name}"
       end
     end
@@ -180,7 +180,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       it "does not see link to switch to another role" do
         visit admin_dashboard_path
-        click_link "Administrative User", match: :first
+        find("[data-shell-target='accountToggle']").click
         expect(page).not_to have_content "Switch to: #{organization.name}"
       end
     end
