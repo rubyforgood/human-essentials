@@ -374,6 +374,37 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+**At most three actions, exactly one of them primary, primary last.** Everything else is
+`:secondary` or `:ghost`. Past three, the least-used collapse behind a "More actions" menu.
+Six index pages here already carry exactly three — two secondary and one primary — so this
+writes down what the app already does rather than changing it.
+
+The actions container carries `data-page-header="actions"` so a spec can count what is in it
+without walking ancestors.
+
+**A page has one place for its main action.** If a fourth button appears, that is the signal
+that something else is wrong — usually a section of the page wanting an action of its own. Do
+not tuck it above a table; see the tabs rule below.
+
+### Tabs
+
+Two components, and picking the wrong one is an accessibility bug rather than a style choice.
+
+| | Use when | Component |
+| --- | --- | --- |
+| **Panel tabs** | Panels swap in place, same URL | `shared/essentials/tabs` |
+| **Page tabs** | Each tab is its own URL | `shared/essentials/page_tabs` |
+
+`role="tab"` tells a screen reader that activating this swaps a panel in the current document.
+If the tab loads a page, that promise is false, and the tablist takes the arrow keys from the
+browser on the way. Page tabs are a `<nav>` of links with `aria-current="page"` on the current
+one.
+
+**Prefer page tabs when a tab needs its own action.** The page header can only follow the tab
+if the tab is a URL — which is how "New partner group" stopped being a fourth button floating
+above a table. It is also how a tab becomes something you can link to, bookmark and go back
+from.
+
 ### Filter bar
 
 ```erb

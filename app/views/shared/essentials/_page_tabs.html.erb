@@ -1,0 +1,29 @@
+<%#
+  Tabs that navigate. Each one is a link to its own URL, and the current one carries
+  aria-current="page".
+
+    render "shared/essentials/page_tabs", tabs: [
+      {label: "Partners", path: partners_path, current: true},
+      {label: "Groups", path: partner_groups_path}
+    ]
+
+  Deliberately NOT the ARIA tabs pattern, and deliberately not shared/essentials/tabs. A
+  tablist with role="tab" tells a screen reader that activating a tab swaps a panel in this
+  document; these load a page. Marking navigation as a tablist promises something that does
+  not happen, and steals the arrow keys from the browser while it is at it.
+
+  Use `tabs` when panels switch in place, and this when the URL changes.
+%>
+<div class="border-b border-slate-200">
+  <nav class="-mb-px flex flex-wrap gap-1" aria-label="Sections">
+    <% tabs.each do |tab| %>
+      <%= link_to tab[:label], tab[:path],
+            "aria-current": (tab[:current] ? "page" : nil),
+            class: [
+              "border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
+              (tab[:current] ? "border-brand-600 text-brand-700" : "border-transparent text-slate-600 hover:text-slate-900")
+            ] %>
+    <% end %>
+  </nav>
+</div>

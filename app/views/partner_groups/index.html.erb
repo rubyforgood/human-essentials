@@ -1,0 +1,23 @@
+<% content_for :title, "Partner groups - #{current_organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The page's primary action follows the tab. On the partners tab it is "New partner agency";
+    here it is "New partner group". One place a page's main action ever appears, rather than a
+    fourth button tucked between the tab strip and the table.
+  %>
+  <%= render "shared/essentials/page_header",
+        title: "Partner agencies",
+        subtitle: "Organizations that receive essentials from #{current_organization.name}.",
+        actions: capture {
+          concat essentials_link_button("New partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <%= render "shared/essentials/page_tabs", tabs: [
+          {label: "Partners", path: partners_path},
+          {label: "Groups", path: partner_groups_path, current: true}
+        ] %>
+    <%= render "table" %>
+  <% end %>
+</div>

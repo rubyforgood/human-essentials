@@ -917,3 +917,43 @@ visible by looking at the rendered page.
 
 Bands use `dollar_presentation`, which always renders. `dollar_value` is untouched: the table
 cells that use it still want the blank.
+
+## 2026-08-18 · A tab that needs its own action must be its own URL
+
+The partner agencies page had three header actions and a fourth — "New partner group" — in a bar
+of its own between the tab strip and the table, where it read as table furniture.
+
+It was there for a reason: the action belongs to the Groups tab, and the header could not follow
+the tab because the tabs switched panels in the browser without changing the URL. A header
+cannot react to state it does not know about.
+
+So the tabs became links. `/partners` and `/partner_groups` are separate pages, each with its
+own primary action: "New partner agency" on one, "New partner group" on the other. Three header
+actions on each, never four. This is what GitHub does — Issues gives you "New issue", Pull
+requests gives you "New pull request" — and Linear, Jira and Shopify the same.
+
+Two things fell out of it that were worth having anyway. A tab you can link to, bookmark and
+reach with the back button. And a partner groups page that exists, rather than a panel that only
+appears if you find the tab.
+
+**Not the ARIA tabs pattern.** A new `page_tabs` component sits beside `tabs` rather than
+replacing it. `role="tab"` promises a screen reader that activating this swaps a panel in the
+current document; when the tab loads a page that promise is false, and the tablist takes the
+arrow keys from the browser while it is at it. Page tabs are a `<nav>` of links with
+`aria-current`. `tabs` is still right where panels genuinely switch in place — items, storage
+locations.
+
+## 2026-08-18 · The button count rule was already being followed, just not written down
+
+Asked what the convention is for multiple buttons at the top of a page. Measured before
+answering: six index pages carry exactly three actions, always two secondary and one primary,
+and eleven carry two. The app is consistent, and consistent with what Polaris, Carbon, Material
+and Atlassian all specify — one primary, at most three, primary last.
+
+The rule simply was not in design.md, whose page header section covered spacing and the back
+link and said nothing about actions. That is why a fourth button had nowhere to go and ended up
+inside a table: there was no rule to violate, so nobody noticed it was being violated.
+
+Written down now, along with the corollary that a fourth button is a signal rather than a
+problem to place — usually a section of the page wanting an action of its own, which is a tab
+wanting to be a URL.

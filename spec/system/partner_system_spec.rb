@@ -762,9 +762,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             check 'Yes'
           end
 
-          # Saving redirects to the partner index, where groups live on their own tab. The old
-          # Bootstrap panes were all "active" at once so the groups table was readable from
-          # either tab; it is a real tab strip now.
+          # Saving redirects to the partner index; groups have their own page behind the Groups
+          # tab, which is a link now rather than an in-page panel switch.
           def post_form_submit
             click_on "Groups"
           end

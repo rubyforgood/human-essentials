@@ -4,6 +4,10 @@ class PartnerGroupsController < ApplicationController
 
   before_action :set_partner_group, only: %i[edit destroy]
 
+  def index
+    @partner_groups = current_organization.partner_groups.includes(:partners, :item_categories)
+  end
+
   def new
     @partner_group = current_organization.partner_groups.new
     set_items_categories

@@ -1,28 +1,26 @@
-<div id="panel-partners" role="tabpanel" aria-labelledby="tab-partners" data-tabs-target="panel">
-  <% if partners.blank? %>
-    <%= render "shared/essentials/empty_state",
-          kind: essentials_filtered? ? :no_results : :cold_start,
-          title: essentials_filtered? ? "No partners match that status" : "No partner agencies yet",
-          body: essentials_filtered? ? "Choose \u201cAll statuses\u201d to see every partner agency." : "Partner agencies are the organizations you distribute essentials to.",
-          action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
-  <% else %>
-    <div class="table-scroll">
-      <table class="data-table">
-        <caption>Partner agencies and their current status</caption>
-        <thead>
-          <tr>
-            <th scope="col">Partner</th>
-            <th scope="col">Email</th>
-            <th scope="col">Group</th>
-            <th scope="col" class="quantity">Quota</th>
-            <th scope="col">Status</th>
-            <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: "partner_row", collection: partners %>
-        </tbody>
-      </table>
-    </div>
-  <% end %>
-</div>
+<% if partners.blank? %>
+  <%= render "shared/essentials/empty_state",
+        kind: essentials_filtered? ? :no_results : :cold_start,
+        title: essentials_filtered? ? "No partners match that status" : "No partner agencies yet",
+        body: essentials_filtered? ? "Choose \u201cAll statuses\u201d to see every partner agency." : "Partner agencies are the organizations you distribute essentials to.",
+        action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
+<% else %>
+  <div class="table-scroll">
+    <table class="data-table">
+      <caption>Partner agencies and their current status</caption>
+      <thead>
+        <tr>
+          <th scope="col">Partner</th>
+          <th scope="col">Email</th>
+          <th scope="col">Group</th>
+          <th scope="col" class="quantity">Quota</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "partner_row", collection: partners %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

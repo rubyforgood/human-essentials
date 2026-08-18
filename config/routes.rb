@@ -236,7 +236,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :partner_groups, only: %i(new create edit update destroy)
+  resources :partner_groups, only: %i(index new create edit update destroy)
 
   resources :product_drives
 
