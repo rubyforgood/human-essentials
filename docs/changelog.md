@@ -114,6 +114,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `a9f8d26ab` | **Every table row action is now `:ghost`.** 13 cells across 12 views moved off the legacy `*_button_to` shims and off `:secondary`. The audit script reports 0 tables with more than one weight, down from 7, and 0 filled buttons in rows, down from 6. |
 | `e6ac2c21d`&hellip;`011c24fbb` | Partner list rebuilt on the shared filter bar, developed on `design-preview-partner-status` over five review rounds. |
 | *(merge)* | **Merged into `design`.** Status chips replaced by a labelled select; single-filter bars apply on change and drop "Clear filters"; "All statuses" added; status colour now means *who is blocked*; pill icons dropped and pills no longer wrap. Two bugs fixed on the way: a blank status filter matched every partner including deactivated ones, and the select chevron sat 4px from the border because padding does not move a native arrow. |
+| *(this commit)* | Two modulepreload links dropped from every page: the `@fullcalendar/core/` directory pin, which has no module at its URL, and `sinon`, 180KB of test-only fake-timer support. The dead `esms-options` script removed from the shared head — es-module-shims has not shipped with importmap-rails since 2.0. 66 preload links per page, down to 64. |
 
 ---
 
