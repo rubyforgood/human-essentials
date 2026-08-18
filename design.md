@@ -1,701 +1,586 @@
 # Human Essentials Design System
 
-> **Living record** of how the Human Essentials UI is built and why — the **single source
-> of truth** for UI work. Read it before building a screen, and keep it current as patterns
-> change. Approved by [ADR 0010](docs/architecture/decisions/0010-adopt-a-documented-design-system.md).
-> Decisions taken where this document was silent are logged in
-> [`docs/design-decisions.md`](docs/design-decisions.md).
+This is the Ruby for Good design system as it exists in Human Essentials. It is normative:
+[ADR 0010](docs/architecture/decisions/0010-adopt-a-documented-design-system.md) makes this
+document the reference for UI work, and
+[ADR 0011](docs/architecture/decisions/0011-adopt-the-ruby-for-good-design-system.md) makes
+Tailwind v4 the system it describes. The same system runs in
+[CASA](https://github.com/rubyforgood/casa/blob/main/design.md); tokens and components are
+shared, the build tooling deliberately is not (see [Build](#build)).
 
-Human Essentials is used by 200+ non-profit essentials banks, most often by a volunteer on a
-laptop in a warehouse. The UI should be **plain, dense and predictable** — not fashionable.
-Consistency beats novelty here: a bank user who has learned one index page has learned all of
-them.
+If you are building a page, skip to [Building or changing a page](#building-or-changing-a-page).
 
-## Status & approach
+## Status
 
-The app ships **one** design system: **Bootstrap 5.2 + AdminLTE 3.2**, compiled by Sprockets,
-with ImportMap for JavaScript. There is no Tailwind, no CSS bundler, and no component library.
+The migration off Bootstrap 5 + AdminLTE 3.2 is **complete**. Both are removed from the
+`Gemfile`, the asset path and the importmap. Every controller except two renders on a design
+system layout:
 
-That decision was made in [ADR 0009](docs/architecture/decisions/0009-stick-with-adminlte-for-app-design.md)
-(Oct 2022) after a Tailwind migration was started and abandoned, and it stands. **Do not
-introduce a second CSS framework.** When AdminLTE has a widget for what you need, copy it from
-the [AdminLTE demo](https://adminlte.io/) rather than inventing one.
+| Controller | Why it is not on a design system layout |
+| --- | --- |
+| `HistoricalTrends::BaseController` | Abstract. It has no views of its own; its three subclasses are migrated. |
+| `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
 
-- Stylesheet entry point: `app/assets/stylesheets/application.scss` (Sass → Sprockets).
-- JavaScript entry point: `app/javascript/application.js`, pinned in `config/importmap.rb`.
-- No asset build step in development. `bin/start` runs the Rails server + Delayed Job worker.
-- Stimulus controllers live in `app/javascript/controllers/`; jQuery is still global
-  (`window.$`) because AdminLTE, select2, bootstrap-select and filterrific all need it.
-
-### The two-dialect problem (read this first)
-
-`application.scss` imports, in this order:
-
-```scss
-@import 'bootstrap';   // bootstrap gem 5.2.3
-@import 'AdminLTE';    // AdminLTE 3.2.0 — which embeds a full copy of Bootstrap 4.6.1
-```
-
-The vendored `AdminLTE.css` contains Bootstrap **4.6.1** and is imported **second**, so where
-the two frameworks define the same class, **Bootstrap 4 wins**. Meanwhile the JavaScript is
-Bootstrap **5.2.3** (`bootstrap.min.js` from the gem, precompiled in
-`config/initializers/assets.rb`). The app is therefore BS4 in CSS and BS5 in JS, on purpose,
-and you have to know which half you are writing.
-
-This is not a guess — compile the two imports and look. In the 1.18MB result, `.card` is
-defined by Bootstrap 5 (the `--bs-card-*` custom-property version) at ~85KB in, redefined by
-AdminLTE's embedded Bootstrap 4 at ~309KB, and redefined once more by AdminLTE's own rules at
-~786KB. Last one wins. Both utility sets survive intact, one after the other: `.visually-hidden`,
-`.float-end` and `.ms-auto` (BS5) all land before `.float-right`, `.sr-only` and `.ml-auto`
-(BS4).
-
-**CSS class names: write Bootstrap 4.** `ml-auto`, `mr-2`, `float-right`, `text-left`,
-`font-weight-bold`, `form-group`, `sr-only`, `btn-block`. This is not a preference, it is what
-the codebase is: 20 `mr-*` vs 0 `me-*`, 27 `float-right` vs 0 `float-end`, 116 `text-right` vs
-0 `text-end`, 48 `font-weight-bold` vs 5 `fw-bold`. BS5-only utilities do resolve (the BS5 gem
-is loaded too), but they are a minority dialect that reads as drift. Never mix both in one
-block.
-
-**JS behaviour attributes: write Bootstrap 5.** `data-bs-toggle`, `data-bs-dismiss`,
-`data-bs-target`. The app has 37 `data-bs-toggle` and 34 `data-bs-dismiss` and **zero**
-BS4-style `data-toggle`/`data-dismiss`. A BS4 attribute renders fine and simply never fires.
-
-**AdminLTE's own widgets use `data-widget`**, not Bootstrap: `pushmenu` (sidebar toggle),
-`treeview` (sidebar submenus), `collapse`/`remove` (card header tools), `expandable-table`.
-These are jQuery plugins from `app/javascript/adminlte.js`.
-
-**Where a class exists in both dialects, wear both.** `partners_helper.rb` renders
-`badge badge-pill badge-info bg-info` and 10 views render `class="close btn-close"` — BS4 name
-plus BS5 name — because either stylesheet may be the one that matches. That is ugly and it is
-correct; keep doing it for `badge`, `close`, and any other overlapping component until the
-frameworks are untangled.
-
-### Dead classes (verified undefined on the asset path)
-
-These are Bootstrap **3** / AdminLTE **2** leftovers. They are not defined in Bootstrap 4,
-Bootstrap 5, or AdminLTE 3.2 — checked against every stylesheet Sprockets loads. They render
-as nothing. **Do not add them; delete them from files you touch.**
-
-| Dead class | Occurrences in `app/views` | Use instead |
-|---|---|---|
-| `pull-right` | 28 | `float-right` |
-| `hidden-xs` | 6 | `d-none d-sm-block` |
-| `box`, `box-body`, `box-header`, `box-title`, `box-primary`, `with-border`, `no-padding` | 53 across 26 files | the AdminLTE 3 `card` family |
-| `label`, `label-*` (BS3 badge) | 1 (`partners_helper.rb` error fallback) | `badge badge-*` |
-| Leftover **Tailwind** classes — `text-2xl`, `flex`, `font-bold`, `w-1/2`, `bg-yellow-400`, `rounded-2xl`, `space-y-5`, … | 81 across 28 files | the Bootstrap/AdminLTE equivalent |
-
-The Tailwind row is the unfinished half of ADR 0009's stated consequence (*"Any work that used
-TailwindCSS would need to be updated to use Bootstrap"*). Be careful when clearing them:
-**`text-sm`, `text-lg`, `text-xl` and `text-bold` are real AdminLTE utilities and `gap-*` is a
-real Bootstrap 5 utility** — they look like Tailwind but they work. Only the 81 listed above are
-undefined.
-
-Two of these are load-bearing bugs rather than harmless noise:
-
-- **`UiHelper#submit_button` defaults to `align: "pull-right"`.** Every default Save button in
-  the app is therefore *not* right-aligned, and has never been. Pass `align: "float-right"` for
-  the intended behaviour, and fix the default when you are next in `ui_helper.rb`.
-- **`shared/_card` emits `box-body table-responsive no-padding`** for `type: :table`, of which
-  only `table-responsive` applies. A table rendered through that partial does not get the
-  padding reset the class name promises; use `card-body table-responsive p-0` when you build
-  the card inline.
+Anything else rendering `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is a defect, not
+a page waiting its turn: none of those classes are defined anywhere any more, so they draw
+nothing at all. `bin/design/status.rb` reports coverage; `bin/design/audit.js` audits a single
+page in a real browser.
 
 ## Foundations
 
 ### Typography
 
-**Source Sans Pro** (Google Fonts CDN, `<link>`ed in each layout, weights 300/400/600/700 plus
-italics). Both AdminLTE's `--font-family-sans-serif` and `$diaper-font-family-sans-serif-default`
-name it, backed by a system fallback stack.
+**Figtree**, self-hosted from `public/vendor/` and declared once in `@theme`:
 
-Use the framework scale. Do not set `font-size` in a view.
+```css
+--font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+```
 
-| Role | Markup | Size |
-|---|---|---|
-| Page title | `<h1>` inside `.content-header` | 1.8rem (1.5rem below `sm`) |
-| Page title qualifier | `<small>` **inside** the `h1` | inherited, muted |
-| Card title | `<h3 class="card-title">` | 1.1rem |
-| Body | default | 1rem / 1.5 |
-| Meta, table chrome | `<small>`, `.text-muted` | 0.875rem |
+Every layout sets `font-sans` on `<body>`. There is no second typeface and no CDN request.
 
-There are 148 inline `style="…"` attributes in `app/views`. That is accumulated debt, not a
-pattern to follow — put new rules in the relevant SCSS file.
+| Role | Classes | Notes |
+| --- | --- | --- |
+| Page title (`h1`) | `text-2xl font-bold tracking-tight text-slate-900` | Exactly one per page, always via the page header partial. |
+| Card title (`h2`) | `text-base font-semibold text-slate-900` | Emitted by the card partial. |
+| Section title (`h3`) | `text-sm font-semibold text-slate-900` | Inside a card body. |
+| Body | `text-sm text-slate-700` | The default reading size in this app. |
+| Secondary | `text-sm text-slate-600` | Subtitles, descriptions. |
+| Meta | `text-xs text-slate-500` | Timestamps, hints, counts. |
+| Field label | `block text-sm font-medium text-slate-700` | Supplied by the simple_form wrapper. |
 
-### Title Case (house style)
+Heading level is document structure, not size. AdminLTE used `<h5>`/`<h6>` as "small and
+bold", which left pages jumping from `h1` to `h5` and gave screen-reader users a broken
+outline. Size is a class; the level says where you are in the document.
 
-Human Essentials writes UI copy in **Title Case**: page titles, nav items, buttons, table
-headers, form labels. "New Distribution", "Pick Ups & Deliveries", "Storage Locations", "Date of
-Distribution", "Clear Filters".
+### Sentence case
 
-Measured across every `<th>` in the app: **158 Title Case vs 26 sentence case** — Title Case is
-the convention by a wide margin, and the sentence-case minority is drift, not a second style.
+**Sentence case for everything a person reads**: headings, buttons, labels, table headers,
+nav items, flash messages, empty states.
 
-This is a deliberate difference from the sibling Ruby for Good project
-[CASA](https://github.com/rubyforgood/casa/blob/main/design.md), which uses sentence case. If
-you are porting a pattern from CASA, re-case the copy.
+> New donation · Print unfulfilled picklists · Fair market value · Storage locations
 
-Two consistency rules that are cheap to keep:
+Not `New Donation`, `Print Unfulfilled Picklists`, `FMV`. Proper nouns keep their capitals
+(NDBN, Human Essentials, a partner's name). This is the house style across Ruby for Good and
+it is the single most common review note on UI PRs here.
 
-- **Match the nav label.** A page's `h1` should read the same as the sidebar item that leads to
-  it ("Storage Locations", not "Manage Storage Locations").
-- **Don't shout.** No `text-uppercase` on labels; use size, weight and colour for hierarchy.
+### Colour
 
-### Color
+Brand is **indigo**, declared as a `--color-brand-*` scale in `@theme` so `bg-brand-600`,
+`text-brand-700` and friends work exactly like any built-in Tailwind colour. Neutrals are
+Tailwind's **slate**, not redeclared.
 
-Three overlapping palettes live in this repo. Know which one you are in.
+| Token | Use |
+| --- | --- |
+| `brand-600` | Primary button, active nav, focus ring, current page |
+| `brand-700` | Primary hover, link text on white |
+| `brand-50` / `brand-100` | Tinted surfaces, icon tiles, pills |
+| `slate-900` | Headings, emphasised values |
+| `slate-700` | Body text |
+| `slate-500` | Meta text, muted values |
+| `slate-200` | Hairline borders |
+| `slate-100` | Dividers, hover fills |
+| `slate-50` | Page background, row hover |
 
-1. **Bootstrap/AdminLTE contextual names** — `primary` `#007bff`, `secondary` `#6c757d`,
-   `success` `#28a745`, `info` `#17a2b8`, `warning` `#ffc107`, `danger` `#dc3545`, `light`,
-   `dark`. These drive every `btn-*`, `bg-gradient-*`, `badge-*`, `card-*`, `text-*`.
-   **This is the palette for components — reach for it first.**
-2. **`app/assets/stylesheets/_colors.scss`** — a small semantic set (`$action`, `$error`,
-   `$success`, `$caution`, `$blue`, `$light-grey`, …) used by the hand-written SCSS files.
-3. **`app/assets/stylesheets/base/_variables.scss`** — the `$diaper-*` token file: ~90 raw
-   colour values named by hue and HSL lightness (`$diaper-color-blue-49`), a few semantic
-   aliases (`$diaper-text-color-interactive-default`,
-   `$diaper-notifcation-color-error-default` — the typo is load-bearing, it is the real
-   variable name), and size tokens (`$diaper-navbar-height: 57`, `$diaper-footer-height: 75`).
+Semantic colour, one meaning each:
 
-**Rule: no new raw hex values in views or in `custom.scss`.** If a component needs a colour,
-use a contextual name; if it genuinely needs a new one, add a named variable to
-`base/_variables.scss` and reference it.
+| Tone | Colour | Means |
+| --- | --- | --- |
+| success | emerald | Completed, approved, healthy, nothing to do |
+| warning | amber | Needs attention, awaiting someone |
+| danger | rose | Destructive, failed, below minimum |
+| info | sky | Neutral information, in progress |
 
-**What the contextual colours mean here.** This mapping comes from `UiHelper` and holds across
-essentially every screen, so it is the app's actual semantic layer:
+**Never colour alone.** Every coloured signal carries a word, and usually an icon too. A
+row that is below its minimum quantity says "Below minimum"; an audit's status says what it
+is; a partner's state is a pill with a label. This is WCAG 1.4.1, and it is also just
+readable — a red cell does not say *why* it is red.
 
-| Colour | Means | Canonical uses |
-|---|---|---|
-| `success` (green) | creates, saves, moves forward | New, Save, Submit, Reactivate |
-| `primary` (blue) | the ordinary action | Edit, Filter |
-| `info` (cyan) | read-only / retrieval | View, Download, Refresh |
-| `warning` (amber) | needs attention, reversible admin action | Invite, Restore |
-| `danger` (red) | destructive or blocking | Delete, Deactivate |
-| `outline-primary` | the neutral way out | Cancel, Clear Filters |
-| `secondary` (grey) | inert | Deactivated status |
-
-**Never signal state by colour alone.** `status_label` pairs every colour with an icon *and* a
-word; keep that pairing.
+Text tones use the **-700** step. `rose-600` is 4.51:1 on white, which passes 4.5:1 by a
+hair; -600 is only ever used as a border or a filled background with white text on it.
 
 ### Spacing, radius, elevation
 
-- Bootstrap 4 spacing scale: `m-*` / `p-*` with 0–5 → 0 / .25 / .5 / 1 / 1.5 / 3 rem.
-- Page background `#f4f6f9`; surfaces are white `.card` at `border-radius .25rem`; the sidebar
-  is `elevation-4`.
-- Fixed chrome: sidebar 250px, navbar 3.5rem, footer 75px. `.content-wrapper` is offset for
-  both; do not position against the viewport directly.
-- Page rhythm: `.content-header` (padding `15px .5rem`) then one or more
-  `.content > .container-fluid > .row > .col-*` blocks. Cards carry their own
-  `margin-bottom: 7.5px` — do not add ad-hoc margins between stacked cards.
+Tailwind's 4px scale, unmodified. In practice:
+
+| Thing | Value |
+| --- | --- |
+| Page gutter | `px-4 sm:px-6 lg:px-8`, `py-6` |
+| Gap between cards | `gap-6` |
+| Card padding | `p-5` (`px-5 py-4` in header and footer strips) |
+| Table cell padding | `px-4 py-3` |
+| Field spacing | `mb-4` between fields, `mt-1.5` label to input |
+| Radius | `rounded-2xl` cards and dialogs, `rounded-lg` controls, `rounded-full` pills and avatars |
+| Elevation | `shadow-sm` on cards, `shadow-xl` on dialogs. Nothing else has a shadow. |
+
+Depth is carried by the hairline border, not the shadow. A card is white on `slate-50` with
+`border-slate-200`; the shadow is a hint, not the edge.
 
 ### Iconography
 
-**Font Awesome 5.11.2 plus the v4 shims**, both from jsDelivr, `<link>`ed in every layout.
-
-Render icons through the `fa_icon` helper (`app/helpers/icon_helper.rb`), never a bare `<i>` in
-new code:
+**Bootstrap Icons**, self-hosted, compiled into the Tailwind bundle. Font Awesome is gone —
+an `fa-*` class renders an empty element: no glyph, no error, just a gap.
 
 ```erb
-<%= fa_icon "trash", text: "Delete" %>                        <%# <i class="fa fa-trash"></i> Delete %>
-<%= fa_icon "chevron-right", text: "Next", right: true %>     <%# icon after the text %>
-```
-
-**The icon names in this app are Font Awesome *4* names**, and they only resolve because
-`v4-shims.css` is loaded: `pencil-square-o`, `circle-o` (38 uses), `floppy-o`, `dot-circle-o`,
-`money`, `gratipay`, `file-text`, `calendar-o`, `pie-chart`, `repeat`, `sign-out`. Keep using
-FA4 names so the icon set stays coherent. If you need an FA5-only glyph, write the explicit FA5
-form (`fas fa-…`) and check it actually renders — the shim maps old names forward, not new names
-backward.
-
-Icons in this app are **decorative**: every icon `fa_icon` produces sits beside its own text
-label. If you ship an icon-only control, it needs an `aria-label`, and the icon itself should be
-`aria-hidden="true"`.
-
-### Accessibility
-
-The bar is **WCAG 2.1 AA**. The app is not there yet, so there are two rules:
-
-1. **Do not add new violations.** Real `<label>`s, one `<h1>` per page, `alt` on meaningful
-   images, `aria-label` on any icon-only control, keyboard-operable everything.
-2. **Fix what you touch.** Landing in a file is the cheapest chance to close a gap in it.
-
-These gaps are app-wide, already verified, and do not need rediscovering — fix them where you
-land, or take one on deliberately:
-
-| Gap | Where | Why it matters |
-|---|---|---|
-| No `lang` attribute on `<html>` | all 4 app layouts | WCAG 3.1.1 — screen readers guess the language |
-| `maximum-scale=1, user-scalable=no` in the viewport meta | all 4 app layouts | WCAG 1.4.4 — blocks pinch-zoom on a phone |
-| No skip link | all layouts | WCAG 2.4.1 — keyboard users tab the whole sidebar on every page |
-| Zero `<caption>` across 142 `<table>`s | app-wide | WCAG 1.3.1 — a table announces nothing about itself |
-| 4 `<main>` landmarks across 422 views | app-wide | `.content-wrapper` is a bare `div` |
-| 8 `<label for>`s pointing at an input that is never rendered | see **Forms** | WCAG 1.3.1 / 4.1.2 — the label names nothing |
-
-There is currently **no automated accessibility test** — no axe, no `spec/system/accessibility/`.
-Adding one is the highest-leverage accessibility task in the repo (see **Backlog**), because
-everything above is the kind of defect a single axe sweep would have caught years ago.
-
-## Components
-
-### Buttons — always through `UiHelper`
-
-`app/helpers/ui_helper.rb` is the button system, and its own comment states the rule: *"Anytime
-a button or pseudo-button are displayed, it should always be through one of these methods."*
-Follow it. A hand-written `<a class="btn btn-…">` skips the confirm dialog, the
-`data-disable-with` double-submit guard, and the `link_to` vs `button_to` decision that the
-HTTP verb requires.
-
-| Helper | Renders | Default label |
-|---|---|---|
-| `new_button_to(path, text:)` | success · md · `fa-plus` | New |
-| `edit_button_to(path)` | primary · xs · `fa-pencil-square-o` | Edit |
-| `view_button_to(path)` | info · xs · `fa-search` | View |
-| `delete_button_to(path)` | danger · xs · `fa-trash` · `DELETE` + confirm | Delete |
-| `deactivate_button_to` / `reactivate_button_to` | danger / success · xs · `PUT` + confirm | Deactivate / Reactivate |
-| `restore_button_to` / `update_button_to` | warning / success · xs · `PATCH` | Restore |
-| `invite_button_to` | warning · xs · `fa-envelope` · `POST` + confirm | Invite |
-| `submit_button(options)` | success `<button type="submit">` · `fa-floppy-o` | Save |
-| `submit_button_to(path)` | success · lg · `fa-check-circle` · `POST` | Submit |
-| `cancel_button_to(path)` | outline-primary · md · `fa-ban` | Cancel |
-| `clear_filter_button` | a cancel button pointed at `request.path` | Clear Filters |
-| `filter_button` | primary `<button type="submit">` · `fa-filter` | Filter |
-| `download_button_to` | info · md · `fa-download` | Download |
-| `print_button_to` | outline-dark · xs · `fa-print` | Print |
-| `refresh_button_to` | info · md · `fa-sync` | Refresh |
-| `modal_button_to(target_id)` | outline-primary + `data-bs-toggle="modal"` | — |
-| `js_button` | outline-primary, for JS hooks | — |
-| `add_element_button` / `remove_element_button` | primary / danger, drive the `form-input` Stimulus controller | — |
-
-**Sizes carry meaning**: `xs` for a row action inside a table, `md` for a page or section
-action, `lg` only for the one terminal Submit on a page. A `lg` button in a table row reads as
-a mistake.
-
-Every helper sets `data-disable-with` ("Please wait…", or "Saving" for `submit_button`). That is
-the app's only double-submit guard — do not bypass it. Any destructive or state-changing action
-gets a `confirm:` (the helpers default to "Are you sure?"; `ApplicationHelper` has
-`confirm_delete_msg` / `confirm_deactivate_msg` / `confirm_reactivate_msg` / `confirm_restore_msg`
-for a resource-specific message, which is better).
-
-Destructive confirms use Rails UJS `data: {confirm:}` (native `window.confirm`), because that is
-what Capybara's `accept_confirm` / `dismiss_confirm` can drive in system specs. Do not replace
-one with a custom dialog without moving the specs too.
-
-### Status labels
-
-`status_label(text, icon, type)` renders a **non-interactive** pill built from button classes
-(`cursor-default btn btn-xs btn-#{type}`). `partner_status_label` maps the six partner states
-onto it: uninvited (plain + `exclamation-circle`), invited (info), awaiting_review (warning),
-approved (success), recertification_required (danger), deactivated (secondary).
-
-Use it for state. **Never make a status label a link** — if it navigates, it is a button, and it
-should look like one.
-
-### Cards
-
-The AdminLTE `card` is the only surface in the app. Two ways to build one:
-
-**Inline** — the common case (159 views):
-
-```erb
-<div class="card card-primary">
-  <div class="card-header"><h3 class="card-title">Distribution Filters</h3></div>
-  <div class="card-body">…</div>
-  <div class="card-footer">…</div>
-</div>
-```
-
-**`shared/_card`** (6 views) — takes `title:`, `subtitle:`, `gradient:`, `type:`
-(`:box` / `:plain` / `:table`), `footer:`, `header_div:`, and adds AdminLTE's collapse/remove
-tool button in the header. Use it when you want that header treatment.
-
-A card that holds a table gets `card-body table-responsive p-0` so the table meets the card
-edges.
-
-### Page header
-
-Every page opens with the same block: an `<h1>` on the left, a breadcrumb on the right (132 and
-129 views respectively).
-
-```erb
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Distributions - #{current_organization.name}" %>
-        <h1>Distributions <small>for <%= current_organization.name %></small></h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to fa_icon("dashboard", text: "Home"), dashboard_path %></li>
-          <li class="breadcrumb-item active">Distributions</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>
+<i class="bi-plus-lg" aria-hidden="true"></i>
 ```
 
 Rules:
 
-- **One `<h1>` per page.** The qualifier ("for Pawnee Diaper Bank") goes in a `<small>` *inside*
-  the `h1`, never as a second heading — a second heading breaks heading order for screen readers.
-- **Always set `content_for :title`.** The `<title>` otherwise falls back to
-  `default_title_content`, which is just the organization name, so every tab reads the same.
-- The breadcrumb's last item is the current page, is not a link, and carries `active`.
-- Sub-pages (`new`, `edit`, `show`) get a breadcrumb back to their index. That breadcrumb is the
-  only "back" affordance the app has — a page without one is a dead end.
+- An icon that sits beside its own label is decorative and is `aria-hidden="true"`.
+- A control with **only** an icon carries its own `aria-label`. There is no third option.
+- `IconHelper#fa_icon` still exists and still takes Font Awesome names, because ~40 call
+  sites use it; it maps them to Bootstrap Icons and always sets `aria-hidden`. New code
+  should write the `<i class="bi-…">` directly or pass `icon:` to a component helper.
+- Icons are aligned once, in `@layer base`, rather than with per-call-site margins.
 
-### Filter bar
+### Accessibility
 
-An index page's filters are a `card card-primary` titled "… Filters":
+Target is **WCAG 2.1 AA**. These are the rules this app has actually had to enforce:
 
-- `card-body` → a `row` of `form-group col-lg-2 col-md-2 col-sm-6 col-xs-12` cells, one per
-  filter.
-- `card-footer` → `filter_button` and `clear_filter_button` on the left; export and New buttons
-  in a `float-right` span.
+- **Landmarks.** One `<main id="main-content">` per document. `<nav>` elements are labelled.
+  A page never has two of the same landmark with the same name.
+- **Skip link.** First focusable element on the app shells, visible on focus, `#222` on white
+  (15.9:1). It is deliberately not `.sr-only-focusable`: that pattern reveals the link with
+  `position: static`, which shifts the page as you tab into it.
+- **One `h1` per page**, and no skipped levels below it.
+- **Every control is named.** A field has a `<label for>`, or an `aria-label`, or an
+  `aria-labelledby`. A `<label>` with no `for` names nothing.
+- **A link cannot be disabled.** It stays focusable and clickable by keyboard and announces
+  nothing. `UiHelper` renders an unavailable link action as a non-interactive `<span>` with
+  `aria-disabled`, and an unavailable form action as a genuinely `disabled` `<button>`.
+- **Focus is always visible**: `focus-visible:outline-2 focus-visible:outline-offset-2`.
+  Nothing sets `outline: none` without replacing it.
+- **Disclosure state is announced**: `aria-expanded` plus `aria-controls` on anything that
+  opens or closes a region.
+- **Colour is never the only signal** (see [Colour](#colour)).
+- `lang` is bound to `I18n.locale`, and the viewport tag does not lock zoom.
 
-Build the controls with `FilterHelper` (`filter_select`, `filter_text`, `filter_checkbox`), not
-by hand. It generates a UUID-suffixed id and a matching `label_tag`, so the label is correctly
-associated — which is exactly the thing hand-rolled `<select>`s get wrong.
+The browser audit (`bin/design/audit.js`) checks the mechanical half of this — heading order,
+unlabelled controls, nameless buttons, duplicate landmarks, leftover Bootstrap classes,
+console errors — on any page you point it at. It does not replace reading the page with a
+keyboard.
 
-Date filtering is `shared/_date_range_picker`: a Litepicker instance (configured in
-`application.js` with named ranges — Default, All Time, Today, Last 7/30 Days, This/Last Month,
-Last 12 Months, Prior Year, This Year) that submits `filters[date_range]` plus a
-`filters[date_range_label]` hidden field. The controller side is the `Filterable` concern's
-`class_filter`.
+## Components
 
-Filters submit with `method: :get` so the filtered view is a real, shareable, bookmarkable URL.
-Keep it that way.
+Components are Ruby helpers in `app/helpers/essentials_ui_helper.rb` and partials under
+`app/views/shared/essentials/`. Reach for one before writing a utility string: the point of
+the system is that a card looks the same on all 77 pages that render one.
 
-### Tables
+### Buttons
 
-- `<table class="table table-hover">` inside `card-body table-responsive p-0`.
-- **Column alignment is semantic**: `class="numeric"` or `"quantity"` right-aligns (from
-  `custom.scss`), `class="date"` centres (from `application.scss`). Use them instead of
-  `text-right`.
-- Extract a row into `_thing_row.html.erb` and render it as a collection once it has more than a
-  couple of cells; that is the established pattern (`_donation_row`, `_purchase_row`,
-  `_request_row`, `_partner_row`).
-- Row actions are `xs` `UiHelper` buttons in a final cell.
-- **Pagination is Kaminari**: `<%= paginate @paginated_things %>` in the `card-footer`.
-  `config/initializers/kaminari_config.rb` sets **50 per page in production but 5 in development
-  and staging** — if a pagination change looks broken locally, check that first.
-- A totals row goes in `<tfoot>`, and should say what it totals ("(This page)" vs the whole
-  result set) — `purchases/index` is the reference.
-- Expandable rows use AdminLTE's `data-widget="expandable-table"`; `expandable_table.scss`
-  supplies the +/− affordance, which AdminLTE itself does not.
-- **Give new tables a `<caption>`** (`class="sr-only"` is fine). There are currently zero in the
-  app; do not extend the streak.
+One treatment per role. The **variant** carries the meaning, the **size** carries the context.
 
-### Forms
+| Variant | Looks like | Use for |
+| --- | --- | --- |
+| `:primary` | Filled indigo | The one action the page is for |
+| `:secondary` | White, slate border | Everything else |
+| `:danger` | Filled rose | Destroys or rejects something |
+| `:ghost` | No border, tinted on hover | Row actions, toolbar actions |
 
-`simple_form` with the Bootstrap wrappers in `config/initializers/simple_form_bootstrap.rb`.
-57 views use `simple_form_for`; 10 still use bare `form_for` and 5 use `form_with`. **New
-model-backed forms use `simple_form_for`** — that is what gets you the wrappers, the error
-markup and the required marker for free.
-
-Non-model forms (filter bars, search) correctly use `form_tag` / `form_with` with `method: :get`;
-17 views do, and that is not debt.
-
-Note there are two initializers, and Rails loads them alphabetically: `simple_form.rb` first,
-then `simple_form_bootstrap.rb`, which wins. That is why the required marker renders **after**
-the label (`label_text = ->(label, required, _) { "#{label} #{required}" }`), and why
-`boolean_style` is `:inline` in the app even though `simple_form.rb` says `:nested`.
-
-The house pattern is an input group with a leading icon:
+| Size | Use for |
+| --- | --- |
+| `:sm` | Inside a table row or a dense toolbar |
+| `:md` | Page and section actions (default) |
 
 ```erb
-<%= f.input :business_name, label: "Business Name", wrapper: :input_group do %>
-  <span class="input-group-text"><i class="fa fa-suitcase"></i></span>
-  <%= f.input_field :business_name, class: "form-control" %>
+<%= essentials_link_button "New donation", new_donation_path, icon: "bi-plus-lg" %>
+<%= essentials_action_button "Deactivate", deactivate_partner_path(partner),
+      method: :put, variant: :danger, confirm: "Are you sure?" %>
+<button class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>">Filter</button>
+```
+
+`essentials_link_button` is a `GET` — it navigates. `essentials_action_button` goes through
+`button_to`, so the verb, the CSRF token and `disable_with` are handled for you. A thing that
+changes state is never a link.
+
+**`UiHelper` is the older API and it still works.** `new_button_to`, `edit_button_to`,
+`delete_button_to`, `submit_button` and the rest have ~100 call sites; they now emit design
+system classes and Bootstrap Icons, and their `type:`/`size:` options map onto the variants
+above. Its own comment still holds: *anytime a button or pseudo-button is displayed, it
+should be through one of these methods.*
+
+### Status pills
+
+A pill is a **state**, not a control: not focusable, does not look pressable.
+
+```erb
+<%= essentials_status_pill "Awaiting review", tone: :warning, icon: "bi-hourglass-split" %>
+```
+
+Tones: `:neutral` `:info` `:success` `:warning` `:danger` `:brand`. Each pairs a tint with a
+word; pass an `icon:` when the pill is doing real signalling work rather than labelling.
+
+### Icon tiles and avatars
+
+```erb
+<%= essentials_icon_tile "bi-box-seam", tone: :brand %>
+<%= essentials_avatar_initials current_user.name %>
+```
+
+A soft coloured tile behind an icon means "a stat or a status". A **person** is an initials
+avatar instead. Keeping these disjoint is what makes either one readable at a glance.
+
+### Cards
+
+The surface everything sits on: white, hairline border, `rounded-2xl`, `shadow-sm`.
+
+```erb
+<%= render "shared/essentials/card",
+      title: "Filters",
+      subtitle: "Narrow this list down.",
+      actions: capture { essentials_link_button("Export", exports_path, variant: :secondary, size: :sm) },
+      footer: capture { render "shared/essentials/pagination", collection: @donations },
+      padded: false,
+      card_id: "donations" do %>
+  …
 <% end %>
 ```
 
-**The attribute passed to `f.input` must be the same one passed to `f.input_field`.** When it
-isn't, simple_form emits `<label for="item_name">` above a field whose id is
-`item_value_in_dollars`: the label names nothing, clicking it focuses nothing, and the required
-marker is computed from the wrong attribute. There are **8** of these today — `items/_form` (×5),
-`kits/_form`, `organizations/edit`, `admin/organizations/edit`. Don't add a ninth, and fix the
-ones you pass.
+`padded: false` when the body is a table that should meet the card edges. `card_id` when
+something needs to find the section — a spec, or an in-page anchor.
 
-**Required fields.** simple_form derives required-ness from the model, and the details matter:
+### Page header
 
-- An **unconditional** `validates :x, presence: true` produces the marker automatically
-  (`<abbr title="required">*</abbr>`, styled by `_form_abbr.scss`). Let it. Don't type a `*`.
-- A **conditional** validator (`presence: {...}, if: ->{...}`) is deliberately ignored by
-  simple_form (`conditional_validators?` in `simple_form/helpers/validators.rb`), so no marker
-  appears. This is the "phone **or** e-mail" case in `product_drive_participants/_form`.
-- Passing `required: true` is **not** a safe substitute for a conditional requirement. With an
-  explicit `required:` option simple_form sets the HTML5 `required` attribute *regardless* of
-  `config.browser_validations = false`, and the browser will then block a submission that the
-  model considers perfectly valid.
-- So: for a conditional requirement, say it in the label —
-  `label: "Phone* (phone number or e-mail required)"`. That is the one sanctioned place a
-  literal `*` belongs in a label string. Keep the wording consistent with the existing four.
-- Because every ActiveRecord model responds to `validators_on`, `config.required_by_default` is
-  effectively dead for AR-backed forms; only presence validators drive the marker.
+Every page renders this, so the spacing cannot drift.
 
-`config.browser_validations = false` is intentional: server-side validation is the single source
-of truth, and error messages render through the simple_form error components
-(`is-invalid` + `invalid-feedback`) rather than a browser tooltip.
+```erb
+<%= render "shared/essentials/page_header",
+      title: "New donation",
+      subtitle: "Record essentials coming in from a donor.",
+      back: {path: donations_path, label: "Back to donations"},
+      actions: capture { essentials_link_button("Import CSV", …) } %>
+```
+
+It owns the page's only `<h1>`. Shape rules, measured rather than eyeballed: the back link
+and title are one block with an 8px gap; `items-end` when there is no subtitle so a 40px CTA
+sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
+to the subtitle's baseline.
+
+### Filter bar
+
+```erb
+<%= render "shared/essentials/filter_bar", url: donations_path do %>
+  <%= filter_select scope: :by_source, collection: Donation::SOURCES %>
+  <%= render "shared/date_range_picker" %>
+  <%= filter_button %>
+  <%= clear_filter_button %>
+<% end %>
+```
+
+Filters submit with **GET**, so a filtered view stays a shareable, bookmarkable URL. A plain
+(borderless) bar sits 16px above the table it filters; wrap it in a card only when it is a
+section in its own right.
+
+`FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_checkbox`) and
+gives each one a UUID-suffixed id with a matching label, so a filter control is always named.
+`EssentialsUiHelper::FILTER_CONTROL_CLASSES` is the single definition of what one looks like.
+
+The date range picker owns its own label. Callers used to add `label_tag "Date Range"`, which
+pointed at `date_range` while the input's id is `filters_date_range` — the label named
+nothing and clicking it did nothing, at all fourteen call sites.
+
+### Tables
+
+`.data-table` is a **component class**, not a utility string:
+
+```erb
+<div class="table-scroll">
+  <table class="data-table">
+    <caption>Donations received in the selected period</caption>
+    <thead>
+      <tr>
+        <th class="date">Date</th>
+        <th>Source</th>
+        <th class="numeric">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>…</tbody>
+  </table>
+</div>
+```
+
+CASA writes its tables with utilities because CASA has a few dozen pages. Human Essentials
+has ~78 tables across 393 views, and a twelve-class string copy-pasted 78 times drifts on the
+first hurried PR.
+
+Column semantics reuse the class names the app already used under Bootstrap, so a table keeps
+its meaning instead of re-deciding alignment cell by cell:
+
+| Class | Effect |
+| --- | --- |
+| `.numeric`, `.quantity`, `.percent` | Right-aligned, tabular figures |
+| `.date` | No wrapping |
+
+Every table gets a `<caption>` (visually hidden) saying what it lists. `.table-scroll` is the
+horizontal scroll container — a wide table scrolls, it does not squeeze.
+
+### Forms
+
+`simple_form`, with `:essentials` as the **default wrapper** — a plain `simple_form_for`
+already produces design system markup. `essentials_form_for` is a convenience that also sets
+the wrapper mappings explicitly.
+
+| Wrapper | Applies to |
+| --- | --- |
+| `:essentials` | Everything by default |
+| `:essentials_boolean` | A single checkbox — control and label on one line |
+| `:essentials_collection` | Radio/checkbox groups — a real `<fieldset>`/`<legend>` |
+| `:essentials_file` | File inputs, styled through `::file-selector-button` |
+
+```erb
+<%= essentials_form_for @donation do |f| %>
+  <%= essentials_error_summary(@donation) %>
+  <%= f.input :source, required: true %>
+  <%= f.input :issued_at, label: "Date received" %>
+  <%= submit_button %>
+<% end %>
+```
+
+- **Do not pass a block to `f.input` just to restyle the field.** A block tells simple_form
+  to skip the wrapper's input, which is why several forms ended up with the wrapper's own
+  class string copy-pasted in by hand.
+- `essentials_error_summary` sits above the form: `role="alert"`, names each field, links
+  each message to its input.
+- Error text is `rose-700`. `rose-600` is only a border.
+- `required: true` sets the HTML5 `required` attribute regardless of `browser_validations`.
+  Conditional validators are *not* inferred as required — mark them explicitly or not at all.
 
 ### Modals
 
-Bootstrap 5 modals (`data-bs-toggle="modal"`, `data-bs-dismiss="modal"`) opened via
-`modal_button_to`. Every layout ships an empty `<div class="modal fade" id="modal_new">` at the
-bottom of `<body>` that AJAX responses (`*_modal.js.erb`, `create.js.erb`) render into — that is
-how "New Donation Site" / "New Vendor" / "New Product Drive" work from an index page.
+Native `<dialog>`, opened with `showModal()`.
 
-`shared/_csv_import_modal` is the shared import dialog: a two-column explainer (download the
-template, then upload) taking `import_type`, `csv_template_url` and `csv_import_url`. Use it for
-every CSV import rather than writing a new one.
+```erb
+<button type="button" data-action="click->dialog#open" data-dialog-id-param="csv-import-modal">
+  Import CSV
+</button>
 
-Close buttons carry both dialects: `class="close btn-close"`.
+<%= render "shared/essentials/modal", id: "csv-import-modal", title: "Import vendors" do %>
+  …
+<% end %>
+```
 
-### Flash messages and toasts
+`showModal()` gives the focus trap, the Escape handler, inert background content and the top
+layer for free — all things the Bootstrap modal reimplemented in JS and got partly wrong. The
+`dialog` Stimulus controller lives on the app shell, so any page can open a dialog by id; it
+adds backdrop-click closing and restores focus to whatever opened it.
 
-Two channels, and they are not interchangeable:
+A trigger names its dialog with `data-dialog-id-param`. A trigger that names nothing is a
+trigger that does nothing.
 
-- **Flash** — `shared/_flash` renders each key inside a `turbo_frame_tag "flash"` with
-  `role="alert"`, classed by `ApplicationHelper#flash_class`: `notice` → `alert-info`,
-  `success` → `alert-success`, `error` → `alert-danger`, `alert` → `alert-warning`. Use it for
-  the outcome of a request that navigated. Note `flash_class` returns `nil` for any other key,
-  which renders an unstyled bare div — stick to the four keys.
-- **Toastr** — `window.toastr`, configured in `application.js` with a **1400ms** timeout. Use it
-  only for transient in-page feedback. At 1400ms it is too fast to read a sentence, so keep toast
-  copy to a few words, and never put an error or anything actionable in one.
+### Flash messages
+
+```erb
+<%= render "shared/essentials/flash" %>
+```
+
+Rendered by the shells inside a `turbo_frame_tag "flash"`, so a Turbo response can replace
+it. A message bar gets a **plain glyph**, never an icon tile: a soft `-50` tile on a `-50`
+surface is invisible, and a filled one shouts and adds height. `role="status"` for
+informational tones and `role="alert"` for warning and danger, so a screen reader interrupts
+only when something actually went wrong.
+
+Keys map `success → :success`, `error → :danger`, `alert → :warning`, anything else `→ :info`.
+
+### Empty states
+
+Never render bare empty table chrome. Three flavours, and every screen picks one
+deliberately:
+
+| `kind:` | Means | Offers |
+| --- | --- | --- |
+| `:cold_start` | Nothing exists yet | The create action |
+| `:no_results` | A filter matched nothing | Clearing the filter |
+| `:all_clear` | Genuinely nothing to do | Reassurance |
+
+```erb
+<%= render "shared/essentials/empty_state", kind: :no_results,
+      title: "No donations found",
+      body: "Nothing matched these filters.",
+      action: capture { clear_filter_button } %>
+```
+
+`essentials_filtered?` decides between the first two. It reads `params` directly rather than
+the controller's `filter_params`, because only about half the controllers define that — a
+view calling it is one un-filtered controller away from a `NameError`, which is exactly how
+the audits index started returning 500s.
+
+### Tabs
+
+```erb
+<%= render "shared/essentials/tabs", tabs: [{id: "open", label: "Open"}, {id: "closed", label: "Closed"}] %>
+```
+
+Real `role="tablist"` semantics with roving `tabindex`: arrow keys move between tabs, Home and
+End jump to the ends, `aria-selected` and `aria-controls` are wired to the panels. Panels
+carry `data-tabs-target="panel"` in the same order as the tabs.
+
+### Pagination
+
+```erb
+<%= render "shared/essentials/pagination", collection: @donations %>
+```
+
+Rendered **inside** the table card as its last child — a compact `border-t` strip, not a
+detached bar floating below the card. Kaminari's own partials in `app/views/kaminari/` supply
+the `<nav aria-label="Pagination">` landmark and the `.pagination-link` styling; the current
+page is marked with `aria-current="page"` and styled off that attribute, so the two cannot
+disagree. The truncation gap is a `<span>`, not a link to `#`.
 
 ### Charts
 
-Highcharts, via `shared/_highcharts` and the `highchart` Stimulus controller:
-
-```erb
-<%= render "shared/highcharts", config: chart_config %>
-```
-
-The partial ships Select All / Deselect All series buttons. Chart config is built server-side
-(see `app/helpers/historical_trends_helper.rb` and `app/services/reports/`). A chart is never
-the only representation of a number — pair it with the table or figure it summarises, because a
-canvas is invisible to a screen reader.
-
-### Empty states and onboarding
-
-- **Cold start (whole app)** — `dashboard/_getting_started_prompt` renders a checklist of setup
-  links while `@org_is_set_up` is false, and disappears once the org has storage locations,
-  items and a partner. New setup requirements belong on that list.
-- **Cold start (one page)** — an index with no records shows a short line of copy plus the same
-  New button as the toolbar. Never render bare empty table chrome.
-- **No results** — a filtered index that matches nothing says so, and leaves the filter bar and
-  `clear_filter_button` in place so the user can undo it.
-
-### Progress stepper
-
-`progress_stepper.scss` plus `ApplicationHelper#step_container_helper(index, active_index)`
-styles a 4-step flow: done steps go green (`$diaper-color-green-33`), the active step is outlined
-blue (`$diaper-color-blue-49`), and future steps are muted. Use it for any multi-step wizard so
-they all look alike.
+Highcharts, through `shared/_highcharts`. A chart is never the only representation of the
+data — the table it summarises is on the same page, because a chart is not readable by a
+screen reader and not printable in colour.
 
 ## App shell
 
-Four shells, all built from the same AdminLTE chrome: fixed 250px dark sidebar
-(`sidebar-dark-primary elevation-4`), white 3.5rem top navbar, `content-wrapper` on `#f4f6f9`,
-and a footer. The `<body>` carries `hold-transition sidebar-mini layout-fixed`, plus an `id` of
-the controller name and a `class` of the action name — those hooks are used by specs and by
-page-specific CSS, so keep them.
+Three layouts. All of them load `tailwind.css` and nothing else.
 
-### Bank shell — `layouts/application.html.erb`
+### Bank shell — `layouts/essentials_app.html.erb`
 
-The main app. Sidebar groups, in this order (frequency of use, not alphabetical):
+Fixed sidebar at `lg`, off-canvas drawer below it, sticky top bar, `<main id="main-content">`.
+`data-controller="shell turbo dialog"` sits on the wrapper: the drawer, the account menu and
+the collapsible nav groups are all `shell`, and `dialog` is there so any page can open a
+`<dialog>` without scoping its own controller.
 
-**Dashboard · Donations · Purchases · Requests · Distributions · Pick Ups & Deliveries ·
-Partner Agencies · Inventory · Community · Reports · My Organization**
+Navigation is built in `EssentialsNavHelper`, not written into the markup. Two flat
+destinations — **Dashboard** and **My organization** — then four collapsible groups:
 
-Groups with children are AdminLTE `has-treeview` accordions whose children are marked with
-`fa-circle-o` bullets. `ApplicationHelper#active_class` and `#menu_open?` take an array of
-controller names and light up / expand the matching item — pass **every** controller that
-belongs to the group, or the menu collapses out from under the user mid-task.
+| Group | Contains |
+| --- | --- |
+| Operations | Donations, purchases, requests, distributions, pick ups & deliveries |
+| Inventory | Items & inventory, kits, storage locations, transfers, inventory adjustments, inventory audit, barcode items |
+| Network | Partner agencies, partner announcements, donation sites, product drives, product drive participants, manufacturers, vendors |
+| Reporting | The fifteen reports, named `Subject — cut` so they sort together |
 
-Nav items are gated by role (`current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)`
-for Inventory Audit, organization settings, and similar). Gate the nav item *and* the controller;
-a hidden link is not authorization.
+Groups collapse because there are 36 destinations in the sidebar — 34 inside the groups, plus
+the two flat ones. CASA's sidebar is flat because CASA has eleven. A group is open when the
+current page is inside it.
 
-The top navbar carries a yellow help link (User Guide for org users, "Need Help?" otherwise),
-an upcoming-pick-ups dropdown, a notifications dropdown counting pending requests and partners
-awaiting review, and the account menu.
+The information architecture is unchanged from the AdminLTE sidebar — this migration was not
+the place to re-plan the app — with one exception: the "New X" items were dropped. Every one
+of them duplicated the primary action already sitting at the top right of the index page it
+pointed at.
 
-### Partner shell — `layouts/partners/application.html.erb`
+### Partner shell — `layouts/essentials_partner.html.erb`
 
-The partner-facing portal at `/partners/*`. Same chrome, much shorter nav: **Dashboard ·
-My Profile · Edit My Profile · Essentials Requests · Distributions · Families · Children.**
+Same construction, a much shorter list: Dashboard, my profile, essentials requests,
+distributions, and — when the partner is set up for them — families and children. Partners see
+their own organization's name in the top bar, never the bank's internal navigation.
 
-Partners are a different audience with different vocabulary — they see "Essentials Requests",
-not "Requests"; they never see inventory, storage locations or other partners' data. Keep the
-two navs conceptually separate even though the CSS is shared.
+### Auth shell — `layouts/essentials_auth.html.erb`
 
-Its flash rendering is its own copy (with a dismiss button and `sanitize(value, tags: %w(ul li))`
-so multi-error messages can render as a list) rather than `shared/_flash`. If you change flash
-markup, change both.
+Split: brand panel on the left at `lg`, form column on the right, single centred column below
+that. Used by every Devise view and the account request flow, wired in `config/application.rb`.
 
-### Admin shell
-
-Super-admin pages under `/admin/*` swap in `_lte_admin_navbar` / `_lte_admin_sidebar` from the
-same `layouts/application.html.erb`, selected by `ApplicationHelper#admin_namespace?` (which
-tests `request.path_info.include?('admin')` — a string match, so any future path containing the
-word "admin" will pick up the admin chrome).
-
-### Auth pages — `layouts/devise.html.erb` → `_devise_shared`
-
-Sign-in / sign-up / password reset render through a shared partial that takes `title:`,
-`body_class:` and `masthead_img_src:`. The `body_class` picks the background gradient from
-`custom.scss`: `login-page--user` (purple), `login-page--consolidated` (blue), `login-page--partner`
-(grey). This is the one place in the app with decorative colour; leave it be.
+No skip link here, deliberately: there is no repeated navigation block ahead of the content to
+skip past, and a skip link that jumps two elements forward is noise in the tab order.
 
 ## Key patterns
 
-### Turbo is off by default, and opted into per action
+### Turbo is opt-in per action
 
-`application.js` sets `Turbo.session.drive = false`. A controller action opts in with
-`before_action :enable_turbo!`, which sets `@turbo` and makes the layout emit
-`data-turbo="true"` and drop the `turbo-visit-control: reload` / `turbo-cache-control: no-cache`
-meta tags.
+`<body data-turbo="<%= @turbo %>">`. Controllers opt in; it is not on by default. Turbo frames
+are used for the flash strip and for the few index pages that update in place.
 
-Today exactly **two** actions opt in: `distributions#new` and `distributions#show`. If you want
-Turbo on a page, opt that action in and test it — do not flip the global. The `turbo` Stimulus
-controller scrolls to the top on a failed `turbo:submit-end` so the error summary is visible.
+### Stimulus first
 
-Independently of Drive, `shared/_flash` is wrapped in a `turbo_frame_tag "flash"`, so flash
-messages can be replaced by a frame response.
+No jQuery in new code, and no framework JS at all. Controllers in `app/javascript/controllers/`:
 
-### Stimulus first; jQuery where the plugin requires it
+| Controller | Does |
+| --- | --- |
+| `shell` | Drawer, account menu, collapsible nav groups, Escape handling |
+| `dialog` | Opens/closes any `<dialog>` by id; backdrop click; focus restore |
+| `tabs` | Roving tabindex, arrow/Home/End |
+| `disclosure`, `expandable`, `accordion` | Show/hide with `aria-expanded` |
+| `confirmation` | Pre-check, then a confirmation `<dialog>` before submitting |
+| `form_input` | Add/remove repeated fieldsets |
+| `date_range`, `highchart`, `select2` | Wrappers around the three third-party widgets |
 
-New behaviour goes in a Stimulus controller in `app/javascript/controllers/`, wired with
-`data-controller` / `data-action` / `data-*-target`. There are ~20 of them and they are the
-pattern to copy.
+Third-party widgets get accessible names added on top: Litepicker's month buttons and
+FullCalendar's toolbar buttons both ship with none.
 
-jQuery stays global because AdminLTE, select2, bootstrap-select and filterrific all need it. A
-Stimulus controller may use jQuery to drive one of those plugins (`select2_controller.js` does),
-but new code that doesn't touch a jQuery plugin should be plain DOM.
+### Multi-tenancy is visible
 
-Notable controllers: `form-input` (add/remove repeatable rows, driven by
-`add_element_button` / `remove_element_button`), `date-range` (Litepicker validation),
-`highchart`, `select2`, `duplicate-items`, `confirmation`, `password-visibility`, `file-input`.
+The organization's name is in the top bar on every bank page, and the partner's name on every
+partner page. It is not decoration: users work across several organizations and a screen with
+no tenant on it is a screen you can act on by mistake.
 
-### Enhanced selects
+### Print
 
-- **select2** via the `select2` Stimulus controller for searchable and multi-selects. Its
-  connect() carries three workarounds — autofocus on open, preventing a reopen loop on
-  unselect, and optional dropdown hiding — that were each fixed once. Do not initialise select2
-  by hand and rediscover them.
-- **bootstrap-select** (`selectpicker`) for the simpler styled selects.
-- Both are jQuery plugins that replace the native control, which means **the default
-  `<label for>` no longer points at the visible widget**. Any enhanced select needs an explicit
-  accessible name.
+`distributions/print` and the picklists are print targets. They render on the app shell and
+rely on the browser's print stylesheet; there is no separate print layout.
 
-### CSV export
+## Build
 
-Every index that can export does it the same way: a `download_button_to` pointing at the same
-path with `format: :csv` and the current `filter_params` merged in, so the export matches what
-is on screen. Keep that coupling — an export that ignores the filters is a support ticket.
+Tailwind v4.3.3 through the **`tailwindcss-rails`** gem — the standalone CLI, no Node, no
+`package.json`. CASA uses `cssbundling-rails` + npm because CASA already had Node; Human
+Essentials does not, and `docs/code_standards.md` is explicit that new dependencies need
+strong justification. Same v4 output, no new runtime. This is a divergence in **tooling**, not
+in the design system.
 
-### Multi-tenancy is visible in the UI
+```
+app/assets/tailwind/application.css   → entry point: @import, @theme, @layer
+app/assets/builds/tailwind.css        → compiled output, served by the layouts
+```
 
-Nearly everything is scoped to `current_organization`. Page titles say which organization
-("Distributions **for** Pawnee Diaper Bank"), and `content_for :title` includes the org name.
-Never render a collection that isn't organization-scoped; the scoping is a tenant boundary, not
-a filter.
+```bash
+bin/rails tailwindcss:build     # compile once
+bin/rails tailwindcss:watch     # compile on change
+bin/start                       # server + job worker + CSS watcher (Procfile.dev)
+```
 
-### Print and PDF
+Notes that will bite you otherwise:
 
-Distribution manifests, donation receipts and picklists are generated with Prawn server-side
-(`app/pdfs/distribution_pdf.rb`, `donation_pdf.rb`, `picklists_pdf.rb`), not by styling HTML for
-print. They set their own type (OpenSans at 10pt) and letterhead — the organization's uploaded
-logo, falling back to `Organization::DIAPER_APP_LOGO` — so a PDF is a separate design surface
-from the web UI and does not inherit anything from this document's tokens. Don't add
-`@media print` rules to work around a missing PDF.
+- **`@source` globs are required.** Rails puts markup outside the CSS tree, so Tailwind's
+  automatic source detection cannot find `app/views`, `app/helpers` or `app/javascript`.
+  A class only used in a file outside those globs will not be generated.
+- **`config.assets.css_compressor = nil`.** libsass cannot parse Tailwind v4 output; leaving
+  the compressor on fails the build with `SassC::SyntaxError: Internal Error: Not enough
+  space`.
+- **`app/assets/tailwind` is removed from the Sprockets load path** by an initializer, so the
+  uncompiled entry point is never served.
+- **Precompiled assets go stale.** If system specs fail with
+  `Failed to resolve module specifier`, `public/assets` is out of date: `bin/rails
+  assets:clobber assets:precompile`.
+- Initializers do not hot-reload. Changing `config/initializers/simple_form_essentials.rb`
+  needs a real server restart, not a page refresh.
 
-## Design decisions (rationale)
+## Building or changing a page
 
-The *why*, so these are not re-litigated.
+1. **Start from the partials.** Page header, card, table, empty state, pagination. If you are
+   writing a twelve-class string that already exists in a partial, use the partial.
+2. **One `h1`**, from the page header. Card titles are `h2`. Do not skip levels.
+3. **Sentence case.** Every string.
+4. **Give the table a `<caption>`** and use `.numeric` / `.quantity` / `.date` on the columns
+   that need them.
+5. **Pick an empty state deliberately** — cold start, no results, or all clear.
+6. **Name every control.** If a control has no visible label, it needs `aria-label`.
+7. **Colour is never the only signal.** Pair it with a word.
+8. **A thing that changes state is a button, not a link.**
+9. **Run the audit**: `pw bin/design/audit.js /your/path`. It catches heading skips, unnamed
+   controls, duplicate landmarks and leftover Bootstrap classes that specs pass straight over.
+10. **Run the specs**, including the system specs for the area you touched. Request specs will
+    not notice a page that renders but is unusable.
 
-- **Bootstrap + AdminLTE, not Tailwind.** Decided in ADR 0009 after a Tailwind migration was
-  started and abandoned: the maintenance win did not justify migrating a volunteer-built app of
-  400+ views. The corollary is the important half — **use AdminLTE properly.** Copy its demo
-  markup for widgets instead of writing bespoke CSS.
-- **One design system at a time.** The current BS4/BS5 split is already one framework overlap
-  too many; a third would make every class name a coin flip.
-- **Buttons only through `UiHelper`.** Colour, size, icon, HTTP verb, confirm dialog and
-  double-submit guard are all decisions that should be made once, centrally. Consistency here is
-  what makes 400 pages feel like one app.
-- **Colour carries meaning, and never carries it alone.** The green/blue/cyan/amber/red mapping
-  is a real semantic layer; pair it with an icon and a word so it survives colour-blindness and
-  greyscale printing.
-- **Filters are GET, results are URLs.** Bank staff share and bookmark filtered views, and
-  support asks them to. Never move a filter into session state.
-- **Server-rendered, progressively enhanced.** Validation, filtering, sorting and pagination all
-  happen on the server; JavaScript decorates. This keeps the app usable on the hardware and
-  connections our users actually have.
-- **Turbo stays opt-in.** It was introduced onto an app full of jQuery plugins that assume a
-  full page load; enabling it globally breaks them silently. Per-action opt-in makes the blast
-  radius one page.
-- **Title Case**, because that is what the app already is and inconsistent casing looks like a
-  bug to a non-technical user.
-- **Accessibility is part of "done"** for new work, even though the existing baseline is behind.
-  The gaps listed above are known debt, not permission.
+### When the system does not cover it
 
-## Building or changing a page (playbook)
-
-1. **Read this document and the page's existing specs** before touching markup — know what
-   behaviour is pinned. Prefer request specs; system specs are slow and flaky (see
-   `docs/code_standards.md`).
-2. **Start from the page skeleton**: `content_for :title` → `section.content-header` with one
-   `h1` and a breadcrumb → `section.content > .container-fluid > .row > .col-*` → cards.
-3. **Use the components above** — `UiHelper` buttons, `FilterHelper` filters, the card and table
-   patterns, `simple_form` with matching `f.input` / `f.input_field` attributes. Don't invent a
-   new one; if you must, add it here in the same PR.
-4. **Write Bootstrap 4 class names and `data-bs-*` JS attributes.** Delete any `pull-right`,
-   `hidden-xs`, `box*` or leftover Tailwind class in the file you are editing.
-5. **Design the empty state** and the no-results state.
-6. **Check accessibility on what you touched**: label/field association, one `h1`, `alt` text,
-   `aria-label` on icon-only controls, a `<caption>` on any new table, keyboard reachability.
-7. **Verify**: `bundle exec rspec` for the affected specs, `bundle exec rubocop`,
-   `bundle exec erb_lint --lint-all`, and load the page at a narrow width — the sidebar collapses
-   at 992px (`data-auto-collapse-size="992"`).
-8. **Keep specs green semantically.** If a spec is coupled to a presentational class you are
-   changing, move it to a stable hook (an `id` or `data-*`) rather than weakening the assertion.
+Use industry best practice, keep it consistent with the tokens above, and **write down what
+you decided and why** in [`docs/design-decisions.md`](docs/design-decisions.md). That file is
+the running log; this file is the settled system. Anything in the log that turns out to be
+general gets promoted into here.
 
 ## Backlog
 
-Known debt, roughly in order of leverage. Each is self-contained and a good first contribution.
+Known gaps, in rough priority order:
 
-- [ ] **Add an automated accessibility check** (axe via Capybara, a small `spec/system/accessibility/`
-  sweep over the main pages of each role). Everything below would have been caught by it.
-- [ ] Add `lang="en"` to all four app layouts.
-- [ ] Remove `maximum-scale=1, user-scalable=no` from the viewport meta so mobile zoom works.
-- [ ] Add a skip link and wrap `.content-wrapper` content in `<main>`.
-- [ ] Add `<caption class="sr-only">` to tables as they are touched (142 tables, 0 captions).
-- [ ] Fix the 8 `f.input` / `f.input_field` attribute mismatches so those labels name their fields.
-- [ ] Fix `UiHelper#submit_button`'s `align: "pull-right"` default, then remove the remaining 28
-  `pull-right` and 6 `hidden-xs` usages.
-- [ ] Replace the 53 AdminLTE 2 `box*` class usages (26 files) with the AdminLTE 3 `card` family,
-  including inside `shared/_card`.
-- [ ] Remove the **81 leftover Tailwind class usages across 28 files** (`text-2xl`, `flex`,
-  `font-bold`, `w-1/2`, `bg-yellow-400`, `rounded-2xl`, `space-y-5`, …). These are undefined and
-  render as nothing — they are the unfinished half of ADR 0009's stated consequence.
-  Careful: `text-sm`, `text-lg`, `text-xl`, `text-bold` and `gap-*` **are** real (AdminLTE and
-  Bootstrap 5 respectively) and should stay.
-- [ ] Migrate the 10 remaining bare `form_for` model views to `simple_form_for`.
-- [ ] Pull the 148 inline `style="…"` attributes into SCSS.
-- [ ] Self-host Font Awesome, select2, toastr and the Source Sans Pro font instead of loading
-  them from three CDNs on every page.
-- [ ] Converge the duplicated flash rendering between the bank and partner layouts.
-- [ ] Delete `app/views/shared/_logo_line.html.erb` — it is a 0-byte file rendered by nothing.
-
-## Workflow
-
-- This document is the design system. **If you introduce a pattern, add it here in the same PR;
-  if you find one that is wrong, fix it here too.** A pattern that only exists in one view is
-  not a pattern.
-- Design changes that alter a shared component (`UiHelper`, `shared/_card`, a layout) affect
-  every page — say so in the PR description and name the pages you checked.
-- If a change would need a second CSS framework, a new front-end dependency, or contradicts
-  ADR 0009 / ADR 0010, raise it as an issue and get agreement first. `docs/code_standards.md`
-  is explicit that new dependencies need a strong justification.
+- **`app/views/static/`** (marketing home page, privacy policy) is still on its own
+  stylesheet. It is public-facing and standalone, so it was excluded from the migration
+  deliberately, but it is now the only part of the app that does not look like the app.
+- **Charts are not accessible.** Highcharts output has no text alternative beyond the table
+  beside it. A summary sentence per chart would be cheap.
+- **No dark mode.** The tokens would support it; nothing has been built.
+- **`shared/_custom_file_input`** duplicates what `:essentials_file` now does through
+  `::file-selector-button`. It can probably go.
+- **The partner profile forms** are the largest remaining views and still carry a lot of
+  bespoke layout that predates the system.

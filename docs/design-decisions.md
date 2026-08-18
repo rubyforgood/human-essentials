@@ -202,3 +202,92 @@ button. The icon inside is `aria-hidden`, and the button carries the name.
 reset* page, and on a domain the app no longer uses. The staging warning that actually works is
 the one in `layouts/_devise_shared`, gated on `Rails.env.staging?`. Migrating dead code just
 moves it.
+
+## 2026-08-17 · UiHelper, IconHelper and FilterHelper were rewritten, not replaced
+
+**Decision.** The three legacy view helpers keep their names, signatures and options
+(`type:`, `size:`, Font Awesome icon names) and emit design system markup instead. They were
+not deprecated in favour of the `essentials_*` helpers.
+
+**Rationale.** Between them they have ~100 call sites. Replacing the API means touching all of
+them in the same change that migrates the views, which is how a mechanical migration turns
+into a rewrite. Mapping `type: "success"` onto `variant: :primary` and `fa fa-plus` onto
+`bi-plus-lg` inside the helper keeps every existing call site working *and* meaning the same
+thing, and leaves a single place to change later.
+
+The mapping is deliberately lossy in one direction: AdminLTE had seven contextual colours and
+the design system has four variants, so `info` and `warning` both land on `:secondary`. The
+distinction they encoded was decorative — the button's label already said what it did.
+
+## 2026-08-17 · An unavailable action is not a disabled link
+
+**Decision.** `UiHelper#_link_to` with `enabled: false` renders a non-interactive `<span>`
+carrying `aria-disabled="true"`, not an `<a class="disabled">`. Form actions render a real
+`disabled` `<button>`.
+
+**Rationale.** There is no such thing as a disabled link. `<a class="disabled">` is still in
+the tab order, still activates on Enter, and announces as an ordinary link. Bootstrap's
+`.disabled` only ever applied `pointer-events: none`, which does nothing for a keyboard user.
+A `<button disabled>` is genuinely inert and announced as unavailable; where the action is a
+navigation rather than a submission, the honest rendering is not a control at all.
+
+## 2026-08-17 · The dialog controller lives on the app shell
+
+**Decision.** `data-controller="dialog"` is on the shell layouts, and triggers name their
+dialog with `data-dialog-id-param`.
+
+**Rationale.** The alternative is scoping a controller element around each trigger *and* its
+dialog. That works when they are adjacent and breaks as soon as the trigger is in a table row
+and the dialog is at the end of the page — which is the common case here. One instance on the
+shell resolves any dialog by id, and a trigger that names nothing is visibly wrong.
+
+## 2026-08-17 · Third-party widgets get their accessible names added on top
+
+**Decision.** Litepicker's month navigation buttons and FullCalendar's toolbar buttons are
+given names after the widget renders — `nameMonthButtons()` on init/render/show, and
+FullCalendar's `buttonHints` plus a fallback `aria-label` pass.
+
+**Rationale.** Both ship buttons with no accessible name, and neither exposes a supported
+option that fixes it completely. Patching the rendered output is ugly but it is the only lever
+available short of replacing the widget, and a nameless button is a hard failure of WCAG 4.1.2.
+
+## 2026-08-17 · Mechanical view transforms must match whole elements and assert balance
+
+**Decision.** Any scripted edit across many views substitutes a *whole element* — opening tag,
+content and closing tag — and asserts that tags still balance in each file before writing.
+Substitutions that rebuild an entire `class="…"` attribute are banned.
+
+**Rationale.** Learned three times in one session, each more expensive than the last. Changing
+`<div>` to `<dl>` on the opening tag alone left `</div>`. Rewriting `<h3>` openers alone left
+`</h3>`. Worst, a transform that rebuilt each class attribute from its tokens corrupted every
+`class="<%= "p-5" if padded %>"` in the tree, because the regex stopped at the ERB's own quote
+— and the "tidy up the whitespace afterwards" step that came with it reformatted 389 files.
+Reverting was the only sane response.
+
+The rule that holds: match whole elements, substitute tokens rather than attributes, never
+"tidy" as a side effect, and check the diff is the size you expected before believing it.
+
+## 2026-08-17 · Data tables and pagination are component classes
+
+**Decision.** `.data-table` and `.pagination-link` are defined in `@layer components` rather
+than composed from utilities at each call site.
+
+**Rationale.** CASA writes tables with utilities and that is right for CASA: a few dozen pages.
+This app has ~78 tables across 393 views and six kaminari partials. A twelve-class string
+repeated 78 times is not a system, it is 78 opportunities to drift. The column semantics
+(`.numeric`, `.quantity`, `.date`) additionally carry meaning the utilities cannot: they say
+*why* a column is right-aligned, and they were already the names the app used.
+
+## 2026-08-17 · System specs are part of the migration, not a follow-up
+
+**Decision.** A migrated area is not done until its system specs pass.
+
+**Rationale.** The request suite (941 examples) and a 39-page browser sweep both passed while
+every one of the 21 dashboard system specs failed. Two different causes, neither visible to
+the other checks: the specs asserted on copy and section ids the migration had changed, and —
+far worse — they were all failing on a *stale precompiled bundle* in `public/assets` that
+still imported `admin-lte`, throwing before any page rendered. Request specs never load JS and
+the sweep ran against the dev server, so neither could see it.
+
+If system specs fail with `Failed to resolve module specifier`, the answer is
+`bin/rails assets:clobber assets:precompile`, not a change to the code.

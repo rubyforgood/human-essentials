@@ -55,6 +55,18 @@ accident.
    duration of the migration there are deliberately two, and the rule becomes "no *third*, and
    the Bootstrap half only shrinks."
 
+## Update — migration complete
+
+The page-by-page migration described in decision 2 finished in the same working session it
+started. Bootstrap 5, AdminLTE 3.2, `sass-rails` and the Font Awesome CDNs are removed from the
+`Gemfile`, the asset path and the importmap; the legacy layouts are deleted. Every controller
+except `HistoricalTrends::BaseController` (abstract, no views) and `StaticController`
+(`layout false`, standalone public documents) renders on a design system layout.
+
+The transitional condition in decision 2 — two CSS resets in the repository, never in the same
+document — has therefore ended, and with it the amended rule in decision 5. There is one design
+system again. `design.md` has been rewritten to specify it, as decision 5 required.
+
 ## Consequences
 
 Contributors gain a system shared with the rest of Ruby for Good, and a design document that
