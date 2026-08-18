@@ -22,10 +22,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on "Review Applicant's Profile"
+          click_on "Review profile"
 
-          assert page.has_content?('Partner Profile')
-          click_on 'Approve Partner'
+          assert page.has_content?('Partner profile')
+          click_on 'Approve partner'
           assert page.has_content? 'Partner approved!'
 
           expect(partner_awaiting_approval.reload.approved?).to eq(true)
@@ -35,10 +35,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on "Review Applicant's Profile"
+          click_on "Review profile"
 
           # Make sure the button is there before trying to double click it
-          expect(page.find('a.btn.btn-success.btn-md[href*="/approve_application"]')).to have_content("Approve Partner")
+          expect(page.find('form[action*="/approve_application"] button')).to have_content("Approve partner")
 
           # Double click on the Distribution complete button
           ferrum_double_click('a.btn.btn-success.btn-md[href*="/approve_application"]')
@@ -67,8 +67,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           assert page.has_content? partner_awaiting_approval.name
 
-          click_on "Review Applicant's Profile"
-          click_on 'Approve Partner'
+          click_on "Review profile"
+          click_on 'Approve partner'
           assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
           expect(partner_awaiting_approval.reload.approved?).to eq(false)
@@ -89,16 +89,16 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
         before do
           visit partners_path
-          assert page.has_content? "Partner Agencies for #{organization.name}"
+          assert page.has_content? "Partner agencies"
 
-          click_on 'New Partner Agency'
+          click_on 'New partner agency'
 
           fill_in 'Name *', with: partner_attributes[:name]
-          fill_in 'E-mail *', with: partner_attributes[:email]
+          fill_in 'Email *', with: partner_attributes[:email]
           fill_in 'Quota', with: partner_attributes[:quota]
           fill_in 'Notes', with: partner_attributes[:notes]
           fill_in 'Partner specific information', with: partner_attributes[:info_for_partner]
-          find('button', text: 'Add Partner Agency').click
+          click_on 'Add partner agency'
 
           assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
@@ -122,12 +122,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
         before do
           visit partners_path
-          assert page.has_content? "Partner Agencies for #{organization.name}"
-          click_on 'New Partner Agency'
+          assert page.has_content? "Partner agencies"
+          click_on 'New partner agency'
 
           fill_in 'Name *', with: partner_attributes[:name]
 
-          find('button', text: 'Add Partner Agency').click
+          click_on 'Add partner agency'
         end
 
         it 'should have not added a new partner and indicate the failure' do
@@ -152,9 +152,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           organization.update!(one_step_partner_invite: true)
           visit partners_path
 
-          assert page.has_content? "Invite and Approve"
+          assert page.has_content? "Invite and approve"
           expect do
-            click_on "Invite and Approve"
+            click_on "Invite and approve"
           end.to change { uninvited_partner.reload.status }.from("uninvited").to("approved")
         end
       end
@@ -181,7 +181,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it 'should notify the user that its been successful and change the partner status' do
           accept_confirm do
-            find_button('Request Recertification').click
+            find_button('Request recertification').click
           end
 
           expect(page).to have_content "#{partner_to_request_recertification.name} recertification successfully requested!"
@@ -253,7 +253,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
             page.find 'a.filtering', text: /Approved/
 
-            click_on "Export Partner Agencies"
+            click_on "Export"
             wait_for_download
             expect(downloads.length).to eq(1)
             expect(download).to match(/.*\.csv/)
@@ -288,7 +288,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
         it "redirects user to partners page root page (dashboard) with error message" do
           visit partner_path(partner.id)
-          expect(page).to have_content("Dashboard - #{partner.name}")
+          expect(page).to have_content(partner.name)
+          expect(page).to have_css("h1", text: "Dashboard")
           expect(page.find("[data-flash-tone='danger']")).to have_content("You must be logged in as the essentials bank's organization administrator to approve partner applications.")
         end
       end
@@ -326,7 +327,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it "preserves the filter constraints in the CSV output" do
             visit subject
 
-            click_on "Export Partner Distributions"
+            click_on "Export"
             wait_for_download
             expect(downloads.length).to eq(1)
             expect(download).to match(/.*\.csv/)
@@ -348,16 +349,16 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       it "User can add a new partner" do
         visit subject
         fill_in "Name", with: "Frank"
-        fill_in "E-mail", with: "frank@frank.com"
+        fill_in "Email", with: "frank@frank.com"
         check 'send_reminders'
-        click_button "Add Partner Agency"
+        click_button "Add partner agency"
 
         expect(page.find("[data-flash]")).to have_content "added"
       end
 
       it "disallows a user from creating a new partner with empty name" do
         visit subject
-        click_button "Add Partner Agency"
+        click_button "Add partner agency"
 
         expect(page.find("[data-flash]")).to have_content "Failed to add partner due to:"
       end
@@ -377,7 +378,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         visit subject
         name = Faker::Name.first_name
         fill_in "Name", with: name
-        click_button "Update Partner"
+        click_button "Update partner"
 
         expect(page).to have_current_path(partner_path(partner.id))
         partner.reload
@@ -387,7 +388,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       it "prevents a user from updating a partner with empty name" do
         visit subject
         fill_in "Name", with: ""
-        click_button "Update Partner"
+        click_button "Update partner"
 
         expect(page.find("[data-flash]")).to have_content "Something didn't work quite right -- try again?"
       end
@@ -395,7 +396,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       it "User can uncheck send_reminders" do
         visit subject
         uncheck 'send_reminders'
-        click_button "Update Partner"
+        click_button "Update partner"
 
         expect(page.find("[data-flash]")).to have_content "updated"
         partner.reload
@@ -414,7 +415,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         # Save Progress
-        click_button "Update Partner"
+        click_button "Update partner"
 
         # Expect documents to exist on show partner page
         expect(page).to have_current_path(partner_path(partner.id))
@@ -441,7 +442,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         # Test document persistence across multiple refresh cycles
         3.times do |iteration|
           # Save progress
-          click_button "Update Partner"
+          click_button "Update partner"
 
           # Verify documents on show page
           expect(page).to have_current_path(partner_path(partner.id))
@@ -468,28 +469,28 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it "displays all sections in a closed state by default" do
           within ".accordion" do
-            expect(page).to have_css("#agency_information.accordion-collapse.collapse", visible: false)
-            expect(page).to have_css("#program_delivery_address.accordion-collapse.collapse", visible: false)
+            expect(page).to have_css("#agency_information", visible: :hidden)
+            expect(page).to have_css("#program_delivery_address", visible: :hidden)
 
             partner.partials_to_show.each do |partial|
-              expect(page).to have_css("##{partial}.accordion-collapse.collapse", visible: false)
+              expect(page).to have_css("##{partial}", visible: :hidden)
             end
           end
         end
 
         it "allows sections to be opened, closed, filled in any order, and reviewed" do
           # Media
-          find("button[data-bs-target='#media_information']").click
-          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+          find("button[aria-controls='media_information']").click
+          expect(page).to have_css("#media_information", visible: :visible)
           within "#media_information" do
             fill_in "Website", with: "https://www.example.com"
           end
-          find("button[data-bs-target='#media_information']").click
-          expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
+          find("button[aria-controls='media_information']").click
+          expect(page).to have_css("#media_information", visible: :hidden)
 
           # Contacts
-          find("button[data-bs-target='#contacts']").click
-          expect(page).to have_css("#contacts.accordion-collapse.collapse.show", visible: true)
+          find("button[aria-controls='contacts']").click
+          expect(page).to have_css("#contacts", visible: :visible)
           within "#contacts" do
             fill_in "Executive Director Name", with: "Lisa Smith"
           end
@@ -506,20 +507,20 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it "displays the edit view with sections containing validation errors expanded" do
           # Open up Media section and clear out website value
-          find("button[data-bs-target='#media_information']").click
+          find("button[aria-controls='media_information']").click
           within "#media_information" do
             fill_in "Website", with: ""
             uncheck "No Social Media Presence"
           end
 
           # Open Pick up person section and fill in 4 email addresses
-          find("button[data-bs-target='#pick_up_person']").click
+          find("button[aria-controls='pick_up_person']").click
           within "#pick_up_person" do
             fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
           end
 
           # Open Partner Settings section and uncheck all options
-          find("button[data-bs-target='#partner_settings']").click
+          find("button[aria-controls='partner_settings']").click
           within "#partner_settings" do
             uncheck "Enable Quantity-based Requests" if has_checked_field?("Enable Quantity-based Requests")
             uncheck "Enable Child-based Requests (unclick if you only do bulk requests)" if has_checked_field?("Enable Child-based Requests (unclick if you only do bulk requests)")
@@ -536,9 +537,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
           # Expect media section, pick up person section, and partner settings section to be opened
-          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
-          expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
-          expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#media_information", visible: :visible)
+          expect(page).to have_css("#pick_up_person", visible: :visible)
+          expect(page).to have_css("#partner_settings", visible: :visible)
 
           # Try to Submit and Review from error state
           all("input[type='submit'][value='Save and Review']").last.click
@@ -550,9 +551,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
           # Expect media section, pick up person section, and partner settings section to be opened
-          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
-          expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
-          expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#media_information", visible: :visible)
+          expect(page).to have_css("#pick_up_person", visible: :visible)
+          expect(page).to have_css("#partner_settings", visible: :visible)
         end
       end
     end
@@ -567,7 +568,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context "when partner has :invited status" do
         before { visit_approval_page(partner_name: invited_partner.name) }
 
-        it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+        it { expect(page).to have_selector(:link_or_button, 'Approve partner') }
       end
 
       context "when viewing a partner's users" do
@@ -594,7 +595,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context "when partner has :awaiting_review status" do
         before { visit_approval_page(partner_name: awaiting_review_partner.name) }
 
-        it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+        it { expect(page).to have_selector(:link_or_button, 'Approve partner') }
       end
     end
 
@@ -611,14 +612,14 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         it 'it should say they can request every item' do
-          assert page.has_content? 'All Items Requestable'
+          assert page.has_content? 'All items requestable'
           assert page.has_content? 'Settings'
         end
       end
 
       context 'when a partner is assigned to partner group' do
         before do
-          assert page.has_content? 'All Items Requestable'
+          assert page.has_content? 'All items requestable'
           partner.update!(partner_group: nil)
         end
 
@@ -633,7 +634,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           before do
             click_on 'Edit details'
             select existing_partner_group.name
-            click_on 'Update Partner'
+            click_on 'Update partner'
           end
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
@@ -647,11 +648,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             expect(existing_partner_group.item_categories).to be_empty
             click_on 'Edit details'
             select existing_partner_group.name
-            click_on 'Update Partner'
+            click_on 'Update partner'
           end
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
-            assert page.has_content? 'No Items Requestable'
+            assert page.has_content? 'No items requestable'
             expect { partner.reload }.to change(partner, :requestable_items).from([]).to([])
           end
         end
@@ -705,7 +706,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           click_on 'Groups'
-          click_on 'New Partner Group'
+          click_on 'New partner group'
           fill_in 'Name *', with: 'Test Group'
 
           # Click on the second item category
@@ -717,7 +718,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           choose 'Day of Month'
           fill_in "partner_group_reminder_schedule_service_day_of_month", with: 1
           fill_in "partner_group_deadline_day", with: 25
-          find_button('Add Partner Group').click
+          find_button('Add partner group').click
 
           assert page.has_content? 'Group Name', wait: page_content_wait
           assert page.has_content? 'Test Group'
@@ -748,8 +749,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Set a new one on the category
           find("input#partner_group_item_category_ids_#{item_category_2.id}").click
 
-          find_button('Update Partner Group').click
+          find_button('Update partner group').click
 
+          click_on 'Groups'
           assert page.has_content? 'New Group Name', wait: page_content_wait
           refute page.has_content? item_category_1.name
           assert page.has_content? item_category_2.name
@@ -772,7 +774,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             post_refresh
           end
 
-          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", nil, :post_refresh
+          it_behaves_like "deadline and reminder form", "partner_group", "Update partner group", nil, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             travel_to Time.zone.local(2025, 9, 30)
@@ -792,7 +794,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             deadline_text.slice!(".")
             shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 
-            click_on "Update Partner Group"
+            click_on "Update partner group"
             existing_partner_group.reload
 
             expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
@@ -814,5 +816,5 @@ end
 def visit_approval_page(partner_name:)
   visit partners_path
   ele = find('tr', text: partner_name)
-  within(ele) { click_on "Review Applicant's Profile" }
+  within(ele) { click_on "Review profile" }
 end

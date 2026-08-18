@@ -14,7 +14,20 @@ export default class extends Controller {
   static targets = ["tab", "panel"]
 
   connect() {
-    this.select(this.tabTargets.findIndex((t) => t.getAttribute("aria-selected") === "true") || 0)
+    this.select(this.tabFromHash() ?? this.tabTargets.findIndex((t) => t.getAttribute("aria-selected") === "true"))
+  }
+
+  // Links elsewhere in the app point at a specific tab by fragment -- the partner approval
+  // queue links to #partner-information, for one. Bootstrap's tab plugin used to do this from
+  // a jQuery block in application.js; it belongs with the tabs.
+  tabFromHash() {
+    const hash = window.location.hash
+    if (!hash) return null
+
+    const index = this.tabTargets.findIndex(
+      (tab) => tab.getAttribute("href") === hash || `#${tab.getAttribute("aria-controls")}` === hash
+    )
+    return index === -1 ? null : index
   }
 
   activate(event) {

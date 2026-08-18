@@ -7,9 +7,9 @@
     <%= render "shared/essentials/empty_state", kind: :cold_start,
           title: "No partner groups yet",
           body: "Groups let you set requestable item categories and reminder schedules for several partners at once.",
-          action: essentials_link_button("New partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg") %>
+          action: essentials_link_button("Add your first partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
-    <div class="data-table">
+    <div class="table-scroll">
       <table class="data-table">
         <caption>Partner groups, their members and reminder settings</caption>
         <thead>

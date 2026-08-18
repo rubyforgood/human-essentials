@@ -1,10 +1,26 @@
-<%= render "shared/essentials/card", title: "Partner details" do %>
-  <%= render "partner_details", partner: partner %>
-  <% if partner.deletable? %>
-    <div class="mt-4 border-t border-slate-200 pt-4">
+<%#
+  Shown instead of the impact header for a partner that has not been invited yet: there is no
+  activity to summarise, and the only action available is deleting them.
+
+  It does NOT render partner_details -- the page body already has a "Partner details" card,
+  and rendering both put two "Edit details" buttons on the page.
+%>
+<%= render "shared/essentials/card" do %>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="flex items-start gap-3">
+      <%= essentials_icon_tile("bi-envelope", tone: :neutral) %>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-slate-900">Not invited yet</p>
+        <p class="mt-0.5 text-sm text-slate-600">
+          <%= partner.name %> has not been invited, so there is no activity to show.
+        </p>
+      </div>
+    </div>
+
+    <% if partner.deletable? %>
       <%= essentials_action_button "Delete partner", partner_path(partner), method: :delete,
             variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
             confirm: confirm_delete_msg(partner.name) %>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 <% end %>

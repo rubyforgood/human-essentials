@@ -15,6 +15,7 @@ export default class extends Controller {
     }
 
     toggle(selected_delivery_method) {
-        $(this.shippingCostTarget).toggleClass("d-none", selected_delivery_method != "shipped");
+        // `hidden`, not Bootstrap's `d-none`, which is no longer defined.
+        this.shippingCostTarget.classList.toggle("hidden", selected_delivery_method != "shipped");
     }
 }

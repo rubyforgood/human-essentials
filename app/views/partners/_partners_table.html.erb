@@ -8,9 +8,9 @@
           kind: essentials_filtered? ? :no_results : :cold_start,
           title: essentials_filtered? ? "No partners match that status" : "No partner agencies yet",
           body: essentials_filtered? ? "Choose Active above to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
-          action: essentials_filtered? ? nil : essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
+          action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
-    <div class="data-table">
+    <div class="table-scroll">
       <table class="data-table">
         <caption>Partner agencies and their current status</caption>
         <thead>

@@ -18,7 +18,7 @@
   <span>Instructions: Please fill out the following form sections carefully. Ensure that all required fields are completed.</span>
 </div>
 
-<div data-controller="accordion">
+<div data-controller="accordion disclosure">
   <%= essentials_form_for current_partner,
                       data: { controller: "form-input", accordion_target: "form" },
                       url: partners_profile_path,

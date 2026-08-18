@@ -11,30 +11,30 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
     it "displays all sections in a closed state by default" do
       within ".accordion" do
-        expect(page).to have_css("#agency_information.accordion-collapse.collapse", visible: false)
-        expect(page).to have_css("#program_delivery_address.accordion-collapse.collapse", visible: false)
+        expect(page).to have_css("#agency_information", visible: :hidden)
+        expect(page).to have_css("#program_delivery_address", visible: :hidden)
 
         partner1.partials_to_show.each do |partial|
-          expect(page).to have_css("##{partial}.accordion-collapse.collapse", visible: false)
+          expect(page).to have_css("##{partial}", visible: :hidden)
         end
 
-        expect(page).to have_css("#partner_settings.accordion-collapse.collapse", visible: false)
+        expect(page).to have_css("#partner_settings", visible: :hidden)
       end
     end
 
     it "allows sections to be opened, closed, filled in any order, and submit for approval" do
       # Media
-      find("button[data-bs-target='#media_information']").click
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='media_information']").click
+      expect(page).to have_css("#media_information", visible: :visible)
       within "#media_information" do
         fill_in "Website", with: "https://www.example.com"
       end
-      find("button[data-bs-target='#media_information']").click
-      expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
+      find("button[aria-controls='media_information']").click
+      expect(page).to have_css("#media_information", visible: :hidden)
 
       # Contacts
-      find("button[data-bs-target='#contacts']").click
-      expect(page).to have_css("#contacts.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='contacts']").click
+      expect(page).to have_css("#contacts", visible: :visible)
       within "#contacts" do
         fill_in "Executive Director Name", with: "Lisa Smith"
       end
@@ -51,20 +51,20 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
     it "displays the edit view with sections containing validation errors expanded" do
       # Open up Media section and clear out website value
-      find("button[data-bs-target='#media_information']").click
+      find("button[aria-controls='media_information']").click
       within "#media_information" do
         fill_in "Website", with: ""
         uncheck "No Social Media Presence"
       end
 
       # Open Pick up person section and fill in 4 email addresses
-      find("button[data-bs-target='#pick_up_person']").click
+      find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
         fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
 
       # Open Partner Settings section and uncheck all options
-      find("button[data-bs-target='#partner_settings']").click
+      find("button[aria-controls='partner_settings']").click
       within "#partner_settings" do
         uncheck "Enable Quantity-based Requests" if has_checked_field?("Enable Quantity-based Requests")
         uncheck "Enable Child-based Requests (unclick if you only do bulk requests)" if has_checked_field?("Enable Child-based Requests (unclick if you only do bulk requests)")
@@ -81,9 +81,9 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
       # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
-      expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
-      expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+      expect(page).to have_css("#media_information", visible: :visible)
+      expect(page).to have_css("#pick_up_person", visible: :visible)
+      expect(page).to have_css("#partner_settings", visible: :visible)
 
       # Try to Submit and Review from error state
       all("input[type='submit'][value='Save and Review']").last.click
@@ -95,15 +95,15 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
       # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
-      expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
-      expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+      expect(page).to have_css("#media_information", visible: :visible)
+      expect(page).to have_css("#pick_up_person", visible: :visible)
+      expect(page).to have_css("#partner_settings", visible: :visible)
     end
 
     it "preserves previously uploaded documents when adding new attachments" do
       # Open attached documents section
-      find("button[data-bs-target='#attached_documents']").click
-      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='attached_documents']").click
+      expect(page).to have_css("#attached_documents", visible: :visible)
 
       # Upload the first document
       within "#attached_documents" do
@@ -116,7 +116,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Verify the document is listed
       visit edit_partners_profile_path
-      find("button[data-bs-target='#attached_documents']").click
+      find("button[aria-controls='attached_documents']").click
       within "#attached_documents" do
         expect(page).to have_link("document1.md")
       end
@@ -132,7 +132,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Verify both documents are listed
       visit edit_partners_profile_path
-      find("button[data-bs-target='#attached_documents']").click
+      find("button[aria-controls='attached_documents']").click
       within "#attached_documents" do
         expect(page).to have_link("document1.md")
         expect(page).to have_link("document2.md")
@@ -141,8 +141,8 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
     it "allows removal of attached documents" do
       # Open attached documents section
-      find("button[data-bs-target='#attached_documents']").click
-      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='attached_documents']").click
+      expect(page).to have_css("#attached_documents", visible: :visible)
 
       # Upload multiple documents at once
       within "#attached_documents" do
@@ -163,7 +163,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Verify both documents persist after page reload
       visit edit_partners_profile_path
-      find("button[data-bs-target='#attached_documents']").click
+      find("button[aria-controls='attached_documents']").click
       within "#attached_documents" do
         expect(page).to have_link("document1.md")
         expect(page).to have_link("document2.md")
@@ -183,7 +183,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Verify only one document remains
       visit edit_partners_profile_path
-      find("button[data-bs-target='#attached_documents']").click
+      find("button[aria-controls='attached_documents']").click
       within "#attached_documents" do
         expect(page).to have_link("document2.md")
         expect(page).not_to have_link("document1.md")
@@ -192,7 +192,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
     it "persists individual file upload when there are validation errors" do
       # Open up Agency Information section and upload proof-of-status letter
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       within "#agency_information" do
         expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("Choose file...")
         attach_file("partner_profile_proof_of_partner_status", Rails.root.join("spec/fixtures/files/irs_determination_letter.md"), make_visible: true)
@@ -200,7 +200,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Open Pick up person section and fill in 4 email addresses which will generate a validation error
-      find("button[data-bs-target='#pick_up_person']").click
+      find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
         fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
@@ -213,7 +213,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Open up Agency Information section and expect the file field to remember users selection
       # but NOT be persisted because there hasn't yet been a successful form submission.
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       within "#agency_information" do
         expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
         expect(page).not_to have_content("Attached file:")
@@ -230,7 +230,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open up Agency Information section and expect file is persisted
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       within "#agency_information" do
         expect(page).to have_content("Attached file:")
         expect(page).to have_link("irs_determination_letter.md", href: /\/rails\/active_storage\/blobs\/redirect\/.+\/irs_determination_letter\.md/)
@@ -240,14 +240,14 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
     it "persists multiple file uploads when there are validation errors" do
       # Open Pick up person section and fill in 4 email addresses which will generate a validation error
-      find("button[data-bs-target='#pick_up_person']").click
+      find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
         fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
 
       # Open attached documents section
-      find("button[data-bs-target='#attached_documents']").click
-      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='attached_documents']").click
+      expect(page).to have_css("#attached_documents", visible: :visible)
 
       # Upload multiple documents
       within "#attached_documents" do
@@ -268,8 +268,8 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
 
       # Open attached documents section
-      find("button[data-bs-target='#attached_documents']").click
-      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='attached_documents']").click
+      expect(page).to have_css("#attached_documents", visible: :visible)
 
       # Expect both documents are still displayed in custom list as selected, but nothing is actually attached
       within "#attached_documents" do
@@ -292,8 +292,8 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open attached documents section
-      find("button[data-bs-target='#attached_documents']").click
-      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+      find("button[aria-controls='attached_documents']").click
+      expect(page).to have_css("#attached_documents", visible: :visible)
 
       # Expect both documents are now rendered as downloadable links
       # i.e. they've been saved, without user having had to select them again

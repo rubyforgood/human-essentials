@@ -58,10 +58,9 @@ function isShortHeightScreen() {
 }
 
 $(document).ready(function(){
-  const hash = window.location.hash;
-  if (hash) {
-    $('ul.nav a[href="' + hash + '"]').tab("show");
-  }
+  // Opening a tab named by the URL fragment now lives in the tabs Stimulus controller. The
+  // call here was `.tab("show")` -- Bootstrap's jQuery plugin, which is not loaded, so it
+  // threw a TypeError on any page reached with a fragment.
   const isMobile = isMobileResolution();
   const isShortHeight = isShortHeightScreen();
 

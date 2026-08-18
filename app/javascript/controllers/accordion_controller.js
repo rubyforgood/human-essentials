@@ -8,10 +8,12 @@ export default class extends Controller {
   disableOpenClose(event) {
     event.preventDefault();
 
-    const buttons = this.element.querySelectorAll(".accordion-button");
+    // The section headers are the disclosure triggers. They used to be found by Bootstrap's
+    // .accordion-button, which no longer exists, so nothing was ever disabled and a second
+    // click during the save could reopen a section mid-submit.
+    const buttons = this.element.querySelectorAll('[data-action*="disclosure#toggle"]');
     buttons.forEach(button => {
       button.disabled = true;
-      button.classList.add("saving");
     });
 
     this.formTarget.requestSubmit();

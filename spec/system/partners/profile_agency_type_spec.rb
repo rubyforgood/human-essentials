@@ -7,7 +7,7 @@ RSpec.describe "Partner Profile Agency Type Field Visibility", type: :system, js
     Flipper.enable(:partner_step_form)
     sign_in(partner.primary_user)
     visit edit_partners_profile_path
-    find("button[data-bs-target='#agency_information']").click
+    find("button[aria-controls='agency_information']").click
   end
 
   after do
@@ -26,17 +26,17 @@ RSpec.describe "Partner Profile Agency Type Field Visibility", type: :system, js
     it "handles different initial agency types correctly" do
       partner.profile.update!(agency_type: nil)
       visit edit_partners_profile_path
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       expect(page).to have_css('[data-hide-by-source-val-target="destination"].d-none', visible: false, wait: 5)
 
       partner.profile.update!(agency_type: "food")
       visit edit_partners_profile_path
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       expect(page).to have_css('[data-hide-by-source-val-target="destination"].d-none', visible: false, wait: 5)
 
       partner.profile.update!(agency_type: "other")
       visit edit_partners_profile_path
-      find("button[data-bs-target='#agency_information']").click
+      find("button[aria-controls='agency_information']").click
       expect(page).not_to have_css('[data-hide-by-source-val-target="destination"].d-none', visible: false, wait: 5)
     end
   end

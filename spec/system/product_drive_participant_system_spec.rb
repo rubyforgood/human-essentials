@@ -77,7 +77,7 @@ RSpec.describe " Participant", type: :system, js: true do
       new_comment = "test comment"
       visit subject
       fill_in "Phone", with: ""
-      fill_in "E-mail", with: new_email
+      fill_in "Email", with: new_email
       fill_in "Comment", with: new_comment
       click_button "Save"
 

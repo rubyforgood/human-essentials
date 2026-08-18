@@ -102,8 +102,10 @@ export default class extends Controller {
   }
 
   monthOrWeekChanged() {
-    $(this.dayOfMonthFieldsTarget).toggleClass("d-none", !this.byDayOfMonthTarget.checked );
-    $(this.dayOfWeekFieldsTarget).toggleClass("d-none", !this.byDayOfWeekTarget.checked );
+    // `hidden`, not Bootstrap's `d-none`: that class is not defined any more, so toggling it
+    // showed and hid nothing and both sets of fields stayed on screen at once.
+    this.dayOfMonthFieldsTarget.classList.toggle("hidden", !this.byDayOfMonthTarget.checked);
+    this.dayOfWeekFieldsTarget.classList.toggle("hidden", !this.byDayOfWeekTarget.checked);
   }
 
   connect() {

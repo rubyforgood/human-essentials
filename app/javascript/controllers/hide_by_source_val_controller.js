@@ -25,9 +25,9 @@ export default class extends Controller {
       shouldShow = !this.valuesToHideValue.includes(sourceValue)
     }
     if (shouldShow) {
-      this.destinationTarget.classList.remove("d-none")
+      this.destinationTarget.classList.remove("hidden")
     } else {
-      this.destinationTarget.classList.add("d-none")
+      this.destinationTarget.classList.add("hidden")
     }
   }
 }

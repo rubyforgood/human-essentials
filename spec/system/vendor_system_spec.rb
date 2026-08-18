@@ -94,7 +94,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       new_email = "foo@bar.com"
       visit subject
       fill_in "Phone", with: ""
-      fill_in "E-mail", with: new_email
+      fill_in "Email", with: new_email
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "updated"
