@@ -161,6 +161,19 @@
     white-space: nowrap;
   }
 
+  /*
+   * Zebra striping, for the itemized reports. Those tables are wide enough that following a
+   * row across the page is genuinely hard without it. It is a modifier on .data-table rather
+   * than a default because striping every table in the app would be noise.
+   */
+  .data-table.striped tbody tr:nth-child(even) {
+    background-color: var(--color-slate-50);
+  }
+
+  .data-table.striped tbody tr:hover {
+    background-color: var(--color-slate-100);
+  }
+
   /* Horizontal scroll container for a table inside a card. */
   .table-scroll {
     overflow-x: auto;

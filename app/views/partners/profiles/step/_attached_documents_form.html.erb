@@ -10,7 +10,7 @@
         <% profile.documents.each do |doc| %>
           <% if doc.persisted? %>
             <li class="attached-document flex justify-between items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
-              <div class="text-truncate" style="max-width: 75%;">
+              <div class="truncate" style="max-width: 75%;">
                 <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-semibold" %>
                 <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
               </div>

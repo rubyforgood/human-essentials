@@ -1,7 +1,7 @@
 <section class="container mx-auto my-5">
   <h2 class="font-semibold">Request History</h2>
 
-  <table class="rounded-3 w-full shadow-lg bg-white">
+  <table class="w-full rounded-xl bg-white shadow-lg">
     <thead>
       <tr class="border-b border-slate-900">
         <th scope="col" class="p-4 w-40">Request Date</th>
@@ -14,13 +14,13 @@
       <% @partner_requests.each do |partner_request| %>
         <tr class="border-b last:border-none">
           <td class="p-4">
-            <i class="text-primary bi-file-text mr-1"></i>
+            <i class="bi-file-text mr-1 text-brand-700"></i>
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
           <td class="p-4"><%= partner_request.total_items %></td>
           <td class="p-4 flex flex-wrap">
             <% partner_request.item_requests.map do |item| %>
-              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-slate-900 rounded-1">
+              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-slate-900 rounded">
                 <%= item.quantity %> <%= item.name_with_unit %>
               </span>
             <% end %>

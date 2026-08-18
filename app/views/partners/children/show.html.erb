@@ -16,10 +16,10 @@
   <div class="px-4 py-6 sm:px-6 lg:px-8">
     <div class="grid gap-6">
       <div class="min-w-0">
-        <div class="card-transparent">
+        <div class="space-y-6">
           <div class="grid gap-6">
             <div class="min-w-0">
-              <div class="card mb-6">
+              <div class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <h3 class="text-sm font-semibold text-slate-900">Child Information</h3>
                 <div class="px-5 py-4">
                   <dl>
@@ -58,7 +58,7 @@
             </div>
 
             <div class="min-w-0">
-              <div class="card mb-6">
+              <div class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <h3 class="text-sm font-semibold text-slate-900">Requested Items</h3>
                 <div class="px-5 py-4">
                   <% if @child.child_item_requests.count > 0 %>

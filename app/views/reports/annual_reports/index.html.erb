@@ -21,11 +21,11 @@
       <div class="min-w-0">
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">NDBN Annual Reports</h2>
+            <h2 class="text-base font-semibold text-slate-900">NDBN annual reports</h2>
           </div>
-          <ul class="list-group list-none">
+          <ul class="list-none space-y-1">
             <% @years.map do |year| %>
-              <li class="list-group-item-action"> <%= link_to "#{year}", reports_annual_report_path(year), class: "list-group-item" %> </li>
+              <li> <%= link_to "#{year}", reports_annual_report_path(year), class: "block rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-slate-50 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %> </li>
             <% end %>
           </ul>
         </div>

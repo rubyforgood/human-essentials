@@ -63,7 +63,7 @@
   <div class="px-4 py-6 sm:px-6 lg:px-8">
     <div class="grid gap-6">
       <div class="min-w-0">
-        <div class="card mb-4"
+        <div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
           data-controller="confirmation"
           data-confirmation-pre-check-path-value="<%= validate_partners_family_requests_path(format: :json) %>">
           <%= form_with(url: partners_family_requests_path, method: 'post', data: { confirmation_target: "form" }) do |f| %>
