@@ -9,7 +9,7 @@
                   Attached files:
                   <ul>
                     <% profile.documents.each do |doc| %>
-                      <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+                      <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-semibold" %></li>
                     <% end %>
                   </ul>
                 </div>

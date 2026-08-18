@@ -1,0 +1,51 @@
+<%#
+  One dialog for both decisions on an account request. Each row's trigger says which
+  decision it is and which request it applies to; the account-request-decision controller
+  points the form at the matching endpoint and rewrites the labels before opening.
+
+  The controller element must wrap BOTH the table and this dialog, so the triggers and the
+  dialog are in the same scope.
+%>
+<dialog data-account-request-decision-target="dialog"
+        data-action="click->account-request-decision#closeOnBackdrop close->account-request-decision#restoreFocus"
+        aria-labelledby="account-request-decision-title"
+        class="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40">
+  <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+    <h2 id="account-request-decision-title"
+        data-account-request-decision-target="title"
+        class="text-base font-semibold text-slate-900">Reject account request</h2>
+    <button type="button"
+            class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-label="Close dialog"
+            data-action="click->account-request-decision#close">
+      <i class="bi-x-lg text-sm" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <%= form_with url: reject_admin_account_requests_path, method: :post,
+                data: {account_request_decision_target: "form"} do %>
+    <div class="px-5 py-4">
+      <%= hidden_field_tag "account_request[id]", nil, id: "account_request_decision_id",
+            data: {account_request_decision_target: "id"} %>
+
+      <%= label_tag "account_request_rejection_reason", "Why are you rejecting this request?",
+            class: "block text-sm font-medium text-slate-700" %>
+      <%= text_area_tag "account_request[rejection_reason]", nil,
+            id: "account_request_rejection_reason",
+            rows: 4,
+            required: true,
+            data: {account_request_decision_target: "reason"},
+            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+      <p class="mt-1.5 text-xs text-slate-500">The requester is sent this, so write it for them.</p>
+    </div>
+
+    <div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 px-5 py-3">
+      <button type="button" class="<%= essentials_button_classes(variant: :secondary) %>"
+              data-action="click->account-request-decision#close">Cancel</button>
+      <button type="submit" class="<%= essentials_button_classes(variant: :danger) %>">
+        <i class="bi-slash-circle" aria-hidden="true"></i>
+        <span data-account-request-decision-target="submitLabel">Reject request</span>
+      </button>
+    </div>
+  <% end %>
+</dialog>

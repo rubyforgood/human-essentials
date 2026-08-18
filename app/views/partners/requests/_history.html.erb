@@ -1,9 +1,9 @@
 <section class="container mx-auto my-5">
-  <h2 class="font-weight-bold">Request History</h2>
+  <h2 class="font-semibold">Request History</h2>
 
-  <table class="rounded-3 w-100 shadow-lg bg-white">
+  <table class="rounded-3 w-full shadow-lg bg-white">
     <thead>
-      <tr class="border-bottom border-dark">
+      <tr class="border-b border-slate-900">
         <th scope="col" class="p-4 w-40">Request Date</th>
         <th scope="col" class="p-4">Number of Items Requested</th>
         <th scope="col" class="p-4">Items Requested</th>
@@ -12,15 +12,15 @@
     </thead>
     <tbody>
       <% @partner_requests.each do |partner_request| %>
-        <tr class="border-bottom last:border-none">
+        <tr class="border-b last:border-none">
           <td class="p-4">
             <i class="text-primary bi-file-text mr-1"></i>
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
           <td class="p-4"><%= partner_request.total_items %></td>
-          <td class="p-4 d-flex flex-wrap">
+          <td class="p-4 flex flex-wrap">
             <% partner_request.item_requests.map do |item| %>
-              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-1">
+              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-slate-900 rounded-1">
                 <%= item.quantity %> <%= item.name_with_unit %>
               </span>
             <% end %>

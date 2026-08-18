@@ -1,32 +1,24 @@
-<div class="box">
-  <div class="px-5 py-4">
-    <% content_for :title, "New - Users - #{current_organization.name}" %>
+<% content_for :title, "New - Users - #{current_organization.name}" %>
 
-    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add a user to <%= current_organization.name %></h1>
+<%#
+  Each field wrapped its own input in a block, which tells simple_form to skip the wrapper --
+  so the class string had to be copied in by hand, four times. Without the block the
+  :essentials wrapper supplies it.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Add a user to #{current_organization.name}",
+        back: {path: users_path, label: "Back to users"} %>
 
-    <%= essentials_form_for(@user) do |f| %>
-      <div class="form-inputs">
-        <%= f.input :name, label: "Name", required: true, autofocus: true do %>
-          <span class="input-group-text"><%= fa_icon "user" %></span>
-          <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-        <% end %>
-        <%= f.input :email, label: "E-mail", required: true do %>
-          <span class="input-group-text"><%= fa_icon "envelope" %></span>
-          <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-        <% end %>
-        <%= f.input :password, label: "Password", required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
-          <span class="input-group-text"><%= fa_icon "lock" %></span>
-          <%= f.input_field :password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-        <% end %>
-        <%= f.input :password_confirmation, label: "Confirm Password", required: true do %>
-          <span class="input-group-text"><%= fa_icon "check" %></span>
-          <%= f.input_field :password_confirmation, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-        <% end %>
-      </div>
+  <%= essentials_form_for(@user) do |f| %>
+    <%= render "shared/essentials/card", footer: capture { submit_button } do %>
+      <%= essentials_error_summary(@user) %>
 
-      <div class="form-actions">
-        <%= submit_button %>
-      </div>
+      <%= f.input :name, label: "Name", required: true, autofocus: true %>
+      <%= f.input :email, label: "Email", required: true %>
+      <%= f.input :password, label: "Password", required: true,
+            hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
+      <%= f.input :password_confirmation, label: "Confirm password", required: true %>
     <% end %>
-  </div>
+  <% end %>
 </div>

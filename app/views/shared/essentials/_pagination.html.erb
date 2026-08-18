@@ -3,14 +3,16 @@
   not a detached bar floating below the card.
 
     render "shared/essentials/pagination", collection: @paginated_things
+
+  The wrapper is a div, not a nav: kaminari's own paginator emits the <nav aria-label=
+  "Pagination"> landmark, and nesting one inside another gives a screen-reader user two
+  identically-named landmarks for the same control.
 %>
 <% if collection.respond_to?(:total_pages) && collection.total_pages > 1 %>
-  <nav class="flex items-center justify-between border-t border-slate-200 px-4 py-3" aria-label="Pagination">
+  <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
     <p class="text-xs text-slate-500">
       Page <%= collection.current_page %> of <%= collection.total_pages %>
     </p>
-    <div class="essentials-pagination">
-      <%= paginate collection, params: (defined?(page_params) ? page_params : {}) %>
-    </div>
-  </nav>
+    <%= paginate collection, params: (defined?(page_params) ? page_params : {}) %>
+  </div>
 <% end %>

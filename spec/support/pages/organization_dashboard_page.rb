@@ -118,18 +118,21 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  # Found by its accessible name rather than a wrapper class. The link used to live in a
+  # .card-footer; it is in the card header now, and naming the class would just move the
+  # coupling rather than remove it.
   def outstanding_requests_link
     within outstanding_section do
-      find(".card-footer a")
+      find("a", text: "View all requests")
     end
   end
 
   def has_partner_approvals_section?
-    has_selector? "#partner_approvals.card"
+    has_selector? "#partner_approvals"
   end
 
   def partner_approvals_section
-    find "#partner_approvals.card"
+    find "#partner_approvals"
   end
 
   private

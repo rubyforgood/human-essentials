@@ -1,6 +1,7 @@
 <%# Body injected into the confirmation <dialog> by confirmation_controller.js. %>
 <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-  <h2 class="text-base font-semibold text-slate-900">Confirm this request</h2>
+  <%# All three partner request forms inject this body, so the id they name is defined here. %>
+  <h2 id="partnerRequestConfirmationTitle" class="text-base font-semibold text-slate-900">Confirm this request</h2>
   <button id="modalClose" type="button"
           class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
           aria-label="Close dialog"

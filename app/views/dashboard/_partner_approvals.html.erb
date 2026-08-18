@@ -1,4 +1,4 @@
-<%= render "shared/essentials/card", title: "Partner approvals", padded: @partners_awaiting_review.blank? do %>
+<%= render "shared/essentials/card", card_id: "partner_approvals", title: "Partner approvals", padded: @partners_awaiting_review.blank? do %>
   <% if @partners_awaiting_review.blank? %>
     <%= render "shared/essentials/empty_state",
           kind: :all_clear,

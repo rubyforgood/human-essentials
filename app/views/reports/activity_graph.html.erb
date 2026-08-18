@@ -8,9 +8,9 @@
   filter_url: reports_activity_graph_path
 ) do %>
   <% if @distribution_data.empty? %>
-    <div class="alert alert-warning" role="alert">
-      No distributions found for the selected date range.
-    </div>
+    <%= render "shared/essentials/empty_state", kind: :no_results,
+          title: "No distributions found",
+          body: "Nothing matched the selected date range. Try widening it." %>
   <% else %>
     <div class="px-5 py-4">
       <div class="px-5 py-4">

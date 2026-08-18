@@ -16,14 +16,14 @@
     <div class="grid gap-6">
       <div class="min-w-0 mb-2">
         <h2 class="text-base font-semibold text-slate-900">Reports are available at the end of every year.</h2>
-        <span class="text-muted"> <%= "#{@actual_year} (available on #{available_date})" %> </span>
+        <span class="text-slate-500"> <%= "#{@actual_year} (available on #{available_date})" %> </span>
       </div>
       <div class="min-w-0">
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="border-b border-slate-200 px-5 py-4">
             <h2 class="text-base font-semibold text-slate-900">NDBN Annual Reports</h2>
           </div>
-          <ul class="list-group list-unstyled">
+          <ul class="list-group list-none">
             <% @years.map do |year| %>
               <li class="list-group-item-action"> <%= link_to "#{year}", reports_annual_report_path(year), class: "list-group-item" %> </li>
             <% end %>

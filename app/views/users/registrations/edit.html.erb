@@ -31,18 +31,15 @@
             <div class="grid gap-6">
               <div class="min-w-0">
                 <%= f.input :name, label: "Name:", required: true, autofocus: true do %>
-                  <span class="input-group-text"><i class="bi-person"></i></span>
                   <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :email, label: "Email:" do %>
-                  <span class="input-group-text"><i class="bi-envelope"></i></span>
                   <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
                 <%= f.input :current_password, label: "Current Password:" do %>
-                  <span class="input-group-text"></span>
                   <%= f.input_field :current_password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                 <% end %>
-                <p class="help-block" id="password-confirmation-help"><em>We need your current password to confirm your
+                <p class="mt-1 text-xs text-slate-500" id="password-confirmation-help"><em>We need your current password to confirm your
                   changes</em></p>
 
               </div>
@@ -51,7 +48,7 @@
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm collapsed-card">
                   <div class="border-b border-slate-200 px-5 py-4">
                     <h3 class="text-sm font-semibold text-slate-900">Change Password</h3>
-                    <span class="card-tools">
+                    <span class="shrink-0">
                       <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
 
                       </button>
@@ -59,14 +56,12 @@
 
                   </div>
                   <div class="px-5 py-4">
-                    <p class="help-block" id="password-help">Leave this blank if you don't want to change it</p>
+                    <p class="mt-1 text-xs text-slate-500" id="password-help">Leave this blank if you don't want to change it</p>
 
                     <%= f.input :password, label: "New Password:" do %>
-                      <span class="input-group-text"><%= fa_icon "lock" %></span>
                       <%= f.input_field :password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                     <% end %>
                     <%= f.input :password_confirmation, label: "New Password Confirmation:" do %>
-                      <span class="input-group-text"><%= fa_icon "check" %></span>
                       <%= f.input_field :password_confirmation, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
                     <% end %>
                   </div>
@@ -80,7 +75,7 @@
             <% unless Rails.env.staging? %>
               <%= submit_button %>
               <% else %>
-              <%= _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }, disabled: true) %>
+              <%= _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "float-right" }, disabled: true) %>
               <% end %>
             </div>
           <!-- ./card-body -->

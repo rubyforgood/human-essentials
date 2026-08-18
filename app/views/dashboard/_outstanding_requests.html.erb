@@ -1,4 +1,5 @@
 <%= render "shared/essentials/card",
+      card_id: "outstanding",
       title: "Outstanding requests",
       padded: @outstanding_requests.any? ? false : true,
       actions: link_to("View all requests", requests_path, class: "text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600") do %>

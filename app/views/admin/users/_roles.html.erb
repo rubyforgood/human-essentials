@@ -35,29 +35,24 @@
               </tbody>
             </table>
             <div data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
-            <h3>Add Role</h3>
+            <h3 class="text-sm font-semibold text-slate-900">Add role</h3>
+            <%# Both selects had a bare <label> with no `for`, so neither was named. %>
             <%= form_tag admin_user_add_role_path(user) do %>
               <div class="form-inputs">
                 <div class="mb-4">
-                  <label>Type</label>
-                  <div class="input-group">
-                    <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-                                     class: "select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
-                                     data: { 'double-select-target': 'source',
-                                             'action': 'double-select#sourceChanged'
-                                     } %>
-                  </div>
+                  <%= label_tag :resource_type, "Type", class: "block text-sm font-medium text-slate-700" %>
+                  <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
+                        class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                        data: {"double-select-target": "source", action: "double-select#sourceChanged"} %>
                 </div>
                 <div class="mb-4">
-                  <label>Resource</label>
-                  <div class="input-group">
-                    <%= select_tag :resource_id, [], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
-                      'double-select-target': 'destination'
-                    } %>
-                  </div>
+                  <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
+                  <%= select_tag :resource_id, [],
+                        class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                        data: {"double-select-target": "destination"} %>
                 </div>
               </div>
-              <%= submit_tag 'Add Role', class: 'inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %>
+              <%= submit_tag "Add role", class: essentials_button_classes(variant: :secondary) %>
             <% end %>
           </div>
         </div>

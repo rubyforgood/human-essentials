@@ -1,6 +1,10 @@
+<%#
+  Kaminari's pagination. The <nav> and its label live here rather than at the call site,
+  because three views call `paginate` directly and would otherwise ship an unlabelled list.
+%>
 <%= paginator.render do %>
-  <nav>
-    <ul class="pagination">
+  <nav aria-label="Pagination">
+    <ul class="flex flex-wrap items-center gap-1">
       <%= first_page_tag unless current_page.first? %>
       <%= prev_page_tag unless current_page.first? %>
       <% each_page do |page| %>

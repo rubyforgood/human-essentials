@@ -1,45 +1,47 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Reject Account Request" %>
+<% content_for :title, "Reject account request" %>
+
+<%#
+  Reached from the link in the account request notification email, which carries a token.
+  The page had no h1 at all in the success branch -- only a content_for :title -- so there
+  was nothing on the page naming what it was.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8"
+     data-controller="account-request-decision"
+     data-account-request-decision-reject-url-value="<%= reject_admin_account_requests_path %>"
+     data-account-request-decision-close-url-value="<%= close_admin_account_requests_path %>">
+  <%= render "shared/essentials/page_header",
+        title: "Reject account request",
+        back: {path: admin_account_requests_path, label: "Back to account requests"} %>
+
+  <% if @account_request %>
+    <%= render "shared/essentials/card", padded: false do %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>The account request named by this link</caption>
+          <thead>
+            <tr>
+              <th class="date">Date submitted</th>
+              <th>Organization</th>
+              <th>Request details</th>
+              <th>Status</th>
+              <th>Contact</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "open_account_request", object: @account_request %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
 
-<% if @account_request %>
-
-  <section>
-    <div class="px-4 py-6 sm:px-6 lg:px-8">
-      <div class="grid gap-6">
-        <div class="min-w-0">
-          <!-- Default box -->
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div class="px-5 py-4">
-              <table class="data-table" id="open-account-requests">
-                <thead>
-                <tr>
-                  <th>Date Submitted</th>
-                  <th>Organization Details</th>
-                  <th>Request details</th>
-                  <th>Request status</th>
-                  <th>Contact Details</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <%= render partial: 'open_account_request', object: @account_request %>
-              </table>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <%= render partial: 'rejection_modal' %>
-<% else %>
-  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Account Request not found!</h1>
-<% end %>
+    <%= render "decision_dialog" %>
+  <% else %>
+    <%= render "shared/essentials/card" do %>
+      <%= render "shared/essentials/empty_state", kind: :no_results,
+            title: "That account request could not be found",
+            body: "The link may have expired, or the request may already have been decided.",
+            action: capture { essentials_link_button("Back to account requests", admin_account_requests_path, variant: :secondary) } %>
+    <% end %>
+  <% end %>
+</div>

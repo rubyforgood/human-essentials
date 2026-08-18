@@ -13,12 +13,10 @@
             <!-- form start -->
             <div class="px-5 py-4">
               <%= f.input :quantity, label: "Quantity" do %>
-                <span class="input-group-text"></span>
                 <%= f.input_field :quantity, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
               <%= f.association :barcodeable, collection: @base_items, label: "Item" %>
               <%= f.input :value, label: "Barcode" do %>
-                <span class="input-group-text"><i class="bi-upc-scan"></i></span>
                 <%= f.input_field :value, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
             </div>

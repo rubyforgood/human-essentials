@@ -17,7 +17,6 @@
 
     <div data-deadline-day-target="dayOfMonthFields">
       <%= f.input :day_of_month, as: :integer, label: 'Reminder day of month' do %>
-        <span class="input-group-text"><i class="bi-calendar"></i></span>
         <%= f.number_field :day_of_month,
           min: ReminderScheduleService::MIN_DAY_OF_MONTH,
           max: ReminderScheduleService::MAX_DAY_OF_MONTH,
@@ -28,7 +27,7 @@
 
     <div data-deadline-day-target="dayOfWeekFields">
       <%= f.label :every_nth_day, 'Reminder day of the week' %>
-      <div class="input-group">
+      <div class="flex flex-wrap items-end gap-3">
         <%= f.input :every_nth_day,
           collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
           label: false,
@@ -52,16 +51,15 @@
           } %>
       </div>
     </div>
-    <small class="mb-3 d-block text-muted" data-deadline-day-target="reminderText"></small>
+    <small class="mb-3 block text-slate-500" data-deadline-day-target="reminderText"></small>
   <% end %>
 
   <%= parent_form.input :deadline_day, wrapper_html: { min: 0, max: 28 }, label: 'Deadline day in reminder email' do %>
-      <span class="input-group-text"><i class="bi-calendar"></i></span>
       <%= parent_form.number_field :deadline_day,
         min: ReminderScheduleService::MIN_DAY_OF_MONTH,
         max: ReminderScheduleService::MAX_DAY_OF_MONTH,
         placeholder: "Deadline day",
         data: {"deadline-day-target": "deadlineDay", "action": "deadline-day#sourceChange"} %>
     <% end %>
-    <small class="mb-3 d-block text-muted" data-deadline-day-target="deadlineText"></small>
+    <small class="mb-3 block text-slate-500" data-deadline-day-target="deadlineText"></small>
 </div>

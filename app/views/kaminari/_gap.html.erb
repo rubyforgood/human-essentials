@@ -1,3 +1,5 @@
-<li class='page-item disabled'>
-  <%= link_to raw(t 'views.pagination.truncate'), '#', class: 'page-link' %>
+<li>
+  <%# Not a control: this was a link to "#", which takes focus, announces as a link and goes
+      nowhere. aria-hidden because "…" tells a screen-reader user nothing. %>
+  <span class="pagination-gap" aria-hidden="true"><%= raw(t "views.pagination.truncate") %></span>
 </li>

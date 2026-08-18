@@ -163,6 +163,57 @@
   }
 
   /*
+   * Pagination. Kaminari renders through app/views/kaminari/*, six partials that would
+   * otherwise repeat the same dozen-class string and drift apart one at a time.
+   */
+  .pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    padding-inline: calc(var(--spacing) * 2);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-slate-600);
+  }
+
+  .pagination-link:hover {
+    background-color: var(--color-slate-100);
+    color: var(--color-slate-900);
+  }
+
+  .pagination-link:focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  /* The current page is marked by aria-current, so the styling follows the semantics
+     rather than a separate .active class that could disagree with it. */
+  .pagination-link[aria-current="page"] {
+    background-color: var(--color-brand-600);
+    color: var(--color-white);
+  }
+
+  .pagination-link[aria-current="page"]:hover {
+    background-color: var(--color-brand-700);
+    color: var(--color-white);
+  }
+
+  /* The truncation marker is not a control: it was a link to "#", which is focusable,
+     announces as a link and goes nowhere. */
+  .pagination-gap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    font-size: var(--text-sm);
+    color: var(--color-slate-400);
+  }
+
+  /*
    * App-specific rules carried over from the AdminLTE stylesheet. These are the only ones
    * that survived: everything else in application.scss was Bootstrap, AdminLTE, or styling
    * for markup that no longer exists.

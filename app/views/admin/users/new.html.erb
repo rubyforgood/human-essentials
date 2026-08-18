@@ -1,67 +1,42 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "New - User" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add a User</h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "New user" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  The role picker is two dependent selects: choosing a role type fetches the resources that
+  role can be scoped to. Both had a bare <label> with no `for`, so neither select was named.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Add a user",
+        back: {path: admin_users_path, label: "Back to users"} %>
 
-          <!-- form start -->
-            <div class="px-5 py-4">
-              <!-- Default box -->
-              <div class="box">
-                <div class="box-header with-border">
-                </div>
-                <div class="px-5 py-4">
+  <%= essentials_form_for @user, url: admin_users_path do |f| %>
+    <%= render "shared/essentials/card",
+          footer: capture { submit_button } do %>
+      <%= essentials_error_summary(@user) %>
 
-                  <%= essentials_form_for @user, url: admin_users_path do |f| %>
-                    <div class="form-inputs">
+      <%= render "admin/users/user_form_fields", f: f %>
 
-                      <%= render 'admin/users/user_form_fields', f: f %>
+      <div data-controller="double-select hide-by-source-val"
+           data-double-select-url-value="<%= resource_ids_admin_users_url %>"
+           data-hide-by-source-val-values-to-hide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>">
+        <div class="mb-4">
+          <%= label_tag :resource_type, "Role type", class: "block text-sm font-medium text-slate-700" %>
+          <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
+                class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                data: {
+                  "double-select-target": "source",
+                  "hide-by-source-val-target": "source",
+                  action: "hide-by-source-val#sourceChanged double-select#sourceChanged"
+                } %>
+        </div>
 
-                      <div data-controller="double-select hide-by-source-val"
-                        data-double-select-url-value="<%= resource_ids_admin_users_url %>"
-                        data-hide-by-source-val-values-to-hide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>">
-                        <label>Role Type</label>
-                          <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-                            class: "select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
-                              'double-select-target': 'source',
-                              'hide-by-source-val-target': 'source',
-                              'action': 'hide-by-source-val#sourceChanged double-select#sourceChanged'
-                          } %>
-                        <div data-hide-by-source-val-target="destination">
-                          <label>Resource</label>
-                          <div class="input-group">
-                            <%= select_tag :resource_id, [], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {
-                              'double-select-target': 'destination'
-                            } %>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                    <div class="border-t border-slate-200 px-5 py-3">
-                      <%= submit_button %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
+        <div class="mb-4" data-hide-by-source-val-target="destination">
+          <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
+          <%= select_tag :resource_id, [],
+                class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                data: {"double-select-target": "destination"} %>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

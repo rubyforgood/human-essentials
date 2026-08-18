@@ -48,7 +48,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "displays a message" do
-          expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests!"
+          expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests"
         end
 
         it "has a See More link" do
@@ -105,7 +105,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         create :request, :fulfilled
         org_dashboard_page.visit
         org_dashboard_page.outstanding_section # wait for the section
-        expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests!"
+        expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests"
         # expect(org_dashboard_page.outstanding_requests).to be_empty
       end
 
@@ -173,13 +173,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_content partner.name
               expect(page).to have_content partner.profile.primary_contact_email
               expect(page).to have_content partner.profile.primary_contact_name
-              expect(page).to have_link "Review Applicant's Profile", href: partner_path(id: partner) + "#partner-information"
+              expect(page).to have_link "Review profile", href: partner_path(id: partner) + "#partner-information"
             end
             [partner_hidden1, partner_hidden2].each do |hidden_partner|
               expect(page).to_not have_content hidden_partner.name
               expect(page).to_not have_content hidden_partner.profile.primary_contact_email
               expect(page).to_not have_content hidden_partner.profile.primary_contact_name
-              expect(page).to_not have_link "Review Applicant's Profile", href: partner_path(id: hidden_partner) + "#partner-information"
+              expect(page).to_not have_link "Review profile", href: partner_path(id: hidden_partner) + "#partner-information"
             end
           end
         end
@@ -190,7 +190,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       it "displays no low inventory message" do
         org_dashboard_page.visit
         expect(org_dashboard_page).to have_low_inventory_section
-        expect(org_dashboard_page.low_inventory_section).to have_text "Inventory is at recommended levels (minimum and recommended levels can be set on each item)"
+        expect(org_dashboard_page.low_inventory_section).to have_text "Inventory is at recommended levels"
       end
 
       context "with low inventory" do
@@ -218,9 +218,12 @@ RSpec.describe "Dashboard", type: :system, js: true do
         it "displays low inventory report" do
           org_dashboard_page.visit
           expect(org_dashboard_page).to have_low_inventory_section
-          inventories = org_dashboard_page.low_inventories
-          minimum_item = "#{below_minimum_item.name}\t100\t150\t200"
-          recommended_item = "#{below_recommended_item.name}\t100\t0\t200"
+          # A row that is below its minimum now says so beside the number: the colour on its
+          # own did not tell you why the row was in the report. Compare on squished text so
+          # the assertion is about the numbers and the marker, not the whitespace between.
+          inventories = org_dashboard_page.low_inventories.map { |row| row.gsub(/\s+/, " ").strip }
+          minimum_item = "#{below_minimum_item.name} 100 Below minimum 150 200"
+          recommended_item = "#{below_recommended_item.name} 100 0 200"
           expect(inventories.count).to eq 2
           expect(inventories).to include minimum_item
           expect(inventories).to include recommended_item

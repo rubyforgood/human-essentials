@@ -1,4 +1,5 @@
 <%= render "shared/essentials/card",
+      card_id: "low_inventory",
       title: "Bank-wide low inventory",
       subtitle: "Minimum and recommended levels are set per item.",
       padded: @low_inventory_report.count.zero? do %>

@@ -68,16 +68,20 @@
                     <%= image_tag @organization.logo, class: "main_logo" %>
                   </p>
                   <p>
-                    <a href="#showTheLogo" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-action="click->dialog#open">
-                      View Original
-                    </a>
+                    <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                              data-action="click->dialog#open" data-dialog-id-param="showTheLogo">
+                      View original
+                    </button>
                   </p>
-                  <div id="showTheLogo" class="modal fade">
-                    <div class="gap-2">
-                      <%= image_tag @organization.logo, class: "thumbnail" %>
-                      <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" onclick="this.closest('dialog').close()">Close</button>
+                                    <dialog id="showTheLogo" aria-label="Organization logo, full size"
+                          class="rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+                          data-action="click->dialog#closeOnBackdrop">
+                    <div class="flex flex-col items-end gap-3 p-5">
+                      <%= image_tag @organization.logo, alt: "", class: "max-h-[70vh] w-auto rounded-lg" %>
+                      <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                              data-action="click->dialog#close" data-dialog-id-param="showTheLogo">Close</button>
                     </div>
-                  </div>
+                  </dialog>
                 </div>
               <% else %>
                 <p>Not defined</p>
@@ -181,7 +185,7 @@
                 <%= fa_icon "calendar" %>
                 <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
                 <% if @organization.reminder_schedule.valid? %>
-                  <small class="mb-3 d-block text-muted">
+                  <small class="mb-3 block text-slate-500">
                     <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
                   </small>
                 <% end %>
@@ -192,7 +196,7 @@
               <p>
                 <%= fa_icon "calendar" %>
                 <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
-                <small class="mb-3 d-block text-muted">
+                <small class="mb-3 block text-slate-500">
                   <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
                     <%= "The deadline on your next reminder email will be #{DeadlineService.new(
                       deadline_day: @organization.deadline_day,

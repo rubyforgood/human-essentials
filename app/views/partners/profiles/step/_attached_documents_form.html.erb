@@ -6,12 +6,12 @@
     <%# Allow user to download and/or remove existing attachments %>
     <% if has_persisted_documents?(profile) %>
       <strong>Attached files:</strong>
-      <ul class="list-unstyled">
+      <ul class="list-none">
         <% profile.documents.each do |doc| %>
           <% if doc.persisted? %>
-            <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
+            <li class="attached-document flex justify-between items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
               <div class="text-truncate" style="max-width: 75%;">
-                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
+                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-semibold" %>
                 <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
               </div>
               <%= remove_element_button "Remove", container_selector: "li", class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
@@ -33,7 +33,7 @@
     <%= pf.file_field :documents,
       multiple: true,
       direct_upload: true,
-      class: "-file d-none block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
+      class: "-file hidden block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
       data: { file_input_target: "input" } %>
 
     <%# Custom button to trigger file selection %>

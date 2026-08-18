@@ -4,7 +4,7 @@
   </div>
 
   <div class="px-5 py-4">
-    <table class="data-table text-nowrap">
+    <table class="data-table whitespace-nowrap">
       <thead>
         <tr>
           <th>Name & Email</th>
@@ -17,7 +17,7 @@
         <% users.order(name: :asc).each do |user| %>
           <tr>
             <td>
-              <div class='d-flex flex-column'>
+              <div class='flex flex-col'>
                 <span><%= user.name %></span>
                 <small><%= user.email %></small>
               </div>
@@ -27,27 +27,23 @@
                 <% if user.last_sign_in_at.present? %>
                   <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)</small>
                 <% else %>
-                  <span class="badge bg-danger">Never</span>
+                  <%= essentials_status_pill("Never", tone: :neutral, icon: "bi-dash-circle") %>
                 <% end %>
               </small>
             </td>
             <td>
               <% if user.invitation_accepted_at %>
-                <span class="badge bg-success">
-                   Accepted
-                </span>
+                <%= essentials_status_pill("Accepted", tone: :success, icon: "bi-check-circle") %>
               <% else %>
-                <div class='d-flex flex-column justify-content-center align-items-start'>
-                  <span class="badge bg-warning">
-                    <div>Waiting Acceptance</div>
-                  </span>
+                <div class='flex flex-col justify-center items-start'>
+                  <%= essentials_status_pill("Waiting acceptance", tone: :warning, icon: "bi-hourglass-split") %>
                   <small style='font-size:10px'>
                     Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago on <%= user.invitation_sent_at.strftime('%b %d %Y') %></strong>
                   </small>
                 </div>
               <% end %>
             </td>
-            <td class='d-flex flex-column'>
+            <td class='flex flex-col'>
               <% unless user.invitation_accepted_at %>
                 <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
                   <i class="bi-envelope"></i> Resend Invitation

@@ -10,7 +10,6 @@
             <!-- form start -->
             <div class="px-5 py-4">
               <%= f.input :name, label: "Name" do %>
-                <span class="input-group-text"><i class="bi-person"></i></span>
                 <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
 
@@ -24,7 +23,7 @@
                 <h2 class='text-bold text-lg'>Do you want to send deadline reminders to them every month?</h2>
                 <%= f.input :send_reminders, as: :boolean, label: "Yes", input_html: { data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisibility', 'checkbox-with-nested-element-target': 'checkbox' } } %>
 
-                <div class='pl-5 d-none' data-checkbox-with-nested-element-target='nestedElement'>
+                <div class='pl-5 hidden' data-checkbox-with-nested-element-target='nestedElement'>
                   <div class="callout callout-info">
                     <h3 class="text-sm font-semibold text-slate-900">That's great!</h3>
                     <p>You must fill out the details below to send reminders.</p>

@@ -1,7 +1,8 @@
 <%# Cold-start guide. Disappears once the organization has storage locations, items and a
     partner, or once an admin dismisses it. %>
 <% unless org_is_set_up %>
-  <%= render "shared/essentials/card", card_class: "border-brand-200 bg-brand-50/40" do %>
+  <%= render "shared/essentials/card", card_id: "getting-started-guide",
+        card_class: "border-brand-200 bg-brand-50/40" do %>
     <div class="flex gap-4">
       <%= essentials_icon_tile("bi-rocket-takeoff", tone: :brand) %>
       <div class="min-w-0 flex-1">

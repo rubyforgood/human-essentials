@@ -1,208 +1,142 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Admin Dashboard" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+<% content_for :title, "Admin dashboard" %>
+
+<%#
+  The super admin dashboard. Every number on it is "in the last week" except the organization
+  total, so each stat says its own period rather than leaving the reader to assume.
+
+  Two "View All Orders" links pointed at href="#": this app has no orders, and the links went
+  nowhere. They are gone rather than restyled.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Dashboard",
+        subtitle: "Activity across every organization on the platform." %>
+
+  <%
+    stats = [
+      {label: "Donations", period: "Last 7 days", value: @donation_count, icon: "bi-box-seam", tone: :brand},
+      {label: "Distributions", period: "Last 7 days", value: @distribution_count, icon: "bi-truck", tone: :info},
+      {label: "Requests", period: "Last 7 days", value: @request_count, icon: "bi-file-text", tone: :success},
+      {label: "Organizations", period: "All time", value: @organization_count, icon: "bi-bank", tone: :warning}
+    ]
+  %>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <% stats.each do |stat| %>
+      <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <%= essentials_icon_tile(stat[:icon], tone: stat[:tone]) %>
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-slate-600"><%= stat[:label] %></p>
+          <p class="text-2xl font-bold tracking-tight text-slate-900"><%= number_with_delimiter(stat[:value]) %></p>
+          <p class="text-xs text-slate-500"><%= stat[:period] %></p>
+        </div>
       </div>
-      <div class="min-w-0">
-      </div>
-    </div>
+    <% end %>
   </div>
 
-</section>
-<section>
-  <div class="grid gap-6">
-    <div class="min-w-0">
-      <div class="info-box">
-        <span class="info-box-icon bg-blue"></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Donations</span>
-          <span class="info-box-number"><%= @donation_count %></span>
-        </div>
+  <div class="mt-6 grid gap-6 lg:grid-cols-2">
+    <%= render "shared/essentials/card",
+          title: "Recently added users",
+          actions: capture { essentials_status_pill(pluralize(@recent_users.count, "new user"), tone: :brand) },
+          footer: capture { essentials_link_button("View all users", admin_users_path, variant: :secondary, size: :sm) } do %>
+      <% if @recent_users.any? %>
+        <ul class="divide-y divide-slate-100">
+          <% @recent_users.each do |user| %>
+            <li class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+              <%= image_tag gravatar_url(user.email, 32), alt: "", class: "h-8 w-8 shrink-0 rounded-full" %>
+              <%= link_to recently_added_user_display_text(user), edit_admin_user_path(user),
+                    class: "min-w-0 flex-1 truncate text-sm font-medium text-brand-700 hover:text-brand-800" %>
+              <span class="shrink-0 text-xs text-slate-500"><%= time_ago_in_words(user.created_at) %> ago</span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "No new users this week" %>
+      <% end %>
+    <% end %>
 
-      </div>
-
-    </div>
-
-    <div class="min-w-0">
-      <div class="info-box">
-        <span class="info-box-icon bg-red"><i class="bi-cash"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Distributions</span>
-          <span class="info-box-number"><%= @distribution_count %></span>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-    <div class="min-w-0">
-      <div class="info-box">
-        <span class="info-box-icon bg-green"><i class="bi-file-text"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Requests</span>
-          <span class="info-box-number"><%= @request_count %></span>
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="min-w-0">
-      <div class="info-box">
-        <span class="info-box-icon bg-yellow"><i class="bi-bank text-white"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Total Organizations</span>
-          <span class="info-box-number"><%= @organization_count %></span>
-        </div>
-
-      </div>
-
-    </div>
-
+    <%= render "shared/essentials/card",
+          title: "Recently added organizations",
+          actions: capture { essentials_status_pill(pluralize(@recent_organizations.count, "new organization"), tone: :brand) },
+          footer: capture { essentials_link_button("View all organizations", admin_organizations_path, variant: :secondary, size: :sm) } do %>
+      <% if @recent_organizations.any? %>
+        <ul class="divide-y divide-slate-100">
+          <% @recent_organizations.each do |org| %>
+            <li class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+              <%= link_to org.name, admin_organization_path(org.id),
+                    class: "min-w-0 flex-1 truncate text-sm font-medium text-brand-700 hover:text-brand-800" %>
+              <span class="shrink-0 text-xs text-slate-500"><%= time_ago_in_words(org.created_at) %> ago</span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "No new organizations this week" %>
+      <% end %>
+    <% end %>
   </div>
-  <div class="grid gap-6">
-    <div class="min-w-0">
-      <!-- USERS LIST -->
-      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-5 py-4">
-          <h2 class="text-base font-semibold text-slate-900"><strong>Recently Added Users</strong></h2>
-          <div class="card-tools">
-            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_users.count, "New User") %></span>
-          </div>
-        </div>
 
-        <div class="px-5 py-4">
-
-          <ul class="users-list clearfix">
-            <% @recent_users.each do |user| %>
-              <li>
-                <%= image_tag gravatar_url(user.email, 32) %>
-                <%= link_to recently_added_user_display_text(user), edit_admin_user_path(user), class: "users-list-name" %>
-                <span class="users-list-date"><%= time_ago_in_words(user.created_at) %></span>
-              </li>
-            <% end %>
-          </ul>
-          <br>
-          <div class="text-center">
-          </div>
-        </div>
-
-        <div class="border-t border-slate-200 px-5 py-3">
-          <%= link_to "View All Users", admin_users_path, class:"inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          <a href="#" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">View All Orders</a>
-        </div>
-
-      </div>
-    </div>
-    <div class="min-w-0">
-      <!-- USERS LIST -->
-      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-5 py-4">
-          <h2 class="text-base font-semibold text-slate-900"><strong>Recently Added Organizations</strong></h2>
-          <div class="card-tools">
-            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
-          </div>
-        </div>
-
-        <div class="px-5 py-4">
-
-          <ul class="users-list clearfix">
-            <% @recent_organizations.each do |org| %>
-              <li>
-                <%#= image_tag(org&.logo) %>
-                <%= link_to org.name, admin_organization_path(org.id), class: "users-list-name" %>
-                <span class="users-list-date"><%= time_ago_in_words(org.created_at) %></span>
-              </li>
-            <% end %>
-          </ul>
-          <br>
-          <div class="text-center">
-          </div>
-        </div>
-
-        <div class="border-t border-slate-200 px-5 py-3">
-          <%= link_to "View All Organizations", admin_organizations_path, class:"inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          <a href="#" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">View All Orders</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="min-w-0">
-    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div class="border-b border-slate-200 px-5 py-4">
-        <h2 class="text-base font-semibold text-slate-900"><strong>Top 10 Uses of Other</strong></h2>
-        <div class="card-tools">
-        </div>
-      </div>
-
-      <div class="px-5 py-4">
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Occurrence</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @top_10_other.each do |other| %>
+  <div class="mt-6 grid gap-6">
+    <%= render "shared/essentials/card",
+          title: "Top 10 uses of \"Other\"",
+          subtitle: "Items banks had to file under Other -- candidates for a new base item.",
+          padded: false,
+          footer: capture { essentials_link_button("View all items", admin_base_items_path, variant: :secondary, size: :sm) } do %>
+      <% if @top_10_other.any? %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Item names most often filed under the Other base item</caption>
+            <thead>
               <tr>
-                <td><%= other[0] %></td>
-                <td><%= other[1] %></td>
+                <th>Name</th>
+                <th class="numeric">Occurrences</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-        <div class="text-center">
+            </thead>
+            <tbody>
+              <% @top_10_other.each do |name, occurrences| %>
+                <tr>
+                  <td><%= name %></td>
+                  <td class="numeric"><%= number_with_delimiter(occurrences) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
-      </div>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "Nothing filed under Other" %>
+      <% end %>
+    <% end %>
 
-      <div class="border-t border-slate-200 px-5 py-3">
-        <%= link_to "View All Items", admin_base_items_path, class:"inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-      </div>
-    </div>
-  </div>
-  <div class="min-w-0">
-    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div class="border-b border-slate-200 px-5 py-4">
-        <h2 class="text-base font-semibold text-slate-900"><strong>Recently Active Users</strong></h2>
-        <div class="card-tools">
-        </div>
-      </div>
-
-      <div class="px-5 py-4">
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Email</th>
-              <th>Organization</th>
-              <th>Last Active</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @active_users.each do |user| %>
+    <%= render "shared/essentials/card", title: "Recently active users", padded: false do %>
+      <% if @active_users.any? %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Users who made a request in the last week</caption>
+            <thead>
               <tr>
-                <td><%= user.display_name %></td>
-                <td><%= user.email %></td>
-                <td><%= user.organization&.name %></td>
-                <td><%= time_ago_in_words user.last_request_at %></td>
+                <th>User</th>
+                <th>Email</th>
+                <th>Organization</th>
+                <th class="date">Last active</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-        <div class="text-center">
+            </thead>
+            <tbody>
+              <% @active_users.each do |user| %>
+                <tr>
+                  <td><%= user.display_name %></td>
+                  <td><%= user.email %></td>
+                  <td><%= user.organization&.name %></td>
+                  <td class="date"><%= time_ago_in_words(user.last_request_at) %> ago</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      <div class="border-t border-slate-200 px-5 py-3">
-        <%= link_to "View All Items", admin_base_items_path, class:"inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-      </div>
-    </div>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "Nobody has been active this week" %>
+      <% end %>
+    <% end %>
   </div>
-</section>
+</div>

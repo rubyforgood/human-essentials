@@ -1,101 +1,100 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Account Requests" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Open Account Requests</h1>
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Account requests" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="px-5 py-4">
-            <table class="data-table" id="open-account-requests">
-              <thead>
+<%#
+  Open and closed requests are two views of one queue, so they are two cards under one h1
+  rather than two h1s -- the page had two, which leaves the document outline claiming the
+  page starts over halfway down.
+
+  The controller element wraps both the open table and the dialog so the row triggers and
+  the dialog share a scope.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8"
+     data-controller="account-request-decision"
+     data-account-request-decision-reject-url-value="<%= reject_admin_account_requests_path %>"
+     data-account-request-decision-close-url-value="<%= close_admin_account_requests_path %>">
+  <%= render "shared/essentials/page_header",
+        title: "Account requests",
+        subtitle: "Organizations waiting to be let in, and the ones already decided." %>
+
+  <div class="grid gap-6">
+    <%= render "shared/essentials/card", title: "Open requests", padded: false,
+          footer: capture { render "shared/essentials/pagination", collection: @open_account_requests } do %>
+      <% if @open_account_requests.any? %>
+        <div class="table-scroll">
+          <table class="data-table" id="open-account-requests">
+            <caption>Account requests still waiting on a decision</caption>
+            <thead>
               <tr>
-                <th>Date Submitted</th>
-                <th>Organization Details</th>
+                <th class="date">Date submitted</th>
+                <th>Organization</th>
                 <th>Request details</th>
-                <th>Request status</th>
-                <th>Contact Details</th>
+                <th>Status</th>
+                <th>Contact</th>
                 <th class="text-right">Actions</th>
               </tr>
-              </thead>
-              <tbody>
-              <%= render partial: 'open_account_request', collection: @open_account_requests %>
-            </table>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= paginate @open_account_requests, param_name: 'open_page' %>
-          </div>
+            </thead>
+            <tbody>
+              <%= render partial: "open_account_request", collection: @open_account_requests %>
+            </tbody>
+          </table>
         </div>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "No open account requests",
+              body: "Every request has been decided." %>
+      <% end %>
+    <% end %>
 
-      </div>
-    </div>
-  </div>
-</section>
-
-<%= render partial: 'rejection_modal' %>
-
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Closed Account Requests</h1>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="px-5 py-4">
-            <table class="data-table" id="closed-account-requests">
-              <thead>
+    <%= render "shared/essentials/card", title: "Closed requests", padded: false,
+          footer: capture { render "shared/essentials/pagination", collection: @closed_account_requests } do %>
+      <% if @closed_account_requests.any? %>
+        <div class="table-scroll">
+          <table class="data-table" id="closed-account-requests">
+            <caption>Account requests that have already been decided</caption>
+            <thead>
               <tr>
-                <th>Organization Details</th>
+                <th>Organization</th>
                 <th>Request details</th>
-                <th>Contact Details</th>
-                <th>Request status</th>
-                <th>Date Confirmed</th>
-                <th>Rejection Reason</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th class="date">Date confirmed</th>
+                <th>Reason</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @closed_account_requests.each do |account_request| %>
                 <tr>
                   <td>
-                    <%= account_request.organization_name %>
-                    <br><%= account_request.organization_website %>
+                    <span class="font-medium text-slate-900"><%= account_request.organization_name %></span>
+                    <% if account_request.organization_website.present? %>
+                      <br><span class="text-slate-500"><%= account_request.organization_website %></span>
+                    <% end %>
                   </td>
                   <td><%= account_request.request_details %></td>
-                  <td><%= account_request.name %>
-                    <br><%= account_request.email %>
+                  <td>
+                    <%= account_request.name %>
+                    <br><span class="text-slate-500"><%= account_request.email %></span>
                   </td>
-                  <td><%= account_request.status.titleize %></td>
-                  <td><%= account_request.confirmed_at&.strftime("%m/%d/%Y") || "N/A" %></td>
-                  <td><%= account_request.rejection_reason %></td>
+                  <td>
+                    <% approved = account_request.status.to_s == "admin_approved" %>
+                    <%= essentials_status_pill(account_request.status.humanize,
+                          tone: approved ? :success : :neutral,
+                          icon: approved ? "bi-check-circle" : "bi-slash-circle") %>
+                  </td>
+                  <td class="date"><%= account_request.confirmed_at&.strftime("%m/%d/%Y") || "—" %></td>
+                  <td><%= optional_data_text(account_request.rejection_reason) %></td>
+                </tr>
               <% end %>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= paginate @closed_account_requests, param_name: 'close_page' %>
-          </div>
+            </tbody>
+          </table>
         </div>
-
-      </div>
-    </div>
+      <% else %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No closed account requests",
+              body: "Requests appear here once they have been decided." %>
+      <% end %>
+    <% end %>
   </div>
-</section>
+
+  <%= render "decision_dialog" %>
+</div>
