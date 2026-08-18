@@ -4,6 +4,11 @@ class ReportsController < ApplicationController
 
   before_action :setup_date_range_picker
 
+  # The hub. Deliberately loads nothing: every report already owns its own date range, and a
+  # hub that ran fifteen queries to render a menu would be the slowest page in the app.
+  def index
+  end
+
   def donations_summary
     @donations = current_organization.donations.during(helpers.selected_range)
     @recent_donations = @donations.recent

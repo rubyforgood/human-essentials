@@ -106,6 +106,10 @@ Rails.application.routes.draw do
     post :finalize
   end
 
+  # The reports hub. Sits outside the namespace so the path is /reports rather than
+  # /reports/index; the fifteen reports it links to keep their existing routes.
+  get "reports", to: "reports#index", as: :reports
+
   namespace :reports do
     resources :annual_reports, only: [:index, :show], param: :year do
       post :recalculate, on: :member

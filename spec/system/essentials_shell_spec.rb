@@ -78,9 +78,15 @@ RSpec.describe "Essentials app shell", type: :request do
   context "navigation model" do
     it "renders every nav group label" do
       get dashboard_path
-      %w[Operations Inventory Network Reporting].each do |label|
+      %w[Operations Inventory Network].each do |label|
         expect(response.body).to include(label)
       end
+    end
+
+    it "renders Reports as a single destination rather than a group" do
+      get dashboard_path
+      expect(response.body).to include(">Reports<")
+      expect(response.body).not_to include("nav-group-reporting")
     end
 
     it "renders every group collapsed when the current page is outside them all" do

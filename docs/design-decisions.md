@@ -765,3 +765,43 @@ The user guide is a book. In-app help is a life ring. Neither collides with a st
 While fixing it: `ESSENTIALS_PARTNER_STATUS` still carried an `icon:` for each status, dead
 since the pill stopped rendering one. Removed rather than left, because a dead icon name in a
 status map is exactly the sort of thing the next person builds on.
+
+## 2026-08-18 · Fifteen reports become a hub with one rail entry
+
+The Reporting group held 15 of the sidebar's 34 destinations; Operations, Inventory and Network
+held 5, 7 and 7. Twelve of the fifteen turned out to be a sparse grid — distributions, donations,
+purchases, product drives and requests, each cut as a summary, an itemised breakdown or a
+twelve-month trend. The remaining three (activity graph, annual survey, history) belong to no
+subject.
+
+A flat list cannot express a grid, and the labels had been compensating: "Distributions —
+summary" encoded the grid in the string so the entries at least sorted together. That naming was
+a symptom, and it is why the em dashes were there.
+
+So the grid became the layout. One rail entry, "Reports", leading to a hub that groups by
+subject and names each report for its cut — under **Distributions**: Summary, Itemized, Trends,
+By county. The em dashes are gone as a side effect rather than as an edit.
+
+Costs one click per report. That is only acceptable because reports are periodic — monthly and
+annual funder reporting — rather than daily like distributions. **This is an assumption, not a
+measurement**, and it is the thing to check with a real bank before treating the hub as settled.
+If some report is genuinely a daily habit, it should be promoted back into the rail beside
+Dashboard rather than the hub being abandoned.
+
+Deliberately not done in this stage: collapsing the grid itself, so that "Distributions —
+summary" and "Distributions — itemized" become one page with a view switcher. It is the
+structurally correct end state and a real refactor of twelve pages; the hub proves the grouping
+first.
+
+Two judgement calls inside it:
+
+- **Annual survey stays on the hub**, not in the rail, though it is high-stakes for NDBN member
+  banks. Permanent rail space is the wrong tool for an annual deadline; a dashboard prompt when
+  the filing window opens is the right one, and is not built.
+- **History is not a report.** It is the inventory event log, and it sat under Reporting because
+  there was nowhere else. It is on the hub under "Everything else" and labelled as an audit
+  trail rather than pretending the hub resolved it.
+
+`active_on` for the rail entry lists every controller that renders a report, so the entry stays
+current while you are inside one. Without that the rail would say you are nowhere, which is
+worse than the group was.

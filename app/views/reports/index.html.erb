@@ -1,0 +1,44 @@
+<% content_for :title, "Reports - #{current_organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Reports",
+        subtitle: "#{reports_catalog_count} reports. Most take a date range and export to CSV." %>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <% reports_catalog.each do |section| %>
+      <%# A stable id per section: it anchors a link to "the donations reports", and gives the
+          specs something to scope to that is not a count of ancestors. %>
+      <section id="reports-<%= section.label.parameterize %>" aria-labelledby="reports-<%= section.label.parameterize %>-heading">
+      <%= render "shared/essentials/card", padded: false do %>
+        <div class="flex items-start gap-3 border-b border-slate-200 px-5 py-4">
+          <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+            <i class="<%= section.icon %>" aria-hidden="true"></i>
+          </span>
+          <div class="min-w-0">
+            <h2 id="reports-<%= section.label.parameterize %>-heading" class="text-base font-semibold text-slate-900"><%= section.label %></h2>
+            <p class="text-sm text-slate-600"><%= section.description %></p>
+          </div>
+        </div>
+
+        <ul class="divide-y divide-slate-100">
+          <% section.reports.each do |report| %>
+            <li>
+              <%# The whole row is the link: a report name alone is a small target, and the
+                  description is what tells you whether this is the one you want. %>
+              <%= link_to report.path,
+                    class: "flex items-start gap-3 px-5 py-3 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" do %>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-medium text-brand-700"><%= report.label %></span>
+                  <span class="block text-sm text-slate-600"><%= report.description %></span>
+                </span>
+                <i class="bi-chevron-right mt-1 shrink-0 text-xs text-slate-400" aria-hidden="true"></i>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+      </section>
+    <% end %>
+  </div>
+</div>
