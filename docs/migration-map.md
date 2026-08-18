@@ -3,14 +3,30 @@
 Where everything went, what replaced what, and what to do when you meet the leftovers.
 
 Companion documents: [design.md](../design.md) is the specification for the system that
-replaced it; [design-decisions.md](design-decisions.md) is the running log of judgement calls;
+replaced it; [changelog.md](changelog.md) is the ordered record of what changed and when;
+[design-decisions.md](design-decisions.md) is the running log of judgement calls;
+[onboarding.md](onboarding.md) is the way in for a new contributor or user; and
 [ADR 0011](architecture/decisions/0011-adopt-the-ruby-for-good-design-system.md) is the
 decision itself.
 
 ## Status
 
 Complete. Both frameworks are gone from the `Gemfile`, the asset path and the importmap, and
-the legacy layouts are deleted. 63 of 65 controllers render on a design system layout.
+the legacy layouts are deleted.
+
+Measured on 2026-08-18 with the commands under [verifying a
+migration](#verifying-a-migration):
+
+| | |
+| --- | --- |
+| Controllers on a design system layout | 63 of 65 |
+| Views carrying design system markup | 299 of 392 |
+| Undefined Bootstrap/AdminLTE/Font Awesome classes in `app/views` | 0 |
+| Stimulus controllers | 30 |
+
+The 93 views in neither column are not a backlog — 55 are ten lines or fewer, 12 are mailer
+templates, and the rest carry no markup of their own. [changelog.md](changelog.md#current-state)
+breaks that down.
 
 | Not migrated | Why |
 | --- | --- |
@@ -123,6 +139,7 @@ specs ran — those had never been run during the migration and were failing 298
 | `remote ||= true` | `||=` cannot express "default true"; the admin barcode dialog submitted over AJAX to an action with no JS response. |
 | select2 had no stylesheet | `.select2-container` had no size; the enhanced selects were unclickable. |
 | `public/*.html` still linked `/assets/application.css` | Error pages served unstyled, including the 500 page that is served when nothing else can render. |
+| Four `fa-*` names still passed into the bank-side profile accordion | Four section headers rendered an empty `<i>`. Found later, by grep, not by the tooling — see below. |
 
 The lesson is recorded in [design-decisions.md](design-decisions.md): a static sweep catches
 what renders wrongly, and the system specs catch what renders fine but cannot be used. Neither
@@ -137,7 +154,15 @@ bundle exec erb_lint --lint-all
 ruby bin/design/status.rb         # which controllers are on a design system layout
 bin/start                         # then, with the app running:
 pw bin/design/sweep.js            # 56 pages in a real browser
+
+# Classes nothing defines any more. Expect no hits outside prose in comments.
+grep -rnE 'btn btn-|card-body|form-group|col-md-|fa-|modal-dialog' app/views/
 ```
+
+Run the grep as well as the other two. The status script asks whether a view has design system
+markup, and a view can have plenty while still passing a dead class into a partial; the sweep
+only visits 56 pages. The last defect found on this branch — four invisible icons on the
+bank-side profile editor — was invisible to both and obvious to the grep.
 
 The sweep calls a page clean when it has no leftover Bootstrap/AdminLTE or Font Awesome
 classes, exactly one `<h1>` and one `<main>`, no skipped heading levels, no unlabelled form
@@ -153,3 +178,9 @@ console errors, and is rendering in Figtree.
 3. If it is a Bootstrap class with no equivalent, ask what it was doing and build the design
    system's version. Record the choice in [design-decisions.md](design-decisions.md).
 4. Re-run the sweep and the system specs for the area.
+5. Add a row to [changelog.md](changelog.md) in the same change.
+
+One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
+survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this
+work either. It is left alone because removing it means editing option hashes rather than
+substituting a token, and that kind of edit has already broken markup once on this branch.
