@@ -108,6 +108,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `3cf21e1f9` | This change log. |
 | `f61a4fd5f` | The migration map brought to the current measured state; the grep for undefined classes promoted into the verification commands. |
 | `4f7b7fdd1` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
+| `0fd3f13ca` | A change log hash orphaned by an amend, corrected; the ancestry check and the reason the last row lags written down. |
 
 ---
 
@@ -124,6 +125,9 @@ Measured on 2026-08-18 as of `dbe7418b1`, the last entry above. Re-run the comma
 | Views carrying design system markup | 299 of 392 |
 | Stimulus controllers | 30 |
 | Undefined legacy classes left in `app/views` | 0 |
+
+Verified at `0fd3f13ca`: `bundle exec rspec` 2903 examples, 0 failures, 1 pending (a
+pre-existing `xit`); `rubocop` 648 files, no offenses; `erb_lint` 420 files, no errors.
 
 The 93 views without design system markup are not a backlog. 55 are ten lines or fewer, 39 are
 partials, 12 are mailer templates, and two are the `static/` marketing pages that are
