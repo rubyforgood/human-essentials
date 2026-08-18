@@ -69,9 +69,13 @@ module PartnersHelper
     "deactivated" => {tone: :neutral, icon: "bi-dash-circle"}
   }.freeze
 
+  # No icon. Every row in the partner list carries one of these, so six icons stack up in a
+  # single column and read as clutter -- and they are decorative: the word is what carries the
+  # meaning, which is also what keeps the pill from depending on colour alone. Icons still earn
+  # their place on pills that mark an exception ("Inactive", "Expired"), where they are rare.
   def essentials_partner_status_pill(status)
-    config = ESSENTIALS_PARTNER_STATUS[status.to_s] || {tone: :neutral, icon: "bi-question-circle"}
-    essentials_status_pill(status.to_s.humanize, tone: config[:tone], icon: config[:icon])
+    config = ESSENTIALS_PARTNER_STATUS[status.to_s] || {tone: :neutral}
+    essentials_status_pill(status.to_s.humanize, tone: config[:tone])
   end
 
   def partner_status_label(status)

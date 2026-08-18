@@ -16,7 +16,7 @@
           concat essentials_link_button("New vendor", new_vendor_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: vendors_path do %>
+  <%= render "shared/essentials/filter_bar", url: vendors_path, auto_submit: true, clear: false do %>
     <div class="pb-2">
       <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
     </div>

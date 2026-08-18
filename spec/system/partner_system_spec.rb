@@ -234,8 +234,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           within "table tbody" do
             expect(page).to have_css("tr", count: Partner.active.count)
           end
+          # The single-filter bars apply on change; there is no Filter button to press.
           select "Approved (#{approved_count})", from: "Status"
-          click_on "Filter"
           within "table tbody" do
             expect(page).to have_css("tr", count: approved_count)
           end
@@ -247,7 +247,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it "preserves the filter constraints in the CSV output" do
             approved_partners = Partner.approved.to_a
             select "Approved (#{approved_partners.size})", from: "Status"
-            click_on "Filter"
 
             expect(page).to have_select("Status", selected: "Approved (#{approved_partners.size})")
 

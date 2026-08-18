@@ -73,7 +73,7 @@ module EssentialsUiHelper
   }.freeze
 
   def essentials_status_pill(label, tone: :neutral, icon: nil)
-    tag.span(class: "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium #{PILL_TONES.fetch(tone.to_sym)}") do
+    tag.span(class: "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium #{PILL_TONES.fetch(tone.to_sym)}") do
       safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
     end
   end
@@ -194,9 +194,18 @@ module EssentialsUiHelper
   # single definition of what one looks like, shared by both helpers. Only the options-array
   # variant lives here, because FilterHelper has no equivalent for it.
 
-  FILTER_CONTROL_CLASSES = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
-                           "px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
-                           "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+  FILTER_CONTROL_BASE = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
+                        "py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
+                        "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+
+  # Text inputs and date pickers: even padding.
+  FILTER_CONTROL_CLASSES = "#{FILTER_CONTROL_BASE} px-3"
+
+  # Selects: the browser draws the chevron inside the right padding, so `px-3` leaves the
+  # longest option ("Recertification required (1)") running into it. `pr-10` reserves the room.
+  # Written as pl-3 + pr-10 rather than px-3 + pr-10 because two utilities setting the same
+  # property resolve by stylesheet order, not by the order they appear in the attribute.
+  FILTER_SELECT_CLASSES = "#{FILTER_CONTROL_BASE} pl-3 pr-10"
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
@@ -207,7 +216,7 @@ module EssentialsUiHelper
 
     label_tag(id, label, class: FILTER_LABEL_CLASSES) +
       select_tag("filters[#{scope}]", options_for_select(options, selected),
-        include_blank: true, class: FILTER_CONTROL_CLASSES, id: id)
+        include_blank: true, class: FILTER_SELECT_CLASSES, id: id)
   end
 
   # --- Top bar help link ----------------------------------------------------

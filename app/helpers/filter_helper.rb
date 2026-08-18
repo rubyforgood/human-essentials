@@ -16,7 +16,7 @@ module FilterHelper
     label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
       collection_select(:filters, scope, collection || {}, key, value,
         {include_blank: include_blank, selected: selected},
-        {class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, id: id})
+        {class: EssentialsUiHelper::FILTER_SELECT_CLASSES, id: id})
   end
 
   def filter_text(scope:, label: nil, selected: nil)

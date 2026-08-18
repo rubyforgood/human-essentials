@@ -15,7 +15,7 @@
           concat essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: partners_path do %>
+  <%= render "shared/essentials/filter_bar", url: partners_path, auto_submit: true, clear: false do %>
     <div class="min-w-[15rem]">
       <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
             key: :last, value: :first, selected: params.dig(:filters, :by_status),

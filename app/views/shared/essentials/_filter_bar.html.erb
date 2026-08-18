@@ -7,16 +7,33 @@
     end
 
   Filters submit with GET so the filtered view stays a shareable, bookmarkable URL.
+
+  Options:
+
+    auto_submit: true   Apply as soon as a control changes, and hide the Filter button.
+                        For bars with ONE filter. With several, auto-applying each control
+                        fires a query per keystroke of thought, so those keep the button.
+                        The button stays in the markup and is hidden by Stimulus, so the
+                        form still works without JavaScript.
+
+    clear: false        Drop "Clear filters". Redundant when a single select's first option
+                        is itself the unfiltered view -- choosing it is the reset.
 %>
 <% clear_path ||= request.path %>
-<%= form_tag url, method: :get, class: "mb-4" do %>
+<% auto_submit = local_assigns.fetch(:auto_submit, false) %>
+<% clear = local_assigns.fetch(:clear, true) %>
+<%= form_tag url, method: :get, class: "mb-4",
+      data: (auto_submit ? {controller: "auto-submit", action: "change->auto-submit#submit"} : {}) do %>
   <div class="flex flex-wrap items-end gap-3">
     <%= yield %>
     <div class="flex items-center gap-2">
-      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>">
+      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>"
+              <%= "data-auto-submit-target=submit" if auto_submit %>>
         <i class="bi-funnel" aria-hidden="true"></i>Filter
       </button>
-      <%= essentials_link_button "Clear filters", clear_path, variant: :ghost, size: :md %>
+      <% if clear %>
+        <%= essentials_link_button "Clear filters", clear_path, variant: :ghost, size: :md %>
+      <% end %>
     </div>
   </div>
 <% end %>

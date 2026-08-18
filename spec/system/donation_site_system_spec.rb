@@ -27,7 +27,8 @@ RSpec.describe "Donation Site", type: :system, js: true do
         create(:donation_site, name: "Inactive Donation Site", active: false)
         visit subject
         check "Also include inactive donation sites"
-        click_on "Filter"
+        # Applies on change -- no Filter button on a single-filter bar.
+        expect(page).to have_content("Inactive Donation Site")
         click_on "Export"
         wait_for_download
         @csv_content = File.read(download)

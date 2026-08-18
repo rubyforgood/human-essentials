@@ -563,3 +563,54 @@ The general point, which is why this is written down rather than just fixed: a l
 absent submits nothing, a select that is unset submits an empty string. Swapping one control for
 another silently changes what arrives at the controller, and the seed data was too tidy to show
 it.
+
+## 2026-08-18 · Apply on change when there is one filter, keep the button when there are several
+
+Asked whether the Filter button was necessary. It depends on how many filters the bar has, and
+this app has both shapes: four index pages filter on a single control, twelve filter on between
+two and nine — `/donations` has nine.
+
+With one control the button is pure friction: you have already said what you want, and the
+button makes you say it twice. With nine, applying on every change fires a query per control
+while the user is still assembling the question, and each one throws away the scroll position.
+
+So `auto_submit:` is a per-bar option rather than a global behaviour, and the four single-filter
+pages take it. Two of those four filter on a checkbox, which is the clearest case of all: a
+checkbox behind an Apply button is a switch that does not switch anything.
+
+The button stays in the markup and is hidden by Stimulus on connect, so the form still works
+without JavaScript. It is hidden with an inline `display:none`, not the `hidden` utility: the
+button already carries `inline-flex`, and two Tailwind utilities setting `display` resolve by
+stylesheet order rather than class order, so `hidden` lost and the button stayed visible. That
+was caught by reading the computed style rather than the class list, which is the only way to
+catch it.
+
+## 2026-08-18 · "All" is an option, not a Clear button — and it is not the same as the default
+
+Asked whether an "All" option could replace "Clear filters". Yes, and it turned out to be two
+separate improvements.
+
+"Clear filters" next to a single select is redundant: the select's first option *is* the reset,
+so choosing it clears the filter. Offering two ways to undo one thing means the user has to work
+out whether they differ. Single-filter bars now pass `clear: false`.
+
+Separately, the partner list's default view is not "everything" — it hides deactivated partners.
+So the first option is `Active (6)` and there is now also `All (7)`, which is a capability the
+page did not have: you could see active partners, or deactivated ones, but never both in one
+list. That needed a sentinel value in the controller, because "all" is not a Partner status and
+has to bypass the default scope rather than be passed to it.
+
+## 2026-08-18 · Drop the icon from a pill that appears on every row
+
+The partner status column carried an icon on all six rows. Two problems, one reported and one
+found while fixing it.
+
+Reported: it reads as busy. The icon is decorative — `aria-hidden`, with the word beside it
+doing the work — so six of them are six pieces of noise in a column that is already colour-coded.
+Icons stay on pills that mark an exception, "Inactive" and "Expired", where they appear on one
+row in twenty and help it stand out.
+
+Found: "Recertification required" was wrapping to two lines, and a wrapped pill centres its icon
+across both lines, so the icon sat between them looking misaligned. The icon was part of what
+pushed it over the width. Pills now carry `whitespace-nowrap` regardless, because a pill is a
+label and a label that reflows is a layout accident, not a design.
