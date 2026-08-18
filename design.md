@@ -1,14 +1,33 @@
 # Human Essentials Design System
 
-This is the Ruby for Good design system as it exists in Human Essentials. It is normative:
+This is the design system for Human Essentials. It is normative:
 [ADR 0010](docs/architecture/decisions/0010-adopt-a-documented-design-system.md) makes this
 document the reference for UI work, and
 [ADR 0011](docs/architecture/decisions/0011-adopt-the-ruby-for-good-design-system.md) makes
-Tailwind v4 the system it describes. The same system runs in
-[CASA](https://github.com/rubyforgood/casa/blob/main/design.md); tokens and components are
-shared, the build tooling deliberately is not (see [Build](#build)).
+Tailwind v4 the system it describes.
 
 If you are building a page, skip to [Building or changing a page](#building-or-changing-a-page).
+If you are new to the app, read [docs/onboarding.md](docs/onboarding.md) first — the components
+below make more sense once you know what a distribution is.
+
+## What this app is, and what the UI has to do
+
+Human Essentials is inventory management for diaper banks and essentials banks. A **bank**
+receives goods (donations, purchases, product drives), holds them across **storage locations**,
+and sends them to **partner agencies**, who request what they need for the families they serve.
+
+Three things about the domain shape almost every screen:
+
+- **Everything belongs to an organization.** 22 models carry `belongs_to :organization`, and a
+  user works inside exactly one bank at a time. The organization's name is on every page for
+  that reason — see [Multi-tenancy is visible](#multi-tenancy-is-visible).
+- **There are two audiences in one app.** Bank staff and partner agencies see different
+  vocabularies, different navigation and different shells. A partner asks for "essentials
+  requests"; the bank calls the same records "requests".
+- **Inventory is a ledger, not a number.** Quantities are derived by replaying events
+  (`DonationEvent`, `DistributionEvent`, `AdjustmentEvent`, and eleven more), so a screen that
+  shows a quantity is showing a computed figure. That is why totals are rendered carefully,
+  with `.numeric`/`.quantity` columns and delimited numbers, rather than as incidental text.
 
 ## Status
 
@@ -299,9 +318,9 @@ nothing and clicking it did nothing, at all fourteen call sites.
 </div>
 ```
 
-CASA writes its tables with utilities because CASA has a few dozen pages. Human Essentials
-has ~78 tables across 393 views, and a twelve-class string copy-pasted 78 times drifts on the
-first hurried PR.
+Composing these from utilities at each call site would mean a twelve-class string copy-pasted
+across ~78 tables in 393 views, and it would drift on the first hurried PR. One definition is
+what keeps a donations table and an audit table looking like the same app.
 
 Column semantics reuse the class names the app already used under Bootstrap, so a table keeps
 its meaning instead of re-deciding alignment cell by cell:
@@ -454,8 +473,9 @@ destinations — **Dashboard** and **My organization** — then four collapsible
 | Reporting | The fifteen reports, named `Subject — cut` so they sort together |
 
 Groups collapse because there are 36 destinations in the sidebar — 34 inside the groups, plus
-the two flat ones. CASA's sidebar is flat because CASA has eleven. A group is open when the
-current page is inside it.
+the two flat ones. A flat rail works up to a dozen or so; past that it becomes a wall of text
+you scan rather than read. A group is open when the current page is inside it, so nobody has to
+hunt for where they already are.
 
 The information architecture is unchanged from the AdminLTE sidebar — this migration was not
 the place to re-plan the app — with one exception: the "New X" items were dropped. Every one
@@ -514,10 +534,9 @@ rely on the browser's print stylesheet; there is no separate print layout.
 ## Build
 
 Tailwind v4.3.3 through the **`tailwindcss-rails`** gem — the standalone CLI, no Node, no
-`package.json`. CASA uses `cssbundling-rails` + npm because CASA already had Node; Human
-Essentials does not, and `docs/code_standards.md` is explicit that new dependencies need
-strong justification. Same v4 output, no new runtime. This is a divergence in **tooling**, not
-in the design system.
+`package.json`. This app has no Node in its deploy path, and `docs/code_standards.md` is
+explicit that new dependencies need strong justification, so the alternative (`cssbundling-rails`
+plus npm) would have meant adding a runtime to production to produce identical CSS.
 
 ```
 app/assets/tailwind/application.css   → entry point: @import, @theme, @layer

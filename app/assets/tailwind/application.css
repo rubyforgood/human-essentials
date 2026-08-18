@@ -86,10 +86,9 @@
   /*
    * Data tables.
    *
-   * Deliberately component classes rather than repeated utility strings. CASA writes its
-   * tables with utilities because CASA has a few dozen pages; Human Essentials has ~90
-   * tables across 393 views, and a 12-class string copy-pasted 90 times drifts on the
-   * first hurried PR. See docs/design-decisions.md.
+   * Deliberately component classes rather than repeated utility strings: there are ~78
+   * tables across 393 views, and a 12-class string copy-pasted that many times drifts on
+   * the first hurried PR. See docs/design-decisions.md.
    *
    * Column semantics reuse the class names the app already uses -- .numeric, .quantity
    * and .date meant right/right/centre under Bootstrap and mean the same here -- so a

@@ -100,7 +100,8 @@ wire up locale selection or delete them; leaving them is a trap for the next con
 
 ## 2026-08-17 · Build with `tailwindcss-rails`, not `cssbundling-rails` + npm
 
-**Decision.** Tailwind v4 comes from the `tailwindcss-rails` gem's standalone CLI. CASA uses
+**Decision.** Tailwind v4 comes from the `tailwindcss-rails` gem's standalone CLI. The
+reference implementation of this design system uses
 `cssbundling-rails` with an npm `build:css` script; Human Essentials does not.
 
 **Rationale.** This repo has no `package.json`, no `node_modules` and no Node anywhere in its
@@ -111,7 +112,8 @@ runtime, and `tailwindcss:build` already hooks `assets:precompile`, so deploys n
 **Consequence, stated plainly.** The two apps' asset pipelines are no longer copy-pasteable —
 only their tokens and components are. That is the intended scope of a shared *design* system.
 
-**Alternative rejected.** Matching CASA exactly. It would have meant adding Node to production
+**Alternative rejected.** Matching the reference implementation's tooling exactly. It would
+have meant adding Node to production
 for one CSS build, which is a permanent operational cost paid for a one-time consistency win.
 
 ## 2026-08-17 · `config.assets.css_compressor = nil`
@@ -129,7 +131,7 @@ for years, so only the test environment was applying it at all.
 **Decision.** `.data-table` and friends live in `@layer components` in `application.css`. Tables
 are written `<table class="data-table">`, not with a dozen utilities per element.
 
-**Rationale.** CASA writes tables with utilities, and at CASA's size that is right. Human
+**Rationale.** Composing tables from utilities is right at a few dozen pages. Human
 Essentials has ~90 tables across 393 views. A twelve-class string repeated ninety times is a
 copy-paste contract with no enforcement, and it drifts on the first hurried PR — which is exactly
 how this codebase ended up with three CSS frameworks. A component class is one definition and
@@ -140,12 +142,13 @@ ninety call sites.
 Bootstrap, so a migrated table carries its alignment semantics across instead of re-deciding
 them cell by cell.
 
-## 2026-08-17 · Sidebar groups collapse; CASA's stay open
+## 2026-08-17 · Sidebar groups collapse
 
 **Decision.** Each middle nav group is a disclosure, closed by default, opening automatically
-when it contains the current page. CASA's equivalent groups are always open under a static label.
+when it contains the current page, rather than all groups standing open under static labels.
 
-**Rationale.** CASA's rail has ~11 destinations. Human Essentials has **34**. Always-open groups
+**Rationale.** A flat rail is readable up to a dozen or so destinations. This one has **34**.
+Always-open groups
 would make the rail roughly three screens tall, so the pinned settings item and half the
 destinations would sit below the fold on a laptop. Collapsing is also closer to what Human
 Essentials users already have — the AdminLTE rail used `treeview` accordions — so the muscle
@@ -272,7 +275,7 @@ The rule that holds: match whole elements, substitute tokens rather than attribu
 **Decision.** `.data-table` and `.pagination-link` are defined in `@layer components` rather
 than composed from utilities at each call site.
 
-**Rationale.** CASA writes tables with utilities and that is right for CASA: a few dozen pages.
+**Rationale.** Composing tables from utilities is right at a few dozen pages.
 This app has ~78 tables across 393 views and six kaminari partials. A twelve-class string
 repeated 78 times is not a system, it is 78 opportunities to drift. The column semantics
 (`.numeric`, `.quantity`, `.date`) additionally carry meaning the utilities cannot: they say
