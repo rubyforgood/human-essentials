@@ -8,7 +8,7 @@
 ) do %>
   <div class="space-y-5 px-5 py-4">
     <%= essentials_stats([
-          {label: "Items distributed #{@selected_date_range_label}", value: total_distributed, value_class: "total_distributed"},
+          {label: "Items distributed", value: total_distributed, value_class: "total_distributed"},
           {label: "Items scheduled for future distribution", value: future_distributed}
         ]) %>
 

@@ -95,8 +95,13 @@ module EssentialsUiHelper
       safe_join(stats.map { |stat|
         tag.div(class: "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3") do
           concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
+          # to_s matters: a block given to `tag` renders nothing for a non-String, so an
+          # Integer value came out as an empty figure. Caught by reading the rendered page
+          # rather than the template -- "Total items" was blank while every currency stat,
+          # already a String, was fine.
+          value = stat[:value].to_s
           concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
-            stat[:value_class] ? tag.span(stat[:value], class: stat[:value_class]) : stat[:value]
+            stat[:value_class] ? tag.span(value, class: stat[:value_class]) : value
           }
         end
       })
