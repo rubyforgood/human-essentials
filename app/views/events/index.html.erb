@@ -21,26 +21,25 @@
         <!-- jquery validation -->
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-base font-semibold text-slate-900">History Filter</h3>
+            <h2 class="text-base font-semibold text-slate-900">History Filter</h2>
           </div>
 
           <!-- form start -->
           <div class="px-5 py-4">
             <%= form_tag(events_path, method: :get) do |f| %>
               <div class="grid gap-6">
-                <div class="form-group min-w-0">
-                  <%= label_tag "Date Range" %>
+                <div class="mb-4 min-w-0">
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
                 </div>
-                <div class="form-group min-w-0">
+                <div class="mb-4 min-w-0">
                   <%= filter_select(scope: :by_type, collection: Event.types_for_select, key: :id, value: :name,
                                     selected: params.dig(:filters, :by_type)) %>
                 </div>
-                <div class="form-group min-w-0">
+                <div class="mb-4 min-w-0">
                   <%= filter_select(scope: :by_storage_location, collection: current_organization.storage_locations,
                                     selected:params.dig(:filters, :by_storage_location)) %>
                 </div>
-                <div class="form-group min-w-0">
+                <div class="mb-4 min-w-0">
                   <%= filter_select(scope: :by_item, collection: @items,
                                     selected:params.dig(:filters, :by_item)) %>
                 </div>

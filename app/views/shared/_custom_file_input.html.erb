@@ -1,41 +1,40 @@
 <%# locals: (form_builder:, label_for:, label_text:, attachment:, attachment_name:) %>
 
-<%# Creates a custom file input field with the following features: %>
-<%# - Displays the name of a previously selected file (even after validation errors). %>
-<%# - Integrates with Active Storage direct uploads to persist the file on the server, %>
-<%#   even if form submission fails. %>
-<%# - Uses a Stimulus controller (`file_input_label`) to dynamically update the label %>
-<%#   text when a new file is selected. %>
-<%# - Styled with Bootstrap's custom file input classes. %>
-<%# %>
-<%# Arguments: %>
-<%# - form_builder: The form builder object. %>
-<%# - label_for: The ID of the file input (used for the label `for` attribute). %>
-<%# - label_text: The text to display for the file input's label. %>
-<%# - attachment: The Active Storage attachment object (used to check for existing files). %>
-<%# - attachment_name: The name of the attachment field (e.g., `:proof_of_form_990`). %>
+<%# A file input that:
+    - names the file already on record, so a validation error doesn't look like data loss
+    - uses Active Storage direct upload, so the file survives a failed submission
+    - updates its own label via the file_input_label Stimulus controller
 
-<div class="form-group">
-  <label class="control-label"><%= label_text %></label>
+    The visible affordance is styled through ::file-selector-button rather than Bootstrap's
+    custom-file overlay, which needed a second <label> positioned on top of the input and
+    left the real control unlabelled underneath. %>
+
+<div class="mb-4">
+  <%= form_builder.label attachment_name, label_text,
+        for: label_for, class: "block text-sm font-medium text-slate-700" %>
 
   <% if attachment.persisted? %>
-    Attached file: <%= link_to attachment.blob.filename, rails_blob_path(attachment), class: "font-weight-bold" %>
+    <p class="mt-1 text-sm text-slate-600">
+      Attached file:
+      <%= link_to attachment.blob.filename, rails_blob_path(attachment),
+            class: "font-medium text-brand-700 hover:text-brand-800" %>
+    </p>
   <% elsif attachment.attached? %>
     <%= form_builder.hidden_field attachment_name, value: attachment.signed_id %>
   <% end %>
 
-  <div class="col-md-12"
-       data-controller="file-input-label"
-       data-file-input-label-default-text-value="<%= attachment.attached? ? attachment.blob.filename : 'Choose file...' %>">
+  <div data-controller="file-input-label"
+       data-file-input-label-default-text-value="<%= attachment.attached? ? attachment.blob.filename : "Choose file..." %>">
     <%= form_builder.file_field attachment_name,
-                        direct_upload: true,
-                        class: "custom-file-input",
-                        data: {
-                          action: "change->file-input-label#fileSelected",
-                          file_input_label_target: "input"
-                        } %>
-    <label class="custom-file-label"
-      for="<%= label_for %>"
-      data-file-input-label-target="label">Choose file...</label>
+          direct_upload: true,
+          id: label_for,
+          class: "mt-1.5 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 " \
+                 "file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 " \
+                 "hover:file:bg-brand-100",
+          data: {
+            action: "change->file-input-label#fileSelected",
+            file_input_label_target: "input"
+          } %>
+    <p class="mt-1 text-xs text-slate-500" data-file-input-label-target="label">Choose file...</p>
   </div>
 </div>

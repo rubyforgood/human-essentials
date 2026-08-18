@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-# Tailwind wrappers for the Ruby for Good design system (see design.md).
+# simple_form wrappers for the Ruby for Good design system (see design.md).
 #
-# Loaded after simple_form_bootstrap.rb (alphabetical: "bootstrap" < "essentials"), so the
-# Bootstrap wrappers and defaults are left exactly as they are for un-migrated pages. This
-# file only ADDS wrappers. A migrated form opts in per form:
-#
-#   simple_form_for(@item, wrapper: :essentials, wrapper_mappings: SimpleForm.essentials_mappings)
-#
-# or, more usually, through the `essentials_form_for` helper which passes both for you.
+# These are now the ONLY wrappers: config/initializers/simple_form_bootstrap.rb is gone along
+# with the rest of Bootstrap. `:essentials` is the default wrapper, so a plain
+# `simple_form_for` produces design system markup and the `essentials_form_for` helper is a
+# convenience rather than a requirement.
 SimpleForm.setup do |config|
   input_classes = "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm " \
                   "text-slate-900 placeholder:text-slate-400 shadow-sm " \
@@ -64,7 +61,7 @@ SimpleForm.setup do |config|
   end
 
   # A file input styled through its ::file-selector-button, so no JS label swap is needed
-  # (the Bootstrap shell needed the file_input_label Stimulus controller for this).
+  # for the affordance itself.
   config.wrappers :essentials_file, tag: "div", class: "mb-4" do |b|
     b.use :html5
     b.optional :readonly
@@ -75,4 +72,26 @@ SimpleForm.setup do |config|
     b.use :full_error, wrap_with: {tag: "p", class: error_classes}
     b.use :hint, wrap_with: {tag: "p", class: hint_classes}
   end
+end
+
+SimpleForm.setup do |config|
+  # The design system wrapper is the default, so a form that does not opt in still gets it.
+  config.default_wrapper = :essentials
+
+  config.wrapper_mappings = {
+    boolean: :essentials_boolean,
+    check_boxes: :essentials_collection,
+    radio_buttons: :essentials_collection,
+    file: :essentials_file
+  }
+
+  # Error notification and validation state, in design system colours. rose-600 is 4.51:1 on
+  # white -- it passes, but only just -- so error TEXT uses -700 and -600 is only ever a
+  # border.
+  config.error_notification_class = "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-900"
+  config.input_field_error_class = "border-rose-400 focus:border-rose-500 focus:ring-rose-500/30"
+  config.input_field_valid_class = "border-emerald-400"
+  config.boolean_label_class = "text-sm text-slate-700"
+  config.boolean_style = :inline
+  config.label_text = ->(label, required, _explicit) { "#{label} #{required}" }
 end

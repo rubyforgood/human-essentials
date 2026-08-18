@@ -1,7 +1,7 @@
 <% content_for :title, "Requests - #{current_organization.name}" %>
 <% info = @requests_info %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Requests",
         subtitle: "Essentials requested by partner agencies.",
@@ -23,12 +23,11 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: requests_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
     <div class="pb-1">
@@ -43,9 +42,9 @@
         footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_requests)) } do %>
     <% if info.paginated_requests.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :all_clear,
-            title: filter_params.present? ? "No requests match those filters" : "No requests right now",
-            body: filter_params.present? ? "Clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
+            kind: essentials_filtered? ? :no_results : :all_clear,
+            title: essentials_filtered? ? "No requests match those filters" : "No requests right now",
+            body: essentials_filtered? ? "Clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

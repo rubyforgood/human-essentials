@@ -13,16 +13,15 @@
 
   <%= render "shared/essentials/filter_bar", url: purchases_path do %>
     <% if @storage_locations.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %></div>
     <% end %>
     <% if @vendors.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %></div>
     <% end %>
     <% if @item_categories.present? %>
       <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: @item_categories, selected: @selected_item_category) %></div>
     <% end %>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Purchase date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
   <% end %>
@@ -31,10 +30,10 @@
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_purchases)) } do %>
     <% if @paginated_purchases.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No purchases match those filters" : "No purchases recorded yet",
-            body: filter_params.present? ? "Clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
-            action: filter_params.present? ? nil : essentials_link_button("New purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No purchases match those filters" : "No purchases recorded yet",
+            body: essentials_filtered? ? "Clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
+            action: essentials_filtered? ? nil : essentials_link_button("New purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

@@ -1,15 +1,15 @@
 <%= f.fields_for :profile, profile do |pf| %>
-  <h3 class="text-base font-semibold text-slate-900"><strong>Agency Distribution Information</strong></h3>
+  <h2 class="text-base font-semibold text-slate-900"><strong>Agency Distribution Information</strong></h2>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :distribution_times, label: "Distribution Times", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :new_client_times, label: "New Client Times", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :more_docs_required, label: "More Docs Required", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

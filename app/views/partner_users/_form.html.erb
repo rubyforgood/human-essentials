@@ -1,14 +1,14 @@
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <div class="border-b border-slate-200 px-5 py-4">
-    <h3 class="text-base font-semibold text-slate-900">Invite New User</h3>
+    <h2 class="text-base font-semibold text-slate-900">Invite New User</h2>
   </div>
 
   <%= essentials_form_for user, url: partner_users_path(partner) do |f| %>
     <div class="px-5 py-4">
-      <div class="form-group">
+      <div class="mb-4">
         <%= f.input :name, label: "Name", placeholder: "Name", required: true %>
       </div>
-      <div class="form-group">
+      <div class="mb-4">
         <%= f.input :email, label: "Email", placeholder: "Email", required: true %>
       </div>
     </div>

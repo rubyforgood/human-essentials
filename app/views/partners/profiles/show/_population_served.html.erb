@@ -8,7 +8,7 @@
       <dt class="text-xs font-medium text-slate-500">Do You Verify The Income Of Your Clients</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_verification) %></dd>
 
-      <h6>Race/Ethnicity of Client Base</h6>
+      <p class="text-xs font-medium text-slate-500">Race/Ethnicity of Client Base</p>
       <dt class="text-xs font-medium text-slate-500">African American</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_black || t(:not_provided) %></dd>
 
@@ -36,7 +36,7 @@
       <dt class="text-xs font-medium text-slate-500">Zip Codes Served</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.zips_served %></dd>
 
-      <h6>Poverty Information of Those Served</h6>
+      <p class="text-xs font-medium text-slate-500">Poverty Information of Those Served</p>
       <dt class="text-xs font-medium text-slate-500">At FPL or below</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.at_fpl_or_below || t(:not_provided) %></dd>
 

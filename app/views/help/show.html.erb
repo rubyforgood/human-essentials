@@ -1,78 +1,46 @@
-<style>
-    .trix-content, ol {
-        list-style: auto;
-    }
-    .trix-content, ul {
-        list-style: inside;
-    }
-</style>
+<% content_for :title, "Help - #{current_organization&.name}" %>
+
 <div class="px-4 py-6 sm:px-6 lg:px-8">
-  <section>
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="card card-primary mt-2">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Frequently Asked Questions</h2>
-          </div>
-          <div class="px-5 py-4">
-            <ul class="list-inside my-2 list-decimal space-y-5">
-              <%= form_for_filterrific @filterrific, remote: true do |f| %>
-                <div class="row flex-row justify-content-between align-items-center">
-                  <div class="min-w-0">
-                    <%= f.label :search_title, "Search By Question" %>
-                    <%= f.text_field(:search_title, class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
-                  </div>
-                  <div class="min-w-0">
-                    <%= render_filterrific_spinner %>
-                  </div>
-                </div>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <%= render "shared/essentials/page_header",
+        title: "Help",
+        subtitle: "Answers to common questions, and how to reach us." %>
 
-  <section>
-    <div class="grid gap-6">
-      <div class="min-w-0" id="accordion">
-        <div id="filterrific_results">
-          <%= render(partial: 'bank_questions', locals: { bank_questions: @bank_questions }) %>
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Frequently asked questions" do %>
+      <%= form_for_filterrific @filterrific, remote: true do |f| %>
+        <div class="flex flex-wrap items-end gap-4">
+          <div class="min-w-[16rem]">
+            <%= f.label :search_title, "Search by question", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+            <%= f.text_field :search_title, class: "filterrific-periodically-observed #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}" %>
+          </div>
+          <div class="pb-2"><%= render_filterrific_spinner %></div>
         </div>
-      </div>
-    </div>
-  </section>
+      <% end %>
 
-  <section>
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="card card-primary mt-2">
-          <div class="col-12 mt-3 text-center">
-            <p class="lead">
-              Have suggestions to help improve the app or other questions about the app? Please
-              <a href="https://human-essential.slack.com/archives/CG1NL2MRC"><u>reach out on Slack.</u></a>
-            </p>
-          </div>
-          <div class="col-12 mt-3 text-center">
-            <p class="lead">
-              Not a member of the Human Essentials Slack group?
-              <a href="https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg"><u>Request
-                a
-                login.</u></a>
-            </p>
-          </div>
-          <div class="col-12 mt-3 text-center">
-            <p class="lead">
-              Still need help? Submit a support ticket
-              <u><%= link_to 'here', support_ticket_form_url, target: '_blank' %></u>
-              and we will do our best to follow up with you via email. Please note that our team meets and triages email
-              on
-              Sundays.
-            </p>
-          </div>
-        </div>
+      <div id="filterrific_results" class="mt-5">
+        <%= render partial: "bank_questions" %>
       </div>
-    </div>
-  </section>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Still need help?" do %>
+      <ul class="space-y-3 text-sm text-slate-700">
+        <li>
+          Have suggestions to help improve the app, or other questions about it?
+          <%= link_to "Reach out on Slack", "https://human-essential.slack.com/archives/CG1NL2MRC",
+                class: "font-medium text-brand-700 underline hover:text-brand-800" %>.
+        </li>
+        <li>
+          Not a member of the Human Essentials Slack group?
+          <%= link_to "Request a login", "https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg",
+                class: "font-medium text-brand-700 underline hover:text-brand-800" %>.
+        </li>
+        <li>
+          Still stuck?
+          <%= link_to "Submit a support ticket", support_ticket_form_url, target: "_blank", rel: "noopener",
+                class: "font-medium text-brand-700 underline hover:text-brand-800" %>
+          and we will do our best to follow up by email. Our team meets and triages email on Sundays.
+        </li>
+      </ul>
+    <% end %>
+  </div>
 </div>

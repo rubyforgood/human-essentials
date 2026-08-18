@@ -12,10 +12,9 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: adjustments_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
   <% end %>
@@ -24,10 +23,10 @@
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_adjustments)) } do %>
     <% if @paginated_adjustments.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No adjustments match those filters" : "No inventory adjustments yet",
-            body: filter_params.present? ? "Clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
-            action: filter_params.present? ? nil : essentials_link_button("New adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No adjustments match those filters" : "No inventory adjustments yet",
+            body: essentials_filtered? ? "Clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
+            action: essentials_filtered? ? nil : essentials_link_button("New adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

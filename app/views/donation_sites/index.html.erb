@@ -1,6 +1,6 @@
 <% content_for :title, "Donation Sites - Community - #{current_organization.name}" %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Donation sites",
         subtitle: "Places where the public can drop off donations for #{current_organization.name}.",
@@ -18,7 +18,7 @@
 
   <%= render "shared/essentials/filter_bar", url: donation_sites_path do %>
     <div class="pb-2">
-      <%= essentials_filter_checkbox(label: "Also include inactive donation sites", scope: "include_inactive_donation_sites", selected: @include_inactive_donation_sites) %>
+      <%= filter_checkbox(label: "Also include inactive donation sites", scope: "include_inactive_donation_sites", selected: @include_inactive_donation_sites) %>
     </div>
   <% end %>
 

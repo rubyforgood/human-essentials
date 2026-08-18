@@ -16,12 +16,11 @@
     <%= f.label :by_month_or_week_day_of_week, 'Day of the Week' %>
 
     <div data-deadline-day-target="dayOfMonthFields">
-      <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder day of month' do %>
+      <%= f.input :day_of_month, as: :integer, label: 'Reminder day of month' do %>
         <span class="input-group-text"><i class="bi-calendar"></i></span>
         <%= f.number_field :day_of_month,
           min: ReminderScheduleService::MIN_DAY_OF_MONTH,
           max: ReminderScheduleService::MAX_DAY_OF_MONTH,
-          class: "form-control",
           placeholder: "Reminder day",
           data: { 'deadline-day-target': 'dayOfMonth', 'action': 'deadline-day#sourceChange' } %>
       <% end %>
@@ -31,29 +30,36 @@
       <%= f.label :every_nth_day, 'Reminder day of the week' %>
       <div class="input-group">
         <%= f.input :every_nth_day,
-        collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
-        class: "form-control",
-        label: false,
-        input_html: {"data-deadline-day-target" => "everyNthDay", "data-action" => "deadline-day#sourceChange"} %>
+          collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
+          label: false,
+          input_html: {
+            "aria-label" => "Which week of the month",
+            "data-deadline-day-target" => "everyNthDay",
+            "data-action" => "deadline-day#sourceChange"
+          } %>
 
+        <%# label: false leaves this select with no accessible name, and it sits beside
+            another select so position alone does not identify it. Named explicitly. %>
         <%= f.input :day_of_week,
           collection: ReminderScheduleService::DAY_OF_WEEK_COLLECTION,
-          class: "form-control",
           label: false,
           show_blank: true,
           default: 1,
-          input_html: {style: 'width: 200px', "data-deadline-day-target" => "dayOfWeek", "data-action" => "deadline-day#sourceChange"} %>
+          input_html: {
+            "aria-label" => "Day of the week",
+            "data-deadline-day-target" => "dayOfWeek",
+            "data-action" => "deadline-day#sourceChange"
+          } %>
       </div>
     </div>
     <small class="mb-3 d-block text-muted" data-deadline-day-target="reminderText"></small>
   <% end %>
 
-  <%= parent_form.input :deadline_day, wrapper: :input_group, wrapper_html: { min: 0, max: 28 }, label: 'Deadline day in reminder email' do %>
+  <%= parent_form.input :deadline_day, wrapper_html: { min: 0, max: 28 }, label: 'Deadline day in reminder email' do %>
       <span class="input-group-text"><i class="bi-calendar"></i></span>
       <%= parent_form.number_field :deadline_day,
         min: ReminderScheduleService::MIN_DAY_OF_MONTH,
         max: ReminderScheduleService::MAX_DAY_OF_MONTH,
-        class: "form-control",
         placeholder: "Deadline day",
         data: {"deadline-day-target": "deadlineDay", "action": "deadline-day#sourceChange"} %>
     <% end %>

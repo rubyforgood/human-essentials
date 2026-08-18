@@ -6,8 +6,7 @@
         <!-- jquery validation -->
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="border-b border-slate-200 px-5 py-4">
-            <h5 class="text-base font-semibold text-slate-900"><%= user.display_name %> - Roles
-            </h5>
+            <h3 class="text-sm font-semibold text-slate-900"><%= user.display_name %> - Roles</h3>
           </div>
 
           <!-- form start -->
@@ -39,7 +38,7 @@
             <h3>Add Role</h3>
             <%= form_tag admin_user_add_role_path(user) do %>
               <div class="form-inputs">
-                <div class="form-group">
+                <div class="mb-4">
                   <label>Type</label>
                   <div class="input-group">
                     <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
@@ -49,7 +48,7 @@
                                      } %>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-4">
                   <label>Resource</label>
                   <div class="input-group">
                     <%= select_tag :resource_id, [], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", data: {

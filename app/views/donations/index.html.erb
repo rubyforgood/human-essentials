@@ -14,31 +14,30 @@
 
   <%= render "shared/essentials/filter_bar", url: donations_path do %>
     <% if info.storage_locations.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
     <% end %>
     <% if info.sources.present? %>
       <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Source", scope: :by_source, options: info.sources, selected: info.selected_source) %></div>
     <% end %>
     <% if info.product_drives.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Product drive", scope: :by_product_drive, collection: info.product_drives, selected: info.selected_product_drive) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Product drive", scope: :by_product_drive, collection: info.product_drives, selected: info.selected_product_drive) %></div>
     <% end %>
     <% if info.product_drive_participants.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Product drive participant", scope: :by_product_drive_participant, collection: info.product_drive_participants, value: :business_name, selected: info.selected_product_drive_participant) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Product drive participant", scope: :by_product_drive_participant, collection: info.product_drive_participants, value: :business_name, selected: info.selected_product_drive_participant) %></div>
     <% end %>
     <% if info.manufacturers.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Manufacturer", scope: :from_manufacturer, collection: info.manufacturers, selected: info.selected_manufacturer) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Manufacturer", scope: :from_manufacturer, collection: info.manufacturers, selected: info.selected_manufacturer) %></div>
     <% end %>
     <% if info.donation_sites.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Donation site", scope: :from_donation_site, collection: info.donation_sites, key: :id, value: :name, selected: info.selected_donation_site) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Donation site", scope: :from_donation_site, collection: info.donation_sites, key: :id, value: :name, selected: info.selected_donation_site) %></div>
     <% end %>
     <% if info.items.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item", scope: :by_item_id, collection: info.items, selected: info.selected_item) %></div>
+      <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :by_item_id, collection: info.items, selected: info.selected_item) %></div>
     <% end %>
     <% if info.item_categories.present? %>
       <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
     <% end %>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
   <% end %>
@@ -47,10 +46,10 @@
         footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_donations)) } do %>
     <% if info.paginated_donations.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No donations match those filters" : "No donations recorded yet",
-            body: filter_params.present? ? "Clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
-            action: filter_params.present? ? nil : essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No donations match those filters" : "No donations recorded yet",
+            body: essentials_filtered? ? "Clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
+            action: essentials_filtered? ? nil : essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

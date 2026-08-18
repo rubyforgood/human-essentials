@@ -1,6 +1,6 @@
 <% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Storage locations",
         subtitle: "Where #{current_organization.name} physically keeps inventory.",
@@ -18,20 +18,20 @@
 
   <%= render "shared/essentials/filter_bar", url: storage_locations_path do %>
     <div class="min-w-[16rem]">
-      <%= essentials_filter_select(label: "Containing item", scope: :containing, collection: @items, selected: @selected_item_category) %>
+      <%= filter_select(label: "Containing item", scope: :containing, collection: @items, selected: @selected_item_category) %>
     </div>
     <div class="pb-2">
-      <%= essentials_filter_checkbox(label: "Include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
+      <%= filter_checkbox(label: "Include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
     </div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>
     <% if @storage_locations.empty? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No storage locations match those filters" : "No storage locations yet",
-            body: filter_params.present? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
-            action: filter_params.present? ? nil : essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No storage locations match those filters" : "No storage locations yet",
+            body: essentials_filtered? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
+            action: essentials_filtered? ? nil : essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

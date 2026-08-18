@@ -1,14 +1,33 @@
-<% css_class ||= "" %>
+<%#
+  The date range filter (Litepicker; configured in application.js).
+
+  The partial renders its OWN label. Callers used to add one with
+  `label_tag "Date Range"`, which produced <label for="date_range"> against an input whose id
+  is filters_date_range -- so the label named nothing and clicking it did nothing. Owning the
+  label here means it cannot drift out of sync at any of the fourteen call sites.
+
+  Locals: css_class (optional), label (optional, defaults to "Date range"), show_label
+  (optional, pass false when the caller genuinely provides its own).
+%>
+<%
+  css_class ||= ""
+  label ||= "Date range"
+  show_label = true if defined?(show_label).nil? || show_label.nil?
+%>
+<% if show_label %>
+  <%= label_tag "filters_date_range", label, class: "block text-sm font-medium text-slate-700" %>
+<% end %>
 <%= text_field_tag "filters[date_range]",
-@selected_date_range_label,
-placeholder: "January 1, 2011 - December 31, 2011",
-class: "#{css_class}",
-autocomplete: "on",
-data: {
-  controller: "date-range",
-  date_range_target: "input",
-  action: "blur->date-range#validate",
-  initial_start_date: @selected_date_interval.first.strftime("%B %d, %Y"),
-  initial_end_date: @selected_date_interval.last.strftime("%B %d, %Y"),
-} %>
+      @selected_date_range_label,
+      id: "filters_date_range",
+      placeholder: "January 1, 2011 - December 31, 2011",
+      class: "mt-1.5 #{css_class}",
+      autocomplete: "on",
+      data: {
+        controller: "date-range",
+        date_range_target: "input",
+        action: "blur->date-range#validate",
+        initial_start_date: @selected_date_interval.first.strftime("%B %d, %Y"),
+        initial_end_date: @selected_date_interval.last.strftime("%B %d, %Y")
+      } %>
 <%= hidden_field_tag "filters[date_range_label]", @selected_date_range_label %>

@@ -433,10 +433,13 @@ RSpec.describe "Organizations", type: :request do
           subject
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          expect(response.body).to include("Receive email when Partner makes a Request?</h6>
-              <p>
-                Yes
-              </p>")
+          # The label was an <h6> used as a type size rather than a document level, which
+          # made the page skip h1 -> h6. It is a labelled paragraph now, so read the pair
+          # rather than the exact markup.
+          page = Nokogiri::HTML(response.body)
+          label = page.css("p").find { |p| p.text.strip == "Receive email when Partner makes a Request?" }
+          expect(label).to be_present
+          expect(label.at_xpath("following-sibling::p[1]").text.strip).to eq("Yes")
         end
       end
 

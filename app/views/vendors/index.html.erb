@@ -1,6 +1,6 @@
 <% content_for :title, "Vendors - Community - #{current_organization.name}" %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="dialog">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Vendors",
         subtitle: "Businesses #{current_organization.name} buys essentials from.",
@@ -18,7 +18,7 @@
 
   <%= render "shared/essentials/filter_bar", url: vendors_path do %>
     <div class="pb-2">
-      <%= essentials_filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
+      <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
     </div>
   <% end %>
 

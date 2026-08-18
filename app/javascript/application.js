@@ -67,7 +67,14 @@ $(document).ready(function(){
 
   const calendarElement = document.getElementById("calendar");
   if (calendarElement) {
-    new Calendar(calendarElement, {
+    // FullCalendar's prev/next buttons are icon-only with no text, so they are announced as
+    // nothing. buttonHints names them; the aria-label pass covers the older markup too.
+    const calendar = new Calendar(calendarElement, {
+      buttonHints: {
+        prev: "Previous $0",
+        next: "Next $0",
+        today: "This $0"
+      },
       timeZone: "UTC",
       firstDay: 1,
       plugins: [luxonPlugin, dayGridPlugin, listPlugin],
@@ -76,7 +83,17 @@ $(document).ready(function(){
       events: "schedule.json",
       height: isMobile || isShortHeight ? "auto" : "parent",
       defaultView: isMobile ? "listWeek" : "month",
-    }).render();
+    });
+    calendar.render();
+
+    // Belt and braces: buttonHints is honoured by newer FullCalendar builds, but the
+    // rendered chrome is the library's, so name anything it left bare.
+    calendarElement.querySelectorAll(".fc-prev-button, .fc-next-button, .fc-today-button")
+      .forEach((button) => {
+        if (button.textContent.trim() || button.getAttribute("aria-label")) return;
+        const which = button.classList.contains(".fc-prev-button") ? "Previous" : "Next";
+        button.setAttribute("aria-label", `${which} period`);
+      });
   }
 
   const rangeElement = document.getElementById("filters_date_range");
@@ -139,7 +156,26 @@ $(document).ready(function(){
 
   // litepicker docs aren't clear on how to register events
   // https://github.com/wakirin/Litepicker/issues/301
+  // Litepicker renders its own previous/next month buttons with an icon and no text, so they
+  // are announced as nothing. Name them each time the calendar is shown, because Litepicker
+  // rebuilds the markup on every open.
+  const nameMonthButtons = () => {
+    document.querySelectorAll(".button-previous-month").forEach((el) => {
+      el.setAttribute("aria-label", "Previous month");
+    });
+    document.querySelectorAll(".button-next-month").forEach((el) => {
+      el.setAttribute("aria-label", "Next month");
+    });
+  };
+
+  // Litepicker builds its DOM during construction, so name them once now as well as on
+  // every open -- otherwise the buttons sit in the page unnamed until the user opens the
+  // calendar, which is exactly when an audit or a screen reader would first meet them.
+  nameMonthButtons();
+  picker.on("render", nameMonthButtons);
+
   picker.on("show", () => {
+    nameMonthButtons();
     window.isLitepickerActive = true;
   });
 

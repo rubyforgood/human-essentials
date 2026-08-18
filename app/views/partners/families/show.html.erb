@@ -17,10 +17,9 @@
     <div class="grid gap-6">
       <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="border-b border-slate-200 px-5 py-4">Family Information
+          <h3 class="text-sm font-semibold text-slate-900">Family Information
             <%= link_to 'Add An Authorized Member To This Family', new_partners_authorized_family_member_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", style: "margin-left:10px;" %>
-            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          </h5>
+            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %></h3>
           <div class="px-5 py-4">
             <dl>
               <dt>Guardian First Name:</dt>
@@ -88,7 +87,7 @@
     <div class="grid gap-6">
       <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="border-b border-slate-200 px-5 py-4">Children Information</h5>
+          <h3 class="text-sm font-semibold text-slate-900">Children Information</h3>
           <table class="data-table">
             <thead>
             <tr>
@@ -120,7 +119,7 @@
     <div class="grid gap-6">
       <div class="min-w-0">
         <div class="card mb-4">
-          <h5 class="border-b border-slate-200 px-5 py-4">Authorized Members for Pick Up</h5>
+          <h3 class="text-sm font-semibold text-slate-900">Authorized Members for Pick Up</h3>
           <table class="data-table">
             <thead>
             <tr>

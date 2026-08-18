@@ -175,28 +175,28 @@ module EssentialsUiHelper
     end
   end
 
+  # Is the current page filtered? Decides between the "nothing here yet" and "nothing
+  # matches" empty states.
+  #
+  # Reads params directly rather than the controller's `filter_params`: only some controllers
+  # define that (it is a private method on about half of them, not a shared concern), so a
+  # view calling it is one un-filtered controller away from a NameError -- which is exactly
+  # how the audits index 500'd.
+  def essentials_filtered?
+    params[:filters].present? || params[:filterrific].present?
+  end
+
   # --- Filter controls ------------------------------------------------------
   #
-  # Design system counterparts of FilterHelper. Same contract -- a UUID-suffixed id with a
-  # matching label, so the control is always named -- but design system classes instead of
-  # Bootstrap's `form-control`, which resolves to nothing on a Tailwind page and leaves an
-  # unstyled browser default select in the filter bar.
+  # FilterHelper builds the selects, text fields and checkboxes; these constants are the
+  # single definition of what one looks like, shared by both helpers. Only the options-array
+  # variant lives here, because FilterHelper has no equivalent for it.
 
   FILTER_CONTROL_CLASSES = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
                            "px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
                            "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
-
-  def essentials_filter_select(scope:, collection:, label: nil, key: :id, value: :name, selected: nil)
-    label ||= "Filter #{scope.to_s.tr("_", " ")}"
-    id = "filters_#{scope}_#{SecureRandom.uuid}"
-
-    label_tag(id, label, class: FILTER_LABEL_CLASSES) +
-      collection_select(:filters, scope, collection || {}, key, value,
-        {include_blank: true, selected: selected},
-        {class: FILTER_CONTROL_CLASSES, id: id})
-  end
 
   # For a filter whose options are a plain array rather than a collection of records.
   def essentials_filter_options(scope:, options:, label: nil, selected: nil)
@@ -206,24 +206,6 @@ module EssentialsUiHelper
     label_tag(id, label, class: FILTER_LABEL_CLASSES) +
       select_tag("filters[#{scope}]", options_for_select(options, selected),
         include_blank: true, class: FILTER_CONTROL_CLASSES, id: id)
-  end
-
-  def essentials_filter_text(scope:, label: nil, selected: nil)
-    label ||= "Filter #{scope.to_s.tr("_", " ")}"
-    id = "filters_#{scope}_#{SecureRandom.uuid}"
-
-    label_tag(id, label, class: FILTER_LABEL_CLASSES) +
-      text_field(:filters, scope, class: FILTER_CONTROL_CLASSES, id: id, value: selected)
-  end
-
-  def essentials_filter_checkbox(scope:, label:, selected: nil)
-    id = "filters_#{scope}_#{SecureRandom.uuid}"
-
-    tag.div(class: "flex items-center gap-2") do
-      concat check_box_tag(scope, 1, selected, id: id,
-        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30")
-      concat label_tag(id, label, class: "text-sm text-slate-700")
-    end
   end
 
   # --- Top bar help link ----------------------------------------------------

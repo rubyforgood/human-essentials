@@ -7,8 +7,8 @@
         actions: essentials_link_button("New kit", new_kit_path, variant: :primary, icon: "bi-plus-lg") %>
 
   <%= render "shared/essentials/filter_bar", url: kits_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
-    <div class="pb-2"><%= essentials_filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
+    <div class="min-w-[13rem]"><%= filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
+    <div class="pb-2"><%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>

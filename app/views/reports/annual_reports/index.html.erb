@@ -15,13 +15,13 @@
   <div class="px-4 py-6 sm:px-6 lg:px-8">
     <div class="grid gap-6">
       <div class="min-w-0 mb-2">
-        <h5 class="mb-1">Reports are available at the end of every year.</h5>
+        <h2 class="text-base font-semibold text-slate-900">Reports are available at the end of every year.</h2>
         <span class="text-muted"> <%= "#{@actual_year} (available on #{available_date})" %> </span>
       </div>
       <div class="min-w-0">
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-base font-semibold text-slate-900">NDBN Annual Reports</h3>
+            <h2 class="text-base font-semibold text-slate-900">NDBN Annual Reports</h2>
           </div>
           <ul class="list-group list-unstyled">
             <% @years.map do |year| %>

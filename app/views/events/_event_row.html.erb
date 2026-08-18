@@ -10,10 +10,13 @@
     <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
     <td>
       <%= link_to event.eventable_id, event.eventable %>
+      <%# Filters the history to this record. Icon-only, so it carries its own name -- the
+          AdminLTE version was a bare fa-filter glyph with nothing to announce. %>
       <%= link_to(
-          events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
-          class: 'inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') do %>
-
+            events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
+            class: essentials_button_classes(variant: :ghost, size: :sm),
+            "aria-label": "Show only history for this record") do %>
+        <i class="bi-funnel" aria-hidden="true"></i>
       <% end %>
     </td>
     <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>

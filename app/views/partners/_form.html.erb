@@ -40,7 +40,8 @@
             input_html: {rows: 3, maxlength: 500, "aria-describedby": "info-for-partner-note"} %>
 
       <div class="mb-4">
-        <span class="block text-sm font-medium text-slate-700">Documents</span>
+        <%# A real <label for>, not a <span>: the file input below is the control it names. %>
+        <%= label_tag "partner_documents", "Documents", class: "block text-sm font-medium text-slate-700" %>
         <% if @partner.documents.present? %>
           <ul class="mt-2 space-y-2">
             <% @partner.documents.select(&:persisted?).each do |doc| %>
@@ -59,6 +60,7 @@
           </ul>
         <% end %>
         <%= f.input_field :documents, as: :file, multiple: true,
+              id: "partner_documents",
               accept: Partner::ALLOWED_MIME_TYPES.join(","),
               class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
       </div>

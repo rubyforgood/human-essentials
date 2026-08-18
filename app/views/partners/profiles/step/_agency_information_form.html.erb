@@ -1,11 +1,11 @@
-<div class="form-group">
+<div class="mb-4">
   <%= f.input :name, label: "Agency Name", required: true, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 </div>
 
 <%= f.fields_for :profile, profile do |pf| %>
   <div data-controller="hide-by-source-val"
        data-hide-by-source-val-values-to-show-value='["other"]'>
-    <div class="form-group">
+    <div class="mb-4">
       <%= pf.input :agency_type,
         collection: Partners::Profile.agency_types_for_selection,
         label: "Agency Type",
@@ -13,7 +13,7 @@
         input_html: { data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
     </div>
 
-    <div class="form-group" data-hide-by-source-val-target="destination">
+    <div class="mb-4" data-hide-by-source-val-target="destination">
       <%= pf.input :other_agency_type, label: "Other Agency Type", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
     </div>
   </div>
@@ -25,27 +25,27 @@
            label_for: "partner_profile_proof_of_partner_status",
            label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :address1, label: "Address (line 1)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :address2, label: "Address (line 2)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :city, label: "City", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :state, label: "State", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-4">
     <%= pf.input :zip_code, label: "Zip Code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

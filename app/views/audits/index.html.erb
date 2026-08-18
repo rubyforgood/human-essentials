@@ -10,16 +10,16 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: audits_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>
     <% if @audits.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No audits match those filters" : "No audits yet",
-            body: filter_params.present? ? "Clear the filters to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
-            action: filter_params.present? ? nil : essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No audits match those filters" : "No audits yet",
+            body: essentials_filtered? ? "Clear the filters to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
+            action: essentials_filtered? ? nil : essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

@@ -12,11 +12,10 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: product_drives_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Name", scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Name", scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
   <% end %>
@@ -25,10 +24,10 @@
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
     <% if @paginated_product_drives.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No product drives match those filters" : "No product drives yet",
-            body: filter_params.present? ? "Clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
-            action: filter_params.present? ? nil : essentials_link_button("New product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No product drives match those filters" : "No product drives yet",
+            body: essentials_filtered? ? "Clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
+            action: essentials_filtered? ? nil : essentials_link_button("New product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

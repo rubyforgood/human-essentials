@@ -12,10 +12,9 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: transfers_path do %>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %></div>
-    <div class="min-w-[13rem]"><%= essentials_filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %></div>
+    <div class="min-w-[13rem]"><%= filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %></div>
     <div class="min-w-[15rem]">
-      <%= label_tag "filters_date_range", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
     </div>
   <% end %>
@@ -23,10 +22,10 @@
   <%= render "shared/essentials/card", padded: false do %>
     <% if @transfers.blank? %>
       <%= render "shared/essentials/empty_state",
-            kind: filter_params.present? ? :no_results : :cold_start,
-            title: filter_params.present? ? "No transfers match those filters" : "No transfers yet",
-            body: filter_params.present? ? "Clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
-            action: filter_params.present? ? nil : essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No transfers match those filters" : "No transfers yet",
+            body: essentials_filtered? ? "Clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
+            action: essentials_filtered? ? nil : essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">
