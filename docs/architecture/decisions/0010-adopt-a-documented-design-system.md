@@ -39,7 +39,7 @@ codebase today:
   across 142 tables.
 
 None of this is a framework problem. It is the absence of a written, agreed reference — the same
-gap the sibling Ruby for Good project CASA closed with its own `design.md`.
+gap a documented design system closes.
 
 ## Decision
 

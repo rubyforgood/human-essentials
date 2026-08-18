@@ -20,9 +20,9 @@ trade-off was wrong.
 
 What has changed is that the decision is no longer local. Ruby for Good is standardising its
 applications on a single design system — the one built for
-[CASA](https://github.com/rubyforgood/casa/blob/main/design.md) — so that contributors moving
-between RFG projects meet the same components, tokens and conventions, and so that accessibility
-and design work done once benefits every app. Under that constraint, "Bootstrap because it is
+the shared Ruby for Good design system — so that contributors moving between RFG projects meet
+the same components, tokens and conventions, and so that accessibility and design work done once
+benefits every app. Under that constraint, "Bootstrap because it is
 what we already have" stops being the cheaper option: it makes Human Essentials the one app a
 contributor has to learn separately, and it forks every future shared improvement.
 
@@ -41,15 +41,14 @@ accident.
 2. **Migrate page by page, not in a big bang.** Tailwind runs alongside the legacy Bootstrap UI.
    A migrated action renders on a Tailwind-only layout; untouched actions keep the Bootstrap
    `application` layout. **The two CSS resets are never loaded in the same document.** This is
-   the mechanism that makes a 393-view migration survivable by volunteers, and it is how CASA
-   did it.
-3. **Build with the `tailwindcss-rails` gem, not `cssbundling-rails` + npm.** CASA uses npm
-   because CASA already had Node. Human Essentials has no `package.json` and no Node in its
-   deploy path, and `docs/code_standards.md` is explicit that new dependencies need strong
-   justification. The standalone Tailwind CLI produces the same v4 output with no new runtime.
-   This is a deliberate divergence from CASA in **tooling**, not in the design system itself.
+   the mechanism that makes a 393-view migration survivable by volunteers.
+3. **Build with the `tailwindcss-rails` gem, not `cssbundling-rails` + npm.** Human Essentials
+   has no `package.json` and no Node in its deploy path, and `docs/code_standards.md` is explicit
+   that new dependencies need strong justification. The standalone Tailwind CLI produces the same
+   v4 output with no new runtime. This is a deliberate divergence in **tooling**, not in the
+   design system itself.
 4. **Self-host the typeface and icons** under `public/vendor/` rather than loading them from a
-   CDN, matching CASA and removing three CDN dependencies from every page render.
+   CDN, removing three CDN dependencies from every page render.
 5. **`design.md` is rewritten to specify the Tailwind system** and remains normative, as ADR 0010
    established. ADR 0010's rule "no second CSS framework is to be introduced" is amended: for the
    duration of the migration there are deliberately two, and the rule becomes "no *third*, and
@@ -89,6 +88,17 @@ Risks accepted:
 - **Specs coupled to Bootstrap markup.** Migrating a page breaks any spec asserting on `.card`,
   `.btn-primary` and similar. Those assertions move to semantic hooks as each page is migrated,
   which is an improvement to the specs regardless.
-- **Divergence from CASA in build tooling** means the two apps' asset pipelines are not
-  copy-pasteable, only their design tokens and components are. Judged the right trade, since
-  adding Node to this deploy path is a larger and more permanent cost.
+- **Divergence in build tooling** means this app's asset pipeline is not copy-pasteable from
+  the other Ruby for Good apps that use npm; only the design tokens and components are shared.
+  Judged the right trade, since adding Node to this deploy path is a larger and more permanent
+  cost.
+
+## Editorial note — 2026-08-18
+
+The text above was edited to describe the design system in this app's own terms. It originally
+named the sibling Ruby for Good project whose implementation this one was ported from, and used
+it as the comparator throughout.
+
+Nothing about the decision changed: the reasoning, the alternatives weighed and the consequences
+accepted are as they were. Recorded here because an ADR is a historical record and a silent edit
+to one is worse than the wording it fixes.

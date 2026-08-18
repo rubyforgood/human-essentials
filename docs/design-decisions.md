@@ -384,20 +384,21 @@ Navigate away with the calendar open and it stays true for the rest of the sessi
 field silently stops validating. A flag that outlives the thing it describes is a bug waiting
 for the right order of events.
 
-## 2026-08-18 · design.md describes this app, not its lineage
+## 2026-08-18 · The documentation describes this app, not its lineage
 
-**Decision.** design.md, the in-app comments and the decision log no longer explain choices by
-comparison to the project this design system was ported from. The ADRs still do.
+**Decision.** No document explains a choice by comparison to the project this design system was
+ported from. That now includes the ADRs.
 
 **Rationale.** A specification should stand on its own: a reader shouldn't need a second
 codebase to understand why tables are component classes here. The arguments survive the edit
 intact — "a flat rail is readable up to a dozen destinations; this one has 34" says what the
 comparison said, without the dependency.
 
-The ADRs are the exception on purpose. An ADR records why a decision was made at a point in
-time, and "Ruby for Good is standardising on the system built for CASA" *is* the reason ADR
-0011 exists. Editing that out would falsify the record, which is the one thing an ADR must not
-do.
+**Revised.** I first exempted the ADRs, on the grounds that an ADR records why a decision was
+made at a point in time and editing it falsifies the record. Asked again, I applied it there
+too — but with an editorial note appended to ADR 0011 saying the text was edited and that the
+decision itself is unchanged. That keeps the record honest, which was the real objection; the
+wording was never the part worth protecting.
 
 ## 2026-08-18 · The four documents are maintained as part of the work
 
