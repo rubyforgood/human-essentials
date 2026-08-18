@@ -125,12 +125,18 @@ that matters:
 - **The same concept is rendered two ways.** Invitation status is plain text in
   `users/_organization_user.html.erb` (`<td><%= user.invitation_status %></td>`) and three
   coloured pills in `partner_users/_users.html.erb`.
-- **A partner in `recertification_required` has no row action at all.** The `case status` in
-  `_partner_row.html.erb` covers uninvited, invited, awaiting_review, approved and deactivated,
-  and falls through for the sixth. The status announces that something is required and the row
-  offers nothing to do about it; the action ("Approve partner") is on the show page.
-  **This predates the design work** — `main`'s version of the partial has the same five
-  branches.
+- **A partner in `recertification_required` has no row action, and that is correct.** The
+  `case status` in `_partner_row.html.erb` covers the other five statuses and falls through for
+  this one, which looks like an oversight and is not. While a partner is in this state the bank
+  has genuinely nothing to do: `Partner#approvable?` is `invited? || awaiting_review?`, so the
+  show page offers no "Approve partner" either, and
+  `PartnerRequestRecertificationService#valid?` refuses to run against a partner already in the
+  state, so the request cannot be re-sent. The ball is with the partner until they resubmit,
+  which moves them to `awaiting_review` and the row grows a "Review profile" button.
+
+  Worth knowing rather than fixing. If a nudge is ever wanted — `invited` has "Re-send invite"
+  for the same "waiting on the partner" situation — it needs a service change first, not a view
+  change.
 
 ## Not recommended
 
