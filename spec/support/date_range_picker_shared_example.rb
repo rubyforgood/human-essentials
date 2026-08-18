@@ -135,9 +135,15 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       page.execute_script("document.getElementById('filters_date_range').focus();")
       page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
 
+      # Click away, which is what the test is describing. This has to be a real click on
+      # another element: focusing the field opens Litepicker, and the date-range controller
+      # deliberately skips validation while the calendar is open -- so a bare .blur() or a
+      # dispatched event leaves the picker open and nothing is validated. Clicking the page
+      # heading closes the calendar and blurs the field in one go, which `find('body').click`
+      # used to do by accident, until the layout moved what sits at the body's centre.
       # Blur the field directly. Clicking the body was a proxy for "click away", and where
       # the body's centre lands depends entirely on the page layout -- it now falls on other
-      # chrome rather than empty space, so the field never lost focus.
+      # chrome rather than empty space.
       accept_alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).") do
         page.execute_script("document.getElementById('filters_date_range').blur();")
       end

@@ -26,7 +26,7 @@ export default class extends Controller {
   validate(event) {
     event.preventDefault();
 
-    if (this.inputTarget.dataset.skipValidation === "true" || window.isLitepickerActive) {
+    if (this.inputTarget.dataset.skipValidation === "true" || this.calendarIsOpen()) {
       return;
     }
 
@@ -38,6 +38,16 @@ export default class extends Controller {
     if (!isValid) {
       alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).")
     }
+  }
+
+  // Ask the calendar whether it is open rather than trusting window.isLitepickerActive.
+  // That flag is global and only cleared by Litepicker's own "hide" event, so navigating
+  // away with the calendar open left it true for the rest of the session and validation
+  // was skipped from then on.
+  calendarIsOpen() {
+    const calendar = document.querySelector(".litepicker");
+    if (!calendar) return window.isLitepickerActive === true;
+    return getComputedStyle(calendar).display !== "none";
   }
 
   isValidDateRange(startStr, endStr) {
