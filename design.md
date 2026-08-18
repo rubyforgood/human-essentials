@@ -536,6 +536,26 @@ screen reader and not printable in colour.
 
 Three layouts. All of them load `tailwind.css` and nothing else.
 
+### Sidebar rules
+
+Four rules, and the first three exist because breaking any one of them was reported as
+"the nav looks busy".
+
+1. **Icons mark the top level, and only the top level.** A standalone rail item, a group
+   header, a pinned item: icon. Anything nested inside a group: no icon, indented instead.
+   Icons on both levels give the eye two columns of glyphs and stop either one meaning
+   anything. `NavItem` takes an optional `icon:` for this; sub-items omit it.
+2. **Sentence case, including group headers.** Uppercase is a convention for a static section
+   *label*. These headers are buttons the same size as the destinations beneath them, and
+   uppercase removes word shape, which is what you scan a rail by.
+3. **One glyph, one meaning, across the whole app.** A circled question mark means "this needs
+   your attention" on a status, so it cannot also mean "help" in the top bar. The user guide is
+   `bi-book`; in-app help is `bi-life-preserver`.
+4. **A group holds at most about seven items.** Past that it is a menu inside a menu and wants
+   a landing page instead. `Reporting` currently holds 15 and is in the backlog for this.
+
+Groups collapse and the one containing the current page opens on load.
+
 ### Bank shell — `layouts/essentials_app.html.erb`
 
 Fixed sidebar at `lg`, off-canvas drawer below it, sticky top bar, `<main id="main-content">`.
@@ -680,6 +700,17 @@ log says when it arrived and what to blame.
 ## Backlog
 
 Known gaps, in rough priority order:
+
+- **Review the Brakeman warning on every release.** It currently reports one: Rails 8.0.2.1
+  reaches end of support on 2026-10-07 (`Gemfile.lock:539`, weak confidence, unmaintained
+  dependency). It is not introduced by the design work — `main` reports the same one — but
+  nothing in this repo's routine says who looks at Brakeman or when. Run
+  `bundle exec brakeman` as part of the release check, and either clear the warning or record
+  why it stands.
+- **`Reporting` holds 15 of the sidebar's 34 destinations.** Operations has 5, Inventory 7,
+  Network 7. A group with 15 children is a menu inside a menu. The likely fix is a reports
+  landing page with one rail entry, which is what most applications of this size do; see the
+  note under "App shell" before changing it.
 
 - **`app/views/static/`** (marketing home page, privacy policy) is still on its own
   stylesheet. It is public-facing and standalone, so it was excluded from the migration

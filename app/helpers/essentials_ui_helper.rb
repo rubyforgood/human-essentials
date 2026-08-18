@@ -236,4 +236,11 @@ module EssentialsUiHelper
   def help_link_label
     (help_link_path == help_path) ? "Need help?" : "User guide"
   end
+
+  # Not a question mark. A circled "?" is the shape this app uses for "something needs your
+  # attention", so beside a label it reads as a warning rather than an offer of help. A guide
+  # is a book; in-app help is a life ring.
+  def help_link_icon
+    (help_link_path == help_path) ? "bi-life-preserver" : "bi-book"
+  end
 end

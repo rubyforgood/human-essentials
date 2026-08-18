@@ -34,7 +34,7 @@
       <div class="mt-auto border-t border-slate-200 pt-4">
         <ul class="space-y-0.5">
           <%= render "layouts/essentials_nav_link",
-                item: EssentialsNavHelper::NavItem.new(label: "Leave admin", path: dashboard_path, active_on: []) %>
+                item: EssentialsNavHelper::NavItem.new(label: "Leave admin", path: dashboard_path, active_on: [], icon: "bi-arrow-left") %>
         </ul>
       </div>
     <% else %>

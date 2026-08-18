@@ -4,11 +4,19 @@
 %>
 <% active = essentials_nav_item_active?(item) %>
 <li>
-  <%= link_to item.label, item.path,
+  <%# An icon marks a top-level destination. Items inside a group have none, and their text
+      is indented instead, so the rail has one column of glyphs rather than two. %>
+  <%= link_to item.path,
         "aria-current": (active ? "page" : nil),
         class: [
-          "block rounded-lg px-3 py-2 text-sm transition-colors",
+          "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+          (item.icon ? nil : "pl-8"),
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
           (active ? "bg-brand-50 font-semibold text-brand-700" : "font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900")
-        ] %>
+        ].compact do %>
+    <% if item.icon %>
+      <i class="<%= item.icon %> shrink-0 text-sm" aria-hidden="true"></i>
+    <% end %>
+    <span class="min-w-0 truncate"><%= item.label %></span>
+  <% end %>
 </li>

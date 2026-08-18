@@ -2,20 +2,25 @@
   A collapsible sidebar section. `group` is an EssentialsNavHelper::NavGroup.
 
   There are ~34 nav destinations, which is past the point where a flat rail is readable, so
-  the groups collapse
-  rather than sitting permanently open (see docs/design-decisions.md). A group opens on
-  load when it contains the current page, and with JS off every group renders open.
+  the groups collapse rather than sitting permanently open (see docs/design-decisions.md).
+  A group opens on load when it contains the current page, and with JS off every group renders
+  open.
+
+  The header is sentence case, like everything else a person reads here. It was uppercase,
+  which is a convention for a static section *label* -- and this is a button, the same size as
+  the destinations under it. Uppercase also removes word shape, which is the thing you scan a
+  rail by.
 %>
 <% open = essentials_nav_group_open?(group) %>
 <% panel_id = "nav-group-#{group.label.parameterize}" %>
 <div class="mt-4">
   <button type="button"
-          class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
           aria-expanded="<%= open %>"
           aria-controls="<%= panel_id %>"
           data-action="click->shell#toggleGroup">
-    <i class="<%= group.icon %> text-sm" aria-hidden="true"></i>
-    <span class="flex-1 text-left"><%= group.label %></span>
+    <i class="<%= group.icon %> shrink-0 text-sm" aria-hidden="true"></i>
+    <span class="flex-1 truncate text-left"><%= group.label %></span>
     <i class="bi-chevron-down text-xs transition-transform <%= "rotate-180" if open %>"
        data-shell-chevron
        aria-hidden="true"></i>

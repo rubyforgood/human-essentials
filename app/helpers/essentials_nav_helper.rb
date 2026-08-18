@@ -7,7 +7,12 @@
 # Ordering is by task frequency, not alphabetical. Dashboard is ungrouped and first;
 # settings is pinned to the bottom. See design.md, "App shell".
 module EssentialsNavHelper
-  NavItem = Data.define(:label, :path, :active_on) do
+  # `icon` is optional and belongs to the top level only -- a standalone rail item or a group
+  # header. Items nested inside a group have none: icons on both levels give the eye two
+  # columns of glyphs to scan, and stop marking anything out.
+  NavItem = Data.define(:label, :path, :active_on, :icon) do
+    def initialize(label:, path:, active_on:, icon: nil) = super
+
     def active?(controller_path)
       active_on.include?(controller_path)
     end
@@ -17,7 +22,7 @@ module EssentialsNavHelper
 
   # The single item above the groups.
   def essentials_nav_dashboard
-    NavItem.new(label: "Dashboard", path: dashboard_path, active_on: %w[dashboard])
+    NavItem.new(label: "Dashboard", path: dashboard_path, active_on: %w[dashboard], icon: "bi-speedometer2")
   end
 
   # The item pinned to the bottom of the rail, below its own divider.
@@ -25,7 +30,7 @@ module EssentialsNavHelper
   def essentials_nav_settings
     return nil unless can_administrate?
 
-    NavItem.new(label: "My organization", path: organization_path, active_on: %w[organizations])
+    NavItem.new(label: "My organization", path: organization_path, active_on: %w[organizations], icon: "bi-building")
   end
 
   # The middle of the rail. Groups with no visible items render nothing -- no orphan label.
@@ -99,16 +104,16 @@ module EssentialsNavHelper
   # because there are nine of them.
   def essentials_admin_nav_items
     [
-      NavItem.new(label: "Admin dashboard", path: admin_dashboard_path, active_on: %w[admin]),
-      NavItem.new(label: "Account requests", path: admin_account_requests_path, active_on: %w[admin/account_requests]),
-      NavItem.new(label: "Organizations", path: admin_organizations_path, active_on: %w[admin/organizations]),
-      NavItem.new(label: "NDBN member upload", path: admin_ndbn_members_path, active_on: %w[admin/ndbn_members]),
-      NavItem.new(label: "Partners", path: admin_partners_path, active_on: %w[admin/partners]),
-      NavItem.new(label: "Users", path: admin_users_path, active_on: %w[admin/users]),
-      NavItem.new(label: "Base items", path: admin_base_items_path, active_on: %w[admin/base_items]),
-      NavItem.new(label: "Barcode items", path: admin_barcode_items_path, active_on: %w[admin/barcode_items]),
-      NavItem.new(label: "Announcements", path: admin_broadcast_announcements_path, active_on: %w[admin/broadcast_announcements]),
-      NavItem.new(label: "FAQ", path: admin_questions_path, active_on: %w[admin/questions])
+      NavItem.new(label: "Admin dashboard", path: admin_dashboard_path, active_on: %w[admin], icon: "bi-speedometer2"),
+      NavItem.new(label: "Account requests", path: admin_account_requests_path, active_on: %w[admin/account_requests], icon: "bi-envelope-paper"),
+      NavItem.new(label: "Organizations", path: admin_organizations_path, active_on: %w[admin/organizations], icon: "bi-buildings"),
+      NavItem.new(label: "NDBN member upload", path: admin_ndbn_members_path, active_on: %w[admin/ndbn_members], icon: "bi-upload"),
+      NavItem.new(label: "Partners", path: admin_partners_path, active_on: %w[admin/partners], icon: "bi-people"),
+      NavItem.new(label: "Users", path: admin_users_path, active_on: %w[admin/users], icon: "bi-person-gear"),
+      NavItem.new(label: "Base items", path: admin_base_items_path, active_on: %w[admin/base_items], icon: "bi-box-seam"),
+      NavItem.new(label: "Barcode items", path: admin_barcode_items_path, active_on: %w[admin/barcode_items], icon: "bi-upc-scan"),
+      NavItem.new(label: "Announcements", path: admin_broadcast_announcements_path, active_on: %w[admin/broadcast_announcements], icon: "bi-megaphone"),
+      NavItem.new(label: "FAQ", path: admin_questions_path, active_on: %w[admin/questions], icon: "bi-question-lg")
     ]
   end
 
@@ -126,15 +131,15 @@ module EssentialsNavHelper
   # the AdminLTE rail unchanged.
   def essentials_partner_nav_items
     items = [
-      NavItem.new(label: "Dashboard", path: partner_user_root_path, active_on: %w[partners/dashboards]),
-      NavItem.new(label: "My profile", path: partners_profile_path, active_on: %w[partners/profiles]),
-      NavItem.new(label: "Essentials requests", path: partners_requests_path, active_on: %w[partners/requests partners/family_requests partners/individuals_requests]),
-      NavItem.new(label: "Distributions", path: partners_distributions_path, active_on: %w[partners/distributions])
+      NavItem.new(label: "Dashboard", path: partner_user_root_path, active_on: %w[partners/dashboards], icon: "bi-speedometer2"),
+      NavItem.new(label: "My profile", path: partners_profile_path, active_on: %w[partners/profiles], icon: "bi-person-badge"),
+      NavItem.new(label: "Essentials requests", path: partners_requests_path, active_on: %w[partners/requests partners/family_requests partners/individuals_requests], icon: "bi-clipboard-check"),
+      NavItem.new(label: "Distributions", path: partners_distributions_path, active_on: %w[partners/distributions], icon: "bi-truck")
     ]
 
     if current_partner&.profile&.enable_child_based_requests?
-      items << NavItem.new(label: "Families", path: partners_families_path, active_on: %w[partners/families])
-      items << NavItem.new(label: "Children", path: partners_children_path, active_on: %w[partners/children partners/authorized_family_members])
+      items << NavItem.new(label: "Families", path: partners_families_path, active_on: %w[partners/families], icon: "bi-house-heart")
+      items << NavItem.new(label: "Children", path: partners_children_path, active_on: %w[partners/children partners/authorized_family_members], icon: "bi-person-arms-up")
     end
 
     items

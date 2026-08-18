@@ -721,3 +721,47 @@ control rather than stranded after it.
 The hint uses the meta token design.md already defines, `text-xs text-slate-500` — 4.8:1 on
 white, which clears AA — and matches the hint styling simple_form applies on every form in the
 app, so this is not a new visual idea.
+
+## 2026-08-18 · Icons mark the top level of the sidebar, and only the top level
+
+Reported: the Dashboard item had no icon while the four group headers did, so the top level
+looked half-finished.
+
+Two ways to fix that, and the cheap one is wrong. Giving every destination an icon means 34
+more glyphs in a 256px rail, in a second column beside the group icons, and once everything is
+marked nothing is. The rule instead is that an icon marks a *level*: standalone items, group
+headers and the pinned item carry one; items inside a group do not, and are indented instead.
+
+That also settled the other two rails, which are flat and therefore all top level: the admin
+rail's ten items and the partner rail's seven all took icons. Before this, only the partner
+Dashboard had one, which was the same inconsistency in a smaller rail.
+
+`NavItem` gained an optional `icon:` with a default of nil, so the ~34 sub-items did not have to
+change at all.
+
+## 2026-08-18 · Sentence case in the sidebar, including group headers
+
+The four group headers were `uppercase tracking-wide`. design.md has listed nav items under
+sentence case since the migration, so this was the app breaking its own rule in the most visible
+place it has.
+
+Uppercase micro-type is a real convention, for a *static* section label — a caption over a list.
+These are buttons: they collapse, they take focus, they are the same size as the destinations
+under them. Styling an interactive control as a caption is the mismatch, and uppercase also
+strips word shape, which is exactly what someone scans a rail by.
+
+They are now `text-sm font-semibold text-slate-700` — a peer of the items rather than a caption
+over them, distinguished by the icon and chevron instead of by case.
+
+## 2026-08-18 · One glyph, one meaning
+
+The user guide link used `bi-question-circle`, and it read as a warning rather than an offer of
+help. That is not a matter of taste: a circled question mark is what this app puts on
+"awaiting review", the status that means someone has to act. The same shape cannot mean "you
+have a problem" in a table and "here is some help" in the top bar.
+
+The user guide is a book. In-app help is a life ring. Neither collides with a status glyph.
+
+While fixing it: `ESSENTIALS_PARTNER_STATUS` still carried an `icon:` for each status, dead
+since the pill stopped rendering one. Removed rather than left, because a dead icon name in a
+status map is exactly the sort of thing the next person builds on.

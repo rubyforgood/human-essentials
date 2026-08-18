@@ -52,7 +52,9 @@ module PartnersHelper
   end
 
   # Design system status pill for a partner. One mapping, used by the partner list, the
-  # partner row and the dashboard, so the six states cannot drift apart.
+  # partner row and the dashboard, so the six states cannot drift apart. Tone only: the pill
+  # stopped rendering an icon when it turned out six of them in one column read as clutter,
+  # and dead icon names in here would be the next person's red herring.
   #
   # Tone answers "who is blocked?", not "how serious does the word sound?". Only
   # `awaiting_review` is the bank's move, so it is the only one that carries a warning tone --
@@ -61,12 +63,12 @@ module PartnersHelper
   # tone. `approved` is the goal state and the majority of rows; a badge on the norm spends
   # colour on what the reader can already see, and teaches them to skip the column.
   ESSENTIALS_PARTNER_STATUS = {
-    "uninvited" => {tone: :neutral, icon: "bi-slash-circle"},
-    "invited" => {tone: :info, icon: "bi-envelope"},
-    "awaiting_review" => {tone: :warning, icon: "bi-question-circle"},
-    "approved" => {tone: :neutral, icon: "bi-check-circle"},
-    "recertification_required" => {tone: :info, icon: "bi-hourglass-split"},
-    "deactivated" => {tone: :neutral, icon: "bi-dash-circle"}
+    "uninvited" => {tone: :neutral},
+    "invited" => {tone: :info},
+    "awaiting_review" => {tone: :warning},
+    "approved" => {tone: :neutral},
+    "recertification_required" => {tone: :info},
+    "deactivated" => {tone: :neutral}
   }.freeze
 
   # No icon. Every row in the partner list carries one of these, so six icons stack up in a
