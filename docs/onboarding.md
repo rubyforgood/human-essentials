@@ -58,7 +58,8 @@ runs through `authorize_user` in `ApplicationController`.
 
 ## The domain model
 
-The associations that matter, read off the models rather than from memory.
+A tour of the parts you meet first. [domain-model.md](domain-model.md) is the full reference —
+polymorphic joins, the event catalogue, the partner state machine — for when you need it.
 
 ### Organization is the tenant boundary
 
