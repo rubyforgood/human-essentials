@@ -12,14 +12,14 @@ RSpec.describe "Coworking invitations", type: :system, js: true do
         visit partner_user_root_path
 
         click_on partner_user.email
-        click_on 'My Co-Workers'
+        click_on 'My co-workers'
 
         click_on 'Invite new user'
 
         fill_in 'Name', with: new_user_name
         fill_in 'Email', with: new_user_email
 
-        click_on 'Create User'
+        click_on 'Send invitation'
 
         assert page.has_content? "You have invited #{new_user_name} to join your organization!"
       end

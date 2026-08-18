@@ -1,5 +1,5 @@
 <div class="mb-4">
-  <%= f.input :name, label: "Agency Name", required: true, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+  <%= f.input :name, label: "Agency name", required: true, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
 </div>
 
 <%= f.fields_for :profile, profile do |pf| %>
@@ -8,13 +8,13 @@
     <div class="mb-4">
       <%= pf.input :agency_type,
         collection: Partners::Profile.agency_types_for_selection,
-        label: "Agency Type",
+        label: "Agency type",
         class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
         input_html: { data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
     </div>
 
     <div class="mb-4" data-hide-by-source-val-target="destination">
-      <%= pf.input :other_agency_type, label: "Other Agency Type", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+      <%= pf.input :other_agency_type, label: "Other agency type", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
            label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
 
   <div class="mb-4">
-    <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :agency_mission, as: :text, label: "Agency mission", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">

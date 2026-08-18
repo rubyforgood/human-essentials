@@ -21,7 +21,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       select "26", from: "partner_profile_served_areas_attributes_0_client_share"
       expect(page).to have_content("101 %")
       expect(page).to have_content("The total client share must be either 0 or 100 %")
-      click_on "Update Information"
+      click_on "Update information"
       text_2 = find_field("partner_profile_served_areas_attributes_0_county_id").find("option[selected]").text # There is at least one county already
       expect(text_2).to eq(county_1_text)
       expect(page).to have_field("partner_profile_served_areas_attributes_0_client_share", with: "26")
@@ -34,8 +34,8 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       select "24", from: "partner_profile_served_areas_attributes_1_client_share"
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
-      click_on "Update Information"
-      expect(page).to have_content("Partner Profile")
+      click_on "Update information"
+      expect(page).to have_content("Partner profile")
       expect(page).to have_content("26 %")
     end
 
@@ -53,7 +53,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       assert page.has_content? "The total client share must be either 0 or 100 %."
       first(".remove_served_area").click
       assert page.has_content? "50 %"
-      click_on "Update Information"
+      click_on "Update information"
       assert page.has_content? "50 %"
     end
   end

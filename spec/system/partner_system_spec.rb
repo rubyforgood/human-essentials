@@ -492,7 +492,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           find("button[aria-controls='contacts']").click
           expect(page).to have_css("#contacts", visible: :visible)
           within "#contacts" do
-            fill_in "Executive Director Name", with: "Lisa Smith"
+            fill_in "Executive director name", with: "Lisa Smith"
           end
 
           # Save Progress

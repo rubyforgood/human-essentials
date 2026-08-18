@@ -14,58 +14,58 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
         refute page.has_content? 'Make a request'
         refute page.has_content? 'Quantity'
         refute page.has_content? 'Specify the family and child you are requesting for'
-        refute page.has_content? '# of Individuals'
+        refute page.has_content? 'Number of individuals'
 
         # Checking that the request page doesn't have these options
         visit partners_requests_path
         refute page.has_content? 'Make a request'
         refute page.has_content? 'Quantity'
         refute page.has_content? 'Specify the family and child you are requesting for'
-        refute page.has_content? '# of Individuals'
+        refute page.has_content? 'Number of individuals'
       end
 
       it "Double clicking submit for approval button does not result in the partner attemping to be approved twice" do
-        click_on 'My Profile'
+        click_on 'My profile'
         assert page.has_content? 'Uninvited'
-        all('a', text: 'Update Information').last.click
+        all('a', text: 'Update information').last.click
 
-        fill_in 'Other Agency Type', with: 'Lorem'
+        fill_in 'Other agency type', with: 'Lorem'
 
-        fill_in 'Executive Director Name', with: 'Lorem'
-        fill_in 'Executive Director Phone', with: '8889990000'
-        fill_in 'Executive Director Email', with: 'lorem@example.com'
-        fill_in 'Primary Contact Phone', with: '8889990000'
+        fill_in 'Executive director name', with: 'Lorem'
+        fill_in 'Executive director phone', with: '8889990000'
+        fill_in 'Executive director email', with: 'lorem@example.com'
+        fill_in 'Primary contact phone', with: '8889990000'
         check 'No Social Media Presence'
 
-        click_on 'Update Information'
+        click_on 'Update information'
         assert page.has_content? 'Details were successfully updated.'
 
-        assert page.has_content? "Submit for Approval"
+        assert page.has_content? "Submit for approval"
 
-        ferrum_double_click('form[action*="/partners/approval_request"] .btn.btn-success')
+        ferrum_double_click('form[action*="/partners/approval_request"] button')
 
-        expect(page).to have_content("Pending Approval")
+        expect(page).to have_content("Pending approval")
         expect(page).not_to have_content("This partner has already requested approval.")
       end
 
       context 'AND they fill out the form and submit it' do
         before do
-          click_on 'My Profile'
+          click_on 'My profile'
           assert page.has_content? 'Uninvited'
-          all('a', text: 'Update Information').last.click
+          all('a', text: 'Update information').last.click
 
-          fill_in 'Other Agency Type', with: 'Lorem'
+          fill_in 'Other agency type', with: 'Lorem'
 
-          fill_in 'Executive Director Name', with: 'Lorem'
-          fill_in 'Executive Director Phone', with: '8889990000'
-          fill_in 'Executive Director Email', with: 'lorem@example.com'
-          fill_in 'Primary Contact Phone', with: '8889990000'
+          fill_in 'Executive director name', with: 'Lorem'
+          fill_in 'Executive director phone', with: '8889990000'
+          fill_in 'Executive director email', with: 'lorem@example.com'
+          fill_in 'Primary contact phone', with: '8889990000'
           check 'No Social Media Presence'
 
-          click_on 'Update Information'
+          click_on 'Update information'
           assert page.has_content? 'Details were successfully updated.'
 
-          all('button', text: 'Submit for Approval').last.click
+          all('button', text: 'Submit for approval').last.click
           assert page.has_content? 'You have submitted your details for approval.'
           assert page.has_content? 'Awaiting Review'
         end
@@ -85,7 +85,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
             assert page.has_content? 'Make a request'
             assert page.has_content? 'Quantity'
             assert page.has_content? 'Specify the family and child you are requesting for'
-            assert page.has_content? '# of Individuals'
+            assert page.has_content? 'Number of individuals'
           end
         end
       end
@@ -100,8 +100,8 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
       login_as(partner_user)
       visit partner_user_root_path
-      click_on 'My Profile'
-      all('button', text: 'Submit for Approval').last.click
+      click_on 'My profile'
+      all('button', text: 'Submit for approval').last.click
     end
 
     it "should render an error message", :aggregate_failures do

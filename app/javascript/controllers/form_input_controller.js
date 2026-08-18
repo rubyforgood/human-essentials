@@ -13,8 +13,9 @@ export default class extends Controller {
   // data-form-input-target="addContainer" to be set on the add container
   addItem(event) {
     const template = this.addTemplateTarget.content.firstElementChild.outerHTML;
+    const trigger = event.currentTarget;
     const dest =
-      document.querySelector(event.target.dataset.addDestSelector) ||
+      document.querySelector(trigger.dataset.addDestSelector) ||
       this.addContainerTarget;
 
     const uniqId = new Date().getTime();
@@ -34,10 +35,11 @@ export default class extends Controller {
   // requires data-remove-parent-selector to be set on the remove button OR
   // data-form-input-target="removeContainer" to be set on the container to remove
   removeItem(event) {
+    const trigger = event.currentTarget;
     const wrapper =
-      event.target.closest(event.target.dataset.removeParentSelector) ||
+      trigger.closest(trigger.dataset.removeParentSelector) ||
       this.removeContainerTarget;
-    const removeSoft = event.target.dataset.removeSoft === "false";
+    const removeSoft = trigger.dataset.removeSoft === "false";
 
     if (removeSoft) {
       wrapper.remove();

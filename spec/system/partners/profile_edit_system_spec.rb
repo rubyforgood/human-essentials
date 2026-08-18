@@ -36,7 +36,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[aria-controls='contacts']").click
       expect(page).to have_css("#contacts", visible: :visible)
       within "#contacts" do
-        fill_in "Executive Director Name", with: "Lisa Smith"
+        fill_in "Executive director name", with: "Lisa Smith"
       end
 
       # Save Progress
@@ -173,7 +173,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       within "#attached_documents" do
         document_name = "document1.md"
         document_li = find("li.attached-document", text: document_name)
-        document_li.find("a.btn-danger", text: "Remove").click
+        document_li.find("a", text: "Remove").click
         expect(page).not_to have_selector("li.attached-document", text: document_name)
       end
 
@@ -194,9 +194,9 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # Open up Agency Information section and upload proof-of-status letter
       find("button[aria-controls='agency_information']").click
       within "#agency_information" do
-        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("Choose file...")
+        expect(find("[data-file-input-label-target='label']", match: :first)).to have_content("Choose file...")
         attach_file("partner_profile_proof_of_partner_status", Rails.root.join("spec/fixtures/files/irs_determination_letter.md"), make_visible: true)
-        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+        expect(find("[data-file-input-label-target='label']", match: :first)).to have_content("irs_determination_letter.md")
       end
 
       # Open Pick up person section and fill in 4 email addresses which will generate a validation error
@@ -215,7 +215,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # but NOT be persisted because there hasn't yet been a successful form submission.
       find("button[aria-controls='agency_information']").click
       within "#agency_information" do
-        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+        expect(find("[data-file-input-label-target='label']", match: :first)).to have_content("irs_determination_letter.md")
         expect(page).not_to have_content("Attached file:")
         expect(page).not_to have_link("irs_determination_letter.md")
       end
@@ -234,7 +234,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       within "#agency_information" do
         expect(page).to have_content("Attached file:")
         expect(page).to have_link("irs_determination_letter.md", href: /\/rails\/active_storage\/blobs\/redirect\/.+\/irs_determination_letter\.md/)
-        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+        expect(find("[data-file-input-label-target='label']", match: :first)).to have_content("irs_determination_letter.md")
       end
     end
 
