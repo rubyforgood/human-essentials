@@ -9,6 +9,16 @@ def date_range_picker_select_range(range_name)
   end
 end
 
+# Litepicker seeds the field from the server's dates as the last step of its setup. Typing
+# before that happens means the seed overwrites what was typed, and the form then filters on
+# the default range -- which is a race, so it depends on the machine and the ordering.
+# Waiting for the calendar's own markup to appear means setup has run.
+def fill_in_date_range(page, date_range)
+  page.assert_selector(".litepicker", visible: :all, wait: 5)
+  page.fill_in "filters_date_range", with: date_range
+  expect(page).to have_field("filters_date_range", with: date_range, wait: 5)
+end
+
 RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   before :each do
     date_field ||= "created_at"
@@ -50,7 +60,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows all the records" do
       visit subject
       date_range = "#{Time.zone.local(1919, 7, 1).to_fs(:date_picker)} - #{Time.zone.local(2020, 7, 31).to_fs(:date_picker)}"
-      fill_in "filters_date_range", with: date_range
+      fill_in_date_range(page, date_range)
       click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 6)
     end
@@ -68,7 +78,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows only 2 of the records" do
       visit subject
       date_range = "#{Time.zone.local(2019, 7, 1).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_fs(:date_picker)}"
-      fill_in "filters_date_range", with: date_range
+      fill_in_date_range(page, date_range)
       click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
@@ -78,7 +88,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows only 1 record" do
       visit subject
       date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
-      fill_in "filters_date_range", with: date_range
+      fill_in_date_range(page, date_range)
       click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
