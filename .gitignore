@@ -95,3 +95,6 @@ out/
 # tailwindcss-rails gem, which hooks assets:precompile, so it is built on deploy.
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# Ad-hoc design preview, served at /design-preview.html in development
+/public/design-preview.html

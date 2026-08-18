@@ -511,3 +511,213 @@ change to the busiest screen a bank user has and it should be someone's decision
 side-effect of an audit. The options, in preference order: give the chips a control treatment
 (bordered, neutral until selected) and keep the status column; or keep the chips and drop the
 status column, since the strip already communicates the same six states.
+
+## 2026-08-18 · Filter with the shared filter bar, not with status chips
+
+The partner list filtered with a strip of coloured chips. Two of them — the statuses with no
+partners — rendered as greyed, non-interactive spans, which is a disabled control in everything
+but name, and design.md rejects those: "a link cannot be disabled".
+
+The obvious fix was to restyle the chips. The right fix was to notice that this app answered
+the question fifteen times already. **Fifteen index pages filter with
+`shared/essentials/filter_bar`** — a labelled select, a Filter button, Clear filters. Exactly
+one page used chips. `/requests` filters by a status enum with a plain select and always has.
+
+So the chips went. The disabled-control problem does not need solving; it needs deleting,
+because a select has no notion of a control you can see but not use. A status with no partners
+is an ordinary option that yields the "No partners match that status" empty state the app
+already renders — honest, and reachable by keyboard like everything else.
+
+The counts moved into the option labels — `Awaiting review (1)` — which is where a count belongs
+when it describes the thing you are about to pick. `filter_select` gained an `include_blank:`
+label so the unfiltered option can say `Active (6)` rather than being an unexplained empty row.
+
+What is lost is the at-a-glance count of every status without opening the select. That is
+acceptable because it was never this page's job: `dashboard/_partner_approvals` already lists
+partners awaiting review, with a button. The chips were doing the dashboard's work on a page
+whose work is to be a list.
+
+Rejected: keeping chips but hiding the zero-count ones. It removes the rule violation and keeps
+the inconsistency, and it makes the strip change width as data changes, so the control you
+reached for last time is somewhere else today.
+
+## 2026-08-18 · A submitted-but-blank filter is not a filter
+
+Replacing the partner chips with a select introduced a bug that the chips could not have had.
+The first option is "Active", and a select's blank option submits `by_status=""` rather than
+omitting the parameter. `PartnersController#index` branched on `filter_params.empty?`, which is
+false for `{by_status: ""}`, so it called `class_filter` — and `Filterable#class_filter` skips
+blank values, leaving `where(nil)`. Choosing "Active" therefore returned *every* partner,
+deactivated ones included: the option showed more than its label promised.
+
+It was invisible in development because the seeded organization has no deactivated partners, so
+`.active` and "everything" are the same six rows. A request spec with one deactivated partner
+shows it immediately, and that spec is now checked in.
+
+The fix is in the controller, not the helper: `filter_params.to_h.compact_blank`, so an
+all-blank filter set means the default view. Doing it in `class_filter` would have changed
+behaviour for the fifteen other pages that use it, and doing it in `filter_select` would leave
+the next controller to rediscover the same thing.
+
+The general point, which is why this is written down rather than just fixed: a link that is
+absent submits nothing, a select that is unset submits an empty string. Swapping one control for
+another silently changes what arrives at the controller, and the seed data was too tidy to show
+it.
+
+## 2026-08-18 · Apply on change when there is one filter, keep the button when there are several
+
+Asked whether the Filter button was necessary. It depends on how many filters the bar has, and
+this app has both shapes: four index pages filter on a single control, twelve filter on between
+two and nine — `/donations` has nine.
+
+With one control the button is pure friction: you have already said what you want, and the
+button makes you say it twice. With nine, applying on every change fires a query per control
+while the user is still assembling the question, and each one throws away the scroll position.
+
+So `auto_submit:` is a per-bar option rather than a global behaviour, and the four single-filter
+pages take it. Two of those four filter on a checkbox, which is the clearest case of all: a
+checkbox behind an Apply button is a switch that does not switch anything.
+
+The button stays in the markup and is hidden by Stimulus on connect, so the form still works
+without JavaScript. It is hidden with an inline `display:none`, not the `hidden` utility: the
+button already carries `inline-flex`, and two Tailwind utilities setting `display` resolve by
+stylesheet order rather than class order, so `hidden` lost and the button stayed visible. That
+was caught by reading the computed style rather than the class list, which is the only way to
+catch it.
+
+## 2026-08-18 · "All" is an option, not a Clear button — and it is not the same as the default
+
+Asked whether an "All" option could replace "Clear filters". Yes, and it turned out to be two
+separate improvements.
+
+"Clear filters" next to a single select is redundant: the select's first option *is* the reset,
+so choosing it clears the filter. Offering two ways to undo one thing means the user has to work
+out whether they differ. Single-filter bars now pass `clear: false`.
+
+Separately, the partner list's default view is not "everything" — it hides deactivated partners.
+So the first option is `Active (6)` and there is now also `All (7)`, which is a capability the
+page did not have: you could see active partners, or deactivated ones, but never both in one
+list. That needed a sentinel value in the controller, because "all" is not a Partner status and
+has to bypass the default scope rather than be passed to it.
+
+## 2026-08-18 · Drop the icon from a pill that appears on every row
+
+The partner status column carried an icon on all six rows. Two problems, one reported and one
+found while fixing it.
+
+Reported: it reads as busy. The icon is decorative — `aria-hidden`, with the word beside it
+doing the work — so six of them are six pieces of noise in a column that is already colour-coded.
+Icons stay on pills that mark an exception, "Inactive" and "Expired", where they appear on one
+row in twenty and help it stand out.
+
+Found: "Recertification required" was wrapping to two lines, and a wrapped pill centres its icon
+across both lines, so the icon sat between them looking misaligned. The icon was part of what
+pushed it over the width. Pills now carry `whitespace-nowrap` regardless, because a pill is a
+label and a label that reflows is a layout accident, not a design.
+
+## 2026-08-18 · Order the status filter by lifecycle, not alphabetically
+
+Asked whether the dropdown should be alphabetical. No — and the reason generalises.
+
+Alphabetical order helps when a list is long and its values have no inherent sequence: countries,
+partners, item names. You arrive knowing the label and need to find it. A status enum is the
+opposite: six values, and they happen in an order. Uninvited, invited, awaiting review, approved,
+recertification required, deactivated is the path a partner actually walks. Alphabetising it
+gives approved, awaiting review, deactivated, invited, recertification required, uninvited, which
+scatters the sequence and puts the end state third. GitHub, Jira and Linear all keep workflow
+states in workflow order for the same reason.
+
+The order is the enum's own declaration order, so the filter cannot drift from the model.
+
+What was wrong was not the order but that three kinds of option sat in one flat list, so "All"
+and "Approved" looked like peers. They are now separated with an `<optgroup>`: the default view
+and the whole collection at the top, then "By status" over the six. `filter_grouped_select` is
+the helper for this shape.
+
+## 2026-08-18 · Hide a progressively-enhanced control in the markup, not on connect
+
+The Filter button flashed on every page load and, because auto-submit navigates, on every
+selection. It was rendered visible and hidden by Stimulus on connect, so the browser painted it
+and took it away a frame later.
+
+Hiding it server-side with an inline `display:none` and restoring it from a `<noscript>` rule
+inverts the default: it is hidden unless JavaScript is *absent*, rather than visible until
+JavaScript arrives. Same behaviour without JavaScript, no flash with it.
+
+The general rule: if a control's resting state depends on JavaScript being present, render the
+resting state and let `<noscript>` undo it. Anything a controller does on connect happens after
+first paint, and the user sees it.
+
+## 2026-08-18 · Known flake: DonationSite CSV export specs query globally
+
+`spec/models/donation_site_spec.rb` asserts on `DonationSite.active` with no organization scope
+and then indexes the result positionally (`csv_data.first`, `.second`). Any other spec that
+leaves a donation site behind breaks it, and nothing pins the order.
+
+It fails on `--seed 57005` in a full run and passes in isolation on the same seed. Verified
+pre-existing: it fails identically on the design branch without any of the filter work, and the
+file is untouched by it. Recorded rather than fixed because it belongs to a different piece of
+work, and a flake that is written down costs the next person minutes instead of an afternoon.
+
+## 2026-08-18 · No optgroup in the status filter, and labels that state their rule
+
+Asked what rules sort records into "Active" and "All", whether "By status" was a subsection of
+them, and whether the optgroup label met contrast requirements. Three questions, one cause.
+
+The rules, which nothing on screen was saying:
+
+| Option | Rule |
+| --- | --- |
+| Active | `where.not(status: :deactivated)` — five of the six statuses |
+| All | no scope — all six |
+| A named status | exactly that one |
+
+So the six are **not** a subsection of either. Five of them sit inside Active; the sixth,
+Deactivated, only inside All. The `<optgroup>` labelled "By status" asserted a hierarchy that
+does not exist, which is why the question came up. It is gone.
+
+On contrast: the optgroup computes to slate-900 on white, 17.9:1, so it passes on paper. That
+measurement is worth little, because the options list is drawn by the platform rather than by
+this stylesheet — macOS renders optgroup labels in its own grey, near enough slate-400 at 2.6:1,
+and no CSS here changes it. A control whose contrast is not ours to set is a control we cannot
+promise anything about, which is a second reason to avoid optgroup rather than restyle it.
+
+What replaced it is labels that carry their own rule: "Active — all but deactivated (6)" and
+"All statuses (7)", flat, with the six statuses under them in lifecycle order. Longer labels,
+no hierarchy to misread, and nothing whose rendering we do not control.
+
+## 2026-08-18 · Empty-state copy names a control, so it goes stale when the control does
+
+"Clear the filter to see everyone" survived the removal of the Clear filters button by three
+commits. The instruction was still true in spirit and impossible to follow literally.
+
+Both affected pages now name the option that does the job — "Choose 'All statuses' to see every
+partner agency" — which meant giving the audits filter a labelled blank option ("All storage
+locations") so there was something to name. That is an improvement anyway: an unexplained empty
+first option is a worse control than a named one.
+
+The rule this suggests: copy that names a control is coupled to that control. When a control is
+removed, grep the views for its label before assuming the change is done. The twelve pages that
+still have a Clear filters button keep the old wording, correctly.
+
+## 2026-08-18 · Short option labels, rules in hint text
+
+"Active — all but deactivated (6)" stated the rule but was the wrong shape for an option label,
+and it leaned on an em dash to hold two clauses together.
+
+The ordinary advice across GOV.UK, Polaris and Material is the same: option labels are short
+noun phrases, and anything that needs explaining goes in hint text under the control. Two
+reasons, and the second is the one that decided it here:
+
+1. An explanation inside an option is re-read on every open, once per option.
+2. It is invisible while the list is closed — which is precisely when someone looks at
+   "Active (6)" and wonders what it excludes.
+
+So: `Active (6)` and `All statuses (6)`, with hint text underneath reading "Active hides
+deactivated partner agencies. All statuses includes them." That sentence is visible without
+opening anything, and `aria-describedby` ties it to the select so it is announced with the
+control rather than stranded after it.
+
+The hint uses the meta token design.md already defines, `text-xs text-slate-500` — 4.8:1 on
+white, which clears AA — and matches the hint styling simple_form applies on every form in the
+app, so this is not a new visual idea.

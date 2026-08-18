@@ -73,7 +73,7 @@ module EssentialsUiHelper
   }.freeze
 
   def essentials_status_pill(label, tone: :neutral, icon: nil)
-    tag.span(class: "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium #{PILL_TONES.fetch(tone.to_sym)}") do
+    tag.span(class: "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium #{PILL_TONES.fetch(tone.to_sym)}") do
       safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
     end
   end
@@ -194,11 +194,23 @@ module EssentialsUiHelper
   # single definition of what one looks like, shared by both helpers. Only the options-array
   # variant lives here, because FilterHelper has no equivalent for it.
 
-  FILTER_CONTROL_CLASSES = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
-                           "px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
-                           "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+  FILTER_CONTROL_BASE = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
+                        "py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
+                        "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+
+  # Text inputs and date pickers: even padding.
+  FILTER_CONTROL_CLASSES = "#{FILTER_CONTROL_BASE} px-3"
+
+  # Selects: `pr-10` reserves room so the longest option ("Recertification required (1)") does
+  # not run under the chevron, and `.filter-select` replaces the native arrow with one we can
+  # position -- the native one sits 4px from the border whatever the padding says.
+  FILTER_SELECT_CLASSES = "#{FILTER_CONTROL_BASE} filter-select pl-3 pr-10"
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
+
+  # Meta text, per design.md: slate-500 at text-xs. 4.8:1 on white, which clears AA for body
+  # text. Matches the hint style simple_form already uses on every form in the app.
+  FILTER_HINT_CLASSES = "mt-1 block text-xs text-slate-500"
 
   # For a filter whose options are a plain array rather than a collection of records.
   def essentials_filter_options(scope:, options:, label: nil, selected: nil)
@@ -207,7 +219,7 @@ module EssentialsUiHelper
 
     label_tag(id, label, class: FILTER_LABEL_CLASSES) +
       select_tag("filters[#{scope}]", options_for_select(options, selected),
-        include_blank: true, class: FILTER_CONTROL_CLASSES, id: id)
+        include_blank: true, class: FILTER_SELECT_CLASSES, id: id)
   end
 
   # --- Top bar help link ----------------------------------------------------

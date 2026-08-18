@@ -15,6 +15,15 @@
           concat essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
+  <%= render "shared/essentials/filter_bar", url: partners_path, auto_submit: true, clear: false do %>
+    <div class="min-w-[15rem]">
+      <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
+            key: :last, value: :first, selected: params.dig(:filters, :by_status),
+            include_blank: @partner_status_default,
+            hint: "Active hides deactivated partner agencies. All statuses includes them.") %>
+    </div>
+  <% end %>
+
   <%= render "shared/essentials/card", padded: false do %>
     <div data-controller="tabs">
       <%= render "shared/essentials/tabs", tabs: [

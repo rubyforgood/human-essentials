@@ -5,6 +5,10 @@ class PartnersController < ApplicationController
   # Migrated to the Ruby for Good design system (ADR 0011).
   layout "essentials_app"
 
+  # Sentinel for the status filter's "All" option. Not a Partner status, so it cannot collide
+  # with one, and it has to bypass the default `.active` scope rather than be passed to it.
+  ALL_STATUSES = "all".freeze
+
   include Importable
 
   before_action :validate_user_role, only: :show
@@ -12,10 +16,41 @@ class PartnersController < ApplicationController
 
   def index
     @partners = current_organization.partners.includes(:partner_group).alphabetized
-    @partners = filter_params.empty? ? @partners.active : @partners.class_filter(filter_params)
+    # Three cases, because "no filter" and "all" are genuinely different here: the default view
+    # hides deactivated partners, and until "All" existed there was no way to see them alongside
+    # everyone else.
+    #
+    # A blank value is the "Active" option, not an absent filter: a select submits "" where a
+    # link would have submitted nothing at all, and class_filter skips blank values, so without
+    # this it would fall through to every partner and the option would show more than its label.
+    applied_filters = filter_params.to_h.compact_blank
+    @partners =
+      case applied_filters["by_status"]
+      when ALL_STATUSES then @partners
+      when nil then @partners.active
+      else @partners.class_filter(applied_filters)
+      end
     @partner_groups = current_organization.partner_groups.includes(:partners, :item_categories)
     @partner_status_counts = current_organization.partners.group(:status).count
     @active_partner_count = @partner_status_counts.except("deactivated").values.sum
+    # [label, value] pairs for the status filter. Counts travel in the label so the list still
+    # answers "how many are waiting on me?" without a row of chips above the table.
+    # Short option labels; the rule that separates "Active" from "All statuses" is hint text
+    # under the control, not cargo inside every option.
+    #
+    # Statuses follow the enum's own order, which is the lifecycle -- uninvited, invited,
+    # awaiting review, approved, recertification required, deactivated. Alphabetising scatters
+    # that sequence for no gain.
+    #
+    # A flat list on purpose: an <optgroup> over the six read as though they were a subset of
+    # Active and All, and they are not -- five of them sit inside Active, the sixth only inside
+    # All. The platform also draws optgroup labels itself, so their contrast is not ours to fix.
+    @partner_status_default = "Active (#{@active_partner_count})"
+    @partner_status_options =
+      [["All statuses (#{@partner_status_counts.values.sum})", ALL_STATUSES]] +
+      current_organization.partners.statuses.keys.map do |status|
+        ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
+      end
 
     respond_to do |format|
       format.html

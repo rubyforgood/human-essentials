@@ -9,8 +9,8 @@
           concat essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: audits_path do %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
+  <%= render "shared/essentials/filter_bar", url: audits_path, auto_submit: true, clear: false do %>
+    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location, include_blank: "All storage locations") %></div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>
@@ -18,7 +18,7 @@
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
             title: essentials_filtered? ? "No audits match those filters" : "No audits yet",
-            body: essentials_filtered? ? "Clear the filters to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
+            body: essentials_filtered? ? "Choose \u201cAll storage locations\u201d to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
             action: essentials_filtered? ? nil : essentials_link_button("Start your first audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

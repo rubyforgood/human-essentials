@@ -62,6 +62,25 @@
 
 @layer components {
   /*
+   * Filter select.
+   *
+   * A native <select> draws its arrow at the far right of the border box, and no amount of
+   * padding-right moves it -- `pr-10` pushes the option text away and leaves the arrow 4px
+   * from the border, which is what it looked like. The only way to control the arrow's
+   * position is to turn the native one off and draw it as a background image.
+   *
+   * A component class rather than a utility string because the value is a data-URI SVG, and
+   * that inside an arbitrary-value class is unreadable and easy to break when it is copied.
+   */
+  .filter-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem 1.25rem;
+  }
+
+  /*
    * Skip link. Same contract as the Bootstrap shell's .skip-link so both halves of
    * the app behave identically for keyboard users during the migration.
    */

@@ -203,8 +203,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page).to have_css("table tr", count: 4, wait: page_content_wait)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
-        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("3 Active")
-        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("1 Deactivated")
+        # Counts travel in the status filter's option labels now, not a strip of chips.
+        expect(page).to have_select("Status",
+          with_options: ["Active (3)", "All statuses (4)", "Deactivated (1)"])
       end
 
       it "allows a user to invite a partner", js: true do
@@ -229,14 +230,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
 
       context "when filtering" do
-        it "allows the user to click on one of the statuses at the top to filter the results" do
+        it "allows the user to filter the results by status" do
           approved_count = Partner.approved.count
           within "table tbody" do
             expect(page).to have_css("tr", count: Partner.active.count)
           end
-          within "#partner-status" do
-            click_on "Approved"
-          end
+          # The single-filter bars apply on change; there is no Filter button to press.
+          select "Approved (#{approved_count})", from: "Status"
           within "table tbody" do
             expect(page).to have_css("tr", count: approved_count)
           end
@@ -247,11 +247,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         context "when filtering" do
           it "preserves the filter constraints in the CSV output" do
             approved_partners = Partner.approved.to_a
-            within "#partner-status" do
-              click_on "Approved"
-            end
+            select "Approved (#{approved_partners.size})", from: "Status"
 
-            page.find 'a.filtering', text: /Approved/
+            expect(page).to have_select("Status", selected: "Approved (#{approved_partners.size})")
 
             click_on "Export"
             wait_for_download

@@ -251,6 +251,40 @@ Do not reach for the legacy `edit_button_to` / `delete_button_to` / `view_button
 row: they map onto `:primary` and `:danger`, which are filled.
 [docs/table-audit.md](docs/table-audit.md) lists the rows that still do.
 
+### Filters
+
+**One filter: apply on change, no button.** Several filters: keep the Filter button. Auto-applying
+each of five controls fires a query per control while the user is still describing what they
+want; making them press a button to change one select is friction with nothing on the other side
+of it. Four index pages filter on one thing and pass `auto_submit: true`; twelve filter on two to
+nine and do not.
+
+**The first option is the reset, so a single-filter bar drops "Clear filters"** (`clear: false`).
+Two ways to undo the same thing is one too many. Where "everything" is meaningfully different
+from the default view, say so with its own option — the partner list defaults to `Active (6)`
+and offers `All (7)` separately, because deactivated partners are hidden by default and were
+previously unreachable alongside the rest.
+
+Counts belong in the option label — `Awaiting review (1)` — not in a separate strip.
+
+**Keep option labels short and put any rule in hint text.** `Active (6)`, not
+`Active, excluding deactivated (6)`. An explanation inside an option is re-read every time the
+list is opened, and it is invisible while the list is shut, which is exactly when someone is
+wondering what the current selection means. `filter_select` takes `hint:`, renders it as meta
+text and wires up `aria-describedby`.
+
+**No `<optgroup>`.** Its label is drawn by the platform rather than by this stylesheet — macOS
+renders it around 2.6:1 — so its contrast is not ours to guarantee. Grouping also implies a
+hierarchy that a filter list rarely has.
+
+Two things that bite:
+
+- A select submits `""` where an absent link submits nothing. `Filterable#class_filter` skips
+  blank values, so a blank option falls through to *unfiltered* rather than the default scope.
+  Compact the params in the controller.
+- `FILTER_SELECT_CLASSES`, not `FILTER_CONTROL_CLASSES`, for a `<select>`. The browser draws the
+  chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3`.
+
 ### Status pills
 
 A pill is a **state**, not a control: not focusable, does not look pressable. It is also
@@ -258,6 +292,12 @@ A pill is a **state**, not a control: not focusable, does not look pressable. It
 carries a badge spends colour on something the reader already knows, and the eye learns to skip
 the column, exceptions included. Most tables here get this right: "Inactive", "Expired" and
 "Below minimum" appear only when true, next to the name, without a column of their own.
+
+**An icon on a pill is decorative, and only earns its place on a pill that is rare.** The word
+carries the meaning — which is also what stops the pill depending on colour alone — so a column
+where every row is badged should drop the icon: six of them stack into clutter. Keep icons for
+exceptions like "Inactive" and "Expired". Pills never wrap (`whitespace-nowrap`); a two-line pill
+leaves its icon centred across both lines, which reads as a misalignment rather than a wrap.
 
 Never build a control out of `PILL_TONES`. A filter chip that borrows the status palette is a
 control that looks like data; the partner list does this and

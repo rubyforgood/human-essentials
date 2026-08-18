@@ -35,7 +35,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       expect { click_button "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
 
       check "include_inactive_vendors"
-      click_button "Filter"
+      expect(page).to have_content(@first.business_name)
 
       expect { click_button "Reactivate", match: :first }.to change { @first.reload.active }.to(true)
     end
@@ -54,7 +54,6 @@ RSpec.describe "Vendor", type: :system, js: true do
 
       it "shows inactive vendors when the filter is applied" do
         check "include_inactive_vendors"
-        click_button "Filter"
 
         expect(page).to have_content(@active_vendor.business_name)
         expect(page).to have_content(@inactive_vendor.business_name)

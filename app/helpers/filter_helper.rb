@@ -7,14 +7,25 @@
 # EssentialsUiHelper::FILTER_CONTROL_CLASSES is the single definition of what a filter control
 # looks like; these methods and the design system's own essentials_filter_* wrappers share it.
 module FilterHelper
-  def filter_select(scope:, collection:, label: nil, key: :id, value: :name, selected: nil)
+  # `include_blank:` takes a string when the unfiltered view means something specific and the
+  # user should be told what it is -- "Active", rather than an unexplained empty option.
+  #
+  # `hint:` explains a rule that an option label should not have to carry. Keeping labels short
+  # and putting the explanation underneath is the ordinary advice -- an explanation inside an
+  # option is re-read every time the list is opened, and it is invisible while the list is shut,
+  # which is when someone is wondering what the current selection means.
+  def filter_select(scope:, collection:, label: nil, key: :id, value: :name, selected: nil,
+    include_blank: true, hint: nil)
     label ||= "Filter #{scope.to_s.tr("_", " ")}"
     id = "filters_#{scope}_#{SecureRandom.uuid}"
+    hint_id = "#{id}_hint" if hint
 
     label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
       collection_select(:filters, scope, collection || {}, key, value,
-        {include_blank: true, selected: selected},
-        {class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, id: id})
+        {include_blank: include_blank, selected: selected},
+        {class: EssentialsUiHelper::FILTER_SELECT_CLASSES, id: id,
+         aria: {describedby: hint_id}.compact}) +
+      (hint ? tag.p(hint, id: hint_id, class: EssentialsUiHelper::FILTER_HINT_CLASSES) : "".html_safe)
   end
 
   def filter_text(scope:, label: nil, selected: nil)
