@@ -1,10 +1,20 @@
 # Onboarding
 
-For anyone new to Human Essentials — using it, maintaining it, or contributing a first patch.
+For anyone new to Human Essentials. Two halves, depending on why you are here.
 
-If you only want to build a screen, [design.md](../design.md) has a playbook. If you are
-looking at markup that predates the design system, [migration-map.md](migration-map.md) says
-what replaced it.
+- **[Part 1 — Maintaining the app](#part-1--maintaining-the-app)**: the domain, the code, how to
+  run it and test it. For contributors and maintainers.
+- **[Part 2 — Using the app](#part-2--using-the-app)**: what the app does and the words it uses.
+  For bank staff, partner agencies and the people supporting them. No Ruby required.
+
+If you only want to build a screen, [design.md](../design.md) has a playbook.
+[domain-model.md](domain-model.md) is the reference for how records relate, and
+[migration-map.md](migration-map.md) says what replaced the markup that predates the design
+system.
+
+---
+
+# Part 1 — Maintaining the app
 
 ## What the app is for
 
@@ -233,8 +243,102 @@ log in the same PR. If you change how a page is built, update `design.md`. If yo
 migrating something, update the migration map. A stale document is worse than none, because
 someone will trust it.
 
-## Getting help
+## Getting help as a contributor
 
 - `docs/` for the rest of the developer documentation
 - Ruby for Good Slack, `#human-essentials`
 - The user guide: https://rubyforgood.github.io/human-essentials/
+
+---
+
+# Part 2 — Using the app
+
+For bank staff, partner agencies and the people supporting them. No Ruby required. This
+explains what the app does and, more usefully, the words it uses — most confusion here is
+vocabulary rather than buttons.
+
+## If you work at a bank
+
+You sign in and land on a **dashboard**: what is running low, which requests are outstanding,
+which partners are waiting on you.
+
+### Getting stock in
+
+Two kinds of record, because they answer different questions later:
+
+| | Use when |
+| --- | --- |
+| **Donation** | Goods given to you. You pick a source: a **product drive**, a **manufacturer**, a **donation site**, or **misc. donation** for anything else. |
+| **Purchase** | Goods you bought, recorded against a vendor with what you spent. |
+
+A **product drive** is a collection event. It is not a third kind of intake — donations recorded
+against it roll up into its totals, which is how you find out whether a drive was worth running.
+
+Everything arrives into a **storage location**: a warehouse, a room, a set of shelves. Inventory
+is counted per location, which is why moving goods between your own locations is a record rather
+than a note to yourself.
+
+### Getting stock out
+
+A partner submits a **request**; you turn it into a **distribution**. Two records, deliberately:
+the request is what was asked for, the distribution is what actually moved. Keeping both is what
+lets you see whether you met the need rather than only what you sent.
+
+### Keeping the numbers honest
+
+- **Transfer** — stock moved between your own storage locations.
+- **Adjustment** — a correction, for when the shelf and the system disagree and you know why.
+- **Audit** — a formal count of a location. If it finds a discrepancy it produces an adjustment,
+  so the correction is on the record with its reason. Admin only.
+
+### Partners
+
+Partners are **invited**, complete a profile, and are **approved**. Along the way their status
+moves through: uninvited → invited → awaiting review → approved. Later it may become
+*recertification required*, or *deactivated*.
+
+A **partner group** decides which item categories its members may request — a group is how you
+say "shelters can request cots, schools cannot". A partner in no group can request anything, and
+the app says so on the partner's page: **All items requestable**.
+
+### Reports
+
+Fifteen, under **Reporting**, named so that related ones sort together: *Distributions —
+summary*, *Distributions — itemized*, *Distributions — by county*, *Donations — manufacturer*,
+*Purchases — trends*, and so on. Most take a date range and export to CSV. Separately, **Annual
+survey** collects the yearly figures many banks have to file.
+
+## If you are a partner agency
+
+You have your own portal. You see your own agency's data and nothing else.
+
+1. **Complete your profile.** Your bank chooses which sections it needs, so this varies. It is
+   long, and it saves section by section: **Save progress** keeps your work without claiming you
+   are finished; **Save and review** moves you on.
+2. **Submit for approval.** The bank reviews what you sent and approves you.
+3. **Make requests.** Depending on what your bank has turned on, you request by:
+   - **Quantity** — "200 size 2 nappies"
+   - **Individuals** — how many people need each product
+   - **Children** — against the specific families and children you have recorded
+4. **Follow your distributions.** What the bank has sent, and when.
+
+Periodically you will be asked to **recertify** — confirm your details are still current. Your
+status changes to *recertification required* until you do.
+
+## Things that surprise people
+
+- **Quantities are worked out, not stored.** Every movement is recorded and the total is derived
+  from the history. So when a number looks wrong, the records explaining it exist — nothing has
+  been silently overwritten.
+- **Deactivating is not deleting.** Deactivated partners, items and storage locations keep their
+  history, which is why last year's totals do not change when you tidy up this year's list.
+- **Items belong to your bank.** Your "Size 1 Nappies" is yours to name and manage; it is mapped
+  behind the scenes to a shared catalogue entry so that reporting across banks still works.
+- **Your bank's name is on every page.** People work with more than one bank, and a screen that
+  does not say which one you are in is a screen you can act on by mistake.
+
+## Getting help
+
+- The user guide: https://rubyforgood.github.io/human-essentials/
+- In the app: **Need help?** in the top bar
+- Something broken, or an idea: https://github.com/rubyforgood/human-essentials/issues
