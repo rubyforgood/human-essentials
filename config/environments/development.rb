@@ -20,6 +20,12 @@ Rails.application.configure do
   config.hosts << "diaper.test"
   config.hosts << ".app.github.dev"
 
+  # Serving the dev server through a TLS-terminating tunnel (localhost.run, ngrok, a
+  # Codespaces forward) means the proxy hands Rails plain HTTP, so request.base_url is
+  # http:// while the browser sends an https Origin -- and CSRF verification rejects every
+  # form, most visibly the login. Opt in with TUNNEL=1 to trust the proxy's scheme.
+  config.assume_ssl = true if ENV["TUNNEL"].present?
+
   # Show full error reports.
   config.consider_all_requests_local = true
   config.action_mailer.default_url_options = { host: "localhost:3000" }

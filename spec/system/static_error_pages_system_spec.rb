@@ -1,26 +1,32 @@
 require "rails_helper"
 
-# Historically the static error pages loaded the application's JavaScript
-# which could cause errors in the console. This test makes sure that
-# the static pages load without any JavaScript errors.
+# These pages are served straight off disk -- by the static middleware for /403, and by the
+# server as a last resort when Rails itself cannot render. So they must not depend on the asset
+# pipeline or load any JavaScript: whatever is broken enough to reach them may be the very thing
+# that would break a page needing assets.
 RSpec.describe "Static Error Pages", type: :system do
-  it "renders the 403 page with the correct headline" do
-    visit "/403"
-    expect(page).to have_css("h2.headline", text: "403")
-  end
+  {
+    "403" => "Access denied",
+    "404" => "Page not found",
+    "422" => "Change rejected",
+    "500" => "Something went wrong"
+  }.each do |code, heading|
+    describe "/#{code}" do
+      before { visit "/#{code}" }
 
-  it "renders the 404 page with the correct headline" do
-    visit "/404"
-    expect(page).to have_css("h2.headline", text: "404")
-  end
+      it "says what happened, and shows the status code" do
+        expect(page).to have_css("h1", text: heading)
+        expect(page).to have_text(code)
+      end
 
-  it "renders the 422 page with the correct headline" do
-    visit "/422"
-    expect(page).to have_css("h2.headline", text: "422")
-  end
+      it "offers a way back into the app" do
+        expect(page).to have_link("Back to Human Essentials", href: "/")
+      end
 
-  it "renders the 500 page with the correct headline" do
-    visit "/500"
-    expect(page).to have_css("h2.headline", text: "500")
+      it "loads no scripts and no stylesheets" do
+        expect(page).to have_no_css("script", visible: :all)
+        expect(page).to have_no_css("link[rel='stylesheet']", visible: :all)
+      end
+    end
   end
 end

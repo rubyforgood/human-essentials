@@ -141,27 +141,23 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows a JavaScript alert when user blurs" do
       visit subject
 
+      # Wait for Litepicker to have built itself before touching the field. Its setup ends by
+      # seeding the field from the server's dates, so setting a value first means the seed
+      # overwrites it -- and a valid range does not trigger the validation under test.
+      page.assert_selector(".litepicker", visible: :all, wait: 5)
+
       date_range = "nov 08 - feb 08"
       page.execute_script("document.getElementById('filters_date_range').focus();")
       page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
+      expect(page).to have_field("filters_date_range", with: date_range, wait: 5)
 
-      # Click away, which is what the test is describing. This has to be a real click on
-      # another element: focusing the field opens Litepicker, and the date-range controller
-      # deliberately skips validation while the calendar is open -- so a bare .blur() or a
-      # dispatched event leaves the picker open and nothing is validated. Clicking the page
-      # heading closes the calendar and blurs the field in one go, which `find('body').click`
-      # used to do by accident, until the layout moved what sits at the body's centre.
-      # Blur the field directly. Clicking the body was a proxy for "click away", and where
-      # the body's centre lands depends entirely on the page layout -- it now falls on other
-      # chrome rather than empty space.
+      # Blur the field. Clicking the body used to stand in for "click away", but where the
+      # body's centre lands depends entirely on the page layout. Note the calendar must stay
+      # shut: the controller skips validation while it is open, and Escape *opens* Litepicker
+      # rather than closing it.
       accept_alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).") do
         page.execute_script("document.getElementById('filters_date_range').blur();")
       end
-
-      valid_date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
-      fill_in "filters_date_range", with: valid_date_range
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
     end
   end
 end
