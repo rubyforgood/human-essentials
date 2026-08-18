@@ -39,7 +39,7 @@ RSpec.describe " Participant", type: :system, js: true do
 
       it "allows single participants to show semi-detailed stats about donations from that product drive" do
         visit product_drive_participant_path(product_drive_participant)
-        expect(page).to have_xpath("//table/tbody/tr", count: 3)
+        expect(page).to have_xpath("//table/tbody/tr", count: 2)
       end
     end
   end
@@ -49,8 +49,8 @@ RSpec.describe " Participant", type: :system, js: true do
 
     it "allows a user to create a new product drive participant" do
       visit subject
-      fill_in "Contact Name", with: "George Henry"
-      fill_in "Business Name", with: "George Company"
+      fill_in "Contact name", with: "George Henry"
+      fill_in "Business name", with: "George Company"
       fill_in "Phone", with: "123-456-1234"
       fill_in "Comment", with: "Participant comment"
 
@@ -91,8 +91,8 @@ RSpec.describe " Participant", type: :system, js: true do
 
     it "does not allow a user to update a product drive participant with empty attributes" do
       visit subject
-      fill_in "Business Name", with: ""
-      fill_in "Contact Name", with: ""
+      fill_in "Business name", with: ""
+      fill_in "Contact name", with: ""
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "didn't work"

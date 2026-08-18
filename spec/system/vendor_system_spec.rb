@@ -68,8 +68,8 @@ RSpec.describe "Vendor", type: :system, js: true do
     it "can create a new vendor instance as a user" do
       visit subject
       vendor_traits = attributes_for(:vendor)
-      fill_in "Contact Name", with: vendor_traits[:contact_name]
-      fill_in "Business Name", with: vendor_traits[:business_name]
+      fill_in "Contact name", with: vendor_traits[:contact_name]
+      fill_in "Business name", with: vendor_traits[:business_name]
       fill_in "Phone", with: vendor_traits[:phone]
 
       expect do
@@ -104,8 +104,8 @@ RSpec.describe "Vendor", type: :system, js: true do
 
     it "does not update a vendor with empty attributes" do
       visit subject
-      fill_in "Business Name", with: ""
-      fill_in "Contact Name", with: ""
+      fill_in "Business name", with: ""
+      fill_in "Contact name", with: ""
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "didn't work"
@@ -127,7 +127,7 @@ RSpec.describe "Vendor", type: :system, js: true do
 
     it "can have a single vendor show semi-detailed stats about purchases" do
       visit vendor_path(@vendor.to_param)
-      expect(page).to have_xpath("//table/tbody/tr", count: 3)
+      expect(page).to have_xpath("//table/tbody/tr", count: 2)
       expect(page).to have_xpath("//table/tbody/tr/td", text: "10")
     end
   end

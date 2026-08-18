@@ -60,26 +60,26 @@ RSpec.describe "Product Drives", type: :system, js: true do
     it 'must create a new product drive' do
       expect do
         fill_in 'Name', with: 'Normal 1'
-        fill_in 'Start Date', with: Time.zone.today
-        fill_in 'End Date', with: Time.zone.today + 4.hours
-        click_button 'Create Product Drive'
+        fill_in 'Start date', with: Time.zone.today
+        fill_in 'End date', with: Time.zone.today + 4.hours
+        click_button 'Save'
       end.to change(ProductDrive, :count).by(1)
     end
 
     it 'must have correct attributes' do
       fill_in 'Name', with: 'Normal 1'
-      fill_in 'Start Date', with: Time.zone.today
-      fill_in 'End Date', with: Time.zone.today + 1.day
-      click_button 'Create Product Drive'
+      fill_in 'Start date', with: Time.zone.today
+      fill_in 'End date', with: Time.zone.today + 1.day
+      click_button 'Save'
 
       expect(ProductDrive.last).to have_attributes({ name: 'Normal 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: false })
     end
 
     it 'must have the success message' do
       fill_in 'Name', with: 'Virtual 1'
-      fill_in 'Start Date', with: Time.zone.today
-      fill_in 'End Date', with: Time.zone.today + 4.hours
-      click_button 'Create Product Drive'
+      fill_in 'Start date', with: Time.zone.today
+      fill_in 'End date', with: Time.zone.today + 4.hours
+      click_button 'Save'
 
       expect(page.find('[data-flash]')).to have_content('added')
     end
@@ -93,29 +93,29 @@ RSpec.describe "Product Drives", type: :system, js: true do
     it 'must create a new virtual Product Drive' do
       expect do
         fill_in 'Name', with: 'Virtual 1'
-        fill_in 'Start Date', with: Time.zone.today
-        fill_in 'End Date', with: Time.zone.today + 4.hours
+        fill_in 'Start date', with: Time.zone.today
+        fill_in 'End date', with: Time.zone.today + 4.hours
         check 'virtual'
-        click_button 'Create Product Drive'
+        click_button 'Save'
       end.to change(ProductDrive, :count).by(1)
     end
 
     it 'must have correct attributes' do
       fill_in 'Name', with: 'Virtual 1'
-      fill_in 'Start Date', with: Time.zone.today
-      fill_in 'End Date', with: Time.zone.today + 1.day
+      fill_in 'Start date', with: Time.zone.today
+      fill_in 'End date', with: Time.zone.today + 1.day
       check 'virtual'
-      click_button 'Create Product Drive'
+      click_button 'Save'
 
       expect(ProductDrive.last).to have_attributes({ name: 'Virtual 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: true })
     end
 
     it 'must have the success message' do
       fill_in 'Name', with: 'Virtual 1'
-      fill_in 'Start Date', with: Time.zone.today
-      fill_in 'End Date', with: Time.zone.today + 4.hours
+      fill_in 'Start date', with: Time.zone.today
+      fill_in 'End date', with: Time.zone.today + 4.hours
       check 'virtual'
-      click_button 'Create Product Drive'
+      click_button 'Save'
 
       expect(page.find('[data-flash]')).to have_content('added')
     end

@@ -81,7 +81,7 @@ RSpec.describe "Kit management", type: :system do
   it 'can allocate and deallocate quantity per storage location from kit index' do
     visit kits_path
 
-    click_on 'Modify Allocation'
+    click_on 'Modify allocation'
 
     inventory = View::Inventory.new(organization.id)
     original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
@@ -142,7 +142,7 @@ RSpec.describe "Kit management", type: :system do
     it 'will not change quantity amounts when allocating' do
       visit kits_path
 
-      click_on 'Modify Allocation'
+      click_on 'Modify allocation'
 
       inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
@@ -182,7 +182,7 @@ RSpec.describe "Kit management", type: :system do
     it 'will not change quantity amounts when deallocating' do
       visit kits_path
 
-      click_on 'Modify Allocation'
+      click_on 'Modify allocation'
 
       inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
@@ -230,7 +230,6 @@ RSpec.describe "Kit management", type: :system do
   describe "when duplicate items" do
     it "detects duplicate items and shows modal", js: true do
       visit new_kit_path
-      click_link "New Kit"
 
       kit_traits = attributes_for(:kit)
       fill_in "Name", with: kit_traits[:name]
@@ -239,8 +238,8 @@ RSpec.describe "Kit management", type: :system do
       item = Item.last
 
       # Add first entry for the item
-      select item.name, from: "item_line_items_attributes_0_item_id"
-      fill_in "item_line_items_attributes_0_quantity", with: "10"
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      fill_in "kit_item_line_items_attributes_0_quantity", with: "10"
 
       # Add a new line item row
       find("[data-form-input-target='addButton']").click

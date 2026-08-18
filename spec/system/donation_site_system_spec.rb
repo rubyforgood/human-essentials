@@ -28,7 +28,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
         visit subject
         check "Also include inactive donation sites"
         click_on "Filter"
-        click_on "Export Donation Sites"
+        click_on "Export"
         wait_for_download
         @csv_content = File.read(download)
 
@@ -56,7 +56,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       donation_site_traits = attributes_for(:donation_site)
       fill_in "Name", with: donation_site_traits[:name], match: :prefer_exact
       fill_in "Address", with: donation_site_traits[:address]
-      fill_in "Contact Name", with: donation_site_traits[:contact_name]
+      fill_in "Contact name", with: donation_site_traits[:contact_name]
       fill_in "Phone", with: donation_site_traits[:phone]
       fill_in "Email", with: donation_site_traits[:email]
       click_button "Save"
@@ -93,7 +93,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
     it "updates an existing donation site's Contact Name" do
       visit subject
-      fill_in "Contact Name", with: "Mr A"
+      fill_in "Contact name", with: "Mr A"
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "updated"

@@ -19,7 +19,7 @@ RSpec.describe "Authentication", type: :system, js: true do
       visit "/users/sign_in"
       fill_in "user_email", with: "no_role_user@example.com"
       fill_in "user_password", with: DEFAULT_USER_PASSWORD
-      find('input[name="commit"]').click
+      click_button "Log in"
       expect(page).to have_content("You need to sign in before continuing.")
     end
   end
@@ -33,7 +33,7 @@ RSpec.describe "Authentication", type: :system, js: true do
       visit "/users/sign_in"
       fill_in "user_email", with: "deactivated@example.com"
       fill_in "user_password", with: DEFAULT_USER_PASSWORD
-      find('input[name="commit"]').click
+      click_button "Log in"
       expect(page).to have_content("Invalid email or password")
     end
   end

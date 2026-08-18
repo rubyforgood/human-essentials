@@ -19,7 +19,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
       before do
         visit subject
-        click_on "New Adjustment"
+        click_on "New adjustment"
         select bare_storage_location.name, from: "From storage location"
       end
 
@@ -38,7 +38,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     context "with a storage location that has inventory" do
       before do
         visit subject
-        click_on "New Adjustment"
+        click_on "New adjustment"
         await_select2("#adjustment_line_items_attributes_0_item_id") do
           select storage_location.name, from: "From storage location"
         end
@@ -68,7 +68,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         sub_quantity = -9001
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
-        click_on "New Adjustment"
+        click_on "New adjustment"
         await_select2("#adjustment_line_items_attributes_0_item_id") do
           select storage_location.name, from: "From storage location"
         end
@@ -87,7 +87,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
-        click_on "New Adjustment"
+        click_on "New adjustment"
         await_select2("#adjustment_line_items_attributes_0_item_id") do
           select storage_location.name, from: "From storage location"
         end
