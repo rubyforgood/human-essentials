@@ -25,7 +25,7 @@ RSpec.describe "Reports::ItemizedDistributions", type: :request do
 
       it "has no items" do
         get reports_itemized_distributions_path
-        expect(response.body).to include("No itemized distributions found for the selected date range.")
+        expect(response.body).to include("No itemized distributions found")
       end
     end
 

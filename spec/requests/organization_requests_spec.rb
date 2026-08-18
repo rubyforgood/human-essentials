@@ -110,7 +110,7 @@ RSpec.describe "Organizations", type: :request do
         # The design system has no breadcrumbs, so there is no "Home" crumb; the route back
         # to the dashboard is the rail, and that is what this was really asserting.
         expect(html.css("a").to_s).to include(dashboard_path)
-        expect(html.text).to include("Organization Info")
+        expect(html.text).to include("Organization info")
         expect(html.text).to include("Address")
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
@@ -216,7 +216,7 @@ RSpec.describe "Organizations", type: :request do
         # The design system has no breadcrumbs, so there is no "Home" crumb; the route back
         # to the dashboard is the rail, and that is what this was really asserting.
         expect(html.css("a").to_s).to include(dashboard_path)
-        expect(html.text).to include("Organization Info")
+        expect(html.text).to include("Organization info")
         expect(html.text).to include("Address")
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")

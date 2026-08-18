@@ -20,7 +20,7 @@ RSpec.describe 'Admin::AccountRequestsController', type: :request do
         it 'should show a not found message' do
           allow(AccountRequest).to receive(:get_by_identity_token).and_return(nil)
           get for_rejection_admin_account_requests_path(token: 'my token')
-          expect(response.body).to match(/Account Request not found!/)
+          expect(response.body).to match(/That account request could not be found/)
         end
       end
 

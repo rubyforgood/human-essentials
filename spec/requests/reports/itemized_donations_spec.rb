@@ -25,7 +25,7 @@ RSpec.describe "Reports::ItemizedDonations", type: :request do
 
       it "has no items" do
         get reports_itemized_donations_path
-        expect(response.body).to include("No itemized donations found for the selected date range.")
+        expect(response.body).to include("No itemized donations found")
       end
     end
 
