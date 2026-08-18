@@ -107,7 +107,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `dbe7418b1` | **Four invisible icons** on the bank-side partner profile editor. Found by grepping for undefined classes, not by the tooling. |
 | `3cf21e1f9` | This change log. |
 | `f61a4fd5f` | The migration map brought to the current measured state; the grep for undefined classes promoted into the verification commands. |
-| `943cc447a` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
+| `4f7b7fdd1` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
 
 ---
 
@@ -146,6 +146,15 @@ Not defects — they render nothing and change nothing — but they are still th
 
 Add an entry in the same change that makes it. One row: the commit, and what changed in a
 sentence that will still mean something in a year.
+
+A commit cannot contain its own hash, so the last row is filled in by the next commit. Check
+the hashes are real and on the branch before you trust them — `git cat-file -e` is not enough,
+it succeeds for dangling objects left behind by an amend:
+
+```bash
+grep -oE '`[0-9a-f]{9}`' docs/changelog.md | tr -d '`' | sort -u |
+  while read -r h; do git merge-base --is-ancestor "$h" HEAD || echo "NOT ON BRANCH: $h"; done
+```
 
 - A **decision** — a judgement call someone could reasonably have made differently — goes in
   [design-decisions.md](design-decisions.md) as well, with its reasoning.
