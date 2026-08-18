@@ -560,8 +560,11 @@ Notes that will bite you otherwise:
 8. **A thing that changes state is a button, not a link.**
 9. **Run the audit**: `pw bin/design/audit.js /your/path`. It catches heading skips, unnamed
    controls, duplicate landmarks and leftover Bootstrap classes that specs pass straight over.
-10. **Run the specs**, including the system specs for the area you touched. Request specs will
-    not notice a page that renders but is unusable.
+10. **Run the specs, including the system specs for the area you touched.** Request specs do
+    not load JavaScript and will not notice a page that renders but cannot be used. Three
+    classes of defect in this migration were visible only to the system specs: markup that a
+    browser reparses into a different shape, Stimulus controllers toggling classes that no
+    longer exist, and forms whose fields had ended up outside the form.
 
 ### When the system does not cover it
 

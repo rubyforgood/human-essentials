@@ -291,3 +291,92 @@ the sweep ran against the dev server, so neither could see it.
 
 If system specs fail with `Failed to resolve module specifier`, the answer is
 `bin/rails assets:clobber assets:precompile`, not a change to the code.
+
+## 2026-08-18 · The browser's clock has to follow Rails' clock in tests
+
+**Decision.** The design system's `<head>` injects sinon's fake timer in the test
+environment, initialised from `Time.now`, exactly as the AdminLTE layout did.
+
+**Rationale.** It was dropped in the migration, and nothing failed loudly. `travel_to` moves
+only Ruby's clock; anything computed in the browser — the reminder and deadline dates, for one
+— stays on real time, so the two disagree by however far the spec travelled. The shared
+example's own comment says "there isn't an easy way to spoof the current time in the test
+browser". There is, and this was it.
+
+## 2026-08-18 · Confirmations go through rails-ujs, not Turbo
+
+**Decision.** Destructive actions carry `data-confirm`, not `data-turbo-confirm`.
+
+**Rationale.** This app loads rails-ujs, and every spec drives confirmations with
+`accept_confirm`, which needs a native `window.confirm`. Turbo only acts on its own attribute
+where Turbo Drive is enabled, and `@turbo` is set per action here — so switching to
+`data-turbo-confirm` quietly removed "are you sure?" from destructive actions on every page
+with Turbo off.
+
+## 2026-08-18 · Specs address behaviour and accessibility contracts, never styling
+
+**Decision.** Where a spec named a Bootstrap class, it now names the thing that makes the
+element what it is:
+
+| Was | Is |
+| --- | --- |
+| `.alert`, `.alert-danger` | `[data-flash]`, `[data-flash-tone='danger']` |
+| `.modal-content`, `.modal-title` | `dialog[open]`, `dialog[open] h2` |
+| `button[data-bs-target='#x']` | `button[aria-controls='x']` |
+| `#x.accordion-collapse.collapse` | `#x` with `visible: :hidden` |
+| `a.btn.btn-success[href*='…']` | `a[href*='…']` |
+| `have_button('X', class: 'disabled')` | `have_button('X', disabled: true)` |
+| `.sidebar`, `.main-header` | `#essentials-sidebar`, `header` |
+
+**Rationale.** Pinning the new class string would re-create the same brittleness against a
+different framework. `aria-controls`, `aria-current`, `disabled` and `dialog[open]` are
+contracts the app owes its users; a class name is an implementation detail. Where a hook was
+genuinely needed and no semantic one existed — the flash's tone, a dashboard card's identity —
+it is a `data-` attribute or an id, named for what it means.
+
+## 2026-08-18 · Boolean partial locals need an explicit nil check
+
+**Decision.** `remote = true if defined?(remote).nil? || remote.nil?`, never `remote ||= true`.
+
+**Rationale.** `||=` cannot express "default true": it turns an explicitly passed `false` into
+`true`. The admin barcode dialog passed `remote: false` and got a remote form, which submitted
+over AJAX to an action with no JS response — the dialog just sat there.
+
+## 2026-08-18 · A partial owns the elements it opens
+
+**Decision.** A partial never closes a tag its caller opened, and never leaves one open for the
+next partial to close.
+
+**Rationale.** Three partner profile partials were written the AdminLTE way: close the parent's
+wrappers, open the next card's. That left the document one `</div>` ahead, and the browser
+resolved the mismatch by closing the `<form>` early — so the served-areas fieldset, the
+remaining profile sections and the submit button all ended up outside the form. Nothing below
+that point could be submitted, and "Add another county" did nothing because the Stimulus
+controller could not see a template that was no longer in its subtree. The page looked fine.
+
+## 2026-08-18 · A cold-start empty state does not repeat the header's button
+
+**Decision.** The empty state's action says what it starts — "Record your first donation" —
+rather than repeating the page header's "New donation".
+
+**Rationale.** Eighteen index pages had the same label twice on the same page. That is ambiguous
+for a reader deciding where to click, ambiguous for anything that clicks by name, and the
+cold-start wording is better copy: it says this is the first one.
+
+## 2026-08-18 · Stimulus actions read `currentTarget`
+
+**Decision.** An action handler reads `event.currentTarget`, not `event.target`.
+
+**Rationale.** `target` is whatever was clicked — the icon inside the button as often as the
+button — and the icon carries none of the data attributes the handler needs. `currentTarget` is
+always the element the action is bound to.
+
+## 2026-08-18 · State is read from the DOM, not from a global flag
+
+**Decision.** The date range field asks the calendar whether it is open (its computed display)
+rather than reading `window.isLitepickerActive`.
+
+**Rationale.** The flag is global and is cleared only by Litepicker's own `hide` event.
+Navigate away with the calendar open and it stays true for the rest of the session, and the
+field silently stops validating. A flag that outlives the thing it describes is a bug waiting
+for the right order of events.
