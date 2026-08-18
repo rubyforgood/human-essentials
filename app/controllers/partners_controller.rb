@@ -12,7 +12,12 @@ class PartnersController < ApplicationController
 
   def index
     @partners = current_organization.partners.includes(:partner_group).alphabetized
-    @partners = filter_params.empty? ? @partners.active : @partners.class_filter(filter_params)
+    # A submitted-but-blank filter is not a filter. The status select's first option is
+    # "Active", which posts by_status="" -- and class_filter skips blank values, so it would
+    # fall through to every partner including deactivated ones. Treat all-blank as unfiltered
+    # so the option means what its label says.
+    applied_filters = filter_params.to_h.compact_blank
+    @partners = applied_filters.empty? ? @partners.active : @partners.class_filter(applied_filters)
     @partner_groups = current_organization.partner_groups.includes(:partners, :item_categories)
     @partner_status_counts = current_organization.partners.group(:status).count
     @active_partner_count = @partner_status_counts.except("deactivated").values.sum

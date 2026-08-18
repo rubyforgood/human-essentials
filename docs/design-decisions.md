@@ -540,3 +540,26 @@ whose work is to be a list.
 Rejected: keeping chips but hiding the zero-count ones. It removes the rule violation and keeps
 the inconsistency, and it makes the strip change width as data changes, so the control you
 reached for last time is somewhere else today.
+
+## 2026-08-18 · A submitted-but-blank filter is not a filter
+
+Replacing the partner chips with a select introduced a bug that the chips could not have had.
+The first option is "Active", and a select's blank option submits `by_status=""` rather than
+omitting the parameter. `PartnersController#index` branched on `filter_params.empty?`, which is
+false for `{by_status: ""}`, so it called `class_filter` — and `Filterable#class_filter` skips
+blank values, leaving `where(nil)`. Choosing "Active" therefore returned *every* partner,
+deactivated ones included: the option showed more than its label promised.
+
+It was invisible in development because the seeded organization has no deactivated partners, so
+`.active` and "everything" are the same six rows. A request spec with one deactivated partner
+shows it immediately, and that spec is now checked in.
+
+The fix is in the controller, not the helper: `filter_params.to_h.compact_blank`, so an
+all-blank filter set means the default view. Doing it in `class_filter` would have changed
+behaviour for the fifteen other pages that use it, and doing it in `filter_select` would leave
+the next controller to rediscover the same thing.
+
+The general point, which is why this is written down rather than just fixed: a link that is
+absent submits nothing, a select that is unset submits an empty string. Swapping one control for
+another silently changes what arrives at the controller, and the seed data was too tidy to show
+it.
