@@ -99,3 +99,4 @@ out/
 # Ad-hoc design preview, served at /design-preview.html in development
 /public/design-preview.html
 /public/reports-hub-preview.html
+/public/reports-options.html
