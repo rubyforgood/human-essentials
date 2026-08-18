@@ -383,3 +383,33 @@ rather than reading `window.isLitepickerActive`.
 Navigate away with the calendar open and it stays true for the rest of the session, and the
 field silently stops validating. A flag that outlives the thing it describes is a bug waiting
 for the right order of events.
+
+## 2026-08-18 · design.md describes this app, not its lineage
+
+**Decision.** design.md, the in-app comments and the decision log no longer explain choices by
+comparison to the project this design system was ported from. The ADRs still do.
+
+**Rationale.** A specification should stand on its own: a reader shouldn't need a second
+codebase to understand why tables are component classes here. The arguments survive the edit
+intact — "a flat rail is readable up to a dozen destinations; this one has 34" says what the
+comparison said, without the dependency.
+
+The ADRs are the exception on purpose. An ADR records why a decision was made at a point in
+time, and "Ruby for Good is standardising on the system built for CASA" *is* the reason ADR
+0011 exists. Editing that out would falsify the record, which is the one thing an ADR must not
+do.
+
+## 2026-08-18 · The four documents are maintained as part of the work
+
+**Decision.** `design.md`, `docs/design-decisions.md`, `docs/migration-map.md` and
+`docs/onboarding.md` are updated in the same change that makes them wrong, not afterwards.
+Recorded in CLAUDE.md so it survives a change of author.
+
+**Rationale.** Each of these already drifted once during this migration: design.md described
+the Bootstrap system for a week after Bootstrap was deleted, and CLAUDE.md claimed `Discard`
+was the deletion strategy when three models use it. A stale document is worse than no document,
+because the next person trusts it and is wrong with confidence.
+
+**Corollary.** Numbers in these documents are measured, not estimated. Every count in the four
+was read off the code with `grep`, `bin/design/status.rb` or the specs — and two were wrong on
+the first pass and corrected before the commit landed.

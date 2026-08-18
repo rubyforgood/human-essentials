@@ -78,7 +78,11 @@ Business logic lives in service classes (`app/services/`), not controllers. Patt
 Complex queries are extracted into `app/queries/` (e.g., `ItemsInQuery`, `LowInventoryQuery`).
 
 ### Frontend
-Bootstrap 5.2, Turbo Rails, Stimulus.js, ImportMap (no Webpack/bundler). JavaScript controllers live in `app/javascript/`.
+Tailwind CSS v4 (via the `tailwindcss-rails` standalone CLI — no Node, no package.json), Turbo Rails, Stimulus.js, ImportMap (no Webpack/bundler). JavaScript controllers live in `app/javascript/controllers/`.
+
+The UI follows a documented design system. **`design.md` is normative** — read it before building or changing a screen. Components are partials in `app/views/shared/essentials/` and helpers in `EssentialsUiHelper`; build from those rather than from utility strings.
+
+Bootstrap and AdminLTE were removed (ADR 0011). A class like `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is defined nowhere and renders as nothing — see `docs/migration-map.md` for what to write instead.
 
 ### Background Jobs
 Delayed Job for async processing (emails, etc.). Clockwork (`clock.rb`) for scheduled tasks (caching historical data, reminder emails, DB backups).
@@ -91,9 +95,41 @@ Flipper is available for feature flags, accessible at `/flipper` (auth required)
 - RSpec with FactoryBot. Factories are in `spec/factories/`.
 - **Setting up inventory in tests**: Use `TestInventory.create_inventory(organization, { storage_location_id => [[item_id, quantity], ...] })` from `spec/inventory.rb`. There's also a `setup_storage_location` helper in `spec/support/inventory_assistant.rb`.
 - System tests use Capybara with Cuprite driver. Failed screenshots go to `tmp/screenshots/` and `tmp/capybara/`.
-- Models use `has_paper_trail` for audit trails and `Discard` for soft deletes (not `destroy`).
+- Models use `has_paper_trail` for audit trails (32 of them). Deletion is usually deactivation:
+  most models carry an active/deactivated status, and only `Request`, `User` and
+  `StorageLocation` use `Discard` proper. Check before reaching for `destroy`.
 - The `Filterable` concern provides `class_filter` for scope-based filtering on index actions.
+- **Run the system specs for anything that touches a view.** Request specs do not load
+  JavaScript. During the design system migration, three classes of defect were invisible to
+  everything except the browser suite: markup a browser reparses into a different shape
+  (fields ending up outside their `<form>`), Stimulus controllers toggling classes that no
+  longer exist, and confirmation dialogs that never appeared.
+- If system specs fail with `Failed to resolve module specifier`, `public/assets` is stale:
+  `bin/rails assets:clobber assets:precompile`.
+- Behind a port forward or TLS-terminating tunnel, start the server with `TUNNEL=1` or CSRF
+  will reject every form and report it as "Your session expired".
 
 ## Dev Credentials
 
 All passwords are `password!`. Key accounts: `superadmin@example.com`, `org_admin1@example.com`, `user_1@example.com`.
+
+## Documentation — keep these current
+
+Four documents describe how this app is built and why. **Update them as part of the work that
+changes them, in the same PR — not afterwards.** A stale document is worse than no document,
+because the next person will trust it.
+
+| Document | Update it when |
+| --- | --- |
+| `design.md` | You add or change a component, token, layout or UI convention. It is the normative spec for the design system. |
+| `docs/design-decisions.md` | You make a judgement call worth explaining — why this pattern and not the obvious alternative. Append a dated entry with the reasoning, including alternatives rejected. |
+| `docs/migration-map.md` | You migrate something, retire a legacy pattern, or find a leftover. Keep the translation tables and the "not migrated" list true. |
+| `docs/onboarding.md` | You change setup, testing conventions, the domain model or how the code is organised. Counts and claims in it are read off the code — re-check them rather than guessing. |
+| `docs/architecture/decisions/` | A structural decision is made. ADRs are historical records: add a new one, supersede an old one, but do not rewrite what a past decision said. |
+
+Two habits that go with this:
+
+- **Verify claims before writing them down.** Numbers in these documents were measured
+  (`grep`, `bin/design/status.rb`, the specs), not estimated. If you state one, measure it.
+- **Record the decision where someone will look for it.** A comment explains the line; the
+  decision log explains the choice. Both, when the choice was not obvious.

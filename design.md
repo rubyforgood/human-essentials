@@ -8,7 +8,8 @@ Tailwind v4 the system it describes.
 
 If you are building a page, skip to [Building or changing a page](#building-or-changing-a-page).
 If you are new to the app, read [docs/onboarding.md](docs/onboarding.md) first — the components
-below make more sense once you know what a distribution is.
+below make more sense once you know what a distribution is. If you are looking at markup that
+predates this system, [docs/migration-map.md](docs/migration-map.md) says what replaced it.
 
 ## What this app is, and what the UI has to do
 
