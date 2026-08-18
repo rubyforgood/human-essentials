@@ -180,6 +180,10 @@ console errors, and is rendering in Figtree.
 4. Re-run the sweep and the system specs for the area.
 5. Add a row to [changelog.md](changelog.md) in the same change.
 
+The legacy `*_button_to` shims are no longer used inside any table cell: they map onto
+`:primary` and `:danger`, which are filled, and that is wrong for a row. They remain in use on
+page headers and forms, where filled is correct.
+
 One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
 survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this
 work either. It is left alone because removing it means editing option hashes rather than

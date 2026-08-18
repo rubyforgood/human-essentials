@@ -14,22 +14,22 @@
       <% when "uninvited" %>
         <% if one_step %>
           <%= essentials_action_button "Invite and approve", invite_and_approve_partner_path(partner_row), method: :post,
-                variant: :secondary, size: :sm, icon: "bi-envelope",
+                variant: :ghost, size: :sm, icon: "bi-envelope",
                 confirm: "Send an invitation to #{partner_row.name} to begin making requests in the application?" %>
         <% else %>
           <%= essentials_action_button "Invite", invite_partner_path(partner_row), method: :post,
-                variant: :secondary, size: :sm, icon: "bi-envelope",
+                variant: :ghost, size: :sm, icon: "bi-envelope",
                 confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?" %>
         <% end %>
       <% when "invited" %>
         <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
-              variant: :secondary, size: :sm, icon: "bi-check2" %>
+              variant: :ghost, size: :sm, icon: "bi-check2" %>
         <%= essentials_action_button "Re-send invite", invite_partner_path(partner_row), method: :post,
               variant: :ghost, size: :sm, icon: "bi-envelope",
               confirm: "Re-send an invitation to #{partner_row.name}?" %>
       <% when "awaiting_review" %>
         <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
-              variant: :secondary, size: :sm, icon: "bi-check2" %>
+              variant: :ghost, size: :sm, icon: "bi-check2" %>
       <% when "approved" %>
         <%= essentials_action_button "Request recertification", recertify_partner_partner_path(partner_row), method: :post,
               variant: :ghost, size: :sm, icon: "bi-arrow-repeat",

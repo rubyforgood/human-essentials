@@ -32,8 +32,10 @@
                   <td><%= partner.name %></td>
                   <td><%= partner.organization&.name %></td>
                   <td class="text-right">
-                    <%= view_button_to admin_partner_path(partner) %>
-                    <%= edit_button_to edit_admin_partner_path(partner) %>
+                    <div class="flex justify-end gap-1.5">
+                      <%= essentials_link_button "View", admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                      <%= essentials_link_button "Edit", edit_admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    </div>
                   </td>
               <% end %>
               </tr>

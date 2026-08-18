@@ -15,7 +15,7 @@
       <%= essentials_link_button "View", distribution_path(pickup_day_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
       <% unless pickup_day_row.complete? %>
         <%= essentials_action_button "Distribution complete", picked_up_distribution_path(pickup_day_row), method: :patch,
-              variant: :secondary, size: :sm, icon: "bi-check-circle" %>
+              variant: :ghost, size: :sm, icon: "bi-check-circle" %>
       <% end %>
     </div>
   </td>

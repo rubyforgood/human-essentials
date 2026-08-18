@@ -8,7 +8,12 @@
     <% end %>
   </td>
   <td class="text-right">
-    <%= edit_button_to edit_admin_broadcast_announcement_path(broadcast_announcement) %>
-    <%= delete_button_to admin_broadcast_announcement_path(broadcast_announcement), method: :delete %>
+    <div class="flex justify-end gap-1.5">
+      <%= essentials_link_button "Edit", edit_admin_broadcast_announcement_path(broadcast_announcement), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <%= essentials_action_button "Delete", admin_broadcast_announcement_path(broadcast_announcement), method: :delete,
+            variant: :ghost, size: :sm, icon: "bi-trash",
+            class: "text-rose-700 hover:bg-rose-50",
+            confirm: "Are you sure?" %>
+    </div>
   </td>
 </tr>

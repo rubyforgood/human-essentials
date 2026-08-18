@@ -27,8 +27,12 @@
                       <%= role.resource&.name || "Super Admin" %> <%= role.resource&.id ? "(id: #{role.resource&.id})" : "" %>
                     </td>
                     <td class="text-right">
-                      <%= delete_button_to admin_user_remove_role_path(user, role_id: role.id),
-                                           confirm: "Are you sure you want to remove this role?" %>
+                      <div class="flex justify-end gap-1.5">
+                        <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
+                              variant: :ghost, size: :sm, icon: "bi-trash",
+                              class: "text-rose-700 hover:bg-rose-50",
+                              confirm: "Are you sure you want to remove this role?" %>
+                      </div>
                     </td>
                   </tr>
                 <% end %>

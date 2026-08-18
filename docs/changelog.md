@@ -109,7 +109,9 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `f61a4fd5f` | The migration map brought to the current measured state; the grep for undefined classes promoted into the verification commands. |
 | `4f7b7fdd1` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
 | `0fd3f13ca` | A change log hash orphaned by an amend, corrected; the ancestry check and the reason the last row lags written down. |
-| *(this commit)* | All 27 index tables audited for row-action weight and badge density; `docs/table-audit.md` and `bin/design/table-audit.js` added; the row-action and badge rules made explicit in `design.md`. Seven tables mix button weights, six render filled buttons in rows, one badges every row **and** paints its filter chips from the status palette. No table changed yet — the findings are recorded for a decision. |
+| `e0c31a7e9` | All 27 index tables audited for row-action weight and badge density; `docs/table-audit.md` and `bin/design/table-audit.js` added; the row-action and badge rules made explicit in `design.md`. |
+| `bc04f2243` | Corrected the audit: the empty `recertification_required` action cell is right, not a defect. |
+| *(this commit)* | **Every table row action is now `:ghost`.** 13 cells across 12 views moved off the legacy `*_button_to` shims and off `:secondary`. The audit script reports 0 tables with more than one weight, down from 7, and 0 filled buttons in rows, down from 6. |
 
 ---
 

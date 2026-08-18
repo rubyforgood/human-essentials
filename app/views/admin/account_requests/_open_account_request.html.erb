@@ -15,7 +15,7 @@
   <td class="text-right">
     <div class="inline-flex flex-wrap justify-end gap-2">
       <%# Both open the same dialog; the params say which decision it is. %>
-      <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
+      <button type="button" class="<%= essentials_button_classes(variant: :ghost, size: :sm, extra: "text-rose-700 hover:bg-rose-50") %>"
               data-action="click->account-request-decision#open"
               data-account-request-decision-id-param="<%= open_account_request.id %>"
               data-account-request-decision-decision-param="reject"

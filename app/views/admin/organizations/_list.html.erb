@@ -18,8 +18,15 @@
           <td class="date text-left"><%= organization.created_at.strftime("%F") %></td>
         <td class="date text-left"><%= organization.display_last_distribution_date %></td>
           <td class="text-right">
-            <%= view_button_to admin_organization_path(organization.id) %>
-            <%= delete_button_to(admin_organization_path(organization.id), { confirm: confirm_delete_msg(organization.name) }) unless (Organization.count <= 1) %>
+            <div class="flex justify-end gap-1.5">
+              <%= essentials_link_button "View", admin_organization_path(organization.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
+              <% unless Organization.count <= 1 %>
+                <%= essentials_action_button "Delete", admin_organization_path(organization.id), method: :delete,
+                      variant: :ghost, size: :sm, icon: "bi-trash",
+                      class: "text-rose-700 hover:bg-rose-50",
+                      confirm: confirm_delete_msg(organization.name) %>
+              <% end %>
+            </div>
           </td>
         </tr>
       <% end %>
