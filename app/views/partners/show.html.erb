@@ -9,7 +9,7 @@
           concat essentials_partner_status_pill(@partner.status)
           if !@partner.approved? && can_administrate?
             if @partner.approvable?
-              concat essentials_action_button("Approve partner", approve_application_partner_path(@partner), method: :post,
+              concat essentials_link_button("Approve partner", approve_application_partner_path(@partner),
                        variant: :primary, icon: "bi-hand-thumbs-up")
             end
           end
@@ -91,7 +91,7 @@
             title: "Partner profile",
             actions: capture {
               if !@partner.approved? && @partner.approvable?
-                concat essentials_action_button("Approve partner", approve_application_partner_path(@partner), method: :post,
+                concat essentials_link_button("Approve partner", approve_application_partner_path(@partner),
                          variant: :primary, size: :sm, icon: "bi-hand-thumbs-up")
               end
               concat essentials_link_button("Edit partner profile", edit_profile_path(@partner), variant: :secondary, size: :sm, icon: "bi-pencil")

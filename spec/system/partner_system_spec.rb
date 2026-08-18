@@ -38,15 +38,15 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           click_on "Review profile"
 
           # Make sure the button is there before trying to double click it
-          expect(page.find('form[action*="/approve_application"] button')).to have_content("Approve partner")
+          expect(page.find('a[href*="/approve_application"]')).to have_content("Approve partner")
 
           # Double click on the Distribution complete button
-          ferrum_double_click('a.btn.btn-success.btn-md[href*="/approve_application"]')
+          ferrum_double_click('a[href*="/approve_application"]')
 
           # Capybara will be quick to determine that a screen doesn't have content.
           # Make some positive assertions that only appears on the new screen to make
           # sure it's loaded before asserting something isn't there.
-          expect(page).to have_content("Partner Agencies for")
+          expect(page).to have_content("Partner agencies")
 
           # If it tries to mark the partner as approved twice, the second time
           # will fail (the partner is already approved) and show this error
@@ -132,7 +132,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it 'should have not added a new partner and indicate the failure' do
           assert page.has_content? "Failed to add partner due to: "
-          assert page.has_content? "New Partner for #{organization.name}"
+          assert page.has_content? "New partner agency"
 
           partner = Partner.find_by(name: partner_attributes[:name])
           expect(partner).to eq(nil)
@@ -720,7 +720,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           fill_in "partner_group_deadline_day", with: 25
           find_button('Add partner group').click
 
-          assert page.has_content? 'Group Name', wait: page_content_wait
+          click_on 'Groups'
+          assert page.has_content? 'Group name', wait: page_content_wait
           assert page.has_content? 'Test Group'
           assert page.has_content? item_category_2.name
           expect(page).to have_content("Your next reminder date is Sun Nov 01 2020.")
@@ -763,6 +764,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             check 'Yes'
           end
 
+          # Saving redirects to the partner index, where groups live on their own tab. The old
+          # Bootstrap panes were all "active" at once so the groups table was readable from
+          # either tab; it is a real tab strip now.
+          def post_form_submit
+            click_on "Groups"
+          end
+
           before do
             partner.update!(partner_group: existing_partner_group)
             visit partners_path
@@ -774,7 +782,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             post_refresh
           end
 
-          it_behaves_like "deadline and reminder form", "partner_group", "Update partner group", nil, :post_refresh
+          it_behaves_like "deadline and reminder form", "partner_group", "Update partner group", :post_form_submit, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             travel_to Time.zone.local(2025, 9, 30)
@@ -795,6 +803,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 
             click_on "Update partner group"
+            click_on "Groups"
             existing_partner_group.reload
 
             expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)

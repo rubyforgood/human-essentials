@@ -10,10 +10,10 @@
 #
 # @example Usage
 #   # Make sure the element is there
-#   expect(page.find('a.btn.btn-success.btn-md[href*="/picked_up"]')).to have_content("Distribution Complete")
+#   expect(page.find('a[href*="/picked_up"]')).to have_content("Distribution Complete")
 #
 #   # Double click it
-#   ferrum_double_click('a.btn.btn-success.btn-md[href*="/picked_up"]')
+#   ferrum_double_click('a[href*="/picked_up"]')
 #
 #   # Assert something based on the double click.
 def ferrum_double_click(css_selector)
