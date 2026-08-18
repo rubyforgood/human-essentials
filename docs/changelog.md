@@ -109,6 +109,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `f61a4fd5f` | The migration map brought to the current measured state; the grep for undefined classes promoted into the verification commands. |
 | `4f7b7fdd1` | `design.md` given the full document set and its measured status; today's four decisions logged; the standing instruction in `CLAUDE.md` extended to six documents and a stated cadence. |
 | `0fd3f13ca` | A change log hash orphaned by an amend, corrected; the ancestry check and the reason the last row lags written down. |
+| *(this commit)* | All 27 index tables audited for row-action weight and badge density; `docs/table-audit.md` and `bin/design/table-audit.js` added; the row-action and badge rules made explicit in `design.md`. Seven tables mix button weights, six render filled buttons in rows, one badges every row **and** paints its filter chips from the status palette. No table changed yet — the findings are recorded for a decision. |
 
 ---
 

@@ -16,6 +16,7 @@ Otherwise:
 | To know what replaced the old markup | [docs/migration-map.md](docs/migration-map.md) |
 | To know what changed and when | [docs/changelog.md](docs/changelog.md) |
 | To know why a call went the way it did | [docs/design-decisions.md](docs/design-decisions.md) |
+| Whether a table conforms | [docs/table-audit.md](docs/table-audit.md) |
 
 The components below make more sense once you know what a distribution is, so onboarding first
 is not a formality.
@@ -234,9 +235,33 @@ system classes and Bootstrap Icons, and their `type:`/`size:` options map onto t
 above. Its own comment still holds: *anytime a button or pseudo-button is displayed, it
 should be through one of these methods.*
 
+### Row actions
+
+**Every action in a table row uses `:ghost`, whatever it does.** A table is read down a column,
+so a second weight implies a hierarchy that does not survive the next row — on a partner list
+"Review profile" and "Request recertification" are each the main thing to do for their own row,
+and emphasising one of them tracks the action's name rather than its importance. Destructive row
+actions stay `:ghost` too, tinted with `text-rose-700 hover:bg-rose-50`; the confirmation is
+what protects the user, not the colour.
+
+`:primary` belongs in the page header, once. If a row action looks like the page's main action,
+the page has as many main actions as it has rows.
+
+Do not reach for the legacy `edit_button_to` / `delete_button_to` / `view_button_to` shims in a
+row: they map onto `:primary` and `:danger`, which are filled.
+[docs/table-audit.md](docs/table-audit.md) lists the rows that still do.
+
 ### Status pills
 
-A pill is a **state**, not a control: not focusable, does not look pressable.
+A pill is a **state**, not a control: not focusable, does not look pressable. It is also
+**exceptional** — badge the rows that need attention, not every row. A column where each row
+carries a badge spends colour on something the reader already knows, and the eye learns to skip
+the column, exceptions included. Most tables here get this right: "Inactive", "Expired" and
+"Below minimum" appear only when true, next to the name, without a column of their own.
+
+Never build a control out of `PILL_TONES`. A filter chip that borrows the status palette is a
+control that looks like data; the partner list does this and
+[docs/table-audit.md](docs/table-audit.md) records it as a defect.
 
 ```erb
 <%= essentials_status_pill "Awaiting review", tone: :warning, icon: "bi-hourglass-split" %>

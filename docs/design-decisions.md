@@ -463,3 +463,51 @@ the migration map as a known inert leftover. The alternative is that someone fin
 cannot tell whether it matters, and either breaks something removing it or leaves it and
 wonders. Naming a thing you chose not to do is cheaper than either.
 
+## 2026-08-18 · One weight for every row action, including destructive ones
+
+Audited all 27 index tables: 17 use `:ghost` throughout, 7 mix weights.
+[table-audit.md](table-audit.md) has the measurements.
+
+The rejected alternative was the intuitive one — emphasise the most important action in each
+row. It does not survive contact with a real table. On the partner list "Review profile" is
+bordered and "Request recertification" is not, but each is the main thing to do for its own row,
+so the emphasis is really tracking which action it is, not how much it matters. Read down the
+column, the highlight jumps around for no reason the reader can infer.
+
+Destructive actions stay `:ghost` as well, tinted rose. A filled red button in every row trains
+people to ignore red, and the confirmation dialog is what actually protects them.
+
+The reason six of the seven deviate is not a style choice: they still call the legacy
+`edit_button_to` / `delete_button_to` shims, which map onto `:primary` and `:danger` because
+that is what those names meant under AdminLTE. The helper cannot tell a page header from a
+table row, so the call site has to.
+
+## 2026-08-18 · Badge the exception, never the norm
+
+Twelve tables badge only the exceptional state — "Inactive", "Expired", "Below minimum" —
+attached to the name rather than given a column. Five badge every row. The twelve are right.
+
+A column where every row carries a badge has spent colour on information the reader already
+has: they can see it is a list of partners, and "Approved" on most rows tells them nothing. The
+cost is not neutral, because the eye learns to skip a column that is always the same, and the
+exceptions go with it. The badge that matters is the one in a column that is usually empty.
+
+Left alone deliberately: `/partners` genuinely has six states with no obvious default, so a
+status column earns its place there even though every row is badged. What does not earn its
+place is badging it *twice* — see the next entry.
+
+## 2026-08-18 · A filter chip must not be built from the status palette
+
+`partners/_statuses.html.erb` builds its filter strip out of `EssentialsUiHelper::PILL_TONES` —
+the status palette itself. So the partner list shows 13 pills on a seeded org: seven that filter
+the list when clicked, six that report a row's state and do nothing. Same shape, same size, same
+colours.
+
+design.md has said since the migration that a pill is "a state, not a control: not focusable,
+does not look pressable". Half of these are links. Nothing about them says which half.
+
+This is recorded as a defect rather than fixed in the same breath, because the fix is a visual
+change to the busiest screen a bank user has and it should be someone's decision, not a
+side-effect of an audit. The options, in preference order: give the chips a control treatment
+(bordered, neutral until selected) and keep the status column; or keep the chips and drop the
+status column, since the strip already communicates the same six states.
