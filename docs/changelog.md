@@ -1,0 +1,156 @@
+# Change log
+
+A running record of what changed, in order, with the commit that carries it. The companion
+documents answer different questions:
+
+| Document | Question it answers |
+| --- | --- |
+| **This file** | What changed, when, and where to find it. |
+| [design-decisions.md](design-decisions.md) | Why a judgement call went the way it did. |
+| [migration-map.md](migration-map.md) | What replaced what, and how to verify a page. |
+| [design.md](../design.md) | How to build a screen now. |
+| [domain-model.md](domain-model.md) | How the records relate. |
+
+Newest last. Dates are commit dates.
+
+---
+
+## Phase 1 — Foundation (2026-08-17)
+
+Tailwind installed alongside the existing stack, so that nothing broke while pages were moved
+across one area at a time.
+
+| Commit | Change |
+| --- | --- |
+| `d4ec1e400` | Design system documentation, and the layout accessibility baseline: skip link, one `<main>`, `lang` bound to `I18n.locale`, zoom lock removed. |
+| `8e98ea0be` | Tailwind v4 via `tailwindcss-rails`, no Node. Tokens, Figtree and Bootstrap Icons self-hosted. |
+| `6a01113ea` | The app shell and the component layer: `essentials_app`, `essentials_partner`, `essentials_auth`, and `shared/essentials/*`. |
+
+## Phase 2 — Area by area (2026-08-17)
+
+Each commit moves one area onto the new shell and leaves the rest untouched.
+
+| Commit | Area |
+| --- | --- |
+| `d2a2ed4ec` | Dashboard |
+| `f35dca40a` | Authentication |
+| `0e4e811aa` | Storage locations |
+| `a5e7f044a` | Vendors, manufacturers, donation sites, product drive participants |
+| `f02fbdd0d` | Donations |
+| `f2e1963f7` | Purchases; the "add a new one" modals became native `<dialog>` |
+| `39b24a53f` | Product drives, barcode items, item categories |
+| `db4dba1bd` | Requests |
+| `587ef132d` | Distributions |
+| `6f6f6252c` | Transfers and adjustments |
+| `eaf175fac` | Items, kits, audits — inventory complete |
+| `1a20d6e64` | Bank-side partner management |
+| `691d662ad` | Partner portal shell and profile partials |
+| `0b27c58da` | Partner portal |
+| `007c4d41a` | The remaining bank-side areas |
+| `f3a0f2b42` | Indentation autocorrect after the sweep |
+| `71ed53360` | Icons, error pages, account request flow |
+
+## Phase 3 — Removing the old stack (2026-08-17)
+
+| Commit | Change |
+| --- | --- |
+| `cda053539` | Deleted the Bootstrap/AdminLTE view layer: five layouts, four navbar and sidebar partials. |
+| `3efdd73a2` | Removed Bootstrap, AdminLTE, sass-rails, bootstrap-select and the Font Awesome CDNs from the `Gemfile`, the asset path and the importmap. |
+
+After this point a legacy class is a defect, not a page awaiting its turn: nothing defines
+those class names any more, so they render as nothing at all.
+
+## Phase 4 — What removal exposed (2026-08-18)
+
+Deleting the old stack turned silent breakage loud. The system specs went from 298 failures to
+zero across these commits; several were pre-existing bugs the old markup had been hiding.
+
+| Commit | Change |
+| --- | --- |
+| `4a50aa72d` | Helpers, icons, the last accessibility fixes. |
+| `93d8295a5` | The Bootstrap markup the browser sweep never reached. |
+| `2c3341476` | `design.md` rewritten as the Tailwind specification. |
+| `4db829472` | Test clock shim, confirm mechanism, flash hooks. |
+| `f5611e000` | Admin navigation and the staging warning restored. |
+| `62ef1a7ce` | Four broken controls; the partner show page's structure. |
+| `b0d6169b9` | **Approve partner posted to a GET route.** A pre-existing bug. |
+| `415719d7f` | **The distribution confirmation never ran**, and forms submitted with `<input>`. Pre-existing. |
+| `8942e5a69` | Cold-start empty states given their own wording; two stale globals fixed. |
+| `2b1a7496e` | Spec selectors retargeted at what they mean, not at styling. |
+| `86b4f9eeb` | Three defects in the admin area; select2 had no stylesheet. |
+| `f0dfb990d` | The account request form's reveal. |
+| `18204c6bd` | **The partner profile form's fields were outside the form.** Pre-existing. |
+| `8d4b8b742` | Request specs updated to the migration's copy. |
+| `8d5f93060` | The date picker is asked whether it is open, rather than trusting a global. |
+| `ee1d8b410` | Decisions from the system spec pass recorded. |
+| `d49e4ce5d` | The last classes that draw nothing; browser sweep checked in. |
+| `6077ba541` | Wait for the date picker before typing into it. |
+
+## Phase 5 — Error pages and local access (2026-08-18)
+
+| Commit | Change |
+| --- | --- |
+| `7cd23ab5b`, `1ef1dcb26` | `403`, `404`, `422` and `500` rebuilt as self-contained documents: inline tokens, vendored typeface, no stylesheet or script, because they must render when the app cannot. |
+| `839bcf57b` | Behind a proxy, relax the CSRF origin check rather than forcing https. Forcing `assume_ssl` broke plain-http port forwarding with "Your session expired". |
+
+## Phase 6 — Documentation (2026-08-18)
+
+| Commit | Change |
+| --- | --- |
+| `20c0b0587` | `design.md` made to stand on its own, opening with the domain rather than the components. |
+| `fee6f6090` | `migration-map.md` added. |
+| `e3092bf80` | `onboarding.md` added (maintainers). |
+| `dffb25b7f` | Keeping these documents current made a standing instruction in `CLAUDE.md`. |
+| `dfb7b8f89` | `domain-model.md` added, read off the models rather than recalled. |
+| `b5bc183e6`, `57e8cddc3` | The last references to the design system's origin app removed, including from the ADRs; one sentence mangled by that edit repaired. |
+| `f61d7a22e` | The user-facing half of `onboarding.md`. |
+| `dbe7418b1` | **Four invisible icons** on the bank-side partner profile editor. Found by grepping for undefined classes, not by the tooling. |
+
+---
+
+## Current state
+
+Measured on 2026-08-18 as of `dbe7418b1`, the last entry above. Re-run the commands in
+[migration-map.md](migration-map.md#verifying-a-migration) to check them.
+
+| | |
+| --- | --- |
+| Commits on the branch | 52 |
+| Files changed against `main` | 604 |
+| Controllers on a design system layout | 63 of 65 |
+| Views carrying design system markup | 299 of 392 |
+| Stimulus controllers | 30 |
+| Undefined legacy classes left in `app/views` | 0 |
+
+The 93 views without design system markup are not a backlog. 55 are ten lines or fewer, 39 are
+partials, 12 are mailer templates, and two are the `static/` marketing pages that are
+deliberately outside the app shell. The remainder carry no markup of their own: chart
+configuration, the `<head>` partial, and simple_form field lists whose markup comes from the
+`:essentials` wrapper.
+
+### Known inert leftovers
+
+Not defects — they render nothing and change nothing — but they are still there:
+
+- `class: 'form-horizontal'` on 12 forms. A Bootstrap 4 class that Bootstrap 5 had already
+  dropped, so it was doing nothing before this work either. Left in place because removing it
+  means editing option hashes rather than substituting a token, and that is the kind of edit
+  that has already broken markup once on this branch.
+
+---
+
+## Keeping this current
+
+Add an entry in the same change that makes it. One row: the commit, and what changed in a
+sentence that will still mean something in a year.
+
+- A **decision** — a judgement call someone could reasonably have made differently — goes in
+  [design-decisions.md](design-decisions.md) as well, with its reasoning.
+- A change to **how screens are built** updates [design.md](../design.md).
+- A change to **what replaced what** updates [migration-map.md](migration-map.md).
+- A change to the **models or their relationships** updates [domain-model.md](domain-model.md).
+
+If a number appears in any of these documents, measure it before you write it down. Counts in
+these documents have been wrong when they were recalled instead of counted, including twice
+during the migration itself — which is why the verification commands are written down rather
+than left as something you are supposed to remember.
