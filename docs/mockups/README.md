@@ -1,0 +1,17 @@
+# Mockups
+
+Design proposals that were shown before anything was built. They are checked in because they
+are the record of what was offered and chosen, and because this workspace has been reset out
+from under the work more than once.
+
+Each one loads the app's real stylesheet (`/assets/tailwind.css`), so it has to be served by the
+app rather than opened from disk:
+
+```bash
+cp docs/mockups/<file>.html public/    # ignored by git; the tracked copy is the one here
+# then open http://localhost:3000/<file>.html
+```
+
+| Mockup | Question it was made to answer | Outcome |
+| --- | --- | --- |
+| `reports-options.html` | How much should a reports hub card carry, and what does an index page look like once its summary report is folded into it? | Pending |

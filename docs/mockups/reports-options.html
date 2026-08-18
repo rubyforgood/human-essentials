@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reports — preview before building</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body { background:#f8fafc; }
+  .frame { border:1px solid #cbd5e1; border-radius:14px; overflow:hidden; background:#fff; }
+  .frame > figcaption { padding:10px 16px; font-size:12px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#475569; }
+  .frame > .body { padding:20px; }
+  .pick > figcaption { background:#ecfdf5; color:#065f46; }
+  .rule { border-left:3px solid #4f46e5; background:#eef2ff; padding:14px 18px; border-radius:0 10px 10px 0; }
+  .warn { border-left:3px solid #d97706; background:#fffbeb; padding:14px 18px; border-radius:0 10px 10px 0; }
+</style></head>
+<body class="text-slate-900">
+<div class="mx-auto max-w-6xl px-8 py-10 space-y-12">
+
+  <header>
+    <h1 class="text-3xl font-bold tracking-tight">Reports — preview before building</h1>
+    <p class="mt-2 max-w-3xl text-slate-600">Nothing here is implemented. Two decisions to make:
+      how much the hub cards carry, and what an index page looks like once its summary is folded
+      into it. Real figures from your seeded organization throughout.</p>
+  </header>
+
+  <!-- ================= PART 1: CARD DENSITY ================= -->
+  <section class="space-y-5">
+    <h2 class="text-xl font-semibold">1. How much should a hub card carry?</h2>
+    <p class="max-w-3xl text-slate-600">Bare links were flat. A sentence each was too heavy.
+      Three points in between, all six-card and all above the fold.</p>
+
+    <figure class="frame">
+      <figcaption>V1 — a short qualifier per report</figcaption>
+      <div class="body">
+        <div class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+              <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-truck"></i></span>
+              <h3 class="text-sm font-semibold">Distributions</h3>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">Itemized</a><span class="text-xs text-slate-500">by item and partner</span></li>
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">Trends</a><span class="text-xs text-slate-500">12 months</span></li>
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">By county</a><span class="text-xs text-slate-500">geographic</span></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+              <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-gift"></i></span>
+              <h3 class="text-sm font-semibold">Donations</h3>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">Itemized</a><span class="text-xs text-slate-500">by item</span></li>
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">Trends</a><span class="text-xs text-slate-500">12 months</span></li>
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">From manufacturers</a><span class="text-xs text-slate-500">source filtered</span></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+              <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-clock-history"></i></span>
+              <h3 class="text-sm font-semibold">Activity</h3>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">Activity graph</a><span class="text-xs text-slate-500">in vs out</span></li>
+              <li class="flex items-baseline justify-between gap-3 py-2"><a href="#" class="font-medium text-brand-700 hover:underline">History</a><span class="text-xs text-slate-500">event log</span></li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">Three of six shown. The qualifier is 2&ndash;4 words,
+          right-aligned so the report names still form a scannable column.</p>
+      </div>
+    </figure>
+
+    <figure class="frame pick">
+      <figcaption>V2 — qualifier plus an output-type icon &nbsp;·&nbsp; my recommendation</figcaption>
+      <div class="body">
+        <div class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-truck"></i></span>
+                <h3 class="text-sm font-semibold">Distributions</h3>
+              </div>
+              <span class="text-xs text-slate-400">3</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-table shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Itemized</span><span class="block text-xs text-slate-500">by item and partner</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-graph-up shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Trends</span><span class="block text-xs text-slate-500">12 months, chart</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-geo-alt shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">By county</span><span class="block text-xs text-slate-500">geographic totals</span></span></a></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-gift"></i></span>
+                <h3 class="text-sm font-semibold">Donations</h3>
+              </div>
+              <span class="text-xs text-slate-400">3</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-table shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Itemized</span><span class="block text-xs text-slate-500">by item</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-graph-up shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Trends</span><span class="block text-xs text-slate-500">12 months, chart</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-building shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">From manufacturers</span><span class="block text-xs text-slate-500">manufacturer sourced only</span></span></a></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-file-earmark-text"></i></span>
+                <h3 class="text-sm font-semibold">Compliance</h3>
+              </div>
+              <span class="text-xs text-slate-400">1</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-clipboard-data shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Annual survey</span><span class="block text-xs text-slate-500">one page per year, for NDBN</span></span></a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">The icon says what you get &mdash; table, chart, map,
+          form &mdash; which is the thing you are actually choosing between. Two lines per report,
+          no sentences. Cards fill without looking padded.</p>
+      </div>
+    </figure>
+
+    <figure class="frame">
+      <figcaption>V3 — qualifier, icon, and a live figure</figcaption>
+      <div class="body">
+        <div class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-truck"></i></span>
+                <h3 class="text-sm font-semibold">Distributions</h3>
+              </div>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">215,949 items</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-table shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Itemized</span><span class="block text-xs text-slate-500">by item and partner</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-graph-up shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Trends</span><span class="block text-xs text-slate-500">12 months, chart</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-geo-alt shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">By county</span><span class="block text-xs text-slate-500">geographic totals</span></span></a></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-gift"></i></span>
+                <h3 class="text-sm font-semibold">Donations</h3>
+              </div>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">23,544 items</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-table shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Itemized</span><span class="block text-xs text-slate-500">by item</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-graph-up shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Trends</span><span class="block text-xs text-slate-500">12 months, chart</span></span></a></li>
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-building shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">From manufacturers</span><span class="block text-xs text-slate-500">manufacturer sourced only</span></span></a></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="bi-cart"></i></span>
+                <h3 class="text-sm font-semibold">Purchases</h3>
+              </div>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">$2,393.66</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100 text-sm">
+              <li class="py-2"><a href="#" class="group flex items-center gap-2.5"><i class="bi-graph-up shrink-0 text-slate-400"></i><span class="min-w-0 flex-1"><span class="block font-medium text-brand-700 group-hover:underline">Trends</span><span class="block text-xs text-slate-500">12 months, chart</span></span></a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">Real figures, all-time. Attractive, but it makes a
+          menu run six aggregate queries, the numbers duplicate what the index pages will now show,
+          and an all-time figure next to a date-ranged report invites a wrong reading.</p>
+      </div>
+    </figure>
+
+    <div class="rule">
+      <p><strong>I would take V2.</strong> The icon carries the thing you are actually choosing
+        between &mdash; table, chart, map, form &mdash; so the card gains meaning rather than
+        decoration, and no report needs a sentence. V3 looks best in a screenshot and is the one
+        I would regret: numbers on a menu that are subtly not the numbers on the page they lead to.</p>
+    </div>
+  </section>
+
+  <!-- ================= PART 2: FOLDED INDEX ================= -->
+  <section class="space-y-5">
+    <h2 class="text-xl font-semibold">2. What #1 does to an index page</h2>
+
+    <div class="warn">
+      <p class="font-medium">The figures already exist on the index. They are in a table footer.</p>
+      <p class="mt-1 text-sm"><code>/distributions</code> already computes
+        <code>@total_items_all_distributions</code> and <code>@total_value_all_distributions</code>
+        and prints them in a <code>&lt;tfoot&gt;</code>, split into &ldquo;this page&rdquo; and
+        &ldquo;all distributions&rdquo;. So folding the summary in is mostly promoting numbers that
+        are already there to somewhere you would look for them.</p>
+    </div>
+
+    <figure class="frame pick">
+      <figcaption>Proposed — /distributions with the summary folded in</figcaption>
+      <div class="body space-y-4">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight">Distributions</h1>
+            <p class="text-sm text-slate-600">Essentials sent to partner agencies.</p>
+          </div>
+          <div class="flex gap-2">
+            <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700"><i class="bi-download"></i>Export</span>
+            <span class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white"><i class="bi-plus-lg"></i>New distribution</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-3">
+          <span class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-600">Date range</span>
+          <span class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-600">Partner</span>
+          <span class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-600">Item</span>
+          <span class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-600">Storage location</span>
+          <span class="text-sm text-slate-400">+3 more</span>
+          <span class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white"><i class="bi-funnel"></i>Filter</span>
+        </div>
+
+        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight">24</dd></div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight">215,949</dd></div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight">$86,379</dd></div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Partners served</dt><dd class="mt-1 text-2xl font-bold tracking-tight">6</dd></div>
+        </dl>
+        <p class="-mt-2 text-xs text-slate-500">These respond to the filters above. That is the
+          whole point: the totals describe what you are looking at.</p>
+
+        <div class="overflow-hidden rounded-2xl border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Partner</th><th>Date of distribution</th><th>Source inventory</th><th>Delivery method</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>1042</td><td>Pawnee Homeless Shelter</td><td>18 Aug 2026</td><td>Main warehouse</td><td>Delivery</td><td><span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Complete</span></td><td class="text-right text-xs text-slate-500">View · Print</td></tr>
+              <tr><td>1041</td><td>Pawnee Middle School</td><td>17 Aug 2026</td><td>Main warehouse</td><td>Pick up</td><td><span class="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700">Scheduled</span></td><td class="text-right text-xs text-slate-500">View · Print</td></tr>
+              <tr><td>1040</td><td>Second Street Outreach</td><td>16 Aug 2026</td><td>Annex</td><td>Delivery</td><td><span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Complete</span></td><td class="text-right text-xs text-slate-500">View · Print</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </figure>
+
+    <div class="rule space-y-2">
+      <p><strong>What changes.</strong> Four summary report pages are deleted; their figures move
+        to the top of the index pages, driven by the filters already there. The old URLs redirect
+        to the index so bookmarks and any funder&rsquo;s saved link keep working.</p>
+      <p><strong>What I would ask you first:</strong> the <code>&lt;tfoot&gt;</code> currently shows
+        &ldquo;this page&rdquo; and &ldquo;all distributions&rdquo; separately. The band above shows
+        the filtered set. Keeping both is confusing; I would drop the footer and let the band be
+        the answer &mdash; but that is a change to a number people may already rely on, so I would
+        rather you say.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">To build</h2>
+    <p class="text-slate-600">Tell me: <strong>V1, V2 or V3</strong> for the cards, and whether the
+      <code>&lt;tfoot&gt;</code> totals stay or go. I will revert the fifteen-tile commit as part of it.</p>
+  </section>
+
+</div></body></html>
