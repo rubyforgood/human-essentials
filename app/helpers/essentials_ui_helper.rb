@@ -201,11 +201,10 @@ module EssentialsUiHelper
   # Text inputs and date pickers: even padding.
   FILTER_CONTROL_CLASSES = "#{FILTER_CONTROL_BASE} px-3"
 
-  # Selects: the browser draws the chevron inside the right padding, so `px-3` leaves the
-  # longest option ("Recertification required (1)") running into it. `pr-10` reserves the room.
-  # Written as pl-3 + pr-10 rather than px-3 + pr-10 because two utilities setting the same
-  # property resolve by stylesheet order, not by the order they appear in the attribute.
-  FILTER_SELECT_CLASSES = "#{FILTER_CONTROL_BASE} pl-3 pr-10"
+  # Selects: `pr-10` reserves room so the longest option ("Recertification required (1)") does
+  # not run under the chevron, and `.filter-select` replaces the native arrow with one we can
+  # position -- the native one sits 4px from the border whatever the padding says.
+  FILTER_SELECT_CLASSES = "#{FILTER_CONTROL_BASE} filter-select pl-3 pr-10"
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 

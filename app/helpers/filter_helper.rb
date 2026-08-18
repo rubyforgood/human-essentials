@@ -19,6 +19,24 @@ module FilterHelper
         {class: EssentialsUiHelper::FILTER_SELECT_CLASSES, id: id})
   end
 
+  # A select whose options fall into kinds: a default, a whole-collection option, and then the
+  # individual values. The <optgroup> is what says they are different kinds of thing -- without
+  # it "All" and "Approved" sit in one flat list looking like peers, which they are not.
+  #
+  #   filter_grouped_select(label: "Status", scope: :by_status,
+  #                         blank: "Active (6)", ungrouped: [["All (7)", "all"]],
+  #                         groups: {"By status" => [["Invited (2)", "invited"], ...]})
+  def filter_grouped_select(scope:, groups:, label: nil, blank: true, ungrouped: [], selected: nil)
+    label ||= "Filter #{scope.to_s.tr("_", " ")}"
+    id = "filters_#{scope}_#{SecureRandom.uuid}"
+
+    options = options_for_select(ungrouped, selected) + grouped_options_for_select(groups, selected)
+
+    label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
+      select_tag("filters[#{scope}]", options,
+        include_blank: blank, class: EssentialsUiHelper::FILTER_SELECT_CLASSES, id: id)
+  end
+
   def filter_text(scope:, label: nil, selected: nil)
     label ||= "Filter #{scope.to_s.tr("_", " ")}"
     id = "filters_#{scope}_#{SecureRandom.uuid}"

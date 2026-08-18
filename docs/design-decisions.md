@@ -614,3 +614,47 @@ Found: "Recertification required" was wrapping to two lines, and a wrapped pill 
 across both lines, so the icon sat between them looking misaligned. The icon was part of what
 pushed it over the width. Pills now carry `whitespace-nowrap` regardless, because a pill is a
 label and a label that reflows is a layout accident, not a design.
+
+## 2026-08-18 · Order the status filter by lifecycle, not alphabetically
+
+Asked whether the dropdown should be alphabetical. No — and the reason generalises.
+
+Alphabetical order helps when a list is long and its values have no inherent sequence: countries,
+partners, item names. You arrive knowing the label and need to find it. A status enum is the
+opposite: six values, and they happen in an order. Uninvited, invited, awaiting review, approved,
+recertification required, deactivated is the path a partner actually walks. Alphabetising it
+gives approved, awaiting review, deactivated, invited, recertification required, uninvited, which
+scatters the sequence and puts the end state third. GitHub, Jira and Linear all keep workflow
+states in workflow order for the same reason.
+
+The order is the enum's own declaration order, so the filter cannot drift from the model.
+
+What was wrong was not the order but that three kinds of option sat in one flat list, so "All"
+and "Approved" looked like peers. They are now separated with an `<optgroup>`: the default view
+and the whole collection at the top, then "By status" over the six. `filter_grouped_select` is
+the helper for this shape.
+
+## 2026-08-18 · Hide a progressively-enhanced control in the markup, not on connect
+
+The Filter button flashed on every page load and, because auto-submit navigates, on every
+selection. It was rendered visible and hidden by Stimulus on connect, so the browser painted it
+and took it away a frame later.
+
+Hiding it server-side with an inline `display:none` and restoring it from a `<noscript>` rule
+inverts the default: it is hidden unless JavaScript is *absent*, rather than visible until
+JavaScript arrives. Same behaviour without JavaScript, no flash with it.
+
+The general rule: if a control's resting state depends on JavaScript being present, render the
+resting state and let `<noscript>` undo it. Anything a controller does on connect happens after
+first paint, and the user sees it.
+
+## 2026-08-18 · Known flake: DonationSite CSV export specs query globally
+
+`spec/models/donation_site_spec.rb` asserts on `DonationSite.active` with no organization scope
+and then indexes the result positionally (`csv_data.first`, `.second`). Any other spec that
+leaves a donation site behind breaks it, and nothing pins the order.
+
+It fails on `--seed 57005` in a full run and passes in isolation on the same seed. Verified
+pre-existing: it fails identically on the design branch without any of the filter work, and the
+file is untouched by it. Recorded rather than fixed because it belongs to a different piece of
+work, and a flake that is written down costs the next person minutes instead of an afternoon.

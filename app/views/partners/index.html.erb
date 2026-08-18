@@ -17,9 +17,11 @@
 
   <%= render "shared/essentials/filter_bar", url: partners_path, auto_submit: true, clear: false do %>
     <div class="min-w-[15rem]">
-      <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
-            key: :last, value: :first, selected: params.dig(:filters, :by_status),
-            include_blank: "Active (#{@active_partner_count})") %>
+      <%= filter_grouped_select(label: "Status", scope: :by_status,
+            blank: @partner_status_default,
+            ungrouped: @partner_status_all,
+            groups: {"By status" => @partner_status_options},
+            selected: params.dig(:filters, :by_status)) %>
     </div>
   <% end %>
 

@@ -13,8 +13,12 @@
     auto_submit: true   Apply as soon as a control changes, and hide the Filter button.
                         For bars with ONE filter. With several, auto-applying each control
                         fires a query per keystroke of thought, so those keep the button.
-                        The button stays in the markup and is hidden by Stimulus, so the
-                        form still works without JavaScript.
+
+                        The button is hidden server-side, in the markup, and revealed again
+                        by a <noscript> rule. Hiding it from JavaScript on connect meant it
+                        was painted first and removed a frame later, so it flashed on every
+                        load and on every selection -- the auto-submit navigation re-renders
+                        the page, so the flash happened each time.
 
     clear: false        Drop "Clear filters". Redundant when a single select's first option
                         is itself the unfiltered view -- choosing it is the reset.
@@ -24,11 +28,18 @@
 <% clear = local_assigns.fetch(:clear, true) %>
 <%= form_tag url, method: :get, class: "mb-4",
       data: (auto_submit ? {controller: "auto-submit", action: "change->auto-submit#submit"} : {}) do %>
+  <% if auto_submit %>
+    <%# Without JavaScript nothing submits the form on change, so the button has to come back. %>
+    <noscript>
+      <style>.filter-bar-submit { display: inline-flex !important; }</style>
+    </noscript>
+  <% end %>
   <div class="flex flex-wrap items-end gap-3">
     <%= yield %>
     <div class="flex items-center gap-2">
-      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>"
-              <%= "data-auto-submit-target=submit" if auto_submit %>>
+      <button type="submit"
+              class="filter-bar-submit <%= essentials_button_classes(variant: :primary, size: :md) %>"
+              <%= tag.attributes(style: "display:none") if auto_submit %>>
         <i class="bi-funnel" aria-hidden="true"></i>Filter
       </button>
       <% if clear %>

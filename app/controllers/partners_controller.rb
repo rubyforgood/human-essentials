@@ -35,11 +35,15 @@ class PartnersController < ApplicationController
     @active_partner_count = @partner_status_counts.except("deactivated").values.sum
     # [label, value] pairs for the status filter. Counts travel in the label so the list still
     # answers "how many are waiting on me?" without a row of chips above the table.
-    @partner_status_options =
-      [["All (#{@partner_status_counts.values.sum})", ALL_STATUSES]] +
-      current_organization.partners.statuses.keys.map do |status|
-        ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
-      end
+    # Three kinds of option, kept apart so the view can group them: the default view, the
+    # whole collection, and the individual statuses. Statuses stay in the enum's own order,
+    # which is the lifecycle -- uninvited, invited, awaiting review, approved, recertification
+    # required, deactivated. Alphabetising them would scatter that sequence for no gain.
+    @partner_status_default = "Active (#{@active_partner_count})"
+    @partner_status_all = [["All (#{@partner_status_counts.values.sum})", ALL_STATUSES]]
+    @partner_status_options = current_organization.partners.statuses.keys.map do |status|
+      ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
+    end
 
     respond_to do |format|
       format.html
