@@ -109,7 +109,7 @@ RSpec.feature "Distributions", type: :system do
 
       click_button "Save"
 
-      expect(page).to have_css('[data-flash='error']', text: /partner/i)
+      expect(page).to have_css("[data-flash='error']", text: /partner/i)
 
       # Fix validation error by filling in a partner
       select "Test Partner", from: "Partner"
@@ -330,7 +330,7 @@ RSpec.feature "Distributions", type: :system do
 
     click_button "Save", match: :first
 
-    expect(page).to have_css('[data-flash='error']', text: /storage location/i)
+    expect(page).to have_css("[data-flash='error']", text: /storage location/i)
 
     # 4438- Bug Fix
     select storage_location.name, from: "From storage location"
@@ -733,7 +733,7 @@ RSpec.feature "Distributions", type: :system do
         barcode_value = "123123123321"
         Barcode.boop(barcode_value)
 
-        within ".modal-content" do
+        within "dialog[open]" do
           page.fill_in "Quantity", with: "51"
           select "VerySpecificItem", from: "Item"
           click_on "Save"

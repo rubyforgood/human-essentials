@@ -294,7 +294,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Product Drive---", from: "donation_product_drive_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Product Drive")
 
           fill_in "product_drive_name", with: "drivenametest"
@@ -307,7 +307,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Product Drive Participant")
 
           fill_in "product_drive_participant_business_name", with: "businesstest"
@@ -325,7 +325,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Product Drive Participant")
 
           fill_in "product_drive_participant_business_name", with: ""
@@ -358,7 +358,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select "---Create new Manufacturer---", from: "donation_manufacturer_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Manufacturer")
 
           fill_in "manufacturer_name", with: "nametest"
@@ -385,12 +385,12 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:donation_site], from: "donation_source"
           select "---Create New Donation Site---", from: "donation_donation_site_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Donation Site")
 
           fill_in "donation_site_name", with: "Test Donation Site"
           fill_in "donation_site_address", with: "Test Address"
-          within(".modal-content") { click_button "Save" }
+          within("dialog[open]") { click_button "Save" }
           select "Test Donation Site", from: "donation_donation_site_id"
         end
 

@@ -115,7 +115,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         it "User can create vendor from purchase" do
           select "---Not Listed---", from: "purchase_vendor_id"
 
-          find(".modal-content")
+          find("dialog[open]")
           expect(page).to have_content("New Vendor")
 
           fill_in "vendor_business_name", with: "businesstest"
@@ -321,9 +321,9 @@ RSpec.describe "Purchases", type: :system, js: true do
             Barcode.boop(new_barcode_value)
           end
 
-          expect(page.find(".modal-title").text).to eq("Add New Barcode")
+          expect(page.find("dialog[open] h2").text).to eq("Add New Barcode")
 
-          within ".modal-content" do
+          within "dialog[open]" do
             fill_in "barcode_item_quantity", with: 3
             select Item.alphabetized.first.name, from: "barcode_item_barcodeable_id"
             find("button", text: "Save").click

@@ -23,6 +23,35 @@
     <main id="main-content" class="flex w-full flex-col justify-center px-6 py-12 lg:w-1/2 lg:px-16">
       <div class="mx-auto w-full max-w-sm">
         <img src="/img/essentials.svg" alt="Human Essentials" class="mb-8 h-10 w-auto lg:hidden">
+
+        <%#
+          Staging warning. The AdminLTE version was a Bootstrap `.modal fade` that nothing ever
+          opened -- there was no JS anywhere in the repo referencing it -- plus a checkbox that
+          gated a permanently `disabled` button. It only "worked" because the modal CSS was not
+          loaded on that layout, so it rendered as plain visible text.
+
+          A warning nobody can dismiss should not pretend to be dismissable: this is a callout,
+          always visible on the page it warns about.
+        %>
+        <% if Rails.env.staging? %>
+          <div id="staging-warning" role="alert"
+               class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p class="flex items-start gap-2 font-semibold">
+              <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+              This site is for TEST purposes only!
+            </p>
+            <p class="mt-2">
+              You are on staging.humanessentials.app, a demo site for
+              <%= link_to "humanessentials.app", "https://humanessentials.app", class: "font-medium underline" %>.
+              It is not safe to upload, enter or save any sensitive data here.
+            </p>
+            <p class="mt-2">
+              To sign in to your live account, go to
+              <%= link_to "humanessentials.app/users/sign_in", "https://humanessentials.app/users/sign_in", class: "font-medium underline" %>.
+            </p>
+          </div>
+        <% end %>
+
         <%= render "shared/essentials/flash" %>
         <%= yield %>
       </div>

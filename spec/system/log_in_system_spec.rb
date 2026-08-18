@@ -38,7 +38,7 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
   end
 
-  describe 'Showing the modal warning in staging' do
+  describe 'Showing the staging warning' do
     ["/users/sign_in", "/users/password/new"].each do |path|
       context "when accessing #{path} in the staging environment" do
         before do
@@ -46,7 +46,7 @@ RSpec.describe "Authentication", type: :system, js: true do
           visit path
         end
 
-        it 'should render the modal' do
+        it 'should render the warning' do
           expect(page).to have_content 'This site is for TEST purposes only!'
         end
       end
@@ -57,8 +57,8 @@ RSpec.describe "Authentication", type: :system, js: true do
           visit path
         end
 
-        it 'should not render the modal' do
-          page.assert_no_selector('#warningModal')
+        it 'should not render the warning' do
+          page.assert_no_selector("#staging-warning")
         end
       end
     end

@@ -67,7 +67,7 @@ RSpec.describe "Kit management", type: :system do
       select(Item.last.name, from: "barcode_item[barcodeable_id]")
     end
 
-    within ".modal-footer" do
+    within "dialog[open]" do
       click_button "Save"
     end
 

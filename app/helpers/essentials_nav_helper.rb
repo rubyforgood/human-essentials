@@ -92,6 +92,32 @@ module EssentialsNavHelper
     ].reject { |group| group.items.empty? }
   end
 
+  # --- Super admin ----------------------------------------------------------
+  #
+  # The admin area is a separate app in everything but routing: none of the bank navigation
+  # applies to it, and a super admin standing in /admin needs the admin destinations. Flat,
+  # because there are nine of them.
+  def essentials_admin_nav_items
+    [
+      NavItem.new(label: "Admin dashboard", path: admin_dashboard_path, active_on: %w[admin]),
+      NavItem.new(label: "Account requests", path: admin_account_requests_path, active_on: %w[admin/account_requests]),
+      NavItem.new(label: "Organizations", path: admin_organizations_path, active_on: %w[admin/organizations]),
+      NavItem.new(label: "NDBN member upload", path: admin_ndbn_members_path, active_on: %w[admin/ndbn_members]),
+      NavItem.new(label: "Partners", path: admin_partners_path, active_on: %w[admin/partners]),
+      NavItem.new(label: "Users", path: admin_users_path, active_on: %w[admin/users]),
+      NavItem.new(label: "Base items", path: admin_base_items_path, active_on: %w[admin/base_items]),
+      NavItem.new(label: "Barcode items", path: admin_barcode_items_path, active_on: %w[admin/barcode_items]),
+      NavItem.new(label: "Announcements", path: admin_broadcast_announcements_path, active_on: %w[admin/broadcast_announcements]),
+      NavItem.new(label: "FAQ", path: admin_questions_path, active_on: %w[admin/questions])
+    ]
+  end
+
+  # Is the user standing in the admin area? The admin rail replaces the bank rail there
+  # rather than sitting beside it -- two full navigations in one sidebar is not navigation.
+  def essentials_admin_area?
+    params[:controller].to_s.start_with?("admin")
+  end
+
   # --- Partner portal -------------------------------------------------------
   #
   # The partner rail is short enough to stay flat: seven destinations at most, so there is

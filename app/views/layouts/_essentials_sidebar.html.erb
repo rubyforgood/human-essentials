@@ -22,20 +22,37 @@
   </div>
 
   <nav class="flex flex-1 flex-col overflow-y-auto px-3 pb-4" aria-label="Main">
-    <ul class="mt-3 space-y-0.5">
-      <%= render "layouts/essentials_nav_link", item: essentials_nav_dashboard %>
-    </ul>
+    <%# The admin area gets its own destinations. None of the bank navigation applies there,
+        and stacking both would be two full navigations in one rail. %>
+    <% if essentials_admin_area? %>
+      <ul class="mt-3 space-y-0.5">
+        <% essentials_admin_nav_items.each do |item| %>
+          <%= render "layouts/essentials_nav_link", item: item %>
+        <% end %>
+      </ul>
 
-    <% essentials_nav_groups.each do |group| %>
-      <%= render "layouts/essentials_nav_group", group: group %>
-    <% end %>
-
-    <% if (settings = essentials_nav_settings) %>
       <div class="mt-auto border-t border-slate-200 pt-4">
         <ul class="space-y-0.5">
-          <%= render "layouts/essentials_nav_link", item: settings %>
+          <%= render "layouts/essentials_nav_link",
+                item: EssentialsNavHelper::NavItem.new(label: "Leave admin", path: dashboard_path, active_on: []) %>
         </ul>
       </div>
+    <% else %>
+      <ul class="mt-3 space-y-0.5">
+        <%= render "layouts/essentials_nav_link", item: essentials_nav_dashboard %>
+      </ul>
+
+      <% essentials_nav_groups.each do |group| %>
+        <%= render "layouts/essentials_nav_group", group: group %>
+      <% end %>
+
+      <% if (settings = essentials_nav_settings) %>
+        <div class="mt-auto border-t border-slate-200 pt-4">
+          <ul class="space-y-0.5">
+            <%= render "layouts/essentials_nav_link", item: settings %>
+          </ul>
+        </div>
+      <% end %>
     <% end %>
   </nav>
 </aside>
