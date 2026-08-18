@@ -31,7 +31,7 @@
             kind: essentials_filtered? ? :no_results : :cold_start,
             title: essentials_filtered? ? "No storage locations match those filters" : "No storage locations yet",
             body: essentials_filtered? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
-            action: essentials_filtered? ? nil : essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
+            action: essentials_filtered? ? nil : essentials_link_button("Add your first storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

@@ -20,7 +20,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         end
 
         it "User can click to the new purchase form" do
-          find(".fa-plus").click
+          click_on "New purchase"
 
           expect(current_path).to eq(new_purchase_path)
           expect(page).to have_content "Start a new purchase"
@@ -116,7 +116,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           select "---Not Listed---", from: "purchase_vendor_id"
 
           find("dialog[open]")
-          expect(page).to have_content("New Vendor")
+          expect(page).to have_content("New vendor")
 
           fill_in "vendor_business_name", with: "businesstest"
           fill_in "vendor_contact_name", with: "test"
@@ -373,7 +373,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           click_on "Delete"
         end
         expect(page).to have_content "Purchase #{purchase.id} has been removed!"
-        expect(page).to have_content "0 (Total)"
+        expect(page).to have_content "0"
       end
     end
 

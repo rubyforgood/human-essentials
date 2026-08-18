@@ -27,7 +27,7 @@
       <%= render "shared/essentials/empty_state", kind: :cold_start,
             title: "No donation sites yet",
             body: "Add the places where donors can drop off essentials.",
-            action: essentials_link_button("New donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg") %>
+            action: essentials_link_button("Add your first donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

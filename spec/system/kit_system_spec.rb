@@ -258,12 +258,12 @@ RSpec.describe "Kit management", type: :system do
 
       # JavaScript modal should appear
       expect(page).to have_css("#duplicateItemsModal", visible: true)
-      expect(page).to have_content("Multiple Item Entries Detected")
-      expect(page).to have_content("Merge Items")
-      expect(page).to have_content("Make Changes")
+      expect(page).to have_content("Multiple item entries detected")
+      expect(page).to have_content("Merge items")
+      expect(page).to have_content("Make changes")
 
       # Test merge functionality
-      click_button "Merge Items"
+      click_button "Merge items"
 
       expect(page.find("[data-flash]")).to have_content "Kit created successfully"
       expect(page).to have_content(kit_traits[:name])

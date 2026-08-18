@@ -17,7 +17,7 @@
       <%= render "shared/essentials/empty_state", kind: :cold_start,
             title: "No manufacturers yet",
             body: "Add manufacturers so donations made directly by a company can be attributed to them.",
-            action: essentials_link_button("New manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg") %>
+            action: essentials_link_button("Add your first manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

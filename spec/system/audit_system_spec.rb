@@ -80,14 +80,14 @@ RSpec.describe "Audit management", type: :system, js: true do
           fill_in "audit_line_items_attributes_0_quantity", with: audit_quantity
 
           accept_confirm do
-            click_button "Confirm Audit"
+            click_button "Confirm audit"
           end
           expect(page.find("[data-flash-tone='info']")).to have_content "Audit is confirmed"
           expect(page).to have_content(item.name)
-          expect(page).to have_content(audit_quantity)
+          expect(page).to have_content(ActiveSupport::NumberHelper.number_to_delimited(audit_quantity))
 
           accept_confirm do
-            click_button "Finalize Audit"
+            click_button "Finalize audit"
           end
           expect(page.find("[data-flash-tone='info']")).to have_content "Audit is Finalized"
 
@@ -149,7 +149,7 @@ RSpec.describe "Audit management", type: :system, js: true do
 
       it "should be able to save progress of an audit" do
         visit subject
-        click_link "New Audit"
+        click_link "New audit"
 
         await_select2("#audit_line_items_attributes_0_item_id") do
           select storage_location.name, from: "Storage location"
@@ -159,7 +159,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
         expect do
-          click_button "Save Progress"
+          click_button "Save progress"
           expect(Audit.last.in_progress?).to be_truthy
           expect(Audit.last.line_items.count).to be(1)
           expect(Audit.last.line_items.last.quantity).to be(quantity)
@@ -168,14 +168,14 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Audit's progress was successfully saved.")
         expect(page).to have_content(quantity)
         expect(page).to have_content("In Progress")
-        expect(page).not_to have_content("Finalize Audit")
-        expect(page).to have_content("Resume Audit")
-        expect(page).to have_content("Delete Audit")
+        expect(page).not_to have_content("Finalize audit")
+        expect(page).to have_content("Resume audit")
+        expect(page).to have_content("Delete audit")
       end
 
       it "should be able to confirm the audit from the #new page", js: true do
         visit subject
-        click_link "New Audit"
+        click_link "New audit"
 
         await_select2("#audit_line_items_attributes_0_item_id") do
           select storage_location.name, from: "Storage location"
@@ -184,23 +184,23 @@ RSpec.describe "Audit management", type: :system, js: true do
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
-        expect(page).to have_content("Confirm Audit")
+        expect(page).to have_content("Confirm audit")
         accept_confirm do
-          click_button "Confirm Audit"
+          click_button "Confirm audit"
         end
         expect(page).to have_content("Audit is confirmed.")
         expect(page).to have_content(quantity)
         expect(page).to have_content("Confirmed")
-        expect(page).not_to have_content("Resume Audit")
-        expect(page).to have_content("Delete Audit")
-        expect(page).to have_content("Finalize Audit")
+        expect(page).not_to have_content("Resume audit")
+        expect(page).to have_content("Delete audit")
+        expect(page).to have_content("Finalize audit")
       end
 
       it "detects duplicate items and shows modal", js: true do
         # Disable server-side validation to test JS modal
         allow_any_instance_of(Audit).to receive(:line_items_unique_by_item_id)
         visit subject
-        click_link "New Audit"
+        click_link "New audit"
 
         await_select2("#audit_line_items_attributes_0_item_id") do
           select storage_location.name, from: "Storage location"
@@ -222,18 +222,18 @@ RSpec.describe "Audit management", type: :system, js: true do
         end
 
         # Try to save - should trigger duplicate detection modal
-        click_button "Save Progress"
+        click_button "Save progress"
 
         # JavaScript modal should appear
         expect(page).to have_css("#duplicateItemsModal", visible: true)
-        expect(page).to have_content("Multiple Item Entries Detected")
-        expect(page).to have_content("Merge Items")
-        expect(page).to have_content("Make Changes")
+        expect(page).to have_content("Multiple item entries detected")
+        expect(page).to have_content("Merge items")
+        expect(page).to have_content("Make changes")
 
         # Test merge functionality
         audit_id = nil
         expect {
-          click_button "Merge Items"
+          click_button "Merge items"
           expect(page).to have_content("Audit's progress was successfully saved.")
           audit_id = Audit.maximum(:id)
         }.to change { Audit.count }.by(1)
@@ -255,10 +255,10 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
 
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Delete Audit")
+        expect(page).to have_content("Delete audit")
         expect do
           accept_confirm do
-            click_button "Delete Audit"
+            click_button "Delete audit"
           end
           expect(page).to have_content("Audit is successfully deleted.")
         end.to change { Audit.count }.by(-1)
@@ -268,25 +268,25 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
 
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Resume Audit")
-        click_link "Resume Audit"
-        expect(page).to have_content("Edit")
-        expect(page).to have_content("Confirm Audit")
-        expect(page).to have_content("Save Progress")
+        expect(page).to have_content("Resume audit")
+        click_link "Resume audit"
+        expect(page).to have_content("Resume audit")
+        expect(page).to have_content("Confirm audit")
+        expect(page).to have_content("Save progress")
       end
 
       it "should be able to confirm the audit from the #edit page" do
         visit edit_audit_path(audit)
-        expect(page).to have_content("Confirm Audit")
+        expect(page).to have_content("Confirm audit")
         accept_confirm do
-          click_button "Confirm Audit"
+          click_button "Confirm audit"
         end
         expect(page).to have_content("Audit is confirmed.")
         expect(page).to have_content(quantity)
         expect(page).to have_content("Confirmed")
-        expect(page).not_to have_content("Resume Audit")
-        expect(page).to have_content("Delete Audit")
-        expect(page).to have_content("Finalize Audit")
+        expect(page).not_to have_content("Resume audit")
+        expect(page).to have_content("Delete audit")
+        expect(page).to have_content("Finalize audit")
       end
     end
 
@@ -296,17 +296,17 @@ RSpec.describe "Audit management", type: :system, js: true do
 
       it "should be able to edit the audit that is confirmed" do
         visit subject
-        expect(page).not_to have_content("Resume Audit")
+        expect(page).not_to have_content("Resume audit")
       end
 
       it "User can delete the audit that is confirmed" do
         visit subject
 
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Delete Audit")
+        expect(page).to have_content("Delete audit")
         expect do
           accept_confirm do
-            click_button "Delete Audit"
+            click_button "Delete audit"
           end
           expect(page).to have_content("Audit is successfully deleted.")
         end.to change { Audit.count }.by(-1)
@@ -315,10 +315,10 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "is able to finalize the audit" do
         visit subject
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Finalize Audit")
+        expect(page).to have_content("Finalize audit")
         expect do
           accept_confirm do
-            click_button "Finalize Audit"
+            click_button "Finalize audit"
           end
           expect(page).to have_content("Audit is Finalized.")
         end.to change { Audit.finalized.count }.by(1)
@@ -330,10 +330,10 @@ RSpec.describe "Audit management", type: :system, js: true do
 
           visit subject
           expect(page).to have_content(quantity)
-          expect(page).to have_content("Finalize Audit")
+          expect(page).to have_content("Finalize audit")
           expect do
             accept_confirm do
-              click_button "Finalize Audit"
+              click_button "Finalize audit"
             end
             expect(page).to have_content("Audit is Finalized.")
           end.to change { storage_location.size }.by(quantity - item_quantity)
@@ -341,13 +341,13 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         it "is immutable" do
           visit subject
-          expect(page).to have_content("Finalize Audit")
+          expect(page).to have_content("Finalize audit")
           accept_confirm do
-            click_button "Finalize Audit"
+            click_button "Finalize audit"
           end
-          expect(page).not_to have_content("Resume Audit")
-          expect(page).not_to have_content("Delete Audit")
-          expect(page).not_to have_content("Finalize Audit")
+          expect(page).not_to have_content("Resume audit")
+          expect(page).not_to have_content("Delete audit")
+          expect(page).not_to have_content("Finalize audit")
           visit edit_audit_path(audit)
           expect(page).not_to have_current_path(edit_audit_path(audit))
           expect(page).to have_current_path(audits_path)
@@ -355,11 +355,11 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         it "should not be able to delete the audit that is finalized" do
           visit subject
-          expect(page).to have_content("Finalize Audit")
+          expect(page).to have_content("Finalize audit")
           accept_confirm do
-            click_button "Finalize Audit"
+            click_button "Finalize audit"
           end
-          expect(page).not_to have_content("Delete Audit")
+          expect(page).not_to have_content("Delete audit")
           # Actual Deletion(`delete :destroy`) Check is done in audits_controller_spec
         end
 
@@ -380,7 +380,7 @@ RSpec.describe "Audit management", type: :system, js: true do
             visit subject
             expect do
               accept_confirm do
-                click_button "Finalize Audit"
+                click_button "Finalize audit"
               end
               expect(page).to have_content("Audit is Finalized.")
             end.to change { storage_location.size }.by(quantity - item_quantity)

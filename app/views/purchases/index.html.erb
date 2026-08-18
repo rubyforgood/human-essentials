@@ -33,7 +33,7 @@
             kind: essentials_filtered? ? :no_results : :cold_start,
             title: essentials_filtered? ? "No purchases match those filters" : "No purchases recorded yet",
             body: essentials_filtered? ? "Clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
-            action: essentials_filtered? ? nil : essentials_link_button("New purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
+            action: essentials_filtered? ? nil : essentials_link_button("Record your first purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

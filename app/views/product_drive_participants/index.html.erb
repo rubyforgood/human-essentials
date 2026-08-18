@@ -21,7 +21,7 @@
       <%= render "shared/essentials/empty_state", kind: :cold_start,
             title: "No product drive participants yet",
             body: "Add the businesses and people who run drives for you, so their donations can be credited.",
-            action: essentials_link_button("New participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg") %>
+            action: essentials_link_button("Add your first participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

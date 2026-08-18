@@ -496,11 +496,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           end
 
           # Save Progress
-          all("input[type='submit'][value='Save Progress']").last.click
+          all("input[type='submit'][value='Save progress']").last.click
           expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
           # Save and Review
-          all("input[type='submit'][value='Save and Review']").last.click
+          all("input[type='submit'][value='Save and review']").last.click
           expect(current_path).to eq(partner_path(partner.id))
           expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
         end
@@ -528,7 +528,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           end
 
           # Save Progress
-          all("input[type='submit'][value='Save Progress']").last.click
+          all("input[type='submit'][value='Save progress']").last.click
 
           # Expect an alert-danger message containing validation errors
           expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
@@ -542,7 +542,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_css("#partner_settings", visible: :visible)
 
           # Try to Submit and Review from error state
-          all("input[type='submit'][value='Save and Review']").last.click
+          all("input[type='submit'][value='Save and review']").last.click
 
           # Expect an alert-danger message containing validation errors
           expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)

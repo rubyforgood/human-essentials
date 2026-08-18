@@ -37,7 +37,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
     it "can be exported in CSV" do
       visit subject
-      click_on "Export Requests"
+      click_on "Export"
 
       wait_for_download
       expect(downloads.length).to eq(1)
@@ -55,7 +55,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "displays all requests" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          click_on "Clear Filters"
+          click_on "Clear filters"
           expect(page).to have_css("table tbody tr", count: 5)
         end
       end
@@ -100,7 +100,7 @@ RSpec.describe "Requests", type: :system, js: true do
           select(item2.name, from: "filters[by_request_item_id]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
-          click_on 'Export Requests'
+          click_on 'Export'
 
           wait_for_download
           expect(downloads.length).to eq(1)
@@ -119,7 +119,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
     it "doesn't display New Quantity Request link" do
       visit subject
-      expect(page).to_not have_link "New Quantity Request"
+      expect(page).to_not have_button "New quantity request"
     end
 
     context "when logged in as an org admin" do
@@ -131,11 +131,11 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       it "displays New Quantity Request link" do
-        expect(page).to have_link "New Quantity Request"
+        expect(page).to have_button "New quantity request"
       end
 
       context "clicking on the link" do
-        before { click_on "New Quantity Request" }
+        before { click_on "New quantity request" }
 
         it "displays a list of active partners" do
           create(:partner, :deactivated, organization:, name: "Inactive Partner", email: "inactive_partner@example.com")
@@ -169,7 +169,7 @@ RSpec.describe "Requests", type: :system, js: true do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
       expect(page).to have_content("Default storage location inventory")
-      expect(page).to have_content("Request Sender:")
+      expect(page).to have_content("Request sender")
       partner_user = request.partner_user
       expect(page).to have_content("#{partner_user.name} <#{partner_user.email}>")
     end
@@ -181,7 +181,7 @@ RSpec.describe "Requests", type: :system, js: true do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
       expect(page).to have_content("Default storage location inventory")
-      expect(page).to have_content("Request Sender:")
+      expect(page).to have_content("Request sender")
       expect(page).not_to have_content("#{partner_user.name} <#{partner_user.email}>")
     end
 
@@ -257,7 +257,7 @@ RSpec.describe "Requests", type: :system, js: true do
       it 'should set the request as canceled and contain the reason' do
         click_on 'Cancel'
         fill_in 'Cancellation reason *', with: reason
-        click_on 'Yes. Cancel Request'
+        click_on 'Yes, cancel this request'
 
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)

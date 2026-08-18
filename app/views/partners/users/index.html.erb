@@ -11,7 +11,7 @@
       <%= render "shared/essentials/empty_state", kind: :cold_start,
             title: "No users yet",
             body: "Invite a colleague so they can make requests on your agency's behalf.",
-            action: essentials_link_button("Invite new user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
+            action: essentials_link_button("Invite your first user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

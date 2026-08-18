@@ -19,10 +19,10 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "Allows User to click to the new donation form" do
-        find(".fa-plus").click
+        click_on "New donation"
 
         expect(current_path).to eq(new_donation_path)
-        expect(page).to have_content "Start a new donation"
+        expect(page).to have_content "New donation"
       end
 
       it "Displays Total quantity on the index page" do
@@ -31,7 +31,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
       it "displays total in kind value on the index page" do
         expect(page).to have_css("table td.in-kind", text: "$3.00")
-        expect(page).to have_css("table td.in-kind", text: "(This page)")
+        expect(page).to have_css("table td.in-kind", text: "this page")
       end
 
       it "doesn't die when an inactive item is in a donation" do
@@ -295,7 +295,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "---Create new Product Drive---", from: "donation_product_drive_id"
 
           find("dialog[open]")
-          expect(page).to have_content("New Product Drive")
+          expect(page).to have_content("New product drive")
 
           fill_in "product_drive_name", with: "drivenametest"
           fill_in "product_drive_start_date", with: Time.current.to_date.to_s
@@ -308,7 +308,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
 
           find("dialog[open]")
-          expect(page).to have_content("New Product Drive Participant")
+          expect(page).to have_content("New product drive participant")
 
           fill_in "product_drive_participant_business_name", with: "businesstest"
           fill_in "product_drive_participant_contact_name", with: "test"
@@ -326,7 +326,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
 
           find("dialog[open]")
-          expect(page).to have_content("New Product Drive Participant")
+          expect(page).to have_content("New product drive participant")
 
           fill_in "product_drive_participant_business_name", with: ""
           fill_in "product_drive_participant_contact_name", with: "2nd contact without business name"
@@ -359,7 +359,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "---Create new Manufacturer---", from: "donation_manufacturer_id"
 
           find("dialog[open]")
-          expect(page).to have_content("New Manufacturer")
+          expect(page).to have_content("New manufacturer")
 
           fill_in "manufacturer_name", with: "nametest"
           click_on "manufacturer-submit"
@@ -500,7 +500,7 @@ RSpec.describe "Donations", type: :system, js: true do
             end
             expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.not_to change { Donation.count }
-          expect(page).to have_content("Start a new donation")
+          expect(page).to have_content("New donation")
           expect(page).to have_content("must be less than")
         end
 
@@ -666,7 +666,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
       it "Allows the user to edit a donation" do
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "100\n(Total)"
+        expect(total_quantity).to eq "100"
         click_on "View"
         expect(page).to have_content "Rare Candy"
 
@@ -681,7 +681,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_on "Save"
 
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "200\n(Total)"
+        expect(total_quantity).to eq "200"
 
         expect(Donation.count).to eq(1)
         donation = Donation.last
@@ -717,7 +717,7 @@ RSpec.describe "Donations", type: :system, js: true do
         # removing the line item is a lot more benign than randomly
         # switching the item on it to a different item
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "0\n(Total)"
+        expect(total_quantity).to eq "0"
       end
     end
 
@@ -774,8 +774,9 @@ RSpec.describe "Donations", type: :system, js: true do
         end
 
         expect(page).to have_content "Donation #{@donation.id} has been removed!"
-        # deleted the only donation, ensure total now reads 0
-        expect(page).to have_content "0\n(Total)"
+        # That was the only donation, so the list is empty. The design system shows an empty
+        # state rather than a table of zeroes.
+        expect(page).to have_content "No donations recorded yet"
       end
     end
   end

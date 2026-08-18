@@ -40,11 +40,11 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Submit and Review
-      all("input[type='submit'][value='Save and Review']").last.click
+      all("input[type='submit'][value='Save and review']").last.click
       expect(current_path).to eq(partners_profile_path)
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
     end
@@ -72,7 +72,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
@@ -86,7 +86,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("#partner_settings", visible: :visible)
 
       # Try to Submit and Review from error state
-      all("input[type='submit'][value='Save and Review']").last.click
+      all("input[type='submit'][value='Save and review']").last.click
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
@@ -111,7 +111,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify the document is listed
@@ -127,7 +127,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify both documents are listed
@@ -158,7 +158,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify both documents persist after page reload
@@ -178,7 +178,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Verify only one document remains
@@ -206,7 +206,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
@@ -226,7 +226,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open up Agency Information section and expect file is persisted
@@ -262,7 +262,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css("[data-flash-tone='danger']", text: /There is a problem/)
@@ -288,7 +288,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       end
 
       # Save Progress
-      all("input[type='submit'][value='Save Progress']").last.click
+      all("input[type='submit'][value='Save progress']").last.click
       expect(page).to have_css("[data-flash-tone='success']", text: "Details were successfully updated.")
 
       # Open attached documents section

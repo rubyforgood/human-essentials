@@ -6,7 +6,7 @@
     <%= render "shared/essentials/empty_state", kind: :cold_start,
           title: "No item categories yet",
           body: "Categories group related items together and make reporting easier.",
-          action: essentials_link_button("New item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg") %>
+          action: essentials_link_button("Add your first item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
     <div class="table-scroll">
       <table class="data-table">

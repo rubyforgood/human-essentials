@@ -99,6 +99,12 @@ $(document).ready(function(){
   if (!rangeElement) {
     return;
   }
+
+  // isLitepickerActive is a window global and survives a page change. If the calendar was
+  // open when the user navigated away there is no "hide" event, so the flag stays true and
+  // the date-range controller's validation is skipped for the rest of the session. Reset it
+  // whenever a picker is set up, which is once per page.
+  window.isLitepickerActive = false;
   const today = DateTime.now();
   const startDate = new Date(rangeElement.dataset["initialStartDate"]);
   const endDate = new Date(rangeElement.dataset["initialEndDate"]);
