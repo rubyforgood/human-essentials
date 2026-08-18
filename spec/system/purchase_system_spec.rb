@@ -40,7 +40,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           purchase2 = create(:purchase, amount_spent_in_cents: 2345, organization: organization)
           purchases = [purchase1, purchase2]
           page.refresh
-          expect(page).to have_text("Total")
+          expect(page).to have_css("dl", text: "Amount spent")
           expect(page).to have_text(purchases.sum(&:total_quantity))
           expect(page).to have_text(dollar_value(purchases.sum(&:amount_spent_in_cents)))
           expect(page).to have_text(dollar_value(3579))

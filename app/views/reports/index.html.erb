@@ -6,40 +6,34 @@
         subtitle: "#{reports_catalog_count} reports. Most take a date range and export to CSV." %>
 
   <%#
-    Every report is the same size tile, because every report carries the same shape of content:
-    a name and a sentence. `auto-rows-fr` equalises the rows within a section, and the shared
-    min-height equalises them across sections -- otherwise a section holding one report would
-    size its tile to its own text and sit shorter than the section above it.
-
-    The alternative, one card per section holding a list, cannot be uniform: sections hold
-    between one and four reports, so the cards are 143px to 378px tall and no amount of
-    stretching fixes a row against the row below it.
+    Six cards, one per subject, equal height via auto-rows-fr and aligned in a 3x2 grid. The
+    icon sits on the card, not on every row: one glyph per card marks the subject, where eleven
+    would just be texture. Each report is a name and a short qualifier -- enough that the card
+    is not a flat list of links, and not so much that the grid drops below the fold.
   %>
-  <div class="space-y-8">
+  <div class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <% reports_catalog.each do |section| %>
       <section id="reports-<%= section.label.parameterize %>"
+               class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
                aria-labelledby="reports-<%= section.label.parameterize %>-heading">
-        <div class="mb-3 flex items-center gap-2.5">
-          <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-            <i class="<%= section.icon %>" aria-hidden="true"></i>
-          </span>
-          <div class="min-w-0">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+          <div class="flex min-w-0 items-center gap-2">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+              <i class="<%= section.icon %>" aria-hidden="true"></i>
+            </span>
             <h2 id="reports-<%= section.label.parameterize %>-heading"
-                class="text-base font-semibold text-slate-900"><%= section.label %></h2>
-            <p class="text-sm text-slate-600"><%= section.description %></p>
+                class="truncate text-sm font-semibold text-slate-900"><%= section.label %></h2>
           </div>
+          <span class="shrink-0 text-xs text-slate-400"><%= section.reports.size %></span>
         </div>
 
-        <ul class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul class="mt-1 divide-y divide-slate-100">
           <% section.reports.each do |report| %>
-            <li class="flex">
+            <li>
               <%= link_to report.path,
-                    class: "flex h-full min-h-[7.5rem] w-full flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                <span class="flex items-center justify-between gap-2">
-                  <span class="text-sm font-semibold text-brand-700"><%= report.label %></span>
-                  <i class="bi-arrow-right shrink-0 text-xs text-slate-400" aria-hidden="true"></i>
-                </span>
-                <span class="mt-1 text-sm text-slate-600"><%= report.description %></span>
+                    class: "group block rounded-lg py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                <span class="block text-sm font-medium text-brand-700 group-hover:underline"><%= report.label %></span>
+                <span class="block text-xs text-slate-500"><%= report.qualifier %></span>
               <% end %>
             </li>
           <% end %>

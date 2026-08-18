@@ -101,14 +101,6 @@ module View
       filters[:from_manufacturer]
     end
 
-    def paginated_donations_quantity
-      paginated_donations.map(&:total_quantity).sum
-    end
-
-    def paginated_in_kind_value
-      paginated_donations.sum { |donation| donation.value_per_itemizable }
-    end
-
     def total_money_raised
       donations.sum { |d| d.money_raised.to_i }
     end

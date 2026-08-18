@@ -854,3 +854,66 @@ things, reached by a link that says neither.
 They now say "View all distributions", "View all purchases", and so on. The pattern itself is
 fine and common — a report shows a preview and offers the full list — but "see more" implies
 more of what you are looking at, and this is not that.
+
+## 2026-08-18 · Four summary reports removed; their figures moved onto the index pages
+
+Asked why summaries have their own page, and why the table with all the information is hidden
+behind a link at the bottom of a card. Both answers are the same: the summary report should not
+exist.
+
+Measured before deciding. Every index page is a strict superset of its summary report:
+
+| Index | Filters | Columns | Totals row | Its summary report |
+| --- | --- | --- | --- | --- |
+| `/distributions` | 7 | 13 | yes | 1 filter, 2 figures, a preview list |
+| `/donations` | 7 | 10 | yes | 1 filter, 2 figures, a preview list |
+| `/purchases` | 3 | 10 | yes | 1 filter, 6 figures, a preview list |
+| `/product_drives` | 4 | 10 | no | 1 filter, 3 figures, a preview list |
+
+So each summary was a weaker copy of a page that already existed, whose only addition was a few
+aggregates, and which then linked back to the page it copied. The table was not hidden by
+accident; it was on the other side of a link from something that added almost nothing.
+
+Data-dense systems — NetSuite, Odoo, Cin7, QuickBooks Commerce — put the aggregates on the list
+page: filters, then the figures those filters produce, then the rows. The figures were already
+being computed here, in a `<tfoot>` below a long table, split into "this page" and "all
+distributions". Folding them in was mostly promoting numbers that already existed to somewhere
+someone would look.
+
+The `<tfoot>` totals went, on the explicit call that the band and the footer saying overlapping
+things is worse than either alone. That drops the per-page subtotal, which had no other consumer;
+the band answers for the filtered set, which is the question people were asking the footer.
+
+Old report URLs redirect to the index rather than 404, because a report link may sit in a
+bookmark or an email to a funder.
+
+## 2026-08-18 · A hub card carries a qualifier, not a sentence and not a bare link
+
+Three attempts before this landed, which is worth recording because the middle two were both
+defensible and both wrong.
+
+Bare links in a subject card read as flat — an unstyled list. A sentence per report, as fifteen
+uniform tiles, was legible and pushed the whole grid below the fold: a menu you have to scroll is
+not doing a menu's job.
+
+What works is a card per subject with one line per report and a two-to-four word qualifier
+underneath — "Itemized / by item and partner". Enough that the card is not a list of links,
+little enough that six cards fit in a 3×2 grid measuring 659px to the bottom of the grid.
+
+Rejected: an icon per report row. It was in the mock and it was too busy — eleven glyphs in a
+grid whose cards already carry one each. One icon per card marks the subject; repeated down the
+rows it marks nothing.
+
+Also rejected: a live figure per subject card. It looks best in a screenshot and would have made
+a menu run six aggregate queries, duplicated the numbers the index pages now show, and put an
+all-time figure next to a date-ranged report.
+
+## 2026-08-18 · A zero is a figure, not a blank
+
+`dollar_value` returns "" for zero. That is a considered choice for a table column, where a
+stack of `$0.00` is noise. In a stat band it produced an empty figure under a label, which reads
+as broken data rather than as nought — two of them, on donations and product drives, and only
+visible by looking at the rendered page.
+
+Bands use `dollar_presentation`, which always renders. `dollar_value` is untouched: the table
+cells that use it still want the blank.

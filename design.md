@@ -715,19 +715,44 @@ Record the change itself in [`docs/changelog.md`](docs/changelog.md) in the same
 files answer different questions and both get asked: the log says why you chose this, the change
 log says when it arrived and what to blame.
 
-### Report and index cards
+### A summary belongs on the page that holds the data
 
-**A grid of cards is only uniform if the cards hold uniform content.** The reports hub is a grid
-of 15 tiles, one per report, each a name and a sentence — so `auto-rows-fr` plus a shared
-`min-h` makes all 15 exactly equal at every breakpoint. Grouping them instead into six section
-cards, one per subject, could not be made uniform: sections hold between one and four reports,
-so the cards ran 143px to 378px and stretching only ever equalises a row against itself.
+**Do not build a page whose job is to total another page.** Filters at the top, the figures
+those filters produce directly beneath them, the table under that. One page, one set of filters,
+one export. Nobody should navigate to see the total of what they are already looking at.
 
-If cards must be equal, make the unit of the card the thing that repeats.
+Four "summary reports" were removed for this reason. Each had fewer filters than the index it
+summarised, no full table, and the same totals — `/distributions` has seven filters and thirteen
+columns against the report's one filter and a preview list — and then linked back to the index it
+was a copy of. Their figures now sit at the top of the index, driven by the same filters as the
+rows.
+
+Retired URLs redirect rather than 404. A report link may be in someone's bookmarks or in an email
+to a funder.
+
+### Cards in a grid
+
+**Equal cards need a uniform unit.** Six subject cards holding lists of one to four reports ran
+143px to 378px, and stretching only ever equalises a row against itself. Fifteen tiles, one per
+report, were uniform and pushed everything below the fold. What works is the middle: a card per
+subject, `auto-rows-fr` so the grid equalises them, and inside it one line per report plus a
+short qualifier.
+
+**A qualifier, not a sentence.** "Itemized · by item and partner", not a full description. A hub
+is a menu; a sentence per entry turns a menu into reading.
+
+**One icon per card, not one per row.** The icon marks the subject. Repeating it down every row
+gives the eye a second column of glyphs to skip and marks nothing out.
 
 **A drill-through link names its destination.** Not "See more…" — it went from the distributions
 *report* to the distributions *table*, which is a different page about different things.
 "View all distributions" says where it goes.
+
+### Figures in a band
+
+`dollar_value` blanks a zero, which is right in a table column where zeros are noise and wrong in
+a stat band where the figure is the content — an empty figure reads as broken rather than as
+nought. Use `dollar_presentation` for a stat.
 
 ## Backlog
 

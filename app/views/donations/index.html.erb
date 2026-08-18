@@ -42,6 +42,19 @@
     </div>
   <% end %>
 
+  <%#
+    What the donations summary report used to show, on the page that holds the data and driven
+    by the same filters. `info` already computed all of it for the table footer that was here.
+  %>
+  <%= essentials_stats([
+        {label: "Donations", value: number_with_delimiter(info.donations.size)},
+        {label: "Items received", value: number_with_delimiter(info.donations_quantity), value_id: "donation_quantity"},
+        {label: "Money raised", value: dollar_presentation(info.total_money_raised)},
+        {label: "In-kind value", value: dollar_presentation(info.total_value_all_donations)}
+      ]) %>
+
+  <div class="mt-6"></div>
+
   <%= render "shared/essentials/card", padded: false,
         footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_donations)) } do %>
     <% if info.paginated_donations.blank? %>
@@ -68,25 +81,6 @@
             </tr>
           </thead>
           <tbody><%= render partial: "donation_row", collection: info.paginated_donations %></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4">Total</td>
-              <td class="quantity">
-                <%= number_with_delimiter(info.paginated_donations_quantity) %>
-                <span class="block text-xs font-normal text-slate-500">this page</span>
-                <span id="donation_quantity" class="mt-1 block"><%= number_with_delimiter(info.donations_quantity) %></span>
-                <span class="block text-xs font-normal text-slate-500">all donations</span>
-              </td>
-              <td class="numeric"><%= dollar_value(info.total_money_raised) %></td>
-              <td class="numeric in-kind">
-                <%= dollar_value(info.paginated_in_kind_value) %>
-                <span class="block text-xs font-normal text-slate-500">this page</span>
-                <span class="mt-1 block"><%= dollar_value(info.total_value_all_donations) %></span>
-                <span class="block text-xs font-normal text-slate-500">all donations</span>
-              </td>
-              <td colspan="2"></td>
-            </tr>
-          </tfoot>
         </table>
       </div>
     <% end %>

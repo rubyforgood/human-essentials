@@ -101,7 +101,11 @@ module EssentialsUiHelper
           # already a String, was fine.
           value = stat[:value].to_s
           concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
-            stat[:value_class] ? tag.span(value, class: stat[:value_class]) : value
+            if stat[:value_class] || stat[:value_id]
+              tag.span(value, class: stat[:value_class], id: stat[:value_id])
+            else
+              value
+            end
           }
         end
       })

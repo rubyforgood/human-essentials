@@ -9,23 +9,9 @@ class ReportsController < ApplicationController
   def index
   end
 
-  def donations_summary
-    @donations = current_organization.donations.during(helpers.selected_range)
-    @recent_donations = @donations.recent
-  end
-
   def manufacturer_donations_summary
     @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
     @recent_manufacturers = current_organization.manufacturers.by_donation_date(10, helpers.selected_range)
-  end
-
-  def purchases_summary
-    @summary_struct = Purchase.organization_summary_by_dates(current_organization, helpers.selected_range)
-  end
-
-  def product_drives_summary
-    @donations = current_organization.donations.during(helpers.selected_range)
-    @recent_donations = @donations.recent
   end
 
   def itemized_donations
@@ -36,11 +22,6 @@ class ReportsController < ApplicationController
   def itemized_distributions
     distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
     @itemized_distribution_data = DistributionItemizedBreakdownService.new(organization: current_organization, distribution_ids: distributions.pluck(:id)).fetch
-  end
-
-  def distributions_summary
-    distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
-    @recent_distributions = distributions.recent
   end
 
   def activity_graph

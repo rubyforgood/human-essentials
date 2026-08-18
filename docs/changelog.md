@@ -113,6 +113,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `bc04f2243` | Corrected the audit: the empty `recertification_required` action cell is right, not a defect. |
 | `a9f8d26ab` | **Every table row action is now `:ghost`.** 13 cells across 12 views moved off the legacy `*_button_to` shims and off `:secondary`. The audit script reports 0 tables with more than one weight, down from 7, and 0 filled buttons in rows, down from 6. |
 | `e6ac2c21d`&hellip;`011c24fbb` | Partner list rebuilt on the shared filter bar, developed on `design-preview-partner-status` over five review rounds. |
+| *(reports hub branch)* | **Reports rebuilt.** Four summary reports removed and their figures folded onto the index pages they duplicated; `<tfoot>` totals dropped in favour of a filtered band above the table; old report URLs redirect. The sidebar's 15-item Reporting group became one rail entry leading to a six-card hub for the eleven reports an index page cannot show. On `design-preview-reports-hub`; mockup in `docs/mockups/`. |
 | *(merge)* | **Merged into `design`.** Status chips replaced by a labelled select; single-filter bars apply on change and drop "Clear filters"; "All statuses" added; status colour now means *who is blocked*; pill icons dropped and pills no longer wrap. Two bugs fixed on the way: a blank status filter matched every partner including deactivated ones, and the select chevron sat 4px from the border because padding does not move a native arrow. |
 
 ---

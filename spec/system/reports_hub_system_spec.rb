@@ -13,14 +13,14 @@ RSpec.describe "Reports hub", type: :system, js: true do
 
   it "groups the reports by subject" do
     expect(page).to have_css("h1", text: "Reports")
-    ["Distributions", "Donations", "Purchases", "Product drives", "Requests", "Everything else"].each do |section|
+    ["Distributions", "Donations", "Purchases", "Requests", "Compliance", "Activity"].each do |section|
       expect(page).to have_css("h2", text: section)
     end
   end
 
   it "links to every report, and every link resolves" do
     hrefs = page.all("main ul a").map { |a| a[:href] }
-    expect(hrefs.size).to eq(15)
+    expect(hrefs.size).to eq(11)
 
     hrefs.each do |href|
       visit href
@@ -28,9 +28,9 @@ RSpec.describe "Reports hub", type: :system, js: true do
     end
   end
 
-  it "describes each report rather than only naming it" do
-    expect(page).to have_content("How much of each item went out, broken down by partner.")
-    expect(page).to have_content("Cached, so up to a day behind.")
+  it "qualifies each report rather than only naming it" do
+    expect(page).to have_content("by item and partner")
+    expect(page).to have_content("12 months, chart")
   end
 
   describe "the sidebar" do
@@ -40,7 +40,7 @@ RSpec.describe "Reports hub", type: :system, js: true do
     end
 
     it "keeps Reports marked as current while inside a report" do
-      visit reports_distributions_summary_path
+      visit reports_itemized_distributions_path
       expect(page).to have_css('aside nav a[aria-current="page"]', text: "Reports")
 
       visit historical_trends_donations_path
