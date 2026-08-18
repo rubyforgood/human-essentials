@@ -1,33 +1,21 @@
 <%= render(
   "shared/filtered_card",
   id: "product_drives",
-  gradient: "secondary",
-  title: "Product Drives",
+  title: "Product drives",
   subtitle: @selected_date_range,
-  type: :table,
   filter_url: reports_product_drives_summary_path,
-  footer_options: { class: "text-center" },
-  footer: link_to("See more...", product_drives_path),
+  footer: link_to("View all product drives", product_drives_path, class: "text-sm font-medium text-brand-700 hover:text-brand-800")
 ) do %>
+  <div class="space-y-5 px-5 py-4">
+    <%= essentials_stats([
+          {label: "Drives active #{@selected_date_range_label}", value: total_number_of_drives, value_class: "total_drives"},
+          {label: "Items received #{@selected_date_range_label}", value: total_received_from_product_drives, value_class: "total_received_donations"},
+          {label: "Raised #{@selected_date_range_label}", value: dollar_presentation(total_received_money_donations_from_product_drives), value_class: "total_money_raised"}
+        ]) %>
 
-  <p class="text-center text-2xl font-bold tracking-tight text-slate-900">
-    <span class="total_drives">
-      <%= total_number_of_drives %>
-    </span> drives active
-    <%= @selected_date_range_label %>
-  </p>
-  <p class="text-center text-2xl font-bold tracking-tight text-slate-900">
-    <span class="total_received_donations">
-      <%= total_received_from_product_drives %>
-    </span> items
-    received <%= @selected_date_range_label %>
-  </p>
-  <h2 class="text-base font-semibold text-slate-900"><span class="total_money_raised">
-      <%= dollar_presentation( total_received_money_donations_from_product_drives) %>
-    </span> raised  <%= @selected_date_range_label %></h2>
-  <div class="px-5 py-4">
-    <h2 class="text-base font-semibold text-slate-900">Recent Donations from Product Drives</h2>
-    <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>
+    <div>
+      <h2 class="mb-2 text-base font-semibold text-slate-900">Recent donations from product drives</h2>
+      <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>
+    </div>
   </div>
-
 <% end %>

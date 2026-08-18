@@ -1,25 +1,22 @@
 <%= render(
   "shared/filtered_card",
   id: "donations",
-  title: "Donations (All Sources)",
+  title: "Donations (all sources)",
   subtitle: @selected_date_range,
-  footer_options: { class: "text-center" },
-  footer: link_to("See more...", donations_path),
+  footer: link_to("View all donations", donations_path, class: "text-sm font-medium text-brand-700 hover:text-brand-800"),
   filter_url: reports_donations_summary_path
 ) do %>
-  <%= new_button_to new_donation_path, {text: "New Donation"} %>
-  <p class="text-center text-2xl font-bold tracking-tight text-slate-900">
-    <span class="total_received_donations">
-      <%= total_received_donations %>
-    </span>
-    items
-    received <%= @selected_date_range_label %>
-  </p>
-  <h2 class="text-base font-semibold text-slate-900"><%= dollar_presentation(total_received_money_donations) %>
-    raised  <%= @selected_date_range_label %></h2>
-  <div class="px-5 py-4">
-    <h2 class="text-base font-semibold text-slate-900">Recent Donations</h2>
-    <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+  <div class="space-y-5 px-5 py-4">
+    <%= essentials_stats([
+          {label: "Items received #{@selected_date_range_label}", value: total_received_donations, value_class: "total_received_donations"},
+          {label: "Raised #{@selected_date_range_label}", value: dollar_presentation(total_received_money_donations)}
+        ]) %>
+
+    <div>
+      <h2 class="mb-2 text-base font-semibold text-slate-900">Recent donations</h2>
+      <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+    </div>
+
+    <div><%= new_button_to new_donation_path, {text: "New Donation"} %></div>
   </div>
 <% end %>
-</section>

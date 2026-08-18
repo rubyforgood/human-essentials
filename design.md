@@ -285,6 +285,24 @@ Two things that bite:
 - `FILTER_SELECT_CLASSES`, not `FILTER_CONTROL_CLASSES`, for a `<select>`. The browser draws the
   chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3`.
 
+### Stats
+
+A figure and the words that say what it counts. `essentials_stats` renders a description list,
+because that is the relationship: the label describes the value.
+
+```erb
+<%= essentials_stats([
+      {label: "Items distributed this month", value: 1_284},
+      {label: "Scheduled for future distribution", value: 310}
+    ]) %>
+```
+
+**A statistic is not a heading.** The reports marked six of them up as `<h2>`, which put the
+page's figures into its heading outline — someone navigating by heading heard "Total spent on
+diapers: $412" as document structure. They also set the figure in a `<p>` at `text-2xl` while
+the real headings were `text-base`, so the visual hierarchy ran opposite to the semantic one.
+A heading names a section; if the thing is data, it is a `<dt>`/`<dd>` pair.
+
 ### Status pills
 
 A pill is a **state**, not a control: not focusable, does not look pressable. It is also
@@ -696,6 +714,20 @@ general gets promoted into here.
 Record the change itself in [`docs/changelog.md`](docs/changelog.md) in the same commit. The two
 files answer different questions and both get asked: the log says why you chose this, the change
 log says when it arrived and what to blame.
+
+### Report and index cards
+
+**A grid of cards is only uniform if the cards hold uniform content.** The reports hub is a grid
+of 15 tiles, one per report, each a name and a sentence — so `auto-rows-fr` plus a shared
+`min-h` makes all 15 exactly equal at every breakpoint. Grouping them instead into six section
+cards, one per subject, could not be made uniform: sections hold between one and four reports,
+so the cards ran 143px to 378px and stretching only ever equalises a row against itself.
+
+If cards must be equal, make the unit of the card the thing that repeats.
+
+**A drill-through link names its destination.** Not "See more…" — it went from the distributions
+*report* to the distributions *table*, which is a different page about different things.
+"View all distributions" says where it goes.
 
 ## Backlog
 

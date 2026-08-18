@@ -14,6 +14,8 @@ module ReportsCatalogHelper
   Report = Data.define(:label, :path, :description)
   ReportSection = Data.define(:label, :icon, :description, :reports)
 
+  # Ordered so the two-column grid pairs sections of similar size: 4 with 4, 3 with 2,
+  # 1 with 1. Cards in a row stretch to match, so an uneven pairing shows as dead space.
   def reports_catalog
     [
       ReportSection.new(
@@ -45,6 +47,18 @@ module ReportsCatalogHelper
         ]
       ),
       ReportSection.new(
+        label: "Everything else", icon: "bi-collection",
+        description: "Reports that do not belong to one subject.",
+        reports: [
+          Report.new(label: "Annual survey", path: reports_annual_reports_path,
+            description: "The yearly figures, one page per year. What NDBN member banks file."),
+          Report.new(label: "Activity graph", path: reports_activity_graph_path,
+            description: "Received against distributed over the date range, as one chart."),
+          Report.new(label: "History", path: events_path,
+            description: "Every inventory event, filterable. An audit trail rather than a report.")
+        ]
+      ),
+      ReportSection.new(
         label: "Purchases", icon: "bi-cart",
         description: "What you bought, and what it cost.",
         reports: [
@@ -68,18 +82,6 @@ module ReportsCatalogHelper
         reports: [
           Report.new(label: "Itemized", path: reports_itemized_requests_path,
             description: "How much of each item was requested across the date range.")
-        ]
-      ),
-      ReportSection.new(
-        label: "Everything else", icon: "bi-collection",
-        description: "Reports that do not belong to one subject.",
-        reports: [
-          Report.new(label: "Annual survey", path: reports_annual_reports_path,
-            description: "The yearly figures, one page per year. What NDBN member banks file."),
-          Report.new(label: "Activity graph", path: reports_activity_graph_path,
-            description: "Received against distributed over the date range, as one chart."),
-          Report.new(label: "History", path: events_path,
-            description: "Every inventory event, filterable. An audit trail rather than a report.")
         ]
       )
     ]

@@ -5,39 +5,45 @@
         title: "Reports",
         subtitle: "#{reports_catalog_count} reports. Most take a date range and export to CSV." %>
 
-  <div class="grid gap-6 lg:grid-cols-2">
+  <%#
+    Every report is the same size tile, because every report carries the same shape of content:
+    a name and a sentence. `auto-rows-fr` equalises the rows within a section, and the shared
+    min-height equalises them across sections -- otherwise a section holding one report would
+    size its tile to its own text and sit shorter than the section above it.
+
+    The alternative, one card per section holding a list, cannot be uniform: sections hold
+    between one and four reports, so the cards are 143px to 378px tall and no amount of
+    stretching fixes a row against the row below it.
+  %>
+  <div class="space-y-8">
     <% reports_catalog.each do |section| %>
-      <%# A stable id per section: it anchors a link to "the donations reports", and gives the
-          specs something to scope to that is not a count of ancestors. %>
-      <section id="reports-<%= section.label.parameterize %>" aria-labelledby="reports-<%= section.label.parameterize %>-heading">
-      <%= render "shared/essentials/card", padded: false do %>
-        <div class="flex items-start gap-3 border-b border-slate-200 px-5 py-4">
-          <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+      <section id="reports-<%= section.label.parameterize %>"
+               aria-labelledby="reports-<%= section.label.parameterize %>-heading">
+        <div class="mb-3 flex items-center gap-2.5">
+          <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
             <i class="<%= section.icon %>" aria-hidden="true"></i>
           </span>
           <div class="min-w-0">
-            <h2 id="reports-<%= section.label.parameterize %>-heading" class="text-base font-semibold text-slate-900"><%= section.label %></h2>
+            <h2 id="reports-<%= section.label.parameterize %>-heading"
+                class="text-base font-semibold text-slate-900"><%= section.label %></h2>
             <p class="text-sm text-slate-600"><%= section.description %></p>
           </div>
         </div>
 
-        <ul class="divide-y divide-slate-100">
+        <ul class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <% section.reports.each do |report| %>
-            <li>
-              <%# The whole row is the link: a report name alone is a small target, and the
-                  description is what tells you whether this is the one you want. %>
+            <li class="flex">
               <%= link_to report.path,
-                    class: "flex items-start gap-3 px-5 py-3 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" do %>
-                <span class="min-w-0 flex-1">
-                  <span class="block text-sm font-medium text-brand-700"><%= report.label %></span>
-                  <span class="block text-sm text-slate-600"><%= report.description %></span>
+                    class: "flex h-full min-h-[7.5rem] w-full flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                <span class="flex items-center justify-between gap-2">
+                  <span class="text-sm font-semibold text-brand-700"><%= report.label %></span>
+                  <i class="bi-arrow-right shrink-0 text-xs text-slate-400" aria-hidden="true"></i>
                 </span>
-                <i class="bi-chevron-right mt-1 shrink-0 text-xs text-slate-400" aria-hidden="true"></i>
+                <span class="mt-1 text-sm text-slate-600"><%= report.description %></span>
               <% end %>
             </li>
           <% end %>
         </ul>
-      <% end %>
       </section>
     <% end %>
   </div>

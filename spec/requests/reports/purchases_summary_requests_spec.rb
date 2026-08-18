@@ -22,9 +22,11 @@ RSpec.describe "Purchases", type: :request do
     describe "GET #index" do
       it "shows a list of recent purchases" do
         get reports_purchases_summary_path
-        expect(response.body).to include("Total spent on diapers")
-        expect(response.body).to include("Total spent on adult incontinence")
-        expect(response.body).to include("Total spent on other")
+        # The six figures are a stat grid now, so the label no longer repeats "Total" -- the
+        # figure is the total.
+        expect(response.body).to include("Spent on diapers")
+        expect(response.body).to include("Spent on adult incontinence")
+        expect(response.body).to include("Spent on other")
         expect(response.body).to include("Total items")
         expect(response.body).to include("Recent purchases")
       end

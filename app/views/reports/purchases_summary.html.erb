@@ -1,29 +1,30 @@
 <%= render(
   "shared/filtered_card",
   id: "purchases",
-  gradient: "secondary",
   title: "Purchases",
   subtitle: @selected_date_range,
-  footer_options: { class: "text-center" },
-  footer: link_to("See more...", purchases_path),
+  footer: link_to("View all purchases", purchases_path, class: "text-sm font-medium text-brand-700 hover:text-brand-800"),
   filter_url: reports_purchases_summary_path
 ) do %>
-  <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
-  <p class="text-center text-2xl font-bold tracking-tight text-slate-900"><%= dollar_presentation(@summary_struct.amount_spent) %>
-    spent
-    <%= @selected_date_range_label %>
-  </p>
-  <div class="px-5 py-4" style="margin: 40px">
-    <h2 class="text-base font-semibold text-slate-900">Total spent on diapers: <%= dollar_presentation @summary_struct.diapers %></h2>
-    <h2 class="text-base font-semibold text-slate-900">Total spent on period supplies: <%= dollar_presentation @summary_struct.period_supplies %></h2>
-    <h2 class="text-base font-semibold text-slate-900">Total spent on adult incontinence: <%= dollar_presentation @summary_struct.adult_incontinence %></h2>
-    <h2 class="text-base font-semibold text-slate-900">Total spent on other: <%= dollar_presentation @summary_struct.other %></h2>
-  </div>
-  <div style="margin: 40px">
-    <h2 class="text-base font-semibold text-slate-900">Total items: <%= @summary_struct.total_items %></h2>
-  </div>
-  <div class="px-5 py-4">
-    <h2 class="text-base font-semibold text-slate-900">Recent purchases</h2>
-    <%= render partial: "purchase", collection: @summary_struct.recent_purchases, as: :purchase %>
+  <div class="space-y-5 px-5 py-4">
+    <%#
+      Six figures that were six consecutive <h2>s, each carrying its label inside the heading
+      text ("Total spent on diapers: $412"). They are data, so they are a description list.
+    %>
+    <%= essentials_stats([
+          {label: "Spent #{@selected_date_range_label}", value: dollar_presentation(@summary_struct.amount_spent)},
+          {label: "Total items", value: @summary_struct.total_items},
+          {label: "Spent on diapers", value: dollar_presentation(@summary_struct.diapers)},
+          {label: "Spent on period supplies", value: dollar_presentation(@summary_struct.period_supplies)},
+          {label: "Spent on adult incontinence", value: dollar_presentation(@summary_struct.adult_incontinence)},
+          {label: "Spent on other", value: dollar_presentation(@summary_struct.other)}
+        ]) %>
+
+    <div>
+      <h2 class="mb-2 text-base font-semibold text-slate-900">Recent purchases</h2>
+      <%= render partial: "purchase", collection: @summary_struct.recent_purchases, as: :purchase %>
+    </div>
+
+    <div><%= new_button_to new_purchase_path, {text: "New Purchase"} %></div>
   </div>
 <% end %>

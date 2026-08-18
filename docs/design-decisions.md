@@ -805,3 +805,52 @@ Two judgement calls inside it:
 `active_on` for the rail entry lists every controller that renders a report, so the entry stays
 current while you are inside one. Without that the rail would say you are nowhere, which is
 worse than the group was.
+
+## 2026-08-18 · Uniform cards need a uniform unit
+
+The hub grouped the fifteen reports into six section cards. Cards ran 143px to 378px, because
+sections hold between one and four reports, and that was reported as cards that should be the
+same size.
+
+Pairing sections by size and stretching got each *row* equal — 4 with 4, 3 with 2, 1 with 1 —
+but rows still differed from each other, and no arrangement fixes that while the card is a
+variable-length list. Forcing all six to the tallest would have put 235px of dead space under
+the one-report sections.
+
+So the unit of the card changed: fifteen tiles, one per report, each holding a name and a
+sentence. Content that repeats uniformly makes cards that are uniform. `auto-rows-fr` equalises
+rows within a section and a shared `min-h` equalises across sections; measured equal at every
+breakpoint from 420px to 1600px.
+
+The general rule, now in design.md: if cards must be equal, make the unit of the card the thing
+that repeats. Grouping stays, as headings above each grid, which costs nothing.
+
+## 2026-08-18 · A statistic is not a heading
+
+The summary reports marked their figures up as `<h2>` — six consecutive ones on the purchases
+report, each carrying its own label inside the heading text ("Total spent on diapers: $412").
+Someone navigating by heading heard the page's statistics as its document structure.
+
+The visual hierarchy ran opposite to the semantic one as well: the largest text on the page was
+a `<p>` at `text-2xl font-bold`, while every actual heading was `text-base`. So the markup said
+"heading" where the design said "data", and the design said "prominent" where the markup said
+"paragraph".
+
+`essentials_stats` renders a description list, which is the real relationship — the label
+describes the value. The `<h2>`s that remain are the ones that name a section, "Recent
+purchases", which is what a heading is for.
+
+Found in the same pass and fixed: an empty `<h2></h2>` on the activity graph, a stray
+`</section>` closing nothing on the donations report, two `style="margin: 40px"` attributes, and
+`gradient:`, `footer_options:` and `type:` passed to a partial that has never read any of them.
+That last one is AdminLTE vocabulary that outlived the markup.
+
+## 2026-08-18 · A drill-through link names its destination
+
+Every summary report ended in "See more…", which led to the index table for that record type.
+From the distributions *report* to the distributions *table*: a different page, about different
+things, reached by a link that says neither.
+
+They now say "View all distributions", "View all purchases", and so on. The pattern itself is
+fine and common — a report shows a preview and offers the full list — but "see more" implies
+more of what you are looking at, and this is not that.
