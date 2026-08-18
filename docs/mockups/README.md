@@ -14,4 +14,5 @@ cp docs/mockups/<file>.html public/    # ignored by git; the tracked copy is the
 
 | Mockup | Question it was made to answer | Outcome |
 | --- | --- | --- |
+| `page-actions-options.html` | Where does a tab's action belong, and how many buttons may a page header carry? | Pending |
 | `reports-options.html` | How much should a reports hub card carry, and what does an index page look like once its summary report is folded into it? | **V2 chosen**, without the per-row icons; `<tfoot>` totals dropped. Built on `design-preview-reports-hub`. |
