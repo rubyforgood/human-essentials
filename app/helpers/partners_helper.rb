@@ -53,12 +53,19 @@ module PartnersHelper
 
   # Design system status pill for a partner. One mapping, used by the partner list, the
   # partner row and the dashboard, so the six states cannot drift apart.
+  #
+  # Tone answers "who is blocked?", not "how serious does the word sound?". Only
+  # `awaiting_review` is the bank's move, so it is the only one that carries a warning tone --
+  # any colour in the status column means someone here has to act. `invited` and
+  # `recertification_required` are both waiting on the partner, so they share the informational
+  # tone. `approved` is the goal state and the majority of rows; a badge on the norm spends
+  # colour on what the reader can already see, and teaches them to skip the column.
   ESSENTIALS_PARTNER_STATUS = {
     "uninvited" => {tone: :neutral, icon: "bi-slash-circle"},
     "invited" => {tone: :info, icon: "bi-envelope"},
     "awaiting_review" => {tone: :warning, icon: "bi-question-circle"},
-    "approved" => {tone: :success, icon: "bi-check-circle"},
-    "recertification_required" => {tone: :danger, icon: "bi-exclamation-triangle"},
+    "approved" => {tone: :neutral, icon: "bi-check-circle"},
+    "recertification_required" => {tone: :info, icon: "bi-hourglass-split"},
     "deactivated" => {tone: :neutral, icon: "bi-dash-circle"}
   }.freeze
 

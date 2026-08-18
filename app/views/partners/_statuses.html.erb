@@ -1,13 +1,25 @@
 <%#
-  Status filter strip. Each status is a link that filters the list; the active one is
-  marked with aria-current as well as colour.
+  Status filter strip.
+
+  These are controls, not states, and they must not look like the status pills in the table
+  below them: a pill is round and tinted with its tone, a filter chip is a rounded rectangle
+  with a border and no tone at all. Before this the strip was built from PILL_TONES, so a chip
+  that filtered the list and a badge that reported a row's state were the same shape, size and
+  colour -- 13 of them on one screen, and nothing said which seven did something.
+
+  Selection is carried by fill and by aria-current, not by colour alone.
 %>
 <% current_filtered_status = params.dig(:filters, :by_status) %>
+<% chip = "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-medium " \
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+<% selected = "border-brand-600 bg-brand-600 text-white" %>
+<% unselected = "border-slate-300 bg-white text-slate-700 hover:bg-slate-50" %>
+
 <ul id="partner-status" class="flex flex-wrap items-center gap-2">
   <li>
     <%= link_to partners_path,
           "aria-current": (current_filtered_status.nil? ? "true" : nil),
-          class: "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 #{current_filtered_status.nil? ? "filtering bg-brand-100 text-brand-800" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}" do %>
+          class: "#{chip} #{current_filtered_status.nil? ? "filtering #{selected}" : unselected}" do %>
       <i class="bi-list-ul" aria-hidden="true"></i><%= @active_partner_count %> Active
     <% end %>
   </li>
@@ -19,13 +31,13 @@
     <li>
       <% if partner_count.zero? %>
         <%# Nothing to filter to, so this is a count rather than a control. %>
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-400">
+        <span class="<%= chip %> border-slate-200 bg-slate-50 text-slate-400">
           <i class="<%= config[:icon] %>" aria-hidden="true"></i><%= partner_count %> <%= status.humanize %>
         </span>
       <% else %>
         <%= link_to partners_path(filters: {by_status: status}),
               "aria-current": (active ? "true" : nil),
-              class: "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 #{active ? "filtering bg-brand-100 text-brand-800" : "#{EssentialsUiHelper::PILL_TONES.fetch(config[:tone])} hover:brightness-95"}" do %>
+              class: "#{chip} #{active ? "filtering #{selected}" : unselected}" do %>
           <i class="<%= config[:icon] %>" aria-hidden="true"></i><%= partner_count %> <%= status.humanize %>
         <% end %>
       <% end %>
