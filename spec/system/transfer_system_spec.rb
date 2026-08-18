@@ -10,7 +10,7 @@ RSpec.describe "Transfer management", type: :system do
 
   def create_transfer(amount, from_name, to_name, click_save: true, click_confirm: true)
     visit transfers_path
-    click_link "New Transfer"
+    click_link "New transfer"
     within "form#new_transfer" do
       select from_name, from: "From storage location"
       select to_name, from: "To storage location"
@@ -28,8 +28,8 @@ RSpec.describe "Transfer management", type: :system do
       to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
       create_transfer("10", from_storage_location.name, to_storage_location.name, click_confirm: false)
 
-      expect(page).to have_content("Transfer Confirmation")
-      expect(page).to have_content("Please confirm that the above list is what you meant to transfer and that the comment is correct.")
+      expect(page).to have_content("Confirm this transfer")
+      expect(page).to have_content("Please confirm that the list above is what you meant to transfer and that the comment is correct.")
       expect(page).to have_content("No, I need to make changes")
       expect(page).to have_content("Yes, it's correct")
     end

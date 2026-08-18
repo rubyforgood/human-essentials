@@ -47,8 +47,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       storage_location_traits = attributes_for(:storage_location)
       fill_in "Name", with: storage_location_traits[:name]
       fill_in "Address", with: storage_location_traits[:address]
-      fill_in "Square Footage", with: storage_location_traits[:square_footage]
-      select StorageLocation::WAREHOUSE_TYPES.sample, from: 'Warehouse Type'
+      fill_in "Square footage", with: storage_location_traits[:square_footage]
+      select StorageLocation::WAREHOUSE_TYPES.sample, from: 'Warehouse type'
       click_on "Save"
 
       expect(page.find("[data-flash]")).to have_content "added"
@@ -68,8 +68,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     it "User updates an existing storage location" do
       visit subject
       fill_in "Address", with: storage_location.name + " new"
-      fill_in "Square Footage", with: 50
-      select (StorageLocation::WAREHOUSE_TYPES - [storage_location.warehouse_type]).sample, from: 'Warehouse Type'
+      fill_in "Square footage", with: 50
+      select (StorageLocation::WAREHOUSE_TYPES - [storage_location.warehouse_type]).sample, from: 'Warehouse type'
 
       click_on "Save"
 
@@ -99,16 +99,16 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       click_on "View", match: :first
 
-      find("#custom-tabs-inventory-in-tab").click
+      click_on "Coming in"
 
-      within "#custom-tabs-inventory-in" do
+      within "#panel-in" do
         expect(page).to have_content("Needle")
         expect(page).to have_content(100)
       end
 
-      find("#custom-tabs-inventory-tab").click
+      within("[role=tablist]") { click_on "Inventory" }
 
-      within "#custom-tabs-inventory" do
+      within "#panel-inventory" do
         expect(page).to have_content("Needle")
         expect(page).to have_content(100)
       end
@@ -157,7 +157,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       visit subject
 
       within "form[action='/storage_locations/#{location1.id}/deactivate']" do
-        expect(page).to have_button('Deactivate', class: "disabled")
+        expect(page).to have_button('Deactivate', disabled: true)
       end
     end
 
@@ -198,17 +198,17 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
     it "Items in (adjustments)" do
       visit subject
-      find("#custom-tabs-inventory-in-tab").click
+      click_on "Coming in"
 
-      expect(page.find("#custom-tabs-inventory-in", visible: true)).to have_content "100"
+      expect(page.find("#panel-in", visible: true)).to have_content "100"
     end
 
     it "Items out (distributions)" do
       create(:distribution, :with_items, storage_location: storage_location)
       visit subject
-      find("#custom-tabs-inventory-out-tab").click
+      click_on "Going out"
 
-      expect(page.find("#custom-tabs-inventory-out", visible: true)).to have_content "100"
+      expect(page.find("#panel-out", visible: true)).to have_content "100"
     end
   end
 end

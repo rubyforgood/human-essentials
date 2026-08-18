@@ -23,7 +23,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           click_on "New purchase"
 
           expect(current_path).to eq(new_purchase_path)
-          expect(page).to have_content "Start a new purchase"
+          expect(page).to have_content "New purchase"
         end
 
         it "User sees purchased date column" do
@@ -31,7 +31,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           purchase_date = 1.week.ago
           create(:purchase, storage_location: storage1, issued_at: purchase_date, organization: organization)
           page.refresh
-          expect(page).to have_text("Purchased Date")
+          expect(page).to have_text("Purchased date")
           expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
         end
 
@@ -276,7 +276,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           it "cannot view the edit page" do
             visit edit_purchase_path(purchase)
 
-            expect(page).to have_content("Still haven't found what you're looking for")
+            expect(page).to have_content("Page not found")
           end
         end
       end
@@ -321,7 +321,7 @@ RSpec.describe "Purchases", type: :system, js: true do
             Barcode.boop(new_barcode_value)
           end
 
-          expect(page.find("dialog[open] h2").text).to eq("Add New Barcode")
+          expect(page.find("dialog[open] h2").text).to eq("Add new barcode")
 
           within "dialog[open]" do
             fill_in "barcode_item_quantity", with: 3
@@ -373,7 +373,9 @@ RSpec.describe "Purchases", type: :system, js: true do
           click_on "Delete"
         end
         expect(page).to have_content "Purchase #{purchase.id} has been removed!"
-        expect(page).to have_content "0"
+        # That was the only purchase, so the list is empty. The design system shows an empty
+        # state rather than a table of zeroes.
+        expect(page).to have_content "No purchases recorded yet"
       end
     end
 

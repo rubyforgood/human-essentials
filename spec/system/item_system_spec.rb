@@ -11,7 +11,7 @@ RSpec.describe "Item management", type: :system do
 
     visit new_item_path
     fill_in "Name", with: item_traits[:name]
-    select "Other", from: "Reporting Category"
+    select "Other", from: "NDBN reporting category"
     click_button "Save"
 
     expect(page.find("[data-flash]")).to have_content "added"
@@ -31,7 +31,7 @@ RSpec.describe "Item management", type: :system do
 
     fill_in "Name", with: item_traits[:name]
     fill_in "item_value_in_dollars", with: '1,234.56'
-    select "Other", from: "Reporting Category"
+    select "Other", from: "NDBN reporting category"
     click_button "Save"
 
     expect(page.find("[data-flash]")).to have_content "added"
@@ -59,12 +59,12 @@ RSpec.describe "Item management", type: :system do
   it "can make the item invisible to partners" do
     item = create(:item)
     visit edit_item_path(item.id)
-    uncheck "visible_to_partners"
+    uncheck "Item is visible to partners?"
     click_button "Save"
     visit edit_item_path(item.id)
 
     # rubocop:disable Rails/DynamicFindBy
-    expect(find_by_id("visible_to_partners").checked?).to be false
+    expect(find_by_id("item_visible_to_partners").checked?).to be false
     # rubocop:enable Rails/DynamicFindBy
 
     expect(item.reload.visible_to_partners).to be false
@@ -116,7 +116,7 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
 
-      click_link "Items, Quantity, and Location" # href="#sectionC"
+      click_on "Items, quantity and location" # href="#sectionC"
       tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
       expect(tab_items_quantity_location_text).to have_content "Quantity"
       expect(tab_items_quantity_location_text).to have_content storage_name
@@ -131,7 +131,7 @@ RSpec.describe "Item management", type: :system do
     end
 
     it "should display an Item Inventory table", js: true do
-      click_link "Item Inventory" # href="#sectionD"
+      click_on "Item inventory" # href="#sectionD"
       tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
       expect(tab_items_quantity_location_text).to have_content "Quantity"
       expect(tab_items_quantity_location_text).to have_content item_pullups.name
@@ -143,8 +143,9 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_quantity_location_text).not_to have_content num_pullups_second_donation
       expect(tab_items_quantity_location_text).not_to have_content num_tampons_in_donation
       expect(tab_items_quantity_location_text).not_to have_content num_tampons_second_donation
-      expandable_row = find("td", text: item_tampons.name).find(:xpath, "..")
-      expandable_row.click
+      expandable_row = page.find(".table-items-location", visible: true)
+        .find("td", text: item_tampons.name, match: :first).find(:xpath, "..")
+      expandable_row.find("button[data-action*='expandable#toggle']").click
       expanded_row = find(".expandable-body", visible: true).text
       expect(find(".expandable-body", visible: true)).to have_link storage_name
       expect(expanded_row).to have_content num_tampons_in_donation
@@ -164,10 +165,10 @@ RSpec.describe "Item management", type: :system do
       let(:new_item_category) { 'Test Category' }
 
       before do
-        click_on 'Item Categories'
-        click_on 'New Item Category'
-        fill_in 'Category Name *', with: new_item_category
-        fill_in 'Category Description', with: 'A test category description'
+        click_on 'Item categories'
+        click_on 'New item category'
+        fill_in 'Category name *', with: new_item_category
+        fill_in 'Category description', with: 'A test category description'
         click_on 'Save'
       end
 
@@ -188,8 +189,8 @@ RSpec.describe "Item management", type: :system do
         let(:new_item_name) { 'Test Item' }
 
         before do
-          click_on 'New Item'
-          select "Other", from: "Reporting Category"
+          click_on 'New item'
+          select "Other", from: "NDBN reporting category"
           fill_in 'Name *', with: new_item_name
           select new_item_category, from: 'Category'
 
