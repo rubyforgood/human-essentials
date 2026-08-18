@@ -205,7 +205,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
         # Counts travel in the status filter's option labels now, not a strip of chips.
         expect(page).to have_select("Status",
-          with_options: ["Active — all but deactivated (3)", "All statuses (4)", "Deactivated (1)"])
+          with_options: ["Active (3)", "All statuses (4)", "Deactivated (1)"])
       end
 
       it "allows a user to invite a partner", js: true do

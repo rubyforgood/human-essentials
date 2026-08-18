@@ -699,3 +699,25 @@ first option is a worse control than a named one.
 The rule this suggests: copy that names a control is coupled to that control. When a control is
 removed, grep the views for its label before assuming the change is done. The twelve pages that
 still have a Clear filters button keep the old wording, correctly.
+
+## 2026-08-18 · Short option labels, rules in hint text
+
+"Active — all but deactivated (6)" stated the rule but was the wrong shape for an option label,
+and it leaned on an em dash to hold two clauses together.
+
+The ordinary advice across GOV.UK, Polaris and Material is the same: option labels are short
+noun phrases, and anything that needs explaining goes in hint text under the control. Two
+reasons, and the second is the one that decided it here:
+
+1. An explanation inside an option is re-read on every open, once per option.
+2. It is invisible while the list is closed — which is precisely when someone looks at
+   "Active (6)" and wonders what it excludes.
+
+So: `Active (6)` and `All statuses (6)`, with hint text underneath reading "Active hides
+deactivated partner agencies. All statuses includes them." That sentence is visible without
+opening anything, and `aria-describedby` ties it to the select so it is announced with the
+control rather than stranded after it.
+
+The hint uses the meta token design.md already defines, `text-xs text-slate-500` — 4.8:1 on
+white, which clears AA — and matches the hint styling simple_form applies on every form in the
+app, so this is not a new visual idea.

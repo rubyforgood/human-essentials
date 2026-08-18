@@ -19,7 +19,8 @@
     <div class="min-w-[15rem]">
       <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
             key: :last, value: :first, selected: params.dig(:filters, :by_status),
-            include_blank: @partner_status_default) %>
+            include_blank: @partner_status_default,
+            hint: "Active hides deactivated partner agencies. All statuses includes them.") %>
     </div>
   <% end %>
 

@@ -208,6 +208,10 @@ module EssentialsUiHelper
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
+  # Meta text, per design.md: slate-500 at text-xs. 4.8:1 on white, which clears AA for body
+  # text. Matches the hint style simple_form already uses on every form in the app.
+  FILTER_HINT_CLASSES = "mt-1 block text-xs text-slate-500"
+
   # For a filter whose options are a plain array rather than a collection of records.
   def essentials_filter_options(scope:, options:, label: nil, selected: nil)
     label ||= "Filter #{scope.to_s.tr("_", " ")}"

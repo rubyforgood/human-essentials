@@ -267,6 +267,16 @@ previously unreachable alongside the rest.
 
 Counts belong in the option label — `Awaiting review (1)` — not in a separate strip.
 
+**Keep option labels short and put any rule in hint text.** `Active (6)`, not
+`Active, excluding deactivated (6)`. An explanation inside an option is re-read every time the
+list is opened, and it is invisible while the list is shut, which is exactly when someone is
+wondering what the current selection means. `filter_select` takes `hint:`, renders it as meta
+text and wires up `aria-describedby`.
+
+**No `<optgroup>`.** Its label is drawn by the platform rather than by this stylesheet — macOS
+renders it around 2.6:1 — so its contrast is not ours to guarantee. Grouping also implies a
+hierarchy that a filter list rarely has.
+
 Two things that bite:
 
 - A select submits `""` where an absent link submits nothing. `Filterable#class_filter` skips
