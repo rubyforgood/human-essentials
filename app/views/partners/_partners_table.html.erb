@@ -3,7 +3,7 @@
     <%= render "shared/essentials/empty_state",
           kind: essentials_filtered? ? :no_results : :cold_start,
           title: essentials_filtered? ? "No partners match that status" : "No partner agencies yet",
-          body: essentials_filtered? ? "Clear the filter to see everyone." : "Partner agencies are the organizations you distribute essentials to.",
+          body: essentials_filtered? ? "Choose \u201cAll statuses\u201d to see every partner agency." : "Partner agencies are the organizations you distribute essentials to.",
           action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
     <div class="table-scroll">

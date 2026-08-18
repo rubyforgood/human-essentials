@@ -658,3 +658,44 @@ It fails on `--seed 57005` in a full run and passes in isolation on the same see
 pre-existing: it fails identically on the design branch without any of the filter work, and the
 file is untouched by it. Recorded rather than fixed because it belongs to a different piece of
 work, and a flake that is written down costs the next person minutes instead of an afternoon.
+
+## 2026-08-18 · No optgroup in the status filter, and labels that state their rule
+
+Asked what rules sort records into "Active" and "All", whether "By status" was a subsection of
+them, and whether the optgroup label met contrast requirements. Three questions, one cause.
+
+The rules, which nothing on screen was saying:
+
+| Option | Rule |
+| --- | --- |
+| Active | `where.not(status: :deactivated)` — five of the six statuses |
+| All | no scope — all six |
+| A named status | exactly that one |
+
+So the six are **not** a subsection of either. Five of them sit inside Active; the sixth,
+Deactivated, only inside All. The `<optgroup>` labelled "By status" asserted a hierarchy that
+does not exist, which is why the question came up. It is gone.
+
+On contrast: the optgroup computes to slate-900 on white, 17.9:1, so it passes on paper. That
+measurement is worth little, because the options list is drawn by the platform rather than by
+this stylesheet — macOS renders optgroup labels in its own grey, near enough slate-400 at 2.6:1,
+and no CSS here changes it. A control whose contrast is not ours to set is a control we cannot
+promise anything about, which is a second reason to avoid optgroup rather than restyle it.
+
+What replaced it is labels that carry their own rule: "Active — all but deactivated (6)" and
+"All statuses (7)", flat, with the six statuses under them in lifecycle order. Longer labels,
+no hierarchy to misread, and nothing whose rendering we do not control.
+
+## 2026-08-18 · Empty-state copy names a control, so it goes stale when the control does
+
+"Clear the filter to see everyone" survived the removal of the Clear filters button by three
+commits. The instruction was still true in spirit and impossible to follow literally.
+
+Both affected pages now name the option that does the job — "Choose 'All statuses' to see every
+partner agency" — which meant giving the audits filter a labelled blank option ("All storage
+locations") so there was something to name. That is an improvement anyway: an unexplained empty
+first option is a worse control than a named one.
+
+The rule this suggests: copy that names a control is coupled to that control. When a control is
+removed, grep the views for its label before assuming the change is done. The twelve pages that
+still have a Clear filters button keep the old wording, correctly.

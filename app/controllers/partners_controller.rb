@@ -35,15 +35,20 @@ class PartnersController < ApplicationController
     @active_partner_count = @partner_status_counts.except("deactivated").values.sum
     # [label, value] pairs for the status filter. Counts travel in the label so the list still
     # answers "how many are waiting on me?" without a row of chips above the table.
-    # Three kinds of option, kept apart so the view can group them: the default view, the
-    # whole collection, and the individual statuses. Statuses stay in the enum's own order,
-    # which is the lifecycle -- uninvited, invited, awaiting review, approved, recertification
-    # required, deactivated. Alphabetising them would scatter that sequence for no gain.
-    @partner_status_default = "Active (#{@active_partner_count})"
-    @partner_status_all = [["All (#{@partner_status_counts.values.sum})", ALL_STATUSES]]
-    @partner_status_options = current_organization.partners.statuses.keys.map do |status|
-      ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
-    end
+    # The two summary options say what rule they apply, because "Active" and "All" are not
+    # statuses and nothing else on the screen explains how they differ. Statuses follow in the
+    # enum's own order, which is the lifecycle -- uninvited, invited, awaiting review, approved,
+    # recertification required, deactivated. Alphabetising scatters that sequence for no gain.
+    #
+    # A flat list on purpose: an <optgroup> over the six read as though they were a subset of
+    # Active and All, and they are not -- five of them sit inside Active, the sixth only inside
+    # All. The platform also draws optgroup labels itself, so their contrast is not ours to fix.
+    @partner_status_default = "Active — all but deactivated (#{@active_partner_count})"
+    @partner_status_options =
+      [["All statuses (#{@partner_status_counts.values.sum})", ALL_STATUSES]] +
+      current_organization.partners.statuses.keys.map do |status|
+        ["#{status.humanize} (#{@partner_status_counts[status] || 0})", status]
+      end
 
     respond_to do |format|
       format.html
