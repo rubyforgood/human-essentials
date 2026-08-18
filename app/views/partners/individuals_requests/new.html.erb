@@ -45,7 +45,7 @@
               </table>
 
               <div>
-                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
+                <%= add_element_button('Add another item', container_selector: '.fields') do %>
                   <%= render 'partners/individuals_requests/item_request', form: form, object: Partners::FamilyRequest::Item.new %>
                 <% end %>
               </div>

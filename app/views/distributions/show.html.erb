@@ -2,8 +2,10 @@
 <% inactive = @distribution.has_inactive_item? %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# Both ends of the movement, as on the old page: which inventory it left and who received
+      it are equally part of identifying a distribution. %>
   <%= render "shared/essentials/page_header",
-        title: "Distribution to #{@distribution.partner.name}",
+        title: "Distribution from #{@distribution.storage_location.name} to #{@distribution.partner.name}",
         subtitle: (@distribution.persisted? ? "Created #{@distribution.created_at.strftime("%m/%d/%Y")}." : nil),
         back: {path: distributions_path, label: "Back to distributions"},
         actions: capture {

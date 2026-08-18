@@ -8,5 +8,5 @@
   <% resource.class.invite_key_fields.each do |field| %>
     <%= f.input field %>
   <% end %>
-  <%= f.button :submit, t("devise.invitations.new.submit_button"), class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
+  <%= f.button :button, t("devise.invitations.new.submit_button"), class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>

@@ -40,7 +40,7 @@ RSpec.describe "Transfer management", type: :system do
 
       create_transfer("10", from_storage_location.name, to_storage_location.name, click_save: false, click_confirm: false)
       # grabs the dynamically generated new item
-      click_on "Add Another Item"
+      click_on "Add another item"
       new_select = all("select[id$='_item_id']").last
       select_id = new_select[:id]
       select item.name, from: select_id

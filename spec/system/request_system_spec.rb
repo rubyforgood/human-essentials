@@ -235,7 +235,7 @@ RSpec.describe "Requests", type: :system, js: true do
             click_button "Yes, it's correct"
           end
 
-          expect(page).not_to have_content("New Distribution")
+          expect(page).not_to have_content("New distribution")
           expect(page).to have_content "Distributions"
           expect(page).to have_content "Distribution created"
           expect(request.reload.distribution_id).to eq Distribution.last.id

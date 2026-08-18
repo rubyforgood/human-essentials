@@ -93,5 +93,9 @@ SimpleForm.setup do |config|
   config.input_field_valid_class = "border-emerald-400"
   config.boolean_label_class = "text-sm text-slate-700"
   config.boolean_style = :inline
+
+  # simple_form adds `btn` to every button it renders. That is a Bootstrap class and is not
+  # defined any more; the design system's classes are passed explicitly at the call site.
+  config.button_class = nil
   config.label_text = ->(label, required, _explicit) { "#{label} #{required}" }
 end

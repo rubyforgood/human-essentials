@@ -21,5 +21,5 @@
   <%= f.hidden_field :invitation_token %>
   <%= f.input :password, input_html: {autocomplete: "new-password"} %>
   <%= f.input :password_confirmation, label: "Type the same password again", input_html: {autocomplete: "new-password"} %>
-  <%= f.button :submit, t("devise.invitations.edit.submit_button"), class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
+  <%= f.button :button, t("devise.invitations.edit.submit_button"), class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>

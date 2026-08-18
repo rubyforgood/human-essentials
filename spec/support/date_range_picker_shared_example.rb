@@ -135,8 +135,11 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       page.execute_script("document.getElementById('filters_date_range').focus();")
       page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
 
+      # Blur the field directly. Clicking the body was a proxy for "click away", and where
+      # the body's centre lands depends entirely on the page layout -- it now falls on other
+      # chrome rather than empty space, so the field never lost focus.
       accept_alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).") do
-        find('body').click
+        page.execute_script("document.getElementById('filters_date_range').blur();")
       end
 
       valid_date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"

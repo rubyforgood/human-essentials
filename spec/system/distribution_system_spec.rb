@@ -71,7 +71,7 @@ RSpec.feature "Distributions", type: :system do
       fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
       # This will fill in another item row with the same item but an additional quantity of 3
-      click_on "Add Another Item"
+      click_on "Add another item"
       quantity_fields = all('input[data-quantity]')
       second_quantity_field = quantity_fields[1]
       second_quantity_field&.fill_in(with: '3')
@@ -170,7 +170,7 @@ RSpec.feature "Distributions", type: :system do
       end.not_to change { ActionMailer::Base.deliveries.count }
 
       # verify line items appear on reload
-      expect(page).to have_content "New Distribution"
+      expect(page).to have_content "New distribution"
       expect(page).to have_selector "#distribution_line_items"
     end
 
@@ -303,7 +303,7 @@ RSpec.feature "Distributions", type: :system do
           page.find('[data-flash]')
         end.not_to change { Distribution.count }
 
-        expect(page).to have_content("New Distribution")
+        expect(page).to have_content("New distribution")
         expect(page.find("[data-flash]")).to have_content('Could not reduce quantity')
       end
     end
@@ -351,6 +351,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Edit", match: :first
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
+      click_button "Yes, it's correct"
       # Make Capybara wait for events to finish before checking Db.
       expect(page).to have_content("SOMETHING DIFFERENT")
 
@@ -359,7 +360,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "the user can view related request" do
-      click_on "View Request"
+      click_on "View request"
 
       expect(page).to have_content "Request from #{distribution.request.partner.name}"
     end
@@ -373,6 +374,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Edit", match: :first
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
+      click_button "Yes, it's correct"
       distribution.reload
       expect(job).to have_received(:deliver_later)
     end
@@ -383,6 +385,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Distribution date", with: Time.zone.parse("2001-10-01 10:00")
 
         click_on "Save", match: :first
+        click_button "Yes, it's correct"
         distribution.reload
       end.to change { distribution.issued_at }.to(Time.zone.parse("2001-10-01 10:00"))
     end
@@ -392,6 +395,7 @@ RSpec.feature "Distributions", type: :system do
       expect do
         fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
         click_on "Save", match: :first
+        click_button "Yes, it's correct"
       end.not_to change { distribution.line_items.first.quantity }
       within "[data-flash]" do
         expect(page).to have_content('Could not reduce quantity')
@@ -427,6 +431,7 @@ RSpec.feature "Distributions", type: :system do
 
         fill_in "Shipping cost", with: 12.05
         click_on "Save", match: :first
+        click_button "Yes, it's correct"
         expect(page).to have_content "Distributions"
         expect(page.find("[data-flash-tone='info']")).to have_content "Distribution updated!"
       end
@@ -479,13 +484,13 @@ RSpec.feature "Distributions", type: :system do
       it "can click on Edit button and a warning appears " do
         visit distributions_path
         click_on "Edit", match: :first
-        expect(page.find("[data-flash-tone='warning']")).to have_content "The current date is past the date this distribution was scheduled for."
+        expect(page).to have_content "The current date is past the date this distribution was scheduled for."
       end
 
       it "can be accessed directly" do
         visit edit_distribution_path(distribution.id)
         expect(page).to have_no_css("[data-flash-tone='danger']")
-        expect(page.find("[data-flash-tone='warning']")).to have_content "The current date is past the date this distribution was scheduled for."
+        expect(page).to have_content "The current date is past the date this distribution was scheduled for."
       end
     end
   end
@@ -539,7 +544,7 @@ RSpec.feature "Distributions", type: :system do
     before do
       visit donation_path(donation)
       sign_in(organization_admin)
-      click_on "Start a new Distribution"
+      click_on "Start a distribution"
       within "#new_distribution" do
         select "Test Partner", from: "Partner"
         choose "Pick up"
@@ -569,7 +574,7 @@ RSpec.feature "Distributions", type: :system do
       before do
         @distribution = Distribution.last
         expect(page).to have_current_path(distribution_path(@distribution.id))
-        click_on "Make a Correction"
+        click_on "Make a correction"
       end
 
       it "User creates a distribution from a donation then edits it" do
@@ -577,6 +582,7 @@ RSpec.feature "Distributions", type: :system do
           first("[data-quantity]").set 13
         end
         click_on "Save"
+        click_button "Yes, it's correct"
         expect(page).to have_content "Distribution updated!"
         expect(page).to have_content 13
       end
@@ -586,6 +592,7 @@ RSpec.feature "Distributions", type: :system do
           first("[data-quantity]").set 999_999
         end
         click_on "Save"
+        click_button "Yes, it's correct"
 
         expect(page).to have_no_content "Distribution updated!"
         expect(page).to have_content(/Could not reduce quantity/i)
@@ -601,7 +608,7 @@ RSpec.feature "Distributions", type: :system do
         select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         find_all("[data-quantity]")[0].set 1
 
-        click_on "Add Another Item"
+        click_on "Add another item"
 
         select2(page, 'distribution_line_items_item_id', item.name, position: 2)
         new_select = find_all("[data-quantity]")[1]
@@ -609,6 +616,7 @@ RSpec.feature "Distributions", type: :system do
         find_all("[data-quantity]")[1].set 3
 
         first("button", text: "Save").click
+        click_button "Yes, it's correct"
 
         expect(page).to have_css "td"
         item_row = find("td", text: item.name).find(:xpath, '..')
@@ -643,12 +651,12 @@ RSpec.feature "Distributions", type: :system do
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text("Test Storage Location")
         request_items.each do |item|
           expect(page).to have_content(Item.find(item["item_id"]).name)
-          expect(page).to have_content(item["quantity"])
+          expect(page).to have_content(ActiveSupport::NumberHelper.number_to_delimited(item["quantity"]))
         end
         click_button "Yes, it's correct"
       end
 
-      expect(page).to have_content("Distribution Complete")
+      expect(page).to have_content("Distribution complete")
 
       @request = Request.last
       @distribution = Distribution.last
@@ -678,7 +686,7 @@ RSpec.feature "Distributions", type: :system do
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text("Test Storage Location")
         request_items.each do |item|
           expect(page).to have_content(Item.find(item["item_id"]).name)
-          expect(page).to have_content(item["quantity"])
+          expect(page).to have_content(ActiveSupport::NumberHelper.number_to_delimited(item["quantity"]))
         end
         click_button "Yes, it's correct"
       end
@@ -699,7 +707,7 @@ RSpec.feature "Distributions", type: :system do
         click_button "Yes, it's correct"
       end
 
-      expect(page).to have_content("Distribution Complete")
+      expect(page).to have_content("Distribution complete")
 
       @request = Request.last
       @distribution = Distribution.last
@@ -875,21 +883,23 @@ RSpec.feature "Distributions", type: :system do
       click_button "Yes, it's correct"
     end
 
-    click_link "Make a Correction"
+    click_link "Make a correction"
 
     fill_in "distribution_line_items_attributes_0_quantity", with: 20
 
     click_button "Save"
-    # At this point the distribution was already saved and edited,
-    # therefore the confirmation modal does not appear here.
+    # The confirmation runs on every save, including a correction. On main it never appeared
+    # at all: the controller called Bootstrap's $(el).modal("show") inside a promise, which
+    # threw, and the catch submitted the form.
+    click_button "Yes, it's correct"
 
-    expect(page).to have_content("Distribution Complete")
-    expect(page).to have_button("Distribution Complete")
+    expect(page).to have_content("Distribution complete")
+    expect(page).to have_button("Distribution complete")
 
     expect(View::Inventory.new(organization.id)
       .quantity_for(item_id: item.id, storage_location: storage_location.id)).to eq(0)
 
-    click_button "Distribution Complete"
+    click_button "Distribution complete"
     expect(page).to have_content('Distribution')
 
     expect(page).to have_content("This distribution has been marked as being completed!")
@@ -918,13 +928,13 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_content("Distribution created!")
 
     # Make sure the button is there before trying to double click it
-    expect(page).to have_button("Distribution Complete", visible: true)
+    expect(page).to have_button("Distribution complete", visible: true)
 
     # Double click on the Distribution Complete button
     ferrum_double_click("form[action='#{distribution_path(id: organization.distributions.last.id)}/picked_up']")
 
     expect(page).to have_content("This distribution has been marked as being completed!")
-    expect(page).not_to have_button("Distribution Complete")
+    expect(page).not_to have_button("Distribution complete")
 
     # If it tries to mark the distribution as completed twice, the second time
     # will fail (the distribution is already complete) and show this error

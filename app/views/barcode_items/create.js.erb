@@ -1,4 +1,6 @@
-$('#newBarcode').modal('hide');
+// The barcode dialog is a native <dialog>; Bootstrap's .modal("hide") is not a function any
+// more and threw here, leaving the dialog open over the field it had just filled in.
+document.getElementById('newBarcode')?.close();
 source_field = $('#trigger-field-id').val();
 
 // Clear out the fields, capturing the quantity and item_id

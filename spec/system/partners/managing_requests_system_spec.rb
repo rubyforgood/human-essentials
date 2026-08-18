@@ -30,7 +30,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
           # Select items
           item_details.each_with_index do |item, idx|
             if idx != 0
-              click_link 'Add Another Item'
+              click_link 'Add another item'
             end
 
             last_row = find_all('tr').last
@@ -91,7 +91,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
           # Select items
           item_details.each_with_index do |item, idx|
             if idx != 0
-              click_link 'Add Another Item'
+              click_link 'Add another item'
             end
 
             last_row = find_all('tr').last
@@ -104,7 +104,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
           last_row.find('a', text: 'Remove').click
 
           # Trigger another row but keep it empty. It should still be valid!
-          click_link 'Add Another Item'
+          click_link 'Add another item'
         end
 
         context 'THEN a request records will be created ' do

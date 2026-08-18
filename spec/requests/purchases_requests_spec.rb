@@ -307,7 +307,7 @@ RSpec.describe "Purchases", type: :request do
         get edit_purchase_path(id: purchase.id)
         expect(response.body)
           .to include('This purchase is too old to edit inventory. You can only change non-inventory fields.')
-        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Add another item')
         expect(response.body).not_to include('Remove Item')
         parsed_body = Nokogiri::HTML(response.body)
         expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty

@@ -10,7 +10,7 @@
 #
 # @example Usage
 #   # Make sure the element is there
-#   expect(page.find('a[href*="/picked_up"]')).to have_content("Distribution Complete")
+#   expect(page.find('a[href*="/picked_up"]')).to have_content("Distribution complete")
 #
 #   # Double click it
 #   ferrum_double_click('a[href*="/picked_up"]')

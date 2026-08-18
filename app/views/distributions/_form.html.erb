@@ -67,7 +67,7 @@
     <% end %>
 
     <div class="flex items-center gap-2">
-      <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md),
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md),
             data: {disable_with: "Saving...", action: "click->confirmation#openModal"} %>
       <%= essentials_link_button "Cancel", distributions_path, variant: :ghost, size: :md %>
     </div>

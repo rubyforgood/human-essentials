@@ -57,7 +57,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
           selected: "Please select a unit",
           options: ["Please select a unit", "units", "packs"])
         select "packs", from: "request_item_requests_attributes_0_request_unit"
-        click_on "Add Another Item"
+        click_on "Add another item"
 
         # get selector to use in subsequent steps
         new_item = find_all(:css, "select[data-item-units-target=itemSelect]")[1]

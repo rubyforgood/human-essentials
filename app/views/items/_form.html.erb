@@ -32,7 +32,7 @@
             maxlength: 500, hint: "500 character maximum", input_html: {rows: 3} %>
 
       <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
         <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
       </div>
     <% end %>

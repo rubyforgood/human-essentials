@@ -5,7 +5,7 @@
 <%= essentials_form_for(resource, as: resource_name, url: unlock_path(resource_name), html: {method: :post, class: "mt-6"}) do |f| %>
   <%= f.full_error :unlock_token, class: "mb-4 block text-sm font-medium text-rose-700" %>
   <%= f.input :email, required: true, autofocus: true, input_html: {autocomplete: "email"} %>
-  <%= f.button :submit, "Resend unlock instructions", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
+  <%= f.button :button, "Resend unlock instructions", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full") %>
 <% end %>
 
 <div class="mt-6 space-y-1 text-sm">

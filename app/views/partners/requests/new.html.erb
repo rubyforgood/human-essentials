@@ -46,7 +46,7 @@
                 </tbody>
               </table>
               <div>
-                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
+                <%= add_element_button('Add another item', container_selector: '.fields') do %>
                   <%= render partial: 'item_request', locals: { form: form, item_units: @item_units }, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>

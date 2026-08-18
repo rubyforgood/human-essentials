@@ -35,7 +35,7 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <%= f.button :submit, "Save", class: essentials_button_classes(variant: :primary, size: :md),
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md),
             data: {disable_with: "Saving...", "duplicate-items-target": "itemSubmitButton"} %>
       <%= essentials_link_button "Cancel", kits_path, variant: :ghost, size: :md %>
     </div>
