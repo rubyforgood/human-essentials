@@ -21,7 +21,10 @@ pin "preact", to: "https://ga.jspm.io/npm:preact@10.11.3/dist/preact.module.js"
 pin "preact/compat", to: "https://ga.jspm.io/npm:preact@10.11.3/compat/dist/compat.module.js"
 pin "preact/hooks", to: "https://ga.jspm.io/npm:preact@10.11.3/hooks/dist/hooks.module.js"
 pin "@fullcalendar/luxon", to: "https://ga.jspm.io/npm:@fullcalendar/luxon@6.0.1/index.js"
-pin "@fullcalendar/core/", to: "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/"
+# A trailing-slash pin maps a whole directory; there is no module at the bare URL, so
+# preloading it fetches a directory listing nobody imports. The individual @fullcalendar
+# entry points above are pinned separately and are preloaded.
+pin "@fullcalendar/core/", to: "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/", preload: false
 pin "@fullcalendar/daygrid", to: "https://ga.jspm.io/npm:@fullcalendar/daygrid@6.0.1/index.js"
 pin "@fullcalendar/list", to: "https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/index.js"
 pin "quagga", to: "https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js"
@@ -32,4 +35,7 @@ pin "jquery-ui", to: "https://ga.jspm.io/npm:jquery-ui@1.13.2/ui/widget.js"
 pin "@rails/activestorage", to: "@rails--activestorage.js" # @8.0.100
 pin "rrule", to: "https://ga.jspm.io/npm:rrule@2.8.1/dist/esm/index.js" # @2.8.1
 pin "tslib", to: "https://ga.jspm.io/npm:tslib@2.8.1/tslib.es6.mjs" # @2.8.1
-pin "sinon" # @21.0.0
+# 180KB, imported only by the fake-clock script in _essentials_head.html.erb under
+# Rails.env.test?. Preloading is on by default in importmap-rails 2.x, which pulled it into
+# every page in every environment.
+pin "sinon", preload: false # @21.0.0
