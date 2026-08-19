@@ -324,9 +324,9 @@ days*, *Last 30 days*, *This month*, *This year*, *All time* and so on — with 
 bottom. Choosing Custom reveals **From** and **To** boxes that open your device's own date
 picker. Set the range, then press **Filter**.
 
-A page you have not filtered opens on *Default (recent and upcoming)*, which runs from two
-months back to one month ahead — far enough forward to include distributions that are scheduled
-but have not happened yet.
+A page you have not filtered opens on *Last 2 months and next month*. It reaches into the future
+on purpose: a distribution can be scheduled before it happens, and a range ending today would
+hide everything already booked in.
 
 The whole filter lives in the address bar, so a filtered view can be bookmarked or sent to
 someone and it will show them the same thing.

@@ -14,30 +14,30 @@
 
   <%= render "shared/essentials/filter_bar", url: donations_path do %>
     <% if info.storage_locations.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
     <% end %>
     <% if info.sources.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Source", scope: :by_source, options: info.sources, selected: info.selected_source) %></div>
+      <div class="min-w-0"><%= essentials_filter_options(label: "Source", scope: :by_source, options: info.sources, selected: info.selected_source) %></div>
     <% end %>
     <% if info.product_drives.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Product drive", scope: :by_product_drive, collection: info.product_drives, selected: info.selected_product_drive) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Product drive", scope: :by_product_drive, collection: info.product_drives, selected: info.selected_product_drive) %></div>
     <% end %>
     <% if info.product_drive_participants.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Product drive participant", scope: :by_product_drive_participant, collection: info.product_drive_participants, value: :business_name, selected: info.selected_product_drive_participant) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Product drive participant", scope: :by_product_drive_participant, collection: info.product_drive_participants, value: :business_name, selected: info.selected_product_drive_participant) %></div>
     <% end %>
     <% if info.manufacturers.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Manufacturer", scope: :from_manufacturer, collection: info.manufacturers, selected: info.selected_manufacturer) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Manufacturer", scope: :from_manufacturer, collection: info.manufacturers, selected: info.selected_manufacturer) %></div>
     <% end %>
     <% if info.donation_sites.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Donation site", scope: :from_donation_site, collection: info.donation_sites, key: :id, value: :name, selected: info.selected_donation_site) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Donation site", scope: :from_donation_site, collection: info.donation_sites, key: :id, value: :name, selected: info.selected_donation_site) %></div>
     <% end %>
     <% if info.items.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :by_item_id, collection: info.items, selected: info.selected_item) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_item_id, collection: info.items, selected: info.selected_item) %></div>
     <% end %>
     <% if info.item_categories.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
+      <div class="min-w-0"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
     <% end %>
-    <div class="min-w-[15rem]">
+    <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
@@ -51,7 +51,8 @@
         {label: "Items received", value: number_with_delimiter(info.donations_quantity), value_id: "donation_quantity"},
         {label: "Money raised", value: dollar_presentation(info.total_money_raised)},
         {label: "In-kind value", value: dollar_presentation(info.total_value_all_donations)}
-      ], caption: date_range_caption) %>
+            ], title: "Totals",
+         subtitle: essentials_stats_scope(info.donations.size, "donation")) %>
 
   <div class="mt-6"></div>
 

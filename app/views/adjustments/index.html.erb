@@ -12,9 +12,9 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: adjustments_path do %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
-    <div class="min-w-[13rem]"><%= filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
-    <div class="min-w-[15rem]">
+    <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
+    <div class="min-w-0"><%= filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
+    <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>

@@ -34,9 +34,18 @@
       <style>.filter-bar-submit { display: inline-flex !important; }</style>
     </noscript>
   <% end %>
-  <div class="flex flex-wrap items-end gap-3">
+  <%#
+    A grid, not a flex row. A flex item sizes to its content -- the longest option in the menu
+    -- so `flex-wrap` with min-width boxes gave six different control widths across four pages
+    (208 to 289px) and packed each line to the left, leaving 337px, 793px and 852px of ragged
+    space at the ends. Equal columns fix both: the width follows the breakpoint, not the text.
+
+    Cells are `min-w-0` so a long option cannot push a column past its share; the select
+    truncates instead.
+  %>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     <%= yield %>
-    <div class="flex items-center gap-2">
+    <div class="col-span-full flex items-center justify-end gap-2">
       <button type="submit"
               class="filter-bar-submit <%= essentials_button_classes(variant: :primary, size: :md) %>"
               <%= tag.attributes(style: "display:none") if auto_submit %>>

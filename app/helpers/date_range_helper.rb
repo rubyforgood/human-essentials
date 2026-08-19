@@ -10,7 +10,7 @@ module DateRangeHelper
   #
   # Despite the name it is not a label. Every branch has to read correctly in that position,
   # which is why they carry their own prepositions -- "in the prior year", not "prior year".
-  # Use #date_range_caption where it has to stand on its own.
+  # It is always used mid-sentence, so it stays lower case.
   #
   # Matched after downcasing, which is what lets the filter's option labels be sentence case.
   # Every preset in #date_range_presets needs a clause here; without one it falls through to
@@ -47,13 +47,6 @@ module DateRangeHelper
     end
   end
 
-  # The same phrase where it begins a line of its own. Sentence case, per design.md: capital
-  # on the first word only, and #upcase_first rather than #capitalize so a date inside it
-  # keeps its own capitals -- "From June 19, 2026", not "From june 19, 2026".
-  def date_range_caption
-    date_range_label.upcase_first
-  end
-
   def default_date
     start_date = 2.months.ago.to_date
     end_date = 1.month.from_now.to_date
@@ -68,9 +61,11 @@ module DateRangeHelper
   # organization's zone.
   #
   # Ordered shortest window to longest, with the catch-alls last, which is the order Stripe,
-  # Google Analytics and Metabase all use. "Default" leads because it is the range the page
-  # arrives on, and it is named for what it shows: this app schedules distributions ahead, so
-  # the default window deliberately runs into the future.
+  # Google Analytics and Metabase all use. The default window leads because it is the range the
+  # page arrives on, and it is named for the span it covers rather than for being the default:
+  # "Default (recent and upcoming)" said neither what it included nor how far it reached. It
+  # runs into the future on purpose -- a distribution can be scheduled before it happens, and a
+  # range ending today would hide everything already booked in.
   #
   # The keys land in filters[date_range_label] verbatim, and #date_range_label matches them
   # after downcasing -- which is why sentence case here is safe.
@@ -79,7 +74,7 @@ module DateRangeHelper
     last_month = today - 1.month
 
     {
-      "Default (recent and upcoming)" => [2.months.ago.to_date, 1.month.from_now.to_date],
+      "Last 2 months and next month" => [2.months.ago.to_date, 1.month.from_now.to_date],
       "Today" => [today, today],
       "Yesterday" => [today - 1.day, today - 1.day],
       "Last 7 days" => [today - 6.days, today],
