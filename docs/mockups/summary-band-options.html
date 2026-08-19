@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Summary band — options, not built</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body{background:#f8fafc}
+  .wrap{max-width:1120px;margin:0 auto;padding:40px 32px 72px}
+  .frame{border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;background:#fff;margin-top:14px}
+  .frame>figcaption{padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+  .frame.pick>figcaption{background:#ecfdf5;color:#065f46}
+  .frame.bad>figcaption{background:#fff1f2;color:#9f1239}
+  .frame>.body{padding:20px}
+  .frame>.shot{padding:20px;background:#fff}
+  .sub{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin:0 0 8px}
+  .rule{border-left:3px solid #4f46e5;background:#eef2ff;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  table.diag{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;overflow:hidden;font-size:14px}
+  table.diag th,table.diag td{text-align:left;padding:8px 13px;border-bottom:1px solid #f1f5f9}
+  table.diag th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+  table.diag tr:last-child td{border-bottom:0}
+  .no{color:#be123c;font-weight:600}.ok{color:#15803d;font-weight:600}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:.9em}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:20px;margin:44px 0 6px}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:#4f46e5;
+    color:#fff;border-radius:7px;font-size:14px;margin-right:9px}
+  p.note{color:#475569;margin:0 0 12px;max-width:84ch}
+  .lede{color:#475569;margin:0 0 28px;max-width:78ch}
+  .side{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+</style></head>
+<body class="text-slate-900"><div class="wrap">
+
+<h1>The summary band</h1>
+<p class="lede">Nothing here is built. <strong>Resize this window</strong> to see the wide behaviour;
+the boxed panels are real iframes at 430px, so they show the narrow behaviour at the same time.</p>
+
+<h2><span class="n">1</span>What is wrong</h2>
+<p class="note">The band is <code>grid gap-4 sm:grid-cols-2 lg:grid-cols-3</code> &mdash; a fixed
+column count, whatever the number of figures. Measured just now:</p>
+<table class="diag">
+  <thead><tr><th>Page</th><th>Figures</th><th>1360px</th><th>900px</th><th>390px</th></tr></thead>
+  <tbody>
+    <tr><td><code>/donations</code>, <code>/purchases</code></td><td>4</td>
+        <td class="no">3 + 1 orphan</td><td class="ok">2 + 2</td><td class="ok">stacked</td></tr>
+    <tr><td><code>/distributions</code>, <code>/product_drives</code></td><td>3</td>
+        <td class="ok">3</td><td class="no">2 + 1 orphan</td><td class="ok">stacked</td></tr>
+  </tbody>
+</table>
+<p class="note" style="margin-top:12px">So every page with a band has an orphan row at
+<em>some</em> width. Two more things you named: the tiles are filled <code>slate-50</code> and
+float on the page in no container, and their radius is 12px where every card in the app is
+16px.</p>
+
+<figure class="frame bad">
+  <figcaption>Current &mdash; /donations, four figures</figcaption>
+  <div class="shot">
+    <p class="sub">This window's width</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl>
+    <p class="sub" style="margin-top:22px">At 430px</p>
+    <iframe title="narrow preview" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=utf-8&gt;&lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=stylesheet href=&quot;/assets/tailwind.css&quot;&gt;&lt;style&gt;body{margin:0;padding:12px;background:#fff;font-family:Figtree,sans-serif}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p class=&quot;mb-2 text-sm text-slate-600&quot;&gt;Over the last 30 days&lt;/p&gt;&lt;dl class=&quot;grid gap-4 sm:grid-cols-2 lg:grid-cols-3&quot;&gt;&lt;div class=&quot;rounded-xl border border-slate-200 bg-slate-50 px-4 py-3&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Donations&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;13&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;rounded-xl border border-slate-200 bg-slate-50 px-4 py-3&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Items received&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;106,644&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;rounded-xl border border-slate-200 bg-slate-50 px-4 py-3&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Money raised&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$1,250.00&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;rounded-xl border border-slate-200 bg-slate-50 px-4 py-3&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;In-kind value&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$11,312.00&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;/body&gt;&lt;/html&gt;" style="width:430px;height:430px;border:1px solid #cbd5e1;border-radius:10px;background:#fff"></iframe>
+  </div>
+</figure>
+
+<h2><span class="n">2</span>How the industry does a metric strip</h2>
+<p class="note">In dense data apps this is one surface, not a scatter of boxes. Stripe's dashboard,
+Shopify's analytics and Linear's insights all use <strong>a single card with the figures divided
+by hairlines</strong> &mdash; no fill per figure, because the fill is what makes four boxes read
+as four objects rather than one reading. The column count follows the number of figures, so there
+is no orphan to design around.</p>
+
+<figure class="frame">
+  <figcaption>A &mdash; one card, one row at desktop, stacked below</figcaption>
+  <div class="shot">
+    <p class="sub">Four figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><dl class="grid divide-y divide-slate-200 lg:grid-cols-4 lg:divide-x lg:divide-y-0"><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></section>
+    <p class="sub" style="margin-top:22px">Three figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><dl class="grid divide-y divide-slate-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0"><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="px-5 py-4"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></section>
+    <p class="sub" style="margin-top:22px">At 430px</p>
+    <iframe title="narrow preview" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=utf-8&gt;&lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=stylesheet href=&quot;/assets/tailwind.css&quot;&gt;&lt;style&gt;body{margin:0;padding:12px;background:#fff;font-family:Figtree,sans-serif}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p class=&quot;mb-2 text-sm text-slate-600&quot;&gt;Over the last 30 days&lt;/p&gt;&lt;section class=&quot;overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm&quot;&gt;&lt;dl class=&quot;grid divide-y divide-slate-200 lg:grid-cols-4 lg:divide-x lg:divide-y-0&quot;&gt;&lt;div class=&quot;px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Donations&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;13&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Items received&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;106,644&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Money raised&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$1,250.00&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;In-kind value&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$11,312.00&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;/section&gt;&lt;/body&gt;&lt;/html&gt;" style="width:430px;height:420px;border:1px solid #cbd5e1;border-radius:10px;background:#fff"></iframe>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">Simplest possible: <code>divide-y</code> stacked,
+    <code>lg:divide-x lg:divide-y-0</code> in one row. Never an orphan, because at desktop the
+    column count <em>is</em> the figure count. The cost is the middle: between 640px and 1024px
+    it is still a tall stack of four, where there is room for two abreast.</p>
+  </div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>B &mdash; one card, filled at every width &nbsp;&middot;&nbsp; my recommendation</figcaption>
+  <div class="shot">
+    <p class="sub">Four figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><section class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm"><dl class="grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></section>
+    <p class="sub" style="margin-top:22px">Three figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><section class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm"><dl class="grid gap-px bg-slate-200 sm:grid-cols-3"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></section>
+    <p class="sub" style="margin-top:22px">At 430px</p>
+    <iframe title="narrow preview" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=utf-8&gt;&lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=stylesheet href=&quot;/assets/tailwind.css&quot;&gt;&lt;style&gt;body{margin:0;padding:12px;background:#fff;font-family:Figtree,sans-serif}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p class=&quot;mb-2 text-sm text-slate-600&quot;&gt;Over the last 30 days&lt;/p&gt;&lt;section class=&quot;overflow-hidden rounded-2xl border border-slate-200 shadow-sm&quot;&gt;&lt;dl class=&quot;grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4&quot;&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Donations&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;13&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Items received&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;106,644&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Money raised&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$1,250.00&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;In-kind value&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$11,312.00&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;/section&gt;&lt;/body&gt;&lt;/html&gt;" style="width:430px;height:420px;border:1px solid #cbd5e1;border-radius:10px;background:#fff"></iframe>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">Same card, but the separators are a <code>gap-px</code> grid
+    over a <code>slate-200</code> backdrop with white cells. That draws a hairline between
+    <em>every</em> pair of neighbours automatically &mdash; rows as well as columns &mdash; so the
+    layout is free to be 2&times;2 at tablet without the divider maths falling apart. This is the
+    Tailwind UI pattern for exactly this component.</p>
+    <p class="note" style="margin:8px 0 0">Column counts chosen so the grid is always <em>full</em>:
+    4 figures go 1 &rarr; 2&times;2 &rarr; 4; 3 figures go 1 &rarr; 3; 2 figures go 1 &rarr; 2.
+    An empty grid cell would show the backdrop as a grey block, which is the one way this pattern
+    can look wrong, and matching the count to the columns is what prevents it.</p>
+  </div>
+</figure>
+
+<figure class="frame">
+  <figcaption>C &mdash; keep the separate tiles, just fix the column count</figcaption>
+  <div class="shot">
+    <p class="sub">Four figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl>
+    <p class="sub" style="margin-top:22px">Three figures &middot; this window</p>
+    <p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><dl class="grid gap-4 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">The minimal change: one line in the helper, orphan gone,
+    everything else as it is. It does not answer the other half of what you asked &mdash; these are
+    still four grey boxes rather than one card &mdash; but it is worth seeing what the smallest fix
+    buys, because it is nearly all of the layout complaint.</p>
+  </div>
+</figure>
+
+<h2><span class="n">3</span>What I would do</h2>
+<div class="rule">
+  <p><strong>B.</strong> One card in the app's own idiom &mdash; white, <code>rounded-2xl</code>,
+  <code>border-slate-200</code>, <code>shadow-sm</code>, the same surface as the reports cards
+  &mdash; with hairline separators and a column count that follows the figure count. It answers
+  both halves: no orphan at any width, and one reading instead of four objects.</p>
+  <p style="margin-top:8px">The caption stays where it is, above the card, sentence case. It
+  labels the whole band, so putting it inside the first cell would attach it to one figure.</p>
+  <p style="margin-top:8px">This is a change to <code>essentials_stats</code>, so it lands on all
+  five call sites at once: 4 index pages and the manufacturer donations report. The
+  <code>value_class</code> and <code>value_id</code> hooks the request specs match on are
+  untouched.</p>
+</div>
+<p class="note"><strong>A, B or C?</strong> I would take B.</p>
+
+</div></body></html>

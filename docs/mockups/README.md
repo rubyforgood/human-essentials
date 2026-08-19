@@ -12,9 +12,17 @@ cp docs/mockups/<file>.html public/    # ignored by git; the tracked copy is the
 # then open http://localhost:3000/<file>.html
 ```
 
+If a mockup shows responsive behaviour with an `<iframe srcdoc="...">`, **escape `<` and `>` in
+the payload as well as the quotes**. rack-mini-profiler injects its script tag at the first
+`</body>` in the response, and an unescaped one inside the attribute means it injects *there* --
+its own quotes then terminate the attribute, and everything after it, including the width, is
+swallowed. Two of the three iframes in `summary-band-options.html` silently fell back to
+Chromium's default 300px that way.
+
 | Mockup | Question it was made to answer | Outcome |
 | --- | --- | --- |
 | `page-actions-options.html` | Where does a tab's action belong, and how many buttons may a page header carry? | **Option A chosen**: tabs became real URLs and the primary action follows the tab. |
 | `reports-options.html` | How much should a reports hub card carry, and what does an index page look like once its summary report is folded into it? | **V2 chosen**, without the per-row icons; `<tfoot>` totals dropped. Built on `design-preview-reports-hub`. |
 | `date-picker-options.html` | The Litepicker popup looks foreign to the app. What is the industry-standard simple date range picker for the design system? | **Option B chosen**, keeping the wire format: a preset `<select>` with two native date inputs behind "Custom". Litepicker and its two CDN pins removed. |
 | `showing-line-options.html` | `#date_range_label` produces a sentence fragment that nothing reads. Where should the sentence go, and is the fragment fit to build on? | **B + C chosen**: a sentence-case caption on the stats band and the period in the `:no_results` empty state, not a standalone line. Helper fixed first — five bugs, one of them the no-parameter default. |
+| `summary-band-options.html` | The stats band orphans a tile, and its filled tiles float on the page in no container. One responsive card instead? | Awaiting a decision. Records that the fixed column count orphans a tile on *every* band page at some width. |
