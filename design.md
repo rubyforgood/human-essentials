@@ -785,6 +785,31 @@ gives the eye a second column of glyphs to skip and marks nothing out.
 a stat band where the figure is the content — an empty figure reads as broken rather than as
 nought. Use `dollar_presentation` for a stat.
 
+### Building a form page
+
+Every form page renders `page_header` with a `back:` link, then one
+`shared/essentials/card`, then fields through `f.input` so the `:essentials` wrapper owns the
+label, the spacing and the error message.
+
+- **Never pass `class:` to `f.input`.** simple_form ignores it; the field is then styled by
+  whatever the wrapper happens to do. `input_html: {class: …}` is the argument that works.
+- **A radio or checkbox group is a `<fieldset>` with a `<legend>`.** A label followed by `<br>`
+  and a run of `&nbsp;` announces the question once and connects nothing to it.
+- **Load the page when you are done.** Two assertions catch the whole class of unbalanced
+  markup, and a class-name audit catches none of it:
+
+  ```js
+  form.contains(submitButton)                              // must be true
+  fieldsOutsideForm(document.querySelector('main form'))   // must be 0
+  ```
+
+  Three pages in this app had a submit button *outside* the form holding its fields. They
+  worked, because the HTML parser splits malformed markup into two forms and re-associates the
+  button — which is exactly why nobody noticed.
+
+`ruby bin/design/form-audit.rb` checks the mechanical part and exits non-zero on a regression.
+It cannot check the two assertions above.
+
 ## Backlog
 
 Known gaps, in rough priority order:

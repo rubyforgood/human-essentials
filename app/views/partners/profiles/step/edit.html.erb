@@ -1,17 +1,9 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Step Editing - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Edit My Organization&nbsp;&nbsp;&nbsp;
-          <%= partner_status_badge(current_partner) %></h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Step Editing - #{current_partner.name}" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit my organization",
+        back: {path: partners_profile_path, label: "Back to my profile"} %>
+</div>
 
 <div class="mx-5 mt-3 flex items-start gap-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900" role="note">
   <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
@@ -27,8 +19,8 @@
     <%= render 'partners/profiles/step/form_actions', f: f, partner: current_partner %>
 
     <div class="accordion mx-5 mt-3" id="accordionExample">
-      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'agency_information', section_title: 'Agency Information', icon_class: 'bi-pencil', partial_name: 'agency_information', sections_with_errors: @sections_with_errors %>
-      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'program_delivery_address', section_title: 'Program / Delivery Address', icon_class: 'bi-geo-alt', partial_name: 'program_delivery_address', sections_with_errors: @sections_with_errors %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'agency_information', section_title: 'Agency information', icon_class: 'bi-pencil', partial_name: 'agency_information', sections_with_errors: @sections_with_errors %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'program_delivery_address', section_title: 'Program and delivery address', icon_class: 'bi-geo-alt', partial_name: 'program_delivery_address', sections_with_errors: @sections_with_errors %>
       <% current_partner.partials_to_show.each do |partial| %>
         <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: partial, section_title: partial_display_name(partial), icon_class: 'bi-sliders', partial_name: partial, sections_with_errors: @sections_with_errors %>
       <% end %>

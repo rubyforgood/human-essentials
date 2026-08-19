@@ -1,20 +1,13 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <div class="border-b border-slate-200 px-5 py-4">
-    <h2 class="text-base font-semibold text-slate-900">Invite New User</h2>
-  </div>
-
+<%# Locals: user, partner. %>
+<%= render "shared/essentials/card", title: "Invite a user" do %>
   <%= essentials_form_for user, url: partner_users_path(partner) do |f| %>
-    <div class="px-5 py-4">
-      <div class="mb-4">
-        <%= f.input :name, label: "Name", placeholder: "Name", required: true %>
-      </div>
-      <div class="mb-4">
-        <%= f.input :email, label: "Email", placeholder: "Email", required: true %>
-      </div>
-    </div>
+    <%= f.input :name, label: "Name", required: true %>
+    <%= f.input :email, label: "Email", required: true %>
 
-    <div class="border-t border-slate-200 px-5 py-3">
-      <%= f.submit "Invite User", class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %>
+    <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+      <%= f.button :button, "Invite user",
+            class: essentials_button_classes(variant: :primary, size: :md),
+            data: {disable_with: "Inviting..."} %>
     </div>
   <% end %>
-</div>
+<% end %>

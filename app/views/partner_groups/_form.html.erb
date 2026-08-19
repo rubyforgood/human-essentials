@@ -1,48 +1,55 @@
-<%= essentials_form_for @partner_group, html: { class: 'form-horizontal' } do |f| %>
-  <section>
-    <div class="px-4 py-6 sm:px-6 lg:px-8">
-      <div class="grid gap-6">
-        <!-- left column -->
-        <div class="min-w-0">
-          <!-- jquery validation -->
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  Locals: submit_btn_options.
 
-            <!-- form start -->
-            <div class="px-5 py-4">
-              <%= f.input :name, label: "Name" do %>
-                <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-              <% end %>
+  Fixed here: `text-bold` (Tailwind has no such class -- the author meant `font-bold`, so these
+  headings were never bold), a `<label>` with a stray `l` attribute and no `for`, `form-horizontal`,
+  and section headings marked up as <h2> where they are really the questions their fields ask, so
+  they are fieldset legends now.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(@partner_group) %>
 
-              <div class='mt-3'>
-                <h2 class='text-bold text-lg'>Which Item Categories Can They Request?</h2>
-                <label class='text-sm text-red-600' l>This controls which item categories members of this group can request!</label>
-                <%= f.association :item_categories, collection: @item_categories, as: :check_boxes, label: '' %>
-              </div>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @partner_group do |f| %>
+      <%= f.input :name, label: "Name" %>
 
-              <div class='mt-3' data-controller='checkbox-with-nested-element'>
-                <h2 class='text-bold text-lg'>Do you want to send deadline reminders to them every month?</h2>
-                <%= f.input :send_reminders, as: :boolean, label: "Yes", input_html: { data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisibility', 'checkbox-with-nested-element-target': 'checkbox' } } %>
+      <fieldset class="mb-4">
+        <legend class="text-sm font-semibold text-slate-900">
+          Which item categories can this group request?
+        </legend>
+        <p class="mt-1 text-sm text-slate-600">
+          Members of this group can only request from the categories you tick. Tick none and they
+          can request nothing.
+        </p>
+        <div class="mt-2">
+          <%= f.association :item_categories, collection: @item_categories, as: :check_boxes, label: false %>
+        </div>
+      </fieldset>
 
-                <div class='pl-5 hidden' data-checkbox-with-nested-element-target='nestedElement'>
-                  <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
-                    <h3 class="text-sm font-semibold text-slate-900">That's great!</h3>
-                    <p>You must fill out the details below to send reminders.</p>
-                  </div>
+      <fieldset class="mb-4" data-controller="checkbox-with-nested-element">
+        <legend class="text-sm font-semibold text-slate-900">
+          Send deadline reminders every month?
+        </legend>
+        <%= f.input :send_reminders, as: :boolean, label: "Yes, send reminders",
+              input_html: {data: {action: "click->checkbox-with-nested-element#toggleNestedElementVisibility",
+                                  "checkbox-with-nested-element-target": "checkbox"}} %>
 
-                  <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: @partner_group %>
-                </div>
-              </div>
-            </div>
-
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= submit_button(submit_btn_options) %>
-            </div>
+        <div class="hidden pl-5" data-checkbox-with-nested-element-target="nestedElement">
+          <div class="flex items-start gap-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900" role="note">
+            <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
+            <span>Reminders need a schedule and a deadline day. Fill in both below.</span>
           </div>
 
+          <div class="mt-4">
+            <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @partner_group %>
+          </div>
         </div>
+      </fieldset>
 
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button(submit_btn_options) %>
+        <%= essentials_link_button "Cancel", partner_groups_path, variant: :ghost, size: :md %>
       </div>
-
-    </div>
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

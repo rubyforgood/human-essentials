@@ -15,13 +15,20 @@ UNDEFINED = %w[text-bold form-horizontal form-group control-label help-block].fr
 DS_H1 = "text-2xl font-bold tracking-tight text-slate-900"
 LTE_COMMENT = /<!--\s*(left column|right column|jquery validation|form start|\/?\.[\w-]+)\s*-->/
 
+# Strip ERB comments before checking. A class name written in a comment -- usually one saying
+# the class was removed -- renders nothing, and matching it reports the fix as the defect.
+def strip_comments(src)
+  src.gsub(/<%#.*?%>/m, "").gsub(/<!--.*?-->/m) { |c| c }
+end
+
 files = Dir.glob("app/views/**/*.html.erb")
   .select { |f| f.match?(%r{/(new|edit)\.html\.erb$|/_form\.html\.erb$}) }
   .sort
 
 findings = files.filter_map do |file|
   rel = file.sub("app/views/", "")
-  src = File.read(file)
+  raw = File.read(file)
+  src = strip_comments(raw)
   auth = AUTH.any? { |prefix| rel.start_with?(prefix) }
 
   issues = []
@@ -33,7 +40,7 @@ findings = files.filter_map do |file|
   if src.match?(/rounded-2xl border border-slate-200 bg-white shadow-sm/) && !src.include?("shared/essentials/card")
     issues << "hand-rolled card"
   end
-  comments = src.scan(LTE_COMMENT).size
+  comments = raw.scan(LTE_COMMENT).size
   issues << "#{comments} AdminLTE comment(s)" if comments.positive?
   title_case = src.scan(/<h[12][^>]*>\s*([A-Z][a-z]+(?: [A-Z][a-z]+){1,})/).flatten.uniq
   issues << "Title Case: #{title_case.first}" if title_case.any?

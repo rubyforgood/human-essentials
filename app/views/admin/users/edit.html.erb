@@ -1,46 +1,25 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Edit - User - #{@user.display_name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing User <%= @user.display_name %></h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Edit - User - #{@user.display_name}" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit user",
+        subtitle: @user.display_name,
+        back: {path: admin_users_path, label: "Back to users"} %>
+</div>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-sm font-semibold text-slate-900">Update <%= @user.display_name %></h3>
-          </div>
-
-          <!-- form start -->
-          <div class="px-5 py-4">
+<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card" do %>
             <%= essentials_form_for @user, url: admin_user_path, html: {id: "quickForm"} do |f| %>
               <div class="form-inputs">
                 <%= render 'admin/users/user_form_fields', f: f %>
               </div>
-              </div>
 
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= submit_button %>
-              </div>
-            <% end %>
-            </div>
-
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button %>
+        <%= essentials_link_button "Cancel", admin_users_path, variant: :ghost, size: :md %>
       </div>
-    </div>
-
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>
 
 <% unless @user == current_user %>
   <%= render partial: 'roles', object: @user, as: :user %>

@@ -1,15 +1,9 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Send broadcast announcement" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Send Broadcast Announcement</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_organization.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Send broadcast announcement" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Send announcement",
+        subtitle: "Partners of #{current_organization.name} see this on their dashboard.",
+        back: {path: broadcast_announcements_path, label: "Back to announcements"} %>
+</div>
 
 <%= render "form", broadcast_announcement: @broadcast_announcement %>

@@ -1,31 +1,39 @@
 # Form page audit — new, edit and form partials
 
-Audited 2026-08-18; re-run after batch 1. 98 pages matching `new.html.erb`, `edit.html.erb` or
-`_form.html.erb`; **31 carry at least one finding**, down from 40.
+Audited 2026-08-18, cleared 2026-08-19. 98 pages matching `new.html.erb`, `edit.html.erb` or
+`_form.html.erb`; **0 with findings**, down from 40.
+
+Re-run with `ruby bin/design/form-audit.rb`, which exits non-zero if anything regresses.
 
 ## Progress
 
 | Batch | Pages | Status |
 | --- | --- | --- |
-| 1 — partner portal: families, children, authorized family members | 9 | **Done.** |
-| 2 — admin area | 14 | Not started |
-| 3 — bank-side: partner groups, announcements, organizations, profiles | 17 | Not started |
+| 1 — partner portal: families, children, authorized family members | 9 | Done |
+| 2 — admin area: base items, barcode items, organizations, partners, users, announcements, FAQ | 14 | Done |
+| 3 — bank-side: partner groups, announcements, organization settings, profiles, requests, account | 17 | Done |
 
-Batch 1 turned up more than the audit could see. `partners/families/_form` had unbalanced divs:
-the browser recovered by splitting it into two `<form>` elements and the submit button ended up
-outside the one holding the fields. It worked — by the parser's error recovery rather than by
-design — which is why nobody had noticed. `partners/children/_form` opened with a stray
-`intersect?` expression that printed `true` onto the page.
+## What the audit could not see
 
-Neither is the kind of thing a class-name audit finds. Both were visible immediately in a
-browser, which is the argument for opening every page in one as it is rewritten.
+Every batch turned up something a class-name scan cannot find. All of it was obvious within
+seconds of opening the page in a browser, which is why each page was opened as it was rewritten.
 
-These pages render on a design system layout, which is why the migration reported them as done.
-The layout is not the page: a view can sit inside the correct shell and still build its own
-header, its own card and its own inputs. That is what most of these do.
+| Page | Found |
+| --- | --- |
+| `partners/families/_form` | Divs did not balance. The browser recovered by splitting one form into two and the submit button ended up outside the one with the fields. It worked, by the parser's error recovery. |
+| `partners/children/_form` | Opened with a stray `intersect?` expression that printed `true` onto the page. |
+| `admin/organizations/new` | A second `<h1>` inside the form, so the page had two. |
+| `admin/base_items/new` | Card header read "Update &lt;name&gt;" on a page for creating a record, where the name is blank. |
+| `users/registrations/edit` | An empty `<button>` — a collapse toggle whose AdminLTE JavaScript is gone, with no label, no icon and no handler. |
+| `organizations/edit` | An inline `<style>` block restyling `trix-editor` with hardcoded hex colours, duplicating the vendored trix stylesheet. The three other rich-text pages never had it. |
+| `partner_groups/_form` | `text-bold`, which Tailwind does not define. The author meant `font-bold`, so that heading was never bold. Also a `<label>` with a stray `l` attribute and no `for`. |
+| `profiles/edit`, `partners/requests/new`, `partners/individuals_requests/new` | The submit row sat outside the fields it submits, same unbalanced-div cause. |
 
-Devise views are judged against the auth layout, which has no page header bar — a plain `<h1>`
-carrying the design system's own classes is correct there and is not counted as a finding.
+## One regression, caught by the suite
+
+Replacing the header on `users/registrations/edit` dropped the staging warning with it — a
+user-facing notice, not styling. `spec/system/account_system_spec.rb` caught it. Restored as a
+proper alert, keeping the `.staging-warning` hook.
 
 ## What each finding means
 

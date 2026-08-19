@@ -1,89 +1,51 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Edit - Users" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing</h1>
-<p class="mt-1 text-sm text-slate-600">your profile</p>
+<% content_for :title, "Edit - Users" %>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "My account",
+        subtitle: "Your name, email and password.",
+        back: {path: dashboard_path_from_current_role, label: "Back to dashboard"} %>
+</div>
+
+<%#
+  Fixed here: a `collapsed-card` class AdminLTE defined and nothing does now, and the empty
+  <button> that used to collapse it -- a control with no label, no icon and no handler. The
+  password fields are a fieldset instead, which is what that card was trying to be.
+
+  Every `f.input ... do` block pasted the input classes by hand, which is what the :essentials
+  wrapper already does.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <% if Rails.env.staging? %>
+    <div class="staging-warning mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
+      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
+      <span>This is a demo version. Changes to the demo account credentials are not allowed.</span>
+    </div>
+  <% end %>
+
+  <%= essentials_error_summary(resource) %>
+
+  <%= render "shared/essentials/card", title: current_user.display_name do %>
+    <%= essentials_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
+      <%= f.input :name, label: "Name", required: true, autofocus: true %>
+      <%= f.input :email, label: "Email" %>
+      <%= f.input :current_password, label: "Current password",
+            hint: "We need your current password to confirm your changes." %>
+
+      <fieldset class="mt-6 border-t border-slate-200 pt-5">
+        <legend class="text-base font-semibold text-slate-900">Change password</legend>
+        <p class="mb-4 text-sm text-slate-600">Leave these blank to keep your current password.</p>
+        <%= f.input :password, label: "New password" %>
+        <%= f.input :password_confirmation, label: "Confirm new password" %>
+      </fieldset>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
         <% if Rails.env.staging? %>
-          <div class="staging-warning">
-            <p> <strong> You are accessing a demo version which does not allow changes to the demo account credentials </strong> </p>
-          </div>
+          <%= _button_to({text: "Save", icon: "floppy-o", type: "success"}, disabled: true) %>
+        <% else %>
+          <%= submit_button %>
         <% end %>
+        <%= essentials_link_button "Cancel", dashboard_path_from_current_role, variant: :ghost, size: :md %>
       </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-sm font-semibold text-slate-900"><%= current_user.display_name %></h3>
-          </div>
-          <%= essentials_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
-
-          <div class="px-5 py-4">
-            <div class="grid gap-6">
-              <div class="min-w-0">
-                <%= f.input :name, label: "Name:", required: true, autofocus: true do %>
-                  <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-                <%= f.input :email, label: "Email:" do %>
-                  <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-                <%= f.input :current_password, label: "Current Password:" do %>
-                  <%= f.input_field :current_password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-                <p class="mt-1 text-xs text-slate-500" id="password-confirmation-help"><em>We need your current password to confirm your
-                  changes</em></p>
-
-              </div>
-
-              <div class="min-w-0">
-                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm collapsed-card">
-                  <div class="border-b border-slate-200 px-5 py-4">
-                    <h3 class="text-sm font-semibold text-slate-900">Change Password</h3>
-                    <span class="shrink-0">
-                      <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
-
-                      </button>
-                    </span>
-
-                  </div>
-                  <div class="px-5 py-4">
-                    <p class="mt-1 text-xs text-slate-500" id="password-help">Leave this blank if you don't want to change it</p>
-
-                    <%= f.input :password, label: "New Password:" do %>
-                      <%= f.input_field :password, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                    <% end %>
-                    <%= f.input :password_confirmation, label: "New Password Confirmation:" do %>
-                      <%= f.input_field :password_confirmation, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-            <div class="border-t border-slate-200 px-5 py-3">
-            <% unless Rails.env.staging? %>
-              <%= submit_button %>
-              <% else %>
-              <%= _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "float-right" }, disabled: true) %>
-              <% end %>
-            </div>
-
-        </div>
-
-      </div>
-
-    </div>
-<% end %>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

@@ -44,7 +44,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created' do
           it "creates the correct request" do
-            click_button 'Submit Essentials Request'
+            click_button 'Submit essentials request'
             expect(page).to have_selector('#partnerIndividualRequestConfirmationModal')
             within "#partnerIndividualRequestConfirmationModal" do
               click_button "Yes, it's correct"
@@ -109,7 +109,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created ' do
           it "displays confirmation modal with quota warning and creates the correct request" do
-            click_button 'Submit Essentials Request'
+            click_button 'Submit essentials request'
             expect(page).to have_text('You are ordering')
             expect(page).to have_text('total items. Are you sure?')
             expect(page).to have_selector('#partnerRequestConfirmationModal')

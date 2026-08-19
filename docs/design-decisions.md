@@ -957,3 +957,46 @@ inside a table: there was no rule to violate, so nobody noticed it was being vio
 Written down now, along with the corollary that a fourth button is a signal rather than a
 problem to place — usually a section of the page wanting an action of its own, which is a tab
 wanting to be a URL.
+
+## 2026-08-19 · The layout is not the page
+
+40 of 98 form pages hand-rolled their own header, card and inputs while rendering inside a
+correct design system layout. `bin/design/status.rb` counted every one of them as migrated,
+because it asks whether a view contains design system markup and they all did.
+
+That is the lesson worth keeping: **a page can sit in the right shell and still be unmigrated.**
+The shell was the easy half. What took the time was the inside of each form -- fields that mixed
+`f.input` with raw `f.label` + `f.text_field`, `class:` passed to `f.input` where simple_form
+ignores it, radio groups laid out with `&nbsp;` runs and `<br>`, and card classes pasted inline
+so a change to the card could never reach them.
+
+`bin/design/form-audit.rb` now checks for it and exits non-zero, so the gap status.rb leaves is
+covered by something.
+
+## 2026-08-19 · Open the page, every time
+
+Every batch turned up at least one defect no class-name audit could have found, and every one
+was obvious within seconds in a browser:
+
+- Divs that did not balance, so the browser split one form into two and left the submit button
+  outside the fields. Three pages had this. They worked, by the HTML parser's error recovery,
+  which is exactly why they survived.
+- A stray `intersect?` expression printing `true` onto a page.
+- A second `<h1>` inside a form.
+- An empty `<button>` — a collapse toggle whose AdminLTE JavaScript had been deleted.
+- A "New base item" page whose card header read "Update", with a blank name.
+
+The rule: rewrite a page, then load it. `submitInForm` and a count of fields outside the form
+are two cheap assertions that catch the whole unbalanced-markup class, and they are now in the
+verification list.
+
+## 2026-08-19 · A header replacement can take a warning with it
+
+`users/registrations/edit` kept its staging warning inside the hand-rolled header block. The
+header was replaced wholesale with `page_header` and the warning went with it -- a user-facing
+notice about not being able to change demo credentials, silently deleted.
+
+`spec/system/account_system_spec.rb` caught it, which is the argument for the assertion existing
+at all. But the general point is about mechanical replacement: when a block is swapped out
+wholesale, read what was inside it first. A header block is a plausible place for a page to keep
+something that is not a header.

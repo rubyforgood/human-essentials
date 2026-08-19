@@ -1,46 +1,36 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Editing - #{@partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing Partner - <%= @partner.name %></h1>
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Editing - #{@partner.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="space-y-6">
-          <%= essentials_form_for @partner, url: profile_path,
-            data: { controller: "form-input" },
-            html: {role: 'form', class: 'form-horizontal'} do |form| %>
-            <%= form.simple_fields_for :profile, @partner.profile do |profile_form| %>
-              <div class="grid gap-6">
-                <div class="min-w-0">
-                  <%= render partial: "partners/profiles/edit/agency_information",
-                             locals: {form: form, partner: @partner, profile: @partner.profile, profile_form: profile_form} %>
-                </div>
-                <% @partner.partials_to_show.each do |partial| %>
-                  <div class="min-w-0">
-                    <%= render partial: "partners/profiles/edit/#{partial}",
-                               locals: {form: profile_form, f: profile_form, partner: @partner, profile: @partner.profile} %>
-                  </div>
-                <% end %>
-                <div class="min-w-0">
-                  <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form } %>
-                </div>
-              <% end %>
-            </div>
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= form.submit("Update information", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600") %>
-              <%= link_to "Cancel Update", partner_path(@partner), class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
-            </div>
-          <% end %>
-        </div>
-      </div>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit partner profile",
+        subtitle: @partner.name,
+        back: {path: partner_path(@partner), label: "Back to #{@partner.name}"} %>
+</div>
+
+<%#
+  The nesting was wrong here: the `<div class="grid gap-6">` opened inside `simple_fields_for`
+  was closed after that block had ended, so the submit row sat outside the fields it submits.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_form_for @partner, url: profile_path,
+        data: {controller: "form-input"}, html: {role: "form"} do |form| %>
+    <div class="space-y-6">
+      <%= form.simple_fields_for :profile, @partner.profile do |profile_form| %>
+        <%= render partial: "partners/profiles/edit/agency_information",
+              locals: {form: form, partner: @partner, profile: @partner.profile, profile_form: profile_form} %>
+        <% @partner.partials_to_show.each do |partial| %>
+          <%= render partial: "partners/profiles/edit/#{partial}",
+                locals: {form: profile_form, f: profile_form, partner: @partner, profile: @partner.profile} %>
+        <% end %>
+        <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form} %>
+      <% end %>
     </div>
-  </div>
-</section>
+
+    <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+      <%= form.button :button, "Update information",
+            class: essentials_button_classes(variant: :primary, size: :md),
+            data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", partner_path(@partner), variant: :ghost, size: :md %>
+    </div>
+  <% end %>
+</div>
