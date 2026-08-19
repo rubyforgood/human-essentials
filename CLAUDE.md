@@ -132,7 +132,17 @@ because the next person will trust it.
 The cadence: **work, then document, then commit and push, at every checkpoint.** Not batched at
 the end. The documentation and the change it describes belong in the same commit, and a
 checkpoint that is not pushed is a checkpoint that can be lost — this workspace has been reset
-out from under the work twice.
+out from under the work three times.
+
+**Do this without being asked.** Finishing a piece of work means: update whichever of the six
+documents it touched — `design.md`, `docs/onboarding.md`, `docs/migration-map.md` and the rest —
+then commit and push. Do not stop to ask whether to document it, and do not wait for permission
+to push. The one thing that still needs asking is a *design* decision: show a preview and let
+the user choose before building a screen.
+
+A user-visible change almost always touches `docs/onboarding.md`. Its user half goes stale
+quietly, because contributors do not read it — check it every time, not only when it seems
+obviously relevant.
 
 Three habits that go with this:
 
