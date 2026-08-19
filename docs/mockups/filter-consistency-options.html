@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filters — consistency, the custom range, and two bugs</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body{background:#f8fafc}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 32px 80px}
+  .frame{border:1px solid #cbd5e1;border-radius:14px;overflow:visible;background:#fff;margin-top:14px}
+  .frame>figcaption{padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#475569;
+    border-radius:14px 14px 0 0}
+  .frame.pick>figcaption{background:#ecfdf5;color:#065f46}
+  .frame.bad>figcaption{background:#fff1f2;color:#9f1239}
+  .frame>.body{padding:18px 20px;border-top:1px solid #e2e8f0}
+  .frame>.shot{padding:20px;background:#fff;border-radius:0 0 14px 14px}
+  .sub{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin:0 0 8px}
+  .rule{border-left:3px solid #4f46e5;background:#eef2ff;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  .warn{border-left:3px solid #dc2626;background:#fef2f2;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  table.diag{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;overflow:hidden;font-size:14px}
+  table.diag th,table.diag td{text-align:left;padding:8px 13px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  table.diag th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+  table.diag tr:last-child td{border-bottom:0}
+  .no{color:#be123c;font-weight:600}.ok{color:#15803d;font-weight:600}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:.9em}
+  pre{background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:10px;font-size:12.5px;overflow:auto;margin:8px 0 0}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:21px;margin:46px 0 6px}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:#4f46e5;
+    color:#fff;border-radius:7px;font-size:14px;margin-right:9px}
+  p.note{color:#475569;margin:0 0 12px;max-width:86ch}
+  .lede{color:#475569;margin:0 0 28px;max-width:80ch}
+  .fake{margin-top:16px;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;color:#94a3b8;
+    font-size:13px;text-align:center;background:#f8fafc}
+</style></head>
+<body class="text-slate-900"><div class="wrap">
+
+<h1>Filters: consistency, the custom range, and two bugs</h1>
+<p class="lede">You found two real bugs, and one of them is app-wide. Nothing here is built.</p>
+
+<h2><span class="n">1</span>Two bugs</h2>
+<div class="warn">
+  <p><strong>Every modal in this app opens in the top-left corner.</strong> Not just Calculate
+  product totals &mdash; all of them, in <strong>28 files</strong>. A native
+  <code>&lt;dialog&gt;</code> opened with <code>showModal()</code> centres itself using the
+  browser's own <code>margin: auto</code>. Tailwind's preflight resets <code>margin: 0</code> on
+  every element, which takes that away. Measured on <code>/requests</code>: the dialog reports
+  <code>:modal</code> true, and sits at <code>top: 0, left: 0</code> with <code>margin: 0px</code>.</p>
+  <pre>dialog:modal { margin: auto }   /* one rule, in @layer base */</pre>
+  <p style="margin-top:8px">Neither the page audit nor the axe run caught it, because neither
+  opens a dialog. That is a gap in the tooling as much as a bug in the CSS.</p>
+</div>
+<div class="warn">
+  <p><strong>Calculate product totals is inside the filter bar.</strong> It is a page action, not
+  a filter, so it is laid out as a filter cell &mdash; which is the misalignment &mdash; and now
+  that the bar collapses it is hidden behind the Filters button entirely. It belongs in the page
+  header with Export and New request.</p>
+</div>
+
+<h2><span class="n">2</span>The threshold was wrong</h2>
+<p class="note">You are right. Two behaviours across sixteen pages is worse than one, whichever
+one it is: someone who learns the filter bar on donations then meets a different thing on
+transfers has learned nothing transferable. <strong>The disclosure goes everywhere</strong>, and
+<code>FILTER_DISCLOSURE_THRESHOLD</code> is deleted.</p>
+<figure class="frame pick">
+  <figcaption>Every bar, whatever its size &mdash; /partners, one filter</figcaption>
+  <div class="shot">
+    <div class="flex flex-wrap items-center gap-2"><button type="button" aria-expanded="false" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm"><i class="bi-funnel" aria-hidden="true"></i>Filters<span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white">1</span><i class="bi-chevron-down text-slate-400" aria-hidden="true"></i></button><span class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white py-1 pl-3 pr-1.5 text-sm text-slate-700"><span class="text-slate-500">Status:</span> <span class="font-medium">Approved</span><button type="button" class="ml-0.5 flex size-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"><i class="bi-x-lg text-xs" aria-hidden="true"></i></button></span><a href="#" class="text-sm font-medium text-brand-700 hover:underline">Clear all</a></div>
+    <div class="fake">the results start here</div>
+  </div>
+</figure>
+
+<h2><span class="n">3</span>The custom range, and what industry does</h2>
+<p class="note">The stacking is the bug you are describing, and it is worse than it looks.
+Choosing <em>Custom</em> turns a 64px cell into a <strong>216px</strong> one &mdash; three stacked
+controls &mdash; and adds <strong>152px</strong> to the bar at every width. At 1360px and above
+the tall cell has no neighbours on its row at all, so there is a column of empty space beside it.</p>
+<figure class="frame bad">
+  <figcaption>Now &mdash; Custom open, 216px of cell in a row of 64px cells</figcaption>
+  <div class="shot"><div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_at_storage_location_23227eee-8be0-494a-9263-26907ea49780">Storage location</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_at_storage_location_23227eee-8be0-494a-9263-26907ea49780" name="filters[at_storage_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_source_1a8e69dd-57e9-4737-8480-d1d3a1c87463">Source</label><select name="filters[by_source]" id="filters_by_source_1a8e69dd-57e9-4737-8480-d1d3a1c87463" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Donation Site">Donation Site</option>
+<option value="Manufacturer">Manufacturer</option>
+<option value="Misc. Donation">Misc. Donation</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_994a4d80-a5d2-46ac-a1de-dbfbc21cb259">Product drive</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_994a4d80-a5d2-46ac-a1de-dbfbc21cb259" name="filters[by_product_drive]"><option value="" label=" "></option>
+<option value="2">Best Product Drive</option>
+<option value="1">First Product Drive</option>
+<option value="3">Second Best Product Drive</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_participant_e5f94413-2d73-449f-a448-b66b9633282e">Product drive participant</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_participant_e5f94413-2d73-449f-a448-b66b9633282e" name="filters[by_product_drive_participant]"><option value="" label=" "></option>
+<option value="1">A Good Place to Collect Diapers</option>
+<option value="2">A Mediocre Place to Collect Diapers</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_from_manufacturer_b0fe458c-a6e9-4326-994b-d428cd1fe052">Manufacturer</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_manufacturer_b0fe458c-a6e9-4326-994b-d428cd1fe052" name="filters[from_manufacturer]"><option value="" label=" "></option>
+<option value="1">Manufacturer 1</option>
+<option value="2">Manufacturer 2</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_from_donation_site_13f79418-cfdb-48b1-8393-f92372b05528">Donation site</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_donation_site_13f79418-cfdb-48b1-8393-f92372b05528" name="filters[from_donation_site]"><option value="" label=" "></option>
+<option value="4">Eagleton Country Club</option>
+<option value="1">Pawnee Hardware</option>
+<option value="3">Waffle House</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_054c9c95-bedc-4afb-8e75-5ccca4d520e1">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_054c9c95-bedc-4afb-8e75-5ccca4d520e1" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_category_0a5687a3-02cd-43f0-9b19-dbbe44866644">Category</label><select name="filters[by_category]" id="filters_by_category_0a5687a3-02cd-43f0-9b19-dbbe44866644" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Category One">Category One</option>
+<option value="Category Three">Category Three</option>
+<option value="Category Two">Category Two</option></select></div><div class="min-w-0">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-col gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Last 2 months and next month&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-0">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset" data-default-value="Last 2 months and next month"><option selected="selected" value="Last 2 months and next month">Last 2 months and next month</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-col gap-3" data-date-range-target="custom">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div></div></div>
+</figure>
+
+<p class="note"><strong>Industry puts the whole date range in a popover.</strong> Stripe, Shopify,
+Google Analytics, Metabase and Linear all do the same thing: the filter is a single button
+showing the current range, and clicking it opens a floating panel with the presets down one side
+and the custom dates down the other. The panel is over the page, so it costs no layout at all
+&mdash; which is exactly the problem you are pointing at. Nothing below it moves, at any
+viewport.</p>
+
+<figure class="frame pick">
+  <figcaption>Proposed &mdash; one button, a popover for everything &nbsp;&middot;&nbsp; my recommendation</figcaption>
+  <div class="shot" style="padding-bottom:280px">
+    <div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_at_storage_location_7c46cff7-9894-4979-b847-a506903ea0e6">Storage location</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_at_storage_location_7c46cff7-9894-4979-b847-a506903ea0e6" name="filters[at_storage_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_source_c25f2004-752e-4e60-9849-47c1378df9ff">Source</label><select name="filters[by_source]" id="filters_by_source_c25f2004-752e-4e60-9849-47c1378df9ff" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Donation Site">Donation Site</option>
+<option value="Manufacturer">Manufacturer</option>
+<option value="Misc. Donation">Misc. Donation</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_6aa6b2cf-f496-41e1-8d8b-d42c06210bae">Product drive</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_6aa6b2cf-f496-41e1-8d8b-d42c06210bae" name="filters[by_product_drive]"><option value="" label=" "></option>
+<option value="2">Best Product Drive</option>
+<option value="1">First Product Drive</option>
+<option value="3">Second Best Product Drive</option></select></div>
+      <div class="min-w-0 relative">
+        <span class="block text-sm font-medium text-slate-700">Date range</span>
+        <button type="button" class="mt-1.5 flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm text-slate-900 shadow-sm">
+          <span>Last 30 days</span><i class="bi-chevron-down text-slate-400" aria-hidden="true"></i>
+        </button>
+        <div class="absolute right-0 top-full z-20 mt-1 w-[30rem] rounded-2xl border border-slate-200 bg-white p-3 shadow-xl"><div class="grid grid-cols-2 gap-3"><ul class="max-h-64 space-y-0.5 overflow-auto border-r border-slate-100 pr-3"><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Last 2 months and next month</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Today</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Yesterday</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Last 7 days</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm bg-brand-50 font-medium text-brand-800">Last 30 days</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">This month</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Last month</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Last 12 months</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">This year</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">Prior year</button></li><li><button type="button" class="w-full rounded-lg px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-100">All time</button></li></ul><div class="space-y-3"><div><label class="block text-sm font-medium text-slate-700">From</label><input type="date" value="2026-07-21" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 px-3 text-sm text-slate-900 shadow-sm"></div><div><label class="block text-sm font-medium text-slate-700">To</label><input type="date" value="2026-08-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 px-3 text-sm text-slate-900 shadow-sm"></div><div class="flex justify-end gap-2 pt-1"><button type="button" class="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">Cancel</button><button type="button" class="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white">Apply</button></div></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="body">
+    <p class="note" style="margin:0">The trigger is one column wide in every state, and the panel
+    never pushes anything. Presets on the left, the custom range on the right, applied together
+    with one button &mdash; which also removes the intermediate request you get today when you set
+    From and then To.</p>
+    <p class="note" style="margin:8px 0 0"><strong>What it needs, honestly.</strong> The HTML
+    <code>popover</code> attribute gives top-layer rendering, click-outside dismissal and Escape
+    for free, and is supported in Chrome 114+, Safari 17+ and Firefox 125+. Positioning is the
+    part still worth writing ourselves: CSS anchor positioning is Chrome-only, so the panel is
+    placed with a few lines of JavaScript from the trigger's rectangle, flipping upwards when it
+    would fall off the bottom. That is a genuine new component for the design system &mdash;
+    roughly a partial, a Stimulus controller and a CSS block &mdash; and it is the piece of this
+    round with real risk in it.</p>
+  </div>
+</figure>
+
+<h2><span class="n">4</span>Two Clears</h2>
+<p class="note">Also right. <em>Clear all</em> sits beside the chips at the top and
+<em>Clear filters</em> sits at the end of the panel; they do the same thing. Industry keeps one,
+next to the summary, because that is where you are looking when you decide you have narrowed too
+far &mdash; and because the one inside the panel is invisible exactly when the panel is shut.</p>
+<figure class="frame pick">
+  <figcaption>Keep the one beside the chips; drop the one in the panel</figcaption>
+  <div class="shot">
+    <div class="mb-3 flex flex-wrap items-center gap-2"><button type="button" aria-expanded="true" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm"><i class="bi-funnel" aria-hidden="true"></i>Filters<span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white">2</span><i class="bi-chevron-down text-slate-400" aria-hidden="true"></i></button><span class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white py-1 pl-3 pr-1.5 text-sm text-slate-700"><span class="text-slate-500">Source:</span> <span class="font-medium">Manufacturer</span><button type="button" class="ml-0.5 flex size-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"><i class="bi-x-lg text-xs" aria-hidden="true"></i></button></span><span class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white py-1 pl-3 pr-1.5 text-sm text-slate-700"><span class="text-slate-500">Date range:</span> <span class="font-medium">Last 30 days</span><button type="button" class="ml-0.5 flex size-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"><i class="bi-x-lg text-xs" aria-hidden="true"></i></button></span><a href="#" class="text-sm font-medium text-brand-700 hover:underline">Clear all</a></div>
+    <div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_at_storage_location_7c46cff7-9894-4979-b847-a506903ea0e6">Storage location</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_at_storage_location_7c46cff7-9894-4979-b847-a506903ea0e6" name="filters[at_storage_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_source_c25f2004-752e-4e60-9849-47c1378df9ff">Source</label><select name="filters[by_source]" id="filters_by_source_c25f2004-752e-4e60-9849-47c1378df9ff" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Donation Site">Donation Site</option>
+<option value="Manufacturer">Manufacturer</option>
+<option value="Misc. Donation">Misc. Donation</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_6aa6b2cf-f496-41e1-8d8b-d42c06210bae">Product drive</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_6aa6b2cf-f496-41e1-8d8b-d42c06210bae" name="filters[by_product_drive]"><option value="" label=" "></option>
+<option value="2">Best Product Drive</option>
+<option value="1">First Product Drive</option>
+<option value="3">Second Best Product Drive</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_participant_8e7ad10a-e947-4537-9ab8-8fb1c5b4bf24">Product drive participant</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_participant_8e7ad10a-e947-4537-9ab8-8fb1c5b4bf24" name="filters[by_product_drive_participant]"><option value="" label=" "></option>
+<option value="1">A Good Place to Collect Diapers</option>
+<option value="2">A Mediocre Place to Collect Diapers</option></select></div><div class="min-w-0 relative"><span class="block text-sm font-medium text-slate-700">Date range</span><button type="button" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 px-3 text-sm text-slate-900 shadow-sm flex items-center justify-between text-left"><span>Last 30 days</span><i class="bi-chevron-down text-slate-400" aria-hidden="true"></i></button></div></div>
+  </div>
+  <div class="body">
+    <p class="note" style="margin:0">It disappears with the chips when nothing is set, so the row
+    is just the Filters button on an unfiltered page.</p>
+  </div>
+</figure>
+
+<h2><span class="n">5</span>What I would build</h2>
+<div class="rule">
+  <p><strong>The two bugs first</strong>, and separately from the rest: <code>dialog:modal { margin: auto }</code>,
+  and Calculate product totals moved into the page header. The dialog rule is one line and fixes
+  28 files.</p>
+  <p style="margin-top:8px"><strong>Then the threshold goes</strong> &mdash; disclosure on every
+  bar &mdash; and the second Clear goes with it. Both are deletions.</p>
+  <p style="margin-top:8px"><strong>Then the date range popover</strong>, as its own change,
+  because it is a new component rather than an adjustment to an existing one. If you would rather
+  not take that on now, the smaller version is to keep today's select and show the custom dates in
+  a popover instead of stacked &mdash; same fix for the 216px blowout, less new surface.</p>
+</div>
+<p class="note"><strong>Build all of it, or hold the popover back?</strong></p>
+
+</div></body></html>
