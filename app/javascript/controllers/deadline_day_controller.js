@@ -78,24 +78,24 @@ export default class extends Controller {
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value
         && this.deadlineDayTarget.value && this.dayOfMonthTarget.value === this.deadlineDayTarget.value) {
-      $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
+      $(this.reminderTextTarget).removeClass('text-slate-500').addClass('text-rose-700');
       $(this.reminderTextTarget).text('Reminder day cannot be the same as deadline day.');
       $(this.deadlineTextTarget).text("");
     } else {
       let dayOfMonth = parseInt(this.dayOfMonthTarget.value);
       let deadlineDay = parseInt(this.deadlineDayTarget.value);
       if (dayOfMonth < 1 || dayOfMonth > 28){
-        $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
+        $(this.reminderTextTarget).removeClass('text-slate-500').addClass('text-rose-700');
         $(this.reminderTextTarget).text("Reminder day must be between 1 and 28");
       } else {
-        $(this.reminderTextTarget).removeClass('text-danger').addClass('text-muted');
+        $(this.reminderTextTarget).removeClass('text-rose-700').addClass('text-slate-500');
         $(this.reminderTextTarget).text(reminder_date ? `Your next reminder date is ${reminder_date.toDateString()}.` : "");
       }
       if (deadlineDay < 1 || deadlineDay > 28){
-        $(this.deadlineTextTarget).removeClass('text-muted').addClass('text-danger');
+        $(this.deadlineTextTarget).removeClass('text-slate-500').addClass('text-rose-700');
         $(this.deadlineTextTarget).text("Deadline day must be between 1 and 28");
       } else {
-        $(this.deadlineTextTarget).removeClass('text-danger').addClass('text-muted');
+        $(this.deadlineTextTarget).removeClass('text-rose-700').addClass('text-slate-500');
         $(this.deadlineTextTarget).text(deadline_date ? `The deadline on your next reminder email will be ${deadline_date.toDateString()}.` : "");
       }
     }

@@ -22,6 +22,11 @@ AUTH = %w[users/sessions users/passwords users/confirmations users/unlocks
 UNDEFINED = %w[text-bold text-italic form-horizontal form-group control-label help-block
   collapsed-card card-body].freeze
 
+# `card` on its own is the Bootstrap/AdminLTE card and is defined nowhere now, so an element
+# carrying it has no border, background or shadow. Matched with word boundaries inside a class
+# attribute so `card-body`, `content-card` and `data-card` do not trip it.
+BARE_CARD = /class="[^"]*\bcard\b[^"]*"/
+
 DS_H1 = "text-2xl font-bold tracking-tight text-slate-900"
 CARD_CLASSES = "rounded-2xl border border-slate-200 bg-white shadow-sm"
 LTE_COMMENT = /<!--\s*(left column|right column|jquery validation|form start|Default box|\/?\.[\w-]+)\s*-->/
@@ -59,6 +64,7 @@ kinds.each do |kind, pattern|
 
     defects = []
     dead = UNDEFINED.select { |c| src.include?(c) }
+    dead << "card" if src.match?(BARE_CARD)
     defects << "dead class: #{dead.join(", ")}" if dead.any?
     inline = src.scan(/style=['"]/).size
     defects << "#{inline} inline style#{"s" if inline > 1}" if inline.positive?

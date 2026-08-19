@@ -40,7 +40,10 @@
               ]
             }.to_json
       %>
-      <div data-controller="highchart" data-highchart-config-value="<%= activity_chart_config %>">
+      <%# The config sets an empty title, so the chart needs a name given explicitly. %>
+      <div data-controller="highchart"
+           data-highchart-config-value="<%= activity_chart_config %>"
+           data-highchart-label-value="Essentials received against essentials distributed, <%= @selected_date_range %>">
         <div data-highchart-target="chart"></div>
       </div>
     </div>

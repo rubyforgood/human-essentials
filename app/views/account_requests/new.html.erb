@@ -7,11 +7,11 @@
 
       <div class="account-type-choice mb-3 flex items-start gap-2">
         <%= radio_button_tag(:account, :bank, @bank_selected, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
+        <%= label_tag(:account_bank, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
       </div>
       <div class="account-type-choice mb-3 flex items-start gap-2">
         <%= radio_button_tag(:account, :partner, false, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
+        <%= label_tag(:account_partner, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
       </div>
 
       <%# Hide #partner_info and #create_bank selections unless radio button selected %>

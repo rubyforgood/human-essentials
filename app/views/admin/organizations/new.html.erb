@@ -22,11 +22,14 @@
       <%= f.input :zipcode %>
       <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @organization %>
       <%= f.simple_fields_for :account_request do |account_request| %>
-        <%= account_request.input :ndbn_member, label: "NDBN membership" do %>
-          <%= account_request.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
-        <% end %>
+        <%= account_request.association :ndbn_member, label: "NDBN membership",
+              label_method: :full_name, value_method: :id %>
       <% end %>
-      <%= f.rich_text_area :default_email_text %>
+      <%# Wrapped in f.input so the trix editor has a label. A bare rich_text_area renders a
+          trix-editor with role=textbox and no accessible name. %>
+      <%= f.input :default_email_text, label: "Default email text" do %>
+        <%= f.rich_text_area :default_email_text %>
+      <% end %>
       <%= f.input :logo, hint: "A 4:1 ratio of width to height; the default is 763 by 188 pixels. JPEG or PNG." %>
 
       <%# Was an <h1>, which gave the page two of them. The page header owns the only h1. %>

@@ -14,7 +14,9 @@
             <div class="form-inputs">
               <%= f.input :title %>
               <div class="font-bold mb-2">Answer</div>
-              <%= f.rich_text_area :answer %>
+              <%= f.input :answer, label: "Answer" do %>
+                <%= f.rich_text_area :answer %>
+              <% end %>
             </div>
           </div>
           <div class="border-t border-slate-200 px-5 py-3">

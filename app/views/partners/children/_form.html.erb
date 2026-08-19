@@ -33,11 +33,12 @@
         <legend class="block text-sm font-medium text-slate-700">Child lives with</legend>
         <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2">
           <% Partners::Child::CAN_LIVE_WITH.each do |value| %>
-            <div class="flex items-center gap-2">
-              <%= f.check_box :child_lives_with, {multiple: true, id: "child_lives_with_#{value.parameterize}",
+            <%# Input nested inside the label: no id/for pair to keep in step. %>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+              <%= f.check_box :child_lives_with, {multiple: true,
                     class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"}, value, nil %>
-              <%= f.label "child_lives_with_#{value.parameterize}", value, class: "text-sm text-slate-700" %>
-            </div>
+              <%= value %>
+            </label>
           <% end %>
         </div>
       </fieldset>
