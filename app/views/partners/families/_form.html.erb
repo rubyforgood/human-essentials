@@ -1,101 +1,64 @@
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  Locals: family, submit_label.
 
-          <!-- form start -->
-          <div class="px-5 py-4">
-            <%= essentials_form_for family, html: {role: 'form', class: 'form-horizontal'} do |f| %>
-              <%= f.input :guardian_first_name, label: "Guardian First Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+  Rewritten from markup whose divs did not balance: the browser recovered by splitting it into
+  two <form> elements, leaving the submit button outside the one holding the fields. It worked,
+  by accident of the parser's error recovery rather than by design.
 
-              <%= f.input :guardian_last_name, label: "Guardian Last Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+  Radio and checkbox groups are fieldsets with legends now. They were a label, a <br> and a run
+  of &nbsp; entities, which announces the question once and then nothing that connects the
+  options to it.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(family) %>
 
-              <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for family, html: {role: "form"} do |f| %>
+      <%= f.input :guardian_first_name, label: "Guardian first name" %>
+      <%= f.input :guardian_last_name, label: "Guardian last name" %>
+      <%= f.input :guardian_zip_code, label: "Guardian zip code" %>
+      <%= f.input :guardian_county, label: "Guardian county" %>
+      <%= f.input :guardian_phone, label: "Guardian phone" %>
+      <%= f.input :case_manager, label: "Case manager",
+            hint: "The person at your agency assigned to this family." %>
 
-              <%= f.label :guardian_county, "Guardian County" %>
-              <%# <i class="bi-question-circle" style="color:blue" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_county, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+      <%= f.input :home_adult_count, label: "Adults living in the home" %>
+      <%= f.input :home_child_count, label: "Children aged 5 to 17 living in the home" %>
+      <%= f.input :home_young_child_count, label: "Children under 5 living in the home" %>
 
-              <%= f.label :guardian_phone, "Guardian Phone" %>
-              <%# <i class="bi-question-circle" style="color:blue" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_phone, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :case_manager, "Case Manager" %>
-              <i class="bi-question-circle" style="color:blue" title="Person at the agency who is assigned to this family."></i>
-              <%= f.text_field :case_manager, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
-              <%= f.number_field :home_adult_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :home_child_count, 'How Many Children (5-17) Live In The Home?' %>
-              <%= f.number_field :home_child_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :home_young_child_count, 'How Many Children (under 5) Live In The Home?' %>
-              <%= f.number_field :home_young_child_count, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :sources_of_income, "Sources of Income" %>
-              <br>
-              <% Partners::Family::INCOME_TYPES.each do |a_value| %>
-                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {multiple: true}, a_value, nil) %>
-                <%= f.label "#{a_value}", "#{a_value}" %>
-              <% end %>
-              <br>
-
-              <%= f.label :guardian_employed, "Is The Parent/Guardian Employed?" %>
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employed, 'Yes' %>
-              <%= label :guardian_employed, 'Yes' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= f.radio_button :guardian_employed, 'No' %>
-              <%= label :guardian_employed, 'No' %>
-              <br>
-
-              <%= f.label :guardian_employment_type, "Guardian Employed Full-Time or Part-Time" %>
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employment_type, 'Full-Time' %>
-              <%= label :guardian_employment_type, 'Full-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= f.radio_button :guardian_employment_type, 'Part-Time' %>
-              <%= label :guardian_employment_type, 'Part-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= f.radio_button :guardian_employment_type, 'N/A' %>
-              <%= label :guardian_employment_type, 'N/A', 'N/A' %>
-              <br>
-
-              <%= f.label :guardian_monthly_pay, "Guardian's Monthly Income" %>
-              <%# <i class="bi-question-circle" style="color:blue" title="Hooray!"></i> %>
-              <%= f.text_field :guardian_monthly_pay, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_health_insurance, 'Private Insurance' %>
-              <%= label :guardian_health_insurance, 'Private Insurance' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= f.radio_button :guardian_health_insurance, 'Medicaid' %>
-              <%= label :guardian_health_insurance, 'Medicaid' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= f.radio_button :guardian_health_insurance, 'Uninsured' %>
-              <%= label :guardian_health_insurance, 'Uninsured' %>
-              <br>
-
-              <%= f.label :military, "Military Family" %>
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, true %> <strong>Yes</strong>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, false %> <strong>No</strong>
-              <br>
-              <%= f.label :comments %>
-              <%= f.text_area :comments, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-              <%= f.label :archived %>
-              <%= f.check_box :archived %>
-              </div>
-
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= f.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
-              </div>
-            <% end %>
+      <fieldset class="mb-4">
+        <legend class="block text-sm font-medium text-slate-700">Sources of income</legend>
+        <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+          <% Partners::Family::INCOME_TYPES.each do |value| %>
+            <div class="flex items-center gap-2">
+              <%= f.check_box :sources_of_income, {multiple: true, id: "sources_of_income_#{value.parameterize}",
+                    class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"}, value, nil %>
+              <%= f.label "sources_of_income_#{value.parameterize}", value, class: "text-sm text-slate-700" %>
             </div>
+          <% end %>
+        </div>
+      </fieldset>
 
+      <%= f.input :guardian_employed, as: :radio_buttons, label: "Is the parent or guardian employed?",
+            collection: [["Yes", "Yes"], ["No", "No"]] %>
+      <%= f.input :guardian_employment_type, as: :radio_buttons, label: "Full-time or part-time?",
+            collection: [["Full-Time", "Full-Time"], ["Part-Time", "Part-Time"], ["N/A", "N/A"]] %>
+      <%= f.input :guardian_monthly_pay, label: "Guardian's monthly income" %>
+      <%= f.input :guardian_health_insurance, as: :radio_buttons, label: "Guardian's health insurance",
+            collection: [["Private Insurance", "Private Insurance"], ["Medicaid", "Medicaid"],
+                         ["Uninsured", "Uninsured"]] %>
+      <%= f.input :military, as: :radio_buttons, label: "Military family",
+            collection: [["Yes", true], ["No", false]] %>
+
+      <%= f.input :comments, label: "Comments", as: :text, input_html: {rows: 3} %>
+      <%= f.input :archived, as: :boolean, label: "Archived" %>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :button, submit_label,
+              class: essentials_button_classes(variant: :primary, size: :md),
+              data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_families_path, variant: :ghost, size: :md %>
       </div>
-
-    </div>
-
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

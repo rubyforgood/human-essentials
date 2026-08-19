@@ -1,7 +1,24 @@
 # Form page audit — new, edit and form partials
 
-Audited 2026-08-18. 98 pages matching `new.html.erb`, `edit.html.erb` or `_form.html.erb`;
-**40 carry at least one finding**.
+Audited 2026-08-18; re-run after batch 1. 98 pages matching `new.html.erb`, `edit.html.erb` or
+`_form.html.erb`; **31 carry at least one finding**, down from 40.
+
+## Progress
+
+| Batch | Pages | Status |
+| --- | --- | --- |
+| 1 — partner portal: families, children, authorized family members | 9 | **Done.** |
+| 2 — admin area | 14 | Not started |
+| 3 — bank-side: partner groups, announcements, organizations, profiles | 17 | Not started |
+
+Batch 1 turned up more than the audit could see. `partners/families/_form` had unbalanced divs:
+the browser recovered by splitting it into two `<form>` elements and the submit button ended up
+outside the one holding the fields. It worked — by the parser's error recovery rather than by
+design — which is why nobody had noticed. `partners/children/_form` opened with a stray
+`intersect?` expression that printed `true` onto the page.
+
+Neither is the kind of thing a class-name audit finds. Both were visible immediately in a
+browser, which is the argument for opening every page in one as it is rewritten.
 
 These pages render on a design system layout, which is why the migration reported them as done.
 The layout is not the page: a view can sit inside the correct shell and still build its own
