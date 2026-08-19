@@ -53,7 +53,8 @@ they render as nothing at all.
 | Form styling | `simple_form_bootstrap.rb` | `simple_form_essentials.rb`, `:essentials` the default wrapper |
 | Selects | bootstrap-select | select2 (kept), stylesheet now vendored |
 | Date range filter | Litepicker + its `ranges` plugin, two unversioned jsDelivr pins | A preset `<select>` and two native `<input type="date">`; no dependency |
-| Totals | `<tfoot>` under each table, and a separate summary report | `essentials_stats` above the table: one card, hairline separators, columns following the figure count, captioned with the period |
+| Totals | `<tfoot>` under each table, and a separate summary report | `essentials_stats` above the table: one card, hairline separators, columns following the figure count, titled and scoped |
+| Filter bars | A flex row of content-sized controls, applied with a Filter button, reloading the page | A grid of equal columns, applied on change into a Turbo Frame; no button, no reload |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
 
 ## What was migrated, by area

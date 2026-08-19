@@ -1293,3 +1293,84 @@ runs into the future on purpose, because a distribution can be scheduled before 
 range ending today would hide everything already booked in. The spec that checks every preset has
 a phrase now identifies the default window by its dates rather than by its name, so a future
 rename cannot silently drop it from that check.
+
+## 2026-08-19 · Known flake: the donation site factory can generate the same name twice
+
+`spec/models/organization_stats_spec.rb:66` calls `create_list(:donation_site, 3, ...)` and
+sometimes fails with "Name must be unique within the organization".
+
+`DonationSite` validates `name` unique per organization, and the factory sets
+`name { Faker::Company.name }` — a random pick, not a sequence. Enough donation sites in one
+organization and Faker repeats itself. Whether it fails depends on how many other specs in the
+run have already created sites in that organization, so it is order-dependent.
+
+Passes in isolation. Verified as nothing to do with the filter work: that change touches no
+model, query, service or migration.
+
+Recorded rather than fixed, on the same reasoning as the two flakes above. The fix is a sequence
+in the factory, and changing a factory that 40-odd specs build on belongs to its own change with
+its own full run.
+
+## 2026-08-19 · Filters apply on change, into a Turbo Frame
+
+**Decision.** No Filter button anywhere. A filter bar passed `frame:` submits into that Turbo
+Frame, so only the results are replaced. Sixteen bars, plus the report card and two pages that
+had hand-rolled their own form.
+
+**Rationale.** Applying on change is what Linear, GitHub, Notion and Stripe do, and the button
+was an extra click on every filter. The app already did both — five bars applied on change,
+eleven did not — so the inconsistency was the real defect.
+
+But the button was not an oversight. `application.js` sets `Turbo.session.drive = false`, so a
+plain submit reloads the whole document: sidebar, assets, scroll position, focus. Auto-applying
+nine filters that way is up to nine reloads while someone is still deciding. The frame is what
+makes applying on change affordable, so it had to come first rather than being a nicety on top.
+
+**Four details are load-bearing, and each was found by breaking it.**
+
+`target="_top"` on the frame. Without it every link *inside* the frame navigates the frame, so a
+row action fetches a page containing no matching frame and Turbo discards the response —
+*"The response (200) did not contain the expected `<turbo-frame id="items-results">`"*. That took
+out 66 specs in one run: every Edit, View, Restore and Deactivate on every index.
+
+`data-turbo="true"` on the form. Turbo only ignores `drive: false` for elements *within* a frame
+(`Session#elementIsNavigatable`), and these forms sit outside the frame they target. Without the
+opt-in Turbo declines the submit and the browser reloads the whole page — **silently**, because
+the filter still works and only the scroll position gives it away.
+
+`turbo_action: "advance"` so the URL keeps up. A filtered view has to stay bookmarkable; that is
+the reason filters are GET in the first place.
+
+The form stays **outside** the frame. Inside it, the controls are replaced on every change and
+focus is lost mid-filtering.
+
+**The export link had to be rebuilt in JavaScript.** It lives in the page header, outside the
+frame, so applying a filter in place left it pointing at the previous query. Exporting the wrong
+rows is a worse failure than a stale table: the file looks correct and nothing on screen
+contradicts it. `auto_submit_controller` now rebuilds its query string from the form on every
+frame load, keeping the link's own path so the `.csv` format survives.
+
+**Announcing the change.** Applying in place is silent to a screen reader — nothing navigates and
+focus does not move. The bar renders a `role="status"` region *outside* the frame and the
+controller writes the new result summary into it; a live region that is itself replaced does not
+announce its new contents. Where a page has a summary card the announcement is its scope
+sentence. Where it does not, it is a row count — but only when the page is unpaginated, because
+announcing "51 results" when 51 is merely the page size is worse than saying nothing precise.
+Paginated pages get "Results updated".
+
+**Waiting, in specs.** `wait_for_filters` waits on **network idle**, not on the frame's `busy`
+attribute. Turbo only marks a frame busy when its own controller handles the navigation; with the
+form outside and `target="_top"`, the session handles it instead and the attribute is never set.
+Measured on `/transfers`: request at +11ms, frame rendered at +93ms, no attribute mutation at any
+point. The quiet period is 300ms, which has to exceed the gap between the change event and the
+request leaving, or "idle" is satisfied by the moment before anything has started.
+
+**Two pages were rebuilt rather than converted**, because their filters were hand-rolled:
+`events` had the tag closing its form block sitting after the div closing its card, plus two
+stray empty columns and a Title Case header row; `distributions_by_county/report` was a bespoke
+card inside three nested empty divs with a `<br>` between the date filter and its button. Neither
+was visible to `page-audit.rb`, which reports both files as clean — nothing in them used a class
+that no longer exists. That is the same lesson as before, in a new place: the layout is not the
+page.
+
+`UiHelper#filter_button` is deleted. It had one caller left and now has none.

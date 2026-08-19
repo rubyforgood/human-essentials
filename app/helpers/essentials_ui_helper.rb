@@ -106,7 +106,11 @@ module EssentialsUiHelper
       if title.present?
         concat(tag.div(class: "border-b border-slate-200 px-5 py-3") do
           concat tag.h2(title, class: "text-base font-semibold text-slate-900")
-          concat tag.p(subtitle, class: "mt-0.5 text-sm text-slate-600") if subtitle.present?
+          # data-filter-scope: the auto-submit controller copies this into its live region
+          # after a frame swap, because it already says what is now on screen.
+          if subtitle.present?
+            concat tag.p(subtitle, class: "mt-0.5 text-sm text-slate-600", data: {filter_scope: true})
+          end
         end)
       end
       concat grid

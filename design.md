@@ -446,11 +446,9 @@ from.
 ### Filter bar
 
 ```erb
-<%= render "shared/essentials/filter_bar", url: donations_path do %>
-  <%= filter_select scope: :by_source, collection: Donation::SOURCES %>
-  <%= render "shared/date_range_picker" %>
-  <%= filter_button %>
-  <%= clear_filter_button %>
+<%= render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do %>
+  <div class="min-w-0"><%= filter_select scope: :by_source, collection: Donation::SOURCES %></div>
+  <div class="min-w-0 sm:col-span-2"><%= render "shared/date_range_picker" %></div>
 <% end %>
 ```
 
@@ -473,6 +471,47 @@ pushing its column past its share.
 The date range cell takes `sm:col-span-2` — it holds three inputs once *Custom* is chosen. The
 actions sit on their own `col-span-full` row, right-aligned, so they stop competing for a
 column.
+
+**Filters apply on change. There is no Filter button.** Pass `frame:` and the bar submits into
+that Turbo Frame, so only the results are replaced:
+
+```erb
+<%= render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do %>
+  …controls…
+<% end %>
+
+<%= turbo_frame_tag "donations-results", target: "_top", data: {turbo_action: "advance"} do %>
+  …summary card, table, pagination…
+<% end %>
+```
+
+Four things about that snippet are load-bearing, and all four were found by breaking them:
+
+| | Why |
+| --- | --- |
+| **`target: "_top"`** | Without it, every link *inside* the frame navigates the frame. Row actions then fetch a page with no matching frame and Turbo discards the response: *"The response (200) did not contain the expected `<turbo-frame>`"*. This broke 66 specs. |
+| **`data-turbo: true`** on the form (set by the partial) | Turbo Drive is off app-wide. Turbo only ignores that for elements *inside* a frame, and this form targets one from outside, so without an opt-in the browser does a **silent full page reload** — silent because the filter still works. |
+| **`turbo_action: "advance"`** | Keeps the URL in step, so a filtered view stays shareable and bookmarkable. |
+| **The form stays outside the frame** | Inside it, the controls are replaced on every change and focus is lost mid-filtering. |
+
+The **Export link** is in the page header, outside the frame, so `auto_submit_controller`
+rebuilds its query string from the form on every frame load. Exporting the previous filter's rows
+is a worse failure than a stale table, because the file looks right and nothing on screen says
+otherwise.
+
+Applying in place is silent to a screen reader — nothing navigates, focus does not move — so the
+bar renders a `role="status"` region, **outside** the frame, and the controller writes the new
+result summary into it. A live region that is itself replaced does not announce its new contents.
+`turbo-frame[busy]` dims the results while a request is in flight, after a 150ms delay so a fast
+response never flickers.
+
+Text filters debounce at 400ms; selects, checkboxes and dates apply immediately. Choosing
+*Custom* in the date range does **not** fire a request — it only reveals the two date inputs, and
+the range has not changed yet.
+
+**In specs, call `wait_for_filters` after changing a control.** There is no longer a click to
+synchronise on. See `spec/support/filter_helpers.rb` for why it waits on network idle rather than
+on the frame's `busy` attribute.
 
 `FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_checkbox`) and
 gives each one a UUID-suffixed id with a matching label, so a filter control is always named.

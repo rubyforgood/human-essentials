@@ -6,12 +6,12 @@
         subtitle: "Collection drives run for #{current_organization.name}.",
         actions: capture {
           if @product_drives.length > 0
-            concat essentials_link_button("Export", product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: product_drives_path do %>
+  <%= render "shared/essentials/filter_bar", url: product_drives_path, frame: "product-drives-results" do %>
     <div class="min-w-0"><%= filter_select(label: "Name", scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %></div>
     <div class="min-w-0"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
     <div class="min-w-0"><%= filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
@@ -19,66 +19,68 @@
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "product-drives-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%#
-    What the product drives summary report used to show. @summary is already computed per drive
-    for the table; these are its totals across the filtered set.
-  %>
-  <%= essentials_stats([
-        {label: "Drives", value: number_with_delimiter(@product_drives.size)},
-        {label: "Items received", value: number_with_delimiter(@summary.values.sum(&:quantity))},
-        {label: "In-kind value", value: dollar_presentation(@summary.values.sum(&:value))}
-            ], title: "Totals",
-         subtitle: essentials_stats_scope(@product_drives.size, "product drive")) %>
+    <%#
+      What the product drives summary report used to show. @summary is already computed per drive
+      for the table; these are its totals across the filtered set.
+    %>
+    <%= essentials_stats([
+          {label: "Drives", value: number_with_delimiter(@product_drives.size)},
+          {label: "Items received", value: number_with_delimiter(@summary.values.sum(&:quantity))},
+          {label: "In-kind value", value: dollar_presentation(@summary.values.sum(&:value))}
+              ], title: "Totals",
+           subtitle: essentials_stats_scope(@product_drives.size, "product drive")) %>
 
-  <div class="mt-6"></div>
+    <div class="mt-6"></div>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
-    <% if @paginated_product_drives.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No product drives #{date_range_label}" : "No product drives yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
-            action: essentials_filtered? ? nil : essentials_link_button("Add your first product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Product drives with their totals</caption>
-          <thead>
-            <tr>
-              <th scope="col">Product drive name</th>
-              <th scope="col" class="date">Start date</th>
-              <th scope="col" class="date">End date</th>
-              <th scope="col">Tags</th>
-              <th scope="col">Held virtually?</th>
-              <th scope="col" class="quantity">Quantity of items</th>
-              <th scope="col" class="quantity">Variety of items</th>
-              <th scope="col" class="numeric">In-kind value</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @paginated_product_drives.each do |product_drive| %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
+      <% if @paginated_product_drives.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No product drives #{date_range_label}" : "No product drives yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
+              action: essentials_filtered? ? nil : essentials_link_button("Add your first product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Product drives with their totals</caption>
+            <thead>
               <tr>
-                <td class="font-medium text-slate-900">
-                  <%= link_to product_drive.name, product_drive_path(product_drive.id), class: "text-brand-700 hover:text-brand-800" %>
-                </td>
-                <td class="date"><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
-                <td class="date"><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
-                <td><%= product_drive.tags_for_display %></td>
-                <td><%= is_virtual(product_drive: product_drive) %></td>
-                <td class="quantity"><%= number_with_delimiter(@summary[product_drive.id].quantity) %></td>
-                <td class="quantity"><%= @summary[product_drive.id].unique_item_count %></td>
-                <td class="numeric"><%= dollar_value(@summary[product_drive.id].value) %></td>
-                <td class="text-right">
-                  <%= essentials_link_button "View", product_drive_path(product_drive.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
-                </td>
+                <th scope="col">Product drive name</th>
+                <th scope="col" class="date">Start date</th>
+                <th scope="col" class="date">End date</th>
+                <th scope="col">Tags</th>
+                <th scope="col">Held virtually?</th>
+                <th scope="col" class="quantity">Quantity of items</th>
+                <th scope="col" class="quantity">Variety of items</th>
+                <th scope="col" class="numeric">In-kind value</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              <% @paginated_product_drives.each do |product_drive| %>
+                <tr>
+                  <td class="font-medium text-slate-900">
+                    <%= link_to product_drive.name, product_drive_path(product_drive.id), class: "text-brand-700 hover:text-brand-800" %>
+                  </td>
+                  <td class="date"><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
+                  <td class="date"><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
+                  <td><%= product_drive.tags_for_display %></td>
+                  <td><%= is_virtual(product_drive: product_drive) %></td>
+                  <td class="quantity"><%= number_with_delimiter(@summary[product_drive.id].quantity) %></td>
+                  <td class="quantity"><%= @summary[product_drive.id].unique_item_count %></td>
+                  <td class="numeric"><%= dollar_value(@summary[product_drive.id].value) %></td>
+                  <td class="text-right">
+                    <%= essentials_link_button "View", product_drive_path(product_drive.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

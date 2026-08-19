@@ -155,13 +155,13 @@ RSpec.describe "Transfer management", type: :system do
 
       visit subject
       select to_storage_location.name, from: "filters[to_location]"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tr", count: 2)
 
       visit subject
       select from_storage_location.name, from: "filters[from_location]"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tr", count: 2)
     end

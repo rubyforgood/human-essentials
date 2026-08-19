@@ -322,7 +322,11 @@ table.
 Every page that filters by date uses the same control: a menu of ranges — *Today*, *Last 7
 days*, *Last 30 days*, *This month*, *This year*, *All time* and so on — with **Custom** at the
 bottom. Choosing Custom reveals **From** and **To** boxes that open your device's own date
-picker. Set the range, then press **Filter**.
+picker.
+
+**Filters apply as you choose them.** There is no Filter button: pick a value and the table and
+its totals update underneath, without the page reloading and without losing your place. Typing
+in a filter waits until you stop. **Clear filters** resets everything.
 
 A page you have not filtered opens on *Last 2 months and next month*. It reaches into the future
 on purpose: a distribution can be scheduled before it happens, and a range ending today would

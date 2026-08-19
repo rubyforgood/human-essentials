@@ -6,39 +6,41 @@
         subtitle: "Barcodes that map a scan to an item and a quantity.",
         actions: capture {
           if @barcode_items.any?
-            concat essentials_link_button("Export", barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: barcode_items_path do %>
+  <%= render "shared/essentials/filter_bar", url: barcode_items_path, frame: "barcode-items-results" do %>
     <div class="min-w-0"><%= filter_select(label: "Item", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %></div>
     <div class="min-w-0"><%= filter_select(label: "Base item", scope: :by_item_partner_key, collection: @base_items.order("name"), key: :partner_key, value: :name, selected: @selected_partner_key) %></div>
     <div class="min-w-0"><%= filter_text(label: "Barcode (boop it!)", scope: :by_value, selected: @selected_barcode_id) %></div>
   <% end %>
+  <%= turbo_frame_tag "barcode-items-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if @barcode_items.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No barcodes match those filters" : "No barcodes yet",
-            body: essentials_filtered? ? "Clear the filters to see every barcode." : "Register a barcode so scanning a box fills in the item and quantity for you.",
-            action: essentials_filtered? ? nil : essentials_link_button("Add your first barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Registered barcodes</caption>
-          <thead>
-            <tr>
-              <th scope="col">Item type</th>
-              <th scope="col" class="quantity">Quantity in the box</th>
-              <th scope="col">Barcode</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "barcode_item_row", collection: @barcode_items %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @barcode_items.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No barcodes match those filters" : "No barcodes yet",
+              body: essentials_filtered? ? "Clear the filters to see every barcode." : "Register a barcode so scanning a box fills in the item and quantity for you.",
+              action: essentials_filtered? ? nil : essentials_link_button("Add your first barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Registered barcodes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Item type</th>
+                <th scope="col" class="quantity">Quantity in the box</th>
+                <th scope="col">Barcode</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "barcode_item_row", collection: @barcode_items %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

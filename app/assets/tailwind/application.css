@@ -72,6 +72,27 @@
 
 @layer components {
   /*
+    A <turbo-frame> is an unknown element to CSS, so it is `display: inline` by default. Every
+    frame here wraps block content -- a card, a table -- and an inline box around block children
+    is a layout hazard: it cannot take a reliable height, and the dim below would apply to the
+    line box rather than the content.
+  */
+  turbo-frame {
+    display: block;
+  }
+
+  /*
+    Filters apply into the frame, so nothing about the page changes while the request is in
+    flight and a slow query looks like nothing happened. Turbo sets `busy` on the frame for the
+    duration; this is the only visible sign. The delay means a fast response never flickers --
+    the dim only appears if the wait is long enough to notice.
+  */
+  turbo-frame[busy] {
+    opacity: 0.55;
+    transition: opacity 150ms ease-in 150ms;
+  }
+
+  /*
    * Filter select.
    *
    * A native <select> draws its arrow at the far right of the border box, and no amount of

@@ -12,7 +12,7 @@
                      variant: :secondary, icon: "bi-printer")
           end
           if info.requests.any?
-            concat essentials_link_button("Export", requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           if current_user.has_role?(Role::ORG_ADMIN, current_organization)
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "new-request"}) do
@@ -22,7 +22,7 @@
           end
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: requests_path do %>
+  <%= render "shared/essentials/filter_bar", url: requests_path, frame: "requests-results" do %>
     <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
     <div class="min-w-0"><%= filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
     <div class="min-w-0"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
@@ -37,36 +37,38 @@
       </button>
     </div>
   <% end %>
+  <%= turbo_frame_tag "requests-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_requests)) } do %>
-    <% if info.paginated_requests.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :all_clear,
-            title: essentials_filtered? ? "No requests #{date_range_label}" : "No requests right now",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Requests from partner agencies</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="date">Date</th>
-              <th scope="col">Request was sent by</th>
-              <th scope="col">Request sender</th>
-              <th scope="col" class="quantity">Items requested</th>
-              <th scope="col">Comments</th>
-              <th scope="col">Type</th>
-              <th scope="col">Status</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "request_row", collection: info.paginated_requests %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_requests)) } do %>
+      <% if info.paginated_requests.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :all_clear,
+              title: essentials_filtered? ? "No requests #{date_range_label}" : "No requests right now",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Requests from partner agencies</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="date">Date</th>
+                <th scope="col">Request was sent by</th>
+                <th scope="col">Request sender</th>
+                <th scope="col" class="quantity">Items requested</th>
+                <th scope="col">Comments</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "request_row", collection: info.paginated_requests %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <%= render "calculate_product_totals" %>
-  <%= render "new" if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <%= render "calculate_product_totals" %>
+    <%= render "new" if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+  <% end %>
 </div>

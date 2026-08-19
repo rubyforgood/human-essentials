@@ -6,43 +6,45 @@
         subtitle: "Inventory moved between your own storage locations.",
         actions: capture {
           if @transfers.any?
-            concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: transfers_path do %>
+  <%= render "shared/essentials/filter_bar", url: transfers_path, frame: "transfers-results" do %>
     <div class="min-w-0"><%= filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %></div>
     <div class="min-w-0"><%= filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %></div>
     <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "transfers-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if @transfers.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No transfers #{date_range_label}" : "No transfers yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
-            action: essentials_filtered? ? nil : essentials_link_button("Record your first transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Inventory transfers between storage locations</caption>
-          <thead>
-            <tr>
-              <th scope="col">From</th>
-              <th scope="col">To</th>
-              <th scope="col" class="date">Date</th>
-              <th scope="col">Comment</th>
-              <th scope="col" class="quantity">Total moved</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "transfer_row", collection: @transfers %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @transfers.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No transfers #{date_range_label}" : "No transfers yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
+              action: essentials_filtered? ? nil : essentials_link_button("Record your first transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Inventory transfers between storage locations</caption>
+            <thead>
+              <tr>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col" class="date">Date</th>
+                <th scope="col">Comment</th>
+                <th scope="col" class="quantity">Total moved</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "transfer_row", collection: @transfers %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

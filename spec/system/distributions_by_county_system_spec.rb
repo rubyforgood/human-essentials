@@ -90,7 +90,6 @@ RSpec.feature "Distributions by County", type: :system do
     within("#reports-distributions") { click_on "By county" }
 
     select date_range_string, from: "filters_date_range_preset"
-
-    click_on "Filter"
+    wait_for_filters
   end
 end

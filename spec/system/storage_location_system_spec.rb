@@ -123,7 +123,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       visit subject
 
       select item.name, from: "filters[containing]"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tr", count: 3)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
@@ -131,7 +131,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location3.name)
 
       check "include_inactive_storage_locations"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tr", count: 4)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location3.name)
@@ -146,7 +146,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
 
       check "include_inactive_storage_locations"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location2.name)
@@ -169,7 +169,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page.find("[data-flash]")).to have_content "Storage Location deactivated successfully"
 
       check "include_inactive_storage_locations"
-      click_button "Filter"
+      wait_for_filters
 
       expect(accept_confirm { click_on "Reactivate", match: :first }).to include "Are you sure you want to reactivate #{location1.name}"
       expect(page.find("[data-flash]")).to have_content "Storage Location reactivated successfully"

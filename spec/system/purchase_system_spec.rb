@@ -60,7 +60,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
           select storage1.name, from: "filters[at_storage_location]"
-          click_button "Filter"
+          wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
         end
 
@@ -76,7 +76,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           expect(page).to have_css("table tbody tr", count: 2)
           select vendor1.business_name, from: "filters[from_vendor]"
-          click_button "Filter"
+          wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
         end
 
@@ -90,7 +90,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
           select organization.item_categories.first.name, from: "filters[by_category]"
-          click_button "Filter"
+          wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
         end
 

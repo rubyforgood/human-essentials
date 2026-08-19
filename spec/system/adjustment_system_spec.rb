@@ -126,7 +126,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
     visit subject
     select storage_location.name, from: "filters[at_location]"
-    click_on "Filter"
+    wait_for_filters
 
     expect(page).to have_css("table tr", count: 2)
   end
@@ -138,7 +138,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
     visit subject
     select user.name, from: "filters[by_user]"
-    click_on "Filter"
+    wait_for_filters
 
     expect(page).to have_css("table tr", count: 2)
   end

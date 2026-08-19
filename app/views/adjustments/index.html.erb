@@ -6,55 +6,57 @@
         subtitle: "Manual corrections to inventory levels.",
         actions: capture {
           if @adjustments.any?
-            concat essentials_link_button("Export", adjustments_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", adjustments_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: adjustments_path do %>
+  <%= render "shared/essentials/filter_bar", url: adjustments_path, frame: "adjustments-results" do %>
     <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
     <div class="min-w-0"><%= filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
     <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "adjustments-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_adjustments)) } do %>
-    <% if @paginated_adjustments.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No adjustments #{date_range_label}" : "No inventory adjustments yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
-            action: essentials_filtered? ? nil : essentials_link_button("Record your first adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Manual inventory adjustments</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="date">Created</th>
-              <th scope="col">Storage location</th>
-              <th scope="col">Comment</th>
-              <th scope="col">Summary</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @paginated_adjustments.each do |adjustment| %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_adjustments)) } do %>
+      <% if @paginated_adjustments.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No adjustments #{date_range_label}" : "No inventory adjustments yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
+              action: essentials_filtered? ? nil : essentials_link_button("Record your first adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Manual inventory adjustments</caption>
+            <thead>
               <tr>
-                <td class="date"><%= adjustment.created_at.strftime("%m/%d/%Y") %></td>
-                <td class="font-medium text-slate-900"><%= adjustment.storage_location.name %></td>
-                <td class="max-w-prose text-slate-600"><%= adjustment.comment %></td>
-                <td><%= pluralize(adjustment.line_items.size, "change") %></td>
-                <td class="text-right">
-                  <%= essentials_link_button "View", adjustment, variant: :ghost, size: :sm, icon: "bi-eye" %>
-                </td>
+                <th scope="col" class="date">Created</th>
+                <th scope="col">Storage location</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Summary</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              <% @paginated_adjustments.each do |adjustment| %>
+                <tr>
+                  <td class="date"><%= adjustment.created_at.strftime("%m/%d/%Y") %></td>
+                  <td class="font-medium text-slate-900"><%= adjustment.storage_location.name %></td>
+                  <td class="max-w-prose text-slate-600"><%= adjustment.comment %></td>
+                  <td><%= pluralize(adjustment.line_items.size, "change") %></td>
+                  <td class="text-right">
+                    <%= essentials_link_button "View", adjustment, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

@@ -248,9 +248,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it "preserves the filter constraints in the CSV output" do
             approved_partners = Partner.approved.to_a
             select "Approved (#{approved_partners.size})", from: "Status"
+            wait_for_filters
 
             expect(page).to have_select("Status", selected: "Approved (#{approved_partners.size})")
 
+            # The export link is rebuilt from the form after the frame loads, so it has to be
+            # read after the wait above, not before.
             click_on "Export"
             wait_for_download
             expect(downloads.length).to eq(1)

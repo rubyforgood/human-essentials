@@ -7,12 +7,12 @@
         subtitle: "Essentials coming in to #{current_organization.name}.",
         actions: capture {
           if info.donations.any?
-            concat essentials_link_button("Export", donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: donations_path do %>
+  <%= render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do %>
     <% if info.storage_locations.present? %>
       <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: info.storage_locations, selected: info.selected_storage_location) %></div>
     <% end %>
@@ -42,48 +42,50 @@
     </div>
   <% end %>
 
-  <%#
-    What the donations summary report used to show, on the page that holds the data and driven
-    by the same filters. `info` already computed all of it for the table footer that was here.
-  %>
-  <%= essentials_stats([
-        {label: "Donations", value: number_with_delimiter(info.donations.size)},
-        {label: "Items received", value: number_with_delimiter(info.donations_quantity), value_id: "donation_quantity"},
-        {label: "Money raised", value: dollar_presentation(info.total_money_raised)},
-        {label: "In-kind value", value: dollar_presentation(info.total_value_all_donations)}
-            ], title: "Totals",
-         subtitle: essentials_stats_scope(info.donations.size, "donation")) %>
+  <%= turbo_frame_tag "donations-results", target: "_top", data: {turbo_action: "advance"} do %>
+    <%#
+      What the donations summary report used to show, on the page that holds the data and driven
+      by the same filters. `info` already computed all of it for the table footer that was here.
+    %>
+    <%= essentials_stats([
+          {label: "Donations", value: number_with_delimiter(info.donations.size)},
+          {label: "Items received", value: number_with_delimiter(info.donations_quantity), value_id: "donation_quantity"},
+          {label: "Money raised", value: dollar_presentation(info.total_money_raised)},
+          {label: "In-kind value", value: dollar_presentation(info.total_value_all_donations)}
+              ], title: "Totals",
+           subtitle: essentials_stats_scope(info.donations.size, "donation")) %>
 
-  <div class="mt-6"></div>
+    <div class="mt-6"></div>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_donations)) } do %>
-    <% if info.paginated_donations.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No donations #{date_range_label}" : "No donations recorded yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
-            action: essentials_filtered? ? nil : essentials_link_button("Record your first donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Donations received, most recent first</caption>
-          <thead>
-            <tr>
-              <th scope="col">Source</th>
-              <th scope="col" class="date">Date</th>
-              <th scope="col">Details</th>
-              <th scope="col">Storage location</th>
-              <th scope="col" class="quantity">Quantity of items</th>
-              <th scope="col" class="numeric">Money raised</th>
-              <th scope="col" class="numeric">In-kind value</th>
-              <th scope="col">Comments</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "donation_row", collection: info.paginated_donations %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_donations)) } do %>
+      <% if info.paginated_donations.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No donations #{date_range_label}" : "No donations recorded yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
+              action: essentials_filtered? ? nil : essentials_link_button("Record your first donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Donations received, most recent first</caption>
+            <thead>
+              <tr>
+                <th scope="col">Source</th>
+                <th scope="col" class="date">Date</th>
+                <th scope="col">Details</th>
+                <th scope="col">Storage location</th>
+                <th scope="col" class="quantity">Quantity of items</th>
+                <th scope="col" class="numeric">Money raised</th>
+                <th scope="col" class="numeric">In-kind value</th>
+                <th scope="col">Comments</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "donation_row", collection: info.paginated_donations %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>
