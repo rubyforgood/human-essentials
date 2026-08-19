@@ -14,6 +14,102 @@ RSpec.describe DateRangeHelper do
     end
   end
 
+  describe "#date_range_label" do
+    def labelled(name, range = nil)
+      dummy_class.new(
+        {filters: {date_range_label: name, date_range: range}.compact}, double("flash", now: {})
+      )
+    end
+
+    # It reads as "13 distributions #{date_range_label}", so a branch that returns nothing
+    # leaves the sentence ending in mid-air. One branch used to: a range starting today.
+    it "never returns an empty phrase, for any preset" do
+      travel_to Time.zone.local(2026, 3, 15) do
+        helper = dummy_class.new({}, double("flash", now: {}))
+
+        helper.date_range_presets.each do |name, (from, to)|
+          range = "#{from.strftime("%B %d, %Y")} - #{to.strftime("%B %d, %Y")}"
+          expect(labelled(name, range).date_range_label).to be_present, "#{name} produced nothing"
+        end
+      end
+    end
+
+    it "gives every preset a phrase of its own rather than describing it by its dates" do
+      travel_to Time.zone.local(2026, 3, 15) do
+        expect(labelled("Today").date_range_label).to eq("today")
+        expect(labelled("Yesterday").date_range_label).to eq("yesterday")
+        expect(labelled("Last 7 days").date_range_label).to eq("over the last 7 days")
+        expect(labelled("Last 30 days").date_range_label).to eq("over the last 30 days")
+        expect(labelled("This month").date_range_label).to eq("this month")
+        expect(labelled("Last month").date_range_label).to eq("last month")
+        expect(labelled("Last 12 months").date_range_label).to eq("over the last 12 months")
+        expect(labelled("This year").date_range_label).to eq("this year")
+        expect(labelled("Prior year").date_range_label).to eq("in the prior year")
+        expect(labelled("All time").date_range_label).to eq("across all time")
+      end
+    end
+
+    # "All time" is a hundred years wide. Formatted with :short -- "%d %b", no year -- it came
+    # out as "during the period 19 Aug to 19 Aug", which reads as a single day.
+    it "carries the year, so a wide range cannot read as one day" do
+      described = labelled("Custom", "August 19, 1926 - August 19, 2027").date_range_label
+
+      expect(described).to eq("from August 19, 1926 to August 19, 2027")
+      expect(described).to include("1926").and include("2027")
+    end
+
+    it "describes a custom range by its ends, and a single day as one day" do
+      travel_to Time.zone.local(2026, 3, 15) do
+        expect(labelled("Custom", "March 3, 2026 - March 9, 2026").date_range_label)
+          .to eq("from March 3, 2026 to March 9, 2026")
+        expect(labelled("Custom", "March 3, 2026 - March 3, 2026").date_range_label)
+          .to eq("on March 3, 2026")
+        expect(labelled("Custom", "March 3, 2026 - March 15, 2026").date_range_label)
+          .to eq("since March 3, 2026")
+      end
+    end
+
+    # A range starting today returned "" -- "Showing 13 distributions."
+    it "describes a range that starts today rather than returning nothing" do
+      travel_to Time.zone.local(2026, 3, 15) do
+        expect(labelled("Custom", "March 15, 2026 - December 1, 2026").date_range_label)
+          .to eq("from March 15, 2026 to December 1, 2026")
+      end
+    end
+
+    # It used to default to "this year" with no parameter, which described neither the default
+    # window nor anything else the page was showing.
+    it "describes the actual default window when no label was submitted" do
+      travel_to Time.zone.local(2026, 3, 15) do
+        helper = dummy_class.new({}, double("flash", now: {}))
+
+        expect(helper.date_range_label).to eq("from January 15, 2026 to April 15, 2026")
+        expect(helper.date_range_label).not_to eq("this year")
+      end
+    end
+  end
+
+  describe "#date_range_caption" do
+    # design.md: sentence case for everything a person reads. #upcase_first rather than
+    # #capitalize, so the month name inside the phrase keeps its capital.
+    it "capitalises only the first word" do
+      helper = dummy_class.new(
+        {filters: {date_range_label: "Last 30 days"}}, double("flash", now: {})
+      )
+
+      expect(helper.date_range_caption).to eq("Over the last 30 days")
+    end
+
+    it "leaves a date inside the phrase capitalised" do
+      helper = dummy_class.new(
+        {filters: {date_range_label: "Custom", date_range: "March 3, 2026 - March 9, 2026"}},
+        double("flash", now: {})
+      )
+
+      expect(helper.date_range_caption).to eq("From March 3, 2026 to March 9, 2026")
+    end
+  end
+
   describe "#date_range_presets" do
     # The point of computing these server-side is that they agree with the Time.zone the query
     # is filtered in. Litepicker built them from the browser's clock, which could be a day out.
@@ -41,17 +137,23 @@ RSpec.describe DateRangeHelper do
       end
     end
 
-    # #date_range_label downcases before matching, which is what lets the option labels read as
-    # sentence case while the prose it produces keeps working.
-    it "names presets that #date_range_label still recognises" do
-      presets = dummy_class.new.date_range_presets
+    # Guards the pairing between the two methods, exhaustively rather than by a hand-kept list.
+    # Add a preset without a matching clause in #date_range_label and it silently falls through
+    # to being described by its dates -- which is exactly how "This year" and "All time" came to
+    # render as "during the period 01 Jan to 31 Dec".
+    #
+    # The default window is excluded on purpose: it has no natural name, and its dates are the
+    # right way to describe it. #date_range_label downcases before matching, which is what lets
+    # the option labels read as sentence case.
+    it "gives every preset but the default window a clause of its own" do
+      named = dummy_class.new.date_range_presets.keys.grep_v(/\ADefault/)
+      expect(named.size).to eq(10)
 
-      ["Today", "Yesterday", "Last 7 days", "Last 30 days", "This month", "Last month",
-        "Last 12 months", "Prior year"].each do |name|
-        expect(presets).to have_key(name)
-
+      named.each do |name|
         helper = dummy_class.new({filters: {date_range_label: name}}, double("flash", now: {}))
-        expect(helper.date_range_label).not_to eq(helper.selected_range_described)
+
+        expect(helper.date_range_label).not_to eq(helper.selected_range_described),
+          "#{name.inspect} has no clause, so it is described by its dates"
       end
     end
   end

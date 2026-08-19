@@ -455,6 +455,27 @@ The `date-range` Stimulus controller exists only to keep that hidden field in st
 visible controls. It does no date arithmetic — the server hands it the preset dates — and it
 reports an end-before-start range in the page, with `setCustomValidity` to block the submit.
 
+**Say the period in words as well as in the control.** `date_range_label` returns a phrase
+built to be appended to a noun — `"13 distributions #{date_range_label}"` — so every branch
+carries its own preposition: *over the last 30 days*, *in the prior year*, *since June 19,
+2026*. `date_range_caption` is the same phrase where it starts a line, sentence case.
+
+Two places use it, and a third deliberately does not:
+
+| Place | What it says | Why |
+| --- | --- | --- |
+| `essentials_stats(…, caption:)` | *Over the last 30 days* above the figures | The band says how many; it never said how many **of what window** |
+| The `:no_results` empty state | *No distributions over the last 30 days* | Answers "did I filter wrong, or is there nothing?" |
+| A standalone "Showing 13 distributions…" line | — | Rejected: the band 40px below already shows the count |
+
+The caption is **sentence case**, not the uppercase-with-tracking eyebrow this slot usually
+attracts. A period is read, not scanned as a category, and the rule above has no exception for
+small text.
+
+Every preset in `date_range_presets` needs a clause in `date_range_label`. Without one it falls
+through to `selected_range_described` and gets described by its dates instead of its name;
+`spec/helpers/date_range_helper_spec.rb` fails if a preset is added without one.
+
 Which option is selected on load is decided by **matching the dates**, not by trusting
 `filters[date_range_label]`. Nothing guarantees a hand-edited or bookmarked URL carries a label
 that describes its range; a range matching no preset reads as *Custom*, with the two dates

@@ -43,8 +43,8 @@
     <% if info.paginated_requests.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :all_clear,
-            title: essentials_filtered? ? "No requests match those filters" : "No requests right now",
-            body: essentials_filtered? ? "Clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
+            title: essentials_filtered? ? "No requests #{date_range_label}" : "No requests right now",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
     <% else %>
       <div class="table-scroll">
         <table class="data-table">

@@ -4,14 +4,30 @@ module DateRangeHelper
     params.dig(:filters, :date_range).presence || default_date
   end
 
+  # The selected range as a phrase, built to be appended to a noun:
+  #
+  #   "13 distributions #{date_range_label}"  ->  "13 distributions over the last 30 days"
+  #
+  # Despite the name it is not a label. Every branch has to read correctly in that position,
+  # which is why they carry their own prepositions -- "in the prior year", not "prior year".
+  # Use #date_range_caption where it has to stand on its own.
+  #
+  # Matched after downcasing, which is what lets the filter's option labels be sentence case.
+  # Every preset in #date_range_presets needs a clause here; without one it falls through to
+  # #selected_range_described and gets described by its dates instead of by its name.
+  #
+  # An absent parameter falls through to that same method deliberately. It used to
+  # default to "this year", which was simply untrue: an unfiltered page shows the *default*
+  # window, two months back to one month ahead, and "this year" is neither that range nor any
+  # other. Nothing read this method before, so the lie was invisible; it is on screen now.
   def date_range_label
-    case (params.dig(:filters, :date_range_label).presence || "this year").downcase
+    case params.dig(:filters, :date_range_label).to_s.downcase
     when "today"
       "today"
     when "yesterday"
       "yesterday"
     when "last 7 days"
-      "over the last week"
+      "over the last 7 days"
     when "last 30 days"
       "over the last 30 days"
     when "this month"
@@ -19,12 +35,23 @@ module DateRangeHelper
     when "last month"
       "last month"
     when "last 12 months"
-      "last 12 months"
+      "over the last 12 months"
+    when "this year"
+      "this year"
     when "prior year"
-      "prior year"
+      "in the prior year"
+    when "all time"
+      "across all time"
     else
       selected_range_described
     end
+  end
+
+  # The same phrase where it begins a line of its own. Sentence case, per design.md: capital
+  # on the first word only, and #upcase_first rather than #capitalize so a date inside it
+  # keeps its own capitals -- "From June 19, 2026", not "From june 19, 2026".
+  def date_range_caption
+    date_range_label.upcase_first
   end
 
   def default_date
@@ -93,14 +120,24 @@ module DateRangeHelper
     (start_date.beginning_of_day)..(end_date.end_of_day)
   end
 
+  # The fallback for a range with no name of its own: a custom range, or the default window.
+  #
+  # Formatted with :date_picker, the same "June 19, 2026" the filter itself uses, because it
+  # carries the year. This used to format with :short -- Rails' "%d %b", day and month only --
+  # so "All time" came out as "during the period 19 Aug to 19 Aug": a hundred years collapsed
+  # into what reads as a single day.
+  #
+  # There is no empty branch. A range starting today used to return "", which left the
+  # sentence this feeds ending in mid-air: "Showing 13 distributions."
   def selected_range_described
     start_date, end_date = selected_interval
-    if start_date == Time.zone.today
-      ""
+
+    if start_date == end_date
+      "on #{start_date.to_fs(:date_picker)}"
     elsif end_date == Time.zone.today
-      "since #{start_date}"
+      "since #{start_date.to_fs(:date_picker)}"
     else
-      "during the period #{start_date.to_fs(:short)} to #{end_date.to_fs(:short)}"
+      "from #{start_date.to_fs(:date_picker)} to #{end_date.to_fs(:date_picker)}"
     end
   end
 end

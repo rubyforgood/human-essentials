@@ -90,7 +90,22 @@ module EssentialsUiHelper
   #
   # `value_class` exists for the spec hooks the request specs match on (`total_distributed`
   # and friends); it is not for styling.
-  def essentials_stats(stats)
+  #
+  # `caption:` names the period the figures cover. The band has always said how many; it has
+  # never said how many *of what window*, which is the one thing the numbers cannot tell you
+  # on their own. Pass `date_range_caption` on any page with a date filter.
+  #
+  # Sentence case, and deliberately not the uppercase-with-tracking eyebrow this slot usually
+  # attracts -- design.md is unambiguous that everything a person reads is sentence case, and
+  # a period is read, not scanned as a category.
+  def essentials_stats(stats, caption: nil)
+    band = essentials_stats_band(stats)
+    return band if caption.blank?
+
+    safe_join([tag.p(caption, class: "mb-2 text-sm text-slate-600"), band])
+  end
+
+  def essentials_stats_band(stats)
     tag.dl(class: "grid gap-4 sm:grid-cols-2 lg:grid-cols-3") do
       safe_join(stats.map { |stat|
         tag.div(class: "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3") do
