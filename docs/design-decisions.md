@@ -1038,6 +1038,7 @@ coming.
 Also fixed on those pages: `partners/requests/show` set its field labels at `text-2xl font-bold`
 above values at `text-lg`, so every label was larger than the thing it labelled — the same
 inverted hierarchy the reports had.
+
 ## 2026-08-18 · Which modulepreloads to keep
 
 Safari warns "preloaded but not used within a few seconds from the window's load event" for
