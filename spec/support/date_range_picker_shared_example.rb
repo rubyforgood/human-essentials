@@ -61,7 +61,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows the matching preset as selected, with the custom dates put away" do
       visit subject
-      expect(page).to have_select("filters_date_range_preset", selected: "Default (recent and upcoming)")
+      expect(page).to have_select("filters_date_range_preset", selected: "Last 2 months and next month")
       expect(page).to have_no_field("filters_date_range_start")
     end
   end

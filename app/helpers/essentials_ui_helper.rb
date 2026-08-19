@@ -91,18 +91,54 @@ module EssentialsUiHelper
   # `value_class` exists for the spec hooks the request specs match on (`total_distributed`
   # and friends); it is not for styling.
   #
-  # `caption:` names the period the figures cover. The band has always said how many; it has
-  # never said how many *of what window*, which is the one thing the numbers cannot tell you
-  # on their own. Pass `date_range_caption` on any page with a date filter.
+  # `title:` and `subtitle:` give the band a header. Without one the card is a row of numbers
+  # with nothing saying what they are or what they cover -- and a bare period above it read as
+  # though it might belong to the table underneath rather than to the figures.
   #
-  # Sentence case, and deliberately not the uppercase-with-tracking eyebrow this slot usually
-  # attracts -- design.md is unambiguous that everything a person reads is sentence case, and
-  # a period is read, not scanned as a category.
-  def essentials_stats(stats, caption: nil)
-    band = essentials_stats_band(stats)
-    return band if caption.blank?
+  # The subtitle's job is *scope*: how many, whether the filters are narrowing it, and over what
+  # period. `essentials_stats_scope` builds that sentence. Sentence case throughout, and
+  # deliberately not the uppercase-with-tracking eyebrow this slot usually attracts -- design.md
+  # is unambiguous that everything a person reads is sentence case.
+  def essentials_stats(stats, title: nil, subtitle: nil)
+    grid = essentials_stats_grid(stats)
 
-    safe_join([tag.p(caption, class: "mb-2 text-sm text-slate-600"), band])
+    tag.div(class: "overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm") do
+      if title.present?
+        concat(tag.div(class: "border-b border-slate-200 px-5 py-3") do
+          concat tag.h2(title, class: "text-base font-semibold text-slate-900")
+          concat tag.p(subtitle, class: "mt-0.5 text-sm text-slate-600") if subtitle.present?
+        end)
+      end
+      concat grid
+    end
+  end
+
+  # "13 donations matching these filters, over the last 30 days."
+  #
+  # The count and the noun come from the caller, because only the page knows them. Whether to say
+  # "matching these filters" is decided here, and it ignores the date range on purpose: a date
+  # range is always set, so counting it would make every page claim to be filtered when the user
+  # has touched nothing.
+  #
+  # No leading "The", because it does not survive the edges: "The 1 donation" and "The 0
+  # donations" both read as though a machine wrote them. Zero gets "No" for the same reason.
+  def essentials_stats_scope(count, noun)
+    counted = count.zero? ? "No #{noun.pluralize}" : "#{number_with_delimiter(count)} #{noun.pluralize(count)}"
+    qualifier = essentials_filtered_beyond_dates? ? " matching these filters" : ""
+
+    "#{counted}#{qualifier}, #{date_range_label}"
+  end
+
+  # Is anything other than the date range being filtered on?
+  DATE_FILTER_KEYS = %w[date_range date_range_label].freeze
+
+  def essentials_filtered_beyond_dates?
+    return true if params[:filterrific].present?
+
+    filters = params[:filters]
+    return false if filters.blank?
+
+    filters.to_unsafe_h.except(*DATE_FILTER_KEYS).any? { |_key, value| value.present? }
   end
 
   # How many columns, for a given number of figures.
@@ -132,29 +168,27 @@ module EssentialsUiHelper
   # white cells, which draws a hairline between every pair of neighbours -- rows as well as
   # columns. `divide-x` cannot: in a grid of more than one row it borders by DOM order rather
   # than by position, so a 2x2 arrangement comes out wrong.
-  def essentials_stats_band(stats)
+  def essentials_stats_grid(stats)
     columns = STATS_COLUMNS.fetch(stats.size, "sm:grid-cols-2 lg:grid-cols-4")
 
-    tag.div(class: "overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm") do
-      tag.dl(class: "grid gap-px bg-slate-200 #{columns}") do
-        safe_join(stats.map { |stat|
-          tag.div(class: "bg-white px-5 py-4") do
-            concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
-            # to_s matters: a block given to `tag` renders nothing for a non-String, so an
-            # Integer value came out as an empty figure. Caught by reading the rendered page
-            # rather than the template -- "Total items" was blank while every currency stat,
-            # already a String, was fine.
-            value = stat[:value].to_s
-            concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
-              if stat[:value_class] || stat[:value_id]
-                tag.span(value, class: stat[:value_class], id: stat[:value_id])
-              else
-                value
-              end
-            }
-          end
-        })
-      end
+    tag.dl(class: "grid gap-px bg-slate-200 #{columns}") do
+      safe_join(stats.map { |stat|
+        tag.div(class: "bg-white px-5 py-4") do
+          concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
+          # to_s matters: a block given to `tag` renders nothing for a non-String, so an
+          # Integer value came out as an empty figure. Caught by reading the rendered page
+          # rather than the template -- "Total items" was blank while every currency stat,
+          # already a String, was fine.
+          value = stat[:value].to_s
+          concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
+            if stat[:value_class] || stat[:value_id]
+              tag.span(value, class: stat[:value_class], id: stat[:value_id])
+            else
+              value
+            end
+          }
+        end
+      })
     end
   end
 

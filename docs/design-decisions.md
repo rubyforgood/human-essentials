@@ -1240,3 +1240,56 @@ Recorded rather than fixed, on the same reasoning as the `DonationSite` flake ab
 either an `.order(:guardian_zip_code)` in the model or a `match_array` in the spec, and choosing
 between those is a decision about the model's contract — whether the list is a set or a sequence —
 which belongs to whoever owns that feature.
+
+## 2026-08-19 · The filter bar is a grid, and the summary card says its own scope
+
+**Decision, on the bar.** `grid-cols-1 sm:2 lg:3 xl:4` with `min-w-0` cells, replacing
+`flex flex-wrap` with per-cell `min-w-[13rem]` boxes. The date range cell takes `sm:col-span-2`;
+the actions move to their own `col-span-full` row, right-aligned.
+
+**Rationale.** A flex item sizes to its *content*, and the content here is the longest option in
+the menu. So the controls came out 208, 224, 247, 278, 285 and 289px across four pages — six
+widths for the same kind of control — and `flex-wrap` packed each line left and left the
+remainder: 337px on `/distributions`, 793px on `/donations`, 852px on `/purchases`, and three
+ragged lines on `/requests`. Both halves of that are the same bug, and a grid fixes both because
+the width comes from the breakpoint rather than the text. Measured after, on nine pages at 1360,
+900 and 390: one width throughout plus the date range's deliberate span, and no cell overflowing
+its column at any width.
+
+A bar with one filter now renders that control at a quarter width with three empty columns beside
+it. That is correct, not a regression: it is the same width as the same control on every other
+page, which is the point.
+
+**Decision, on the card.** `essentials_stats` takes `title:` and `subtitle:` and renders a header
+inside the card. `essentials_stats_scope(count, noun)` builds the subtitle.
+
+**Rationale.** The figures had no title at all, so the period sitting above them was doing two
+jobs and read as though it might belong to the table underneath. The missing information was not
+a name, though — it was **scope**: that these numbers describe the filtered view rather than the
+whole database. The sentence carries all three: how many, whether the filters are narrowing it,
+and over what period.
+
+Two things it gets right that the obvious version does not. It says "matching these filters" only
+when something *other than the date range* is set — a date range is always set, so counting it
+would make every page claim to be filtered when the user has touched nothing. And there is no
+leading "The", because that does not survive the edges: "The 1 donation" and "The 0 donations"
+both read as though a machine wrote them. Zero gets "No".
+
+**Rejected: "13 of 214 donations."** The most informative version, and the only one needing a
+second unfiltered `COUNT` on every page load. Not worth a query per request unless we specifically
+want people to see how much the filter is hiding.
+
+**`reports/manufacturer_donations_summary` still takes no header** — `shared/filtered_card`
+states the period in its page header, and two statements of it is the duplication this avoids.
+
+**`date_range_caption` is deleted.** It was added a commit earlier for the standalone-caption
+design, and the header supersedes it: the scope sentence uses `date_range_label` mid-sentence,
+where it stays lower case, so nothing needs the capitalised form. Its only remaining caller was
+its own spec.
+
+**Relabelled** `Default (recent and upcoming)` to `Last 2 months and next month`. The old label
+said neither what it included nor how far it reached. Behaviour is unchanged: the window still
+runs into the future on purpose, because a distribution can be scheduled before it happens and a
+range ending today would hide everything already booked in. The spec that checks every preset has
+a phrase now identifies the default window by its dates rather than by its name, so a future
+rename cannot silently drop it from that check.

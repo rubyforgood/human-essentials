@@ -19,20 +19,20 @@
 
   <%= render "shared/essentials/filter_bar", url: distributions_path do %>
     <% if @items.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :by_item_id, collection: @items, selected: @selected_item) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_item_id, collection: @items, selected: @selected_item) %></div>
     <% end %>
     <% if @item_categories.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
     <% end %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Reporting category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Reporting category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %></div>
     <% if @partners.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %></div>
     <% end %>
     <% if @storage_locations.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Source inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Source inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %></div>
     <% end %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %></div>
-    <div class="min-w-[15rem]">
+    <div class="min-w-0"><%= filter_select(label: "Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %></div>
+    <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
@@ -46,7 +46,8 @@
         {label: "Distributions", value: number_with_delimiter(@distributions.size)},
         {label: "Items distributed", value: number_with_delimiter(@total_items_all_distributions)},
         {label: "Total value", value: dollar_presentation(@total_value_all_distributions)}
-      ], caption: date_range_caption) %>
+            ], title: "Totals",
+         subtitle: essentials_stats_scope(@distributions.size, "distribution")) %>
 
   <div class="mt-6"></div>
 

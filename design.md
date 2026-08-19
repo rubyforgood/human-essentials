@@ -294,8 +294,22 @@ because that is the relationship: the label describes the value.
 <%= essentials_stats([
       {label: "Items distributed this month", value: 1_284},
       {label: "Scheduled for future distribution", value: 310}
-    ], caption: date_range_caption) %>
+    ], title: "Totals", subtitle: essentials_stats_scope(@donations.size, "donation")) %>
 ```
+
+**Give the band a header.** Without one it is a row of numbers with nothing saying what they
+are, and a bare period above it reads as though it might belong to the table underneath. The
+title names the thing (*Totals*); the subtitle states the **scope** —
+`essentials_stats_scope(count, noun)` builds it:
+
+> 13 donations, from June 19, 2026 to September 19, 2026
+> 4 donations **matching these filters**, over the last 30 days
+> No distributions, today
+
+It says "matching these filters" only when something *other than the date range* is set. A date
+range is always set, so counting it would make every page claim to be filtered when the user has
+touched nothing. There is no leading "The": it does not survive the edges — "The 1 donation" and
+"The 0 donations" both read as though a machine wrote them.
 
 **One card, hairline separators, no fill per figure.** A summary band is one reading, and a
 filled box around each figure makes it four objects instead. This is the metric strip Stripe,
@@ -444,6 +458,22 @@ Filters submit with **GET**, so a filtered view stays a shareable, bookmarkable 
 (borderless) bar sits 16px above the table it filters; wrap it in a card only when it is a
 section in its own right.
 
+**The bar is a grid, not a flex row**, and every cell is `min-w-0`:
+
+```
+grid-cols-1 · sm:grid-cols-2 · lg:grid-cols-3 · xl:grid-cols-4
+```
+
+A flex item sizes to its *content* — the longest option in the menu — so `flex-wrap` with
+min-width boxes gave six different control widths across four pages (208 to 289px) and packed
+each line left, leaving 337px, 793px and 852px of ragged space at the ends. Equal columns fix
+both: the width follows the breakpoint, not the text, and a long option truncates rather than
+pushing its column past its share.
+
+The date range cell takes `sm:col-span-2` — it holds three inputs once *Custom* is chosen. The
+actions sit on their own `col-span-full` row, right-aligned, so they stop competing for a
+column.
+
 `FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_checkbox`) and
 gives each one a UUID-suffixed id with a matching label, so a filter control is always named.
 `EssentialsUiHelper::FILTER_CONTROL_CLASSES` is the single definition of what one looks like.
@@ -482,19 +512,18 @@ reports an end-before-start range in the page, with `setCustomValidity` to block
 **Say the period in words as well as in the control.** `date_range_label` returns a phrase
 built to be appended to a noun — `"13 distributions #{date_range_label}"` — so every branch
 carries its own preposition: *over the last 30 days*, *in the prior year*, *since June 19,
-2026*. `date_range_caption` is the same phrase where it starts a line, sentence case.
+2026*. It is always used mid-sentence, so it stays lower case.
 
 Two places use it, and a third deliberately does not:
 
 | Place | What it says | Why |
 | --- | --- | --- |
-| `essentials_stats(…, caption:)` | *Over the last 30 days* above the figures | The band says how many; it never said how many **of what window** |
+| `essentials_stats_scope` | *13 donations, over the last 30 days* — the summary card's subtitle | The band says how many; it never said how many **of what window** |
 | The `:no_results` empty state | *No distributions over the last 30 days* | Answers "did I filter wrong, or is there nothing?" |
-| A standalone "Showing 13 distributions…" line | — | Rejected: the band 40px below already shows the count |
+| A standalone "Showing 13 distributions…" line | — | Rejected: the summary card already shows the count |
 
-The caption is **sentence case**, not the uppercase-with-tracking eyebrow this slot usually
-attracts. A period is read, not scanned as a category, and the rule above has no exception for
-small text.
+Both are **sentence case**, not the uppercase-with-tracking eyebrow this slot usually attracts.
+A period is read, not scanned as a category, and the rule above has no exception for small text.
 
 Every preset in `date_range_presets` needs a clause in `date_range_label`. Without one it falls
 through to `selected_range_described` and gets described by its dates instead of its name;

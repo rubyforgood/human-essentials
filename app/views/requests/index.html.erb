@@ -23,11 +23,11 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: requests_path do %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
-    <div class="min-w-[15rem]">
+    <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
+    <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
     <div class="pb-1">

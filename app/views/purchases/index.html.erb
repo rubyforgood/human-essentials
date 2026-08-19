@@ -13,15 +13,15 @@
 
   <%= render "shared/essentials/filter_bar", url: purchases_path do %>
     <% if @storage_locations.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %></div>
     <% end %>
     <% if @vendors.present? %>
-      <div class="min-w-[13rem]"><%= filter_select(label: "Vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %></div>
+      <div class="min-w-0"><%= filter_select(label: "Vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %></div>
     <% end %>
     <% if @item_categories.present? %>
-      <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: @item_categories, selected: @selected_item_category) %></div>
+      <div class="min-w-0"><%= essentials_filter_options(label: "Category", scope: :by_category, options: @item_categories, selected: @selected_item_category) %></div>
     <% end %>
-    <div class="min-w-[15rem]">
+    <div class="min-w-0 sm:col-span-2">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
@@ -36,7 +36,8 @@
         {label: "Items purchased", value: number_with_delimiter(@purchases_quantity), value_id: "purchase_quantity"},
         {label: "Amount spent", value: dollar_presentation(@total_value_all_purchases)},
         {label: "Fair market value", value: dollar_presentation(@total_fair_market_values)}
-      ], caption: date_range_caption) %>
+            ], title: "Totals",
+         subtitle: essentials_stats_scope(@purchases.size, "purchase")) %>
 
   <div class="mt-6"></div>
 

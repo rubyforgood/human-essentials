@@ -89,27 +89,6 @@ RSpec.describe DateRangeHelper do
     end
   end
 
-  describe "#date_range_caption" do
-    # design.md: sentence case for everything a person reads. #upcase_first rather than
-    # #capitalize, so the month name inside the phrase keeps its capital.
-    it "capitalises only the first word" do
-      helper = dummy_class.new(
-        {filters: {date_range_label: "Last 30 days"}}, double("flash", now: {})
-      )
-
-      expect(helper.date_range_caption).to eq("Over the last 30 days")
-    end
-
-    it "leaves a date inside the phrase capitalised" do
-      helper = dummy_class.new(
-        {filters: {date_range_label: "Custom", date_range: "March 3, 2026 - March 9, 2026"}},
-        double("flash", now: {})
-      )
-
-      expect(helper.date_range_caption).to eq("From March 3, 2026 to March 9, 2026")
-    end
-  end
-
   describe "#date_range_presets" do
     # The point of computing these server-side is that they agree with the Time.zone the query
     # is filtered in. Litepicker built them from the browser's clock, which could be a day out.
@@ -142,11 +121,15 @@ RSpec.describe DateRangeHelper do
     # to being described by its dates -- which is exactly how "This year" and "All time" came to
     # render as "during the period 01 Jan to 31 Dec".
     #
-    # The default window is excluded on purpose: it has no natural name, and its dates are the
-    # right way to describe it. #date_range_label downcases before matching, which is what lets
-    # the option labels read as sentence case.
+    # The default window is excluded on purpose: it has no name that reads as a phrase, and its
+    # dates are the right way to describe it. Identified by its dates rather than by its label,
+    # so renaming the option cannot silently drop it from this check. #date_range_label
+    # downcases before matching, which is what lets the option labels read as sentence case.
     it "gives every preset but the default window a clause of its own" do
-      named = dummy_class.new.date_range_presets.keys.grep_v(/\ADefault/)
+      helper = dummy_class.new({}, double("flash", now: {}))
+      default_range = helper.selected_interval
+      named = helper.date_range_presets.reject { |_name, range| range == default_range }.keys
+
       expect(named.size).to eq(10)
 
       named.each do |name|

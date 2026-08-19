@@ -12,9 +12,9 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: barcode_items_path do %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Item", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %></div>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Base item", scope: :by_item_partner_key, collection: @base_items.order("name"), key: :partner_key, value: :name, selected: @selected_partner_key) %></div>
-    <div class="min-w-[13rem]"><%= filter_text(label: "Barcode (boop it!)", scope: :by_value, selected: @selected_barcode_id) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Item", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %></div>
+    <div class="min-w-0"><%= filter_select(label: "Base item", scope: :by_item_partner_key, collection: @base_items.order("name"), key: :partner_key, value: :name, selected: @selected_partner_key) %></div>
+    <div class="min-w-0"><%= filter_text(label: "Barcode (boop it!)", scope: :by_value, selected: @selected_barcode_id) %></div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>

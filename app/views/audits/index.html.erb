@@ -10,7 +10,7 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: audits_path, auto_submit: true, clear: false do %>
-    <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location, include_blank: "All storage locations") %></div>
+    <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location, include_blank: "All storage locations") %></div>
   <% end %>
 
   <%= render "shared/essentials/card", padded: false do %>

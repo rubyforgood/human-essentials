@@ -17,7 +17,7 @@
         } %>
 
   <%= render "shared/essentials/filter_bar", url: storage_locations_path do %>
-    <div class="min-w-[16rem]">
+    <div class="min-w-0">
       <%= filter_select(label: "Containing item", scope: :containing, collection: @items, selected: @selected_item_category) %>
     </div>
     <div class="pb-2">
