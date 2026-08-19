@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A "showing" line — options, not built</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body{background:#f8fafc}
+  .wrap{max-width:1120px;margin:0 auto;padding:40px 32px 72px}
+  .frame{border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;background:#fff;margin-top:14px}
+  .frame>figcaption{padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+  .frame.pick>figcaption{background:#ecfdf5;color:#065f46}
+  .frame.bad>figcaption{background:#fff1f2;color:#9f1239}
+  .frame>.body{padding:20px}
+  .rule{border-left:3px solid #4f46e5;background:#eef2ff;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  .warn{border-left:3px solid #d97706;background:#fffbeb;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  table.diag{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;overflow:hidden;font-size:14px}
+  table.diag th,table.diag td{text-align:left;padding:8px 13px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  table.diag th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+  table.diag tr:last-child td{border-bottom:0}
+  .ok{color:#15803d;font-weight:600}
+  .no{color:#be123c;font-weight:600}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:.9em}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:20px;margin:44px 0 6px}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:#4f46e5;
+    color:#fff;border-radius:7px;font-size:14px;margin-right:9px}
+  p.note{color:#475569;margin:0 0 12px;max-width:84ch}
+  .lede{color:#475569;margin:0 0 28px;max-width:78ch}
+  .shot{background:#fff;padding:18px}
+  .dim{opacity:.45;pointer-events:none}
+</style></head>
+<body class="text-slate-900"><div class="wrap">
+
+<h1>A &ldquo;showing&rdquo; line under the filter bar</h1>
+<p class="lede">Nothing here is built. Three placements for the sentence, and the thing you need
+to decide first: <strong><code>date_range_label</code> cannot currently produce it correctly</strong>
+&mdash; four of its twelve outputs are wrong, ambiguous or empty.</p>
+
+<h2><span class="n">1</span>What it is for</h2>
+<p class="note"><code>date_range_label</code> does not return a label. It returns a <strong>sentence
+fragment</strong> &mdash; an adverbial phrase built to be glued onto a noun phrase:</p>
+<div class="rule" style="font-size:17px">
+  Showing 13 distributions <strong>over the last 30&nbsp;days</strong>.
+</div>
+<p class="note">That is why it says &ldquo;over the last 30 days&rdquo; and &ldquo;during the
+period&hellip;&rdquo; rather than &ldquo;Last 30 days&rdquo;. It was written to complete a
+sentence and has never had a sentence to complete. Four jobs such a line does:</p>
+<ul class="note" style="padding-left:1.1rem">
+  <li><strong>Confirms the filter landed.</strong> Pressing Filter reloads the page; prose
+  confirms what you are now looking at.</li>
+  <li><strong>Names the window the totals describe.</strong> The figures below say
+  &ldquo;Distributions 13&rdquo;. They do not say 13 <em>out of what period</em>.</li>
+  <li><strong>Survives scroll and print.</strong> The control is pinned at the top. A
+  <code>&lt;select&gt;</code> prints as a box; a sentence prints as a sentence.</li>
+  <li><strong>Rescues the empty state.</strong> &ldquo;No distributions <em>over the last 30
+  days</em>&rdquo; answers &ldquo;did I filter wrong, or is there genuinely nothing?&rdquo;
+  &mdash; which &ldquo;No distributions match those filters&rdquo; does not.</li>
+</ul>
+
+<h2><span class="n">2</span>Why it cannot ship as it stands</h2>
+<p class="note">Every output, measured just now against the real presets:</p>
+<table class="diag">
+  <thead><tr><th style="width:15rem">Preset</th><th>Produces</th><th style="width:18rem">Verdict</th></tr></thead>
+  <tbody>
+    <tr><td>Today</td><td>&ldquo;today&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>Yesterday</td><td>&ldquo;yesterday&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>Last 7 days</td><td>&ldquo;over the last <strong>week</strong>&rdquo;</td><td class="no">disagrees with the option, which says 7&nbsp;days</td></tr>
+    <tr><td>Last 30 days</td><td>&ldquo;over the last 30 days&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>This month</td><td>&ldquo;this month&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>Last month</td><td>&ldquo;last month&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>Last 12 months</td><td>&ldquo;last 12 months&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>Prior year</td><td>&ldquo;prior year&rdquo;</td><td class="ok">fine</td></tr>
+    <tr><td>This year</td><td>&ldquo;during the period 01 Jan to 31 Dec&rdquo;</td><td class="no"><strong>no year.</strong> Falls to the generic branch instead of saying &ldquo;this year&rdquo;</td></tr>
+    <tr><td>All time</td><td>&ldquo;during the period 19 Aug to 19 Aug&rdquo;</td><td class="no"><strong>wrong.</strong> Reads as one day. The range is 1926&ndash;2027</td></tr>
+    <tr><td>Default</td><td>&ldquo;during the period 19 Jun to 19 Sep&rdquo;</td><td class="no">no year</td></tr>
+    <tr><td>Custom, ending today</td><td>&ldquo;since 2026-03-03&rdquo;</td><td class="no">raw ISO, where every other line uses &ldquo;19 Jun&rdquo;</td></tr>
+    <tr><td>Custom, starting today</td><td><em>&ldquo;&rdquo; (empty)</em></td><td class="no"><strong>empty.</strong> The sentence becomes &ldquo;Showing 13 distributions.&rdquo;</td></tr>
+  </tbody>
+</table>
+<div class="warn">
+  <p><strong>One root cause behind most of it.</strong> <code>selected_range_described</code>
+  formats with <code>to_fs(:short)</code>, and Rails' <code>:short</code> for a Date is
+  <code>"%d %b"</code> &mdash; day and month, <strong>no year</strong>. That is why a
+  century-wide range collapses to &ldquo;19 Aug to 19 Aug&rdquo;.</p>
+  <p style="margin-top:6px">The rest is that <em>This year</em> and <em>All time</em> have no
+  <code>when</code> clause of their own, so they fall through to the date-range wording instead
+  of naming themselves.</p>
+</div>
+
+<h2><span class="n">3</span>Where the line goes</h2>
+<p class="note">All three use the same corrected sentence. The filter bar below is the app's real
+markup, not a drawing.</p>
+
+<figure class="frame">
+  <figcaption>A &mdash; a line of its own, between the filter bar and the figures</figcaption>
+  <div class="shot">
+    <div class="dim"><form class="mb-4" action="/distributions" accept-charset="UTF-8" method="get">
+  <div class="flex flex-wrap items-end gap-3">
+    
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd">Item category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd" name="filters[by_item_category_id]"><option value="" label=" "></option>
+<option value="1">Category One</option>
+<option value="2">Category Two</option>
+<option value="3">Category Three</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c">Reporting category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c" name="filters[by_reporting_category]"><option value="" label=" "></option>
+<option value="adult_incontinence">Adult Incontinence</option>
+<option value="cloth_diapers">Cloth Diapers</option>
+<option value="disposable_diapers">Disposable Diapers</option>
+<option value="pads">Pads</option>
+<option value="period_liners">Period Liners</option>
+<option value="period_other">Period Other</option>
+<option value="period_underwear">Period Underwear</option>
+<option value="tampons">Tampons</option>
+<option value="other_categories">Other</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d">Partner</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d" name="filters[by_partner]"><option value="" label=" "></option>
+<option value="2">Pawnee Homeless Shelter</option>
+<option value="5">Pawnee Middle School</option>
+<option value="1">Pawnee Parent Service</option>
+<option value="3">Pawnee Pregnancy Center</option>
+<option value="4">Pawnee Senior Citizens Center</option>
+<option value="6">Second Street Community Outreach</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75">Source inventory</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75" name="filters[by_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8">Status</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8" name="filters[by_state]"><option value="" label=" "></option>
+<option value="5">Scheduled</option>
+<option value="10">Complete</option></select></div>
+    <div class="min-w-[15rem]">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-wrap items-end gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Default (recent and upcoming)&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-[13rem]">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset"><option selected="selected" value="Default (recent and upcoming)">Default (recent and upcoming)</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" hidden="">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button type="submit" class="filter-bar-submit inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600 px-3.5 py-2 text-sm">
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
+        <a class="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600 px-3.5 py-2 text-sm" href="/distributions">Clear filters</a>
+    </div>
+  </div>
+</form></div>
+    <p class="mt-4 text-sm text-slate-600">Showing <strong class="font-semibold text-slate-900">13 distributions</strong> over the last 30&nbsp;days.</p>
+    <div class="mt-4"><dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">The literal ask, and what GitHub, Linear and Stripe do. The
+    cost here is that the band directly beneath already says <strong>Distributions 13</strong>,
+    so the count is on screen twice, 40px apart.</p>
+  </div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>B &mdash; a caption on the figures &nbsp;&middot;&nbsp; my recommendation</figcaption>
+  <div class="shot">
+    <div class="dim"><form class="mb-4" action="/distributions" accept-charset="UTF-8" method="get">
+  <div class="flex flex-wrap items-end gap-3">
+    
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd">Item category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd" name="filters[by_item_category_id]"><option value="" label=" "></option>
+<option value="1">Category One</option>
+<option value="2">Category Two</option>
+<option value="3">Category Three</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c">Reporting category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c" name="filters[by_reporting_category]"><option value="" label=" "></option>
+<option value="adult_incontinence">Adult Incontinence</option>
+<option value="cloth_diapers">Cloth Diapers</option>
+<option value="disposable_diapers">Disposable Diapers</option>
+<option value="pads">Pads</option>
+<option value="period_liners">Period Liners</option>
+<option value="period_other">Period Other</option>
+<option value="period_underwear">Period Underwear</option>
+<option value="tampons">Tampons</option>
+<option value="other_categories">Other</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d">Partner</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d" name="filters[by_partner]"><option value="" label=" "></option>
+<option value="2">Pawnee Homeless Shelter</option>
+<option value="5">Pawnee Middle School</option>
+<option value="1">Pawnee Parent Service</option>
+<option value="3">Pawnee Pregnancy Center</option>
+<option value="4">Pawnee Senior Citizens Center</option>
+<option value="6">Second Street Community Outreach</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75">Source inventory</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75" name="filters[by_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8">Status</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8" name="filters[by_state]"><option value="" label=" "></option>
+<option value="5">Scheduled</option>
+<option value="10">Complete</option></select></div>
+    <div class="min-w-[15rem]">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-wrap items-end gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Default (recent and upcoming)&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-[13rem]">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset"><option selected="selected" value="Default (recent and upcoming)">Default (recent and upcoming)</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" hidden="">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button type="submit" class="filter-bar-submit inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600 px-3.5 py-2 text-sm">
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
+        <a class="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600 px-3.5 py-2 text-sm" href="/distributions">Clear filters</a>
+    </div>
+  </div>
+</form></div>
+    <p class="mt-4 text-xs font-medium uppercase tracking-wide text-slate-500">Over the last 30&nbsp;days</p>
+    <div class="mt-2"><dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Distributions</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Items distributed</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><dt class="text-sm font-medium text-slate-600">Total value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">The band already carries the numbers; what it has never
+    carried is the <em>period they cover</em>. This adds exactly the missing half and repeats
+    nothing. It also reads correctly on the four report pages that use the same band, and it is
+    the one placement that does not fight the existing layout.</p>
+  </div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>C &mdash; in the empty state &nbsp;&middot;&nbsp; take this one as well</figcaption>
+  <div class="shot">
+    <div class="dim"><form class="mb-4" action="/distributions" accept-charset="UTF-8" method="get">
+  <div class="flex flex-wrap items-end gap-3">
+    
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_50eabfd7-def3-489a-bbdd-2fed27f52928" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd">Item category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_category_id_1175dc9f-f2a2-4009-98d6-ba784fc6bdcd" name="filters[by_item_category_id]"><option value="" label=" "></option>
+<option value="1">Category One</option>
+<option value="2">Category Two</option>
+<option value="3">Category Three</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c">Reporting category</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_reporting_category_9b74524d-88b3-49ff-b7a1-e15682e1c76c" name="filters[by_reporting_category]"><option value="" label=" "></option>
+<option value="adult_incontinence">Adult Incontinence</option>
+<option value="cloth_diapers">Cloth Diapers</option>
+<option value="disposable_diapers">Disposable Diapers</option>
+<option value="pads">Pads</option>
+<option value="period_liners">Period Liners</option>
+<option value="period_other">Period Other</option>
+<option value="period_underwear">Period Underwear</option>
+<option value="tampons">Tampons</option>
+<option value="other_categories">Other</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d">Partner</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_partner_a1312b83-3500-4d69-bd71-59363ab5d71d" name="filters[by_partner]"><option value="" label=" "></option>
+<option value="2">Pawnee Homeless Shelter</option>
+<option value="5">Pawnee Middle School</option>
+<option value="1">Pawnee Parent Service</option>
+<option value="3">Pawnee Pregnancy Center</option>
+<option value="4">Pawnee Senior Citizens Center</option>
+<option value="6">Second Street Community Outreach</option></select></div>
+      <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75">Source inventory</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_location_50f3453e-0b48-49cc-9e94-c2d909c15c75" name="filters[by_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div>
+    <div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8">Status</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_state_f31a0a5a-71be-4c22-a7be-5ae91aebe3b8" name="filters[by_state]"><option value="" label=" "></option>
+<option value="5">Scheduled</option>
+<option value="10">Complete</option></select></div>
+    <div class="min-w-[15rem]">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-wrap items-end gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Default (recent and upcoming)&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-[13rem]">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset"><option selected="selected" value="Default (recent and upcoming)">Default (recent and upcoming)</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" hidden="">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button type="submit" class="filter-bar-submit inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600 px-3.5 py-2 text-sm">
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
+        <a class="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600 px-3.5 py-2 text-sm" href="/distributions">Clear filters</a>
+    </div>
+  </div>
+</form></div>
+    <div class="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-600"><i class="bi-search text-xl" aria-hidden="true"></i></span>
+        <p class="mt-3 text-sm font-semibold text-slate-900">No distributions over the last 30&nbsp;days</p>
+        <p class="mt-1 max-w-prose text-sm text-slate-600">Try a wider date range, or clear the filters to see every distribution.</p>
+      </div>
+    </div>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">Today this reads <em>&ldquo;No distributions match those
+    filters&rdquo;</em>, which leaves the user to go and read the controls to find out which
+    ones. This is where the fragment earns the most, and it is a two-line change to the
+    <code>:no_results</code> branch.</p>
+  </div>
+</figure>
+
+<h2><span class="n">4</span>What I would do</h2>
+<div class="rule">
+  <p><strong>Fix <code>date_range_label</code> first</strong> &mdash; it is four bugs, not a
+  refactor: give <em>This year</em> and <em>All time</em> their own clauses, format with the
+  year, and make the start-date-is-today case say something rather than nothing.
+  <code>DateRangeHelper</code> has no test for this method at all today.</p>
+  <p style="margin-top:8px"><strong>Then B and C</strong>, not A: the caption puts the period
+  where the totals are, and the empty state is where a user is actually asking the question the
+  sentence answers. A is the one placement that duplicates something already on screen.</p>
+  <p style="margin-top:8px">If you want A anyway, it should replace the count in the band rather
+  than sit above it &mdash; but that is a bigger change to a component eleven pages share.</p>
+</div>
+<p class="note"><strong>So: A, B, C, or B+C? And shall I fix the helper as part of it?</strong>
+I would do B+C with the helper fixed and specs added.</p>
+
+</div></body></html>
