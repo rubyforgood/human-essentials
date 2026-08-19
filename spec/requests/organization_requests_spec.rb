@@ -406,13 +406,13 @@ RSpec.describe "Organizations", type: :request do
           subject
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          expect(response.body).to include('Media Information')
+          expect(response.body).to include('Media information')
           expect(organization.reload.partner_form_fields).to eq(['media_information'])
 
           patch "/manage", params: { organization: { partner_form_fields: [] } }
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          expect(response.body).to_not include('Media Information')
+          expect(response.body).to_not include('Media information')
           expect(organization.reload.partner_form_fields).to eq([])
         end
       end

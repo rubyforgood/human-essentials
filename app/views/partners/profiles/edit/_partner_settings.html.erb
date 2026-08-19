@@ -1,22 +1,20 @@
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Settings</h2>
-          </div>
-          <div class="px-5 py-4">
-            <% if form.object.organization.enable_quantity_based_requests? %>
-              <%= form.check_box :enable_quantity_based_requests, as: :boolean %>&nbsp;
-              <%= form.label :enable_quantity_based_requests, "Enable Quantity-based Requests" %>
-            <% end %>
-            <br>
-            <% if form.object.organization.enable_child_based_requests? %>
-              <%= form.check_box :enable_child_based_requests, as: :boolean %>&nbsp;
-              <%= form.label :enable_child_based_requests, "Enable Child-based Requests (unclick if you only do bulk requests)" %>
-            <% end %>
-            <br>
-            <% if form.object.organization.enable_individual_requests? %>
-              <%= form.check_box :enable_individual_requests, as: :boolean %>&nbsp;
-              <%= form.label :enable_individual_requests, "Enable Requests for Individuals" %>
-            <% end %>
-            <br>
-          </div>
-        </div>
+<%= render "shared/essentials/card", title: "Settings" do %>
+  <% if form.object.organization.enable_quantity_based_requests? %>
+    <div class="mb-2 flex items-start gap-2">
+      <%= form.check_box :enable_quantity_based_requests, as: :boolean, class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 mt-0.5" %>
+      <%= form.label :enable_quantity_based_requests, "Enable quantity-based requests", class: "text-sm text-slate-700" %>
+    </div>
+  <% end %>
+  <% if form.object.organization.enable_child_based_requests? %>
+    <div class="mb-2 flex items-start gap-2">
+      <%= form.check_box :enable_child_based_requests, as: :boolean, class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 mt-0.5" %>
+      <%= form.label :enable_child_based_requests, "Enable child-based requests (unclick if you only do bulk requests)", class: "text-sm text-slate-700" %>
+    </div>
+  <% end %>
+  <% if form.object.organization.enable_individual_requests? %>
+    <div class="mb-2 flex items-start gap-2">
+      <%= form.check_box :enable_individual_requests, as: :boolean, class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 mt-0.5" %>
+      <%= form.label :enable_individual_requests, "Enable requests by number of individuals", class: "text-sm text-slate-700" %>
+    </div>
+  <% end %>
+<% end %>

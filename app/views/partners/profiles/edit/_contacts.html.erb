@@ -1,26 +1,16 @@
 <%# Two self-contained cards. This partial used to close its parent's wrappers and open the
     next card's, which left the page's tag depth wrong from here down. %>
 <div class="grid gap-6">
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="border-b border-slate-200 px-5 py-4">
-      <h2 class="text-base font-semibold text-slate-900">Executive director</h2>
-    </div>
-    <div class="px-5 py-4">
-      <%= form.input :executive_director_name, label: "Executive director name" %>
-      <%= form.input :executive_director_phone, label: "Executive director phone" %>
-      <%= form.input :executive_director_email, label: "Executive director email" %>
-    </div>
-  </div>
+  <%= render "shared/essentials/card", title: "Executive director" do %>
+    <%= form.input :executive_director_name, label: "Executive director name" %>
+    <%= form.input :executive_director_phone, label: "Executive director phone" %>
+    <%= form.input :executive_director_email, label: "Executive director email" %>
+  <% end %>
 
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="border-b border-slate-200 px-5 py-4">
-      <h2 class="text-base font-semibold text-slate-900">Primary contact</h2>
-    </div>
-    <div class="px-5 py-4">
-      <%= form.input :primary_contact_name, label: "Primary contact name" %>
-      <%= form.input :primary_contact_phone, label: "Primary contact phone" %>
-      <%= form.input :primary_contact_mobile, label: "Primary contact cell" %>
-      <%= form.input :primary_contact_email, label: "Primary contact email" %>
-    </div>
-  </div>
+  <%= render "shared/essentials/card", title: "Primary contact" do %>
+    <%= form.input :primary_contact_name, label: "Primary contact name" %>
+    <%= form.input :primary_contact_phone, label: "Primary contact phone" %>
+    <%= form.input :primary_contact_mobile, label: "Primary contact cell" %>
+    <%= form.input :primary_contact_email, label: "Primary contact email" %>
+  <% end %>
 </div>

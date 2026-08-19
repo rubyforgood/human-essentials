@@ -54,7 +54,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[aria-controls='media_information']").click
       within "#media_information" do
         fill_in "Website", with: ""
-        uncheck "No Social Media Presence"
+        uncheck "No social media presence"
       end
 
       # Open Pick up person section and fill in 4 email addresses
@@ -66,9 +66,9 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # Open Partner Settings section and uncheck all options
       find("button[aria-controls='partner_settings']").click
       within "#partner_settings" do
-        uncheck "Enable Quantity-based Requests" if has_checked_field?("Enable Quantity-based Requests")
-        uncheck "Enable Child-based Requests (unclick if you only do bulk requests)" if has_checked_field?("Enable Child-based Requests (unclick if you only do bulk requests)")
-        uncheck "Enable Requests for Individuals" if has_checked_field?("Enable Requests for Individuals")
+        uncheck "Enable quantity-based requests" if has_checked_field?("Enable quantity-based requests")
+        uncheck "Enable child-based requests (unclick if you only do bulk requests)" if has_checked_field?("Enable child-based requests (unclick if you only do bulk requests)")
+        uncheck "Enable requests by number of individuals" if has_checked_field?("Enable requests by number of individuals")
       end
 
       # Save Progress

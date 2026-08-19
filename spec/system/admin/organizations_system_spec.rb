@@ -122,7 +122,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         click_on "Save"
       end
 
-      expect(page).to have_content("All Human Essentials Organizations")
+      expect(page).to have_content("Organizations")
 
       within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click

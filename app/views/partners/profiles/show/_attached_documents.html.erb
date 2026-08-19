@@ -1,7 +1,6 @@
 <%# The <dt> and <dd> had no <dl> around them at all, which is what axe reports as `dlitem`. %>
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Attached documents</h2>
-  <div class="px-5 py-4">
+<%= render "shared/essentials/card", title: "Attached documents" do %>
+
     <dl>
       <dt class="text-xs font-medium text-slate-500">Attached files</dt>
       <% if profile.documents.attached? %>
@@ -15,5 +14,4 @@
         <dd class="mt-0.5 text-sm text-slate-500">No files saved</dd>
       <% end %>
     </dl>
-  </div>
-</div>
+<% end %>

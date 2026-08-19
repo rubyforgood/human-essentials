@@ -113,17 +113,21 @@ class Organization < ApplicationRecord
     "Org:#{id}"
   end
 
+  # Display name, then the key that is stored. Only the key is persisted, so the labels are
+  # presentational and follow the house sentence case -- and they have to, because these same
+  # names are the section headings on the partner profile. Two capitalisations of one section
+  # name is worse than either.
   ALL_PARTIALS = [
-    ['Media Information', 'media_information'],
-    ['Agency Stability', 'agency_stability'],
-    ['Organizational Capacity', 'organizational_capacity'],
-    ['Sources of Funding', 'sources_of_funding'],
-    ['Area Served', 'area_served'],
-    ['Population Served', 'population_served'],
+    ['Media information', 'media_information'],
+    ['Agency stability', 'agency_stability'],
+    ['Organizational capacity', 'organizational_capacity'],
+    ['Sources of funding', 'sources_of_funding'],
+    ['Area served', 'area_served'],
+    ['Population served', 'population_served'],
     ['Contacts', 'contacts'],
-    ['Pickup Person', 'pick_up_person'],
-    ['Agency Distribution Information', 'agency_distribution_information'],
-    ['Attached Documents', 'attached_documents']
+    ['Pick-up person', 'pick_up_person'],
+    ['Agency distribution information', 'agency_distribution_information'],
+    ['Attached documents', 'attached_documents']
   ].freeze
 
   has_rich_text :default_email_text

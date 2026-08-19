@@ -5,7 +5,7 @@ describe PartnersHelper, type: :helper do
     end
 
     it "returns the custom display name when overridden" do
-      expect(helper.partial_display_name("attached_documents")).to eq("Additional Documents")
+      expect(helper.partial_display_name("attached_documents")).to eq("Additional documents")
     end
   end
 end

@@ -35,7 +35,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
         fill_in 'Executive director phone', with: '8889990000'
         fill_in 'Executive director email', with: 'lorem@example.com'
         fill_in 'Primary contact phone', with: '8889990000'
-        check 'No Social Media Presence'
+        check 'No social media presence'
 
         click_on 'Update information'
         assert page.has_content? 'Details were successfully updated.'
@@ -60,7 +60,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
           fill_in 'Executive director phone', with: '8889990000'
           fill_in 'Executive director email', with: 'lorem@example.com'
           fill_in 'Primary contact phone', with: '8889990000'
-          check 'No Social Media Presence'
+          check 'No social media presence'
 
           click_on 'Update information'
           assert page.has_content? 'Details were successfully updated.'

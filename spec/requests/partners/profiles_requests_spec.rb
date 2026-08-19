@@ -65,8 +65,8 @@ RSpec.describe "/partners/profiles", type: :request do
       partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
       get edit_partners_profile_path(partner)
       expect(response).to render_template(partial: "partners/profiles/edit/_partner_settings")
-      expect(response.body).to include("Enable Quantity-based Requests")
-      expect(response.body).not_to include("Enable Child-based Requests")
+      expect(response.body).to include("Enable quantity-based requests")
+      expect(response.body).not_to include("Enable child-based requests")
     end
   end
 

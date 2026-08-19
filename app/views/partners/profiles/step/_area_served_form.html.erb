@@ -1,7 +1,8 @@
 <%= f.simple_fields_for :profile, profile do |pf| %>
   <div data-controller="area-served">
-    <fieldset style="margin-bottom: 2rem">
-      <legend></legend>
+    <%# Was a fieldset with an empty <legend>, which announces a group and names it nothing.
+        The heading above already names it, so a plain wrapper is honest. %>
+    <div class="mb-8">
       <div id="served_areas" class="partner-served-area-fields partner-served-areas">
         <%= render 'served_areas/served_area_fields', form: pf %>
       </div>
@@ -21,6 +22,6 @@
           <%= render 'served_areas/served_area_fields', form: pf, object: Partners::ServedArea.new %>
         <% end %>
       </div>
-    </fieldset>
+    </div>
   </div>
 <% end %>

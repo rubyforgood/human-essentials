@@ -11,7 +11,7 @@ RSpec.describe "/partners/profiles", type: :request do
     describe "on show" do
       it "displays the partner area served entry if there are no partials specified for the organization" do
         get partners_profile_path(partner)
-        expect(response.body).to include("Area Served")
+        expect(response.body).to include("Area served")
       end
 
       it "handles empty county list" do
@@ -23,7 +23,7 @@ RSpec.describe "/partners/profiles", type: :request do
     describe "GET #edit" do
       it "displays the partner area served entry if there are no partials specified for the organization" do
         get edit_partners_profile_path(partner)
-        expect(response.body).to include("Area Served")
+        expect(response.body).to include("Area served")
       end
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "/partners/profiles", type: :request do
       it "does not display the client share if only other partials are specified" do
         partner.organization = organization
         get partners_profile_path(partner)
-        expect(response.body).to_not include("Area Served")
+        expect(response.body).to_not include("Area served")
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe "/partners/profiles", type: :request do
       it "does not display the client share if only other partials are specified" do
         partner.organization = organization
         get edit_partners_profile_path(partner)
-        expect(response.body).to_not include("Area Served")
+        expect(response.body).to_not include("Area served")
       end
     end
   end
@@ -65,7 +65,7 @@ RSpec.describe "/partners/profiles", type: :request do
       it "displays the area served if specified" do
         partner.organization = organization
         get partners_profile_path(partner)
-        expect(response.body).to include("Area Served")
+        expect(response.body).to include("Area served")
       end
       it "handles empty county list" do
         get partners_profile_path(partner)
@@ -90,7 +90,7 @@ RSpec.describe "/partners/profiles", type: :request do
       it "displays the area served if specified" do
         partner.organization = organization
         get edit_partners_profile_path(partner)
-        expect(response.body).to include("Area Served")
+        expect(response.body).to include("Area served")
       end
 
       describe "full_county_list" do

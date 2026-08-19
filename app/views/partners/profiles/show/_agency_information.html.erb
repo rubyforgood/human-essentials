@@ -1,6 +1,4 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Agency Information</h2>
-  <div class="px-5 py-4">
+<%= render "shared/essentials/card", title: "Agency information" do %>
     <dl class="space-y-3">
       <dt class="text-xs font-medium text-slate-500">Name</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.partner.name %></dd>
@@ -48,5 +46,4 @@
         </address>
       </dd>
     </dl>
-  </div>
-</div>
+<% end %>

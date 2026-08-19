@@ -1,24 +1,19 @@
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Additional Documents</h2>
-          </div>
-          <div class="px-5 py-4">
-            <% if profile.documents.attached? %>
-              <div class="grid gap-6">
-                <div class="min-w-0">
-                  Attached files:
-                  <ul>
-                    <% profile.documents.each do |doc| %>
-                      <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-semibold" %></li>
-                    <% end %>
-                  </ul>
-                </div>
-                <div class="min-w-0">
-                  <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                </div>
-              </div>
-            <% else %>
-              <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-            <% end %>
-          </div>
-        </div>
+<%= render "shared/essentials/card", title: "Additional documents" do %>
+  <% if profile.documents.attached? %>
+    <div class="grid gap-6">
+      <div class="min-w-0">
+        Attached files:
+        <ul>
+          <% profile.documents.each do |doc| %>
+            <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-semibold" %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="min-w-0">
+        <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+      </div>
+    </div>
+  <% else %>
+    <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+  <% end %>
+<% end %>

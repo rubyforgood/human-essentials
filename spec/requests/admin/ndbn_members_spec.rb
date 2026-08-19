@@ -19,7 +19,7 @@ RSpec.describe "NDBNMembers", type: :request do
 
       html = Nokogiri::HTML(response.body)
 
-      expect(html.css("h1").text).to eq("NDBN Member Upload")
+      expect(html.css("h1").text).to eq("NDBN member upload")
 
       expect(html.css("form[action='/admin/ndbn_members/upload_csv']").count).to eq(1)
       expect(html.css("form[action='/admin/ndbn_members/upload_csv'] input[type=file]").count).to eq(1)

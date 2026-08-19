@@ -1,22 +1,12 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Users" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Users</h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Users" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Users",
+        subtitle: "Everyone with an account." %>
+</div>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", padded: false do %>
           <div class="border-b border-slate-200 px-5 py-4">
             <%= form_for_filterrific @filterrific, remote: true, html: { id: 'filterrific-form' } do |f| %>
               <div class="row flex-row justify-between items-center">
@@ -46,9 +36,5 @@
           <div class="border-t border-slate-200 px-5 py-3">
             <%= paginate @users %>
           </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+  <% end %>
+</div>

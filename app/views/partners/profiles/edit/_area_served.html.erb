@@ -1,26 +1,24 @@
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Area Served  (County / Client Share %) </h2>
-          </div>
-          <div class="px-5 py-4" data-controller="area-served">
-            <fieldset style="margin-bottom: 2rem">
-              <legend></legend>
-              <div id="served_areas" class="partner-served-area-fields partner-served-areas">
-                <%= render 'served_areas/served_area_fields', form: f %>
-              </div>
-              <div class="partner-served_areas-total-row grid gap-6">
-                <div class="partners-served-areas-total-prompt col-w">Total is:</div>
-                <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value min-w-0 numeric" data-area-served-target="total">
-                  <%= @client_share_total %> %</span>
-                <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning min-w-0" data-area-served-target="warning">
-                  The total client share must be either 0 or 100 %.
-                </div>
-              </div>
-              <div class="grid gap-6 links justify-end">
-                <%= add_element_button "Add Another County", container_selector: "#served_areas", id: "__add_partner_served_area" do %>
-                    <%= render 'served_areas/served_area_fields', form: f, object: Partners::ServedArea.new %>
-                <% end %>
-              </div>
-            </fieldset>
-          </div>
+<%= render "shared/essentials/card", title: "Area served, by county and client share", padded: false do %>
+  <div class="px-5 py-4" data-controller="area-served">
+    <%# Was a fieldset with an empty <legend>, which announces a group and names it nothing.
+        The heading above already names it, so a plain wrapper is honest. %>
+    <div class="mb-8">
+      <div id="served_areas" class="partner-served-area-fields partner-served-areas">
+        <%= render 'served_areas/served_area_fields', form: f %>
+      </div>
+      <div class="partner-served_areas-total-row grid gap-6">
+        <div class="partners-served-areas-total-prompt col-w">Total is:</div>
+        <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value min-w-0 numeric" data-area-served-target="total">
+          <%= @client_share_total %> %</span>
+        <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning min-w-0" data-area-served-target="warning">
+          The total client share must be either 0 or 100 %.
         </div>
+      </div>
+      <div class="grid gap-6 links justify-end">
+        <%= add_element_button "Add Another County", container_selector: "#served_areas", id: "__add_partner_served_area" do %>
+            <%= render 'served_areas/served_area_fields', form: f, object: Partners::ServedArea.new %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
