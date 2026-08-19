@@ -171,8 +171,15 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       check "include_inactive_storage_locations"
       wait_for_filters
 
+      # Applying a filter clears the flash, which lifts everything below it. Cuprite clicks by
+      # coordinates, so a row action clicked before that settles lands where the button was.
+      expect(page).to have_no_css("[data-flash]")
+
       expect(accept_confirm { click_on "Reactivate", match: :first }).to include "Are you sure you want to reactivate #{location1.name}"
-      expect(page.find("[data-flash]")).to have_content "Storage Location reactivated successfully"
+
+      # Asserted against the page rather than a node found first: applying the filter above
+      # replaces the flash frame, so a node captured beforehand is the previous message.
+      expect(page).to have_css("[data-flash]", text: "Storage Location reactivated successfully")
     end
 
     it "Filter list presented to user is in alphabetical order by item name" do

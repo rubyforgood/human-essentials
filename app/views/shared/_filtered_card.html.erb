@@ -22,7 +22,7 @@
     every other filter in the app: applied on change, into the frame below, with no button.
   %>
   <%= render "shared/essentials/filter_bar", url: filter_url, frame: "report-results", clear: false do %>
-    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
+    <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 
   <%= turbo_frame_tag "report-results", target: "_top", data: {turbo_action: "advance"} do %>

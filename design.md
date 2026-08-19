@@ -448,7 +448,7 @@ from.
 ```erb
 <%= render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do %>
   <div class="min-w-0"><%= filter_select scope: :by_source, collection: Donation::SOURCES %></div>
-  <div class="min-w-0 sm:col-span-2"><%= render "shared/date_range_picker" %></div>
+  <div class="min-w-0"><%= render "shared/date_range_picker" %></div>
 <% end %>
 ```
 
@@ -468,9 +468,38 @@ each line left, leaving 337px, 793px and 852px of ragged space at the ends. Equa
 both: the width follows the breakpoint, not the text, and a long option truncates rather than
 pushing its column past its share.
 
-The date range cell takes `sm:col-span-2` — it holds three inputs once *Custom* is chosen. The
-actions sit on their own `col-span-full` row, right-aligned, so they stop competing for a
-column.
+**Every cell is one column, including the date range.** It holds three controls once *Custom* is
+chosen and they stack; a cell twice the width of its neighbours, to accommodate a state it is
+usually not in, reads as a mistake. The industry answer is a popover — Stripe, Shopify and Google
+Analytics all put presets and a custom range in a floating panel behind a single-width trigger —
+but that needs anchoring, a focus trap, escape and click-outside, none of which this system has.
+
+The actions are an ordinary cell with `self-end`, so they follow the last filter. On
+`col-span-full` they took a row of their own on every page, including the ones with a single
+filter.
+
+**Five filters or more and the bar collapses** behind a Filters button —
+`EssentialsUiHelper::FILTER_DISCLOSURE_THRESHOLD`, counted in the partial from the yielded block
+so no call site decides it. Four or fewer is one row at desktop, and hiding one row behind a
+click costs more than it saves.
+
+| Page | Filters | Before | After |
+| --- | --- | --- | --- |
+| `/donations` | 9 | 264px, 4 rows | **38px**, collapsed |
+| `/distributions` | 7 | 188px | **38px**, collapsed |
+| `/requests` | 5 | 188px | **38px**, collapsed |
+| `/transfers` | 3 | 112px | **64px**, open |
+| `/items` | 2 | 112px | **64px**, open |
+
+The collapsed bar **shows what is set**, as chips built by `filter_summary_controller.js`: a
+count on the button, one dismissible chip per active filter, and *Clear all*. That is the price
+of collapsing at all — a filter set that hides both itself and its effect is how someone concludes
+their records have disappeared. The chips are built in the browser, not rendered by the server,
+for the same reason the export link is: the bar is outside the frame and does not re-render when
+a filter applies.
+
+The date range counts as set only when it is not the range the page would have shown anyway; its
+select carries `data-default-value` to say which that is.
 
 **Filters apply on change. There is no Filter button.** Pass `frame:` and the bar submits into
 that Turbo Frame, so only the results are replaced:
@@ -509,9 +538,10 @@ Text filters debounce at 400ms; selects, checkboxes and dates apply immediately.
 *Custom* in the date range does **not** fire a request — it only reveals the two date inputs, and
 the range has not changed yet.
 
-**In specs, call `wait_for_filters` after changing a control.** There is no longer a click to
-synchronise on. See `spec/support/filter_helpers.rb` for why it waits on network idle rather than
-on the frame's `busy` attribute.
+**In specs, call `wait_for_filters` after changing a control**, and `open_filters` before
+reaching a control on a bar that collapses. There is no longer a click to synchronise on. See
+`spec/support/filter_helpers.rb` for why it waits on network idle rather than on the frame's
+`busy` attribute, and why the quiet period is longer than the debounce.
 
 `FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_checkbox`) and
 gives each one a UUID-suffixed id with a matching label, so a filter control is always named.
@@ -811,6 +841,8 @@ No jQuery in new code, and no framework JS at all. Controllers in `app/javascrip
 | `confirmation` | Pre-check, then a confirmation `<dialog>` before submitting |
 | `form_input` | Add/remove repeated fieldsets |
 | `date_range` | Keeps the date filter's hidden `filters[date_range]` string in step |
+| `auto_submit` | Applies a filter bar on change; announces the result, keeps the export link current |
+| `filter_summary` | The chips and count beside a collapsed filter bar |
 | `highchart`, `select2` | Wrappers around the two remaining third-party widgets |
 
 Third-party widgets get accessible names added on top: FullCalendar's toolbar buttons ship

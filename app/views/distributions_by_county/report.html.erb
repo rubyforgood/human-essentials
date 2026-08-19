@@ -13,7 +13,7 @@
   <%= render "shared/essentials/filter_bar",
         url: distributions_by_county_report_path(current_organization),
         frame: "county-results", clear: false do %>
-    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
+    <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 
   <%= turbo_frame_tag "county-results", target: "_top", data: {turbo_action: "advance"} do %>

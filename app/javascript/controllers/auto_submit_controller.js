@@ -22,6 +22,12 @@ export default class extends Controller {
     this.onFrameLoad = () => {
       this.announce()
       this.syncExports()
+
+      // Only for a load this controller caused. turbo:frame-load also fires when the frame is
+      // first connected, on every ordinary page load -- clearing the flash there would delete
+      // the message the page was rendered to show.
+      if (this.applying) this.clearFlash()
+      this.applying = false
     }
     this.frame.addEventListener("turbo:frame-load", this.onFrameLoad)
   }
@@ -57,6 +63,13 @@ export default class extends Controller {
     })
   }
 
+  // Applying a filter used to be a page load, which cleared the flash with it. Into a frame it
+  // does not, so "Storage location deactivated successfully" would sit above a table it no longer
+  // describes -- and keep sitting there through every subsequent filter.
+  clearFlash() {
+    document.querySelector("turbo-frame#flash")?.replaceChildren()
+  }
+
   summary() {
     // A page with a summary card has already worked out the total, in a sentence.
     const scope = this.frame.querySelector("[data-filter-scope]")
@@ -78,6 +91,7 @@ export default class extends Controller {
     if (this.typeable(event?.target)) return
 
     clearTimeout(this.timer)
+    this.applying = true
     this.element.requestSubmit()
   }
 
@@ -87,7 +101,10 @@ export default class extends Controller {
     if (!this.typeable(event?.target)) return
 
     clearTimeout(this.timer)
-    this.timer = setTimeout(() => this.element.requestSubmit(), this.delayValue)
+    this.timer = setTimeout(() => {
+      this.applying = true
+      this.element.requestSubmit()
+    }, this.delayValue)
   }
 
   typeable(target) {

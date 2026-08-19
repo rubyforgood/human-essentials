@@ -1374,3 +1374,60 @@ that no longer exists. That is the same lesson as before, in a new place: the la
 page.
 
 `UiHelper#filter_button` is deleted. It had one caller left and now has none.
+
+## 2026-08-19 · The date range is one column wide, and a dense bar collapses
+
+**Two defects first**, both introduced by the grid work a commit earlier.
+
+The date range cell carried `sm:col-span-2` permanently, because it holds three controls once
+*Custom* is chosen. It holds three controls only when Custom is chosen; the rest of the time it
+was one select in a cell twice the width of its neighbours. The custom dates now stack inside a
+one-column cell. Two date inputs abreast in one column would leave about 119px each against a
+natural width of 149.
+
+The actions sat on `col-span-full`, which cost a whole grid row on every page with a bar,
+including `/partners`, which has one filter and now fits on one line. They are an ordinary cell
+with `self-end`.
+
+**The industry answer to the date range is a popover** — Stripe, Shopify and Google Analytics all
+put the presets and the custom range in a floating panel behind a single-width trigger, which is
+how they keep one cell's width whatever state it is in. Rejected for now: it needs anchoring, a
+focus trap, escape and click-outside, none of which this design system has, and stacking gets the
+same width discipline out of markup we already own. Written down rather than silently skipped,
+because it is the thing to build if the date filter ever needs to be richer.
+
+**Then the density.** Five filters or more and the bar collapses behind a Filters button. Four or
+fewer is one row at desktop and hiding one row behind a click costs more than it saves. Measured:
+`/donations` 264px to 38px, `/distributions` and `/requests` 188px to 38px; `/transfers` and
+`/items` stay open and drop to 64px from the two fixes alone.
+
+The threshold is counted **in the partial**, from the element children of the yielded block
+(Nokogiri, 26µs), so no call site decides it and the behaviour cannot drift from one page to the
+next.
+
+**A collapsed filter set has to say what is active.** That is the whole condition on collapsing:
+filters that narrow the data with nothing on screen to show for it are how someone concludes their
+records have disappeared. So the collapsed bar carries a count on the button and a dismissible
+chip per active filter, and the panel does *not* open itself when the page arrives filtered —
+the chips already say what is applied, and opening automatically would give the space back on
+exactly the pages where it was worth saving.
+
+The chips are built **in the browser**, not rendered by the server. The bar sits outside the
+results frame, so it does not re-render when a filter applies; anything the server put there
+would be one filter behind. That is the same bug the export link had.
+
+The date range counts as active only when it differs from the range the page would have shown
+anyway, which its select declares in `data-default-value`. Without that every page would claim to
+be filtered before the user touched anything.
+
+**A thing that cost an afternoon, worth writing down.** Clearing the flash when a filter applies —
+which restores what a full page reload used to do — lifts everything below it. Cuprite clicks by
+coordinates, so a spec that clicks a row action straight afterwards lands where the button was,
+and reports it as a missing confirmation dialog rather than a mis-click. The spec now waits for
+the flash to go before clicking. The same reflow is a small hazard for a real user, and it is the
+reason to be wary of removing anything above the fold in response to an unrelated action.
+
+Two other things the same investigation turned up: `turbo:frame-load` also fires when a frame is
+**first connected**, so clearing the flash there deleted the message on every ordinary page load
+until it was guarded; and `wait_for_filters` must use a quiet period longer than the 400ms text
+debounce, or "idle" is satisfied by the pause before the request has been sent.

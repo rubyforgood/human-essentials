@@ -21,13 +21,25 @@
   show_label = true if defined?(show_label).nil? || show_label.nil?
   presets = date_range_presets
   selected_preset = selected_date_range_preset
+  default_preset = presets.key(default_date.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") })
   start_date, end_date = @selected_date_interval
 %>
-<div class="flex flex-wrap items-end gap-3"
+<%#
+  One column wide, like every other filter, with the custom dates stacked underneath rather than
+  beside. A cell twice the width of its neighbours, to accommodate a state it is usually not in,
+  reads as a mistake; and two date inputs abreast in a single column leaves each about 119px
+  against a natural width of 149.
+
+  The industry answer is a popover -- Stripe, Shopify and Google Analytics all put the presets
+  and the custom range in a floating panel behind a single-width trigger. That needs a component
+  this design system does not have (anchoring, focus trap, escape, click-outside); stacking gets
+  the same width discipline out of markup we already own. See docs/design-decisions.md.
+%>
+<div class="flex flex-col gap-3"
      data-controller="date-range"
      data-date-range-presets-value="<%= presets.transform_values { |from, to| [from.iso8601, to.iso8601] }.to_json %>">
 
-  <div class="min-w-[13rem]">
+  <div class="min-w-0">
     <% if show_label %>
       <%= label_tag "filters_date_range_preset", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
     <% end %>
@@ -35,7 +47,10 @@
           options_for_select(presets.keys + ["Custom"], selected_preset || "Custom"),
           id: "filters_date_range_preset",
           class: EssentialsUiHelper::FILTER_SELECT_CLASSES,
-          data: {date_range_target: "preset", action: "change->date-range#choosePreset"} %>
+          data: {date_range_target: "preset", action: "change->date-range#choosePreset",
+                 # The range the page shows when nobody has chosen one. The filter summary treats
+                 # this value as "not filtered", and resets to it when its chip is dismissed.
+                 default_value: default_preset} %>
   </div>
 
   <%#
@@ -43,7 +58,7 @@
     [hidden] !important, so it cannot lose to a display utility the way `class="hidden"` lost
     to `inline-flex` on the Filter button.
   %>
-  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" <%= "hidden" if selected_preset %>>
+  <div class="flex flex-col gap-3" data-date-range-target="custom" <%= "hidden" if selected_preset %>>
     <div>
       <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= date_field_tag "date_range_start", start_date,
@@ -63,8 +78,8 @@
             aria: {describedby: "filters_date_range_error"},
             data: {date_range_target: "end", action: "change->date-range#chooseCustom"} %>
     </div>
-    <%# basis-full puts the message on its own row; the rest is simple_form's error styling. %>
-    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700"
+    <%# simple_form's error styling, so a filter error looks like a form error. %>
+    <p id="filters_date_range_error" class="mt-1 text-xs font-medium text-rose-700"
        role="alert" data-date-range-target="error" hidden>The end date must be on or after the start date.</p>
   </div>
 

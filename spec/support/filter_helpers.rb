@@ -16,7 +16,16 @@
 # between the change event and the request leaving, or "idle" is satisfied by the moment before
 # anything has started.
 module FilterHelpers
-  FILTER_QUIET_PERIOD = 0.3
+  # Longer than the 400ms debounce in auto_submit_controller.js, and deliberately so. A text
+  # filter does not send its request until the typing stops, so a shorter quiet period is
+  # satisfied by the pause *before* anything has been sent and the assertion races the swap.
+  FILTER_QUIET_PERIOD = 0.6
+
+  # Bars with five filters or more start collapsed, so their controls are not reachable until the
+  # panel is opened. A no-op on the pages with fewer filters, which have no panel at all.
+  def open_filters
+    page.all("[data-filter-toggle][aria-expanded='false']", wait: 0).first&.click
+  end
 
   def wait_for_filters
     page.driver.wait_for_network_idle(duration: FILTER_QUIET_PERIOD, timeout: 10)

@@ -55,7 +55,11 @@ RSpec.describe "Requests", type: :system, js: true do
         it "displays all requests" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
+
+          # "Clear filters" lives in the panel, which starts collapsed on a bar this size.
+          open_filters
           click_on "Clear filters"
+
           expect(page).to have_css("table tbody tr", count: 5)
         end
       end
@@ -64,6 +68,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
+          open_filters
           select(item2.name, from: "filters[by_request_item_id]")
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
@@ -74,6 +79,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
+          open_filters
           select(partner2.name, from: "filters[by_partner]")
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
@@ -86,6 +92,7 @@ RSpec.describe "Requests", type: :system, js: true do
           # check for all requests
           expect(page).to have_css("table tbody tr", count: 5)
           # filter
+          open_filters
           select('Fulfilled', from: "filters[by_status]")
           wait_for_filters
           # check for filtered requests
@@ -97,6 +104,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "respects the applied filters" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
+          open_filters
           select(item2.name, from: "filters[by_request_item_id]")
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
