@@ -21,11 +21,16 @@ export default class extends Controller {
 
   // A preset fills the two date inputs, so switching to "Custom" afterwards starts from the
   // range you were just looking at rather than from nothing.
-  choosePreset() {
+  choosePreset(event) {
     const preset = this.presetsValue[this.presetTarget.value];
     if (preset) {
       this.startTarget.value = preset[0];
       this.endTarget.value = preset[1];
+    } else {
+      // "Custom" only reveals the two date inputs -- the range has not changed yet. Stop the
+      // event here so a bar that applies on change does not spend a request re-fetching what
+      // is already on screen. The change to a date input will submit soon enough.
+      event?.stopPropagation();
     }
     this.sync();
   }

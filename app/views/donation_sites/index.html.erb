@@ -6,7 +6,7 @@
         subtitle: "Places where the public can drop off donations for #{current_organization.name}.",
         actions: capture {
           if @donation_sites.any?
-            concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           else
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
@@ -16,43 +16,45 @@
           concat essentials_link_button("New donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: donation_sites_path, auto_submit: true, clear: false do %>
+  <%= render "shared/essentials/filter_bar", url: donation_sites_path, frame: "donation-sites-results", clear: false do %>
     <div class="pb-2">
       <%= filter_checkbox(label: "Also include inactive donation sites", scope: "include_inactive_donation_sites", selected: @include_inactive_donation_sites) %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "donation-sites-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if @donation_sites.empty? %>
-      <%= render "shared/essentials/empty_state", kind: :cold_start,
-            title: "No donation sites yet",
-            body: "Add the places where donors can drop off essentials.",
-            action: essentials_link_button("Add your first donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Donation drop-off sites</caption>
-          <thead>
-            <tr>
-              <th scope="col">Donation site</th>
-              <th scope="col">Address</th>
-              <th scope="col">Contact name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "donation_site_row", collection: @donation_sites %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @donation_sites.empty? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No donation sites yet",
+              body: "Add the places where donors can drop off essentials.",
+              action: essentials_link_button("Add your first donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Donation drop-off sites</caption>
+            <thead>
+              <tr>
+                <th scope="col">Donation site</th>
+                <th scope="col">Address</th>
+                <th scope="col">Contact name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "donation_site_row", collection: @donation_sites %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <%= render layout: "shared/essentials/csv_import_modal", locals: {
-        import_type: "Donation sites", csv_template_url: "/donation_sites_template.csv", csv_import_url: import_csv_donation_sites_path
-      } do %>
-    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter your donation site names and addresses in the matching columns.</li>
-    <li>Save the file as a CSV.</li>
+    <%= render layout: "shared/essentials/csv_import_modal", locals: {
+          import_type: "Donation sites", csv_template_url: "/donation_sites_template.csv", csv_import_url: import_csv_donation_sites_path
+        } do %>
+      <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your donation site names and addresses in the matching columns.</li>
+      <li>Save the file as a CSV.</li>
+    <% end %>
   <% end %>
 </div>

@@ -1,43 +1,40 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Estimated Distributions by County - #{current_organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Estimated Distributions by County for <%= current_organization.name %></h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Distributions by county - #{current_organization.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="grid gap-6">
-            <div class="min-w-0">
-              <div class="px-5 py-4">
-                <%= essentials_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
-                  <%= render partial: "shared/date_range_picker" %><br>
-                  <%= filter_button %>
-                <% end %>
-              </div>
+<%#
+  Rebuilt on the design system. It was a hand-rolled card inside three nested empty divs, with a
+  Title Case <h1>, a <br> between the date filter and its button, and no empty state -- none of
+  which the class-name audit can see, because none of it uses a class that no longer exists.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Estimated distributions by county",
+        subtitle: "Counties are estimated from the served areas your partner agencies declared, so a distribution is spread across the counties its partner covers." %>
 
-            </div>
-          </div>
+  <%= render "shared/essentials/filter_bar",
+        url: distributions_by_county_report_path(current_organization),
+        frame: "county-results", clear: false do %>
+    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
+  <% end %>
 
-          <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
+  <%= turbo_frame_tag "county-results", target: "_top", data: {turbo_action: "advance"} do %>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @breakdown.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: :no_results,
+              title: "No distributions #{date_range_label}",
+              body: "Try a wider date range. Counties only appear once a partner in them has received a distribution." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Estimated items and value by county</caption>
+            <thead>
               <tr>
-                <th>County</th>
-                <th class="numeric">Estimated total items</th>
-                <th class="numeric">Estimated total market value</th>
+                <th scope="col">County</th>
+                <th scope="col" class="numeric">Estimated total items</th>
+                <th scope="col" class="numeric">Estimated total market value</th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <% @breakdown.each do |bd| %>
                 <tr>
                   <td><%= bd.name %></td>
@@ -45,14 +42,10 @@
                   <td class="numeric"><%= dollar_presentation(bd.value) %></td>
                 </tr>
               <% end %>
-
-              </tbody>
-
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

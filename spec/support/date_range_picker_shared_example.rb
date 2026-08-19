@@ -11,6 +11,7 @@ end
 
 def select_date_range_preset(name)
   select name, from: "filters_date_range_preset"
+  wait_for_filters
 end
 
 # Choose an explicit range. "Custom" has to be selected first because that is what reveals the
@@ -25,6 +26,7 @@ def fill_in_date_range(start_date, end_date)
   select "Custom", from: "filters_date_range_preset"
   fill_in "filters_date_range_start", with: start_date.strftime("%Y-%m-%d")
   fill_in "filters_date_range_end", with: end_date.strftime("%Y-%m-%d")
+  wait_for_filters
   expect(page).to have_field("filters_date_range",
     with: date_range_picker_params(start_date, end_date), type: "hidden", visible: :all, wait: 5)
 end
@@ -78,7 +80,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "filters to that preset and stays selected afterwards" do
       visit subject
       select_date_range_preset "Today"
-      click_on "Filter"
 
       expect(page).to have_css("table tbody tr", count: 1)
       expect(page).to have_select("filters_date_range_preset", selected: "Today")
@@ -95,7 +96,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows all the records" do
       visit subject
       fill_in_date_range(Time.zone.local(1919, 7, 1), Time.zone.local(2020, 7, 31))
-      click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 6)
     end
   end
@@ -112,7 +112,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows only 2 of the records" do
       visit subject
       fill_in_date_range(Time.zone.local(2019, 7, 1), Time.zone.local(2019, 7, 31))
-      click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
   end
@@ -121,14 +120,12 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows only 1 record" do
       visit subject
       fill_in_date_range(Time.zone.local(2019, 7, 22), Time.zone.local(2019, 7, 28))
-      click_on "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
 
     it "comes back as a custom range rather than snapping to a preset" do
       visit subject
       fill_in_date_range(Time.zone.local(2019, 7, 22), Time.zone.local(2019, 7, 28))
-      click_on "Filter"
 
       expect(page).to have_select("filters_date_range_preset", selected: "Custom")
       expect(page).to have_field("filters_date_range_start", with: "2019-07-22")
@@ -145,10 +142,10 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       select "Custom", from: "filters_date_range_preset"
       fill_in "filters_date_range_start", with: "2019-09-01"
       fill_in "filters_date_range_end", with: "2019-08-01"
+      wait_for_filters
 
       expect(page).to have_css("[role='alert']", text: "The end date must be on or after the start date.")
 
-      click_on "Filter"
       expect(page).to have_css("[role='alert']", text: "The end date must be on or after the start date.")
       expect(page).to have_field("filters_date_range_end", with: "2019-08-01")
     end

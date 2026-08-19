@@ -10,12 +10,12 @@
             concat " Import partners"
           end)
           if @partners.any?
-            concat essentials_link_button("Export", partners_path(format: :csv, filters: filter_params), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", partners_path(format: :csv, filters: filter_params), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: partners_path, auto_submit: true, clear: false do %>
+  <%= render "shared/essentials/filter_bar", url: partners_path, frame: "partners-results", clear: false do %>
     <div class="min-w-0">
       <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
             key: :last, value: :first, selected: params.dig(:filters, :by_status),
@@ -23,20 +23,22 @@
             hint: "Active hides deactivated partner agencies. All statuses includes them.") %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "partners-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <%= render "shared/essentials/page_tabs", tabs: [
-          {label: "Partners", path: partners_path, current: true},
-          {label: "Groups", path: partner_groups_path}
-        ] %>
-    <%= render partial: "partners_table", locals: {partners: @partners} %>
-  <% end %>
+    <%= render "shared/essentials/card", padded: false do %>
+      <%= render "shared/essentials/page_tabs", tabs: [
+            {label: "Partners", path: partners_path, current: true},
+            {label: "Groups", path: partner_groups_path}
+          ] %>
+      <%= render partial: "partners_table", locals: {partners: @partners} %>
+    <% end %>
 
-  <%= render layout: "shared/essentials/csv_import_modal", locals: {
-        import_type: "Partners", csv_template_url: "/partners_template.csv", csv_import_url: import_csv_partners_path
-      } do %>
-    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter your partner agency names and addresses in the matching columns.</li>
-    <li>Save the file as a CSV.</li>
+    <%= render layout: "shared/essentials/csv_import_modal", locals: {
+          import_type: "Partners", csv_template_url: "/partners_template.csv", csv_import_url: import_csv_partners_path
+        } do %>
+      <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your partner agency names and addresses in the matching columns.</li>
+      <li>Save the file as a CSV.</li>
+    <% end %>
   <% end %>
 </div>

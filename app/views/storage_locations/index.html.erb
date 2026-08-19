@@ -6,7 +6,7 @@
         subtitle: "Where #{current_organization.name} physically keeps inventory.",
         actions: capture {
           if @storage_locations.any?
-            concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           else
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
@@ -16,7 +16,7 @@
           concat essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: storage_locations_path do %>
+  <%= render "shared/essentials/filter_bar", url: storage_locations_path, frame: "storage-locations-results" do %>
     <div class="min-w-0">
       <%= filter_select(label: "Containing item", scope: :containing, collection: @items, selected: @selected_item_category) %>
     </div>
@@ -24,52 +24,54 @@
       <%= filter_checkbox(label: "Include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "storage-locations-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if @storage_locations.empty? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No storage locations match those filters" : "No storage locations yet",
-            body: essentials_filtered? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
-            action: essentials_filtered? ? nil : essentials_link_button("Add your first storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Storage locations with their current inventory totals</caption>
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Address</th>
-              <th scope="col" class="numeric">Square footage</th>
-              <th scope="col">Warehouse type</th>
-              <th scope="col" class="quantity">Total inventory</th>
-              <th scope="col" class="numeric">Fair market value</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4">Total</td>
-              <td class="quantity"><%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %></td>
-              <td class="numeric"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @storage_locations.empty? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No storage locations match those filters" : "No storage locations yet",
+              body: essentials_filtered? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
+              action: essentials_filtered? ? nil : essentials_link_button("Add your first storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Storage locations with their current inventory totals</caption>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col" class="numeric">Square footage</th>
+                <th scope="col">Warehouse type</th>
+                <th scope="col" class="quantity">Total inventory</th>
+                <th scope="col" class="numeric">Fair market value</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4">Total</td>
+                <td class="quantity"><%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %></td>
+                <td class="numeric"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <%= render layout: "shared/essentials/csv_import_modal", locals: {
-        import_type: "Storage locations",
-        csv_template_url: "/storage_locations_template.csv",
-        csv_import_url: import_csv_storage_locations_path
-      } do %>
-    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter your storage location names and addresses in the matching columns.</li>
-    <li>Save the file as a CSV.</li>
+    <%= render layout: "shared/essentials/csv_import_modal", locals: {
+          import_type: "Storage locations",
+          csv_template_url: "/storage_locations_template.csv",
+          csv_import_url: import_csv_storage_locations_path
+        } do %>
+      <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your storage location names and addresses in the matching columns.</li>
+      <li>Save the file as a CSV.</li>
+    <% end %>
   <% end %>
 </div>

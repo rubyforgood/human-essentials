@@ -77,7 +77,7 @@ RSpec.describe "Item management", type: :system do
       expect do
         visit items_path
         check "include_inactive_items"
-        click_on "Filter"
+        wait_for_filters
         within "#items-table" do
           expect(page).to have_content(item.name)
         end

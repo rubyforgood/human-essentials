@@ -12,12 +12,12 @@
         subtitle: "Essentials sent out to partner agencies.",
         actions: capture {
           if @distributions.any?
-            concat essentials_link_button("Export", distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: distributions_path do %>
+  <%= render "shared/essentials/filter_bar", url: distributions_path, frame: "distributions-results" do %>
     <% if @items.present? %>
       <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_item_id, collection: @items, selected: @selected_item) %></div>
     <% end %>
@@ -36,56 +36,58 @@
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "distributions-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%#
-    The figures the summary report used to live on, on the page that holds the data. They are
-    driven by the same filters as the table, which is the point -- the totals describe what you
-    are looking at. These were already computed for the table footer that used to sit below.
-  %>
-  <%= essentials_stats([
-        {label: "Distributions", value: number_with_delimiter(@distributions.size)},
-        {label: "Items distributed", value: number_with_delimiter(@total_items_all_distributions)},
-        {label: "Total value", value: dollar_presentation(@total_value_all_distributions)}
-            ], title: "Totals",
-         subtitle: essentials_stats_scope(@distributions.size, "distribution")) %>
+    <%#
+      The figures the summary report used to live on, on the page that holds the data. They are
+      driven by the same filters as the table, which is the point -- the totals describe what you
+      are looking at. These were already computed for the table footer that used to sit below.
+    %>
+    <%= essentials_stats([
+          {label: "Distributions", value: number_with_delimiter(@distributions.size)},
+          {label: "Items distributed", value: number_with_delimiter(@total_items_all_distributions)},
+          {label: "Total value", value: dollar_presentation(@total_value_all_distributions)}
+              ], title: "Totals",
+           subtitle: essentials_stats_scope(@distributions.size, "distribution")) %>
 
-  <div class="mt-6"></div>
+    <div class="mt-6"></div>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_distributions)) } do %>
-    <% if @paginated_distributions.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No distributions #{date_range_label}" : "No distributions yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every distribution." : "A distribution records essentials leaving your bank for a partner agency.",
-            action: essentials_filtered? ? nil : essentials_link_button("Create your first distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Distributions to partner agencies</caption>
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Partner</th>
-              <th scope="col" class="date">Initial allocation</th>
-              <th scope="col" class="date">Date of distribution</th>
-              <th scope="col">Source inventory</th>
-              <th scope="col" class="quantity">
-                <%= filtered_item_name ? "Total #{filtered_item_name}" : (filtered_category_name ? "Total in #{filtered_category_name}" : (filtered_reporting_category_name ? "Total #{filtered_reporting_category_name}" : "Total items")) %>
-              </th>
-              <th scope="col" class="numeric">
-                <%= filtered_item_name ? "Value of #{filtered_item_name}" : (filtered_category_name ? "Value of #{filtered_category_name}" : (filtered_reporting_category_name ? "Value of #{filtered_reporting_category_name}" : "Total value")) %>
-              </th>
-              <th scope="col">Delivery method</th>
-              <th scope="col" class="numeric">Shipping cost</th>
-              <th scope="col">Comments</th>
-              <th scope="col">Status</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "distribution_row", collection: @paginated_distributions %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_distributions)) } do %>
+      <% if @paginated_distributions.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No distributions #{date_range_label}" : "No distributions yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every distribution." : "A distribution records essentials leaving your bank for a partner agency.",
+              action: essentials_filtered? ? nil : essentials_link_button("Create your first distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Distributions to partner agencies</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Partner</th>
+                <th scope="col" class="date">Initial allocation</th>
+                <th scope="col" class="date">Date of distribution</th>
+                <th scope="col">Source inventory</th>
+                <th scope="col" class="quantity">
+                  <%= filtered_item_name ? "Total #{filtered_item_name}" : (filtered_category_name ? "Total in #{filtered_category_name}" : (filtered_reporting_category_name ? "Total #{filtered_reporting_category_name}" : "Total items")) %>
+                </th>
+                <th scope="col" class="numeric">
+                  <%= filtered_item_name ? "Value of #{filtered_item_name}" : (filtered_category_name ? "Value of #{filtered_category_name}" : (filtered_reporting_category_name ? "Value of #{filtered_reporting_category_name}" : "Total value")) %>
+                </th>
+                <th scope="col">Delivery method</th>
+                <th scope="col" class="numeric">Shipping cost</th>
+                <th scope="col">Comments</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "distribution_row", collection: @paginated_distributions %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

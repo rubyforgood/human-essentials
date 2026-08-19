@@ -5,62 +5,64 @@
         title: "Inventory audits",
         subtitle: "Counts that set inventory levels at a storage location.",
         actions: capture {
-          concat essentials_link_button("Export", audits_path(format: :csv), variant: :secondary, icon: "bi-download")
+          concat essentials_link_button("Export", audits_path(format: :csv), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           concat essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: audits_path, auto_submit: true, clear: false do %>
+  <%= render "shared/essentials/filter_bar", url: audits_path, frame: "audits-results", clear: false do %>
     <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location, include_blank: "All storage locations") %></div>
   <% end %>
+  <%= turbo_frame_tag "audits-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if @audits.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No audits match those filters" : "No audits yet",
-            body: essentials_filtered? ? "Choose \u201cAll storage locations\u201d to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
-            action: essentials_filtered? ? nil : essentials_link_button("Start your first audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Inventory audits and their status</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="date">Created</th>
-              <th scope="col">Organization</th>
-              <th scope="col">Storage location</th>
-              <th scope="col">Summary</th>
-              <th scope="col">Status</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @audits.each do |audit| %>
-              <%# Status was a green/red/yellow row tint alone; it is a pill with an icon and
-                  the word now, and the row keeps a soft tint as reinforcement. %>
-              <% tone, icon, tint = if audit.finalized?
-                                      [:success, "bi-check-circle", "positive bg-emerald-50/50"]
-                                    elsif audit.in_progress?
-                                      [:warning, "bi-hourglass-split", "negative bg-amber-50/50"]
-                                    else
-                                      [:info, "bi-clipboard-check", "highlight bg-sky-50/50"]
-                                    end %>
-              <tr class="<%= tint %>">
-                <td class="date">
-                  <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y").squeeze(" ") %></time>
-                </td>
-                <td><%= audit.organization.name %></td>
-                <td class="font-medium text-slate-900"><%= audit.storage_location.name %></td>
-                <td><%= pluralize(audit.line_items.count, "item") %></td>
-                <td><%= essentials_status_pill(audit.status.titleize, tone: tone, icon: icon) %></td>
-                <td class="text-right">
-                  <%= essentials_link_button "View", audit, variant: :ghost, size: :sm, icon: "bi-eye" %>
-                </td>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if @audits.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No audits match those filters" : "No audits yet",
+              body: essentials_filtered? ? "Choose \u201cAll storage locations\u201d to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
+              action: essentials_filtered? ? nil : essentials_link_button("Start your first audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Inventory audits and their status</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="date">Created</th>
+                <th scope="col">Organization</th>
+                <th scope="col">Storage location</th>
+                <th scope="col">Summary</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              <% @audits.each do |audit| %>
+                <%# Status was a green/red/yellow row tint alone; it is a pill with an icon and
+                    the word now, and the row keeps a soft tint as reinforcement. %>
+                <% tone, icon, tint = if audit.finalized?
+                                        [:success, "bi-check-circle", "positive bg-emerald-50/50"]
+                                      elsif audit.in_progress?
+                                        [:warning, "bi-hourglass-split", "negative bg-amber-50/50"]
+                                      else
+                                        [:info, "bi-clipboard-check", "highlight bg-sky-50/50"]
+                                      end %>
+                <tr class="<%= tint %>">
+                  <td class="date">
+                    <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y").squeeze(" ") %></time>
+                  </td>
+                  <td><%= audit.organization.name %></td>
+                  <td class="font-medium text-slate-900"><%= audit.storage_location.name %></td>
+                  <td><%= pluralize(audit.line_items.count, "item") %></td>
+                  <td><%= essentials_status_pill(audit.status.titleize, tone: tone, icon: icon) %></td>
+                  <td class="text-right">
+                    <%= essentials_link_button "View", audit, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

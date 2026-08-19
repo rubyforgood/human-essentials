@@ -6,12 +6,14 @@
         subtitle: "Bundles of items distributed as a single unit.",
         actions: essentials_link_button("New kit", new_kit_path, variant: :primary, icon: "bi-plus-lg") %>
 
-  <%= render "shared/essentials/filter_bar", url: kits_path do %>
+  <%= render "shared/essentials/filter_bar", url: kits_path, frame: "kits-results" do %>
     <div class="min-w-0"><%= filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
     <div class="pb-2"><%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
   <% end %>
+  <%= turbo_frame_tag "kits-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%= render "shared/essentials/card", padded: false do %>
-    <%= render partial: "kits/table" %>
+    <%= render "shared/essentials/card", padded: false do %>
+      <%= render partial: "kits/table" %>
+    <% end %>
   <% end %>
 </div>

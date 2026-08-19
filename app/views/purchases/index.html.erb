@@ -6,12 +6,12 @@
         subtitle: "Essentials bought by #{current_organization.name}.",
         actions: capture {
           if @purchases.any?
-            concat essentials_link_button("Export", purchases_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export", purchases_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: purchases_path do %>
+  <%= render "shared/essentials/filter_bar", url: purchases_path, frame: "purchases-results" do %>
     <% if @storage_locations.present? %>
       <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %></div>
     <% end %>
@@ -25,50 +25,52 @@
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  <%= turbo_frame_tag "purchases-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  <%#
-    What the purchases summary report used to show, driven by the filters on this page. The
-    category breakdown it also carried lives on the purchase records themselves; the four
-    figures here are the ones the table footer used to repeat.
-  %>
-  <%= essentials_stats([
-        {label: "Purchases", value: number_with_delimiter(@purchases.size)},
-        {label: "Items purchased", value: number_with_delimiter(@purchases_quantity), value_id: "purchase_quantity"},
-        {label: "Amount spent", value: dollar_presentation(@total_value_all_purchases)},
-        {label: "Fair market value", value: dollar_presentation(@total_fair_market_values)}
-            ], title: "Totals",
-         subtitle: essentials_stats_scope(@purchases.size, "purchase")) %>
+    <%#
+      What the purchases summary report used to show, driven by the filters on this page. The
+      category breakdown it also carried lives on the purchase records themselves; the four
+      figures here are the ones the table footer used to repeat.
+    %>
+    <%= essentials_stats([
+          {label: "Purchases", value: number_with_delimiter(@purchases.size)},
+          {label: "Items purchased", value: number_with_delimiter(@purchases_quantity), value_id: "purchase_quantity"},
+          {label: "Amount spent", value: dollar_presentation(@total_value_all_purchases)},
+          {label: "Fair market value", value: dollar_presentation(@total_fair_market_values)}
+              ], title: "Totals",
+           subtitle: essentials_stats_scope(@purchases.size, "purchase")) %>
 
-  <div class="mt-6"></div>
+    <div class="mt-6"></div>
 
-  <%= render "shared/essentials/card", padded: false,
-        footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_purchases)) } do %>
-    <% if @paginated_purchases.blank? %>
-      <%= render "shared/essentials/empty_state",
-            kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No purchases #{date_range_label}" : "No purchases recorded yet",
-            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
-            action: essentials_filtered? ? nil : essentials_link_button("Record your first purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
-    <% else %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>Purchases, most recent first</caption>
-          <thead>
-            <tr>
-              <th scope="col">Purchases from</th>
-              <th scope="col">Storage location</th>
-              <th scope="col">Comments</th>
-              <th scope="col" class="quantity">Quantity of items</th>
-              <th scope="col" class="quantity">Variety of items</th>
-              <th scope="col" class="numeric">Amount spent</th>
-              <th scope="col" class="numeric">Fair market value</th>
-              <th scope="col" class="date">Purchased date</th>
-              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody><%= render partial: "purchase_row", collection: @paginated_purchases %></tbody>
-        </table>
-      </div>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_purchases)) } do %>
+      <% if @paginated_purchases.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No purchases #{date_range_label}" : "No purchases recorded yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
+              action: essentials_filtered? ? nil : essentials_link_button("Record your first purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Purchases, most recent first</caption>
+            <thead>
+              <tr>
+                <th scope="col">Purchases from</th>
+                <th scope="col">Storage location</th>
+                <th scope="col">Comments</th>
+                <th scope="col" class="quantity">Quantity of items</th>
+                <th scope="col" class="quantity">Variety of items</th>
+                <th scope="col" class="numeric">Amount spent</th>
+                <th scope="col" class="numeric">Fair market value</th>
+                <th scope="col" class="date">Purchased date</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody><%= render partial: "purchase_row", collection: @paginated_purchases %></tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

@@ -27,7 +27,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, organization: organization)
       visit subject
       fill_in "filters[by_value]", with: b.value
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tbody tr", count: 1)
     end
@@ -52,7 +52,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, organization: organization)
       visit subject
       select b.item.name, from: "filters[barcodeable_id]"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tbody tr", count: 1)
     end
@@ -65,7 +65,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       visit subject
       select BaseItem.first.name, from: "filters[by_item_partner_key]"
-      click_button "Filter"
+      wait_for_filters
 
       expect(page).to have_css("table tbody tr", count: 2)
     end
@@ -110,7 +110,10 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       expect(page.find("table")).to have_content "1T Diapers"
 
-      click_button "Filter"
+      # There is no Filter button to press any more -- the bar applies on change. Reloading the
+      # index is the round trip this was checking: that the new barcode is really in the list
+      # and not just in the page the create action rendered.
+      visit barcode_items_path
 
       expect(page.find("table")).to have_content "1T Diapers"
     end

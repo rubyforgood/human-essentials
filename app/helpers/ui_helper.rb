@@ -138,10 +138,6 @@ module UiHelper
     _link_to link, {icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs"}.merge(options), properties
   end
 
-  def filter_button(options = {})
-    _button_to({icon: "filter", type: "primary", text: "Filter", size: "md"}.merge(options))
-  end
-
   # Used for keying off JavaScript.
   def js_button(options = {}, properties = {})
     _link_to "", {icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md"}.merge(options), properties

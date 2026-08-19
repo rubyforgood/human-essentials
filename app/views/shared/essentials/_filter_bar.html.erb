@@ -24,10 +24,35 @@
                         is itself the unfiltered view -- choosing it is the reset.
 %>
 <% clear_path ||= request.path %>
-<% auto_submit = local_assigns.fetch(:auto_submit, false) %>
+<% frame = local_assigns[:frame] %>
+<%# A bar pointed at a frame always applies on change: that is the whole reason for the frame. %>
+<% auto_submit = frame.present? || local_assigns.fetch(:auto_submit, false) %>
 <% clear = local_assigns.fetch(:clear, true) %>
-<%= form_tag url, method: :get, class: "mb-4",
-      data: (auto_submit ? {controller: "auto-submit", action: "change->auto-submit#submit"} : {}) do %>
+<%
+  form_data = {}
+  if auto_submit
+    form_data[:controller] = "auto-submit"
+    form_data[:action] = "change->auto-submit#submit input->auto-submit#debounce"
+  end
+  if frame.present?
+    form_data[:turbo_frame] = frame
+    # Turbo Drive is off app-wide, and Turbo only ignores that for elements *inside* a frame.
+    # This form targets one from outside it, so without an explicit opt-in Turbo declines to
+    # handle the submit and the browser does a full page reload instead -- silently, because
+    # the filter still works. See Session#elementIsNavigatable.
+    form_data[:turbo] = true
+  end
+%>
+<%= form_tag url, method: :get, class: "mb-4", data: form_data do %>
+  <% if frame.present? %>
+    <%#
+      Applying into a frame changes nothing a screen reader notices -- no navigation, no focus
+      move. This is the announcement, and it lives out here rather than in the results because a
+      live region has to survive the swap: an aria-live element that is itself replaced does not
+      announce its new contents.
+    %>
+    <p class="sr-only" role="status" data-auto-submit-target="status"></p>
+  <% end %>
   <% if auto_submit %>
     <%# Without JavaScript nothing submits the form on change, so the button has to come back. %>
     <noscript>

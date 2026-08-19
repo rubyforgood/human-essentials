@@ -1,75 +1,63 @@
 <% content_for :title, "History - #{current_organization.name}" %>
+
+<%#
+  Rebuilt on the design system. The filters were a hand-rolled form inside a card, and the tag
+  closing the form block fell after the div closing the card, with two stray empty columns and a
+  Title Case header row -- none of which the class-name audit can see, because none of it uses a
+  class that no longer exists. It was also the last page still rendering a Filter button.
+%>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "History",
-        subtitle: "Every inventory event, filterable." %>
-</div>
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Filters</h2>
-          </div>
+        subtitle: "Every event that changed inventory, most recent first." %>
 
-          <div class="px-5 py-4">
-            <%= form_tag(events_path, method: :get) do |f| %>
-              <div class="grid gap-6">
-                <div class="mb-4 min-w-0">
-                  <%= render partial: "shared/date_range_picker" %>
-                </div>
-                <div class="mb-4 min-w-0">
-                  <%= filter_select(scope: :by_type, collection: Event.types_for_select, key: :id, value: :name,
-                                    selected: params.dig(:filters, :by_type)) %>
-                </div>
-                <div class="mb-4 min-w-0">
-                  <%= filter_select(scope: :by_storage_location, collection: current_organization.storage_locations,
-                                    selected:params.dig(:filters, :by_storage_location)) %>
-                </div>
-                <div class="mb-4 min-w-0">
-                  <%= filter_select(scope: :by_item, collection: @items,
-                                    selected:params.dig(:filters, :by_item)) %>
-                </div>
-              </div>
-            </div>
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= filter_button %>
-              <%= clear_filter_button %>
-            </div>
-            <% end # form %>
-            </div>
-
-      </div>
-      <div class="min-w-0">
-
-      </div>
+  <%= render "shared/essentials/filter_bar", url: events_path, frame: "events-results" do %>
+    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
+    <div class="min-w-0">
+      <%= filter_select(label: "Event type", scope: :by_type, collection: Event.types_for_select,
+            key: :id, value: :name, selected: params.dig(:filters, :by_type)) %>
     </div>
+    <div class="min-w-0">
+      <%= filter_select(label: "Storage location", scope: :by_storage_location,
+            collection: current_organization.storage_locations,
+            selected: params.dig(:filters, :by_storage_location)) %>
+    </div>
+    <div class="min-w-0">
+      <%= filter_select(label: "Item", scope: :by_item, collection: @items,
+            selected: params.dig(:filters, :by_item)) %>
+    </div>
+  <% end %>
 
-  </div>
-
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
+  <%= turbo_frame_tag "events-results", target: "_top", data: {turbo_action: "advance"} do %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: capture { concat(render("shared/essentials/pagination", collection: @events)) } do %>
+      <% if @events.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No events #{date_range_label}" : "No inventory events yet",
+              body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every event." : "Every donation, distribution, transfer and adjustment is recorded here as it happens." %>
+      <% else %>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>Inventory events</caption>
+            <thead>
               <tr>
-                <th>User</th>
-                <th>Type</th>
-                <th>Refers To</th>
-                <th>Date/Time</th>
-                <th>From Location</th>
-                <th>To Location</th>
-                <th>Items</th>
+                <th scope="col">User</th>
+                <th scope="col">Type</th>
+                <th scope="col">Refers to</th>
+                <th scope="col" class="date">Date and time</th>
+                <th scope="col">From location</th>
+                <th scope="col">To location</th>
+                <th scope="col">Items</th>
               </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "event_row", collection: @events, as: :event, locals: { items: @items, storage_locs: @locations} %>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= paginate @events %>
-          </div>
+            </thead>
+            <tbody>
+              <%= render partial: "event_row", collection: @events, as: :event,
+                    locals: {items: @items, storage_locs: @locations} %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
 </div>

@@ -17,20 +17,19 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header", title: title, subtitle: subtitle %>
 
-  <%= form_tag filter_url, method: :get, class: "mb-4" do %>
-    <div class="flex flex-wrap items-end gap-3">
-      <div class="min-w-[16rem]">
-        <%= render partial: "shared/date_range_picker" %>
-      </div>
-      <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>">
-        <i class="bi-funnel" aria-hidden="true"></i>Filter
-      </button>
-    </div>
+  <%#
+    The shared filter bar rather than a hand-rolled form, so a report's date filter behaves like
+    every other filter in the app: applied on change, into the frame below, with no button.
+  %>
+  <%= render "shared/essentials/filter_bar", url: filter_url, frame: "report-results", clear: false do %>
+    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 
-  <%= render "shared/essentials/card", footer: footer do %>
-    <div<%= " id=#{id.to_json.html_safe}".html_safe if id %>>
-      <%= yield %>
-    </div>
+  <%= turbo_frame_tag "report-results", target: "_top", data: {turbo_action: "advance"} do %>
+    <%= render "shared/essentials/card", footer: footer do %>
+      <div<%= " id=#{id.to_json.html_safe}".html_safe if id %>>
+        <%= yield %>
+      </div>
+    <% end %>
   <% end %>
 </div>
