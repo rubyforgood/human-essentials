@@ -294,8 +294,32 @@ because that is the relationship: the label describes the value.
 <%= essentials_stats([
       {label: "Items distributed this month", value: 1_284},
       {label: "Scheduled for future distribution", value: 310}
-    ]) %>
+    ], caption: date_range_caption) %>
 ```
+
+**One card, hairline separators, no fill per figure.** A summary band is one reading, and a
+filled box around each figure makes it four objects instead. This is the metric strip Stripe,
+Shopify and Linear all use.
+
+The separators are a `gap-px` grid showing a `slate-200` backdrop through the gaps between white
+cells. That draws a hairline between **every pair of neighbours — rows as well as columns**,
+which `divide-x` cannot: in a grid of more than one row `divide-*` borders by DOM order rather
+than by grid position, so a 2×2 arrangement comes out wrong.
+
+**The figure count must divide the column count.** `STATS_COLUMNS` maps one to the other:
+
+| Figures | Columns |
+| --- | --- |
+| 2 | 1 → 2 at `sm` |
+| 3 | 1 → 3 at `sm` |
+| 4 | 1 → 2 at `sm` → 4 at `lg` |
+| 5 | 1 → 5 at `lg` (five columns at 640px leaves ~128px, which a currency figure does not fit) |
+| 6 | 1 → 2 at `sm` → 3 at `lg` |
+
+This was a flat `sm:grid-cols-2 lg:grid-cols-3` whatever the count, which orphaned a tile on
+**every** page that had a band — four figures went 3 + 1 at desktop, three went 2 + 1 at tablet.
+An empty cell matters more now than it did then: with the separators drawn by a backdrop showing
+through, a missing cell shows as a grey block rather than as whitespace.
 
 **A statistic is not a heading.** The reports marked six of them up as `<h2>`, which put the
 page's figures into its heading outline — someone navigating by heading heard "Total spent on
