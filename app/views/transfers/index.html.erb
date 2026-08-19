@@ -23,8 +23,8 @@
     <% if @transfers.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No transfers match those filters" : "No transfers yet",
-            body: essentials_filtered? ? "Clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
+            title: essentials_filtered? ? "No transfers #{date_range_label}" : "No transfers yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every transfer." : "A transfer moves inventory from one of your storage locations to another.",
             action: essentials_filtered? ? nil : essentials_link_button("Record your first transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

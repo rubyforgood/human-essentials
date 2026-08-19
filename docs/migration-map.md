@@ -32,7 +32,7 @@ breaks that down.
 | --- | --- |
 | `HistoricalTrends::BaseController` | Abstract; it has no views. Its three subclasses are migrated. |
 | `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
-| `DateRangeHelper#date_range_label` | Correct for the first time — `filters[date_range_label]` now carries a real preset name — but nothing reads its output. `@selected_date_range_label` is set in `ApplicationController#setup_date_range_picker` and consumed by no view. Left in place, and written down here, rather than deleted inside an unrelated change. |
+| `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 
 Anything else still carrying `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is a
 defect rather than a page awaiting its turn: none of those classes are defined anywhere now, so

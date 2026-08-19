@@ -46,7 +46,7 @@
         {label: "Distributions", value: number_with_delimiter(@distributions.size)},
         {label: "Items distributed", value: number_with_delimiter(@total_items_all_distributions)},
         {label: "Total value", value: dollar_presentation(@total_value_all_distributions)}
-      ]) %>
+      ], caption: date_range_caption) %>
 
   <div class="mt-6"></div>
 
@@ -55,8 +55,8 @@
     <% if @paginated_distributions.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No distributions match those filters" : "No distributions yet",
-            body: essentials_filtered? ? "Clear the filters to see every distribution." : "A distribution records essentials leaving your bank for a partner agency.",
+            title: essentials_filtered? ? "No distributions #{date_range_label}" : "No distributions yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every distribution." : "A distribution records essentials leaving your bank for a partner agency.",
             action: essentials_filtered? ? nil : essentials_link_button("Create your first distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

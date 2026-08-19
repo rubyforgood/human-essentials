@@ -28,7 +28,7 @@
         {label: "Drives", value: number_with_delimiter(@product_drives.size)},
         {label: "Items received", value: number_with_delimiter(@summary.values.sum(&:quantity))},
         {label: "In-kind value", value: dollar_presentation(@summary.values.sum(&:value))}
-      ]) %>
+      ], caption: date_range_caption) %>
 
   <div class="mt-6"></div>
 
@@ -37,8 +37,8 @@
     <% if @paginated_product_drives.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No product drives match those filters" : "No product drives yet",
-            body: essentials_filtered? ? "Clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
+            title: essentials_filtered? ? "No product drives #{date_range_label}" : "No product drives yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
             action: essentials_filtered? ? nil : essentials_link_button("Add your first product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

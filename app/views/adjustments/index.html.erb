@@ -24,8 +24,8 @@
     <% if @paginated_adjustments.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No adjustments match those filters" : "No inventory adjustments yet",
-            body: essentials_filtered? ? "Clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
+            title: essentials_filtered? ? "No adjustments #{date_range_label}" : "No inventory adjustments yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
             action: essentials_filtered? ? nil : essentials_link_button("Record your first adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

@@ -51,7 +51,7 @@
         {label: "Items received", value: number_with_delimiter(info.donations_quantity), value_id: "donation_quantity"},
         {label: "Money raised", value: dollar_presentation(info.total_money_raised)},
         {label: "In-kind value", value: dollar_presentation(info.total_value_all_donations)}
-      ]) %>
+      ], caption: date_range_caption) %>
 
   <div class="mt-6"></div>
 
@@ -60,8 +60,8 @@
     <% if info.paginated_donations.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No donations match those filters" : "No donations recorded yet",
-            body: essentials_filtered? ? "Clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
+            title: essentials_filtered? ? "No donations #{date_range_label}" : "No donations recorded yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
             action: essentials_filtered? ? nil : essentials_link_button("Record your first donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">

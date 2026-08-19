@@ -1130,3 +1130,55 @@ that caused it.
 names added on top* and *2026-08-18 · State is read from the DOM, not from a global flag*. Both
 still stand for FullCalendar and as general rules; the widget the second one was written about
 no longer exists, and `window.isLitepickerActive` is deleted.
+
+## 2026-08-19 · The period is said in words, next to the figures and in the empty state
+
+**Decision.** `date_range_label` feeds two places: a sentence-case caption above the stats band,
+and the `:no_results` empty state title. Not a standalone "Showing 13 distributions…" line.
+
+**Rationale.** The band already answers *how many*. What no page answered was *how many of what
+window* — the period lived only in the filter control, which is pinned at the top, prints as a
+box, and says nothing at all once you have scrolled to the table. The empty state is where the
+gap cost the most: "No distributions match those filters" makes the user go back and read the
+controls to find out which ones, where "No distributions over the last 30 days" is the answer.
+
+The standalone line was the literal request and is what GitHub, Linear and Stripe do. Rejected
+here because this app is not those apps: the stats band sits 40px below the filter bar and its
+first tile is the count, so the line would have put the same number on screen twice. The
+caption adds the half that was missing and repeats nothing.
+
+`reports/manufacturer_donations_summary` takes no caption: `shared/filtered_card` already states
+the period in the page header, and two statements of it is the duplication we just avoided.
+
+**Sentence case, not an uppercase eyebrow.** This slot — small muted text above a group of
+figures — usually attracts `uppercase tracking-wide`. design.md's sentence case rule has no
+exception for small text, and the distinction it is really making applies here: a period is
+*read*, not scanned as a category label. `#upcase_first` rather than `#capitalize`, so the month
+name inside the phrase keeps its own capital: "From June 19, 2026", not "From june 19, 2026".
+
+**The helper had to be fixed first, and it was five bugs, not four.** Nothing had ever read
+`date_range_label`, so nothing had ever caught them:
+
+| Case | Was | Now |
+| --- | --- | --- |
+| This year | "during the period 01 Jan to 31 Dec" | "this year" |
+| All time | "during the period 19 Aug to 19 Aug" | "across all time" |
+| Last 7 days | "over the last week" | "over the last 7 days" |
+| Custom ending today | "since 2026-03-03" | "since March 3, 2026" |
+| Custom starting today | `""` | "from March 15, 2026 to December 1, 2026" |
+| **No parameter at all** | "this year" | "from January 15, 2026 to April 15, 2026" |
+
+Two causes. `selected_range_described` formatted with `to_fs(:short)`, which is Rails'
+`"%d %b"` — **no year** — so a hundred-year range collapsed into what reads as a single day.
+And *This year* and *All time* had no `when` clause, so they fell through to that same
+date-range wording rather than naming themselves.
+
+The last row is the one worth remembering: the method defaulted to `"this year"` when the
+parameter was absent, which is the state every index page opens in. It described neither the
+default window (two months back, one month ahead) nor anything else on the page. It was
+invisible for as long as nothing rendered it, and it went on screen the moment something did.
+
+**The pairing is now tested exhaustively**, not against a hand-kept list: every key in
+`date_range_presets` except the default window must produce something other than its own date
+description. Add a preset without a clause and the spec fails, which is how *This year* and
+*All time* should have been caught.

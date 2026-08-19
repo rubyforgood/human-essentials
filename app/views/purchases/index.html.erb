@@ -36,7 +36,7 @@
         {label: "Items purchased", value: number_with_delimiter(@purchases_quantity), value_id: "purchase_quantity"},
         {label: "Amount spent", value: dollar_presentation(@total_value_all_purchases)},
         {label: "Fair market value", value: dollar_presentation(@total_fair_market_values)}
-      ]) %>
+      ], caption: date_range_caption) %>
 
   <div class="mt-6"></div>
 
@@ -45,8 +45,8 @@
     <% if @paginated_purchases.blank? %>
       <%= render "shared/essentials/empty_state",
             kind: essentials_filtered? ? :no_results : :cold_start,
-            title: essentials_filtered? ? "No purchases match those filters" : "No purchases recorded yet",
-            body: essentials_filtered? ? "Clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
+            title: essentials_filtered? ? "No purchases #{date_range_label}" : "No purchases recorded yet",
+            body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
             action: essentials_filtered? ? nil : essentials_link_button("Record your first purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll">
