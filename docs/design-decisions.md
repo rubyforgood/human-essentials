@@ -970,7 +970,7 @@ The shell was the easy half. What took the time was the inside of each form -- f
 ignores it, radio groups laid out with `&nbsp;` runs and `<br>`, and card classes pasted inline
 so a change to the card could never reach them.
 
-`bin/design/form-audit.rb` now checks for it and exits non-zero, so the gap status.rb leaves is
+`bin/design/page-audit.rb` now checks for it and exits non-zero, so the gap status.rb leaves is
 covered by something.
 
 ## 2026-08-19 · Open the page, every time
@@ -1000,3 +1000,41 @@ notice about not being able to change demo credentials, silently deleted.
 at all. But the general point is about mechanical replacement: when a block is swapped out
 wholesale, read what was inside it first. A header block is a plausible place for a page to keep
 something that is not a header.
+
+## 2026-08-19 · Audit every page kind, and separate defect from debt
+
+The form audit was form-only, so `show` and `index` pages had never been checked. They needed to
+be: nine of 31 show pages carried defects, including three cases of malformed markup that the
+browser silently repairs into a different tree.
+
+`bin/design/page-audit.rb` replaces `form-audit.rb` and covers show, index, form and partial. One
+tool rather than two overlapping ones.
+
+The useful addition is **two severities**, because they are not the same problem:
+
+- **Defect** — the page is wrong now. A class nothing defines, a hardcoded inline style, layout
+  built from `&nbsp;`, Title Case, or no `page_header` and therefore no back link.
+- **Debt** — the page renders correctly, but the card's classes are pasted inline instead of
+  rendering the component, so a change to the card can never reach it.
+
+The script exits non-zero on a defect and reports debt without enforcing it. Conflating them
+would mean either failing the build on cosmetics or letting real defects hide among them.
+
+Three exclusions, all deliberate: `shared/essentials/*`, because the components are the
+definition rather than a copy of it; mailer templates, where inline style is the only thing email
+clients honour; and `static/*`, which the migration map already records as standalone public
+documents outside the system.
+
+## 2026-08-19 · A show page is a description list, not a one-row table
+
+Four show pages presented a record as a table with a single row of data — `admin/partners/show`
+was three columns and one row, with an empty `<h2>` above it. Two others used a bare `<dl>` with
+no styling, so labels and values ran together in a wall of text.
+
+A record's fields are label-and-value pairs, which is what a description list is for. Styled as a
+two-column grid it reads better than either, and it does not promise a reader that more rows are
+coming.
+
+Also fixed on those pages: `partners/requests/show` set its field labels at `text-2xl font-bold`
+above values at `text-lg`, so every label was larger than the thing it labelled — the same
+inverted hierarchy the reports had.

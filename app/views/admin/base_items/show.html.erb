@@ -1,48 +1,61 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Base Items - #{@base_item.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Base Item details</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= @base_item.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Base Items - #{@base_item.name}" %>
 
-<!-- Main content -->
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Size: <%= @base_item.size || "no size provided" %></h2>
-          </div>
-          <div class="px-5 py-4">
-            <h3 class="text-sm font-semibold text-slate-900">Items created from this Base Item</h3>
-            <table class="data-table">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Organization</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @items.each do |item| %>
-                <tr id="item-row-<%= item.to_param %>">
-                  <td><%= item.name %></td>
-                  <td><%= item.organization.name %> (id: <%= item.organization.id %>)</td>
-                </tr>
-              <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Base item",
+        subtitle: @base_item.name,
+        back: {path: admin_base_items_path, label: "Back to base items"},
+        actions: capture {
+          concat essentials_link_button("Edit", edit_admin_base_item_path(@base_item),
+                   variant: :primary, icon: "bi-pencil")
+        } %>
+</div>
+
+<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", title: "Details" do %>
+    <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Name</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= @base_item.name %></dd>
       </div>
-    </div>
-  </div>
-</section>
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Size</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@base_item.size) %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Partner key</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@base_item.partner_key) %></dd>
+      </div>
+    </dl>
+  <% end %>
+
+  <%= render "shared/essentials/card", title: "Items created from this base item", padded: false do %>
+    <% if @items.any? %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Every organization's own item that maps onto this base item</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Organization</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @items.each do |item| %>
+              <tr id="item-row-<%= item.to_param %>">
+                <td class="font-medium text-slate-900"><%= item.name %></td>
+                <td><%= item.organization.name %> (id: <%= item.organization.id %>)</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-5 py-4">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No items yet",
+              body: "No organization has created an item from this base item." %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

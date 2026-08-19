@@ -1,49 +1,37 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Partner Information</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= @partner.name %></p>
+<% content_for :title, "Partners - #{@partner.name}" %>
+
+<%#
+  Same shape as the barcode page: one row of a table doing a description list's job. It also had
+  an empty <h2> as the card header.
+%>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Partner",
+        subtitle: @partner.name,
+        back: {path: admin_partners_path, label: "Back to partners"},
+        actions: capture {
+          concat essentials_link_button("Edit", edit_admin_partner_path(@partner),
+                   variant: :primary, icon: "bi-pencil")
+        } %>
+</div>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", title: "Partner information" do %>
+    <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Partner name</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.name %></dd>
       </div>
-      <div class="min-w-0">
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Essentials bank</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.organization.name %></dd>
       </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900"></h2>
-          </div>
-          <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
-              <tr>
-                <th>Partner Name</th>
-                <th>Essentials Bank</th>
-                <th>Partner Email</th>
-              </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><%= @partner.name %></td>
-                  <td><%= @partner.organization.name %></td>
-                  <td><%= @partner.email %></td>
-                </tr>
-
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Partner email</dt>
+        <dd class="mt-0.5 text-sm text-slate-900">
+          <%= mail_to @partner.email, class: "font-medium text-brand-700 hover:text-brand-800" %>
+        </dd>
       </div>
-    </div>
-  </div>
-</section>
+    </dl>
+  <% end %>
+</div>

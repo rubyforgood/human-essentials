@@ -1,48 +1,31 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Children - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Authorized Family Member Details</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Authorized family member - #{current_partner.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="mb-12 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <h3 class="text-sm font-semibold text-slate-900">Authorized Family Member Information</h3>
-          <div class="px-5 py-4">
-            <dl>
-              <dt>First Name:</dt>
-              <dd><%= @authorized_family_member.first_name %></dd>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Authorized family member",
+        subtitle: "#{@authorized_family_member.first_name} #{@authorized_family_member.last_name}".strip.presence,
+        back: {path: partners_family_path(@authorized_family_member.family), label: "Back to family"},
+        actions: capture {
+          concat essentials_link_button("Edit", edit_partners_authorized_family_member_path(@authorized_family_member),
+                   variant: :primary, icon: "bi-pencil")
+        } %>
+</div>
 
-              <dt>Last Name:</dt>
-              <dd><%= @authorized_family_member.last_name %></dd>
-
-              <dt>Date of Birth:</dt>
-              <dd><%= @authorized_family_member.date_of_birth %></dd>
-
-              <dt>Gender:</dt>
-              <dd><%= @authorized_family_member.gender %></dd>
-
-              <dt>Comments:</dt>
-              <dd><%= @authorized_family_member.comments %></dd>
-            </dl>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= link_to 'Edit Authorized Family Member Details', edit_partners_authorized_family_member_path(@authorized_family_member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-            <%= link_to 'Show Member Family', partners_family_path(@authorized_family_member.family), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          </div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", title: "Member information" do %>
+    <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <% [
+           ["First name", @authorized_family_member.first_name],
+           ["Last name", @authorized_family_member.last_name],
+           ["Date of birth", @authorized_family_member.date_of_birth],
+           ["Gender", @authorized_family_member.gender],
+           ["Comments", @authorized_family_member.comments]
+         ].each do |label, value| %>
+        <div>
+          <dt class="text-sm font-medium text-slate-600"><%= label %></dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(value) %></dd>
         </div>
-      </div>
-    </div>
-  </div>
-
-</section>
+      <% end %>
+    </dl>
+  <% end %>
+</div>

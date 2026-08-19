@@ -1,55 +1,39 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Annual Survey - #{current_organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900"><%= "#{params[:year]} NDBN Annual Report" %></h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_organization.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
-<!-- Main content -->
-<section>
-  <div class="border-t border-slate-200 px-5 py-3">
-    <div class="px-5 py-4">
-      <span class="float-right">
-        <%=
-          refresh_button_to(
-            recalculate_reports_annual_report_path(@year),
-              { text: "Recalculate Report" },
-              method: :post
-            )
-        %>
-        <%=
-            download_button_to(
-              reports_annual_report_path(@year, format: :csv),
-              text: "Export Report"
-            )
-        %>
-      </span>
-    </div>
-  </div>
-</section>
-<% @report.each_report do |name, entries| %>
-  <section>
-    <h1 class="text-2xl font-bold tracking-tight text-slate-900"><%= name %></h1><br>
-    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div class="px-5 py-4">
+<% content_for :title, "Annual Survey - #{current_organization.name}" %>
+
+<%#
+  This page rendered one <h1> per report section inside a loop, so a page could carry a dozen of
+  them. The page header owns the only h1; each section is an h2. Spacing was <br> tags and the
+  actions were float-right inside a bordered strip.
+%>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "#{params[:year]} NDBN annual report",
+        subtitle: current_organization.name,
+        back: {path: reports_annual_reports_path, label: "Back to annual survey"},
+        actions: capture {
+          concat refresh_button_to(recalculate_reports_annual_report_path(@year),
+                   {text: "Recalculate report"}, method: :post)
+          concat download_button_to(reports_annual_report_path(@year, format: :csv),
+                   text: "Export report")
+        } %>
+</div>
+
+<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <% @report.each_report do |section_name, entries| %>
+    <%= render "shared/essentials/card", title: section_name, padded: false do %>
+      <div class="table-scroll">
         <table class="data-table">
+          <caption><%= section_name %> figures for <%= params[:year] %></caption>
           <tbody>
-          <% entries.each do |name, value| %>
-            <tr>
-              <th><%= name %></th>
-              <td><%= value %></td>
-            </tr>
-          <% end %>
+            <% entries.each do |entry_name, value| %>
+              <tr>
+                <th scope="row" class="font-medium text-slate-900"><%= entry_name %></th>
+                <td><%= value %></td>
+              </tr>
+            <% end %>
           </tbody>
         </table>
       </div>
-    </div>
-  </section>
-  <br>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

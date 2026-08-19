@@ -1,153 +1,144 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Family Details</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Families - #{current_partner.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <h3 class="text-sm font-semibold text-slate-900">Family Information
-            <%= link_to 'Add An Authorized Member To This Family', new_partners_authorized_family_member_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", style: "margin-left:10px;" %>
-            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %></h3>
-          <div class="px-5 py-4">
-            <dl>
-              <dt>Guardian First Name:</dt>
-              <dd><%= @family.guardian_first_name %></dd>
+<%#
+  Fixed here: the children table's <tr> was never closed, ten `style="width: …%"` attributes on
+  table headers (which summed to more than 100% in both tables), two action links crammed into
+  an <h3> with a `margin-left:10px` inline style, and a bare <dl> with no styling.
+%>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Family details",
+        subtitle: "#{@family.guardian_first_name} #{@family.guardian_last_name}".strip.presence,
+        back: {path: partners_families_path, label: "Back to families"},
+        actions: capture {
+          concat essentials_link_button("Add child", new_partners_child_path(family_id: @family.id),
+                   variant: :secondary, icon: "bi-person-arms-up")
+          concat essentials_link_button("Add authorized member",
+                   new_partners_authorized_family_member_path(family_id: @family.id),
+                   variant: :primary, icon: "bi-person-plus")
+        } %>
+</div>
 
-              <dt>Guardian Last Name:</dt>
-              <dd><%= @family.guardian_last_name %></dd>
-
-              <dt>Guardian Zip Code:</dt>
-              <dd><%= @family.guardian_zip_code %></dd>
-
-              <dt>Guardian County:</dt>
-              <dd><%= @family.guardian_county %></dd>
-
-              <dt>Guardian Phone:</dt>
-              <dd><%= @family.guardian_phone %></dd>
-
-              <dt>Case Manager:</dt>
-              <dd><%= @family.case_manager %></dd>
-
-              <dt>Home Adult Count:</dt>
-              <dd><%= @family.home_adult_count %></dd>
-
-              <dt>Number of Children Aged 5-17 in the Home:</dt>
-              <dd><%= @family.home_child_count %></dd>
-
-              <dt>Number of Children Under Age 5 in the Home:</dt>
-              <dd><%= @family.home_young_child_count %></dd>
-
-              <dt>Sources of Income:</dt>
-              <dd><%= @family.sources_of_income.join(', ') %></dd>
-
-              <dt>Guardian Employed:</dt>
-              <dd><%= @family.guardian_employed ? "Yes" : "No" %></dd>
-
-              <dt>Guardian Employment Type:</dt>
-              <dd><%= @family.guardian_employment_type %></dd>
-
-              <dt>Guardian Monthly Pay:</dt>
-              <dd><%= @family.guardian_monthly_pay %></dd>
-
-              <dt>Guardian Health Insurance:</dt>
-              <dd><%= @family.guardian_health_insurance %></dd>
-
-              <dt>Military Family:</dt>
-              <dd><%= @family.military ? "Yes" : "No" %></dd>
-
-              <dt>Comments:</dt>
-              <dd><%= @family.comments %></dd>
-            </dl>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= link_to 'Edit This Family', edit_partners_family_path(@family), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-            <%= link_to 'Back to Families', partners_families_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          </div>
+<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", title: "Family information" do %>
+    <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <% [
+           ["Guardian first name", @family.guardian_first_name],
+           ["Guardian last name", @family.guardian_last_name],
+           ["Guardian zip code", @family.guardian_zip_code],
+           ["Guardian county", @family.guardian_county],
+           ["Guardian phone", @family.guardian_phone],
+           ["Case manager", @family.case_manager],
+           ["Adults in the home", @family.home_adult_count],
+           ["Children aged 5 to 17 in the home", @family.home_child_count],
+           ["Children under 5 in the home", @family.home_young_child_count],
+           ["Sources of income", @family.sources_of_income.join(", ")],
+           ["Guardian employed", @family.guardian_employed ? "Yes" : "No"],
+           ["Guardian employment type", @family.guardian_employment_type],
+           ["Guardian monthly pay", @family.guardian_monthly_pay],
+           ["Guardian health insurance", @family.guardian_health_insurance],
+           ["Military family", @family.military ? "Yes" : "No"],
+           ["Comments", @family.comments]
+         ].each do |label, value| %>
+        <div>
+          <dt class="text-sm font-medium text-slate-600"><%= label %></dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(value) %></dd>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      <% end %>
+    </dl>
+  <% end %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <h3 class="text-sm font-semibold text-slate-900">Children Information</h3>
-          <table class="data-table">
-            <thead>
+  <%= render "shared/essentials/card", title: "Children", padded: false do %>
+    <% if @family.children.any? %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Children in this family</caption>
+          <thead>
             <tr>
-              <th style="width: 13.33%">First Name</th>
-              <th style="width: 13.33%">Last Name</th>
-              <th style="width: 13.33%">Date of Birth</th>
-              <th style="width: 45%">Gender</th>
-              <th style="width: 15%">Actions</th>
+              <th scope="col">First name</th>
+              <th scope="col">Last name</th>
+              <th scope="col">Date of birth</th>
+              <th scope="col">Gender</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             <% @family.children.each do |child| %>
               <tr>
-                <td><%= child.first_name %></td>
+                <td class="font-medium text-slate-900"><%= child.first_name %></td>
                 <td><%= child.last_name %></td>
-                <td><%= child.date_of_birth %></td>
+                <td class="date"><%= child.date_of_birth %></td>
                 <td><%= child.gender %></td>
-                <td><%= link_to 'Edit', edit_partners_child_path(child), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %></td>
+                <td class="text-right">
+                  <div class="flex justify-end gap-1.5">
+                    <%= essentials_link_button "View", partners_child_path(child),
+                          variant: :ghost, size: :sm, icon: "bi-eye" %>
+                    <%= essentials_link_button "Edit", edit_partners_child_path(child),
+                          variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                  </div>
+                </td>
+              </tr>
             <% end %>
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <h3 class="text-sm font-semibold text-slate-900">Authorized Members for Pick Up</h3>
-          <table class="data-table">
-            <thead>
+    <% else %>
+      <div class="px-5 py-4">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No children yet",
+              body: "Add the children this family requests essentials for.",
+              action: essentials_link_button("Add child", new_partners_child_path(family_id: @family.id),
+                        variant: :primary, icon: "bi-person-arms-up") %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= render "shared/essentials/card", title: "Authorized to collect", padded: false do %>
+    <% if @family.authorized_family_members.any? %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>People other than the guardian who may collect essentials for this family</caption>
+          <thead>
             <tr>
-              <th style="width: 13.33%">First Name</th>
-              <th style="width: 13.33%">Last Name</th>
-              <th style="width: 13.33%">Date of Birth</th>
-              <th style="width: 45%">Comments</th>
-              <th style="width: 15%">Actions</th>
+              <th scope="col">First name</th>
+              <th scope="col">Last name</th>
+              <th scope="col">Date of birth</th>
+              <th scope="col">Comments</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             <% @family.authorized_family_members.each do |member| %>
               <tr>
-                <td><%= member.first_name %></td>
+                <td class="font-medium text-slate-900"><%= member.first_name %></td>
                 <td><%= member.last_name %></td>
-                <td><%= member.date_of_birth %></td>
+                <td class="date"><%= member.date_of_birth %></td>
                 <td><%= member.comments %></td>
-                <td>
-                  <%= link_to 'Edit', edit_partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-                  <%= link_to 'View', partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-                  <%= link_to 'Delete', partners_authorized_family_member_path(member), class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600",
-                       data: { confirm: "Are you sure?" }, method: :delete %>
+                <td class="text-right">
+                  <div class="flex justify-end gap-1.5">
+                    <%= essentials_link_button "View", partners_authorized_family_member_path(member),
+                          variant: :ghost, size: :sm, icon: "bi-eye" %>
+                    <%= essentials_link_button "Edit", edit_partners_authorized_family_member_path(member),
+                          variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    <%= essentials_action_button "Delete", partners_authorized_family_member_path(member),
+                          method: :delete, variant: :ghost, size: :sm, icon: "bi-trash",
+                          class: "text-rose-700 hover:bg-rose-50", confirm: "Are you sure?" %>
+                  </div>
                 </td>
+              </tr>
             <% end %>
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% else %>
+      <div class="px-5 py-4">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "Nobody else authorized",
+              body: "Only the guardian can collect essentials for this family.",
+              action: essentials_link_button("Add authorized member",
+                        new_partners_authorized_family_member_path(family_id: @family.id),
+                        variant: :primary, icon: "bi-person-plus") %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

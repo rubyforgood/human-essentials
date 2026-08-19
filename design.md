@@ -807,7 +807,7 @@ label, the spacing and the error message.
   worked, because the HTML parser splits malformed markup into two forms and re-associates the
   button — which is exactly why nobody noticed.
 
-`ruby bin/design/form-audit.rb` checks the mechanical part and exits non-zero on a regression.
+`ruby bin/design/page-audit.rb` checks the mechanical part and exits non-zero on a defect.
 It cannot check the two assertions above.
 
 ## Backlog
