@@ -15,7 +15,7 @@
     <div class="min-w-0"><%= filter_select(label: "Name", scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %></div>
     <div class="min-w-0"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
     <div class="min-w-0"><%= filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
-    <div class="min-w-0 sm:col-span-2">
+    <div class="min-w-0">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>

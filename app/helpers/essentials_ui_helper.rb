@@ -326,6 +326,15 @@ module EssentialsUiHelper
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
+  # At how many filters the bar collapses behind a Filters button.
+  #
+  # Four or fewer is one grid row at desktop, and hiding one row behind a click costs more than
+  # it saves. Five is where a second row starts: /donations has nine and spent 264px before any
+  # data. Above the threshold the collapsed state carries chips for whatever is set, because a
+  # filter set that hides both itself and its effect is how someone concludes their records have
+  # disappeared.
+  FILTER_DISCLOSURE_THRESHOLD = 5
+
   # Meta text, per design.md: slate-500 at text-xs. 4.8:1 on white, which clears AA for body
   # text. Matches the hint style simple_form already uses on every form in the app.
   FILTER_HINT_CLASSES = "mt-1 block text-xs text-slate-500"

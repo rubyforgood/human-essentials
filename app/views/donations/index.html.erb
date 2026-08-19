@@ -37,7 +37,7 @@
     <% if info.item_categories.present? %>
       <div class="min-w-0"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
     <% end %>
-    <div class="min-w-0 sm:col-span-2">
+    <div class="min-w-0">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>

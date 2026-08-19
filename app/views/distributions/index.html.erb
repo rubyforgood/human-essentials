@@ -32,7 +32,7 @@
       <div class="min-w-0"><%= filter_select(label: "Source inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %></div>
     <% end %>
     <div class="min-w-0"><%= filter_select(label: "Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %></div>
-    <div class="min-w-0 sm:col-span-2">
+    <div class="min-w-0">
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>

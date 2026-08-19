@@ -328,6 +328,12 @@ picker.
 its totals update underneath, without the page reloading and without losing your place. Typing
 in a filter waits until you stop. **Clear filters** resets everything.
 
+Pages with a lot of filters — donations, distributions and requests — keep them behind a
+**Filters** button, so the data starts higher up the page. Whatever you have set is listed beside
+that button as a row of chips, with a count on the button itself, so nothing is ever narrowing
+your results without saying so. Click the **×** on a chip to drop that one filter, or **Clear
+all** to drop the lot.
+
 A page you have not filtered opens on *Last 2 months and next month*. It reaches into the future
 on purpose: a distribution can be scheduled before it happens, and a range ending today would
 hide everything already booked in.

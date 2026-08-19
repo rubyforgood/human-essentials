@@ -29,11 +29,21 @@
 <% auto_submit = frame.present? || local_assigns.fetch(:auto_submit, false) %>
 <% clear = local_assigns.fetch(:clear, true) %>
 <%
+  # Counted here, not passed in, so no call site decides it and the behaviour cannot drift from
+  # one page to the next. Each filter is one element child of the yielded block.
+  controls = capture { yield }
+  filter_count = Nokogiri::HTML5.fragment(controls).element_children.size
+  collapsible = filter_count >= EssentialsUiHelper::FILTER_DISCLOSURE_THRESHOLD
+  panel_id = "filter-panel-#{SecureRandom.uuid}"
+
+  controllers = []
   form_data = {}
   if auto_submit
-    form_data[:controller] = "auto-submit"
+    controllers << "auto-submit"
     form_data[:action] = "change->auto-submit#submit input->auto-submit#debounce"
   end
+  controllers.push("disclosure", "filter-summary") if collapsible
+  form_data[:controller] = controllers.join(" ") if controllers.any?
   if frame.present?
     form_data[:turbo_frame] = frame
     # Turbo Drive is off app-wide, and Turbo only ignores that for elements *inside* a frame.
@@ -68,9 +78,39 @@
     Cells are `min-w-0` so a long option cannot push a column past its share; the select
     truncates instead.
   %>
-  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    <%= yield %>
-    <div class="col-span-full flex items-center justify-end gap-2">
+  <% if collapsible %>
+    <%#
+      Five filters or more and the panel starts closed. It stays closed even when the page arrives
+      filtered: the chips beside the button already say what is applied, and opening automatically
+      would give back the space on exactly the pages where it was worth saving.
+    %>
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
+              data-action="click->disclosure#toggle" data-filter-toggle
+              class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+        <i class="bi-funnel" aria-hidden="true"></i>Filters
+        <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white"
+              data-filter-summary-target="count" hidden></span>
+        <i class="bi-chevron-down text-slate-400 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
+      </button>
+      <%# `contents` so the chips are laid out by the row above, not boxed inside a wrapper. %>
+      <div class="contents" data-filter-summary-target="chips"></div>
+      <%= link_to "Clear all", clear_path,
+            class: "text-sm font-medium text-brand-700 hover:underline",
+            data: {filter_summary_target: "clear"}, hidden: true %>
+    </div>
+  <% end %>
+
+  <div id="<%= panel_id %>"
+       class="<%= "hidden " if collapsible %>grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <%= controls %>
+    <%#
+      An ordinary grid cell, so it follows the last filter instead of taking a row of its own.
+      `col-span-full` cost a row on every page with a bar, including the ones with a single
+      filter. `self-end` sits it on the controls' baseline; the cells themselves are top-aligned
+      because the date range grows downwards when Custom is chosen.
+    %>
+    <div class="flex items-center gap-2 self-end">
       <button type="submit"
               class="filter-bar-submit <%= essentials_button_classes(variant: :primary, size: :md) %>"
               <%= tag.attributes(style: "display:none") if auto_submit %>>

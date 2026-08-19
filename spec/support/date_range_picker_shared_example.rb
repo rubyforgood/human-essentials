@@ -10,6 +10,7 @@ def date_range_picker_params(start_date, end_date)
 end
 
 def select_date_range_preset(name)
+  open_filters
   select name, from: "filters_date_range_preset"
   wait_for_filters
 end
@@ -23,6 +24,7 @@ end
 # Filter without waiting is a race. Checking Capybara's #value rather than a [value=...]
 # selector because the controller sets the property, which leaves the attribute untouched.
 def fill_in_date_range(start_date, end_date)
+  open_filters
   select "Custom", from: "filters_date_range_preset"
   fill_in "filters_date_range_start", with: start_date.strftime("%Y-%m-%d")
   fill_in "filters_date_range_end", with: end_date.strftime("%Y-%m-%d")
@@ -63,6 +65,8 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows the matching preset as selected, with the custom dates put away" do
       visit subject
+      open_filters # a bar with five filters or more starts collapsed
+
       expect(page).to have_select("filters_date_range_preset", selected: "Last 2 months and next month")
       expect(page).to have_no_field("filters_date_range_start")
     end
@@ -139,6 +143,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # invalid range, and the controller reports it in the page and blocks the submit.
     it "says so in the page and does not filter" do
       visit subject
+      open_filters
       select "Custom", from: "filters_date_range_preset"
       fill_in "filters_date_range_start", with: "2019-09-01"
       fill_in "filters_date_range_end", with: "2019-08-01"

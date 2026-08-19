@@ -12,7 +12,7 @@
         subtitle: "Every event that changed inventory, most recent first." %>
 
   <%= render "shared/essentials/filter_bar", url: events_path, frame: "events-results" do %>
-    <div class="min-w-0 sm:col-span-2"><%= render partial: "shared/date_range_picker" %></div>
+    <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
     <div class="min-w-0">
       <%= filter_select(label: "Event type", scope: :by_type, collection: Event.types_for_select,
             key: :id, value: :name, selected: params.dig(:filters, :by_type)) %>

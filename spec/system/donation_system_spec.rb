@@ -60,6 +60,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select Donation::SOURCES[:misc], from: "filters[by_source]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -73,6 +74,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: b, product_drive_participant: x)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select a.name, from: "filters[by_product_drive]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -86,6 +88,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select a.business_name, from: "filters[by_product_drive_participant]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -99,6 +102,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select a.business_name, from: "filters[by_product_drive_participant]"
         wait_for_filters
         expect(page).to have_select("filters[by_product_drive_participant]", selected: a.business_name)
@@ -111,6 +115,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:manufacturer_donation, manufacturer: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select a.name, from: "filters[from_manufacturer]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -121,6 +126,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, donation_site: location1)
         create(:donation, donation_site: location2)
         visit subject
+        open_filters
         select location1.name, from: "filters[from_donation_site]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -132,6 +138,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, storage_location: storage2)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select storage1.name, from: "filters[at_storage_location]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -144,6 +151,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, :with_items, item: item_2)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select item_1.name, from: "filters[by_item_id]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -158,6 +166,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, :with_items, item_quantity: 30, item: item_2)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select organization.item_categories.first.name, from: "filters[by_category]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)
@@ -182,9 +191,11 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation, storage_location: storage1)
         visit subject
         expect(page).to have_css("table tbody tr", count: 3)
+        open_filters
         select Donation::SOURCES[:misc], from: "filters[by_source]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 2)
+        open_filters
         select storage1.name, from: "filters[at_storage_location]"
         wait_for_filters
         expect(page).to have_css("table tbody tr", count: 1)

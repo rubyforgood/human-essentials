@@ -142,6 +142,7 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         visit subject
         select storage_location.name, from: "filters[at_location]"
+        wait_for_filters
 
         expect(page).to have_css("table tr", count: 2)
       end
