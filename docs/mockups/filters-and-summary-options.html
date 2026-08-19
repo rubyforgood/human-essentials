@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filters and summary — options, not built</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body{background:#f8fafc}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 32px 80px}
+  .frame{border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;background:#fff;margin-top:14px}
+  .frame>figcaption{padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+  .frame.pick>figcaption{background:#ecfdf5;color:#065f46}
+  .frame.bad>figcaption{background:#fff1f2;color:#9f1239}
+  .frame>.body{padding:18px 20px}
+  .frame>.shot{padding:20px;background:#fff;overflow:hidden}
+  .sub{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin:0 0 8px}
+  .rule{border-left:3px solid #4f46e5;background:#eef2ff;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  .warn{border-left:3px solid #d97706;background:#fffbeb;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  table.diag{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;overflow:hidden;font-size:14px}
+  table.diag th,table.diag td{text-align:left;padding:8px 13px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  table.diag th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+  table.diag tr:last-child td{border-bottom:0}
+  .no{color:#be123c;font-weight:600}.ok{color:#15803d;font-weight:600}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:.9em}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:21px;margin:48px 0 6px}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:#4f46e5;
+    color:#fff;border-radius:7px;font-size:14px;margin-right:9px}
+  p.note{color:#475569;margin:0 0 12px;max-width:86ch}
+  .lede{color:#475569;margin:0 0 28px;max-width:80ch}
+  .gapmark{position:relative;outline:2px dashed #fb7185;outline-offset:2px}
+</style></head>
+<body class="text-slate-900"><div class="wrap">
+
+<h1>Filters, and the summary card</h1>
+<p class="lede">Four questions, four sections. Nothing here is built. <strong>Resize the window</strong>
+for the wide behaviour; the boxed panels are iframes at 430px.</p>
+
+<h2><span class="n">1</span>Why the inputs are different sizes</h2>
+<p class="note">The bar is <code>flex flex-wrap items-end gap-3</code> and each control sits in a
+<code>min-w-[13rem]</code> box. A flex item sizes to its <em>content</em> &mdash; the longest
+option in the menu &mdash; so the widths come out ragged, and <code>flex-wrap</code> packs each
+line to the left and leaves whatever is left over. Measured on the real pages:</p>
+<table class="diag">
+  <thead><tr><th>Page</th><th>Control widths on one line</th><th>White space left at the end</th></tr></thead>
+  <tbody>
+    <tr><td><code>/distributions</code></td><td>224, 208, 247</td><td class="no">337px</td></tr>
+    <tr><td><code>/donations</code></td><td>247 (Date range, alone on its line)</td><td class="no">793px</td></tr>
+    <tr><td><code>/purchases</code></td><td>188 (Filter button, alone)</td><td class="no">852px</td></tr>
+    <tr><td><code>/requests</code></td><td>247 then 200 then 188, three ragged lines</td><td class="no">793px, 581px, 381px</td></tr>
+  </tbody>
+</table>
+<p class="note" style="margin-top:12px">Widths across the four pages run 208, 224, 247, 278, 285,
+289. Six different sizes for the same kind of control.</p>
+
+<figure class="frame bad">
+  <figcaption>Current &mdash; /donations, nine filters</figcaption>
+  <div class="shot"><div class="flex flex-wrap items-end gap-3"><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502">Storage location</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502" name="filters[at_storage_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125">Source</label><select name="filters[by_source]" id="filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Donation Site">Donation Site</option>
+<option value="Manufacturer">Manufacturer</option>
+<option value="Misc. Donation">Misc. Donation</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886">Product drive</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886" name="filters[by_product_drive]"><option value="" label=" "></option>
+<option value="2">Best Product Drive</option>
+<option value="1">First Product Drive</option>
+<option value="3">Second Best Product Drive</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6">Product drive participant</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6" name="filters[by_product_drive_participant]"><option value="" label=" "></option>
+<option value="1">A Good Place to Collect Diapers</option>
+<option value="2">A Mediocre Place to Collect Diapers</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53">Manufacturer</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53" name="filters[from_manufacturer]"><option value="" label=" "></option>
+<option value="1">Manufacturer 1</option>
+<option value="2">Manufacturer 2</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b">Donation site</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b" name="filters[from_donation_site]"><option value="" label=" "></option>
+<option value="4">Eagleton Country Club</option>
+<option value="1">Pawnee Hardware</option>
+<option value="3">Waffle House</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div><div class="min-w-[13rem]"><label class="block text-sm font-medium text-slate-700" for="filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee">Category</label><select name="filters[by_category]" id="filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Category One">Category One</option>
+<option value="Category Three">Category Three</option>
+<option value="Category Two">Category Two</option></select></div><div class="min-w-[15rem]">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-wrap items-end gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Default (recent and upcoming)&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-[13rem]">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset"><option selected="selected" value="Default (recent and upcoming)">Default (recent and upcoming)</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" hidden="">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div><div class="flex items-center gap-2"><button type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm"><i class="bi-funnel" aria-hidden="true"></i>Filter</button><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold text-slate-700">Clear filters</a></div></div></div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>Fix &mdash; a grid, so every control is the same width and the row is full</figcaption>
+  <div class="shot"><div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502">Storage location</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502" name="filters[at_storage_location]"><option value="" label=" "></option>
+<option value="1">Bulk Storage Location</option>
+<option value="2">Pawnee Main Bank (Office)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125">Source</label><select name="filters[by_source]" id="filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Donation Site">Donation Site</option>
+<option value="Manufacturer">Manufacturer</option>
+<option value="Misc. Donation">Misc. Donation</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886">Product drive</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886" name="filters[by_product_drive]"><option value="" label=" "></option>
+<option value="2">Best Product Drive</option>
+<option value="1">First Product Drive</option>
+<option value="3">Second Best Product Drive</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6">Product drive participant</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6" name="filters[by_product_drive_participant]"><option value="" label=" "></option>
+<option value="1">A Good Place to Collect Diapers</option>
+<option value="2">A Mediocre Place to Collect Diapers</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53">Manufacturer</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53" name="filters[from_manufacturer]"><option value="" label=" "></option>
+<option value="1">Manufacturer 1</option>
+<option value="2">Manufacturer 2</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b">Donation site</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b" name="filters[from_donation_site]"><option value="" label=" "></option>
+<option value="4">Eagleton Country Club</option>
+<option value="1">Pawnee Hardware</option>
+<option value="3">Waffle House</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b">Item</label><select class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" id="filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b" name="filters[by_item_id]"><option value="" label=" "></option>
+<option value="1">Adult Briefs (Large/X-Large)</option>
+<option value="2">Adult Briefs (Medium/Large)</option>
+<option value="3">Adult Briefs (Small/Medium)</option>
+<option value="6">Adult Briefs (XS/Small)</option>
+<option value="4">Adult Briefs (XXL)</option>
+<option value="7">Adult Briefs (XXS)</option>
+<option value="5">Adult Briefs (XXXL)</option>
+<option value="26">Adult Cloth Diapers (Large/XL/XXL)</option>
+<option value="27">Adult Cloth Diapers (Small/Medium)</option>
+<option value="145">Adult Incontinence Kit</option>
+<option value="33">Adult Incontinence Pads</option>
+<option value="146">Baby Care Essentials Kit</option>
+<option value="39">Bed Pads (Cloth)</option>
+<option value="40">Bed Pads (Disposable)</option>
+<option value="41">Bibs (Adult &amp; Child)</option>
+<option value="28">Cloth Diapers (AIO's/Pocket)</option>
+<option value="29">Cloth Diapers (Covers)</option>
+<option value="8">Cloth Diapers (Plastic Cover Pants)</option>
+<option value="30">Cloth Diapers (Prefolds &amp; Fitted)</option>
+<option value="31">Cloth Inserts (For Cloth Diapers)</option>
+<option value="44">Cloth Potty Training Pants/Underwear</option>
+<option value="32">Cloth Swimmers (Kids)</option>
+<option value="143">Diaper Care Kit</option>
+<option value="42">Diaper Rash Cream/Powder</option>
+<option value="9">Disposable Inserts</option>
+<option value="19">Kids L/XL (60-125 lbs)</option>
+<option value="10">Kids (Newborn)</option>
+<option value="11">Kids (Preemie)</option>
+<option value="20">Kids Pull-Ups (2T-3T)</option>
+<option value="21">Kids Pull-Ups (3T-4T)</option>
+<option value="22">Kids Pull-Ups (4T-5T)</option>
+<option value="23">Kids Pull-Ups (5T-6T)</option>
+<option value="12">Kids (Size 1)</option>
+<option value="13">Kids (Size 2)</option>
+<option value="14">Kids (Size 3)</option>
+<option value="15">Kids (Size 4)</option>
+<option value="16">Kids (Size 5)</option>
+<option value="17">Kids (Size 6)</option>
+<option value="18">Kids (Size 7)</option>
+<option value="24">Kids S/M (38-65 lbs)</option>
+<option value="35">Liners (Incontinence)</option>
+<option value="38">Liners (Menstrual)</option>
+<option value="144">Menstrual Care Kit</option>
+<option value="43">Other</option>
+<option value="36">Pads</option>
+<option value="147">Potty Training Kit</option>
+<option value="25">Swimmers</option>
+<option value="37">Tampons</option>
+<option value="34">Underpads (Pack)</option>
+<option value="45">Wipes (Adult)</option>
+<option value="46">Wipes (Baby)</option></select></div><div class="min-w-0"><label class="block text-sm font-medium text-slate-700" for="filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee">Category</label><select name="filters[by_category]" id="filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10"><option value="" label=" "></option><option value="Category One">Category One</option>
+<option value="Category Three">Category Three</option>
+<option value="Category Two">Category Two</option></select></div><div class="min-w-0 sm:col-span-2">
+      <!-- BEGIN app/views/shared/_date_range_picker.html.erb --><div class="flex flex-wrap items-end gap-3" data-controller="date-range" data-date-range-presets-value="{&quot;Default (recent and upcoming)&quot;:[&quot;2026-06-19&quot;,&quot;2026-09-19&quot;],&quot;Today&quot;:[&quot;2026-08-19&quot;,&quot;2026-08-19&quot;],&quot;Yesterday&quot;:[&quot;2026-08-18&quot;,&quot;2026-08-18&quot;],&quot;Last 7 days&quot;:[&quot;2026-08-13&quot;,&quot;2026-08-19&quot;],&quot;Last 30 days&quot;:[&quot;2026-07-21&quot;,&quot;2026-08-19&quot;],&quot;This month&quot;:[&quot;2026-08-01&quot;,&quot;2026-08-31&quot;],&quot;Last month&quot;:[&quot;2026-07-01&quot;,&quot;2026-07-31&quot;],&quot;Last 12 months&quot;:[&quot;2025-08-20&quot;,&quot;2026-08-19&quot;],&quot;This year&quot;:[&quot;2026-01-01&quot;,&quot;2026-12-31&quot;],&quot;Prior year&quot;:[&quot;2025-01-01&quot;,&quot;2025-12-31&quot;],&quot;All time&quot;:[&quot;1926-08-19&quot;,&quot;2027-08-19&quot;]}">
+
+  <div class="min-w-[13rem]">
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_preset">Date range</label>
+    <select name="filters[date_range_label]" id="filters_date_range_preset" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10" data-date-range-target="preset" data-action="change-&gt;date-range#choosePreset"><option selected="selected" value="Default (recent and upcoming)">Default (recent and upcoming)</option>
+<option value="Today">Today</option>
+<option value="Yesterday">Yesterday</option>
+<option value="Last 7 days">Last 7 days</option>
+<option value="Last 30 days">Last 30 days</option>
+<option value="This month">This month</option>
+<option value="Last month">Last month</option>
+<option value="Last 12 months">Last 12 months</option>
+<option value="This year">This year</option>
+<option value="Prior year">Prior year</option>
+<option value="All time">All time</option>
+<option value="Custom">Custom</option></select>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" hidden="">
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_start">From</label>
+      <input type="date" id="filters_date_range_start" value="2026-06-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" data-date-range-target="start" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700" for="filters_date_range_end">To</label>
+      <input type="date" id="filters_date_range_end" value="2026-09-19" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3" autocomplete="off" aria-describedby="filters_date_range_error" data-date-range-target="end" data-action="change-&gt;date-range#chooseCustom">
+    </div>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700" role="alert" data-date-range-target="error" hidden="">The end date must be on or after the start date.</p>
+  </div>
+
+  <input type="hidden" name="filters[date_range]" id="filters_date_range" value="June 19, 2026 - September 19, 2026" data-date-range-target="range" autocomplete="off">
+</div>
+<!-- END app/views/shared/_date_range_picker.html.erb -->
+    </div><div class="col-span-full flex items-center justify-end gap-2 pt-1"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold text-slate-700">Clear filters</a></div></div>
+    <p class="sub" style="margin-top:22px">At 430px</p>
+    <iframe title="narrow preview" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=utf-8&gt;&lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=stylesheet href=&quot;/assets/tailwind.css&quot;&gt;&lt;style&gt;body{margin:0;padding:12px;background:#fff;font-family:Figtree,sans-serif}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4&quot;&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502&quot;&gt;Storage location&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_at_storage_location_72ca18ce-fabd-4ce5-a1a5-4fca083bb502&quot; name=&quot;filters[at_storage_location]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Bulk Storage Location&lt;/option&gt;
+&lt;option value=&quot;2&quot;&gt;Pawnee Main Bank (Office)&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125&quot;&gt;Source&lt;/label&gt;&lt;select name=&quot;filters[by_source]&quot; id=&quot;filters_by_source_c813b553-e831-4fdc-bd49-8365025c5125&quot; class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;&lt;option value=&quot;Donation Site&quot;&gt;Donation Site&lt;/option&gt;
+&lt;option value=&quot;Manufacturer&quot;&gt;Manufacturer&lt;/option&gt;
+&lt;option value=&quot;Misc. Donation&quot;&gt;Misc. Donation&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886&quot;&gt;Product drive&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_by_product_drive_d14f8108-92fb-4cad-b7c8-4ff154720886&quot; name=&quot;filters[by_product_drive]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;2&quot;&gt;Best Product Drive&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;First Product Drive&lt;/option&gt;
+&lt;option value=&quot;3&quot;&gt;Second Best Product Drive&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6&quot;&gt;Product drive participant&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_by_product_drive_participant_f50463ef-1ad5-454d-9845-4d49f1c672b6&quot; name=&quot;filters[by_product_drive_participant]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;A Good Place to Collect Diapers&lt;/option&gt;
+&lt;option value=&quot;2&quot;&gt;A Mediocre Place to Collect Diapers&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53&quot;&gt;Manufacturer&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_from_manufacturer_88b5dd71-ed3b-49fd-b00a-b42b0acded53&quot; name=&quot;filters[from_manufacturer]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Manufacturer 1&lt;/option&gt;
+&lt;option value=&quot;2&quot;&gt;Manufacturer 2&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b&quot;&gt;Donation site&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_from_donation_site_45ff39c6-5e93-44a5-a29e-702392a27b9b&quot; name=&quot;filters[from_donation_site]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;4&quot;&gt;Eagleton Country Club&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Pawnee Hardware&lt;/option&gt;
+&lt;option value=&quot;3&quot;&gt;Waffle House&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b&quot;&gt;Item&lt;/label&gt;&lt;select class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; id=&quot;filters_by_item_id_6a44a890-52b0-4bf8-af29-474ebfc0849b&quot; name=&quot;filters[by_item_id]&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;
+&lt;option value=&quot;1&quot;&gt;Adult Briefs (Large/X-Large)&lt;/option&gt;
+&lt;option value=&quot;2&quot;&gt;Adult Briefs (Medium/Large)&lt;/option&gt;
+&lt;option value=&quot;3&quot;&gt;Adult Briefs (Small/Medium)&lt;/option&gt;
+&lt;option value=&quot;6&quot;&gt;Adult Briefs (XS/Small)&lt;/option&gt;
+&lt;option value=&quot;4&quot;&gt;Adult Briefs (XXL)&lt;/option&gt;
+&lt;option value=&quot;7&quot;&gt;Adult Briefs (XXS)&lt;/option&gt;
+&lt;option value=&quot;5&quot;&gt;Adult Briefs (XXXL)&lt;/option&gt;
+&lt;option value=&quot;26&quot;&gt;Adult Cloth Diapers (Large/XL/XXL)&lt;/option&gt;
+&lt;option value=&quot;27&quot;&gt;Adult Cloth Diapers (Small/Medium)&lt;/option&gt;
+&lt;option value=&quot;145&quot;&gt;Adult Incontinence Kit&lt;/option&gt;
+&lt;option value=&quot;33&quot;&gt;Adult Incontinence Pads&lt;/option&gt;
+&lt;option value=&quot;146&quot;&gt;Baby Care Essentials Kit&lt;/option&gt;
+&lt;option value=&quot;39&quot;&gt;Bed Pads (Cloth)&lt;/option&gt;
+&lt;option value=&quot;40&quot;&gt;Bed Pads (Disposable)&lt;/option&gt;
+&lt;option value=&quot;41&quot;&gt;Bibs (Adult &amp;amp; Child)&lt;/option&gt;
+&lt;option value=&quot;28&quot;&gt;Cloth Diapers (AIO&#x27;s/Pocket)&lt;/option&gt;
+&lt;option value=&quot;29&quot;&gt;Cloth Diapers (Covers)&lt;/option&gt;
+&lt;option value=&quot;8&quot;&gt;Cloth Diapers (Plastic Cover Pants)&lt;/option&gt;
+&lt;option value=&quot;30&quot;&gt;Cloth Diapers (Prefolds &amp;amp; Fitted)&lt;/option&gt;
+&lt;option value=&quot;31&quot;&gt;Cloth Inserts (For Cloth Diapers)&lt;/option&gt;
+&lt;option value=&quot;44&quot;&gt;Cloth Potty Training Pants/Underwear&lt;/option&gt;
+&lt;option value=&quot;32&quot;&gt;Cloth Swimmers (Kids)&lt;/option&gt;
+&lt;option value=&quot;143&quot;&gt;Diaper Care Kit&lt;/option&gt;
+&lt;option value=&quot;42&quot;&gt;Diaper Rash Cream/Powder&lt;/option&gt;
+&lt;option value=&quot;9&quot;&gt;Disposable Inserts&lt;/option&gt;
+&lt;option value=&quot;19&quot;&gt;Kids L/XL (60-125 lbs)&lt;/option&gt;
+&lt;option value=&quot;10&quot;&gt;Kids (Newborn)&lt;/option&gt;
+&lt;option value=&quot;11&quot;&gt;Kids (Preemie)&lt;/option&gt;
+&lt;option value=&quot;20&quot;&gt;Kids Pull-Ups (2T-3T)&lt;/option&gt;
+&lt;option value=&quot;21&quot;&gt;Kids Pull-Ups (3T-4T)&lt;/option&gt;
+&lt;option value=&quot;22&quot;&gt;Kids Pull-Ups (4T-5T)&lt;/option&gt;
+&lt;option value=&quot;23&quot;&gt;Kids Pull-Ups (5T-6T)&lt;/option&gt;
+&lt;option value=&quot;12&quot;&gt;Kids (Size 1)&lt;/option&gt;
+&lt;option value=&quot;13&quot;&gt;Kids (Size 2)&lt;/option&gt;
+&lt;option value=&quot;14&quot;&gt;Kids (Size 3)&lt;/option&gt;
+&lt;option value=&quot;15&quot;&gt;Kids (Size 4)&lt;/option&gt;
+&lt;option value=&quot;16&quot;&gt;Kids (Size 5)&lt;/option&gt;
+&lt;option value=&quot;17&quot;&gt;Kids (Size 6)&lt;/option&gt;
+&lt;option value=&quot;18&quot;&gt;Kids (Size 7)&lt;/option&gt;
+&lt;option value=&quot;24&quot;&gt;Kids S/M (38-65 lbs)&lt;/option&gt;
+&lt;option value=&quot;35&quot;&gt;Liners (Incontinence)&lt;/option&gt;
+&lt;option value=&quot;38&quot;&gt;Liners (Menstrual)&lt;/option&gt;
+&lt;option value=&quot;144&quot;&gt;Menstrual Care Kit&lt;/option&gt;
+&lt;option value=&quot;43&quot;&gt;Other&lt;/option&gt;
+&lt;option value=&quot;36&quot;&gt;Pads&lt;/option&gt;
+&lt;option value=&quot;147&quot;&gt;Potty Training Kit&lt;/option&gt;
+&lt;option value=&quot;25&quot;&gt;Swimmers&lt;/option&gt;
+&lt;option value=&quot;37&quot;&gt;Tampons&lt;/option&gt;
+&lt;option value=&quot;34&quot;&gt;Underpads (Pack)&lt;/option&gt;
+&lt;option value=&quot;45&quot;&gt;Wipes (Adult)&lt;/option&gt;
+&lt;option value=&quot;46&quot;&gt;Wipes (Baby)&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0&quot;&gt;&lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee&quot;&gt;Category&lt;/label&gt;&lt;select name=&quot;filters[by_category]&quot; id=&quot;filters_by_category_e889f8e5-0942-460d-b320-1f6f8267f9ee&quot; class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot;&gt;&lt;option value=&quot;&quot; label=&quot; &quot;&gt;&lt;/option&gt;&lt;option value=&quot;Category One&quot;&gt;Category One&lt;/option&gt;
+&lt;option value=&quot;Category Three&quot;&gt;Category Three&lt;/option&gt;
+&lt;option value=&quot;Category Two&quot;&gt;Category Two&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;min-w-0 sm:col-span-2&quot;&gt;
+      &lt;!-- BEGIN app/views/shared/_date_range_picker.html.erb --&gt;&lt;div class=&quot;flex flex-wrap items-end gap-3&quot; data-controller=&quot;date-range&quot; data-date-range-presets-value=&quot;{&amp;quot;Default (recent and upcoming)&amp;quot;:[&amp;quot;2026-06-19&amp;quot;,&amp;quot;2026-09-19&amp;quot;],&amp;quot;Today&amp;quot;:[&amp;quot;2026-08-19&amp;quot;,&amp;quot;2026-08-19&amp;quot;],&amp;quot;Yesterday&amp;quot;:[&amp;quot;2026-08-18&amp;quot;,&amp;quot;2026-08-18&amp;quot;],&amp;quot;Last 7 days&amp;quot;:[&amp;quot;2026-08-13&amp;quot;,&amp;quot;2026-08-19&amp;quot;],&amp;quot;Last 30 days&amp;quot;:[&amp;quot;2026-07-21&amp;quot;,&amp;quot;2026-08-19&amp;quot;],&amp;quot;This month&amp;quot;:[&amp;quot;2026-08-01&amp;quot;,&amp;quot;2026-08-31&amp;quot;],&amp;quot;Last month&amp;quot;:[&amp;quot;2026-07-01&amp;quot;,&amp;quot;2026-07-31&amp;quot;],&amp;quot;Last 12 months&amp;quot;:[&amp;quot;2025-08-20&amp;quot;,&amp;quot;2026-08-19&amp;quot;],&amp;quot;This year&amp;quot;:[&amp;quot;2026-01-01&amp;quot;,&amp;quot;2026-12-31&amp;quot;],&amp;quot;Prior year&amp;quot;:[&amp;quot;2025-01-01&amp;quot;,&amp;quot;2025-12-31&amp;quot;],&amp;quot;All time&amp;quot;:[&amp;quot;1926-08-19&amp;quot;,&amp;quot;2027-08-19&amp;quot;]}&quot;&gt;
+
+  &lt;div class=&quot;min-w-[13rem]&quot;&gt;
+      &lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_date_range_preset&quot;&gt;Date range&lt;/label&gt;
+    &lt;select name=&quot;filters[date_range_label]&quot; id=&quot;filters_date_range_preset&quot; class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none filter-select pl-3 pr-10&quot; data-date-range-target=&quot;preset&quot; data-action=&quot;change-&amp;gt;date-range#choosePreset&quot;&gt;&lt;option selected=&quot;selected&quot; value=&quot;Default (recent and upcoming)&quot;&gt;Default (recent and upcoming)&lt;/option&gt;
+&lt;option value=&quot;Today&quot;&gt;Today&lt;/option&gt;
+&lt;option value=&quot;Yesterday&quot;&gt;Yesterday&lt;/option&gt;
+&lt;option value=&quot;Last 7 days&quot;&gt;Last 7 days&lt;/option&gt;
+&lt;option value=&quot;Last 30 days&quot;&gt;Last 30 days&lt;/option&gt;
+&lt;option value=&quot;This month&quot;&gt;This month&lt;/option&gt;
+&lt;option value=&quot;Last month&quot;&gt;Last month&lt;/option&gt;
+&lt;option value=&quot;Last 12 months&quot;&gt;Last 12 months&lt;/option&gt;
+&lt;option value=&quot;This year&quot;&gt;This year&lt;/option&gt;
+&lt;option value=&quot;Prior year&quot;&gt;Prior year&lt;/option&gt;
+&lt;option value=&quot;All time&quot;&gt;All time&lt;/option&gt;
+&lt;option value=&quot;Custom&quot;&gt;Custom&lt;/option&gt;&lt;/select&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;flex flex-wrap items-end gap-3&quot; data-date-range-target=&quot;custom&quot; hidden=&quot;&quot;&gt;
+    &lt;div&gt;
+      &lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_date_range_start&quot;&gt;From&lt;/label&gt;
+      &lt;input type=&quot;date&quot; id=&quot;filters_date_range_start&quot; value=&quot;2026-06-19&quot; class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3&quot; autocomplete=&quot;off&quot; data-date-range-target=&quot;start&quot; data-action=&quot;change-&amp;gt;date-range#chooseCustom&quot;&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;label class=&quot;block text-sm font-medium text-slate-700&quot; for=&quot;filters_date_range_end&quot;&gt;To&lt;/label&gt;
+      &lt;input type=&quot;date&quot; id=&quot;filters_date_range_end&quot; value=&quot;2026-09-19&quot; class=&quot;mt-1.5 block w-full rounded-lg border border-slate-300 bg-white py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none px-3&quot; autocomplete=&quot;off&quot; aria-describedby=&quot;filters_date_range_error&quot; data-date-range-target=&quot;end&quot; data-action=&quot;change-&amp;gt;date-range#chooseCustom&quot;&gt;
+    &lt;/div&gt;
+    &lt;p id=&quot;filters_date_range_error&quot; class=&quot;basis-full mt-1 text-xs font-medium text-rose-700&quot; role=&quot;alert&quot; data-date-range-target=&quot;error&quot; hidden=&quot;&quot;&gt;The end date must be on or after the start date.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;input type=&quot;hidden&quot; name=&quot;filters[date_range]&quot; id=&quot;filters_date_range&quot; value=&quot;June 19, 2026 - September 19, 2026&quot; data-date-range-target=&quot;range&quot; autocomplete=&quot;off&quot;&gt;
+&lt;/div&gt;
+&lt;!-- END app/views/shared/_date_range_picker.html.erb --&gt;
+    &lt;/div&gt;&lt;div class=&quot;col-span-full flex items-center justify-end gap-2 pt-1&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold text-slate-700&quot;&gt;Clear filters&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" style="width:430px;height:560px;border:1px solid #cbd5e1;border-radius:10px;background:#fff"></iframe>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0"><code>grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+    xl:grid-cols-4</code> with <code>min-w-0</code> on each cell. Equal columns, full rows, and the
+    number of columns follows the width rather than the content. This is what Stripe's, Shopify's
+    and Linear's filter panels do once there is more than a control or two.</p>
+    <p class="note" style="margin:8px 0 0">The date range takes <code>sm:col-span-2</code> because
+    it holds three inputs when Custom is open. The actions go on their own full-width row,
+    right-aligned, so they stop competing for a column.</p>
+  </div>
+</figure>
+
+<h2><span class="n">2</span>Filtering as you choose, instead of a Filter button</h2>
+<p class="note">You are right that it is the standard, and right that the button is an extra click.
+The split in practice is by <em>how many</em> filters and <em>how expensive</em> the update is:
+Linear, GitHub, Notion and Stripe apply each control immediately; Jira's advanced search, the AWS
+console and Salesforce report builder keep an Apply button because the query is costly and people
+set several conditions before they mean anything.</p>
+<p class="note">This app already does both &mdash; five pages auto-apply, eleven have the button
+&mdash; which is the actual inconsistency.</p>
+<div class="warn">
+  <p><strong>The thing that decides this is not the button.</strong>
+  <code>application.js</code> line 12 sets <code>Turbo.session.drive = false</code>, so a filter
+  submit is a <strong>full page reload</strong>: the whole document, the sidebar, the assets,
+  scroll position back to the top, and focus back to the start of the page.</p>
+  <p style="margin-top:8px">Auto-applying nine filters that way means up to nine full reloads while
+  someone is still deciding, each one throwing away where they were. That is why the button is
+  there on the busy pages, and it is a real reason rather than an oversight.</p>
+</div>
+<p class="note">So there are two ways to give you auto-filtering, and they are very different sizes
+of job:</p>
+<table class="diag">
+  <thead><tr><th style="width:12rem">Option</th><th>What happens</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr><td><strong>A &mdash; auto-submit everywhere</strong></td>
+        <td>Set <code>auto_submit: true</code> on the remaining eleven bars. Selects apply on
+        change; the date range applies when a preset is picked, and waits for both dates when
+        Custom is open; text filters debounce.</td>
+        <td class="no">Full page reload per change. Scroll and focus lost each time. Roughly two
+        hours.</td></tr>
+    <tr><td><strong>B &mdash; wrap the results in a Turbo Frame first</strong>, then auto-submit</td>
+        <td>The table, the summary card and the pagination update in place. No reload, scroll and
+        focus kept, and a change costs one small request instead of a whole document.</td>
+        <td class="ok">The right answer, and the bigger one: a frame per index page, plus
+        <code>data-turbo-frame</code> on the form. Turbo Drive stays off, so nothing else on the
+        page changes behaviour.</td></tr>
+  </tbody>
+</table>
+<p class="note" style="margin-top:12px">Either way the Filter button goes. Both need a
+<strong>live region</strong> announcing the new result count, because a filter that applies
+silently tells a screen reader nothing, and a busy indicator so a slow query does not look like
+nothing happened.</p>
+<div class="rule">
+  <p><strong>I would do B</strong>, and I would do it as its own change rather than folded into a
+  layout fix. If you want the quick win now, A on the pages with three filters or fewer is safe and
+  I can do it in the same pass as the grid.</p>
+</div>
+
+<h2><span class="n">3</span>&ldquo;Default (recent and upcoming)&rdquo;</h2>
+<p class="note">Fair &mdash; it does not say what it covers. It is <strong>two months back to one
+month ahead</strong>. The window runs into the future on purpose, because a distribution can be
+scheduled before it happens, and a range ending today would hide everything already booked in.</p>
+<table class="diag">
+  <thead><tr><th style="width:22rem">Label</th><th>Reading</th></tr></thead>
+  <tbody>
+    <tr><td><code>Default (recent and upcoming)</code></td><td class="no">Current. &ldquo;Default&rdquo; says nothing, and the parenthetical is vague.</td></tr>
+    <tr><td><strong><code>Last 2 months and next month</code></strong></td><td class="ok">Says exactly what it is, in the same shape as &ldquo;Last 30 days&rdquo;. My recommendation.</td></tr>
+    <tr><td><code>Recent and scheduled</code></td><td>Better than &ldquo;upcoming&rdquo;, still does not give the span.</td></tr>
+    <tr><td><code>Around today (2 months back, 1 month ahead)</code></td><td>Precise and too long for a menu.</td></tr>
+  </tbody>
+</table>
+<p class="note" style="margin-top:12px">Separate question worth asking once: should the default
+still be this window at all, or plain <code>Last 30 days</code> like most reporting tools? Changing
+it changes what every index page shows on first load, and would hide scheduled distributions, so I
+would rename and leave the behaviour alone unless you want that.</p>
+
+<h2><span class="n">4</span>A subheader for the summary card</h2>
+<p class="note">The card has no title, so the period caption above it is doing two jobs and reads
+as though it might belong to the table. What is actually unclear is <strong>scope</strong>: that
+these figures describe the filtered view rather than everything.</p>
+
+<figure class="frame bad">
+  <figcaption>Current &mdash; a bare period above an untitled card</figcaption>
+  <div class="shot"><p class="mb-2 text-sm text-slate-600">Over the last 30 days</p><div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><dl class="grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div></div>
+</figure>
+
+<figure class="frame">
+  <figcaption>A &mdash; &ldquo;Totals&rdquo; with the period beneath</figcaption>
+  <div class="shot"><div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div class="border-b border-slate-200 px-5 py-3"><h2 class="text-base font-semibold text-slate-900">Totals</h2><p class="mt-0.5 text-sm text-slate-600">Over the last 30 days</p></div><dl class="grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div></div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">Names the thing and keeps the period. Uses the card
+    component's existing header slot, so it costs nothing new. Still does not say the numbers
+    follow the filters.</p>
+  </div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>B &mdash; &ldquo;Totals&rdquo;, and a subheader that states the scope &nbsp;&middot;&nbsp; my recommendation</figcaption>
+  <div class="shot"><div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div class="border-b border-slate-200 px-5 py-3"><h2 class="text-base font-semibold text-slate-900">Totals</h2><p class="mt-0.5 text-sm text-slate-600">The 13 donations matching these filters, over the last 30 days</p></div><dl class="grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div>
+    <p class="sub" style="margin-top:22px">At 430px</p>
+    <iframe title="narrow preview" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=utf-8&gt;&lt;meta name=viewport content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=stylesheet href=&quot;/assets/tailwind.css&quot;&gt;&lt;style&gt;body{margin:0;padding:12px;background:#fff;font-family:Figtree,sans-serif}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm&quot;&gt;&lt;div class=&quot;border-b border-slate-200 px-5 py-3&quot;&gt;&lt;h2 class=&quot;text-base font-semibold text-slate-900&quot;&gt;Totals&lt;/h2&gt;&lt;p class=&quot;mt-0.5 text-sm text-slate-600&quot;&gt;The 13 donations matching these filters, over the last 30 days&lt;/p&gt;&lt;/div&gt;&lt;dl class=&quot;grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4&quot;&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Donations&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;13&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Items received&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;106,644&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;Money raised&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$1,250.00&lt;/dd&gt;&lt;/div&gt;&lt;div class=&quot;bg-white px-5 py-4&quot;&gt;&lt;dt class=&quot;text-sm font-medium text-slate-600&quot;&gt;In-kind value&lt;/dt&gt;&lt;dd class=&quot;mt-1 text-2xl font-bold tracking-tight text-slate-900&quot;&gt;$11,312.00&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;" style="width:430px;height:520px;border:1px solid #cbd5e1;border-radius:10px;background:#fff"></iframe>
+  </div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">&ldquo;The 13 donations matching these filters, over the last
+    30 days.&rdquo; One line that answers all three questions: what this is, what it covers, and
+    that it is not the whole database. The count is already on the page, so it costs no extra
+    query.</p>
+    <p class="note" style="margin:8px 0 0">When nothing is filtered it reads &ldquo;All 214
+    donations, from June 19 to September 19, 2026&rdquo; &mdash; the same sentence, without
+    implying a filter that is not there.</p>
+  </div>
+</figure>
+
+<figure class="frame">
+  <figcaption>C &mdash; name the subject too</figcaption>
+  <div class="shot"><div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div class="border-b border-slate-200 px-5 py-3"><h2 class="text-base font-semibold text-slate-900">Donation totals</h2><p class="mt-0.5 text-sm text-slate-600">13 of 214 donations, over the last 30 days</p></div><dl class="grid gap-px bg-slate-200 sm:grid-cols-2 lg:grid-cols-4"><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Donations</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">13</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Items received</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">106,644</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">Money raised</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$1,250.00</dd></div><div class="bg-white px-5 py-4"><dt class="text-sm font-medium text-slate-600">In-kind value</dt><dd class="mt-1 text-2xl font-bold tracking-tight text-slate-900">$11,312.00</dd></div></dl></div></div>
+  <div class="body" style="border-top:1px solid #e2e8f0">
+    <p class="note" style="margin:0">&ldquo;13 of 214&rdquo; is the most informative version and the
+    only one that needs a second query, an unfiltered <code>COUNT</code> per page load. Worth it if
+    you want people to see how much the filter is hiding; not worth it otherwise.</p>
+  </div>
+</figure>
+
+<h2><span class="n">5</span>What I would build</h2>
+<div class="rule">
+  <p><strong>1.</strong> The grid filter bar, on all sixteen bars. Fixes the ragged widths and the
+  trailing white space, and is independent of everything else here.</p>
+  <p style="margin-top:8px"><strong>2.</strong> Rename the preset to <code>Last 2 months and next
+  month</code>. Behaviour unchanged.</p>
+  <p style="margin-top:8px"><strong>3.</strong> Summary card option <strong>B</strong>: header
+  &ldquo;Totals&rdquo;, subheader naming the count, the filter state and the period.</p>
+  <p style="margin-top:8px"><strong>4.</strong> Auto-filtering as option <strong>B</strong> &mdash;
+  a Turbo Frame around the results, then auto-submit and drop the button &mdash; as its own change,
+  because doing it by full page reload would make the busy pages worse, not better.</p>
+</div>
+<p class="note"><strong>Tell me which of the four to build, and whether auto-filtering is A or B.</strong></p>
+
+</div></body></html>
