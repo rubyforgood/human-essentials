@@ -303,10 +303,27 @@ the app says so on the partner's page: **All items requestable**.
 
 ### Reports
 
-Fifteen, under **Reporting**, named so that related ones sort together: *Distributions —
-summary*, *Distributions — itemized*, *Distributions — by county*, *Donations — manufacturer*,
-*Purchases — trends*, and so on. Most take a date range and export to CSV. Separately, **Annual
-survey** collects the yearly figures many banks have to file.
+**Reports** in the sidebar opens a hub: eleven reports in six groups — Distributions, Donations,
+Purchases, Requests, Compliance and Activity. Most take a date range and export to CSV.
+**Annual survey**, under Compliance, collects the yearly figures many banks have to file.
+
+There is no separate *summary* report for distributions, donations, purchases or product drives
+any more. Those totals sit at the top of the matching index page, which has the full table and
+all of its filters as well.
+
+### Picking a date range
+
+Every page that filters by date uses the same control: a menu of ranges — *Today*, *Last 7
+days*, *Last 30 days*, *This month*, *This year*, *All time* and so on — with **Custom** at the
+bottom. Choosing Custom reveals **From** and **To** boxes that open your device's own date
+picker. Set the range, then press **Filter**.
+
+A page you have not filtered opens on *Default (recent and upcoming)*, which runs from two
+months back to one month ahead — far enough forward to include distributions that are scheduled
+but have not happened yet.
+
+The whole filter lives in the address bar, so a filtered view can be bookmarked or sent to
+someone and it will show them the same thing.
 
 ## If you are a partner agency
 

@@ -16,7 +16,7 @@
     <div class="min-w-[13rem]"><%= filter_select(label: "Item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %></div>
     <div class="min-w-[13rem]"><%= filter_select(label: "Tag", scope: :by_tags, key: :name, collection: @tags, selected: @selected_tags) %></div>
     <div class="min-w-[15rem]">
-      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+      <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
 

@@ -1,63 +1,69 @@
-// This Stimulus controller is used to handle custom validation for the date range input field.
-// Litepicker.js manages the date range field and prevents invalid data when users interact with its calendar control.
-// However, if a user tabs into the field and enters invalid data without triggering Litepicker events,
-// Litepicker won't validate the input, leaving invalid data in the field.
-// This controller ensures that in such cases, custom validation is performed to alert the user about invalid input.
+// The date range filter.
 //
-// Note: The `data-skip-validation` attribute is used only in automated system tests to disable client-side validation.
-// In real user interactions, if a user enters an invalid date and immediately hits Enter, the form submits before
-// JS blur-based validation runs, so server-side validation is exercised as expected.
-// However, in system tests (especially on CI), the JS blur validation always runs before form submission,
-// making it impossible to test server-side validation for this scenario unless client-side validation is disabled.
-// This attribute should only be set in test code.
+// Its whole job is to keep one hidden field correct. The server still receives a single
+// filters[date_range] string -- "June 19, 2026 - September 19, 2026" -- which DateRangeHelper
+// splits on " - " and parses with strptime. The select and the two date inputs are the user's
+// way of composing that string; nothing else about the request changed.
+//
+// The preset dates are computed by the server and handed over in presetsValue, so this file
+// does no date arithmetic at all. That is deliberate: the ranges have to agree with the
+// Time.zone the query is filtered in, and the browser's midnight is not necessarily that.
 
 import { Controller } from "@hotwired/stimulus";
-import { DateTime } from "luxon";
 
 export default class extends Controller {
-  static targets = ["input"];
+  static targets = ["preset", "custom", "start", "end", "range", "error"];
+  static values = { presets: Object };
 
   connect() {
-    this.initialStart = this.inputTarget.dataset.initialStartDate;
-    this.initialEnd = this.inputTarget.dataset.initialEndDate;
-    this.format = "MMMM d, yyyy";
+    this.sync();
   }
 
-  validate(event) {
-    event.preventDefault();
-
-    if (this.inputTarget.dataset.skipValidation === "true" || this.calendarIsOpen()) {
-      return;
+  // A preset fills the two date inputs, so switching to "Custom" afterwards starts from the
+  // range you were just looking at rather than from nothing.
+  choosePreset() {
+    const preset = this.presetsValue[this.presetTarget.value];
+    if (preset) {
+      this.startTarget.value = preset[0];
+      this.endTarget.value = preset[1];
     }
-
-    const value = this.inputTarget.value.trim();
-    const [startStr, endStr] = value.split(" - ").map((s) => s.trim());
-
-    const isValid = this.isValidDateRange(startStr, endStr);
-
-    if (!isValid) {
-      alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).")
-    }
+    this.sync();
   }
 
-  // Ask the calendar whether it is open rather than trusting window.isLitepickerActive.
-  // That flag is global and only cleared by Litepicker's own "hide" event, so navigating
-  // away with the calendar open left it true for the rest of the session and validation
-  // was skipped from then on.
-  calendarIsOpen() {
-    const calendar = document.querySelector(".litepicker");
-    if (!calendar) return window.isLitepickerActive === true;
-    return getComputedStyle(calendar).display !== "none";
+  // Editing either date means the range is no longer whichever preset was showing.
+  chooseCustom() {
+    this.presetTarget.value = "Custom";
+    this.sync();
   }
 
-  isValidDateRange(startStr, endStr) {
-    try {
-      const start = DateTime.fromFormat(startStr, this.format);
-      const end = DateTime.fromFormat(endStr, this.format);
+  sync() {
+    const custom = this.presetTarget.value === "Custom";
+    this.customTarget.hidden = !custom;
 
-      return start.isValid && end.isValid && start <= end;
-    } catch (error) {
-      return false;
-    }
+    const start = this.startTarget.value;
+    const end = this.endTarget.value;
+    // ISO dates sort lexically, so this needs no parsing.
+    const backwards = Boolean(start && end && end < start);
+
+    this.errorTarget.hidden = !backwards;
+    // setCustomValidity blocks the submit itself. The old control raised a window.alert(),
+    // which the design system does not use anywhere else and which a screen reader user
+    // meets with no way back to the field that caused it.
+    this.endTarget.setCustomValidity(backwards ? "The end date must be on or after the start date." : "");
+
+    if (!start || !end || backwards) return;
+    this.rangeTarget.value = `${this.humanize(start)} - ${this.humanize(end)}`;
+  }
+
+  // "2026-06-19" -> "June 19, 2026", the format strptime is waiting for. Built from the parts
+  // rather than new Date(iso), which reads a bare ISO date as UTC and lands on the previous
+  // day for anyone west of Greenwich.
+  humanize(iso) {
+    const [year, month, day] = iso.split("-").map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 }

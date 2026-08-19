@@ -15,7 +15,7 @@
     <div class="min-w-[13rem]"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %></div>
     <div class="min-w-[13rem]"><%= filter_select(label: "User", scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %></div>
     <div class="min-w-[15rem]">
-      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+      <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
 

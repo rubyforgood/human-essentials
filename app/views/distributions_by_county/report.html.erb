@@ -20,7 +20,7 @@
             <div class="min-w-0">
               <div class="px-5 py-4">
                 <%= essentials_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %><br>
+                  <%= render partial: "shared/date_range_picker" %><br>
                   <%= filter_button %>
                 <% end %>
               </div>

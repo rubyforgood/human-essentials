@@ -14,7 +14,7 @@
             <%= form_tag(events_path, method: :get) do |f| %>
               <div class="grid gap-6">
                 <div class="mb-4 min-w-0">
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
+                  <%= render partial: "shared/date_range_picker" %>
                 </div>
                 <div class="mb-4 min-w-0">
                   <%= filter_select(scope: :by_type, collection: Event.types_for_select, key: :id, value: :name,

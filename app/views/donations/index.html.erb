@@ -38,7 +38,7 @@
       <div class="min-w-[13rem]"><%= essentials_filter_options(label: "Category", scope: :by_category, options: info.item_categories, selected: info.selected_item_category) %></div>
     <% end %>
     <div class="min-w-[15rem]">
-      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+      <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
 

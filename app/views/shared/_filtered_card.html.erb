@@ -20,7 +20,7 @@
   <%= form_tag filter_url, method: :get, class: "mb-4" do %>
     <div class="flex flex-wrap items-end gap-3">
       <div class="min-w-[16rem]">
-        <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+        <%= render partial: "shared/date_range_picker" %>
       </div>
       <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>">
         <i class="bi-funnel" aria-hidden="true"></i>Filter

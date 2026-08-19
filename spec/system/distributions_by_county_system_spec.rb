@@ -14,7 +14,7 @@ RSpec.feature "Distributions by County", type: :system do
     it("works for all time") do
       @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
       @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      visit_distribution_by_county_with_specified_date_range("All Time")
+      visit_distribution_by_county_with_specified_date_range("All time")
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
@@ -27,7 +27,7 @@ RSpec.feature "Distributions by County", type: :system do
       @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
       @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-      visit_distribution_by_county_with_specified_date_range("This Year")
+      visit_distribution_by_county_with_specified_date_range("This year")
 
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
@@ -50,7 +50,7 @@ RSpec.feature "Distributions by County", type: :system do
       first_day_of_current_year = Time.current.end_of_day.change(year: current_year, month: 1, day: 1).to_datetime
       create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: first_day_of_current_year)
 
-      visit_distribution_by_county_with_specified_date_range("Prior Year")
+      visit_distribution_by_county_with_specified_date_range("Prior year")
 
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
@@ -72,7 +72,7 @@ RSpec.feature "Distributions by County", type: :system do
       tomorrow = 1.day.from_now.end_of_day.to_datetime
       create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: tomorrow)
 
-      visit_distribution_by_county_with_specified_date_range("Last 12 Months")
+      visit_distribution_by_county_with_specified_date_range("Last 12 months")
 
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
@@ -89,11 +89,7 @@ RSpec.feature "Distributions by County", type: :system do
     find("#essentials-sidebar").click_link("Reports")
     within("#reports-distributions") { click_on "By county" }
 
-    find("#filters_date_range").click
-
-    within ".container__predefined-ranges" do
-      find("button", text: date_range_string).click
-    end
+    select date_range_string, from: "filters_date_range_preset"
 
     click_on "Filter"
   end
