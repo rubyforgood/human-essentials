@@ -29,7 +29,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
     it "Shows the expected filters with the expected values and in alphabetical order for name filter" do
       expect(page.find("select[name='filters[by_name]']").find(:xpath, 'option[2]').text).to eq "Alpha Test name 3"
       expect(page.has_select?('filters[by_name]', with_options: @product_drives.map(&:name))).to be true
-      expect(page.has_field?('filters_date_range', with: default_date))
+      expect(page).to have_select('filters_date_range_preset', selected: 'Default (recent and upcoming)')
     end
 
     it "shows the expected product drives" do
@@ -39,12 +39,15 @@ RSpec.describe "Product Drives", type: :system, js: true do
       end
     end
 
+    # Scoped to the cells rather than counted across the whole page. /Yes/ matched the date
+    # filter's "Yesterday" option once the picker became a <select> whose options are page text,
+    # and /No/ would match any word containing it just as easily.
     it 'shows only one virtual product drives' do
-      expect(page).to have_text(/Yes/, maximum: 1)
+      expect(page).to have_css('table tbody td', text: 'Yes', exact_text: true, count: 1)
     end
 
     it 'shows two non-virtual product drives' do
-      expect(page).to have_text(/No/, maximum: 2)
+      expect(page).to have_css('table tbody td', text: 'No', exact_text: true, count: 2)
     end
 
     it 'shows in descending order of start date' do

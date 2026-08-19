@@ -1,33 +1,73 @@
 <%#
-  The date range filter (Litepicker; configured in application.js).
+  The date range filter: a preset menu, with two native date inputs revealed for the custom
+  case. See docs/design-decisions.md, 2026-08-19, for why this rather than a calendar widget.
 
-  The partial renders its OWN label. Callers used to add one with
-  `label_tag "Date Range"`, which produced <label for="date_range"> against an input whose id
-  is filters_date_range -- so the label named nothing and clicking it did nothing. Owning the
-  label here means it cannot drift out of sync at any of the fourteen call sites.
+  The wire format is unchanged. The server still receives ONE filters[date_range] string of
+  the form "June 19, 2026 - September 19, 2026", which #selected_interval splits on " - " and
+  parses with strptime. The hidden field below is that string; everything visible exists to
+  keep it correct. Do not rename it without reading DateRangeHelper first.
 
-  Locals: css_class (optional), label (optional, defaults to "Date range"), show_label
-  (optional, pass false when the caller genuinely provides its own).
+  filters[date_range_label] is the preset name, and it is now the select's own value. It used
+  to be a hidden copy of #date_range_label -- the rendered *prose* -- so it fed the next
+  request a string like "during the period 19 Jun to 19 Sep", which matches none of that
+  method's cases and collapsed every named period back to the generic wording.
+
+  Locals: label (optional, defaults to "Date range"), show_label (optional, pass false when
+  the caller genuinely provides its own). The old css_class local is gone: it styled a text
+  input that no longer exists, and the control now owns its own appearance.
 %>
 <%
-  css_class ||= ""
   label ||= "Date range"
   show_label = true if defined?(show_label).nil? || show_label.nil?
+  presets = date_range_presets
+  selected_preset = selected_date_range_preset
+  start_date, end_date = @selected_date_interval
 %>
-<% if show_label %>
-  <%= label_tag "filters_date_range", label, class: "block text-sm font-medium text-slate-700" %>
-<% end %>
-<%= text_field_tag "filters[date_range]",
-      @selected_date_range_label,
-      id: "filters_date_range",
-      placeholder: "January 1, 2011 - December 31, 2011",
-      class: "mt-1.5 #{css_class}",
-      autocomplete: "on",
-      data: {
-        controller: "date-range",
-        date_range_target: "input",
-        action: "blur->date-range#validate",
-        initial_start_date: @selected_date_interval.first.strftime("%B %d, %Y"),
-        initial_end_date: @selected_date_interval.last.strftime("%B %d, %Y")
-      } %>
-<%= hidden_field_tag "filters[date_range_label]", @selected_date_range_label %>
+<div class="flex flex-wrap items-end gap-3"
+     data-controller="date-range"
+     data-date-range-presets-value="<%= presets.transform_values { |from, to| [from.iso8601, to.iso8601] }.to_json %>">
+
+  <div class="min-w-[13rem]">
+    <% if show_label %>
+      <%= label_tag "filters_date_range_preset", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+    <% end %>
+    <%= select_tag "filters[date_range_label]",
+          options_for_select(presets.keys + ["Custom"], selected_preset || "Custom"),
+          id: "filters_date_range_preset",
+          class: EssentialsUiHelper::FILTER_SELECT_CLASSES,
+          data: {date_range_target: "preset", action: "change->date-range#choosePreset"} %>
+  </div>
+
+  <%#
+    Hidden with the attribute rather than a utility class: Tailwind's preflight marks
+    [hidden] !important, so it cannot lose to a display utility the way `class="hidden"` lost
+    to `inline-flex` on the Filter button.
+  %>
+  <div class="flex flex-wrap items-end gap-3" data-date-range-target="custom" <%= "hidden" if selected_preset %>>
+    <div>
+      <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= date_field_tag "date_range_start", start_date,
+            id: "filters_date_range_start",
+            name: nil,
+            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+            autocomplete: "off",
+            data: {date_range_target: "start", action: "change->date-range#chooseCustom"} %>
+    </div>
+    <div>
+      <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= date_field_tag "date_range_end", end_date,
+            id: "filters_date_range_end",
+            name: nil,
+            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+            autocomplete: "off",
+            aria: {describedby: "filters_date_range_error"},
+            data: {date_range_target: "end", action: "change->date-range#chooseCustom"} %>
+    </div>
+    <%# basis-full puts the message on its own row; the rest is simple_form's error styling. %>
+    <p id="filters_date_range_error" class="basis-full mt-1 text-xs font-medium text-rose-700"
+       role="alert" data-date-range-target="error" hidden>The end date must be on or after the start date.</p>
+  </div>
+
+  <%= hidden_field_tag "filters[date_range]", "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}",
+        id: "filters_date_range", data: {date_range_target: "range"} %>
+</div>

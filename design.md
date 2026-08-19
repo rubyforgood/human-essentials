@@ -424,9 +424,41 @@ section in its own right.
 gives each one a UUID-suffixed id with a matching label, so a filter control is always named.
 `EssentialsUiHelper::FILTER_CONTROL_CLASSES` is the single definition of what one looks like.
 
-The date range picker owns its own label. Callers used to add `label_tag "Date Range"`, which
-pointed at `date_range` while the input's id is `filters_date_range` — the label named
-nothing and clicking it did nothing, at all fourteen call sites.
+The date range picker owns its own label, for the same reason. Callers used to add
+`label_tag "Date Range"`, which pointed at `date_range` while the input's id was
+`filters_date_range` — the label named nothing and clicking it did nothing, at all fourteen
+call sites.
+
+### Date range picker
+
+```erb
+<%= render "shared/date_range_picker" %>
+```
+
+A preset `<select>`, with two native `<input type="date">` fields revealed when **Custom** is
+chosen. No calendar widget and no third-party dependency: it is built from the same
+`FILTER_SELECT_CLASSES` and `FILTER_CONTROL_CLASSES` as every other filter, so it matches the
+rest of the bar by construction rather than by being re-themed.
+
+The presets come from `DateRangeHelper#date_range_presets` and are computed **server-side**, in
+`Time.zone`. They are ordered shortest window to longest with the catch-alls last, and named in
+sentence case like every other option in the app.
+
+The wire format is a single string, and changing it is a bigger job than it looks:
+
+| Parameter | Carries | Read by |
+| --- | --- | --- |
+| `filters[date_range]` | `"June 19, 2026 - September 19, 2026"` — one hidden field | `#selected_interval`, which splits on `" - "` and parses with `strptime` |
+| `filters[date_range_label]` | the preset name, straight off the select | `#date_range_label`, which downcases before matching |
+
+The `date-range` Stimulus controller exists only to keep that hidden field in step with the
+visible controls. It does no date arithmetic — the server hands it the preset dates — and it
+reports an end-before-start range in the page, with `setCustomValidity` to block the submit.
+
+Which option is selected on load is decided by **matching the dates**, not by trusting
+`filters[date_range_label]`. Nothing guarantees a hand-edited or bookmarked URL carries a label
+that describes its range; a range matching no preset reads as *Custom*, with the two dates
+filled in.
 
 ### Tables
 
@@ -665,10 +697,12 @@ No jQuery in new code, and no framework JS at all. Controllers in `app/javascrip
 | `disclosure`, `expandable`, `accordion` | Show/hide with `aria-expanded` |
 | `confirmation` | Pre-check, then a confirmation `<dialog>` before submitting |
 | `form_input` | Add/remove repeated fieldsets |
-| `date_range`, `highchart`, `select2` | Wrappers around the three third-party widgets |
+| `date_range` | Keeps the date filter's hidden `filters[date_range]` string in step |
+| `highchart`, `select2` | Wrappers around the two remaining third-party widgets |
 
-Third-party widgets get accessible names added on top: Litepicker's month buttons and
-FullCalendar's toolbar buttons both ship with none.
+Third-party widgets get accessible names added on top: FullCalendar's toolbar buttons ship
+with none. Litepicker used to need the same treatment for its month buttons; it was replaced
+by the date range picker above and its two CDN pins are gone.
 
 ### Multi-tenancy is visible
 

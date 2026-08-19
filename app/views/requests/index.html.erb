@@ -28,7 +28,7 @@
     <div class="min-w-[13rem]"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
     <div class="min-w-[13rem]"><%= filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
     <div class="min-w-[15rem]">
-      <%= render partial: "shared/date_range_picker", locals: {css_class: EssentialsUiHelper::FILTER_CONTROL_CLASSES} %>
+      <%= render partial: "shared/date_range_picker" %>
     </div>
     <div class="pb-1">
       <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>"

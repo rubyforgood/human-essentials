@@ -1062,3 +1062,71 @@ Two entries in the list were real, and both are gone:
 The rule this leaves: a preload warning is worth acting on when the module is not part of the
 boot graph at all. It is not worth acting on when the module is merely reached through a
 dynamic import.
+
+## 2026-08-19 · The date range filter is a preset menu, not a calendar
+
+**Decision.** Litepicker is gone. The date range filter is a preset `<select>` with two native
+`<input type="date">` fields revealed for the custom case, built from the design system's own
+filter classes. The two unversioned CDN pins are removed.
+
+**Rationale.** The complaint was that the popup "looks really odd", and it did — but it was not
+broken, it was foreign. Measured with the calendar open: `-apple-system` rather than Figtree,
+12.8px against a scale that has no such step, 5px and 3px radii against our 8px and 16px, a
+`0 0 5px #ddd` glow where the app uses directional shadows, `#333` and `#ddd` hardcoded past
+the slate scale, and `cursor: default` on the day cells so they did not read as clickable.
+
+Three options were mocked up (`docs/mockups/date-picker-options.html`): two native date inputs;
+a preset menu with custom dates behind it; or keeping a calendar and re-theming it.
+
+Re-theming was rejected on the cascade. Litepicker injects **72** CSS rules at runtime, into
+`<head>`, unlayered and after our stylesheet — the same trap FullCalendar cost us, where an
+unlayered rule beats a layered one whatever the specificity, and every override needs
+`!important` or a specificity fight. That buys a widget we maintain the theme for, still on a
+CDN, still with a keyboard story we do not control.
+
+Two native inputs alone was rejected because it loses the presets, and the presets are the
+common case: a bank filing a funder report wants "last 30 days", not a pair of dates found on a
+grid. The preset menu is what Stripe, Shopify, Google Analytics and Metabase all do for
+reporting periods, and it matches the design system by construction rather than by being
+re-themed — a `<select>` and two date inputs are already components we own.
+
+**What it also fixed.** Two latent bugs, both invisible because Litepicker papered over them:
+
+- The server rendered `@selected_date_range_label` — the *prose* from `#date_range_label`, e.g.
+  `"during the period 19 Jun to 19 Sep"` — as the value of the `filters[date_range]` text
+  field, and Litepicker overwrote it during setup. Anything that read the field before setup
+  finished got a string `strptime` cannot parse. The spec suite knew: `fill_in_date_range` had
+  to wait for `.litepicker` to appear or the seed would overwrite what it had typed.
+- `filters[date_range_label]` was a hidden copy of that same prose, and nothing ever updated it
+  from the calendar. So choosing "Last 30 Days" submitted the *previous* request's prose, which
+  matches none of `#date_range_label`'s cases, and every named period collapsed to the generic
+  wording after one round trip. The select's own value is now the preset name, so that
+  parameter finally means what it says.
+
+**Preset dates are computed server-side**, in `Time.zone`. Litepicker built them in the browser
+from luxon's `DateTime.now()`, which is the browser's midnight — so "Today" could be a day out
+from the "today" the query was actually filtered on. The controller now does no date arithmetic
+at all.
+
+**Which option is selected is decided by matching the dates**, not by reading
+`filters[date_range_label]`. That parameter is user-supplied and, as above, was historically
+wrong; a bookmarked URL whose label disagrees with its dates must not select an option that
+misdescribes what is on screen. A range matching no preset reads as *Custom*.
+
+**Rejected: changing the wire format.** `filters[date_range]` is still one string,
+`"June 19, 2026 - September 19, 2026"`, split on `" - "` and parsed with `strptime`. Two ISO
+parameters would be cleaner — a localised month name is a fragile thing to parse, and the
+rescue silently resets to the default range with a flash. But that touches `DateRangeHelper`,
+ten call sites and their specs, and none of it is what makes the control look wrong. Kept as a
+follow-up rather than smuggled into a visual fix.
+
+**Validation moved into the page.** Native date inputs cannot hold a non-date, which leaves
+exactly one way to build an invalid range: end before start. That is reported in a `role=alert`
+paragraph and blocked with `setCustomValidity`. The old control raised a `window.alert()` —
+used nowhere else in the app, and a screen reader user meets it with no way back to the field
+that caused it.
+
+**Supersedes** the Litepicker halves of *2026-08-17 · Third-party widgets get their accessible
+names added on top* and *2026-08-18 · State is read from the DOM, not from a global flag*. Both
+still stand for FullCalendar and as general rules; the widget the second one was written about
+no longer exists, and `window.isLitepickerActive` is deleted.
