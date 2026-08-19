@@ -311,6 +311,12 @@ There is no separate *summary* report for distributions, donations, purchases or
 any more. Those totals sit at the top of the matching index page, which has the full table and
 all of its filters as well.
 
+They appear as a row of figures in a single card above the table, with the period they cover
+named just above it — so *Over the last 30 days* over *Donations 13 · Items received 106,644 ·
+Money raised $1,250.00 · In-kind value $11,312.00*. **The figures describe whatever the filters
+are currently showing, not the whole database.** Change the date range and they change with the
+table.
+
 ### Picking a date range
 
 Every page that filters by date uses the same control: a menu of ranges — *Today*, *Last 7

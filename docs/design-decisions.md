@@ -1182,3 +1182,61 @@ invisible for as long as nothing rendered it, and it went on screen the moment s
 `date_range_presets` except the default window must produce something other than its own date
 description. Add a preset without a clause and the spec fails, which is how *This year* and
 *All time* should have been caught.
+
+## 2026-08-19 · The summary band is one card, and the columns follow the figures
+
+**Decision.** `essentials_stats` renders a single card — white, `rounded-2xl`,
+`border-slate-200`, `shadow-sm`, the same surface as every other card — with the figures divided
+by hairlines rather than each sitting in its own filled `slate-50` box. The column count is
+looked up from the number of figures.
+
+**Rationale, on the layout.** The band was `grid gap-4 sm:grid-cols-2 lg:grid-cols-3` whatever
+the number of figures, so it orphaned a tile on **every page that had one**, just at different
+widths: four figures went 3 + 1 at 1360px, three went 2 + 1 at 900px. The fixed column count was
+the whole bug. `STATS_COLUMNS` now maps count to columns so the grid is always full, and it is a
+lookup rather than arithmetic because Tailwind scans source text — a computed class name would
+not be generated.
+
+**Rationale, on the fill.** Four filled boxes read as four objects; a summary band is meant to be
+one reading. Removing the fill and putting the figures on one surface is what Stripe, Shopify and
+Linear do for a metric strip. It also fixed a smaller inconsistency: the tiles were
+`rounded-xl` (12px) where every card in the app is `rounded-2xl` (16px).
+
+**The separators are a `gap-px` grid over a backdrop**, not `divide-x`. `divide-*` borders by DOM
+order, not grid position, so in any arrangement of more than one row it draws lines in the wrong
+places — the second cell of a 2×2 gets a top border because it is the second *child*, not because
+it is below anything. A 1px gap showing a `slate-200` parent through it puts a hairline between
+every pair of actual neighbours, rows included, and needs no per-breakpoint reset.
+
+The trade this makes: an **empty grid cell now shows as a grey block** rather than as whitespace,
+because the backdrop shows through wherever a cell is missing. That is why the count and the
+columns have to agree, and why it is written down in `design.md` next to the table rather than
+left as a property of the implementation.
+
+**Rejected: the minimal fix** — keeping the filled tiles and only correcting the column count.
+It removes the orphan, which was most of the complaint, and it is one line. Rejected because it
+leaves the other half: four grey boxes floating on the page in no container, which is what
+prompted the question.
+
+**Rejected: `divide-y` stacked with `lg:divide-x lg:divide-y-0`.** Simpler, and correct at both
+ends, but it gives up the tablet range: between 640px and 1024px four figures stay a tall stack
+where there is room for two abreast.
+
+The caption stays above the card. It names the period the whole band covers, so inside the first
+cell it would read as belonging to one figure.
+
+## 2026-08-19 · Known flake: Partner#impact_metrics does not order its zipcodes
+
+`spec/models/partner_spec.rb:328` asserts `family_zipcodes_list` equals
+`["45612-123", "45612-126"]`. The method is `families.pluck(:guardian_zip_code).uniq` — **no
+`ORDER BY`** — so Postgres is free to return the rows either way round, and on a full run it
+sometimes returns them reversed.
+
+It failed on `--seed 12807` in a full run and passes in isolation. Verified as nothing to do with
+the summary band work: that change touches no model, query, service or migration, only
+`essentials_ui_helper.rb` and views.
+
+Recorded rather than fixed, on the same reasoning as the `DonationSite` flake above. The fix is
+either an `.order(:guardian_zip_code)` in the model or a `match_array` in the spec, and choosing
+between those is a decision about the model's contract — whether the list is a set or a sequence —
+which belongs to whoever owns that feature.

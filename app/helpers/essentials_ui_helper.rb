@@ -105,25 +105,56 @@ module EssentialsUiHelper
     safe_join([tag.p(caption, class: "mb-2 text-sm text-slate-600"), band])
   end
 
+  # How many columns, for a given number of figures.
+  #
+  # The count has to divide the column count exactly. This was a flat
+  # `sm:grid-cols-2 lg:grid-cols-3` whatever the number of figures, which orphaned a tile on
+  # every page that had a band -- four figures went 3 + 1 at desktop, three went 2 + 1 at
+  # tablet. An empty cell is worse here than it was before, too: with the separators drawn by
+  # the backdrop showing through the gaps, a missing cell shows as a grey block.
+  #
+  # Five is stacked until `lg` on purpose: five columns at 640px leaves about 128px each, which
+  # a figure like "$11,312.00" at text-2xl does not fit into.
+  STATS_COLUMNS = {
+    1 => "",
+    2 => "sm:grid-cols-2",
+    3 => "sm:grid-cols-3",
+    4 => "sm:grid-cols-2 lg:grid-cols-4",
+    5 => "lg:grid-cols-5",
+    6 => "sm:grid-cols-2 lg:grid-cols-3"
+  }.freeze
+
+  # One card, with the figures separated by hairlines rather than each sitting in its own filled
+  # box. Four fills read as four objects; the point of a summary band is that it is one reading.
+  # This is the metric strip Stripe, Shopify and Linear all use.
+  #
+  # The separators are the `gap-px` grid showing a slate-200 backdrop through the gaps between
+  # white cells, which draws a hairline between every pair of neighbours -- rows as well as
+  # columns. `divide-x` cannot: in a grid of more than one row it borders by DOM order rather
+  # than by position, so a 2x2 arrangement comes out wrong.
   def essentials_stats_band(stats)
-    tag.dl(class: "grid gap-4 sm:grid-cols-2 lg:grid-cols-3") do
-      safe_join(stats.map { |stat|
-        tag.div(class: "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3") do
-          concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
-          # to_s matters: a block given to `tag` renders nothing for a non-String, so an
-          # Integer value came out as an empty figure. Caught by reading the rendered page
-          # rather than the template -- "Total items" was blank while every currency stat,
-          # already a String, was fine.
-          value = stat[:value].to_s
-          concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
-            if stat[:value_class] || stat[:value_id]
-              tag.span(value, class: stat[:value_class], id: stat[:value_id])
-            else
-              value
-            end
-          }
-        end
-      })
+    columns = STATS_COLUMNS.fetch(stats.size, "sm:grid-cols-2 lg:grid-cols-4")
+
+    tag.div(class: "overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm") do
+      tag.dl(class: "grid gap-px bg-slate-200 #{columns}") do
+        safe_join(stats.map { |stat|
+          tag.div(class: "bg-white px-5 py-4") do
+            concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
+            # to_s matters: a block given to `tag` renders nothing for a non-String, so an
+            # Integer value came out as an empty figure. Caught by reading the rendered page
+            # rather than the template -- "Total items" was blank while every currency stat,
+            # already a String, was fine.
+            value = stat[:value].to_s
+            concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
+              if stat[:value_class] || stat[:value_id]
+                tag.span(value, class: stat[:value_class], id: stat[:value_id])
+              else
+                value
+              end
+            }
+          end
+        })
+      end
     end
   end
 
