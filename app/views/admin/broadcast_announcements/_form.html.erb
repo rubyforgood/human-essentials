@@ -1,34 +1,23 @@
-  <%= essentials_form_for @broadcast_announcement, url: admin_form_url, html: { class: 'form-horizontal' } do |f| %>
-    <%= f.error_notification %>
-    <section>
-      <div class="px-4 py-6 sm:px-6 lg:px-8">
-        <div class="grid gap-6">
-          <!-- left column -->
-          <div class="min-w-0">
-            <!-- jquery validation -->
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  The admin copy of the announcement form. Differs from the bank-side one only in the url and in
+  having no organization_id -- an admin announcement goes to every bank.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(@broadcast_announcement) %>
 
-              <!-- form start -->
-              <div class="px-5 py-4">
-                <%= f.hidden_field :user_id, value: current_user.id %>
-                <%= f.label :message, "Announcement " %> <i>(500 character max)</i>
-                <%= f.input :message, label: false, maxlength: 500, autofocus: true %>
-                <%= f.label :link, "URL for more information" %>
-                <%= f.input :link, label: false %>
-                <%= f.input :expiry,
-                  label: "Expiration date",
-                  as: :date,
-                  html5: true %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @broadcast_announcement, url: admin_form_url do |f| %>
+      <%= f.hidden_field :user_id, value: current_user.id %>
 
-                <div class="border-t border-slate-200 px-5 py-3">
-                  <%= submit_button({ text: "Broadcast Announcement", icon: "envelope" }) %>
-                </div>
-              </div>
-            </div>
+      <%= f.input :message, label: "Announcement", autofocus: true,
+            hint: "500 characters maximum.", input_html: {maxlength: 500} %>
+      <%= f.input :link, label: "URL for more information" %>
+      <%= f.input :expiry, label: "Expiration date", as: :date, html5: true %>
 
-          </div>
-        </div>
-
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button({text: "Broadcast announcement", icon: "envelope"}) %>
+        <%= essentials_link_button "Cancel", admin_broadcast_announcements_path, variant: :ghost, size: :md %>
       </div>
-    </section>
+    <% end %>
   <% end %>
+</div>

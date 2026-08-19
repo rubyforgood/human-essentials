@@ -1,119 +1,90 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Children - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Child Details</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Children - #{current_partner.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="space-y-6">
-          <div class="grid gap-6">
-            <div class="min-w-0">
-              <div class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <h3 class="text-sm font-semibold text-slate-900">Child Information</h3>
-                <div class="px-5 py-4">
-                  <dl>
-                    <dt>First name</dt>
-                    <dd><%= @child.first_name %></dd>
+<%#
+  Fixed here: five `<td>` elements closed with `</th>`, which the browser silently repairs into
+  a different tree; a bare `<dl>` with no styling, so the labels and values ran together; and an
+  `<h3>` sitting outside the padded div it titled.
+%>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Child details",
+        subtitle: "#{@child.first_name} #{@child.last_name}".strip.presence || "Child",
+        back: {path: partners_children_path, label: "Back to children"},
+        actions: capture {
+          concat essentials_link_button("Edit child", edit_partners_child_path(@child),
+                   variant: :primary, icon: "bi-pencil")
+        } %>
+</div>
 
-                    <dt>Last name:</dt>
-                    <dd><%= @child.last_name %></dd>
-
-                    <dt>Date of birth:</dt>
-                    <dd><%= @child.date_of_birth %></dd>
-
-                    <dt>Gender:</dt>
-                    <dd><%= @child.gender %></dd>
-
-                    <dt>Child lives with:</dt>
-                    <dd><%= @child.child_lives_with.join(', ') %></dd>
-
-                    <dt>Race:</dt>
-                    <dd><%= @child.race %></dd>
-
-                    <dt>Agency child:</dt>
-                    <dd><%= @child.agency_child_id %></dd>
-
-                    <dt>Health insurance:</dt>
-                    <dd><%= @child.health_insurance %></dd>
-
-                    <dt>Item(s) needed:</dt>
-                    <dd><%= display_requested_items(current_partner, @child) %></dd>
-
-                    <dt>Comments:</dt>
-                    <dd><%= @child.comments %></dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-
-            <div class="min-w-0">
-              <div class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <h3 class="text-sm font-semibold text-slate-900">Requested Items</h3>
-                <div class="px-5 py-4">
-                  <% if @child.child_item_requests.count > 0 %>
-                    <table class="data-table">
-                      <thead>
-                      <tr>
-                        <th scope="col">Request Date</th>
-                        <th scope="col">Item Ordered</th>
-                        <th scope="col">Item Picked Up</th>
-                        <th scope="col">Quantity Ordered</th>
-                        <th scope="col">Quantity Picked Up</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <% @child_item_requests.each do |child_item_request| %>
-                        <tr>
-                          <td><b><%= child_item_request.created_at.to_date.iso8601 %></b>
-                          </th>
-                          <td><%= fetch_valid_item_name(child_item_request.ordered_item_diaperid) %></th>
-                          <td><b>
-                            <% if (diaperid = child_item_request.picked_up_item_diaperid) && child_item_request.picked_up? %>
-                              <%= fetch_valid_item_name(diaperid) %>
-                            <% elsif !child_item_request.picked_up? %>
-                              Not picked up
-                            <% else %>
-                              Ordered Item
-                            <% end %>
-                          </b>
-                          </th>
-                          <td><%= child_item_request.quantity %></th>
-                          <td>
-                            <% if child_item_request.picked_up? %>
-                              <%= child_item_request.quantity_picked_up ||
-                                      child_item_request.quantity %>
-                            <% else %>
-                              <b>Not picked up</b>
-                            <% end %>
-                            </th>
-                            </tr>
-                      <% end %>
-                      </tbody>
-                    </table>
-                  <% else %>
-                    No family requests recorded for this member.
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= link_to 'Edit Child Details', edit_partners_child_path(@child), class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-            <%= link_to 'All Children', partners_children_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-          </div>
+<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", title: "Child information" do %>
+    <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <% [
+           ["First name", @child.first_name],
+           ["Last name", @child.last_name],
+           ["Date of birth", @child.date_of_birth],
+           ["Gender", @child.gender],
+           ["Child lives with", @child.child_lives_with.join(", ")],
+           ["Race", @child.race],
+           ["Agency child ID", @child.agency_child_id],
+           ["Health insurance", @child.health_insurance],
+           ["Items needed", display_requested_items(current_partner, @child)],
+           ["Comments", @child.comments]
+         ].each do |label, value| %>
+        <div>
+          <dt class="text-sm font-medium text-slate-600"><%= label %></dt>
+          <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(value) %></dd>
         </div>
+      <% end %>
+    </dl>
+  <% end %>
+
+  <%= render "shared/essentials/card", title: "Requested items", padded: false do %>
+    <% if @child.child_item_requests.count > 0 %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Request date</th>
+              <th scope="col">Item ordered</th>
+              <th scope="col">Item picked up</th>
+              <th scope="col" class="quantity">Quantity ordered</th>
+              <th scope="col" class="quantity">Quantity picked up</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @child_item_requests.each do |child_item_request| %>
+              <tr>
+                <td class="date"><%= child_item_request.created_at.to_date.iso8601 %></td>
+                <td><%= fetch_valid_item_name(child_item_request.ordered_item_diaperid) %></td>
+                <td>
+                  <% if (diaperid = child_item_request.picked_up_item_diaperid) && child_item_request.picked_up? %>
+                    <%= fetch_valid_item_name(diaperid) %>
+                  <% elsif !child_item_request.picked_up? %>
+                    <span class="text-slate-500">Not picked up</span>
+                  <% else %>
+                    Ordered item
+                  <% end %>
+                </td>
+                <td class="quantity"><%= child_item_request.quantity %></td>
+                <td class="quantity">
+                  <% if child_item_request.picked_up? %>
+                    <%= child_item_request.quantity_picked_up || child_item_request.quantity %>
+                  <% else %>
+                    <span class="text-slate-500">Not picked up</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
+    <% else %>
+      <div class="px-5 py-4">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No requests yet",
+              body: "Requests made for this child will appear here." %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

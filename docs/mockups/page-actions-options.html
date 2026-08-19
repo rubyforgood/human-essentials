@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page actions — options, not built</title>
+<link rel="stylesheet" href="/assets/tailwind.css" media="all">
+<style>
+  body { background:#f8fafc; }
+  .frame { border:1px solid #cbd5e1; border-radius:14px; overflow:hidden; background:#fff; }
+  .frame > figcaption { padding:10px 16px; font-size:12px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#475569; }
+  .frame.pick > figcaption { background:#ecfdf5; color:#065f46; }
+  .frame.bad > figcaption { background:#fff1f2; color:#9f1239; }
+  .frame > .body { padding:20px; }
+  .rule { border-left:3px solid #4f46e5; background:#eef2ff; padding:14px 18px; border-radius:0 10px 10px 0; }
+  .tabstrip { border-bottom:1px solid #e2e8f0; display:flex; gap:4px; }
+  .tab { padding:10px 14px; font-size:14px; font-weight:500; color:#475569; }
+  .tab[aria-selected="true"] { color:#4338ca; box-shadow: inset 0 -2px 0 #4f46e5; }
+</style></head>
+<body class="text-slate-900">
+<div class="mx-auto max-w-5xl px-8 py-10 space-y-10">
+
+<header>
+  <h1 class="text-3xl font-bold tracking-tight">Page actions — options, not built</h1>
+  <p class="mt-2 max-w-3xl text-slate-600">Where a tab&rsquo;s action belongs, and how many
+    buttons a page header may carry. Nothing here is implemented.</p>
+</header>
+
+<section class="space-y-4">
+  <h2 class="text-xl font-semibold">Today</h2>
+  <figure class="frame bad">
+    <figcaption>Current — three in the header, a fourth inside the table</figcaption>
+    <div class="body space-y-0">
+      <div class="flex items-end justify-between gap-4 pb-4">
+        <div><h1 class="text-2xl font-bold tracking-tight">Partner agencies</h1>
+          <p class="text-sm text-slate-600">Organizations that receive essentials.</p></div>
+        <div class="flex gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-upload"></i>Import partners</span>
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-download"></i>Export</span>
+          <span class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white"><i class="bi-plus-lg"></i>New partner agency</span>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-2xl border border-slate-200">
+        <div class="tabstrip px-2"><span class="tab">Partners</span><span class="tab" aria-selected="true">Groups</span></div>
+        <div class="flex justify-end border-b border-slate-200 px-5 py-3 bg-rose-50/60">
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700"><i class="bi-plus-lg"></i>New partner group</span>
+        </div>
+        <table class="data-table"><thead><tr><th>Group name</th><th>Members</th><th>Requestable categories</th></tr></thead>
+          <tbody><tr><td>Shelters</td><td>3</td><td>Nappies, Wipes</td></tr></tbody></table>
+      </div>
+      <p class="mt-3 text-sm text-rose-700">The fourth action sits in a bar of its own between the
+        tab strip and the table, so it reads as part of the table rather than as the page&rsquo;s
+        action. And &ldquo;New partner agency&rdquo; stays in the header while you are looking at
+        groups, where it does not apply.</p>
+    </div>
+  </figure>
+</section>
+
+<section class="space-y-4">
+  <h2 class="text-xl font-semibold">Option A — the primary action follows the tab</h2>
+  <figure class="frame pick">
+    <figcaption>Groups tab selected &nbsp;·&nbsp; my recommendation</figcaption>
+    <div class="body">
+      <div class="flex items-end justify-between gap-4 pb-4">
+        <div><h1 class="text-2xl font-bold tracking-tight">Partner agencies</h1>
+          <p class="text-sm text-slate-600">Organizations that receive essentials.</p></div>
+        <div class="flex gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-upload"></i>Import partners</span>
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-download"></i>Export</span>
+          <span class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white"><i class="bi-plus-lg"></i>New partner group</span>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-2xl border border-slate-200">
+        <div class="tabstrip px-2"><span class="tab">Partners</span><span class="tab" aria-selected="true">Groups</span></div>
+        <table class="data-table"><thead><tr><th>Group name</th><th>Members</th><th>Requestable categories</th></tr></thead>
+          <tbody><tr><td>Shelters</td><td>3</td><td>Nappies, Wipes</td></tr></tbody></table>
+      </div>
+      <p class="mt-3 text-sm text-slate-600">Still three buttons. The primary one swaps label and
+        target with the tab, so there is one place a page&rsquo;s main action ever appears. This is
+        what GitHub does (Issues &rarr; New issue, Pull requests &rarr; New pull request), and
+        Linear, Jira and Shopify the same.</p>
+      <p class="mt-2 text-sm text-slate-600">Cost: the tabs currently switch in the browser with
+        no page load. Making the header follow them means either re-rendering the header from
+        Stimulus, or letting each tab be its own URL. <strong>The second is better anyway</strong>
+        &mdash; a tab you can link to and go back from.</p>
+    </div>
+  </figure>
+</section>
+
+<section class="space-y-4">
+  <h2 class="text-xl font-semibold">Option B — keep it in the panel, but stop it looking like table furniture</h2>
+  <figure class="frame">
+    <figcaption>Action sits with the tab strip</figcaption>
+    <div class="body">
+      <div class="overflow-hidden rounded-2xl border border-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-200 pr-3">
+          <div class="tabstrip flex-1 border-0 px-2"><span class="tab">Partners</span><span class="tab" aria-selected="true">Groups</span></div>
+          <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700"><i class="bi-plus-lg"></i>New partner group</span>
+        </div>
+        <table class="data-table"><thead><tr><th>Group name</th><th>Members</th><th>Requestable categories</th></tr></thead>
+          <tbody><tr><td>Shelters</td><td>3</td><td>Nappies, Wipes</td></tr></tbody></table>
+      </div>
+      <p class="mt-3 text-sm text-slate-600">One row instead of two, and the action is clearly
+        attached to the tab strip rather than floating above the table. No routing change. Keeps a
+        fourth button on the page, which is the thing you objected to.</p>
+    </div>
+  </figure>
+</section>
+
+<section class="space-y-4">
+  <h2 class="text-xl font-semibold">How many buttons may a header carry?</h2>
+  <div class="rule space-y-2">
+    <p><strong>One primary, at most three visible, primary last.</strong> Polaris, Carbon,
+      Material and Atlassian all land in the same place: exactly one primary action; everything
+      else secondary or ghost; beyond three, the least-used collapse behind &ldquo;More
+      actions&rdquo;.</p>
+    <p>Measured here: <strong>six index pages already carry exactly three</strong> &mdash; partner
+      agencies, donation sites, product drive participants, requests, storage locations, vendors
+      &mdash; always two secondary and one primary. Eleven more carry two. So the app is already
+      consistent and already at the ceiling; the rule just is not written down, which is why a
+      fourth button had nowhere to go but into the table.</p>
+    <p>design.md&rsquo;s page header section documents spacing and the back link and says nothing
+      about how many actions or their weight. That is the gap.</p>
+  </div>
+</section>
+
+<section class="space-y-3">
+  <h2 class="text-xl font-semibold">To decide</h2>
+  <p class="text-slate-600"><strong>A or B</strong> for the tab action. A is the industry pattern
+    and needs tabs to become real URLs; B is a contained fix to how it looks. I would take A, and
+    it is the larger change.</p>
+</section>
+
+</div></body></html>

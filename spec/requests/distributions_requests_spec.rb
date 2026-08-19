@@ -87,8 +87,10 @@ RSpec.describe "Distributions", type: :request do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
         get distributions_path
+        # Per-page totals went with the table footer; the figure on the page is the filtered
+        # total, which is what the stat band shows.
         expect(assigns(:total_items_all_distributions)).to eq(22)
-        expect(assigns(:total_items_paginated_distributions)).to eq(22)
+        expect(response.body).to include("Items distributed")
       end
 
       it "shows edit and reclaim actions" do

@@ -34,7 +34,9 @@
     </div>
 
     <% if actions %>
-      <div class="flex flex-wrap items-center gap-2"><%= actions %></div>
+      <%# A stable hook so a spec, or the audit, can count what is in here without walking
+          ancestors. At most three, exactly one of them primary -- see design.md. %>
+      <div class="flex flex-wrap items-center gap-2" data-page-header="actions"><%= actions %></div>
     <% end %>
   </div>
 </div>

@@ -30,8 +30,10 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "displays total in kind value on the index page" do
-        expect(page).to have_css("table td.in-kind", text: "$3.00")
-        expect(page).to have_css("table td.in-kind", text: "this page")
+        # The totals moved out of the table footer and into the band above it, so there is one
+        # figure for the filtered set rather than a "this page" and an "all donations" pair.
+        expect(page).to have_css("dl", text: "In-kind value")
+        expect(page).to have_css("dl", text: "$3.00")
       end
 
       it "doesn't die when an inactive item is in a donation" do

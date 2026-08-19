@@ -1,28 +1,14 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Updating Partner Information</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= @partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit partner",
+        subtitle: @partner.name,
+        back: {path: admin_partners_path, label: "Back to partners"} %>
+</div>
 
 <%= essentials_form_for @partner, url: admin_partner_path do |f| %>
-  <section>
-    <div class="px-4 py-6 sm:px-6 lg:px-8">
-      <div class="grid gap-6">
-        <!-- left column -->
-        <div class="min-w-0">
-          <!-- jquery validation -->
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-            <!-- form start -->
-            <div class="px-5 py-4">
+<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card" do %>
               <%= f.input :name, label: "Name" do %>
                 <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
@@ -34,17 +20,11 @@
                   <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
                 </div>
               <% end %>
-            </div>
 
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= submit_button %>
-            </div>
-          </div>
-
-        </div>
-
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button %>
+        <%= essentials_link_button "Cancel", admin_partners_path, variant: :ghost, size: :md %>
       </div>
-
-    </div>
-  </section>
+  <% end %>
+</div>
 <% end %>

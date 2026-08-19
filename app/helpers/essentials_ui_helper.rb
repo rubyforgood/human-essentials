@@ -78,6 +78,40 @@ module EssentialsUiHelper
     end
   end
 
+  # --- Stats ----------------------------------------------------------------
+  #
+  # A figure and the words that say what it counts. A description list, because that is the
+  # relationship: the label describes the value.
+  #
+  # The reports previously marked these up as <h2>, which put a page's statistics into its
+  # heading outline -- someone navigating by heading heard "Total spent on diapers: $412" as
+  # document structure. They also set the figure in a <p> at text-2xl while the real headings
+  # were text-base, so the visual hierarchy ran opposite to the semantic one.
+  #
+  # `value_class` exists for the spec hooks the request specs match on (`total_distributed`
+  # and friends); it is not for styling.
+  def essentials_stats(stats)
+    tag.dl(class: "grid gap-4 sm:grid-cols-2 lg:grid-cols-3") do
+      safe_join(stats.map { |stat|
+        tag.div(class: "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3") do
+          concat tag.dt(stat[:label], class: "text-sm font-medium text-slate-600")
+          # to_s matters: a block given to `tag` renders nothing for a non-String, so an
+          # Integer value came out as an empty figure. Caught by reading the rendered page
+          # rather than the template -- "Total items" was blank while every currency stat,
+          # already a String, was fine.
+          value = stat[:value].to_s
+          concat tag.dd(class: "mt-1 text-2xl font-bold tracking-tight text-slate-900") {
+            if stat[:value_class] || stat[:value_id]
+              tag.span(value, class: stat[:value_class], id: stat[:value_id])
+            else
+              value
+            end
+          }
+        end
+      })
+    end
+  end
+
   # --- Icon tile ------------------------------------------------------------
   #
   # A soft coloured tile behind an icon means "a stat or a status". A person is an

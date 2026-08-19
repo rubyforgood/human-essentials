@@ -26,6 +26,20 @@
     </div>
   <% end %>
 
+  <%#
+    What the purchases summary report used to show, driven by the filters on this page. The
+    category breakdown it also carried lives on the purchase records themselves; the four
+    figures here are the ones the table footer used to repeat.
+  %>
+  <%= essentials_stats([
+        {label: "Purchases", value: number_with_delimiter(@purchases.size)},
+        {label: "Items purchased", value: number_with_delimiter(@purchases_quantity), value_id: "purchase_quantity"},
+        {label: "Amount spent", value: dollar_presentation(@total_value_all_purchases)},
+        {label: "Fair market value", value: dollar_presentation(@total_fair_market_values)}
+      ]) %>
+
+  <div class="mt-6"></div>
+
   <%= render "shared/essentials/card", padded: false,
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_purchases)) } do %>
     <% if @paginated_purchases.blank? %>
@@ -52,31 +66,6 @@
             </tr>
           </thead>
           <tbody><%= render partial: "purchase_row", collection: @paginated_purchases %></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="3">Total</td>
-              <td class="quantity">
-                <%= number_with_delimiter(@paginated_purchases_quantity) %>
-                <span class="block text-xs font-normal text-slate-500">this page</span>
-                <span id="purchase_quantity" class="mt-1 block"><%= number_with_delimiter(@purchases_quantity) %></span>
-                <span class="block text-xs font-normal text-slate-500">all purchases</span>
-              </td>
-              <td></td>
-              <td class="numeric">
-                <%= dollar_value(@paginated_purchases_value) %>
-                <span class="block text-xs font-normal text-slate-500">this page</span>
-                <span class="mt-1 block"><%= dollar_value(@total_value_all_purchases) %></span>
-                <span class="block text-xs font-normal text-slate-500">all purchases</span>
-              </td>
-              <td class="numeric">
-                <%= dollar_value(@paginated_fair_market_values) %>
-                <span class="block text-xs font-normal text-slate-500">this page</span>
-                <span class="mt-1 block"><%= dollar_value(@total_fair_market_values) %></span>
-                <span class="block text-xs font-normal text-slate-500">all purchases</span>
-              </td>
-              <td colspan="2"></td>
-            </tr>
-          </tfoot>
         </table>
       </div>
     <% end %>

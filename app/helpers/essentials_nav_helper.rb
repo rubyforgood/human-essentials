@@ -25,6 +25,21 @@ module EssentialsNavHelper
     NavItem.new(label: "Dashboard", path: dashboard_path, active_on: %w[dashboard], icon: "bi-speedometer2")
   end
 
+  # The reports hub. One rail entry for fifteen reports, which used to be a group holding as
+  # many destinations as the other three groups combined.
+  #
+  # `active_on` lists every controller that renders a report, so the entry stays highlighted
+  # while you are inside one -- otherwise the rail would say you are nowhere.
+  def essentials_nav_reports
+    NavItem.new(
+      label: "Reports",
+      path: reports_path,
+      active_on: %w[reports reports/annual_reports distributions_by_county events
+        historical_trends/distributions historical_trends/donations historical_trends/purchases],
+      icon: "bi-graph-up"
+    )
+  end
+
   # The item pinned to the bottom of the rail, below its own divider.
   # Organization settings are admin-only, so org users get no pinned item at all.
   def essentials_nav_settings
@@ -71,27 +86,6 @@ module EssentialsNavHelper
           NavItem.new(label: "Product drive participants", path: product_drive_participants_path, active_on: %w[product_drive_participants]),
           NavItem.new(label: "Manufacturers", path: manufacturers_path, active_on: %w[manufacturers]),
           NavItem.new(label: "Vendors", path: vendors_path, active_on: %w[vendors])
-        ]
-      ),
-      NavGroup.new(
-        label: "Reporting",
-        icon: "bi-graph-up",
-        items: [
-          NavItem.new(label: "Activity graph", path: reports_activity_graph_path, active_on: %w[reports/activity_graph]),
-          NavItem.new(label: "Annual survey", path: reports_annual_reports_path, active_on: %w[reports/annual_reports]),
-          NavItem.new(label: "History", path: events_path, active_on: %w[events]),
-          NavItem.new(label: "Distributions — summary", path: reports_distributions_summary_path, active_on: %w[reports/distributions_summary]),
-          NavItem.new(label: "Distributions — by county", path: distributions_by_county_report_path(filters: {date_range: date_range_params}), active_on: %w[distributions_by_county]),
-          NavItem.new(label: "Distributions — itemized", path: reports_itemized_distributions_path, active_on: %w[reports/itemized_distributions]),
-          NavItem.new(label: "Distributions — trends", path: historical_trends_distributions_path, active_on: %w[historical_trends/distributions]),
-          NavItem.new(label: "Donations — summary", path: reports_donations_summary_path, active_on: %w[reports/donations_summary]),
-          NavItem.new(label: "Donations — itemized", path: reports_itemized_donations_path, active_on: %w[reports/itemized_donations]),
-          NavItem.new(label: "Donations — manufacturer", path: reports_manufacturer_donations_summary_path, active_on: %w[reports/manufacturer_donations_summary]),
-          NavItem.new(label: "Donations — trends", path: historical_trends_donations_path, active_on: %w[historical_trends/donations]),
-          NavItem.new(label: "Product drives — summary", path: reports_product_drives_summary_path, active_on: %w[reports/product_drives_summary]),
-          NavItem.new(label: "Purchases — summary", path: reports_purchases_summary_path, active_on: %w[reports/purchases_summary]),
-          NavItem.new(label: "Purchases — trends", path: historical_trends_purchases_path, active_on: %w[historical_trends/purchases]),
-          NavItem.new(label: "Requests — itemized", path: reports_itemized_requests_path, active_on: %w[reports/itemized_requests])
         ]
       )
     ].reject { |group| group.items.empty? }

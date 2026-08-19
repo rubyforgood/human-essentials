@@ -1,15 +1,9 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "New - Partner Groups - #{current_organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">New Partner Group</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_organization.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "New - Partner Groups - #{current_organization.name}" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New partner group",
+        subtitle: "Groups set which item categories their members may request.",
+        back: {path: partner_groups_path, label: "Back to groups"} %>
+</div>
 
 <%= render partial: "form", object: @partner_group, locals: { submit_btn_options: { text: "Add partner group" } } %>

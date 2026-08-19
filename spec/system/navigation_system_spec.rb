@@ -19,13 +19,12 @@ RSpec.describe "Navigation", type: :system, js: true do
 
       it "shows the top-level destinations" do
         expect(sidebar).to have_link("Dashboard")
+        expect(sidebar).to have_link("Reports")
         expect(sidebar).to have_link("My organization")
       end
 
       it "groups the rest of the destinations" do
-        # The group labels are upper-cased by CSS, so Capybara sees "OPERATIONS": match the
-        # word, not the casing the stylesheet happens to apply.
-        ["Operations", "Inventory", "Network", "Reporting"].each do |group|
+        ["Operations", "Inventory", "Network"].each do |group|
           expect(sidebar).to have_css("button", text: /#{group}/i)
         end
       end
@@ -62,12 +61,14 @@ RSpec.describe "Navigation", type: :system, js: true do
         end
       end
 
-      describe "the Reporting group" do
-        before { sidebar.find("button", text: /reporting/i).click }
+      describe "reports" do
+        it "are one rail entry leading to the hub, not a group of fifteen" do
+          expect(sidebar).to have_no_css("button", text: /reporting/i)
 
-        it "shows its destinations" do
-          expect(sidebar).to have_link("Annual survey")
-          expect(sidebar).to have_link("Distributions — by county")
+          sidebar.click_link("Reports")
+          expect(page).to have_css("h1", text: "Reports")
+          expect(page).to have_link("Annual survey")
+          expect(page).to have_css("h2", text: "Distributions")
         end
       end
 

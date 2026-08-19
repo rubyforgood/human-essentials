@@ -106,19 +106,27 @@ Rails.application.routes.draw do
     post :finalize
   end
 
+  # The reports hub. Sits outside the namespace so the path is /reports rather than
+  # /reports/index; the fifteen reports it links to keep their existing routes.
+  get "reports", to: "reports#index", as: :reports
+
   namespace :reports do
     resources :annual_reports, only: [:index, :show], param: :year do
       post :recalculate, on: :member
     end
-    get :donations_summary
     get :manufacturer_donations_summary
-    get :product_drives_summary
-    get :purchases_summary
     get :itemized_donations
     get :itemized_distributions
-    get :distributions_summary
     get :activity_graph
     get :itemized_requests
+
+    # The four summary reports were weaker copies of the index pages -- fewer filters, no full
+    # table, the same totals -- so their figures moved onto the index and the pages went. These
+    # redirects keep old bookmarks and anything a funder was sent working.
+    get :distributions_summary, to: redirect("/distributions")
+    get :donations_summary, to: redirect("/donations")
+    get :purchases_summary, to: redirect("/purchases")
+    get :product_drives_summary, to: redirect("/product_drives")
   end
 
   resources :transfers, only: %i(index create new show destroy) do
@@ -228,7 +236,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :partner_groups, only: %i(new create edit update destroy)
+  resources :partner_groups, only: %i(index new create edit update destroy)
 
   resources :product_drives
 

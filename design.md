@@ -285,6 +285,24 @@ Two things that bite:
 - `FILTER_SELECT_CLASSES`, not `FILTER_CONTROL_CLASSES`, for a `<select>`. The browser draws the
   chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3`.
 
+### Stats
+
+A figure and the words that say what it counts. `essentials_stats` renders a description list,
+because that is the relationship: the label describes the value.
+
+```erb
+<%= essentials_stats([
+      {label: "Items distributed this month", value: 1_284},
+      {label: "Scheduled for future distribution", value: 310}
+    ]) %>
+```
+
+**A statistic is not a heading.** The reports marked six of them up as `<h2>`, which put the
+page's figures into its heading outline — someone navigating by heading heard "Total spent on
+diapers: $412" as document structure. They also set the figure in a `<p>` at `text-2xl` while
+the real headings were `text-base`, so the visual hierarchy ran opposite to the semantic one.
+A heading names a section; if the thing is data, it is a `<dt>`/`<dd>` pair.
+
 ### Status pills
 
 A pill is a **state**, not a control: not focusable, does not look pressable. It is also
@@ -355,6 +373,37 @@ It owns the page's only `<h1>`. Shape rules, measured rather than eyeballed: the
 and title are one block with an 8px gap; `items-end` when there is no subtitle so a 40px CTA
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
+
+**At most three actions, exactly one of them primary, primary last.** Everything else is
+`:secondary` or `:ghost`. Past three, the least-used collapse behind a "More actions" menu.
+Six index pages here already carry exactly three — two secondary and one primary — so this
+writes down what the app already does rather than changing it.
+
+The actions container carries `data-page-header="actions"` so a spec can count what is in it
+without walking ancestors.
+
+**A page has one place for its main action.** If a fourth button appears, that is the signal
+that something else is wrong — usually a section of the page wanting an action of its own. Do
+not tuck it above a table; see the tabs rule below.
+
+### Tabs
+
+Two components, and picking the wrong one is an accessibility bug rather than a style choice.
+
+| | Use when | Component |
+| --- | --- | --- |
+| **Panel tabs** | Panels swap in place, same URL | `shared/essentials/tabs` |
+| **Page tabs** | Each tab is its own URL | `shared/essentials/page_tabs` |
+
+`role="tab"` tells a screen reader that activating this swaps a panel in the current document.
+If the tab loads a page, that promise is false, and the tablist takes the arrow keys from the
+browser on the way. Page tabs are a `<nav>` of links with `aria-current="page"` on the current
+one.
+
+**Prefer page tabs when a tab needs its own action.** The page header can only follow the tab
+if the tab is a URL — which is how "New partner group" stopped being a fourth button floating
+above a table. It is also how a tab becomes something you can link to, bookmark and go back
+from.
 
 ### Filter bar
 
@@ -696,6 +745,70 @@ general gets promoted into here.
 Record the change itself in [`docs/changelog.md`](docs/changelog.md) in the same commit. The two
 files answer different questions and both get asked: the log says why you chose this, the change
 log says when it arrived and what to blame.
+
+### A summary belongs on the page that holds the data
+
+**Do not build a page whose job is to total another page.** Filters at the top, the figures
+those filters produce directly beneath them, the table under that. One page, one set of filters,
+one export. Nobody should navigate to see the total of what they are already looking at.
+
+Four "summary reports" were removed for this reason. Each had fewer filters than the index it
+summarised, no full table, and the same totals — `/distributions` has seven filters and thirteen
+columns against the report's one filter and a preview list — and then linked back to the index it
+was a copy of. Their figures now sit at the top of the index, driven by the same filters as the
+rows.
+
+Retired URLs redirect rather than 404. A report link may be in someone's bookmarks or in an email
+to a funder.
+
+### Cards in a grid
+
+**Equal cards need a uniform unit.** Six subject cards holding lists of one to four reports ran
+143px to 378px, and stretching only ever equalises a row against itself. Fifteen tiles, one per
+report, were uniform and pushed everything below the fold. What works is the middle: a card per
+subject, `auto-rows-fr` so the grid equalises them, and inside it one line per report plus a
+short qualifier.
+
+**A qualifier, not a sentence.** "Itemized · by item and partner", not a full description. A hub
+is a menu; a sentence per entry turns a menu into reading.
+
+**One icon per card, not one per row.** The icon marks the subject. Repeating it down every row
+gives the eye a second column of glyphs to skip and marks nothing out.
+
+**A drill-through link names its destination.** Not "See more…" — it went from the distributions
+*report* to the distributions *table*, which is a different page about different things.
+"View all distributions" says where it goes.
+
+### Figures in a band
+
+`dollar_value` blanks a zero, which is right in a table column where zeros are noise and wrong in
+a stat band where the figure is the content — an empty figure reads as broken rather than as
+nought. Use `dollar_presentation` for a stat.
+
+### Building a form page
+
+Every form page renders `page_header` with a `back:` link, then one
+`shared/essentials/card`, then fields through `f.input` so the `:essentials` wrapper owns the
+label, the spacing and the error message.
+
+- **Never pass `class:` to `f.input`.** simple_form ignores it; the field is then styled by
+  whatever the wrapper happens to do. `input_html: {class: …}` is the argument that works.
+- **A radio or checkbox group is a `<fieldset>` with a `<legend>`.** A label followed by `<br>`
+  and a run of `&nbsp;` announces the question once and connects nothing to it.
+- **Load the page when you are done.** Two assertions catch the whole class of unbalanced
+  markup, and a class-name audit catches none of it:
+
+  ```js
+  form.contains(submitButton)                              // must be true
+  fieldsOutsideForm(document.querySelector('main form'))   // must be 0
+  ```
+
+  Three pages in this app had a submit button *outside* the form holding its fields. They
+  worked, because the HTML parser splits malformed markup into two forms and re-associates the
+  button — which is exactly why nobody noticed.
+
+`ruby bin/design/page-audit.rb` checks the mechanical part and exits non-zero on a defect.
+It cannot check the two assertions above.
 
 ## Backlog
 

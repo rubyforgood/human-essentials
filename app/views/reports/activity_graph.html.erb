@@ -1,10 +1,8 @@
 <%= render(
   "shared/filtered_card",
   id: "activity_graph",
-  gradient: "secondary",
   title: "Activity Graph",
   subtitle: @selected_date_range,
-  type: :table,
   filter_url: reports_activity_graph_path
 ) do %>
   <% if @distribution_data.empty? %>
@@ -13,9 +11,9 @@
           body: "Nothing matched the selected date range. Try widening it." %>
   <% else %>
     <div class="px-5 py-4">
-      <div class="px-5 py-4">
-        <h2 class="text-base font-semibold text-slate-900"></h2>
-        <%
+      <%# The chart is the content; it had an empty <h2> above it and sat in a div nested
+          inside an identical div. %>
+      <%
             activity_chart_config = {
               chart: {
                 type: "bar"
@@ -41,10 +39,12 @@
                 }
               ]
             }.to_json
-        %>
-        <div data-controller="highchart" data-highchart-config-value="<%= activity_chart_config %>">
-          <div data-highchart-target="chart"></div>
-        </div>
+      %>
+      <%# The config sets an empty title, so the chart needs a name given explicitly. %>
+      <div data-controller="highchart"
+           data-highchart-config-value="<%= activity_chart_config %>"
+           data-highchart-label-value="Essentials received against essentials distributed, <%= @selected_date_range %>">
+        <div data-highchart-target="chart"></div>
       </div>
     </div>
   <% end %>

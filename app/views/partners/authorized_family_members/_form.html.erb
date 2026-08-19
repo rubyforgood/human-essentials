@@ -1,29 +1,31 @@
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  Locals: authorized_family_member, submit_label.
 
-          <!-- form start -->
-          <div class="px-5 py-4">
-            <%= essentials_form_for authorized_family_member, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+  Every field goes through `f.input`, so the :essentials simple_form wrapper owns the label,
+  the spacing and the error message. The old version mixed `f.input` with raw `f.label` +
+  `f.text_field`, and passed `class:` to `f.input`, where simple_form ignores it -- the fields
+  were being styled by luck.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(authorized_family_member) %>
 
-              <%= form.input :first_name, label: "First Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-              <%= form.input :last_name, label: "Last Name", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-              <%= form.input :date_of_birth, as: :date, start_year: 100.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
-              <%= form.input :gender, collection: ["Male", "Female"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-              <%= form.input :comments, label: "Comments", as: :text, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-              <%= hidden_field_tag :family_id, authorized_family_member.family.id %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for authorized_family_member, html: {role: "form"} do |f| %>
+      <%= f.input :first_name, label: "First name" %>
+      <%= f.input :last_name, label: "Last name" %>
+      <%= f.input :date_of_birth, as: :date, start_year: 100.years.ago.year,
+            end_year: Time.current.year, label: "Date of birth" %>
+      <%= f.input :gender, collection: ["Male", "Female"], label: "Gender" %>
+      <%= f.input :comments, label: "Comments", as: :text, input_html: {rows: 3} %>
+      <%= hidden_field_tag :family_id, authorized_family_member.family.id %>
 
-              </div>
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= form.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
-              </div>
-            <% end %>
-            </div>
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :button, submit_label,
+              class: essentials_button_classes(variant: :primary, size: :md),
+              data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_family_path(authorized_family_member.family),
+              variant: :ghost, size: :md %>
       </div>
-    </div>
-  </div>
-</section>
+    <% end %>
+  <% end %>
+</div>

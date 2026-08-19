@@ -1,78 +1,67 @@
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<%#
+  Locals: child, submit_label.
 
-          <!-- form start -->
-          <div class="px-5 py-4">
+  Fields go through `f.input` so the :essentials wrapper owns labels, spacing and errors. The
+  old version mixed raw `f.label` + `f.text_field` with `f.input`, laid checkboxes out with
+  `&nbsp;` runs and `<br>`, and opened with a stray intersect? expression that printed "true"
+  onto the page.
+%>
+<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(child) %>
 
-            <%= essentials_form_for child, html: {role: 'form', class: 'form-horizontal'} do |form| %>
-              <%= form.label :first_name, "First Name" %>
-              <%= form.text_field :first_name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for child, html: {role: "form"} do |f| %>
+      <%= f.input :first_name, label: "First name" %>
+      <%= f.input :last_name, label: "Last name" %>
 
-              <%= form.label :last_name, "Last Name" %>
-              <%= form.text_field :last_name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= @requestable_items.map(&:last).intersect?(child.requested_item_ids) %>
-              <div class="requestable-items-container">
-                <%= form.label :item_needed, "Item(s) Requested" %>
-                <%= form.select(
-                  :requested_item_ids,
-                  @requestable_items,
-                  { include_hidden: true },
-                  {
-                    multiple: true,
-                    class: "custom-select block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
-                    "data-controller": "select2",
-                    "data-select2-config-value": "{}",
-                  },
-                ) %>
-              <br>
-              </div>
-
-              <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
-              <%= form.input :gender, collection: ["Male", "Female"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= form.label :child_lives_with, "Child Lives With" %><br>
-
-              <% Partners::Child::CAN_LIVE_WITH.each do |a_value| %>
-                <%= form.check_box(:child_lives_with, {:multiple => true}, a_value, nil) %>
-                <%= form.label "#{a_value}" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <% end %>
-              <br>
-              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, :include_blank => true %>
-              <%= form.input :agency_child_id, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, label: "Agency Child ID" %>
-              <%#= form.label :health_insurance, 'Health Insurance' %>
-              <%= form.input :health_insurance, as: :radio_buttons,
-                             collection: [['Private Insurance', 'Private Insurance'],
-                                          ['Medicaid', 'Medicaid'],
-                                          ['Uninsured', 'Uninsured']],
-                             label: "Health Insurance",
-                              class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= form.label :comments %><br>
-              <%= form.text_area :comments, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-
-              <%= hidden_field_tag :family_id, child.family.id %>
-              <br>
-              <%= form.label :active %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= form.check_box :active %>
-              <br>
-              <%= form.label "Archived?" %>&nbsp;
-              <%= form.check_box :archived %>
-
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= form.submit(class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600') %>
-              </div>
-            <% end %>
-          </div>
-        </div>
+      <div class="requestable-items-container mb-4">
+        <%= f.label :requested_item_ids, "Items requested",
+              class: "block text-sm font-medium text-slate-700" %>
+        <%= f.select :requested_item_ids, @requestable_items, {include_hidden: true},
+              multiple: true,
+              class: "custom-select mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+              data: {controller: "select2", "select2-config-value": "{}"} %>
       </div>
 
-    </div>
+      <%= f.input :date_of_birth, as: :date, start_year: 20.years.ago.year,
+            end_year: Time.current.year, label: "Date of birth" %>
+      <%= f.input :gender, collection: ["Male", "Female"], label: "Gender" %>
 
-  </div>
-</section>
+      <%# A checkbox group is a fieldset with a legend, so the question is announced once and
+          each box is announced against it. It was a label, a <br> and a run of &nbsp;. %>
+      <fieldset class="mb-4">
+        <legend class="block text-sm font-medium text-slate-700">Child lives with</legend>
+        <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+          <% Partners::Child::CAN_LIVE_WITH.each do |value| %>
+            <%# Input nested inside the label: no id/for pair to keep in step. %>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+              <%= f.check_box :child_lives_with, {multiple: true,
+                    class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"}, value, nil %>
+              <%= value %>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+
+      <%= f.input :race, label: "Race", include_blank: true,
+            collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian",
+                         "Pacific Islander", "Multi-racial", "Other"] %>
+      <%= f.input :agency_child_id, label: "Agency child ID" %>
+      <%= f.input :health_insurance, as: :radio_buttons, label: "Health insurance",
+            collection: ["Private Insurance", "Medicaid", "Uninsured"] %>
+      <%= f.input :comments, label: "Comments", as: :text, input_html: {rows: 3} %>
+
+      <%= hidden_field_tag :family_id, child.family.id %>
+
+      <%= f.input :active, as: :boolean, label: "Active" %>
+      <%= f.input :archived, as: :boolean, label: "Archived" %>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= f.button :button, submit_label,
+              class: essentials_button_classes(variant: :primary, size: :md),
+              data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_children_path, variant: :ghost, size: :md %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

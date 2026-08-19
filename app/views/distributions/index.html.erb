@@ -37,6 +37,19 @@
     </div>
   <% end %>
 
+  <%#
+    The figures the summary report used to live on, on the page that holds the data. They are
+    driven by the same filters as the table, which is the point -- the totals describe what you
+    are looking at. These were already computed for the table footer that used to sit below.
+  %>
+  <%= essentials_stats([
+        {label: "Distributions", value: number_with_delimiter(@distributions.size)},
+        {label: "Items distributed", value: number_with_delimiter(@total_items_all_distributions)},
+        {label: "Total value", value: dollar_presentation(@total_value_all_distributions)}
+      ]) %>
+
+  <div class="mt-6"></div>
+
   <%= render "shared/essentials/card", padded: false,
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_distributions)) } do %>
     <% if @paginated_distributions.blank? %>
@@ -70,7 +83,6 @@
             </tr>
           </thead>
           <tbody><%= render partial: "distribution_row", collection: @paginated_distributions %></tbody>
-          <tfoot><%= render partial: "distribution_total", locals: {quantity_label: quantity_label} %></tfoot>
         </table>
       </div>
     <% end %>

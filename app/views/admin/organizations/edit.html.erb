@@ -1,105 +1,83 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Edit - Organizations - #{@organization.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing</h1>
-<p class="mt-1 text-sm text-slate-600"><%= @organization.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Edit - Organizations" %>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit organization",
+        subtitle: @organization.name,
+        back: {path: admin_organizations_path, label: "Back to organizations"} %>
+</div>
 
-<%= essentials_form_for @organization, url: admin_organization_path do |f| %>
-  <section>
-    <div class="px-4 py-6 sm:px-6 lg:px-8">
-      <div class="grid gap-6">
-        <!-- left column -->
-        <div class="min-w-0">
-          <!-- jquery validation -->
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(@organization) %>
 
-            <div class="border-b border-slate-200 px-5 py-4">
-              <h3>Update record for <%= @organization.name %></h3>
-            </div>
-            <!-- form start -->
-            <div class="px-5 py-4">
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @organization, url: admin_organization_path do |f| %>
+      <%# No autofocus: on a form this long it starts focus past the skip link, so a keyboard
+          user cannot Tab forward to bypass the navigation. Short single-purpose forms keep it. %>
+      <%= f.input :name, required: true %>
+      <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
+      <%= f.input :email %>
 
-              <div class="form-inputs">
-                <%= f.input :name, required: true, autofocus: true do %>
-                  <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-                <%= f.input :url, as: :url, placeholder: "http://www.example.com" do %>
-                  <%= f.input_field :url, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-                <%= f.input :email do %>
-                  <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-
-                <%= f.input :address do %>
-                  <%= f.input_field :street, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "street" %>
-                  <%= f.input_field :city, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "city" %>
-                  <%= f.input_field :state, collection: us_states, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "state" %>
-                  <%= f.input_field :zipcode, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "zipcode" %>
-                <% end %>
-
-                <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: @organization %>
-
-                <%= f.input :intake_location, :collection => @organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true %>
-
-                <%= f.input :invitation_text, label: "Custom Partner Invitation Message" do %>
-                  <%= f.text_area :invitation_text, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-                <% end %>
-
-                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
-                  <%= f.rich_text_area :default_email_text %>
-                <% end %>
-
-                <%= f.input :logo do %>
-
-                  <% if @organization.logo.attached? %>
-                    <div>
-                      <p>
-                        <%= image_tag @organization.logo %>
-                      </p>
-                      <p>
-                        <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                                  data-action="click->dialog#open" data-dialog-id-param="showTheLogo">
-                          View original
-                        </button>
-                      </p>
-                      <dialog id="showTheLogo" aria-label="Organization logo, full size"
-                              class="rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
-                              data-action="click->dialog#closeOnBackdrop">
-                        <div class="flex flex-col items-end gap-3 p-5">
-                          <%= image_tag @organization.logo, alt: "", class: "max-h-[70vh] w-auto rounded-lg" %>
-                          <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                                  data-action="click->dialog#close" data-dialog-id-param="showTheLogo">Close</button>
-                        </div>
-                      </dialog>
-                    </div>
-                    <label class="block text-sm font-medium text-slate-700">Update Logo</label>
-                  <% end %>
-
-                  <%= f.input_field :logo, as: :file %>
-                  <p class="mt-1 text-xs text-slate-500">
-                    Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-                    Only jpeg/png format is supported.
-                  </p>
-
-                <% end %>
-              </div>
-            </div>
-
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= submit_button %>
-            </div>
-          </div>
+      <%# The address was one `f.input :address do` block wrapping four fields, so a single
+          label covered all of them. A fieldset with a legend names the group and lets each
+          field keep its own label. %>
+      <fieldset class="mb-4">
+        <legend class="block text-sm font-medium text-slate-700">Address</legend>
+        <div class="mt-1.5 space-y-2">
+          <%= f.input_field :street, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+                placeholder: "Street", aria: {label: "Street"} %>
+          <%= f.input_field :city, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+                placeholder: "City", aria: {label: "City"} %>
+          <%= f.input_field :state, collection: us_states,
+                class: EssentialsUiHelper::FILTER_SELECT_CLASSES, aria: {label: "State"} %>
+          <%= f.input_field :zipcode, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+                placeholder: "Zipcode", aria: {label: "Zipcode"} %>
         </div>
+      </fieldset>
 
+      <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @organization %>
+
+      <%= f.input :intake_location, label: "Default intake location", include_blank: true,
+            collection: @organization.storage_locations.active.alphabetized,
+            label_method: :name, value_method: :id %>
+      <%= f.input :invitation_text, label: "Custom partner invitation message", as: :text,
+            input_html: {rows: 3} %>
+
+      <%= f.input :default_email_text, label: "Default text included in distribution emails" do %>
+        <%= f.rich_text_area :default_email_text %>
+      <% end %>
+
+      <div class="mb-4">
+        <%= f.label :logo, "Logo", class: "block text-sm font-medium text-slate-700" %>
+        <% if @organization.logo.attached? %>
+          <div class="mt-2 flex items-center gap-3">
+            <%= image_tag @organization.logo, alt: "", class: "h-12 w-auto rounded" %>
+            <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
+                    data-action="click->dialog#open" data-dialog-id-param="showTheLogo">
+              View original
+            </button>
+          </div>
+          <dialog id="showTheLogo" aria-label="Organization logo, full size"
+                  class="rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+                  data-action="click->dialog#closeOnBackdrop">
+            <div class="flex flex-col items-end gap-3 p-5">
+              <%= image_tag @organization.logo, alt: "", class: "max-h-[70vh] w-auto rounded-lg" %>
+              <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>"
+                      data-action="click->dialog#close" data-dialog-id-param="showTheLogo">Close</button>
+            </div>
+          </dialog>
+        <% end %>
+        <%# Was a second <label> with no `for`, which announced as an empty label. %>
+        <%= f.input_field :logo, as: :file, id: "organization_logo",
+              class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
+        <p class="mt-1 text-xs text-slate-500">
+          A 4:1 ratio of width to height; the default is 763 by 188 pixels. JPEG or PNG.
+        </p>
       </div>
-    </div>
-<% end %>
-</section>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button %>
+        <%= essentials_link_button "Cancel", admin_organizations_path, variant: :ghost, size: :md %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

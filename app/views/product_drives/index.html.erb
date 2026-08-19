@@ -20,6 +20,18 @@
     </div>
   <% end %>
 
+  <%#
+    What the product drives summary report used to show. @summary is already computed per drive
+    for the table; these are its totals across the filtered set.
+  %>
+  <%= essentials_stats([
+        {label: "Drives", value: number_with_delimiter(@product_drives.size)},
+        {label: "Items received", value: number_with_delimiter(@summary.values.sum(&:quantity))},
+        {label: "In-kind value", value: dollar_presentation(@summary.values.sum(&:value))}
+      ]) %>
+
+  <div class="mt-6"></div>
+
   <%= render "shared/essentials/card", padded: false,
         footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
     <% if @paginated_product_drives.blank? %>

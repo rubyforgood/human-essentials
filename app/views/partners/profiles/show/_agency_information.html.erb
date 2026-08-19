@@ -26,25 +26,27 @@
       <dt class="text-xs font-medium text-slate-500">Agency Mission</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.agency_mission %></dd>
 
-      <address>
-        <strong>Address</strong> <br>
-        <%= profile.address1 %> <br>
-        <% unless profile.address2.blank? %> <br>
-          <%= profile.address2 %> <br>
-        <% end %>
-        <%= profile.city %> <%= profile.state %> <br>
-        <%= profile.zip_code %>
-      </address>
+      <%# The two <address> elements sat directly inside the <dl>, which is not a permitted
+          child. They are the value of a term now, with the <address> inside the <dd>. %>
+      <dt class="text-xs font-medium text-slate-500">Address</dt>
+      <dd class="mt-0.5 text-sm text-slate-900">
+        <address class="not-italic">
+          <%= profile.address1 %><br>
+          <% if profile.address2.present? %><%= profile.address2 %><br><% end %>
+          <%= profile.city %> <%= profile.state %><br>
+          <%= profile.zip_code %>
+        </address>
+      </dd>
 
-      <address>
-        <strong>Program / Delivery Address (if different)</strong> <br>
-        <%= profile.program_address1 %> <br>
-        <% unless profile.program_address2.blank? %>
-          <%= profile.program_address2 %> <br>
-        <% end %>
-        <%= profile.program_city %> <%= profile.program_state %> <br>
-        <%= profile.program_zip_code %>
-      </address>
+      <dt class="text-xs font-medium text-slate-500">Program or delivery address, if different</dt>
+      <dd class="mt-0.5 text-sm text-slate-900">
+        <address class="not-italic">
+          <%= profile.program_address1 %><br>
+          <% if profile.program_address2.present? %><%= profile.program_address2 %><br><% end %>
+          <%= profile.program_city %> <%= profile.program_state %><br>
+          <%= profile.program_zip_code %>
+        </address>
+      </dd>
     </dl>
   </div>
 </div>

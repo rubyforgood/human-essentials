@@ -62,8 +62,9 @@ RSpec.describe "Family requests", type: :system, js: true do
         click_button "Yes, it's correct"
       end
 
-      expect(page).to have_text("Request Details")
-      click_link "Your Previous Requests"
+      expect(page).to have_text("Request details")
+      # The bottom-of-page link was replaced by the page header's back link.
+      click_link "Back to requests"
       expect(page).to have_text("Request History")
     end
 
@@ -71,7 +72,7 @@ RSpec.describe "Family requests", type: :system, js: true do
     it "disables confirmation and modal close buttons after clicking confirm" do
       visit partners_requests_path
       find('a[aria-label="Create a request for a child or family"]').click
-      click_button("Submit Essentials Request")
+      click_button("Submit essentials request")
 
       # Disable form submission so form doesn't immediately submit and we can check button state
       page.execute_script("$(\"form[action='/partners/family_requests']\").attr('action', 'javascript: void(0);');")
@@ -91,7 +92,7 @@ RSpec.describe "Family requests", type: :system, js: true do
 
       visit partners_requests_path
       find('a[aria-label="Create a request for a child or family"]').click
-      fill_in "Search By Child Name", with: "Arthur"
+      fill_in "Search by child name", with: "Arthur"
       expect(page).to have_text("Arthur")
       expect(page).to_not have_text("Zeno")
     end
@@ -104,7 +105,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       visit partners_requests_path
       find('a[aria-label="Create a request for a child or family"]').click
       expect(page).to have_css("table tbody tr", count: 3)
-      fill_in "Search By Guardian Name", with: "Main Family"
+      fill_in "Search by guardian name", with: "Main Family"
       expect(page).to have_text("Zeno")
       expect(page).to have_text("Arthur")
       expect(page).to_not have_text("Louis")

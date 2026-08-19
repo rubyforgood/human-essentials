@@ -76,7 +76,10 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       visit admin_users_path
       click_link "Edit", match: :first
-      expect(page).to have_content("Update AAlphabetically First User")
+      # The card header that read "Update <name>" is gone; the page header carries the title and
+      # the name is its subtitle.
+      expect(page).to have_css("h1", text: "Edit user")
+      expect(page).to have_content("AAlphabetically First User")
 
       fill_in "user_name", with: "TestUser"
       click_on "Save"

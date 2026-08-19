@@ -1,7 +1,18 @@
-<div class="text-center p-3">
-  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Need Help?</h1>
-  <p>
-    Please contact your essentials bank, <%= @bank.name %>, if you need further assistance.<br>
-    Our email on record for them is: <%= mail_to @bank.email %>
-  </p>
+<% content_for :title, "Need help? - #{@bank.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header", title: "Need help?" %>
+
+  <div class="max-w-2xl">
+    <%= render "shared/essentials/card" do %>
+      <p class="text-sm text-slate-700">
+        Contact your essentials bank, <strong class="font-semibold"><%= @bank.name %></strong>,
+        if you need further assistance.
+      </p>
+      <p class="mt-2 text-sm text-slate-700">
+        The email on record for them is
+        <%= mail_to @bank.email, class: "font-medium text-brand-700 hover:text-brand-800" %>.
+      </p>
+    <% end %>
+  </div>
 </div>

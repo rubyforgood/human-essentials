@@ -1,13 +1,19 @@
+<%# The <dt> and <dd> had no <dl> around them at all, which is what axe reports as `dlitem`. %>
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Attached Documents</h2>
+  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Attached documents</h2>
   <div class="px-5 py-4">
-    <% if profile.documents.attached? %>
-      <dt class="text-xs font-medium text-slate-500">Attached files:</dt>
-      <% profile.documents.each do |doc| %>
-        <dd class="mt-0.5 text-sm text-slate-900"><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-medium text-brand-700 hover:text-brand-800" %></dd>
+    <dl>
+      <dt class="text-xs font-medium text-slate-500">Attached files</dt>
+      <% if profile.documents.attached? %>
+        <% profile.documents.each do |doc| %>
+          <dd class="mt-0.5 text-sm text-slate-900">
+            <%= link_to doc.blob["filename"], rails_blob_path(doc),
+                  class: "font-medium text-brand-700 hover:text-brand-800" %>
+          </dd>
+        <% end %>
+      <% else %>
+        <dd class="mt-0.5 text-sm text-slate-500">No files saved</dd>
       <% end %>
-    <% else %>
-      <dd class="mt-0.5 text-sm text-slate-900">No files saved</dd>
-    <% end %>
+    </dl>
   </div>
 </div>

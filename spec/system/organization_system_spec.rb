@@ -124,7 +124,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it 'can set a default storage location on the organization' do
-        select(storage_location.name, from: 'Default Storage Location')
+        select(storage_location.name, from: 'Default storage location')
 
         click_on "Save"
         expect(page).to have_content(storage_location.name)

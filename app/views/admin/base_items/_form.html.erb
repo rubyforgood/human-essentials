@@ -1,7 +1,9 @@
-    <%= form.input :name, label: "Name" do %>
-      <%= form.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-    <% end %>
+<%#
+  Locals: form (a form builder).
 
-    <%= form.input :partner_key, label: "Key (for Partner Requests)" do %>
-      <%= form.input_field :partner_key, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-    <% end %>
+  The fields were wrapped in `f.input ... do` blocks that pasted the input classes by hand,
+  which is what the :essentials wrapper already does. Plain `f.input` gets the same result and
+  keeps the error message.
+%>
+<%= form.input :name, label: "Name" %>
+<%= form.input :partner_key, label: "Key, for partner requests" %>

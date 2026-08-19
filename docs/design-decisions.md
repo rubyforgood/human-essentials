@@ -765,3 +765,276 @@ The user guide is a book. In-app help is a life ring. Neither collides with a st
 While fixing it: `ESSENTIALS_PARTNER_STATUS` still carried an `icon:` for each status, dead
 since the pill stopped rendering one. Removed rather than left, because a dead icon name in a
 status map is exactly the sort of thing the next person builds on.
+
+## 2026-08-18 · Fifteen reports become a hub with one rail entry
+
+The Reporting group held 15 of the sidebar's 34 destinations; Operations, Inventory and Network
+held 5, 7 and 7. Twelve of the fifteen turned out to be a sparse grid — distributions, donations,
+purchases, product drives and requests, each cut as a summary, an itemised breakdown or a
+twelve-month trend. The remaining three (activity graph, annual survey, history) belong to no
+subject.
+
+A flat list cannot express a grid, and the labels had been compensating: "Distributions —
+summary" encoded the grid in the string so the entries at least sorted together. That naming was
+a symptom, and it is why the em dashes were there.
+
+So the grid became the layout. One rail entry, "Reports", leading to a hub that groups by
+subject and names each report for its cut — under **Distributions**: Summary, Itemized, Trends,
+By county. The em dashes are gone as a side effect rather than as an edit.
+
+Costs one click per report. That is only acceptable because reports are periodic — monthly and
+annual funder reporting — rather than daily like distributions. **This is an assumption, not a
+measurement**, and it is the thing to check with a real bank before treating the hub as settled.
+If some report is genuinely a daily habit, it should be promoted back into the rail beside
+Dashboard rather than the hub being abandoned.
+
+Deliberately not done in this stage: collapsing the grid itself, so that "Distributions —
+summary" and "Distributions — itemized" become one page with a view switcher. It is the
+structurally correct end state and a real refactor of twelve pages; the hub proves the grouping
+first.
+
+Two judgement calls inside it:
+
+- **Annual survey stays on the hub**, not in the rail, though it is high-stakes for NDBN member
+  banks. Permanent rail space is the wrong tool for an annual deadline; a dashboard prompt when
+  the filing window opens is the right one, and is not built.
+- **History is not a report.** It is the inventory event log, and it sat under Reporting because
+  there was nowhere else. It is on the hub under "Everything else" and labelled as an audit
+  trail rather than pretending the hub resolved it.
+
+`active_on` for the rail entry lists every controller that renders a report, so the entry stays
+current while you are inside one. Without that the rail would say you are nowhere, which is
+worse than the group was.
+
+## 2026-08-18 · Uniform cards need a uniform unit
+
+The hub grouped the fifteen reports into six section cards. Cards ran 143px to 378px, because
+sections hold between one and four reports, and that was reported as cards that should be the
+same size.
+
+Pairing sections by size and stretching got each *row* equal — 4 with 4, 3 with 2, 1 with 1 —
+but rows still differed from each other, and no arrangement fixes that while the card is a
+variable-length list. Forcing all six to the tallest would have put 235px of dead space under
+the one-report sections.
+
+So the unit of the card changed: fifteen tiles, one per report, each holding a name and a
+sentence. Content that repeats uniformly makes cards that are uniform. `auto-rows-fr` equalises
+rows within a section and a shared `min-h` equalises across sections; measured equal at every
+breakpoint from 420px to 1600px.
+
+The general rule, now in design.md: if cards must be equal, make the unit of the card the thing
+that repeats. Grouping stays, as headings above each grid, which costs nothing.
+
+## 2026-08-18 · A statistic is not a heading
+
+The summary reports marked their figures up as `<h2>` — six consecutive ones on the purchases
+report, each carrying its own label inside the heading text ("Total spent on diapers: $412").
+Someone navigating by heading heard the page's statistics as its document structure.
+
+The visual hierarchy ran opposite to the semantic one as well: the largest text on the page was
+a `<p>` at `text-2xl font-bold`, while every actual heading was `text-base`. So the markup said
+"heading" where the design said "data", and the design said "prominent" where the markup said
+"paragraph".
+
+`essentials_stats` renders a description list, which is the real relationship — the label
+describes the value. The `<h2>`s that remain are the ones that name a section, "Recent
+purchases", which is what a heading is for.
+
+Found in the same pass and fixed: an empty `<h2></h2>` on the activity graph, a stray
+`</section>` closing nothing on the donations report, two `style="margin: 40px"` attributes, and
+`gradient:`, `footer_options:` and `type:` passed to a partial that has never read any of them.
+That last one is AdminLTE vocabulary that outlived the markup.
+
+## 2026-08-18 · A drill-through link names its destination
+
+Every summary report ended in "See more…", which led to the index table for that record type.
+From the distributions *report* to the distributions *table*: a different page, about different
+things, reached by a link that says neither.
+
+They now say "View all distributions", "View all purchases", and so on. The pattern itself is
+fine and common — a report shows a preview and offers the full list — but "see more" implies
+more of what you are looking at, and this is not that.
+
+## 2026-08-18 · Four summary reports removed; their figures moved onto the index pages
+
+Asked why summaries have their own page, and why the table with all the information is hidden
+behind a link at the bottom of a card. Both answers are the same: the summary report should not
+exist.
+
+Measured before deciding. Every index page is a strict superset of its summary report:
+
+| Index | Filters | Columns | Totals row | Its summary report |
+| --- | --- | --- | --- | --- |
+| `/distributions` | 7 | 13 | yes | 1 filter, 2 figures, a preview list |
+| `/donations` | 7 | 10 | yes | 1 filter, 2 figures, a preview list |
+| `/purchases` | 3 | 10 | yes | 1 filter, 6 figures, a preview list |
+| `/product_drives` | 4 | 10 | no | 1 filter, 3 figures, a preview list |
+
+So each summary was a weaker copy of a page that already existed, whose only addition was a few
+aggregates, and which then linked back to the page it copied. The table was not hidden by
+accident; it was on the other side of a link from something that added almost nothing.
+
+Data-dense systems — NetSuite, Odoo, Cin7, QuickBooks Commerce — put the aggregates on the list
+page: filters, then the figures those filters produce, then the rows. The figures were already
+being computed here, in a `<tfoot>` below a long table, split into "this page" and "all
+distributions". Folding them in was mostly promoting numbers that already existed to somewhere
+someone would look.
+
+The `<tfoot>` totals went, on the explicit call that the band and the footer saying overlapping
+things is worse than either alone. That drops the per-page subtotal, which had no other consumer;
+the band answers for the filtered set, which is the question people were asking the footer.
+
+Old report URLs redirect to the index rather than 404, because a report link may sit in a
+bookmark or an email to a funder.
+
+## 2026-08-18 · A hub card carries a qualifier, not a sentence and not a bare link
+
+Three attempts before this landed, which is worth recording because the middle two were both
+defensible and both wrong.
+
+Bare links in a subject card read as flat — an unstyled list. A sentence per report, as fifteen
+uniform tiles, was legible and pushed the whole grid below the fold: a menu you have to scroll is
+not doing a menu's job.
+
+What works is a card per subject with one line per report and a two-to-four word qualifier
+underneath — "Itemized / by item and partner". Enough that the card is not a list of links,
+little enough that six cards fit in a 3×2 grid measuring 659px to the bottom of the grid.
+
+Rejected: an icon per report row. It was in the mock and it was too busy — eleven glyphs in a
+grid whose cards already carry one each. One icon per card marks the subject; repeated down the
+rows it marks nothing.
+
+Also rejected: a live figure per subject card. It looks best in a screenshot and would have made
+a menu run six aggregate queries, duplicated the numbers the index pages now show, and put an
+all-time figure next to a date-ranged report.
+
+## 2026-08-18 · A zero is a figure, not a blank
+
+`dollar_value` returns "" for zero. That is a considered choice for a table column, where a
+stack of `$0.00` is noise. In a stat band it produced an empty figure under a label, which reads
+as broken data rather than as nought — two of them, on donations and product drives, and only
+visible by looking at the rendered page.
+
+Bands use `dollar_presentation`, which always renders. `dollar_value` is untouched: the table
+cells that use it still want the blank.
+
+## 2026-08-18 · A tab that needs its own action must be its own URL
+
+The partner agencies page had three header actions and a fourth — "New partner group" — in a bar
+of its own between the tab strip and the table, where it read as table furniture.
+
+It was there for a reason: the action belongs to the Groups tab, and the header could not follow
+the tab because the tabs switched panels in the browser without changing the URL. A header
+cannot react to state it does not know about.
+
+So the tabs became links. `/partners` and `/partner_groups` are separate pages, each with its
+own primary action: "New partner agency" on one, "New partner group" on the other. Three header
+actions on each, never four. This is what GitHub does — Issues gives you "New issue", Pull
+requests gives you "New pull request" — and Linear, Jira and Shopify the same.
+
+Two things fell out of it that were worth having anyway. A tab you can link to, bookmark and
+reach with the back button. And a partner groups page that exists, rather than a panel that only
+appears if you find the tab.
+
+**Not the ARIA tabs pattern.** A new `page_tabs` component sits beside `tabs` rather than
+replacing it. `role="tab"` promises a screen reader that activating this swaps a panel in the
+current document; when the tab loads a page that promise is false, and the tablist takes the
+arrow keys from the browser while it is at it. Page tabs are a `<nav>` of links with
+`aria-current`. `tabs` is still right where panels genuinely switch in place — items, storage
+locations.
+
+## 2026-08-18 · The button count rule was already being followed, just not written down
+
+Asked what the convention is for multiple buttons at the top of a page. Measured before
+answering: six index pages carry exactly three actions, always two secondary and one primary,
+and eleven carry two. The app is consistent, and consistent with what Polaris, Carbon, Material
+and Atlassian all specify — one primary, at most three, primary last.
+
+The rule simply was not in design.md, whose page header section covered spacing and the back
+link and said nothing about actions. That is why a fourth button had nowhere to go and ended up
+inside a table: there was no rule to violate, so nobody noticed it was being violated.
+
+Written down now, along with the corollary that a fourth button is a signal rather than a
+problem to place — usually a section of the page wanting an action of its own, which is a tab
+wanting to be a URL.
+
+## 2026-08-19 · The layout is not the page
+
+40 of 98 form pages hand-rolled their own header, card and inputs while rendering inside a
+correct design system layout. `bin/design/status.rb` counted every one of them as migrated,
+because it asks whether a view contains design system markup and they all did.
+
+That is the lesson worth keeping: **a page can sit in the right shell and still be unmigrated.**
+The shell was the easy half. What took the time was the inside of each form -- fields that mixed
+`f.input` with raw `f.label` + `f.text_field`, `class:` passed to `f.input` where simple_form
+ignores it, radio groups laid out with `&nbsp;` runs and `<br>`, and card classes pasted inline
+so a change to the card could never reach them.
+
+`bin/design/page-audit.rb` now checks for it and exits non-zero, so the gap status.rb leaves is
+covered by something.
+
+## 2026-08-19 · Open the page, every time
+
+Every batch turned up at least one defect no class-name audit could have found, and every one
+was obvious within seconds in a browser:
+
+- Divs that did not balance, so the browser split one form into two and left the submit button
+  outside the fields. Three pages had this. They worked, by the HTML parser's error recovery,
+  which is exactly why they survived.
+- A stray `intersect?` expression printing `true` onto a page.
+- A second `<h1>` inside a form.
+- An empty `<button>` — a collapse toggle whose AdminLTE JavaScript had been deleted.
+- A "New base item" page whose card header read "Update", with a blank name.
+
+The rule: rewrite a page, then load it. `submitInForm` and a count of fields outside the form
+are two cheap assertions that catch the whole unbalanced-markup class, and they are now in the
+verification list.
+
+## 2026-08-19 · A header replacement can take a warning with it
+
+`users/registrations/edit` kept its staging warning inside the hand-rolled header block. The
+header was replaced wholesale with `page_header` and the warning went with it -- a user-facing
+notice about not being able to change demo credentials, silently deleted.
+
+`spec/system/account_system_spec.rb` caught it, which is the argument for the assertion existing
+at all. But the general point is about mechanical replacement: when a block is swapped out
+wholesale, read what was inside it first. A header block is a plausible place for a page to keep
+something that is not a header.
+
+## 2026-08-19 · Audit every page kind, and separate defect from debt
+
+The form audit was form-only, so `show` and `index` pages had never been checked. They needed to
+be: nine of 31 show pages carried defects, including three cases of malformed markup that the
+browser silently repairs into a different tree.
+
+`bin/design/page-audit.rb` replaces `form-audit.rb` and covers show, index, form and partial. One
+tool rather than two overlapping ones.
+
+The useful addition is **two severities**, because they are not the same problem:
+
+- **Defect** — the page is wrong now. A class nothing defines, a hardcoded inline style, layout
+  built from `&nbsp;`, Title Case, or no `page_header` and therefore no back link.
+- **Debt** — the page renders correctly, but the card's classes are pasted inline instead of
+  rendering the component, so a change to the card can never reach it.
+
+The script exits non-zero on a defect and reports debt without enforcing it. Conflating them
+would mean either failing the build on cosmetics or letting real defects hide among them.
+
+Three exclusions, all deliberate: `shared/essentials/*`, because the components are the
+definition rather than a copy of it; mailer templates, where inline style is the only thing email
+clients honour; and `static/*`, which the migration map already records as standalone public
+documents outside the system.
+
+## 2026-08-19 · A show page is a description list, not a one-row table
+
+Four show pages presented a record as a table with a single row of data — `admin/partners/show`
+was three columns and one row, with an empty `<h2>` above it. Two others used a bare `<dl>` with
+no styling, so labels and values ran together in a wall of text.
+
+A record's fields are label-and-value pairs, which is what a description list is for. Styled as a
+two-column grid it reads better than either, and it does not promise a reader that more rows are
+coming.
+
+Also fixed on those pages: `partners/requests/show` set its field labels at `text-2xl font-bold`
+above values at `text-lg`, so every label was larger than the thing it labelled — the same
+inverted hierarchy the reports had.

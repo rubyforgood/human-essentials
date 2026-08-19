@@ -62,9 +62,6 @@ class DistributionsController < ApplicationController
     @distribution_totals = DistributionTotalsService.call(current_organization.distributions.class_filter(scope_filters))
     @total_value_all_distributions = @distribution_totals.values.sum(&:value)
     @total_items_all_distributions = @distribution_totals.values.sum(&:quantity)
-    paginated_ids = @paginated_distributions.ids
-    @total_value_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:value)
-    @total_items_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:quantity)
     @selected_item_category = filter_params[:by_item_category_id].presence
     @reporting_categories = Item.reporting_categories_for_select
     @selected_reporting_category = filter_params[:by_reporting_category].presence

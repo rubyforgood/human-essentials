@@ -1,6 +1,12 @@
 <%#
   A report: a date-range filter above one card of results.
+
   Locals: filter_url, title, subtitle (optional), footer (optional), id (optional).
+
+  Callers used to pass `gradient:`, `footer_options:` and `type:` as well. This partial has
+  never read any of them -- they are AdminLTE vocabulary that outlived the markup -- so they
+  have been removed from the call sites rather than left to imply the partial does something
+  with them.
 %>
 <%
   id ||= nil
@@ -22,7 +28,7 @@
     </div>
   <% end %>
 
-  <%= render "shared/essentials/card", card_class: (id ? nil : nil), footer: footer do %>
+  <%= render "shared/essentials/card", footer: footer do %>
     <div<%= " id=#{id.to_json.html_safe}".html_safe if id %>>
       <%= yield %>
     </div>

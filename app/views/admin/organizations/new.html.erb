@@ -1,69 +1,50 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "New - Organizations" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">New Organization</h1>
+<% content_for :title, "New - Organizations" %>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New organization",
+        subtitle: "A bank, and the first user who administers it.",
+        back: {path: admin_organizations_path, label: "Back to organizations"} %>
+</div>
+
+<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= essentials_error_summary(@organization) %>
+
+  <%= render "shared/essentials/card" do %>
+    <%= essentials_form_for @organization, url: admin_organizations_path do |f| %>
+      <%= f.hidden_field :account_request_id, value: @organization.account_request_id %>
+
+      <%= f.input :name, required: true, autofocus: true %>
+      <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
+      <%= f.input :email %>
+      <%= f.input :street %>
+      <%= f.input :city %>
+      <%= f.input :state, collection: us_states, prompt: "Select a state" %>
+      <%= f.input :zipcode %>
+      <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @organization %>
+      <%= f.simple_fields_for :account_request do |account_request| %>
+        <%= account_request.association :ndbn_member, label: "NDBN membership",
+              label_method: :full_name, value_method: :id %>
+      <% end %>
+      <%# Wrapped in f.input so the trix editor has a label. A bare rich_text_area renders a
+          trix-editor with role=textbox and no accessible name. %>
+      <%= f.input :default_email_text, label: "Default email text" do %>
+        <%= f.rich_text_area :default_email_text %>
+      <% end %>
+      <%= f.input :logo, hint: "A 4:1 ratio of width to height; the default is 763 by 188 pixels. JPEG or PNG." %>
+
+      <%# Was an <h1>, which gave the page two of them. The page header owns the only h1. %>
+      <fieldset class="mt-6 border-t border-slate-200 pt-5">
+        <legend class="text-base font-semibold text-slate-900">First user</legend>
+        <p class="mb-4 text-sm text-slate-600">The person who will administer this organization.</p>
+        <%= f.simple_fields_for :user, @user do |user| %>
+          <%= render "admin/users/user_form_fields", f: user %>
+        <% end %>
+      </fieldset>
+
+      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+        <%= submit_button %>
+        <%= essentials_link_button "Cancel", admin_organizations_path, variant: :ghost, size: :md %>
       </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
-
-<%= essentials_form_for @organization, url: admin_organizations_path do |f| %>
-
-  <section>
-    <div class="px-4 py-6 sm:px-6 lg:px-8">
-      <div class="grid gap-6">
-        <!-- left column -->
-        <div class="min-w-0">
-          <!-- jquery validation -->
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-            <div class="border-b border-slate-200 px-5 py-4">
-              <h3>Create New Organization</h3>
-            </div>
-            <!-- form start -->
-            <div class="px-5 py-4">
-
-              <div class="form-inputs">
-                <%= f.hidden_field :account_request_id, value: @organization.account_request_id %>
-
-                <%= f.input :name, required: true, autofocus: true %>
-                <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-                <%= f.input :email %>
-                <%= f.input :street %>
-                <%= f.input :city %>
-                <%= f.input :state, collection: us_states, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none", placeholder: "state" %>
-                <%= f.input :zipcode %>
-                <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: @organization %>
-                <%= f.simple_fields_for :account_request do |account_request| %>
-                  <%= account_request.input :ndbn_member, label: 'NDBN Membership' do %>
-                    <%= account_request.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
-                  <% end %>
-                <% end %>
-                <%= f.rich_text_area :default_email_text %>
-                <%= f.input :logo %>
-                <p class="mt-1 text-xs text-slate-500">Logo should be a 4:1 ratio of width / height (default image is 763 x 188
-                  pixels).
-                  Only jpeg/png format is supported.
-                </p>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add a user</h1>
-                <%= f.simple_fields_for :user, @user do |user| %>
-                  <%= render 'admin/users/user_form_fields', f: user %>
-                <% end %>
-
-              </div>
-            </div>
-
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= submit_button %>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-<% end %>
+    <% end %>
+  <% end %>
+</div>

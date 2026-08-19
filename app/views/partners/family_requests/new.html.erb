@@ -1,95 +1,63 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Families - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Family Details</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
+<% content_for :title, "Families - #{current_partner.name}" %>
+
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "New request for a child",
+        subtitle: "Pick the children you are requesting for.",
+        back: {path: partners_requests_path, label: "Back to requests"} %>
+</div>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# The filter block used the shared filter bar's shape by hand, and closed a div in the
+      middle of the form so the reset link sat outside it. %>
+  <%= form_for_filterrific @filterrific do |f| %>
+    <div class="mb-4 flex flex-wrap items-end gap-3">
+      <div class="min-w-[15rem]">
+        <%= f.label :search_families, "Search by guardian name",
+              class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= f.text_field :search_families,
+              class: "filterrific-periodically-observed #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}" %>
       </div>
-      <div class="min-w-0">
+      <div class="min-w-[15rem]">
+        <%= f.label :search_names, "Search by child name",
+              class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= f.text_field :search_names,
+              class: "filterrific-periodically-observed #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}" %>
+      </div>
+      <div class="flex items-center gap-2 pb-2">
+        <%= f.check_box :search_active,
+              class: "filterrific-periodically-observed size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" %>
+        <%= f.label :search_active, "Active children only", class: "text-sm text-slate-700" %>
+      </div>
+      <div class="flex items-center gap-2 pb-1">
+        <%= essentials_link_button "Reset search", reset_filterrific_url, variant: :ghost, size: :md %>
+        <%= render_filterrific_spinner %>
       </div>
     </div>
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Filters</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form_for_filterrific @filterrific do |f| %>
-              <div class="grid gap-6">
-                <div class="min-w-0">
-                  <%= f.label :search_families, "Search By Guardian Name" %>
-                  <%= f.text_field(
-                          :search_families,
-                          class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
-                      ) %>
-                </div>
-                <div class="min-w-0">
-                  <%= f.label :search_names, "Search By Child Name" %>
-                  <%= f.text_field(
-                          :search_names,
-                          class: "filterrific-periodically-observed block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
-                      ) %>
-                </div>
-                <div class="min-w-0">
-                  <%= f.label :search_active, "Show Active Only?" %>
-                  <br>
-                  <%= f.check_box(
-                          :search_active,
-                          class: 'filterrific-periodically-observed'
-                      ) %>
-                </div>
-                <div class="min-w-0">
-                  <%= render_filterrific_spinner %>
-                </div>
-              </div>
-              </div>
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= link_to(
-                        'Reset Search',
-                        reset_filterrific_url,
-                        class: 'inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600'
-                    ) %>
-            <% end %>
-          </div>
+  <% end %>
+
+  <div data-controller="confirmation"
+       data-confirmation-pre-check-path-value="<%= validate_partners_family_requests_path(format: :json) %>">
+    <%= render "shared/essentials/card", padded: false do %>
+      <%= form_with(url: partners_family_requests_path, method: "post", data: {confirmation_target: "form"}) do |f| %>
+        <div id="filterrific_results">
+          <%= render partial: "partners/family_requests/list", locals: {children: @children} %>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-          data-controller="confirmation"
-          data-confirmation-pre-check-path-value="<%= validate_partners_family_requests_path(format: :json) %>">
-          <%= form_with(url: partners_family_requests_path, method: 'post', data: { confirmation_target: "form" }) do |f| %>
-            <div id="filterrific_results">
-              <%= render(
-                partial: 'partners/family_requests/list',
-                locals: {children: @children}
-              ) %>
-            </div>
+        <div class="flex items-center gap-2 border-t border-slate-200 px-5 py-4">
+          <%= submit_tag "Submit essentials request",
+                class: essentials_button_classes(variant: :primary, size: :md),
+                data: {action: "click->confirmation#openModal"} %>
+          <%= essentials_link_button "Cancel", partners_requests_path, variant: :ghost, size: :md %>
+        </div>
+      <% end %>
+    <% end %>
 
-            <hr>
-
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= submit_tag("Submit Essentials Request", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600", data: { action: "click->confirmation#openModal" }) %>
-              <%= link_to "Cancel Request", partners_requests_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
-            </div>
-          <% end %>
-
-          <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
-          <%# and app/controllers/partners/family_requests_controller.rb#validate for how it gets populated. %>
-          <dialog id="partnerFamilyRequestConfirmationModal"
+    <%# Confirmation modal: see confirmation_controller.js for how it is shown, and
+        Partners::FamilyRequestsController#validate for how it is populated. %>
+    <dialog id="partnerFamilyRequestConfirmationModal"
             class="confirm w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
             aria-labelledby="partnerRequestConfirmationTitle"
             data-confirmation-target="modal"></dialog>
-        </div>
-      </div>
-    </div>
   </div>
-</section>
+</div>

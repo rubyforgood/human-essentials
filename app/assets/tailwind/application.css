@@ -52,6 +52,16 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /*
+   * A <fieldset> defaults to `min-width: min-content`, so it refuses to shrink below the width of
+   * its widest child and pushes past its container instead. On the organization settings page that
+   * put 61px of form outside a card with `overflow-hidden`, where it was clipped and unreachable at
+   * 320px -- WCAG 1.4.10. Grouping fields in fieldsets is right; inheriting this default is not.
+   */
+  fieldset {
+    min-width: 0;
+  }
+
   /* Bootstrap Icons are decorative by default; give them the same optical
      alignment everywhere rather than per-call-site margin fiddling. */
   [class^="bi-"]::before,
@@ -289,4 +299,48 @@
       margin-left: 0;
     }
   }
+}
+
+/*
+ * Third-party overrides. Deliberately outside @layer components.
+ *
+ * Cascade layers beat specificity: an unlayered rule wins against a layered one however specific
+ * the layered one is. The vendored stylesheets are imported unlayered, so a rule that has to beat
+ * them cannot live in a layer. That is why these are here and not with the components -- and it
+ * is why raising specificity inside the layer had no effect at all.
+ */
+
+/*
+ * Trix toolbar focus. Trix sets `outline: none` on its buttons and ships no focus style, which did
+ * not matter while every button was tabindex="-1" and unreachable. trix_toolbar_controller.js
+ * makes them keyboard-operable, so they need a visible indicator -- WCAG 2.4.7.
+ */
+trix-toolbar .trix-button:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Calendar: days from the neighbouring month.
+ *
+ * FullCalendar dims these with `opacity: 0.3` on `.fc-daygrid-day-top`, putting slate-900 over
+ * white at 1.96:1 -- measured with axe, against the 4.5:1 WCAG 1.4.3 requires. The intent is right
+ * and the mechanism is wrong: opacity dims text without saying how far. An explicit colour
+ * de-emphasises by the same amount and is a known ratio, slate-500 at 4.8:1.
+ *
+ * Targets the day-top div, which holds only the date, so events in those cells keep their contrast.
+ *
+ * `!important` is genuinely needed here, unlike the Trix rule above. Trix's CSS is imported into
+ * this stylesheet, so moving out of @layer components was enough to outrank it. FullCalendar
+ * injects its stylesheet into <head> at runtime -- unlayered as well, and later in source order
+ * than anything this file can emit. Tested both ways: without !important the day numbers stay at
+ * 1.47:1.
+ */
+.fc .fc-day-other .fc-daygrid-day-top {
+  opacity: 1 !important;
+}
+
+.fc .fc-day-other .fc-daygrid-day-number {
+  color: var(--color-slate-500);
 }

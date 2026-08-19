@@ -14,16 +14,16 @@ RSpec.describe "Creating a parner child", type: :system, js: true do
   describe "creating a child for a family" do
     it "creates a child with correct info" do
       visit new_partners_child_path(family_id: family.id)
-      fill_in "First Name", with: "Child First Name"
-      fill_in "Last Name", with: "Child Last Name"
+      fill_in "First name", with: "Child First Name"
+      fill_in "Last name", with: "Child Last Name"
       select "Other", from: "Race"
-      fill_in "Agency Child ID", with: "01234"
+      fill_in "Agency child ID", with: "01234"
       fill_in "Comments", with: "Some Comment"
 
       select2(page, "requestable-items-container", "Item 2")
       select2(page, "requestable-items-container", "Item 1")
 
-      click_button "Create Child"
+      click_button "Add child"
 
       expect(page).to have_text("Child was successfully created.")
       expect(page).to have_text("Child First Name")

@@ -85,8 +85,9 @@ RSpec.feature "Distributions by County", type: :system do
   def visit_distribution_by_county_with_specified_date_range(date_range_string)
     visit dashboard_path
 
-    find("#essentials-sidebar").find("button", text: /reporting/i).click
-    click_on "Distributions — by county"
+    # Reports are reached through the hub now, not a sidebar group of fifteen.
+    find("#essentials-sidebar").click_link("Reports")
+    within("#reports-distributions") { click_on "By county" }
 
     find("#filters_date_range").click
 

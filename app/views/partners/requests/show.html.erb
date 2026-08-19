@@ -1,70 +1,56 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Bulk Request - #{current_partner.name}" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_partner.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Request - #{current_partner.name}" %>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Request Details</h2>
-          </div>
-          <div class="px-5 py-4">
+<%#
+  The field labels were `text-2xl font-bold` and their values `text-lg`, so every label was
+  larger than the thing it labelled. They are a description list now. `text-gray-400` was also
+  the only use of the gray scale in the app, which is slate everywhere else.
+%>
+<div class="px-4 pt-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Request",
+        subtitle: "Submitted #{@partner_request.created_at.localtime.strftime("%d %b %Y at %H:%M")}",
+        back: {path: partners_requests_path, label: "Back to requests"} %>
+</div>
 
-            <% if flash[:success] %>
-              <%= render partial: 'partners/requests/success' %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <% if flash[:success] %>
+    <%= render partial: "partners/requests/success" %>
+  <% end %>
+
+  <%= render "shared/essentials/card", title: "Request details" do %>
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Request ID</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= @partner_request.id %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Comments</dt>
+        <dd class="mt-0.5 text-sm text-slate-900"><%= optional_data_text(@partner_request.comments) %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Requested items</dt>
+        <dd class="mt-0.5">
+          <ul class="space-y-1 text-sm text-slate-900">
+            <% @partner_request.item_requests.each do |item| %>
+              <li>
+                <%= item.name %> - <%= item.quantity %>
+                <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
+                  <%= item.request_unit.pluralize(item.quantity.to_i) %>
+                <% end %>
+              </li>
             <% end %>
-
-            <div>
-              <span class='text-2xl font-bold'>Request ID:</span>
-              <p class='text-lg'>
-                <%= @partner_request.id %>
-              </p>
-            </div>
-
-            <div>
-              <span class='text-2xl font-bold'>Comments:</span>
-              <p>
-                <% if @partner_request.comments.present? %>
-                  <%= @partner_request.comments %>
-                <% else %>
-                  <span class='italic text-gray-400'> None Provided </span>
-                <% end %>
-              </p>
-            </div>
-
-            <div>
-              <span class='text-2xl font-bold'>Requested Items:</span>
-              <ul class='text-lg'>
-                <% @partner_request.item_requests.each do |item| %>
-                  <li>
-                    <%= item.name %> - <%= item.quantity %>
-                    <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
-                      <%= item.request_unit.pluralize(item.quantity.to_i) %>
-                    <% end %>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-            <div>
-              <span class='text-2xl font-bold'>Submitted:</span>
-              <p class='text-lg'><%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
-            </div>
-            <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %></p>
-          </div>
-        </div>
+          </ul>
+        </dd>
       </div>
-    </div>
-  </div>
-</section>
+
+      <div>
+        <dt class="text-sm font-medium text-slate-600">Submitted</dt>
+        <dd class="mt-0.5 text-sm text-slate-900">
+          <%= @partner_request.created_at.localtime.strftime("%F %T") %>
+        </dd>
+      </div>
+    </dl>
+  <% end %>
+</div>

@@ -10,7 +10,9 @@ RSpec.describe Partners::HelpsController, type: :request do
   describe "for partner users" do
     it "displays the bank's information" do
       get partners_help_path
-      expect(response.body).to include("your essentials bank, Essentials Bank")
+      # The bank name is wrapped in <strong>, so the sentence is not contiguous text.
+      expect(response.body).to include("your essentials bank")
+      expect(response.body).to include("Essentials Bank")
       expect(response.body).to include("bank@test.com")
     end
   end

@@ -2,16 +2,16 @@
   <div class="account-request">
     <div class="p-3">
       <div class="mb-10">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Essentials Bank Account Request Form</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an essentials bank account</h1>
       </div>
 
       <div class="account-type-choice mb-3 flex items-start gap-2">
         <%= radio_button_tag(:account, :bank, @bank_selected, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
+        <%= label_tag(:account_bank, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
       </div>
       <div class="account-type-choice mb-3 flex items-start gap-2">
         <%= radio_button_tag(:account, :partner, false, class: "account_type mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
+        <%= label_tag(:account_partner, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
       </div>
 
       <%# Hide #partner_info and #create_bank selections unless radio button selected %>
@@ -35,7 +35,7 @@
         <p class='p-2 bg-yellow-200'>
           Fill out the details below about your bank to request a free account to use Human Essentials for your organization's essentials bank.
           <br><br>
-          <span class='text-bold'>Do you <span class='text-italic'>partner</span> with diaper and/or period supply banks? If so please go to the <%= link_to 'partner app', new_user_session_path %> to login.</span>
+          <span class="font-semibold">Do you <em>partner</em> with diaper and/or period supply banks? If so please go to the <%= link_to 'partner app', new_user_session_path %> to login.</span>
         </p>
 
         <%= essentials_form_for(@account_request) do |f| %>
@@ -81,16 +81,17 @@
     </div>
   </div>
 <% else %>
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" style='width: 30rem'>
-    <div class="px-5 py-4">
-      <div class="text-base font-semibold text-slate-900">
-        <h3>Request an account</h3>
+  <div class="w-[30rem]">
+    <%= render "shared/essentials/card", title: "Request an account" do %>
+      <div class="space-y-2 text-sm text-slate-700">
+        <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
+        <p>
+          To request an account,
+          <%= link_to "click here", "https://humanessentials.app/account_requests/new",
+                class: "font-medium text-brand-700 hover:text-brand-800" %>
+          to head over to the Human Essentials website.
+        </p>
       </div>
-
-      <div class="text-sm text-slate-700">
-        <p> Hey there, it looks like you're trying to request an account, but you're not currently on the live version of Human Essentials </p>
-        <p> To request an account, <%= link_to 'click here', 'https://humanessentials.app/account_requests/new' %> to head on over to the Human Essentials website</p>
-      </div>
-    </div>
+    <% end %>
   </div>
 <% end %>

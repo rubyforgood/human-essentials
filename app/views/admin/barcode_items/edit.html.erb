@@ -1,14 +1,8 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Admin - Inventory - Barcode Items - New" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editing Barcode Item</h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Admin - Inventory - Barcode Items - New" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Edit barcode item",
+        back: {path: admin_barcode_items_path, label: "Back to barcode items"} %>
+</div>
 
 <%= render partial: "form", object: @barcode_item %>
