@@ -1,10 +1,5 @@
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Pick Up Person</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form.input :pick_up_name, label: "Pick Up Person Name" %>
-            <%= form.input :pick_up_phone, label: "Pick Up Person's Phone #" %>
-            <%= form.input :pick_up_email, label: "Pick Up Person's Email (comma-separated if multiple addresses)", placeholder: "example1@org.com, example2@org.com" %>
-          </div>
-        </div>
+<%= render "shared/essentials/card", title: "Pick-up person" do %>
+  <%= form.input :pick_up_name, label: "Pick Up Person Name" %>
+  <%= form.input :pick_up_phone, label: "Pick Up Person's Phone #" %>
+  <%= form.input :pick_up_email, label: "Pick Up Person's Email (comma-separated if multiple addresses)", placeholder: "example1@org.com, example2@org.com" %>
+<% end %>

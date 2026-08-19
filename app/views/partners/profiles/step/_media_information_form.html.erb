@@ -16,7 +16,9 @@
   </div>
 
   <div class="mb-4">
-    <%= pf.check_box :no_social_media_presence, as: :boolean %>&nbsp;
-    <%= pf.label :no_social_media_presence, "No Social Media Presence" %>
+    <div class="flex items-start gap-2">
+        <%= pf.check_box :no_social_media_presence, as: :boolean, class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 mt-0.5" %>
+        <%= pf.label :no_social_media_presence, "No social media presence", class: "text-sm text-slate-700" %>
+      </div>
   </div>
 <% end %>

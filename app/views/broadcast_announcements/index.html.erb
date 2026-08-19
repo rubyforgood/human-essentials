@@ -1,23 +1,11 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Send broadcast announcement" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Broadcast Announcement to Partners</h1>
-<p class="mt-1 text-sm text-slate-600">for <%= current_organization.name %></p>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<% content_for :title, "Send broadcast announcement" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Partner announcements",
+        subtitle: "Messages your partners see on their dashboard." %>
+</div>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", padded: false do %>
 
           <div class="px-5 py-4">
             <div class='flex justify-end mb-4'>
@@ -41,10 +29,5 @@
             </table>
 
           </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-</section>
+  <% end %>
+</div>

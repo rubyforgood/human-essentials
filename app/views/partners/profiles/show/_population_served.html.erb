@@ -1,6 +1,4 @@
-<div class="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Population Served</h2>
-  <div class="px-5 py-4">
+<%= render "shared/essentials/card", title: "Population served", card_class: "mb-4" do %>
     <dl class="space-y-3">
       <dt class="text-xs font-medium text-slate-500">Clients Have An Income Requirement to Work With You</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_requirement_desc) %></dd>
@@ -10,7 +8,7 @@
 
     </dl>
 
-    <h3 class="mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Race/Ethnicity of Client Base</h3>
+    <h3 class="mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Race and ethnicity of client base</h3>
     <dl class="mt-2 space-y-3">
       <dt class="text-xs font-medium text-slate-500">African American</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.population_black || t(:not_provided) %></dd>
@@ -41,7 +39,7 @@
 
     </dl>
 
-    <h3 class="mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Poverty Information of Those Served</h3>
+    <h3 class="mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Poverty information of those served</h3>
     <dl class="mt-2 space-y-3">
       <dt class="text-xs font-medium text-slate-500">At FPL or below</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.at_fpl_or_below || t(:not_provided) %></dd>
@@ -55,5 +53,4 @@
       <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.poverty_unknown || t(:not_provided) %></dd>
     </dl>
-  </div>
-</div>
+<% end %>

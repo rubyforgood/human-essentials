@@ -1,23 +1,12 @@
-<section class="mb-6">
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mb-2">
-      <div class="min-w-0">
-        <% content_for :title, "Base Items - Inventory" %>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">All Base Items</h1>
-      </div>
-      <div class="min-w-0">
-      </div>
-    </div>
-  </div>
-</section>
+<% content_for :title, "Base Items - Inventory" %>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: "Base items",
+        subtitle: "The shared catalogue every organization's items map onto." %>
+</div>
 
-<!-- Main content -->
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <!-- Default box -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card", padded: false do %>
           <div class="px-5 py-4">
             <table class="data-table">
               <thead>
@@ -33,8 +22,5 @@
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  <% end %>
+</div>

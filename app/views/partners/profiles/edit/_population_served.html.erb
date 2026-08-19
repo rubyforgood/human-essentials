@@ -1,39 +1,29 @@
 <%# Two self-contained cards. This partial used to close its parent's wrappers and open the
     next card's, which left the page's tag depth wrong from here down. %>
 <div class="grid gap-6">
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Population served</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
-                           as: :radio_buttons,
-                           wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
-            <%= form.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
-                           as: :radio_buttons,
-                           wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
-          </div>
-  </div>
+  <%= render "shared/essentials/card", title: "Population served" do %>
+    <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
+    as: :radio_buttons,
+    wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+    <%= form.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
+    as: :radio_buttons,
+    wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+  <% end %>
 
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Race/Ethnicity of Client Base</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form.input :population_black, label: "% African American", as: :integer %>
-            <%= form.input :population_white, label: "% Caucasian", as: :integer %>
-            <%= form.input :population_hispanic, label: "% Hispanic", as: :integer %>
-            <%= form.input :population_asian, label: "% Asian", as: :integer %>
-            <%= form.input :population_american_indian, label: "% American Indian", as: :integer %>
-            <%= form.input :population_island, label: "% Pacific Island", as: :integer %>
-            <%= form.input :population_multi_racial, label: "% Multi-racial", as: :integer %>
-            <%= form.input :population_other, label: "% Other", as: :integer %>
-            <%= form.input :zips_served, label: "Zip Codes Served" %>
-            <h3 class="pt-3 font-semibold">Poverty Information of Those Served</h3>
-            <%= form.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer %>
-            <%= form.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer %>
-            <%= form.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer %>
-            <%= form.input :poverty_unknown, label: "% Poverty Unknown", as: :integer %>
-          </div>
-        </div>
-</div>
+  <%= render "shared/essentials/card", title: "Race and ethnicity of client base" do %>
+  <%= form.input :population_black, label: "% African American", as: :integer %>
+  <%= form.input :population_white, label: "% Caucasian", as: :integer %>
+  <%= form.input :population_hispanic, label: "% Hispanic", as: :integer %>
+  <%= form.input :population_asian, label: "% Asian", as: :integer %>
+  <%= form.input :population_american_indian, label: "% American Indian", as: :integer %>
+  <%= form.input :population_island, label: "% Pacific Island", as: :integer %>
+  <%= form.input :population_multi_racial, label: "% Multi-racial", as: :integer %>
+  <%= form.input :population_other, label: "% Other", as: :integer %>
+  <%= form.input :zips_served, label: "Zip Codes Served" %>
+  <h3 class="pt-3 font-semibold">Poverty information of those served</h3>
+  <%= form.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer %>
+  <%= form.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer %>
+  <%= form.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer %>
+  <%= form.input :poverty_unknown, label: "% Poverty Unknown", as: :integer %>
+  </div>
+<% end %>

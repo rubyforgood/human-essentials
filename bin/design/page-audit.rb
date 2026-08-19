@@ -68,7 +68,9 @@ kinds.each do |kind, pattern|
     defects << "dead class: #{dead.join(", ")}" if dead.any?
     inline = src.scan(/style=['"]/).size
     defects << "#{inline} inline style#{"s" if inline > 1}" if inline.positive?
-    nbsp = src.scan("&nbsp;").size
+    # &nbsp; inside sr-only prose separates words for a screen reader; without it "Deactivate"
+    # runs into the explanation after it. Only layout &nbsp; is a defect.
+    nbsp = src.gsub(/<span class="sr-only">.*?<\/span>/m, "").scan("&nbsp;").size
     defects << "#{nbsp} &nbsp;" if nbsp.positive?
     title_case = src.scan(/<h[1-3][^>]*>\s*([A-Z][a-z]+(?: [A-Z][a-z]+){1,})/).flatten.uniq
     defects << "Title Case: #{title_case.first}" if title_case.any?

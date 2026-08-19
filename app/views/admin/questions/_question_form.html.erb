@@ -1,30 +1,14 @@
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <!-- left column -->
-      <div class="min-w-0">
-        <!-- jquery validation -->
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h3>FAQ Entry</h3>
-          </div>
-          <!-- form start -->
-          <div class="px-5 py-4">
-            <div class="form-inputs">
-              <%= f.input :title %>
-              <div class="font-bold mb-2">Answer</div>
-              <%= f.input :answer, label: "Answer" do %>
-                <%= f.rich_text_area :answer %>
-              <% end %>
-            </div>
-          </div>
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= submit_button %>
-          </div>
-        </div>
-      </div>
-
-    </div>
+<%= render "shared/essentials/card", title: "FAQ Entry" do %>
+<div class="px-5 py-4">
+  <div class="form-inputs">
+    <%= f.input :title %>
+    <div class="font-bold mb-2">Answer</div>
+    <%= f.input :answer, label: "Answer" do %>
+      <%= f.rich_text_area :answer %>
+    <% end %>
   </div>
-</section>
+</div>
+<div class="border-t border-slate-200 px-5 py-3">
+  <%= submit_button %>
+</div>
+<% end %>

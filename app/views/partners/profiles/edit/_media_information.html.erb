@@ -1,13 +1,10 @@
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Media Information</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form.input :website, label: "Website" %>
-            <%= form.input :facebook, label: "Facebook" %>
-            <%= form.input :twitter, label: "Twitter" %>
-            <%= form.input :instagram, label: "Instagram" %>
-            <%= form.check_box :no_social_media_presence, as: :boolean %>&nbsp;
-            <%= form.label :no_social_media_presence, "No Social Media Presence" %>
-          </div>
-        </div>
+<%= render "shared/essentials/card", title: "Media information" do %>
+  <%= form.input :website, label: "Website" %>
+  <%= form.input :facebook, label: "Facebook" %>
+  <%= form.input :twitter, label: "Twitter" %>
+  <%= form.input :instagram, label: "Instagram" %>
+  <div class="mb-2 flex items-start gap-2">
+      <%= form.check_box :no_social_media_presence, as: :boolean, class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 mt-0.5" %>
+      <%= form.label :no_social_media_presence, "No social media presence", class: "text-sm text-slate-700" %>
+    </div>
+<% end %>

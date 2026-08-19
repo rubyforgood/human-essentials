@@ -29,12 +29,13 @@ module PartnersHelper
 
   # In step-wise editing of the partner profile, the partial name is used as the section header by default.
   # This helper allows overriding the header with a custom display name if needed.
+  # Organization::ALL_PARTIALS already pairs each key with its display name and is what the
+  # settings select shows, so it is the source here too. Humanizing separately is how the
+  # accordion came to say "Pick up person" while the select said "Pick-up person".
   def partial_display_name(partial)
-    custom_names = {
-      'attached_documents' => 'Additional Documents'
-    }
-
-    custom_names[partial] || partial.humanize
+    custom_names = {"attached_documents" => "Additional documents"}
+    from_constant = Organization::ALL_PARTIALS.find { |_label, key| key == partial.to_s }&.first
+    custom_names[partial.to_s] || from_constant || partial.to_s.humanize
   end
 
   def section_with_errors?(section, sections_with_errors = [])

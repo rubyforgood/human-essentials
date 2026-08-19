@@ -1,7 +1,5 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <h2 class="border-b border-slate-200 px-5 py-4 text-base font-semibold text-slate-900">Contacts</h2>
-  <div class="px-5 py-4">
-    <h3 class="text-sm font-semibold text-slate-900">Executive Director</h3>
+<%= render "shared/essentials/card", title: "Contacts" do %>
+    <h3 class="text-sm font-semibold text-slate-900">Executive director</h3>
     <dl class="space-y-3">
       <dt class="text-xs font-medium text-slate-500">Name</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.executive_director_name %></dd>
@@ -13,7 +11,7 @@
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.executive_director_email %></dd>
     </dl>
 
-    <h3 class="text-sm font-semibold text-slate-900">Primary Contact Person</h3>
+    <h3 class="text-sm font-semibold text-slate-900">Primary contact person</h3>
     <dl class="space-y-3">
       <dt class="text-xs font-medium text-slate-500">Name</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.primary_contact_name %></dd>
@@ -27,5 +25,4 @@
       <dt class="text-xs font-medium text-slate-500">Email</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.primary_contact_email %></dd>
     </dl>
-  </div>
-</div>
+<% end %>

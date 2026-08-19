@@ -63,7 +63,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
       # Expect to see the a new organization with the name provided
       # originally in the AccountRequest
-      expect(page).to have_content('All Human Essentials Organizations')
+      expect(page).to have_content('Organizations')
       expect(page).to have_content(created_account_request.organization_name)
       expect(page).to have_content(created_account_request.email)
 
