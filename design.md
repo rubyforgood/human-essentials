@@ -831,9 +831,31 @@ Four rules, and the first three exist because breaking any one of them was repor
    your attention" on a status, so it cannot also mean "help" in the top bar. The user guide is
    `bi-book`; in-app help is `bi-life-preserver`.
 4. **A group holds at most about seven items.** Past that it is a menu inside a menu and wants
-   a landing page instead. `Reporting` currently holds 15 and is in the backlog for this.
+   a landing page instead. `Reporting` held 15 and became the reports hub for exactly this reason.
+5. **Weight follows the level, not the behaviour.** Every top-level item is
+   `font-semibold text-slate-700`, whether it expands or not; every nested item is
+   `font-medium text-slate-600`. The chevron says "this opens"; type says how deep you are.
 
 Groups collapse and the one containing the current page opens on load.
+
+Rule 5 was added after Dashboard, Reports and My organization were found sitting at the *child*
+weight beside Operations and Inventory at the parent weight — all four at the same indent. A
+top-level destination read as a child that had lost its parent, which is what "the nav looks odd"
+turned out to mean. This is the convention in GitHub, Linear, Notion, Jira, Stripe and Vercel:
+disclosure is marked by an affordance, hierarchy by type.
+
+**Ordering.** Home first; then the work, grouped by the thing it acts on; then read-only views of
+that work; then the pinned account item. Stripe, Shopify, Xero and QuickBooks all order a rail
+this way, and the reason is frequency: you visit a report about what you did less often than you
+do the thing. *Reports* currently sits at the top beside *Dashboard*, which is a leftover from
+building the hub — grouping the two leaf items looked tidy in the markup and puts a derived view
+above the operational ones. It belongs after `Network`.
+
+**The bottom strip.** The rail's pinned item and the page footer are both `h-14` with a full-bleed
+top border, so their rules meet at the same height and run into the rail's own `border-r` as one
+line across the screen. They were 12px apart, which reads as a mistake rather than a separation.
+The two carry different type on purpose — the rail item is a destination at `text-sm`, the footer
+is a colophon at `text-xs` — but they share a baseline grid.
 
 ### Bank shell — `layouts/essentials_app.html.erb`
 

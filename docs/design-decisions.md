@@ -1488,3 +1488,36 @@ request-and-render under a full suite exceeds two seconds often enough to produc
 read as wrong row counts rather than as timeouts. It only lengthens the path to a genuine
 failure; a passing assertion still returns as soon as it is true. Three specs were chasing this
 before the cause was clear.
+
+## 2026-08-20 · Nav weight follows the level, and the two bottom strips are one band
+
+**Decision.** Every top-level sidebar item is `font-semibold text-slate-700`, whether it expands
+or not; nested items are `font-medium text-slate-600`. The rail's pinned item and the page footer
+are both `h-14` with a full-bleed top border.
+
+**Rationale, on the weight.** Dashboard, Reports and My organization were at the *child* weight —
+500/slate-600 — sitting at the same indent as Operations, Inventory and Network at 600/slate-700.
+Measured, all six at `left: 12`. So a top-level destination looked like a child that had lost its
+parent, which is what "the typography does not match" turned out to mean.
+
+The mistake underneath it is that the styling encoded **behaviour** (does this expand?) rather
+than **hierarchy** (how deep is this?). GitHub, Linear, Notion, Jira, Stripe and Vercel all do the
+opposite, and the reason is that a rail is scanned by indentation and weight: an affordance marks
+what a thing does, type marks where it sits. Dashboard only ever looked right because it was the
+active page and picked up the active weight by accident.
+
+**Rationale, on the strips.** The rail's pinned item and the page footer both sit at the bottom of
+the screen, 12px apart — their rules at y=831 and y=843. Twelve pixels is too little to read as a
+deliberate separation and too much to read as a line, so it reads as a mistake. Both are `h-14`
+now and their rules meet at y=844; the rail's `-mx-3` takes its border to the rail edge, where the
+`border-r` carries it into the footer's. Measured: 0→255 and 256→1440, one line.
+
+They keep different type on purpose. The rail item is a destination at `text-sm`; the footer is a
+colophon at `text-xs`. Matching them would make the credit look like a fourth navigation item.
+
+**Not done: moving Reports.** It sits at the top beside Dashboard because grouping the two leaf
+items was tidy when the reports hub replaced the fifteen-item Reporting group. The convention —
+Stripe, Shopify, Xero, QuickBooks — is home, then the work, then read-only views of the work, then
+the pinned account item, ordered by how often each is wanted. By that rule Reports belongs after
+`Network`. Left in place pending a decision, because nav order is the sort of thing a particular
+bank may have a reason about, and the rule is now written into design.md either way.

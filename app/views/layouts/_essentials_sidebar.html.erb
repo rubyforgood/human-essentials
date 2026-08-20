@@ -21,7 +21,7 @@
     </button>
   </div>
 
-  <nav class="flex flex-1 flex-col overflow-y-auto px-3 pb-4" aria-label="Main">
+  <nav class="flex flex-1 flex-col overflow-y-auto px-3" aria-label="Main">
     <%# The admin area gets its own destinations. None of the bank navigation applies there,
         and stacking both would be two full navigations in one rail. %>
     <% if essentials_admin_area? %>
@@ -31,8 +31,8 @@
         <% end %>
       </ul>
 
-      <div class="mt-auto border-t border-slate-200 pt-4">
-        <ul class="space-y-0.5">
+      <div class="mt-auto -mx-3 flex h-14 shrink-0 items-center border-t border-slate-200 px-3">
+        <ul class="w-full space-y-0.5">
           <%= render "layouts/essentials_nav_link",
                 item: EssentialsNavHelper::NavItem.new(label: "Leave admin", path: dashboard_path, active_on: [], icon: "bi-arrow-left") %>
         </ul>
@@ -47,9 +47,15 @@
         <%= render "layouts/essentials_nav_group", group: group %>
       <% end %>
 
+      <%#
+        The bottom strip. `h-14` and a full-bleed border so its rule meets the page footer's at
+        the same height and runs into the rail's own border-r -- the two read as one band across
+        the bottom of the screen. They were 12px apart, which looked like a mistake rather than a
+        separation. See design.md.
+      %>
       <% if (settings = essentials_nav_settings) %>
-        <div class="mt-auto border-t border-slate-200 pt-4">
-          <ul class="space-y-0.5">
+        <div class="mt-auto -mx-3 flex h-14 shrink-0 items-center border-t border-slate-200 px-3">
+          <ul class="w-full space-y-0.5">
             <%= render "layouts/essentials_nav_link", item: settings %>
           </ul>
         </div>

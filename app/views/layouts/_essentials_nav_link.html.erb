@@ -3,16 +3,25 @@
   Active state is colour AND aria-current, never colour alone.
 %>
 <% active = essentials_nav_item_active?(item) %>
+<%
+  # An icon marks a top-level destination. Items inside a group have none, and their text is
+  # indented instead, so the rail has one column of glyphs rather than two.
+  #
+  # Weight follows the *level*, not whether the item expands. Dashboard, Reports and My
+  # organization sat at font-medium/slate-600 -- the child weight -- next to Operations and
+  # Inventory at font-semibold/slate-700, so a top-level destination read as a child that had
+  # lost its parent. The chevron is what says "this opens"; type says how deep you are.
+  top_level = item.icon.present?
+  resting = top_level ? "font-semibold text-slate-700" : "font-medium text-slate-600"
+%>
 <li>
-  <%# An icon marks a top-level destination. Items inside a group have none, and their text
-      is indented instead, so the rail has one column of glyphs rather than two. %>
   <%= link_to item.path,
         "aria-current": (active ? "page" : nil),
         class: [
           "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
-          (item.icon ? nil : "pl-8"),
+          (top_level ? nil : "pl-8"),
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
-          (active ? "bg-brand-50 font-semibold text-brand-700" : "font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900")
+          (active ? "bg-brand-50 font-semibold text-brand-700" : "#{resting} hover:bg-slate-100 hover:text-slate-900")
         ].compact do %>
     <% if item.icon %>
       <i class="<%= item.icon %> shrink-0 text-sm" aria-hidden="true"></i>
