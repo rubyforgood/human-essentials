@@ -19,6 +19,18 @@ pipeline became Propshaft (ADR 0012) the undigested asset path 404s — only
 links it would silently render unstyled, which is how all nine of these were found: the heading
 font had fallen back to Times New Roman.
 
+Two traps in that arrangement, both of which have produced a mockup that lied:
+
+- **Re-copy `mockup.css` after every Tailwind rebuild.** It is a snapshot, not a link. A mockup
+  opened against a stale copy renders with the classes the app had at copy time — which is how
+  a `text-slate-300` on a disabled control came out slate-600, silently, in a panel whose whole
+  point was showing a disabled control.
+- **A mockup can only use utility classes the app already uses somewhere.** Tailwind does not
+  scan `docs/mockups/` or `public/`, so a class no view uses is not in the stylesheet at all. If
+  a mockup proposes *new* styling, write the rule out in the mockup's own `<style>` block,
+  exactly as it would appear in `application.css`. That is more honest anyway: it shows the rule
+  being proposed rather than borrowing something that happens to look similar.
+
 If a mockup shows responsive behaviour with an `<iframe srcdoc="...">`, **escape `<` and `>` in
 the payload as well as the quotes**. rack-mini-profiler injects its script tag at the first
 `</body>` in the response, and an unescaped one inside the attribute means it injects *there* --
@@ -36,5 +48,6 @@ Chromium's default 300px that way.
 | `filter-density-options.html` | The date range cell is twice the width of its neighbours and the actions take a row of their own. Should a dense filter set collapse? | **Option C chosen**, threshold five, with the date range narrowed to one column rather than made conditional. `/donations` went 264px to 38px. |
 | `pagination-options.html` | Which tables should paginate, and how many rows? | **Option B chosen** — three bands by measured row height. Recorded that `items` computes pagination and never renders it (6,442px page), and that row heights vary 4.5× so one page size cannot serve every table. |
 | `pagination-designs.html` | The system already has a pager. What else would fit it, and does the pager say the right thing? | **Option A chosen**: the numbered pager stays and the label became "Showing 31–45 of 272 requests". `« First` and `Last »` kept, which the A panel had dropped — see `design.md` for why. A rows-per-page select and load-more were both argued against and not built. |
+| `pagination-count-options.html` | A table that fits on one page shows no count at all, and the control set reflows as you page. What is the convention? | Awaiting a decision. Three options; recommends A with Stripe's control set — the strip always renders, Prev and Next are always there and disabled when they lead nowhere, First and Last appear only when there is more than one page. |
 | `filter-consistency-options.html` | Two bugs (every modal opens top-left; Calculate product totals is inside the filter bar), plus: should the disclosure threshold go, how does industry take a custom date range, and are two Clears needed? | **All built.** Both bugs fixed, the threshold and the second Clear deleted, and the date range rebuilt as a popover on a shared `popover` controller. `bin/design/overlay-audit.js` added, because neither existing audit had ever opened an overlay. |
 | `filters-and-summary-options.html` | Four questions: why filter controls are different widths and leave trailing white space; whether to auto-apply instead of a Filter button; what "recent and upcoming" means; and what subheader the summary card needs. | **All four recommendations built**, auto-filtering as option B: a grid bar, the preset renamed, a titled summary card with a scope sentence, and filters applied on change into a Turbo Frame. |

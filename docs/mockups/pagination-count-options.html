@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The count on single-page tables &mdash; options</title>
+<link rel="stylesheet" href="/mockup.css">
+<style>
+  body { background: #f8fafc; }
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  .opt { margin-top: 2.75rem; }
+  .note { max-width: 46rem; }
+  .swatch { border: 1px dashed #cbd5e1; border-radius: 0.75rem; padding: 1rem; background: #fff; }
+  table.demo td, table.demo th { white-space: nowrap; }
+  .caselabel { font-size: 0.75rem; font-weight: 600; color: #475569; margin: 1rem 0 0.35rem; }
+  /* Proposed addition to application.css, @layer components, beside .pagination-link.
+     Written out here rather than borrowed from a utility class: a mockup can only use
+     utilities the app itself already uses, because Tailwind does not scan this file. */
+  .pagination-link[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; }
+  .pagination-link[aria-disabled="true"]:hover { background-color: transparent; color: var(--color-slate-600); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="text-2xl font-semibold text-slate-900">The count on single-page tables</h1>
+  <p class="mt-2 text-sm text-slate-600 note">
+    Two questions in one: should a table that fits on one page still say how many rows it has,
+    and should the control set stay put instead of appearing and disappearing? Measured in this
+    app on 20 August 2026.
+  </p>
+
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">What happens today</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Two separate reflows, and the second one is not the one you asked about but is the same
+      problem:
+    </p>
+    <ul class="mt-2 space-y-1 text-sm text-slate-600 note list-disc pl-5">
+      <li><strong>One page &rarr; no strip at all.</strong> The card simply ends after the last
+      row, so nothing says how many rows matched. Nine of the sixteen index pages are in this
+      state on the seed data.</li>
+      <li><strong>The pager itself reflows as you page.</strong>
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">&laquo; First</code> and
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">&lsaquo; Prev</code> are not
+      rendered at all on page 1, and Next and Last are not rendered on the last page. On
+      /requests that is 7 controls on page 1, 14 on page 5 and 8 on page 10 &mdash; the row
+      of buttons changes width under the cursor every time you use it.</li>
+      <li><strong>The screen-reader announcement gives up.</strong> When a filter applies,
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">auto_submit_controller</code>
+      announces the new count &mdash; except on a paginated page, where it says
+      &ldquo;Results updated&rdquo;, because the rows on screen are not the total and it has
+      nothing else to read. Any option below fixes that as a side effect.</li>
+    </ul>
+
+    <p class="caselabel">A table that fits on one page &mdash; today</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="caselabel">Page 1 of 10 &mdash; today. No First, no Prev.</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">1&ndash;15</span> of <span class="font-medium text-slate-900">146</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><span class="pagination-link" aria-current="page">1</span></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><a href="#" class="pagination-link">3</a></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><a href="#" class="pagination-link">5</a></li>
+            <li><span class="pagination-gap">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+            <li><a href="#" class="pagination-link">Last &raquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================== A ============================== -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">Option A &mdash; the strip is always there, and so are the controls</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Recommended</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The footer renders whatever the row count, and a control that leads nowhere is drawn
+      disabled rather than removed. This is the majority convention in dense admin tables:
+      <strong>Stripe</strong>, <strong>Shopify Polaris</strong> (whose docs say pagination
+      should stay visible for consistency), <strong>Material UI</strong>
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">TablePagination</code>,
+      <strong>Ant Design</strong> (which ships
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">hideOnSinglePage: false</code> by
+      default) and <strong>AG Grid</strong>.
+    </p>
+
+    <p class="caselabel">A table that fits on one page</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">1&ndash;3</span> of <span class="font-medium text-slate-900">3</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><span class="pagination-link" aria-disabled="true">&laquo; First</span></li>
+            <li><span class="pagination-link" aria-disabled="true">&lsaquo; Prev</span></li>
+            <li><span class="pagination-link" aria-current="page">1</span></li>
+            <li><span class="pagination-link" aria-disabled="true">Next &rsaquo;</span></li>
+            <li><span class="pagination-link" aria-disabled="true">Last &raquo;</span></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <p class="caselabel">Page 1 of 10 &mdash; the same five controls, in the same places</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">1&ndash;15</span> of <span class="font-medium text-slate-900">146</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><span class="pagination-link" aria-disabled="true">&laquo; First</span></li>
+            <li><span class="pagination-link" aria-disabled="true">&lsaquo; Prev</span></li>
+            <li><span class="pagination-link" aria-current="page">1</span></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><a href="#" class="pagination-link">3</a></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><a href="#" class="pagination-link">5</a></li>
+            <li><span class="pagination-gap">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+            <li><a href="#" class="pagination-link">Last &raquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> the card has the same shape whatever the data, and the buttons
+      stop moving under the cursor. Every table says how many rows matched, which is the
+      question the filter bar raises.</li>
+      <li><strong>For, on accessibility:</strong> disabled here means a
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">&lt;span aria-disabled="true"&gt;</code>,
+      not a disabled link. That is already this app's rule &mdash;
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">ui_helper.rb</code> renders an
+      unavailable action as a non-focusable span for exactly this reason, because a disabled
+      link stays focusable and announces nothing.</li>
+      <li><strong>Against:</strong> four dead controls under a three-row table is visible
+      chrome that does nothing. Stripe and Material show only a disabled Prev/Next pair, not
+      First and Last as well.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== B ============================== -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Option B &mdash; the count is always there, the controls only when they lead somewhere</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The strip always renders and always states the total; the buttons appear only when there
+      is a second page. This is <strong>Django admin</strong>, which prints &ldquo;9
+      items&rdquo; under every list and adds page links only when it needs them.
+    </p>
+
+    <p class="caselabel">A table that fits on one page</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <p class="text-sm text-slate-600"><span class="font-medium text-slate-900">3</span> requests</p>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> no dead chrome. The sentence shortens honestly &mdash;
+      &ldquo;3 requests&rdquo; rather than &ldquo;Showing 1&ndash;3 of 3 requests&rdquo;, which
+      states a range nobody needed.</li>
+      <li><strong>Against:</strong> it answers the count question but not the reflow one. The
+      pager still grows and shrinks between pages unless that is fixed separately, and the strip
+      still changes height class between a one-page and a multi-page table.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== C ============================== -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Option C &mdash; the count belongs to the table, not to the pager</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The count moves into the card header, where it is part of the table's identity and is
+      there whether or not there is a pager. The footer appears only when there is more than one
+      page. This is <strong>GitHub</strong> (the count is in the Open/Closed tabs above the
+      list), <strong>Salesforce Lightning</strong> (&ldquo;20 items &bull; sorted by Name&rdquo;
+      in the list header) and <strong>Linear</strong>.
+    </p>
+
+    <p class="caselabel">A table that fits on one page</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+        <div class="min-w-0">
+          <h2 class="text-base font-semibold text-slate-900">Requests</h2>
+          <p class="mt-0.5 text-sm text-slate-600"><span class="font-medium text-slate-900">3</span> matching the current filters</p>
+        </div>
+      </div>
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> the count sits with the thing it counts and reads before the
+      table rather than after it, which is the order you want when the question is &ldquo;did
+      that filter do anything?&rdquo;</li>
+      <li><strong>Against:</strong> most index cards in this app have no header at all &mdash;
+      they are <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">padded: false</code> with
+      the table meeting the card edge. This would add a 57px header to sixteen pages, directly
+      under a summary card that already carries a scope sentence saying much the same thing.
+      Two counts, 60px apart.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== rec ============================== -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Recommendation</h2>
+    <div class="mt-3 swatch note">
+      <p class="text-sm text-slate-700">
+        <strong>Option A, with Stripe's control set rather than the full one.</strong> Keep the
+        strip always, keep the controls always, but the persistent pair is
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">&lsaquo; Prev</code> and
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">Next &rsaquo;</code> &mdash;
+        disabled when they lead nowhere &mdash; with
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">&laquo; First</code> and
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">Last &raquo;</code> appearing
+        only on a table that has more than one page.
+      </p>
+      <p class="mt-3 text-sm text-slate-700">
+        That gets the whole benefit &mdash; a card of stable shape, a count on every table, and
+        buttons that stop moving between pages &mdash; without putting four dead controls under
+        a three-row table. First and Last are worth keeping when they mean something, because
+        jumping to the oldest record is a real task on audits and events; under a one-page table
+        they mean nothing at all.
+      </p>
+      <p class="mt-3 text-sm text-slate-700">
+        Not C, only because of where this app puts things: sixteen index cards would grow a
+        header they do not currently have, immediately below a summary card that already states
+        the scope. If those cards had titles, C would be the better idea.
+      </p>
+    </div>
+
+    <p class="caselabel">The recommendation, one page</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">1&ndash;3</span> of <span class="font-medium text-slate-900">3</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><span class="pagination-link" aria-disabled="true">&lsaquo; Prev</span></li>
+            <li><span class="pagination-link" aria-current="page">1</span></li>
+            <li><span class="pagination-link" aria-disabled="true">Next &rsaquo;</span></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <p class="caselabel">The recommendation, page 1 of 10</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">1&ndash;15</span> of <span class="font-medium text-slate-900">146</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><span class="pagination-link" aria-disabled="true">&laquo; First</span></li>
+            <li><span class="pagination-link" aria-disabled="true">&lsaquo; Prev</span></li>
+            <li><span class="pagination-link" aria-current="page">1</span></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><a href="#" class="pagination-link">3</a></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><a href="#" class="pagination-link">5</a></li>
+            <li><span class="pagination-gap">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+            <li><a href="#" class="pagination-link">Last &raquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <p class="caselabel">The recommendation, page 10 of 10 &mdash; Next and Last stay, disabled</p>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">136&ndash;146</span> of <span class="font-medium text-slate-900">146</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex flex-wrap items-center gap-1">
+            <li><a href="#" class="pagination-link">&laquo; First</a></li>
+            <li><a href="#" class="pagination-link">&lsaquo; Prev</a></li>
+            <li><span class="pagination-gap">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">6</a></li>
+            <li><a href="#" class="pagination-link">7</a></li>
+            <li><a href="#" class="pagination-link">8</a></li>
+            <li><a href="#" class="pagination-link">9</a></li>
+            <li><span class="pagination-link" aria-current="page">10</span></li>
+            <li><span class="pagination-link" aria-disabled="true">Next &rsaquo;</span></li>
+            <li><span class="pagination-link" aria-disabled="true">Last &raquo;</span></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Whichever is chosen</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Having the total in the DOM on every table lets the filter announcement stop hedging.
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">auto_submit_controller.summary()</code>
+      currently returns the literal string &ldquo;Results updated&rdquo; on any page with a
+      pager, because the rows on screen are not the total and announcing the page size as if it
+      were the count would be worse than saying nothing. With a count always present it can read
+      the real sentence instead, on every page.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
