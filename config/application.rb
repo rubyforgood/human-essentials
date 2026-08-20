@@ -39,21 +39,15 @@ module Diaper
 
     config.active_support.to_time_preserves_timezone = :zone # New default starting in Rails 8.1
 
-    # sassc-rails defaults config.assets.css_compressor to :sass, and libsass cannot parse
-    # the CSS that Tailwind v4 emits (@layer, @property, oklch(), color-mix()) -- it dies
-    # with "Internal Error: Not enough space" the first time anything asks Sprockets for
-    # tailwind.css. Nothing is lost by turning it off: the Tailwind CLI already minifies its
-    # own output, and production has had this compressor commented out for years, so only
-    # the test environment was ever applying it.
-    config.assets.css_compressor = nil
-
-    # Keep Sprockets away from the Tailwind SOURCE. tailwindcss-rails hardcodes its input to
-    # app/assets/tailwind/application.css, and Sprockets picks up every app/assets/* directory
-    # -- so "application.css" resolves to a file whose first line is `@import "tailwindcss"`,
-    # which Sprockets cannot process. Only the compiled app/assets/builds/tailwind.css is
-    # ever served. Pinned by spec/assets/asset_resolution_spec.rb.
-    initializer "human_essentials.hide_tailwind_source_from_sprockets", after: :append_assets_path do |app|
-      app.config.assets.paths.reject! { |path| path.to_s.end_with?("app/assets/tailwind") }
-    end
+    # Keep the pipeline away from the Tailwind SOURCE. tailwindcss-rails hardcodes its input to
+    # app/assets/tailwind/application.css, and the pipeline picks up every app/assets/*
+    # directory -- so "application.css" would resolve to a file whose first line is
+    # `@import "tailwindcss"`, which is not a stylesheet a browser can use. Only the compiled
+    # app/assets/builds/tailwind.css is ever served. Pinned by
+    # spec/assets/asset_resolution_spec.rb.
+    #
+    # Propshaft applies this in its own append_assets_path initializer, so it is set as config
+    # rather than by rejecting from the path list afterwards.
+    config.assets.excluded_paths = [Rails.root.join("app/assets/tailwind")]
   end
 end

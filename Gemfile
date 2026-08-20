@@ -43,8 +43,12 @@ gem "solid_cache", "~> 1.0"
 # The Ruby for Good design system is built with Tailwind v4 (ADR 0011). This gem ships the
 # standalone Tailwind CLI, so no Node is needed at build or deploy time.
 gem "tailwindcss-rails", "~> 4.6"
-# The asset pipeline that serves the compiled stylesheet and the importmap.
-gem "sprockets-rails", "~> 3.5"
+# The asset pipeline that serves the compiled stylesheet and the importmap. Propshaft rather
+# than Sprockets: this app has nothing left for Sprockets to do. There are no `//= require`
+# directives, no ERB assets and no Sass -- Tailwind compiles its own stylesheet and importmap
+# serves JavaScript unbundled, so all the pipeline has to do is digest files and rewrite the
+# url() references inside CSS. See docs/architecture/decisions.
+gem "propshaft", "~> 1.3"
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -111,7 +115,6 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "sprockets", "~> 4.2.2"
 gem "prawn", "~> 2.4.0"
 gem "matrix" # Used by prawn
 gem "ttfunk", "~>1.7.0"
@@ -119,8 +122,6 @@ gem "ttfunk", "~>1.7.0"
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
   gem 'lograge'
-  # JS compression for deployed environments.
-  gem 'terser'
 end
 
 group :development, :test, :staging do

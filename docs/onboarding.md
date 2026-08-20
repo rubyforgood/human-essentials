@@ -214,8 +214,14 @@ Two things that will save you an afternoon:
   Stimulus controllers toggling classes that no longer exist, and forms whose fields had ended
   up outside the form.
 
-If system specs fail with `Failed to resolve module specifier`, `public/assets` is stale:
-`bin/rails assets:clobber assets:precompile`.
+**Do not run `assets:precompile` locally.** The pipeline is Propshaft (ADR 0012), which serves
+assets straight from the load path in development and test — precompiling *freezes* them behind
+`public/assets/.manifest.json` until you delete that file. If a stylesheet or a module looks
+stale, that file is usually why.
+
+`assets:clobber` also deletes the compiled Tailwind stylesheet, because `tailwindcss-rails`
+enhances the task. Follow it with `bin/rails tailwindcss:build` or every page will 500 on a
+missing `tailwind.css`.
 
 ## The design system
 

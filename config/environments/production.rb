@@ -33,14 +33,10 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = true
 
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :terser
-  # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
-  # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
+  # No asset compression here. Propshaft does not transform assets -- it digests them and
+  # rewrites url() references. The one stylesheet is already minified by the Tailwind CLI, and
+  # the JavaScript is served unbundled through importmap, so a compressor has nothing to act on
+  # that is not already handled. Gzip/brotli belongs at the web server.
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'

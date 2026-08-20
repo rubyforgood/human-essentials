@@ -44,6 +44,7 @@ they render as nothing at all.
 | --- | --- | --- |
 | CSS framework | Bootstrap 5.2 gem, plus Bootstrap 4.6.1 vendored inside AdminLTE 3.2 | Tailwind v4.3.3 |
 | Build | sass-rails through Sprockets | `tailwindcss-rails` standalone CLI, no Node |
+| Asset pipeline | Sprockets, with a `manifest.js`, a precompile list and a disabled CSS compressor | Propshaft: digests filenames and rewrites `url()`, nothing else (ADR 0012) |
 | Typeface | Source Sans Pro, CDN | Figtree, self-hosted under `public/vendor/` |
 | Icons | Font Awesome 4 and 5, two CDNs | Bootstrap Icons, self-hosted, compiled into the bundle |
 | Shell | `layouts/application`, `_lte_navbar`, `_lte_sidebar`, `_lte_admin_*` | `layouts/essentials_app`, `_essentials_topbar`, `_essentials_sidebar` |
