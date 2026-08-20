@@ -526,17 +526,18 @@ Four things about that snippet are load-bearing, and all four were found by brea
 | **The form stays outside the frame** | Inside it, the controls are replaced on every change and focus is lost mid-filtering. |
 
 The **Export link** is in the page header, outside the frame, so `auto_submit_controller`
-rebuilds its query string from the form on every frame load. It listens on the **document** and
-resolves the frame when it needs it, not in `connect()`: the form is parsed before the frame it
-targets, so resolving it early can return null and leave the link — and the announcement —
-silently dead.
+rebuilds its query string from the form on every frame load. Exporting the previous filter's rows
+is a worse failure than a stale table, because the file looks right and nothing on screen says
+otherwise.
+
+That controller listens on the **document** and resolves the frame when it needs it, not in
+`connect()`: the form is parsed before the frame it targets, so resolving it early can return
+null and leave the export link — and the announcement — silently dead.
 
 The flash is **not** cleared when a filter applies. It was, briefly; removing 56px from above the
 results moves everything below it under a cursor that is often already over a row action, and a
 layout shift in response to an unrelated action is a hazard. A stale message describes something
-that did happen, and it clears on the next navigation. Exporting the previous filter's rows
-is a worse failure than a stale table, because the file looks right and nothing on screen says
-otherwise.
+that did happen, and it clears on the next navigation.
 
 Applying in place is silent to a screen reader — nothing navigates, focus does not move — so the
 bar renders a `role="status"` region, **outside** the frame, and the controller writes the new
