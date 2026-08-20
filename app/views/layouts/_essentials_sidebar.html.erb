@@ -38,14 +38,30 @@
         </ul>
       </div>
     <% else %>
-      <ul class="mt-3 space-y-0.5">
-        <%= render "layouts/essentials_nav_link", item: essentials_nav_dashboard %>
-        <%= render "layouts/essentials_nav_link", item: essentials_nav_reports %>
-      </ul>
+      <%#
+        `space-y-4` between every top-level entry, whether it is a group or a lone destination.
+        Dashboard and Reports used to share one list at `space-y-0.5` -- the spacing for items
+        *inside* a section -- so they clustered while everything else was 16px apart.
 
-      <% essentials_nav_groups.each do |group| %>
-        <%= render "layouts/essentials_nav_group", group: group %>
-      <% end %>
+        A section is a meaningful grouping, not "the leaves that happen to be next to each other".
+        Dashboard is a section of one, and so is Reports.
+
+        Reports sits after the working groups because it is a read-only view of what they hold:
+        home, then the work, then views of the work, then the pinned account item. See design.md.
+      %>
+      <div class="mt-3 space-y-4">
+        <ul>
+          <%= render "layouts/essentials_nav_link", item: essentials_nav_dashboard %>
+        </ul>
+
+        <% essentials_nav_groups.each do |group| %>
+          <%= render "layouts/essentials_nav_group", group: group %>
+        <% end %>
+
+        <ul>
+          <%= render "layouts/essentials_nav_link", item: essentials_nav_reports %>
+        </ul>
+      </div>
 
       <%#
         The bottom strip. `h-14` and a full-bleed border so its rule meets the page footer's at

@@ -13,7 +13,8 @@
 %>
 <% open = essentials_nav_group_open?(group) %>
 <% panel_id = "nav-group-#{group.label.parameterize}" %>
-<div class="mt-4">
+<%# No margin of its own: the rail spaces every top-level entry with one `space-y-4`. %>
+<div>
   <button type="button"
           class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
           aria-expanded="<%= open %>"

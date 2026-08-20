@@ -16,25 +16,30 @@ export default class extends Controller {
   static values = { delay: { type: Number, default: 400 } }
 
   connect() {
-    this.frame = document.getElementById(this.element.dataset.turboFrame || "")
-    if (!this.frame) return
+    this.frameId = this.element.dataset.turboFrame
+    if (!this.frameId) return
 
-    this.onFrameLoad = () => {
+    // Listened for on the document, and the frame looked up when it is needed rather than here.
+    // The form is parsed before the frame it targets, so resolving the element at connect time
+    // could return null -- and then the export link and the announcement silently stopped
+    // working, with nothing on screen to say so. It held in a browser and not under Cuprite,
+    // which is the kind of difference that hides a real bug in a timing story.
+    this.onFrameLoad = (event) => {
+      if (event.target.id !== this.frameId) return
+
       this.announce()
       this.syncExports()
-
-      // Only for a load this controller caused. turbo:frame-load also fires when the frame is
-      // first connected, on every ordinary page load -- clearing the flash there would delete
-      // the message the page was rendered to show.
-      if (this.applying) this.clearFlash()
-      this.applying = false
     }
-    this.frame.addEventListener("turbo:frame-load", this.onFrameLoad)
+    document.addEventListener("turbo:frame-load", this.onFrameLoad)
   }
 
   disconnect() {
     clearTimeout(this.timer)
-    this.frame?.removeEventListener("turbo:frame-load", this.onFrameLoad)
+    document.removeEventListener("turbo:frame-load", this.onFrameLoad)
+  }
+
+  get frame() {
+    return document.getElementById(this.frameId)
   }
 
   // A filter applying into a frame is silent: nothing navigates and focus does not move, so a
@@ -63,12 +68,12 @@ export default class extends Controller {
     })
   }
 
-  // Applying a filter used to be a page load, which cleared the flash with it. Into a frame it
-  // does not, so "Storage location deactivated successfully" would sit above a table it no longer
-  // describes -- and keep sitting there through every subsequent filter.
-  clearFlash() {
-    document.querySelector("turbo-frame#flash")?.replaceChildren()
-  }
+  // No clearing of the flash here, and that is deliberate. A filter used to be a page load, which
+  // took the flash with it, so restoring that seemed right -- but removing 56px from above the
+  // results moves everything below it, under a cursor that is often already over a row action.
+  // A layout shift in response to an unrelated action is a hazard for a person and it broke three
+  // specs that click a row action after filtering. A message about something that did happen is
+  // the cheaper problem; it clears on the next real navigation.
 
   summary() {
     // A page with a summary card has already worked out the total, in a sentence.
@@ -91,7 +96,6 @@ export default class extends Controller {
     if (this.typeable(event?.target)) return
 
     clearTimeout(this.timer)
-    this.applying = true
     this.element.requestSubmit()
   }
 
@@ -101,10 +105,7 @@ export default class extends Controller {
     if (!this.typeable(event?.target)) return
 
     clearTimeout(this.timer)
-    this.timer = setTimeout(() => {
-      this.applying = true
-      this.element.requestSubmit()
-    }, this.delayValue)
+    this.timer = setTimeout(() => this.element.requestSubmit(), this.delayValue)
   }
 
   typeable(target) {
