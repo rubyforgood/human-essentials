@@ -5,7 +5,8 @@
         subtitle: "Messages your partners see on their dashboard." %>
 </div>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
+  <%= render "shared/essentials/card", padded: false,
+        footer: essentials_pagination_footer(@broadcast_announcements) do %>
 
           <div class="px-5 py-4">
             <div class='flex justify-end mb-4'>
@@ -22,7 +23,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @broadcast_announcements.reverse.each do |broadcast_announcement| %>
+                <% @broadcast_announcements.each do |broadcast_announcement| %>
                   <%= render broadcast_announcement %>
                 <% end %>
               </tbody>

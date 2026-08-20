@@ -1,4 +1,4 @@
 <li>
   <%= link_to_unless current_page.first?, raw(t "views.pagination.first"), url,
-        remote: remote, class: "pagination-link", aria: {label: "Go to the first page"} %>
+        remote: remote, class: "pagination-link", data: {turbo_frame: "_self"}, aria: {label: "Go to the first page"} %>
 </li>

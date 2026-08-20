@@ -12,7 +12,7 @@ class Admin::UsersController < AdminController
       params[:filterrific],
       available_filters: [:search_name, :search_email]
     ) || return
-    @users = @filterrific.find.page(params[:page])
+    @users = @filterrific.find.page(params[:page]).per(Pagination::MEDIUM)
 
     respond_to do |format|
       format.html

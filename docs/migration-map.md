@@ -34,6 +34,22 @@ breaks that down.
 | `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 
+### Index tables without a pager
+
+Every other index table paginates (`design.md` → Pagination). These eight do not. Row heights
+were measured at 1440×900 on 2026-08-20; the band is the one they would take.
+
+| Table | Row | Band | Why not, or why next |
+| --- | --- | --- | --- |
+| `/admin/partners` | 53px | COMPACT | **Should be next.** Every partner across every organization — 200+ organizations in production. Unbounded by construction. |
+| `/admin/ndbn_members` | 45px | COMPACT | **Should be next.** A national roster, loaded by CSV upload; NDBN has some hundreds of member banks. |
+| `/partners` | 65px | MEDIUM | Grows with the bank. A large one has 50–200 partner agencies, so 13,000px at the top end. |
+| `/vendors` | 52px | COMPACT | Grows with use, though more slowly than partners. Has a CSV export, so it needs the separate-ivar pattern. |
+| `/product_drive_participants` | 53px | COMPACT | Grows with use. Has a CSV export. |
+| `/kits` | 111px | TALL | Bounded by how many kit types a bank chooses to define, but the rows are tall — 50 kits is 5,550px. |
+| `/users` | 45px | COMPACT | Bounded by an organization's staff. Dozens at the outside. |
+| `/storage_locations` | 65px | MEDIUM | Bounded by physical warehouses, and the table has a `<tfoot>` grand total. Paginating would leave a "Total" row that does not add up the rows above it — the number stays right and the label stops being obvious, which is worse than a long page for a table that is three rows in practice. |
+
 Anything else still carrying `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is a
 defect rather than a page awaiting its turn: none of those classes are defined anywhere now, so
 they render as nothing at all.

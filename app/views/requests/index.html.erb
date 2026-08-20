@@ -40,7 +40,7 @@
   <%= turbo_frame_tag "requests-results", target: "_top", data: {turbo_action: "advance"} do %>
 
     <%= render "shared/essentials/card", padded: false,
-          footer: capture { concat(render("shared/essentials/pagination", collection: info.paginated_requests)) } do %>
+          footer: essentials_pagination_footer(info.paginated_requests) do %>
       <% if info.paginated_requests.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :all_clear,

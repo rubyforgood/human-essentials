@@ -385,7 +385,7 @@ The surface everything sits on: white, hairline border, `rounded-2xl`, `shadow-s
       title: "Filters",
       subtitle: "Narrow this list down.",
       actions: capture { essentials_link_button("Export", exports_path, variant: :secondary, size: :sm) },
-      footer: capture { render "shared/essentials/pagination", collection: @donations },
+      footer: essentials_pagination_footer(@paginated_donations),
       padded: false,
       card_id: "donations" do %>
   …
@@ -804,15 +804,69 @@ carry `data-tabs-target="panel"` in the same order as the tabs.
 
 ### Pagination
 
+**Every index table is paginated.** A table whose row count grows with use and has no pager is
+a page that gets longer forever. The tables still without one are bounded by something outside
+the software, and each is listed with its reason in `docs/migration-map.md`.
+
+Go through the helper, never the partial directly:
+
 ```erb
-<%= render "shared/essentials/pagination", collection: @donations %>
+<%= render "shared/essentials/card", padded: false,
+      footer: essentials_pagination_footer(@paginated_donations) do %>
 ```
 
-Rendered **inside** the table card as its last child — a compact `border-t` strip, not a
-detached bar floating below the card. Kaminari's own partials in `app/views/kaminari/` supply
-the `<nav aria-label="Pagination">` landmark and the `.pagination-link` styling; the current
-page is marked with `aria-current="page"` and styled off that attribute, so the two cannot
-disagree. The truncation gap is a `<span>`, not a link to `#`.
+The helper returns `nil` for a collection that fits on one page, so the card skips the footer.
+Call sites used to do `capture { concat(render(...)) }` and let the card test the result for
+blankness; that worked in production and failed in development, where
+`annotate_rendered_view_with_filenames` puts an HTML comment in the buffer and a "blank"
+capture is never blank. Nine pages carried an empty bordered strip under the table.
+
+The pager draws no chrome of its own — the card footer supplies `border-t border-slate-200
+px-5 py-3`. It used to draw both, which put the pager between two hairlines twelve pixels
+apart on every page that used the footer slot. A table that is *not* the card's last child —
+one tab panel of five, say — supplies that chrome itself:
+
+```erb
+<% if (pager = essentials_pagination_footer(items)) %>
+  <div class="border-t border-slate-200 px-5 py-3"><%= pager %></div>
+<% end %>
+```
+
+Kaminari's own partials in `app/views/kaminari/` supply the `<nav aria-label="Pagination">`
+landmark and the `.pagination-link` styling; the current page is marked with
+`aria-current="page"` and styled off that attribute, so the two cannot disagree. The
+truncation gap is a `<span>`, not a link to `#`. Every page link carries
+`data-turbo-frame="_self"`, so paging updates the results frame instead of doing a whole-page
+visit and throwing away the scroll position.
+
+#### Page size: three bands
+
+One number does not fit every table, because the rows are not the same height. Measured at
+1440×900 in this app, a row on `/users` is 45px and a row on `/purchases` is 205px — a 4.5×
+spread. `Pagination` (`app/models/pagination.rb`) names three bands, and an index states
+which one it is:
+
+| Band | Rows | Row height | Full page | For |
+| --- | --- | --- | --- | --- |
+| `Pagination::TALL` | 15 | 121–205px | 1,815–3,068px | rows that wrap: line items, addresses, multi-line summaries |
+| `Pagination::MEDIUM` | 25 | 65–85px | 1,625–2,125px | the ordinary case: short cells that may wrap to two lines |
+| `Pagination::COMPACT` | 50 | 45–53px | 2,250–2,650px | dense rows: a few short cells, no wrapping |
+
+```ruby
+@paginated_purchases = @purchases.page(params[:page]).per(Pagination::TALL)
+```
+
+Every band lands a full page between **1.8 and 3.4 screens** — the range where scrolling still
+feels like reading one page rather than paging by hand. Pick the band by measuring the row,
+not by guessing: `/broadcast_announcements` looks dense and is 85px, because the message body
+wraps, and 50 of those is 4.7 screens.
+
+Name a band even where the Kaminari default would do the same thing. That default is
+`Pagination::MEDIUM`, written out as `25` in `config/initializers/kaminari_config.rb` because
+an initializer runs before autoloading.
+
+When a controller also exports CSV, paginate into a **separate** `@paginated_*` ivar and leave
+the full collection for the export — otherwise "Export" quietly means "export this page".
 
 ### Charts
 

@@ -161,12 +161,9 @@ RSpec.describe "ProductDrives", type: :request do
       end
 
       describe "pagination" do
-        around do |ex|
-          old_default = Kaminari.config.default_per_page
-          Kaminari.config.default_per_page = 2
-          ex.run
-          Kaminari.config.default_per_page = old_default
-        end
+        # Stub the band, not Kaminari's default: the controller names its band explicitly, so
+        # changing the default no longer reaches it.
+        before { stub_const("Pagination::COMPACT", 2) }
 
         before do
           # Create a list of Product Drives to exceed pagination limit
@@ -186,7 +183,7 @@ RSpec.describe "ProductDrives", type: :request do
           product_drives_table = parsed_html.at_css("table.data-table")
           row_count = product_drives_table.css("tbody tr").size
 
-          # There should be 2 rows on the first page--the default per page configured above
+          # There should be 2 rows on the first page -- the band stubbed above
           expect(row_count).to eq(2)
 
           # Check that pagination controls (e.g., "Next" button) appear

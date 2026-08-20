@@ -1,10 +1,8 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false do
-  around do |ex|
-    old_default = Kaminari.config.default_per_page
-    Kaminari.config.default_per_page = 3
-    ex.run
-    Kaminari.config.default_per_page = old_default
-  end
+  # Stub the band, not Kaminari's default: the controller names its band explicitly, so
+  # changing the default no longer reaches it.
+  before { stub_const("Pagination::COMPACT", 3) }
+
   before do
     Organization.delete_all # should not be needed once seed_data works
   end

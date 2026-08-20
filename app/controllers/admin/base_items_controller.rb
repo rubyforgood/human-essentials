@@ -22,6 +22,7 @@ class Admin::BaseItemsController < AdminController
 
   def index
     @base_items = BaseItem.alphabetized.all
+    @paginated_base_items = @base_items.page(params[:page]).per(Pagination::COMPACT)
   end
 
   def new

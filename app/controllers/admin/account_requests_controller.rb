@@ -6,9 +6,9 @@ class Admin::AccountRequestsController < AdminController
 
   def index
     @open_account_requests = AccountRequest.requested.order('created_at DESC')
-      .page(params[:open_page]).per(15)
+      .page(params[:open_page]).per(Pagination::TALL)
     @closed_account_requests = AccountRequest.closed.order('updated_at DESC')
-      .page(params[:close_page]).per(15)
+      .page(params[:close_page]).per(Pagination::TALL)
   end
 
   def for_rejection

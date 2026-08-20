@@ -10,6 +10,8 @@ class AuditsController < ApplicationController
     @selected_location = filter_params[:at_location]
     @audits = current_organization.audits.includes(:line_items, :storage_location).class_filter(filter_params)
     @storage_locations = StorageLocation.with_audits_for(current_organization).select(:id, :name)
+    # The CSV export below wants every row; the table wants one page of them.
+    @paginated_audits = @audits.page(params[:page]).per(Pagination::COMPACT)
 
     respond_to do |format|
       format.html

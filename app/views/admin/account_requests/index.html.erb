@@ -18,7 +18,7 @@
 
   <div class="grid gap-6">
     <%= render "shared/essentials/card", title: "Open requests", padded: false,
-          footer: capture { render "shared/essentials/pagination", collection: @open_account_requests } do %>
+          footer: essentials_pagination_footer(@open_account_requests) do %>
       <% if @open_account_requests.any? %>
         <div class="table-scroll">
           <table class="data-table" id="open-account-requests">
@@ -46,7 +46,7 @@
     <% end %>
 
     <%= render "shared/essentials/card", title: "Closed requests", padded: false,
-          footer: capture { render "shared/essentials/pagination", collection: @closed_account_requests } do %>
+          footer: essentials_pagination_footer(@closed_account_requests) do %>
       <% if @closed_account_requests.any? %>
         <div class="table-scroll">
           <table class="data-table" id="closed-account-requests">

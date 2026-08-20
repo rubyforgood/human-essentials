@@ -14,6 +14,8 @@ class BarcodeItemsController < ApplicationController
     @barcode_items = current_organization.barcode_items.includes(:item, :barcodeable).class_filter(filter_params)
     @selected_item = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
+    # The CSV export below wants every row; the table wants one page of them.
+    @paginated_barcode_items = @barcode_items.page(params[:page]).per(Pagination::COMPACT)
 
     respond_to do |format|
       format.html

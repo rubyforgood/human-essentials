@@ -15,7 +15,7 @@ class ProductDrivesController < ApplicationController
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)
-    @paginated_product_drives = @product_drives.page(params[:page])
+    @paginated_product_drives = @product_drives.page(params[:page]).per(Pagination::COMPACT)
 
     # to be used in the name filter to sort product drives in alpha order
     @product_drives_alphabetical = @product_drives.sort_by { |pd| pd.name.downcase }

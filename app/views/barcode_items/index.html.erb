@@ -18,7 +18,8 @@
   <% end %>
   <%= turbo_frame_tag "barcode-items-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-    <%= render "shared/essentials/card", padded: false do %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: essentials_pagination_footer(@paginated_barcode_items) do %>
       <% if @barcode_items.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :cold_start,
@@ -37,7 +38,7 @@
                 <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
             </thead>
-            <tbody><%= render partial: "barcode_item_row", collection: @barcode_items %></tbody>
+            <tbody><%= render partial: "barcode_item_row", collection: @paginated_barcode_items %></tbody>
           </table>
         </div>
       <% end %>

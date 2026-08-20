@@ -15,7 +15,7 @@ module View
         .during(helpers.selected_range)
         .class_filter(filters)
 
-      @paginated_requests = requests.includes(:partner).page(params[:page])
+      @paginated_requests = requests.includes(:partner).page(params[:page]).per(Pagination::TALL)
     end
 
     def filter_params(params = {})

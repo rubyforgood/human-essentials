@@ -6,7 +6,8 @@
 </div>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
+  <%= render "shared/essentials/card", padded: false,
+        footer: essentials_pagination_footer(@paginated_base_items) do %>
           <div class="px-5 py-4">
             <table class="data-table">
               <thead>
@@ -18,7 +19,7 @@
               </tr>
               </thead>
               <tbody>
-              <%= render partial: "base_item_row", collection: @base_items %>
+              <%= render partial: "base_item_row", collection: @paginated_base_items %>
               </tbody>
             </table>
           </div>

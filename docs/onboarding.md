@@ -223,6 +223,12 @@ stale, that file is usually why.
 enhances the task. Follow it with `bin/rails tailwindcss:build` or every page will 500 on a
 missing `tailwind.css`.
 
+**Development shows the same page size as production.** Kaminari used to default to 5 rows in
+development and staging and 50 everywhere else, so a page under review never looked like the
+page a bank sees — you got a pager under a five-row table and never saw the long one. It is 25
+everywhere now, and each index names its band (`Pagination::TALL`, `MEDIUM` or `COMPACT`). If a
+table you are working on looks suspiciously short or long, check the band before the data.
+
 ## The design system
 
 [design.md](../design.md) is normative. In short: Tailwind v4, Figtree, indigo on slate,
