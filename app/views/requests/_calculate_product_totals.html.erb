@@ -7,7 +7,8 @@
           title: "Nothing to total",
           body: "No requests match the current filters." %>
   <% else %>
-    <div class="max-h-96 overflow-y-auto">
+    <%# tabindex so the list can be scrolled by keyboard -- WCAG 2.1.1. %>
+    <div class="max-h-96 overflow-y-auto" tabindex="0">
       <table class="data-table">
         <caption>Total quantity requested per item</caption>
         <thead>

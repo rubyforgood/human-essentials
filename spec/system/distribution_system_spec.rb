@@ -29,6 +29,7 @@ RSpec.feature "Distributions", type: :system do
       it "Allows a distribution to be created and shipping cost field not visible" do
         visit new_distribution_path
 
+        open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         choose "Pick up"
@@ -64,6 +65,7 @@ RSpec.feature "Distributions", type: :system do
         })
 
       visit new_distribution_path
+      open_filters
       select "Test Partner", from: "Partner"
       select "Test Storage Location", from: "From storage location"
       select2(page, 'distribution_line_items_item_id', item.name, position: 1)
@@ -112,6 +114,7 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("[data-flash='error']", text: /partner/i)
 
       # Fix validation error by filling in a partner
+      open_filters
       select "Test Partner", from: "Partner"
       click_button "Save"
 
@@ -140,6 +143,7 @@ RSpec.feature "Distributions", type: :system do
         })
 
       visit new_distribution_path
+      open_filters
       select "Test Partner", from: "Partner"
       select "Test Storage Location", from: "From storage location"
       select2(page, 'distribution_line_items_item_id', item.name, position: 1)
@@ -164,6 +168,7 @@ RSpec.feature "Distributions", type: :system do
       # verify line items appear on initial load
       expect(page).to have_selector "#distribution_line_items"
 
+      open_filters
       select "Test Partner", from: "Partner"
       expect do
         click_button "Save"
@@ -178,6 +183,7 @@ RSpec.feature "Distributions", type: :system do
       it "Allows a distribution to be created" do
         visit new_distribution_path
 
+        open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         choose "Shipped"
@@ -214,6 +220,7 @@ RSpec.feature "Distributions", type: :system do
           })
 
         visit new_distribution_path
+        open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         select2(page, 'distribution_line_items_item_id', item.name, position: 1)
@@ -247,6 +254,7 @@ RSpec.feature "Distributions", type: :system do
           })
 
         visit new_distribution_path
+        open_filters
         select "Test Partner", from: "Partner"
 
         await_select2("#distribution_line_items_attributes_0_item_id") do
@@ -276,6 +284,7 @@ RSpec.feature "Distributions", type: :system do
       it "gracefully handles the error" do
         visit new_distribution_path
 
+        open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         choose "Delivery"
@@ -325,6 +334,7 @@ RSpec.feature "Distributions", type: :system do
   it "errors if user does not fill storage_location" do
     visit new_distribution_path
 
+    open_filters
     select "Test Partner", from: "Partner"
     select "", from: "From storage location"
 
@@ -546,6 +556,7 @@ RSpec.feature "Distributions", type: :system do
       sign_in(organization_admin)
       click_on "Start a distribution"
       within "#new_distribution" do
+        open_filters
         select "Test Partner", from: "Partner"
         choose "Pick up"
         click_button "Save"
@@ -743,6 +754,7 @@ RSpec.feature "Distributions", type: :system do
 
         within "dialog[open]" do
           page.fill_in "Quantity", with: "51"
+          open_filters
           select "VerySpecificItem", from: "Item"
           click_on "Save"
         end
@@ -869,6 +881,7 @@ RSpec.feature "Distributions", type: :system do
         storage_location.id => { item.id => 20 }
       })
 
+    open_filters
     select "Test Partner", from: "Partner"
     select "Test Storage Location", from: "From storage location"
     choose "Delivery"
@@ -917,6 +930,7 @@ RSpec.feature "Distributions", type: :system do
         storage_location.id => { item.id => 20 }
       })
 
+    open_filters
     select "Test Partner", from: "Partner"
     select "Test Storage Location", from: "From storage location"
     choose "Delivery"

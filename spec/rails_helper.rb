@@ -66,6 +66,12 @@ Capybara.javascript_driver = :local_cuprite
 # disable CSS transitions and js animations
 Capybara.disable_animation = true
 
+# Filtering is asynchronous now: a filter bar submits into a Turbo Frame and the results are
+# swapped in place. Capybara's 2s default is thin for a request-and-render under a full suite, and
+# the failures it produces read as wrong counts rather than as timeouts. This only lengthens the
+# path to a genuine failure; a passing assertion still returns as soon as it is true.
+Capybara.default_max_wait_time = 5
+
 Capybara::Screenshot.autosave_on_failure = true
 # The driver name should match the Capybara driver config name.
 Capybara::Screenshot.register_driver(:local_cuprite) do |driver, path|

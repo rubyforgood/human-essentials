@@ -114,6 +114,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           # Item lookup finds no barcode and responds by prompting user to choose an item and quantity
           within "#newBarcode" do
             fill_in "Quantity", with: 10
+            open_filters
             select new_item_name, from: "Item"
             expect(page).to have_field("barcode_item_quantity", with: '10')
             expect(page).to have_field("barcode_item_value", with: new_barcode)
@@ -141,6 +142,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         create(:audit, organization: organization, storage_location: storage_location2)
 
         visit subject
+        open_filters
         select storage_location.name, from: "filters[at_location]"
         wait_for_filters
 

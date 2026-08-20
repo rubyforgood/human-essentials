@@ -56,9 +56,12 @@ RSpec.describe "Requests", type: :system, js: true do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
 
-          # "Clear filters" lives in the panel, which starts collapsed on a bar this size.
+          # There is one Clear now, beside the chips rather than inside the panel -- and it is
+          # hidden until something is actually filtered.
           open_filters
-          click_on "Clear filters"
+          select(item2.name, from: "filters[by_request_item_id]")
+          wait_for_filters
+          click_on "Clear all"
 
           expect(page).to have_css("table tbody tr", count: 5)
         end

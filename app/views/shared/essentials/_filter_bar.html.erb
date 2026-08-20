@@ -1,49 +1,50 @@
 <%#
-  Filter bar. A plain (borderless) bar sits 16px above the table it filters; wrap it in a
-  card only when it is a section in its own right.
+  Filter bar. Collapsed behind a Filters button, with the filters that are set shown beside it as
+  chips. A plain (borderless) bar sits 16px above the results it filters.
 
-    render "shared/essentials/filter_bar", url: donations_path do
-      ... filter controls ...
+    render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do
+      <div class="min-w-0"> ... one filter ... </div>
     end
 
-  Filters submit with GET so the filtered view stays a shareable, bookmarkable URL.
+  Filters submit with GET, so a filtered view stays a shareable, bookmarkable URL.
 
   Options:
 
-    auto_submit: true   Apply as soon as a control changes, and hide the Filter button.
-                        For bars with ONE filter. With several, auto-applying each control
-                        fires a query per keystroke of thought, so those keep the button.
+    frame:              The id of the turbo_frame_tag wrapping the results. With it the bar
+                        applies on change and replaces only the results; without it the bar
+                        submits normally and keeps its Filter button.
 
-                        The button is hidden server-side, in the markup, and revealed again
-                        by a <noscript> rule. Hiding it from JavaScript on connect meant it
-                        was painted first and removed a frame later, so it flashed on every
-                        load and on every selection -- the auto-submit navigation re-renders
-                        the page, so the flash happened each time.
+    auto_submit: true   Apply on change without a frame -- a full page reload per change. Only
+                        for a bar that has no results frame to update.
 
-    clear: false        Drop "Clear filters". Redundant when a single select's first option
-                        is itself the unfiltered view -- choosing it is the reset.
+    clear_path:         Where "Clear all" goes. Defaults to the current path.
+
+  Every cell inside the block is `min-w-0` and holds one filter: the grid gives them equal
+  columns, and a long option truncates rather than pushing its column past its share.
+
+  The Filter button exists only for the no-JS case. It is hidden in the markup and restored by a
+  <noscript> rule -- hiding it from JavaScript on connect meant it was painted and then removed a
+  frame later, which flashed on every load.
 %>
 <% clear_path ||= request.path %>
 <% frame = local_assigns[:frame] %>
 <%# A bar pointed at a frame always applies on change: that is the whole reason for the frame. %>
 <% auto_submit = frame.present? || local_assigns.fetch(:auto_submit, false) %>
-<% clear = local_assigns.fetch(:clear, true) %>
 <%
-  # Counted here, not passed in, so no call site decides it and the behaviour cannot drift from
-  # one page to the next. Each filter is one element child of the yielded block.
+  # Every bar collapses, whatever its size. This was a threshold -- five filters or more -- and
+  # two behaviours across sixteen pages is worse than one whichever one it is: learning the
+  # filter bar on donations and then meeting something else on transfers teaches nothing
+  # transferable.
   controls = capture { yield }
-  filter_count = Nokogiri::HTML5.fragment(controls).element_children.size
-  collapsible = filter_count >= EssentialsUiHelper::FILTER_DISCLOSURE_THRESHOLD
   panel_id = "filter-panel-#{SecureRandom.uuid}"
 
-  controllers = []
+  controllers = ["disclosure", "filter-summary"]
   form_data = {}
   if auto_submit
-    controllers << "auto-submit"
+    controllers.unshift("auto-submit")
     form_data[:action] = "change->auto-submit#submit input->auto-submit#debounce"
   end
-  controllers.push("disclosure", "filter-summary") if collapsible
-  form_data[:controller] = controllers.join(" ") if controllers.any?
+  form_data[:controller] = controllers.join(" ")
   if frame.present?
     form_data[:turbo_frame] = frame
     # Turbo Drive is off app-wide, and Turbo only ignores that for elements *inside* a frame.
@@ -78,37 +79,39 @@
     Cells are `min-w-0` so a long option cannot push a column past its share; the select
     truncates instead.
   %>
-  <% if collapsible %>
-    <%#
-      Five filters or more and the panel starts closed. It stays closed even when the page arrives
-      filtered: the chips beside the button already say what is applied, and opening automatically
-      would give back the space on exactly the pages where it was worth saving.
-    %>
-    <div class="mb-3 flex flex-wrap items-center gap-2">
-      <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
-              data-action="click->disclosure#toggle" data-filter-toggle
-              class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
-        <i class="bi-funnel" aria-hidden="true"></i>Filters
-        <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white"
-              data-filter-summary-target="count" hidden></span>
-        <i class="bi-chevron-down text-slate-400 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
-      </button>
-      <%# `contents` so the chips are laid out by the row above, not boxed inside a wrapper. %>
-      <div class="contents" data-filter-summary-target="chips"></div>
-      <%= link_to "Clear all", clear_path,
-            class: "text-sm font-medium text-brand-700 hover:underline",
-            data: {filter_summary_target: "clear"}, hidden: true %>
-    </div>
-  <% end %>
+  <%#
+    The panel starts closed, and stays closed even when the page arrives filtered: the chips
+    beside the button already say what is applied, and opening automatically would give the space
+    back on exactly the pages where it was worth saving.
+  %>
+  <div class="mb-3 flex flex-wrap items-center gap-2">
+    <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
+            data-action="click->disclosure#toggle" data-filter-toggle
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+      <i class="bi-funnel" aria-hidden="true"></i>Filters
+      <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white"
+            data-filter-summary-target="count" hidden></span>
+      <i class="bi-chevron-down text-slate-400 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
+    </button>
+    <%# `contents` so the chips are laid out by the row above, not boxed inside a wrapper. %>
+    <div class="contents" data-filter-summary-target="chips"></div>
+    <%= link_to "Clear all", clear_path,
+          class: "text-sm font-medium text-brand-700 hover:underline",
+          data: {filter_summary_target: "clear"}, hidden: true %>
+  </div>
 
   <div id="<%= panel_id %>"
-       class="<%= "hidden " if collapsible %>grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+       class="hidden grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     <%= controls %>
     <%#
       An ordinary grid cell, so it follows the last filter instead of taking a row of its own.
       `col-span-full` cost a row on every page with a bar, including the ones with a single
       filter. `self-end` sits it on the controls' baseline; the cells themselves are top-aligned
       because the date range grows downwards when Custom is chosen.
+
+      There is no "Clear filters" here. "Clear all" sits with the chips above, which is where you
+      are looking when you decide you have narrowed too far -- and one inside the panel is
+      invisible exactly when the panel is shut. The submit button only exists for the no-JS case.
     %>
     <div class="flex items-center gap-2 self-end">
       <button type="submit"
@@ -116,9 +119,6 @@
               <%= tag.attributes(style: "display:none") if auto_submit %>>
         <i class="bi-funnel" aria-hidden="true"></i>Filter
       </button>
-      <% if clear %>
-        <%= essentials_link_button "Clear filters", clear_path, variant: :ghost, size: :md %>
-      <% end %>
     </div>
   </div>
 <% end %>

@@ -125,6 +125,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     create(:adjustment, organization: organization, storage_location: storage_location2)
 
     visit subject
+    open_filters
     select storage_location.name, from: "filters[at_location]"
     wait_for_filters
 
@@ -137,6 +138,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     create(:adjustment, organization: organization, storage_location: storage_location2, user_id: organization_admin.id)
 
     visit subject
+    open_filters
     select user.name, from: "filters[by_user]"
     wait_for_filters
 

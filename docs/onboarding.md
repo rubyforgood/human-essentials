@@ -319,20 +319,21 @@ table.
 
 ### Picking a date range
 
-Every page that filters by date uses the same control: a menu of ranges — *Today*, *Last 7
-days*, *Last 30 days*, *This month*, *This year*, *All time* and so on — with **Custom** at the
-bottom. Choosing Custom reveals **From** and **To** boxes that open your device's own date
-picker.
+Every page that filters by date uses the same control: a button showing the range you are looking
+at, opening a panel of the usual ones — *Today*, *Last 7 days*, *Last 30 days*, *This month*,
+*This year*, *All time* — beside **From** and **To** boxes for any other range.
 
 **Filters apply as you choose them.** There is no Filter button: pick a value and the table and
 its totals update underneath, without the page reloading and without losing your place. Typing
-in a filter waits until you stop. **Clear filters** resets everything.
+in a filter waits until you stop.
 
-Pages with a lot of filters — donations, distributions and requests — keep them behind a
-**Filters** button, so the data starts higher up the page. Whatever you have set is listed beside
-that button as a row of chips, with a count on the button itself, so nothing is ever narrowing
-your results without saying so. Click the **×** on a chip to drop that one filter, or **Clear
-all** to drop the lot.
+Filters live behind a **Filters** button on every page, so the data starts at the top. Whatever
+you have set is listed beside that button as a row of chips, with a count on the button itself, so
+nothing is ever narrowing your results without saying so. Click the **×** on a chip to drop that
+one filter, or **Clear all** to drop the lot.
+
+**Date range** is one of those filters, and it opens a small panel: the common ranges down one
+side, and **From** and **To** boxes down the other for anything else. Set both and press **Apply**.
 
 A page you have not filtered opens on *Last 2 months and next month*. It reaches into the future
 on purpose: a distribution can be scheduled before it happens, and a range ending today would

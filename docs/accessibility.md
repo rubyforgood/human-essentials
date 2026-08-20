@@ -11,10 +11,11 @@ bin/start                                          # then, with the app running:
 
 pw bin/design/wcag-audit.js       # axe-core, WCAG 2.1 A/AA, 61 pages, all four roles
 pw bin/design/wcag-manual.js      # the criteria axe cannot check
+pw bin/design/overlay-audit.js    # opens every dialog and popover, then checks them
 bundle exec rspec spec/system/accessibility_system_spec.rb
 ```
 
-Both scripts exit non-zero on a failure. `wcag-audit.js` groups by rule rather than by page,
+All three scripts exit non-zero on a failure. `wcag-audit.js` groups by rule rather than by page,
 because a rule broken on thirty pages is one fix and not thirty.
 
 ## What each tool covers
@@ -23,7 +24,13 @@ because a rule broken on thirty pages is one fix and not thirty.
 | --- | --- | --- |
 | `wcag-audit.js` (axe) | Names, roles, contrast, labels, landmarks, list structure, heading order | Whether alt text is *good*, whether a heading describes its section, whether an order makes sense |
 | `wcag-manual.js` | 1.4.4, 1.4.10, 1.4.12, 2.1.1, 2.4.1, 2.4.2, 2.4.7, 3.1.1 | Anything needing judgement |
+| `overlay-audit.js` | Dialogs and popovers **opened**: centring, viewport fit, accessible name, Escape, focus return, surface, plus axe on the opened overlay | Overlays it has no page in its list for |
 | `accessibility_system_spec.rb` | The four fixes that regressed silently before | Everything else |
+
+**An audit only sees the state it puts the page in.** Every dialog in this app opened in the
+top-left corner for as long as both audits existed, because one reads markup and the other scans
+the page as loaded, and neither had ever clicked a trigger. `overlay-audit.js` exists for that
+reason, and the same question is worth asking of any new check: what state does it never reach?
 
 axe finds roughly a third to a half of WCAG issues. **Zero violations is a floor, not a
 certificate.** Screen reader testing, and testing with the people who use this app, are not

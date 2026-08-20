@@ -3,28 +3,27 @@ import { Controller } from "@hotwired/stimulus"
 /*
  * App shell chrome for the Ruby for Good design system layout (layouts/essentials_app).
  *
- * Owns three independent bits of state so they cannot fight each other:
+ * Owns two independent bits of state so they cannot fight each other:
  *   - the off-canvas sidebar drawer below the `lg` breakpoint
- *   - the top-bar account menu
  *   - each collapsible sidebar nav group
  *
- * Everything here is progressive enhancement. With JS off the drawer is irrelevant
- * (the sidebar is statically visible at `lg`), the account menu's links are still
- * reachable, and every nav group renders open.
+ * The account menu used to live here too. It is an anchored floating panel like any other, so it
+ * belongs to `popover`, which already has the outside-click, Escape and focus-return behaviour
+ * that this controller was duplicating for it alone.
+ *
+ * Everything here is progressive enhancement. With JS off the drawer is irrelevant (the sidebar
+ * is statically visible at `lg`) and every nav group renders open.
  */
 export default class extends Controller {
-  static targets = ["drawer", "scrim", "drawerToggle", "accountMenu", "accountToggle"]
+  static targets = ["drawer", "scrim", "drawerToggle"]
 
   connect() {
     this.closeOnEscape = this.closeOnEscape.bind(this)
-    this.closeAccountOnOutsideClick = this.closeAccountOnOutsideClick.bind(this)
     document.addEventListener("keydown", this.closeOnEscape)
-    document.addEventListener("click", this.closeAccountOnOutsideClick)
   }
 
   disconnect() {
     document.removeEventListener("keydown", this.closeOnEscape)
-    document.removeEventListener("click", this.closeAccountOnOutsideClick)
   }
 
   // --- Sidebar drawer (mobile) ---------------------------------------------
@@ -49,29 +48,6 @@ export default class extends Controller {
     isOpen ? this.closeDrawer() : this.openDrawer()
   }
 
-  // --- Account menu ---------------------------------------------------------
-
-  toggleAccount(event) {
-    event.stopPropagation()
-    const isOpen = this.accountToggleTarget.getAttribute("aria-expanded") === "true"
-    this.accountToggleTarget.setAttribute("aria-expanded", isOpen ? "false" : "true")
-    this.accountMenuTarget.classList.toggle("hidden", isOpen)
-  }
-
-  closeAccount() {
-    if (!this.hasAccountMenuTarget) return
-    this.accountToggleTarget.setAttribute("aria-expanded", "false")
-    this.accountMenuTarget.classList.add("hidden")
-  }
-
-  closeAccountOnOutsideClick(event) {
-    if (!this.hasAccountMenuTarget) return
-    if (this.accountMenuTarget.classList.contains("hidden")) return
-    if (this.element.querySelector("[data-shell-target='accountMenu']")?.contains(event.target)) return
-    if (this.accountToggleTarget.contains(event.target)) return
-    this.closeAccount()
-  }
-
   // --- Collapsible nav groups ----------------------------------------------
 
   toggleGroup(event) {
@@ -89,7 +65,6 @@ export default class extends Controller {
 
   closeOnEscape(event) {
     if (event.key !== "Escape") return
-    this.closeAccount()
     if (this.hasDrawerToggleTarget && this.drawerToggleTarget.getAttribute("aria-expanded") === "true") {
       this.closeDrawer()
     }

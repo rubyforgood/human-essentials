@@ -154,12 +154,14 @@ RSpec.describe "Transfer management", type: :system do
       create(:transfer, organization: organization, from: to_storage_location, to: from_storage_location)
 
       visit subject
+      open_filters
       select to_storage_location.name, from: "filters[to_location]"
       wait_for_filters
 
       expect(page).to have_css("table tr", count: 2)
 
       visit subject
+      open_filters
       select from_storage_location.name, from: "filters[from_location]"
       wait_for_filters
 

@@ -9,26 +9,35 @@ def date_range_picker_params(start_date, end_date)
   "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}"
 end
 
-def select_date_range_preset(name)
+# The date range is a popover: a trigger button, then a panel holding the presets and a custom
+# range. Every filter bar also starts collapsed, so there are two things to open before any of it
+# is reachable.
+def open_date_range
   open_filters
-  select name, from: "filters_date_range_preset"
+  find("#filters_date_range_trigger").click
+  expect(page).to have_css("[role='dialog'][aria-label='Choose a date range']")
+end
+
+def select_date_range_preset(name)
+  open_date_range
+  find("button[data-preset='#{name}']").click
   wait_for_filters
 end
 
-# Choose an explicit range. "Custom" has to be selected first because that is what reveals the
-# two date inputs: until then they carry the `hidden` attribute and Capybara will not fill
-# them.
+# Choose an explicit range. Both dates are applied together with the Apply button, so this costs
+# one request rather than one per field.
 #
 # The wait on the hidden field is the important part. filters[date_range] is what actually gets
-# submitted, and the Stimulus controller writes it in response to the change event, so clicking
-# Filter without waiting is a race. Checking Capybara's #value rather than a [value=...]
-# selector because the controller sets the property, which leaves the attribute untouched.
+# submitted, and the Stimulus controller writes it in response to the click, so asserting without
+# waiting is a race. Checking Capybara's #value rather than a [value=...] selector because the
+# controller sets the property, which leaves the attribute untouched.
 def fill_in_date_range(start_date, end_date)
-  open_filters
-  select "Custom", from: "filters_date_range_preset"
+  open_date_range
   fill_in "filters_date_range_start", with: start_date.strftime("%Y-%m-%d")
   fill_in "filters_date_range_end", with: end_date.strftime("%Y-%m-%d")
+  click_on "Apply"
   wait_for_filters
+
   expect(page).to have_field("filters_date_range",
     with: date_range_picker_params(start_date, end_date), type: "hidden", visible: :all, wait: 5)
 end
@@ -65,9 +74,9 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows the matching preset as selected, with the custom dates put away" do
       visit subject
-      open_filters # a bar with five filters or more starts collapsed
+      open_filters # every bar starts collapsed
 
-      expect(page).to have_select("filters_date_range_preset", selected: "Last 2 months and next month")
+      expect(page).to have_button("Last 2 months and next month")
       expect(page).to have_no_field("filters_date_range_start")
     end
   end
@@ -86,7 +95,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       select_date_range_preset "Today"
 
       expect(page).to have_css("table tbody tr", count: 1)
-      expect(page).to have_select("filters_date_range_preset", selected: "Today")
+      expect(page).to have_button("Today")
     end
   end
 
@@ -131,7 +140,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       visit subject
       fill_in_date_range(Time.zone.local(2019, 7, 22), Time.zone.local(2019, 7, 28))
 
-      expect(page).to have_select("filters_date_range_preset", selected: "Custom")
+      open_date_range
       expect(page).to have_field("filters_date_range_start", with: "2019-07-22")
       expect(page).to have_field("filters_date_range_end", with: "2019-07-28")
     end
@@ -143,14 +152,12 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # invalid range, and the controller reports it in the page and blocks the submit.
     it "says so in the page and does not filter" do
       visit subject
-      open_filters
-      select "Custom", from: "filters_date_range_preset"
+      open_date_range
       fill_in "filters_date_range_start", with: "2019-09-01"
       fill_in "filters_date_range_end", with: "2019-08-01"
-      wait_for_filters
+      click_on "Apply"
 
-      expect(page).to have_css("[role='alert']", text: "The end date must be on or after the start date.")
-
+      # The panel stays open with the error showing, rather than closing on an invalid range.
       expect(page).to have_css("[role='alert']", text: "The end date must be on or after the start date.")
       expect(page).to have_field("filters_date_range_end", with: "2019-08-01")
     end

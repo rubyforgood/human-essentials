@@ -12,7 +12,7 @@
 
   <%= render "shared/essentials/filter_bar",
         url: distributions_by_county_report_path(current_organization),
-        frame: "county-results", clear: false do %>
+        frame: "county-results" do %>
     <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 

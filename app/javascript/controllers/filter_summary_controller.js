@@ -40,7 +40,9 @@ export default class extends Controller {
       if (!label) return []
 
       if (field.type === "checkbox") return field.checked ? [{ field, label, value: null }] : []
-      if (field.type === "hidden" || field.type === "date") return []
+      // Date inputs are the inside of the date range popover; the range itself reports through a
+      // hidden field, which is why hidden fields are not skipped outright.
+      if (field.type === "date") return []
 
       // The date range is always set to something, so it only counts as a filter when it is not
       // the range the page would have shown anyway.
@@ -86,14 +88,28 @@ export default class extends Controller {
   // Reset the control and let the change event do the rest: the date range controller updates its
   // hidden field from it, and auto-submit applies the result. Nothing here submits directly.
   clearField(field) {
-    if (field.type === "checkbox") field.checked = false
-    else field.value = field.dataset.defaultValue ?? ""
+    if (field.type === "checkbox") {
+      field.checked = false
+      field.dispatchEvent(new Event("change", { bubbles: true }))
+      return
+    }
 
+    // The date range's chip resets a whole popover, not one input, so hand it back to the
+    // controller that owns it rather than writing its hidden fields from here.
+    const dateRange = field.closest("[data-controller~='date-range']")
+    if (dateRange && field.dataset.defaultValue) {
+      dateRange.querySelector(`[data-preset="${CSS.escape(field.dataset.defaultValue)}"]`)?.click()
+      return
+    }
+
+    field.value = field.dataset.defaultValue ?? ""
     field.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
+  // data-filter-label for a control that cannot carry a <label>: the date range submits through
+  // hidden fields, because its visible control is a button in a popover.
   labelFor(field) {
-    return field.labels?.[0]?.textContent.trim() || null
+    return field.dataset.filterLabel || field.labels?.[0]?.textContent.trim() || null
   }
 
   displayValue(field) {

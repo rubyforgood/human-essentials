@@ -76,6 +76,7 @@ RSpec.describe "Item management", type: :system do
     it "allows a user to restore the item" do
       expect do
         visit items_path
+        open_filters
         check "include_inactive_items"
         wait_for_filters
         within "#items-table" do
