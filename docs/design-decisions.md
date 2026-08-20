@@ -1594,3 +1594,100 @@ the new one.
 `tailwindcss:clobber`, which deletes `app/assets/builds/*.css`. Clobbering without rebuilding
 leaves every page 500ing on a missing `tailwind.css`. That was true under Sprockets too; it just
 took this migration to walk into it.
+
+---
+
+## 2026-08-20 · Page size is banded by row height, not set once
+
+**The measurement that decided it.** Row heights in this app differ by 4.5×, measured at
+1440×900: 45px on `/users`, 121px on `/items`, 155px on `/distributions`, 205px on
+`/purchases`, where a row carries a wrapped list of line items. One page size cannot serve
+that spread. At 50 everywhere, `/purchases` is a 10,250px page — eleven screens. At 15
+everywhere, `/users` needs five clicks to show what fits on one.
+
+So `Pagination` names three bands — `TALL` 15, `MEDIUM` 25, `COMPACT` 50 — and each index says
+which one it is. Every band lands a full page between 1.8 and 3.4 screens.
+
+**Rejected: a rows-per-page select.** It is what Material, Ant Design and AG Grid ship, and it
+was the obvious alternative. It hands the user a decision the bands exist to settle, and to be
+worth anything it has to be remembered per table and per user, which is a preference store, a
+permitted param and a migration for a problem the design can just answer. It also adds a fourth
+control to a strip that already competes with the filter bar above it.
+
+**Rejected: load more / infinite scroll.** These are working tables. People print a
+distribution, Ctrl-F an item and send someone a link to what they are looking at. An appended
+row cannot be linked to, the browser's find only sees what has been loaded, and the page footer
+retreats every time the user reaches it.
+
+**Band by measuring, not by looking.** `/broadcast_announcements` reads as a dense table and
+its rows are 85px, because the message body wraps. It was banded `COMPACT` on appearance,
+measured at 4,225px — 4.7 screens — and moved to `MEDIUM`.
+
+**Kaminari's default was 5 in development and staging, 50 elsewhere.** That is the more
+interesting half of this change. A page under review never looked like the page in production:
+a reviewer saw a pager under a five-row table and never saw the table that was actually long.
+It is one number now, 25, in every environment.
+
+**The scope that was not taken.** Eight index tables are still unpaginated and are listed with
+their measured row heights in `migration-map.md`. Two of them are unbounded by construction and
+should be next: `/admin/partners` lists every partner across every organization, and
+`/admin/ndbn_members` is a national roster. They were left out because this change was scoped to
+page *size*, and widening it silently is as much a problem as narrowing it.
+
+## 2026-08-20 · The pager's chrome belongs to the card, not to the pager
+
+Three defects, each present on every page that used the component, and each invisible to the
+audits because all three are about a box that is empty or doubled rather than markup that is
+wrong.
+
+**Two hairlines.** The card footer draws `border-t border-slate-200 px-5 py-3` and the
+pagination partial drew the same thing inside it — two rules twelve pixels apart, 24px of
+padding where there should be 12. The partial no longer draws chrome. The one place the pager
+is not a card footer, the item list's tab panel, supplies it inline, because a card footer
+there would show the item pager under the Kits tab.
+
+**An empty strip.** Call sites passed `footer: capture { concat(render(...)) }` and the card
+tested the result for blankness. That is correct in production and wrong in development:
+`annotate_rendered_view_with_filenames` puts `<!-- BEGIN ... -->` in the buffer, so a partial
+that rendered nothing still captured something, and nine pages carried an empty bordered strip
+under the table. Fixed by moving the decision out of the template —
+`essentials_pagination_footer` returns `nil`, which is unambiguous in every environment.
+
+The general lesson is the one the environment-split page size gave too: **a rule that reads
+the rendered output will read a different thing in development than in production.** Decide in
+Ruby, on the data.
+
+**A whole-page visit.** Kaminari's link templates had no `data-turbo-frame`, so with Drive off
+a page link left the frame and reloaded the page, losing the scroll position. Every link
+carries `data: {turbo_frame: "_self"}` now. Verified on `/requests`: a marker set on `window`
+survives the page change, so the document is not replaced; the rows change, the label goes
+"Page 1 of 10" to "Page 2 of 10", `aria-current` moves to 2, the URL advances to `?page=2`,
+and the scroll position holds to within 29px — the drift is the two pages' rows not being the
+same height, not a reset.
+
+## 2026-08-20 · Two more system-suite flakes, recorded rather than chased
+
+Three full runs of the suite while landing the page-size bands, and each disagreed with the
+others. Written down so the next person does not spend an afternoon deciding whether they
+matter.
+
+**The first run's 20 failures were self-inflicted** — Playwright probes and an axe run were
+going against the dev server at the same time, and Cuprite times out under that contention. The
+give-away was 18 of the 20 failure screenshots being the login page at exactly 47,153 bytes: a
+`sign_in` that timed out, not a page that rendered wrong. All 62 examples in those three files
+pass in 44 seconds when run alone. **Do not run the browser audits and the system suite at the
+same time.**
+
+The two runs after that gave one failure each, in different places, neither reproducible:
+
+- `request_system_spec.rb:55` — `have_css("table tbody tr", count: 5)` found one node and six
+  `<<ERROR>>`s. `<<ERROR>>` is Capybara failing to read a node it had already matched, which
+  means the frame swapped underneath the query. Passes 5 of 5 in isolation and 27 of 27 in its
+  own file.
+- `storage_location_system_spec.rb:167` — the reactivation flash, asserted after the frame that
+  carries it is replaced. This one had already been hardened once this week and still flakes.
+
+Neither is attributable to the pagination change. `/storage_locations` is not paginated, no file
+under it changed, and it renders the card without a `footer:` local — so the one shared edit that
+could have reached it (`if footer` becoming `if footer.present?`) evaluates identically for that
+page, `nil` either way.

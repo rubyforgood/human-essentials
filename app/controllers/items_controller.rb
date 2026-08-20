@@ -20,7 +20,7 @@ class ItemsController < ApplicationController
     @include_inactive_items = params[:include_inactive_items]
     @selected_reporting_category = filter_params[:by_reporting_category]
 
-    @paginated_items = @items.page(params[:page])
+    @paginated_items = @items.page(params[:page]).per(Pagination::TALL)
 
     @inventory = View::Inventory.new(current_organization.id)
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.call(organization: current_organization,

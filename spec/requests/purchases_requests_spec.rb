@@ -84,12 +84,10 @@ RSpec.describe "Purchases", type: :request do
         end
 
         describe "pagination" do
-          around do |ex|
-            old_default = Kaminari.config.default_per_page
-            Kaminari.config.default_per_page = 2
-            ex.run
-            Kaminari.config.default_per_page = old_default
-          end
+          # Stub the band, not Kaminari's default: the controller names its band explicitly, so
+          # changing the default no longer reaches it.
+          before { stub_const("Pagination::TALL", 2) }
+
           before do
             item = create(:item, organization: organization)
             purchase_1 = create(:purchase, organization: organization, comment: "Singleton", issued_at: 1.day.ago)

@@ -5,7 +5,11 @@ class BroadcastAnnouncementsController < ApplicationController
   before_action :set_broadcast_announcement, only: %i[edit update destroy]
 
   def index
+    # Newest first. This used to be `.reverse` in the view, which reverses one page rather
+    # than the collection and so gives the wrong rows once there is a second page.
     @broadcast_announcements = BroadcastAnnouncement.where(organization_id: current_organization.id)
+      .order(created_at: :desc)
+      .page(params[:page]).per(Pagination::MEDIUM)
   end
 
   def new

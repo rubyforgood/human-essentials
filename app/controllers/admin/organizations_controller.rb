@@ -9,7 +9,7 @@ class Admin::OrganizationsController < AdminController
       params[:filterrific]
     ) || return
 
-    @organizations = @filterrific.find.page(params[:page])
+    @organizations = @filterrific.find.page(params[:page]).per(Pagination::COMPACT)
 
     respond_to do |format|
       format.html

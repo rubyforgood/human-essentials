@@ -4,7 +4,7 @@
   <% if page.current? %>
     <%= content_tag :span, page, class: "pagination-link", aria: {current: "page"} %>
   <% else %>
-    <%= link_to page, url, remote: remote, rel: page.rel, class: "pagination-link",
+    <%= link_to page, url, remote: remote, rel: page.rel, class: "pagination-link", data: {turbo_frame: "_self"},
           aria: {label: "Go to page #{page}"} %>
   <% end %>
 </li>

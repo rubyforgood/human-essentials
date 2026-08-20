@@ -33,7 +33,9 @@
 
   <div class="<%= "p-5" if padded %>"><%= yield %></div>
 
-  <% if footer %>
+  <%# `present?`, not truthiness: a footer that captured a pager for a single-page collection is
+      whitespace, and rendering it drew an empty bordered strip at the foot of the card. %>
+  <% if footer.present? %>
     <div class="border-t border-slate-200 px-5 py-3"><%= footer %></div>
   <% end %>
 </section>

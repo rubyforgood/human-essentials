@@ -1,15 +1,25 @@
 <%#
-  Pagination, rendered INSIDE the table card as its last child -- a compact border-t strip,
-  not a detached bar floating below the card.
+  Pagination, rendered in the table card's footer slot:
 
-    render "shared/essentials/pagination", collection: @paginated_things
+    render "shared/essentials/card", padded: false,
+           footer: essentials_pagination_footer(@paginated_things) do
 
-  The wrapper is a div, not a nav: kaminari's own paginator emits the <nav aria-label=
-  "Pagination"> landmark, and nesting one inside another gives a screen-reader user two
-  identically-named landmarks for the same control.
+  It draws no border and no padding of its own -- the card footer already supplies
+  `border-t border-slate-200 px-5 py-3`. It used to draw both, which put the pager inside two
+  stacked hairlines twelve pixels apart on every page that used the footer slot.
+
+  A table that is not the card's last child -- a tab panel, say -- supplies that chrome itself,
+  by assigning essentials_pagination_footer to a local and wrapping it in the same div.
+
+  Go through the helper either way. It returns nil for a single-page collection, which is what
+  keeps the card from drawing an empty strip.
+
+  The wrapper is a div, not a nav: kaminari's own paginator emits the nav landmark labelled
+  "Pagination", and nesting one inside another gives a screen-reader user two identically
+  named landmarks for the same control.
 %>
 <% if collection.respond_to?(:total_pages) && collection.total_pages > 1 %>
-  <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+  <div class="flex flex-wrap items-center justify-between gap-3">
     <p class="text-xs text-slate-500">
       Page <%= collection.current_page %> of <%= collection.total_pages %>
     </p>

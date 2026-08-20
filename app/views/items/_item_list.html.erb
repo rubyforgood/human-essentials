@@ -21,4 +21,14 @@
       </tbody>
     </table>
   </div>
+  <%#
+    The controller has always computed a paginated collection; this panel rendered the full one
+    and never showed a pager, so 51 items at 121px a row made a 6,442px page. See design.md.
+
+    The chrome is inline rather than the card's `footer:` slot because this table is one tab
+    panel of five -- a card footer would show the item pager under the Kits tab too.
+  %>
+  <% if (pager = essentials_pagination_footer(items)) %>
+    <div class="border-t border-slate-200 px-5 py-3"><%= pager %></div>
+  <% end %>
 </div>

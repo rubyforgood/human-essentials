@@ -38,7 +38,7 @@ module View
           .class_filter(filters)
           .during(helpers.selected_range)
 
-        paginated_donations = donations.page(params[:page])
+        paginated_donations = donations.page(params[:page]).per(Pagination::MEDIUM)
 
         storage_locations = donations.filter_map do |donation|
           donation.storage_location unless donation.storage_location.discarded_at

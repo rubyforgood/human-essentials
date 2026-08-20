@@ -14,7 +14,7 @@ class PurchasesController < ApplicationController
                                      .during(helpers.selected_range)
     @item_categories = current_organization.item_categories.pluck(:name).uniq
 
-    @paginated_purchases = @purchases.page(params[:page])
+    @paginated_purchases = @purchases.page(params[:page]).per(Pagination::TALL)
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset
     # Purchase quantity

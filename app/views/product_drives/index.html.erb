@@ -35,7 +35,7 @@
     <div class="mt-6"></div>
 
     <%= render "shared/essentials/card", padded: false,
-          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_product_drives)) } do %>
+          footer: essentials_pagination_footer(@paginated_product_drives) do %>
       <% if @paginated_product_drives.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :cold_start,

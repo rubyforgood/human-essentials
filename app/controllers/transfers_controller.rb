@@ -16,6 +16,8 @@ class TransfersController < ApplicationController
     @selected_to = filter_params[:to_location]
     @from_storage_locations = StorageLocation.with_transfers_from(current_organization)
     @to_storage_locations = StorageLocation.with_transfers_to(current_organization)
+    # The CSV export below wants every row; the table wants one page of them.
+    @paginated_transfers = @transfers.page(params[:page]).per(Pagination::COMPACT)
     respond_to do |format|
       format.html
       format.csv { send_data Exports::ExportTransfersCSVService.new(transfers: @transfers.includes(line_items: :item), organization: current_organization).generate_csv, filename: "Transfers-#{Time.zone.today}.csv" }

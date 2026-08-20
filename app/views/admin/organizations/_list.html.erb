@@ -33,6 +33,6 @@
     </tbody>
   </table>
 </div>
-<div class="border-t border-slate-200 px-5 py-3">
-  <%= paginate organizations %>
-</div>
+<% if (pager = essentials_pagination_footer(organizations)) %>
+  <div class="border-t border-slate-200 px-5 py-3"><%= pager %></div>
+<% end %>

@@ -14,7 +14,8 @@
   <% end %>
   <%= turbo_frame_tag "audits-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-    <%= render "shared/essentials/card", padded: false do %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: essentials_pagination_footer(@paginated_audits) do %>
       <% if @audits.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :cold_start,
@@ -36,7 +37,7 @@
               </tr>
             </thead>
             <tbody>
-              <% @audits.each do |audit| %>
+              <% @paginated_audits.each do |audit| %>
                 <%# Status was a green/red/yellow row tint alone; it is a pill with an icon and
                     the word now, and the row keeps a soft tint as reinforcement. %>
                 <% tone, icon, tint = if audit.finalized?

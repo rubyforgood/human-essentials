@@ -21,7 +21,7 @@
   <%= turbo_frame_tag "adjustments-results", target: "_top", data: {turbo_action: "advance"} do %>
 
     <%= render "shared/essentials/card", padded: false,
-          footer: capture { concat(render("shared/essentials/pagination", collection: @paginated_adjustments)) } do %>
+          footer: essentials_pagination_footer(@paginated_adjustments) do %>
       <% if @paginated_adjustments.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :cold_start,

@@ -20,7 +20,8 @@
   <% end %>
   <%= turbo_frame_tag "transfers-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-    <%= render "shared/essentials/card", padded: false do %>
+    <%= render "shared/essentials/card", padded: false,
+          footer: essentials_pagination_footer(@paginated_transfers) do %>
       <% if @transfers.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: essentials_filtered? ? :no_results : :cold_start,
@@ -41,7 +42,7 @@
                 <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
             </thead>
-            <tbody><%= render partial: "transfer_row", collection: @transfers %></tbody>
+            <tbody><%= render partial: "transfer_row", collection: @paginated_transfers %></tbody>
           </table>
         </div>
       <% end %>

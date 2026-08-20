@@ -21,7 +21,7 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        @events = @events.page(params[:page])
+        @events = @events.page(params[:page]).per(Pagination::MEDIUM)
       end
     end
   end

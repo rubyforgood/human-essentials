@@ -373,4 +373,20 @@ module EssentialsUiHelper
   def help_link_icon
     (help_link_path == help_path) ? "bi-life-preserver" : "bi-book"
   end
+
+  # The pager for a table card, ready for the card's `footer:` slot:
+  #
+  #   render "shared/essentials/card", padded: false,
+  #          footer: essentials_pagination_footer(@paginated_things) do
+  #
+  # It returns nil -- not an empty string -- for a collection that fits on one page, so the
+  # card skips the footer instead of drawing an empty bordered strip. Call sites used to do
+  # `capture { concat(render(...)) }` and let the card test the result for blankness, which
+  # worked in production and failed in development: annotate_rendered_view_with_filenames
+  # puts an HTML comment in the buffer, so the "blank" capture was never blank.
+  def essentials_pagination_footer(collection, page_params: {})
+    return nil unless collection.respond_to?(:total_pages) && collection.total_pages > 1
+
+    render "shared/essentials/pagination", collection: collection, page_params: page_params
+  end
 end

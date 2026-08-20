@@ -53,7 +53,7 @@ class DistributionsController < ApplicationController
                      .order(issued_at: :desc)
                      .includes(:partner, :storage_location)
                      .class_filter(scope_filters)
-    @paginated_distributions = @distributions.page(params[:page])
+    @paginated_distributions = @distributions.page(params[:page]).per(Pagination::TALL)
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
     @storage_locations = current_organization.storage_locations.active.alphabetized.select(:id, :name)

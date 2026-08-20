@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagination designs &mdash; options</title>
+<link rel="stylesheet" href="/mockup.css">
+<style>
+  body { background: #f8fafc; }
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  .opt { margin-top: 2.5rem; }
+  .note { max-width: 46rem; }
+  .swatch { border: 1px dashed #cbd5e1; border-radius: 0.75rem; padding: 1rem; background: #fff; }
+  table.demo td, table.demo th { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="text-2xl font-semibold text-slate-900">Pagination designs</h1>
+  <p class="mt-2 text-sm text-slate-600 note">
+    Four ways to render the pager, all built from components this design system already has.
+    Every number below was measured in this app on 20 August 2026, not estimated.
+  </p>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">What exists today</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">Already built</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Yes &mdash; the system has a pagination component:
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">shared/essentials/_pagination</code>,
+      five Kaminari templates in <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">app/views/kaminari/</code>,
+      and a <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">.pagination-link</code> class in the
+      stylesheet. It is a numbered pager on a hairline strip at the foot of the table card, with
+      <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">aria-current="page"</code> on the current number.
+      It is in use on fourteen pages.
+    </p>
+
+    <section class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-xs text-slate-500">Page 3 of 19</p>
+          <nav aria-label="Pagination"><ul class="flex items-center gap-1">
+            <li><a href="#" class="pagination-link">&laquo; First</a></li>
+            <li><a href="#" class="pagination-link">&lsaquo; Prev</a></li>
+            <li><a href="#" class="pagination-link">1</a></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><span class="pagination-link" aria-current="page">3</span></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><a href="#" class="pagination-link">5</a></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+            <li><a href="#" class="pagination-link">Last &raquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <p class="mt-3 text-sm text-slate-600 note">
+      The gap: <strong>&ldquo;Page 3 of 19&rdquo; never says how many rows there are.</strong> A
+      user looking at /requests cannot tell from this whether the filter matched 140 records or
+      1,400, and page count is a proxy that changes meaning whenever the page size does.
+    </p>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">Option A &mdash; keep the numbered pager, add the count</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Recommended</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      One change: the label states the range and the total instead of the page number. Same
+      markup, same component, same keyboard behaviour. This is what Stripe, Shopify Admin,
+      GitHub&rsquo;s issue lists and Django admin all put on the left of the pager.
+    </p>
+
+    <section class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">31&ndash;45</span> of <span class="font-medium text-slate-900">272</span> requests</p>
+          <nav aria-label="Pagination"><ul class="flex items-center gap-1">
+            <li><a href="#" class="pagination-link">&lsaquo; Prev</a></li>
+            <li><a href="#" class="pagination-link">1</a></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><span class="pagination-link" aria-current="page">3</span></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><a href="#" class="pagination-link">5</a></li>
+            <li><span class="pagination-link" aria-hidden="true">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">19</a></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> answers &ldquo;how big is this result set?&rdquo;, which is the question the filter bar above it raises. Keeps direct access to the last page &mdash; the one people use to find the oldest record.</li>
+      <li><strong>Against:</strong> the row of numbers is the widest control on the strip; at 19 pages it needs the ellipsis to stay on one line.</li>
+      <li><strong>Cost:</strong> one helper, one partial. No change to any call site.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Option B &mdash; range summary with prev/next only</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Drop the numbers entirely. Two ghost buttons and a count. This is Linear, Notion, Vercel
+      and the newer Stripe dashboards &mdash; the pattern that admits nobody types a page number,
+      they scan and step.
+    </p>
+
+    <section class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">31&ndash;45</span> of <span class="font-medium text-slate-900">272</span> requests</p>
+          <nav aria-label="Pagination" class="flex items-center gap-2">
+            <a href="#" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"><i class="bi-chevron-left" aria-hidden="true"></i> Previous</a>
+            <a href="#" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50">Next <i class="bi-chevron-right" aria-hidden="true"></i></a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> narrowest control on the strip; survives a phone viewport without wrapping; no ellipsis logic.</li>
+      <li><strong>Against:</strong> reaching page 19 of /requests is eighteen clicks. There is no way to jump to the end, and this app has tables where the oldest record is the interesting one (audits, events).</li>
+      <li><strong>Cost:</strong> a new partial; the five Kaminari templates stop being used.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Option C &mdash; range summary, prev/next, and a page-size control</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Option B plus a &ldquo;rows per page&rdquo; select. This is what Material, Ant Design and
+      AG&nbsp;Grid ship as the default, and what most enterprise admin tables do.
+    </p>
+
+    <section class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-4">
+            <p class="text-sm text-slate-600">Showing <span class="font-medium text-slate-900">31&ndash;45</span> of <span class="font-medium text-slate-900">272</span> requests</p>
+            <label class="flex items-center gap-2 text-sm text-slate-600">
+              Rows
+              <select class="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 shadow-sm">
+                <option>15</option><option>25</option><option>50</option><option>100</option>
+              </select>
+            </label>
+          </div>
+          <nav aria-label="Pagination"><ul class="flex items-center gap-1">
+            <li><a href="#" class="pagination-link">&lsaquo; Prev</a></li>
+            <li><a href="#" class="pagination-link">1</a></li>
+            <li><a href="#" class="pagination-link">2</a></li>
+            <li><span class="pagination-link" aria-current="page">3</span></li>
+            <li><a href="#" class="pagination-link">4</a></li>
+            <li><span class="pagination-link" aria-hidden="true">&hellip;</span></li>
+            <li><a href="#" class="pagination-link">19</a></li>
+            <li><a href="#" class="pagination-link">Next &rsaquo;</a></li>
+          </ul></nav>
+        </div>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> the user resolves the row-height problem themselves; a power user on a tall monitor picks 100 and stops paging.</li>
+      <li><strong>Against:</strong> it makes a per-user preference out of a decision the design just made. The banded sizes exist precisely because 50 is wrong for /purchases and 15 is wrong for /users; a select invites the wrong answer and then has to remember it per table, per user. It also adds a fourth control to a strip that already competes with the filter bar for attention.</li>
+      <li><strong>Cost:</strong> a control, a permitted param, per-table persistence, and a decision about where the preference lives.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Option D &mdash; load more / infinite scroll</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      No pager. A button appends the next page into the same table.
+    </p>
+
+    <section class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="">
+        <table class="data-table demo">
+          <thead><tr><th scope="col">Partner</th><th scope="col" class="date">Requested</th><th scope="col">Status</th><th scope="col" class="quantity">Items</th></tr></thead>
+          <tbody>
+            <tr><td class="font-medium text-slate-900">Pawnee Parks Dept.</td><td class="date">2026-08-14</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Pending</span></td><td class="quantity">240</td></tr>
+            <tr><td class="font-medium text-slate-900">Eagleton Family Center</td><td class="date">2026-08-13</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">1,120</td></tr>
+            <tr><td class="font-medium text-slate-900">Sweetums Outreach</td><td class="date">2026-08-11</td><td><span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Fulfilled</span></td><td class="quantity">96</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="border-t border-slate-200 px-5 py-3">
+        <div class="flex flex-col items-center gap-2">
+          <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"><i class="bi-arrow-down" aria-hidden="true"></i> Load 15 more</button>
+          <p class="text-xs text-slate-500">45 of 272 loaded</p>
+        </div>
+      </div>
+    </section>
+
+    <ul class="mt-3 space-y-1 text-sm text-slate-600 note">
+      <li><strong>For:</strong> no page state to keep in the URL; reads well on a phone.</li>
+      <li><strong>Against:</strong> wrong for this app. These are working tables, not feeds &mdash; you print a distribution, you Ctrl-F an item, you send someone a link to what you are looking at. A loaded-in row cannot be linked to, the browser&rsquo;s find only sees what has been appended, and the footer of the page moves away from the user every time they reach it.</li>
+      <li><strong>Cost:</strong> a Stimulus controller, a Turbo Stream append action per table, and every system spec that counts rows has to learn to wait.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Recommendation</h2>
+    <div class="mt-3 swatch note">
+      <p class="text-sm text-slate-700">
+        <strong>Option A.</strong> It is the smallest change that fixes the one thing wrong with
+        the pager we have &mdash; that it never says how many rows matched &mdash; and it keeps
+        the last-page jump, which the audit and event tables genuinely need.
+      </p>
+      <p class="mt-3 text-sm text-slate-700">
+        Not C: a rows-per-page select hands the user a decision the banded sizes were introduced
+        to settle, and it has to be remembered per table and per user to be worth anything.
+        Not D: these tables get printed, searched and linked to.
+      </p>
+      <p class="mt-3 text-sm text-slate-700">
+        B is a reasonable second choice if the numbered row ever becomes a problem on narrow
+        viewports &mdash; but at the banded sizes the longest pager in the app is /requests at
+        nineteen pages, which fits on one line with an ellipsis.
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">Sizes &mdash; measured, and now built</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      This part is not a proposal; it landed with this change. Row heights measured at
+      1440&times;900 in this app.
+    </p>
+    <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table class="data-table">
+        <thead><tr><th scope="col">Band</th><th scope="col" class="quantity">Rows/page</th><th scope="col">Tables</th><th scope="col" class="quantity">Row height</th><th scope="col" class="quantity">Full page</th></tr></thead>
+        <tbody>
+          <tr><td class="font-medium text-slate-900">TALL</td><td class="quantity">15</td><td>requests, purchases, distributions, items, kits*, admin/account&nbsp;requests</td><td class="quantity">121&ndash;205px</td><td class="quantity">1,815&ndash;3,068px</td></tr>
+          <tr><td class="font-medium text-slate-900">MEDIUM</td><td class="quantity">25</td><td>donations, events, announcements, admin/users</td><td class="quantity">65&ndash;85px</td><td class="quantity">1,625&ndash;2,125px</td></tr>
+          <tr><td class="font-medium text-slate-900">COMPACT</td><td class="quantity">50</td><td>adjustments, transfers, audits, barcode&nbsp;items, product&nbsp;drives, admin/base&nbsp;items, admin/organizations</td><td class="quantity">45&ndash;53px</td><td class="quantity">2,250&ndash;2,650px</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-sm text-slate-600 note">
+      Every band lands a full page between 1.8 and 3.4 screens. Before this change one size of 50
+      applied everywhere in production and 5 everywhere in development &mdash; /purchases was
+      10,250px, eleven screens, and no reviewer ever saw it because development showed five rows.
+      *kits is measured but not yet paginated; see the coverage note in the answer.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
