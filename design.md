@@ -979,14 +979,16 @@ Notes that will bite you otherwise:
 - **`@source` globs are required.** Rails puts markup outside the CSS tree, so Tailwind's
   automatic source detection cannot find `app/views`, `app/helpers` or `app/javascript`.
   A class only used in a file outside those globs will not be generated.
-- **`config.assets.css_compressor = nil`.** libsass cannot parse Tailwind v4 output; leaving
-  the compressor on fails the build with `SassC::SyntaxError: Internal Error: Not enough
-  space`.
-- **`app/assets/tailwind` is removed from the Sprockets load path** by an initializer, so the
-  uncompiled entry point is never served.
-- **Precompiled assets go stale.** If system specs fail with
-  `Failed to resolve module specifier`, `public/assets` is out of date: `bin/rails
-  assets:clobber assets:precompile`.
+- **The pipeline is Propshaft** (ADR 0012). It compiles nothing: no directives, no ERB assets,
+  no Sass, no minification. It digests filenames and rewrites `url()` in CSS, and there is no
+  precompile list — everything on the load path is served.
+- **`app/assets/tailwind` is excluded from the load path** via `config.assets.excluded_paths`,
+  so the uncompiled entry point can never resolve as `application.css`.
+- **Do not precompile in development or test.** Propshaft serves from the load path in both, so
+  `assets:precompile` *freezes* assets behind `public/assets/.manifest.json` until that file is
+  deleted. This is the opposite of the Sprockets trap it replaced.
+- **`assets:clobber` deletes the Tailwind build**, because `tailwindcss-rails` enhances the task.
+  Always follow it with `tailwindcss:build`, or every page 500s on a missing `tailwind.css`.
 - Initializers do not hot-reload. Changing `config/initializers/simple_form_essentials.rb`
   needs a real server restart, not a page refresh.
 

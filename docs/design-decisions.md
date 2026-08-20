@@ -1556,3 +1556,41 @@ resolves the frame when it needs it.
 shows *Deactivate* — but disabled, whenever the location holds inventory. `have_button` requires
 an enabled button, so it is not a signal. *Reactivate* disappearing is the outcome, and waiting
 for that is what made the test deterministic.
+
+## 2026-08-20 · Propshaft instead of Sprockets
+
+**Decision.** Replace `sprockets-rails` and `sprockets` with `propshaft`. Recorded in full as
+[ADR 0012](architecture/decisions/0012-use-propshaft-instead-of-sprockets.md); this is the short
+version and what it superseded.
+
+**Rationale.** Sprockets is a compiler, and after the design system migration there was nothing
+left here for it to compile. No `//= require` directives — the only file with any was
+`manifest.js`, which exists to feed Sprockets. No ERB assets. No Sass. No bundling, because
+importmap serves JavaScript unbundled. One stylesheet, already minified by the Tailwind CLI before
+Sprockets saw it. What remained was digesting filenames and rewriting `url()` in CSS, which is
+Propshaft's entire job.
+
+The configuration made the case on its own: three separate pieces of it existed to stop the
+compiler compiling. `css_compressor = nil` because libsass cannot parse Tailwind v4 output; an
+initializer rejecting `app/assets/tailwind` from the load path so `application.css` would not
+resolve to `@import "tailwindcss"`; and a precompile list kept in step by hand.
+
+**Supersedes** *2026-08-17 · `config.assets.css_compressor = nil`*. Propshaft has no CSS
+compressor, so the setting is not disabled — it does not exist. The reasoning in that entry still
+explains why libsass and Tailwind v4 cannot be combined, which is worth keeping.
+
+**Measured, not assumed.** The served stylesheet is byte-identical to the build apart from
+Propshaft quoting `url()` values: 12 font URLs, two quotes each, 24 bytes. All twelve still point
+at `public/vendor` and all twelve files exist. Figtree and Bootstrap Icons load, icons render, 70
+JS modules resolve, no failed requests and no console errors across four pages.
+
+**The development trap inverted, which is worth knowing.** It used to be that assets went stale
+until you precompiled. Propshaft serves from the load path in development and test, so
+precompiling is what makes them stale — Rails then serves `public/assets/.manifest.json` until it
+is deleted. `CLAUDE.md`, `design.md` and `docs/onboarding.md` all said the old thing and now say
+the new one.
+
+**One trap that is not Propshaft's.** `tailwindcss-rails` enhances `assets:clobber` with its own
+`tailwindcss:clobber`, which deletes `app/assets/builds/*.css`. Clobbering without rebuilding
+leaves every page 500ing on a missing `tailwind.css`. That was true under Sprockets too; it just
+took this migration to walk into it.

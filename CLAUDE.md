@@ -80,6 +80,10 @@ Complex queries are extracted into `app/queries/` (e.g., `ItemsInQuery`, `LowInv
 ### Frontend
 Tailwind CSS v4 (via the `tailwindcss-rails` standalone CLI — no Node, no package.json), Turbo Rails, Stimulus.js, ImportMap (no Webpack/bundler). JavaScript controllers live in `app/javascript/controllers/`.
 
+The asset pipeline is **Propshaft**, not Sprockets (ADR 0012). It does not compile anything: no
+directives, no ERB assets, no Sass, no minification. It digests filenames and rewrites `url()`
+in CSS. There is no precompile list — everything on the load path is served.
+
 The UI follows a documented design system. **`design.md` is normative** — read it before building or changing a screen. Components are partials in `app/views/shared/essentials/` and helpers in `EssentialsUiHelper`; build from those rather than from utility strings.
 
 Bootstrap and AdminLTE were removed (ADR 0011). A class like `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is defined nowhere and renders as nothing — see `docs/migration-map.md` for what to write instead.
@@ -104,8 +108,12 @@ Flipper is available for feature flags, accessible at `/flipper` (auth required)
   everything except the browser suite: markup a browser reparses into a different shape
   (fields ending up outside their `<form>`), Stimulus controllers toggling classes that no
   longer exist, and confirmation dialogs that never appeared.
-- If system specs fail with `Failed to resolve module specifier`, `public/assets` is stale:
-  `bin/rails assets:clobber assets:precompile`.
+- **Do not run `assets:precompile` in development or test.** The pipeline is Propshaft
+  (ADR 0012), which serves from the load path in both, so precompiling *freezes* assets: Rails
+  serves `public/assets/.manifest.json` until you delete it. If assets look stale, that file is
+  usually why — `bin/rails assets:clobber`, then `bin/rails tailwindcss:build`.
+- `assets:clobber` deletes the Tailwind build too (`tailwindcss-rails` enhances the task), so it
+  always needs `tailwindcss:build` after it or every page 500s on a missing `tailwind.css`.
 - Behind a port forward or TLS-terminating tunnel, start the server with `TUNNEL=1` or CSRF
   will reject every form and report it as "Your session expired".
 
