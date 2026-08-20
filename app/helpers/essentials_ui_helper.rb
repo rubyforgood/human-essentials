@@ -389,4 +389,38 @@ module EssentialsUiHelper
 
     render "shared/essentials/pagination", collection: collection, page_params: page_params
   end
+
+  # "Showing 31–45 of 272 requests" — the range and the total, not the page number.
+  #
+  # A page number is a proxy. It changes meaning whenever the page size does, and it never
+  # answers the question the filter bar above it raises: how big is this result set? Someone
+  # looking at "Page 3 of 19" cannot tell whether the filter matched 140 records or 1,400.
+  # Stripe, Shopify Admin, GitHub's issue lists and Django admin all put the range here.
+  def essentials_pagination_summary(collection)
+    first = collection.offset_value + 1
+    last = collection.offset_value + collection.length
+    total = collection.total_count
+
+    safe_join([
+      "Showing ",
+      tag.span("#{number_with_delimiter(first)}–#{number_with_delimiter(last)}", class: "font-medium text-slate-900"),
+      " of ",
+      tag.span(number_with_delimiter(total), class: "font-medium text-slate-900"),
+      " #{essentials_entry_name(collection, total)}"
+    ])
+  end
+
+  # The noun, pluralised and in sentence case: "requests", "base items", "product drives".
+  # Kaminari's `entry_name` gives the humanised model name, which is capitalised and which an
+  # i18n entry may have set by hand — `ProductDrive` reads "Product Drive". A word keeps its
+  # case if it carries an internal capital, so "NDBN member" does not become "ndbn member".
+  def essentials_entry_name(collection, count)
+    name = if collection.respond_to?(:entry_name)
+      collection.entry_name(count: count)
+    else
+      "result".pluralize(count)
+    end
+
+    name.split.map { |word| /\p{Lu}.*\p{Lu}/.match?(word) ? word : word.downcase }.join(" ")
+  end
 end
