@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagination — audit and options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  body{background:#f8fafc}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 32px 80px}
+  .frame{border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;background:#fff;margin-top:14px}
+  .frame>figcaption{padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+  .frame.pick>figcaption{background:#ecfdf5;color:#065f46}
+  .frame.bad>figcaption{background:#fff1f2;color:#9f1239}
+  .frame>.body{padding:18px 20px}
+  .frame>.shot{padding:20px;background:#fff}
+  .rule{border-left:3px solid #4f46e5;background:#eef2ff;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  .warn{border-left:3px solid #dc2626;background:#fef2f2;padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+  table.diag{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;overflow:hidden;font-size:13.5px}
+  table.diag th,table.diag td{text-align:left;padding:6px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  table.diag th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+  table.diag tr:last-child td{border-bottom:0}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .no{color:#be123c;font-weight:600}.ok{color:#15803d;font-weight:600}.warnc{color:#b45309;font-weight:600}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:.9em}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:21px;margin:46px 0 6px}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:#4f46e5;
+    color:#fff;border-radius:7px;font-size:14px;margin-right:9px}
+  p.note{color:#475569;margin:0 0 12px;max-width:88ch}
+  .lede{color:#475569;margin:0 0 28px;max-width:80ch}
+  .screens{display:flex;gap:6px;align-items:flex-end;margin-top:6px}
+  .screen{width:34px;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:3px}
+</style></head>
+<body class="text-slate-900"><div class="wrap">
+
+<h1>Pagination</h1>
+<p class="lede">Measured against the running app. Nothing here is built — the question at the end
+is which page-size rule you want.</p>
+
+<h2><span class="n">1</span>One defect, and it is the worst page in the app</h2>
+<div class="warn">
+  <p><strong><code>items_controller.rb:23</code> computes pagination and throws it away.</strong>
+  It assigns <code>@paginated_items</code>, and that name appears <strong>nowhere else in the
+  repository</strong> — not a view, not a spec. The view renders <code>@items</code>, all 51 of
+  them, at 121px a row: a <strong>6,442px page</strong> with no pagination control. Dead code
+  hiding a missing feature.</p>
+  <p style="margin-top:8px"><code>/admin/base_items</code> is the same shape without the dead
+  code: 47 rows, 2,867px, unpaginated, and global to every organisation.</p>
+</div>
+
+<h2><span class="n">2</span>Which tables should paginate at all</h2>
+<p class="note">Not a row count. The question is whether a collection is <strong>bounded by the
+size of the organisation</strong> or <strong>grows with its activity</strong>. A list of three
+storage locations does not want a pager; a list of donations does, from the first day, because the
+page that is fine at 20 rows is unusable at 2,000 and nobody notices the day it crosses over.</p>
+<table class="diag">
+  <thead><tr><th>Grows with</th><th>Tables</th><th>Rule</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Activity</strong></td>
+        <td><code>adjustments</code> <code>audits</code> <code>barcode_items</code>
+            <code>broadcast_announcements</code> <code>distributions</code> <code>donations</code>
+            <code>events</code> <code>product_drives</code> <code>purchases</code>
+            <code>requests</code> <code>transfers</code></td>
+        <td class="ok">Always paginate</td></tr>
+    <tr><td><strong>The organisation</strong></td>
+        <td><code>donation_sites</code> <code>items</code> <code>kits</code>
+            <code>manufacturers</code> <code>partner_groups</code> <code>partners</code>
+            <code>product_drive_participants</code> <code>storage_locations</code>
+            <code>users</code> <code>vendors</code></td>
+        <td>Filter instead — except <code>items</code>, below</td></tr>
+  </tbody>
+</table>
+<p class="note" style="margin-top:12px">Three of the first group are unpaginated today —
+<code>audits</code>, <code>barcode_items</code> and <code>broadcast_announcements</code> — plus
+<code>transfers</code>, which is filed as bounded but is not: a bank transfers stock between
+locations forever.</p>
+<p class="note"><code>items</code> is the exception in the second group. It is bounded, but at
+121px a row a bank with 200 items gets a 24,000px page, and 51 items already gives 6,442px. Height
+decides it, not the category.</p>
+
+<h2><span class="n">3</span>How many rows — the measurement that changes the answer</h2>
+<p class="note">The usual answer is 25 or 50: Kaminari defaults to 25, GitHub uses 30, Shopify,
+Jira, Linear and Salesforce use 50, Stripe 20, Django admin 100. The split in that list is row
+height — 50 where rows are one line, 25 where they are tall.</p>
+<p class="note"><strong>This app does not have one row height. It has sixteen, and they differ by
+4.5×</strong> — 45px on <code>/users</code>, 205px on <code>/purchases</code>. A single page size
+cannot serve both.</p>
+
+<figure class="frame bad">
+  <figcaption>A — one size for everything: 50, as production does today</figcaption>
+  <div class="shot">
+    <table class="diag"><thead><tr><th>Table</th><th class="num">row</th><th class="num">per page</th>
+      <th class="num">page of rows</th><th class="num">screens</th><th>&nbsp;</th></tr></thead>
+      <tbody><tr><td><code>/purchases</code></td><td class="num">205px</td><td class="num">50</td><td class="num">10,250px</td><td class="num">11.4</td><td style="width:34%"><div style="background:#be123c;height:14px;width:100%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/distributions</code></td><td class="num">155px</td><td class="num">50</td><td class="num">7,750px</td><td class="num">8.6</td><td style="width:34%"><div style="background:#be123c;height:14px;width:76%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/requests</code></td><td class="num">125px</td><td class="num">50</td><td class="num">6,250px</td><td class="num">6.9</td><td style="width:34%"><div style="background:#be123c;height:14px;width:61%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/items</code></td><td class="num">121px</td><td class="num">50</td><td class="num">6,050px</td><td class="num">6.7</td><td style="width:34%"><div style="background:#be123c;height:14px;width:59%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/kits</code></td><td class="num">111px</td><td class="num">50</td><td class="num">5,550px</td><td class="num">6.2</td><td style="width:34%"><div style="background:#be123c;height:14px;width:54%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/donations</code></td><td class="num">65px</td><td class="num">50</td><td class="num">3,250px</td><td class="num">3.6</td><td style="width:34%"><div style="background:#d97706;height:14px;width:32%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/events</code></td><td class="num">65px</td><td class="num">50</td><td class="num">3,250px</td><td class="num">3.6</td><td style="width:34%"><div style="background:#d97706;height:14px;width:32%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/partners</code></td><td class="num">65px</td><td class="num">50</td><td class="num">3,250px</td><td class="num">3.6</td><td style="width:34%"><div style="background:#d97706;height:14px;width:32%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/storage_locations</code></td><td class="num">65px</td><td class="num">50</td><td class="num">3,250px</td><td class="num">3.6</td><td style="width:34%"><div style="background:#d97706;height:14px;width:32%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/adjustments</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/barcode_items</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/donation_sites</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/manufacturers</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/product_drives</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/transfers</code></td><td class="num">52px</td><td class="num">50</td><td class="num">2,600px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:25%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/users</code></td><td class="num">45px</td><td class="num">50</td><td class="num">2,250px</td><td class="num">2.5</td><td style="width:34%"><div style="background:#15803d;height:14px;width:22%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr></tbody></table>
+    <p class="note" style="margin:12px 0 0">Simple, and what most of the industry does.
+    <code>/purchases</code> becomes a <strong>10,250px</strong> page — eleven screens of scrolling
+    to reach the pager.</p>
+  </div>
+</figure>
+
+<figure class="frame pick">
+  <figcaption>B — three sizes, banded by row height &nbsp;·&nbsp; my recommendation</figcaption>
+  <div class="shot">
+    <p class="note" style="margin:0 0 10px"><strong>Tall rows (≥120px) 15 · medium (60–119px) 25 ·
+    compact (&lt;60px) 50.</strong> One constant per controller, and one sentence of rule.</p>
+    <table class="diag"><thead><tr><th>Table</th><th class="num">row</th><th class="num">per page</th>
+      <th class="num">page of rows</th><th class="num">screens</th><th>&nbsp;</th></tr></thead>
+      <tbody><tr><td><code>/purchases</code></td><td class="num">205px</td><td class="num">15</td><td class="num">3,075px</td><td class="num">3.4</td><td style="width:34%"><div style="background:#d97706;height:14px;width:30%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/distributions</code></td><td class="num">155px</td><td class="num">15</td><td class="num">2,325px</td><td class="num">2.6</td><td style="width:34%"><div style="background:#15803d;height:14px;width:23%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/requests</code></td><td class="num">125px</td><td class="num">15</td><td class="num">1,875px</td><td class="num">2.1</td><td style="width:34%"><div style="background:#15803d;height:14px;width:18%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/items</code></td><td class="num">121px</td><td class="num">15</td><td class="num">1,815px</td><td class="num">2.0</td><td style="width:34%"><div style="background:#15803d;height:14px;width:18%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/kits</code></td><td class="num">111px</td><td class="num">25</td><td class="num">2,775px</td><td class="num">3.1</td><td style="width:34%"><div style="background:#d97706;height:14px;width:27%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/donations</code></td><td class="num">65px</td><td class="num">25</td><td class="num">1,625px</td><td class="num">1.8</td><td style="width:34%"><div style="background:#15803d;height:14px;width:16%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/events</code></td><td class="num">65px</td><td class="num">25</td><td class="num">1,625px</td><td class="num">1.8</td><td style="width:34%"><div style="background:#15803d;height:14px;width:16%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/partners</code></td><td class="num">65px</td><td class="num">25</td><td class="num">1,625px</td><td class="num">1.8</td><td style="width:34%"><div style="background:#15803d;height:14px;width:16%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/storage_locations</code></td><td class="num">65px</td><td class="num">25</td><td class="num">1,625px</td><td class="num">1.8</td><td style="width:34%"><div style="background:#15803d;height:14px;width:16%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/adjustments</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/barcode_items</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/donation_sites</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/manufacturers</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/product_drives</code></td><td class="num">53px</td><td class="num">50</td><td class="num">2,650px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:26%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/transfers</code></td><td class="num">52px</td><td class="num">50</td><td class="num">2,600px</td><td class="num">2.9</td><td style="width:34%"><div style="background:#15803d;height:14px;width:25%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr><tr><td><code>/users</code></td><td class="num">45px</td><td class="num">50</td><td class="num">2,250px</td><td class="num">2.5</td><td style="width:34%"><div style="background:#15803d;height:14px;width:22%;border-radius:3px;display:inline-block;vertical-align:middle"></div></td></tr></tbody></table>
+    <p class="note" style="margin:12px 0 0">Every page lands between <strong>1.8 and 3.4
+    screens</strong> instead of 2.5 to 11.4. The pager arrives at roughly the same place whatever
+    table you are on, which is the thing a person actually learns.</p>
+  </div>
+</figure>
+
+<h2><span class="n">4</span>The development page size hides all of this</h2>
+<div class="warn">
+  <p><code>config.default_per_page</code> is <strong>5</strong> in development and staging, and
+  <strong>50</strong> in production. Nobody building or reviewing this app ever sees the layout
+  that ships: a table that is eleven screens in production is one screen in staging.</p>
+  <p style="margin-top:8px">That is a review gap, and it is the kind that lets a 6,442px page
+  through. Whatever page size you choose, it should be the same everywhere.</p>
+</div>
+
+<h2><span class="n">5</span>The control itself does not change</h2>
+<figure class="frame">
+  <figcaption>The existing pagination strip, unchanged</figcaption>
+  <div class="shot">
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-5 py-4 text-sm text-slate-500">…table…</div>
+      <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+    <p class="text-xs text-slate-500">
+      Page 1 of 9
+    </p>
+    <!-- BEGIN app/views/kaminari/_paginator.html.erb -->
+  <nav aria-label="Pagination">
+    <ul class="flex flex-wrap items-center gap-1">
+      
+      
+          <!-- BEGIN app/views/kaminari/_page.html.erb --><li>
+    <span class="pagination-link" aria-current="page">1</span>
+</li>
+<!-- END app/views/kaminari/_page.html.erb -->
+          <!-- BEGIN app/views/kaminari/_page.html.erb --><li>
+    <a rel="next" class="pagination-link" aria-label="Go to page 2" href="/adjustments?page=2">2</a>
+</li>
+<!-- END app/views/kaminari/_page.html.erb -->
+          <!-- BEGIN app/views/kaminari/_page.html.erb --><li>
+    <a class="pagination-link" aria-label="Go to page 3" href="/adjustments?page=3">3</a>
+</li>
+<!-- END app/views/kaminari/_page.html.erb -->
+          <!-- BEGIN app/views/kaminari/_page.html.erb --><li>
+    <a class="pagination-link" aria-label="Go to page 4" href="/adjustments?page=4">4</a>
+</li>
+<!-- END app/views/kaminari/_page.html.erb -->
+          <!-- BEGIN app/views/kaminari/_page.html.erb --><li>
+    <a class="pagination-link" aria-label="Go to page 5" href="/adjustments?page=5">5</a>
+</li>
+<!-- END app/views/kaminari/_page.html.erb -->
+          <!-- BEGIN app/views/kaminari/_gap.html.erb --><li>
+  <span class="pagination-gap" aria-hidden="true">…</span>
+</li>
+<!-- END app/views/kaminari/_gap.html.erb -->
+      <!-- BEGIN app/views/kaminari/_next_page.html.erb --><li>
+  <a rel="next" class="pagination-link" aria-label="Go to the next page" href="/adjustments?page=2">Next ›</a>
+</li>
+<!-- END app/views/kaminari/_next_page.html.erb -->
+      <!-- BEGIN app/views/kaminari/_last_page.html.erb --><li>
+  <a class="pagination-link" aria-label="Go to the last page" href="/adjustments?page=9">Last »</a>
+</li>
+<!-- END app/views/kaminari/_last_page.html.erb -->
+    </ul>
+  </nav>
+<!-- END app/views/kaminari/_paginator.html.erb -->
+  </div>
+    </div>
+    <p class="note" style="margin:12px 0 0">It already renders itself only when there is more than
+    one page, so adding pagination to a table with six rows shows nothing at all. That is what
+    makes it safe to apply the rule broadly.</p>
+  </div>
+</figure>
+
+<h2><span class="n">6</span>What I would build</h2>
+<div class="rule">
+  <p><strong>1.</strong> Fix <code>items</code>: render <code>@paginated_items</code> and add the
+  pagination partial. Two lines, and it takes the worst page in the app from 6,442px to 1,815px.</p>
+  <p style="margin-top:8px"><strong>2.</strong> Paginate the four that grow and do not:
+  <code>audits</code>, <code>barcode_items</code>, <code>broadcast_announcements</code>,
+  <code>transfers</code> — plus <code>admin/base_items</code>.</p>
+  <p style="margin-top:8px"><strong>3.</strong> Adopt <strong>B</strong>, the three bands, as a
+  per-controller constant, and make the development and staging size match production so the
+  layout under review is the layout that ships.</p>
+  <p style="margin-top:8px"><strong>4.</strong> Write the bounded/unbounded rule into
+  <code>design.md</code>, so nobody paginates a list of three storage locations.</p>
+</div>
+<p class="note"><strong>A or B — and do you want the four extra tables paginated now?</strong></p>
+
+</div></body></html>

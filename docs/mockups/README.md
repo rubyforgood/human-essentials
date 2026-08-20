@@ -4,13 +4,20 @@ Design proposals that were shown before anything was built. They are checked in 
 are the record of what was offered and chosen, and because this workspace has been reset out
 from under the work more than once.
 
-Each one loads the app's real stylesheet (`/assets/tailwind.css`), so it has to be served by the
-app rather than opened from disk:
+Each one loads the app's real stylesheet, so it has to be served by the app rather than opened
+from disk:
 
 ```bash
-cp docs/mockups/<file>.html public/    # ignored by git; the tracked copy is the one here
+cp docs/mockups/<file>.html public/          # ignored by git; the tracked copy is the one here
+cp app/assets/builds/tailwind.css public/mockup.css
 # then open http://localhost:3000/<file>.html
 ```
+
+They link `/mockup.css`, a plain copy in `public/`, rather than `/assets/tailwind.css`. Since the
+pipeline became Propshaft (ADR 0012) the undigested asset path 404s — only
+`/assets/tailwind-<digest>.css` resolves, and that digest changes on every rebuild. A mockup that
+links it would silently render unstyled, which is how all nine of these were found: the heading
+font had fallen back to Times New Roman.
 
 If a mockup shows responsive behaviour with an `<iframe srcdoc="...">`, **escape `<` and `>` in
 the payload as well as the quotes**. rack-mini-profiler injects its script tag at the first
@@ -27,5 +34,6 @@ Chromium's default 300px that way.
 | `showing-line-options.html` | `#date_range_label` produces a sentence fragment that nothing reads. Where should the sentence go, and is the fragment fit to build on? | **B + C chosen**: a sentence-case caption on the stats band and the period in the `:no_results` empty state, not a standalone line. Helper fixed first — five bugs, one of them the no-parameter default. |
 | `summary-band-options.html` | The stats band orphans a tile, and its filled tiles float on the page in no container. One responsive card instead? | **Option B chosen**: one card, hairline separators drawn by a `gap-px` backdrop, column count following the figure count. Every row full at every breakpoint on all five pages. |
 | `filter-density-options.html` | The date range cell is twice the width of its neighbours and the actions take a row of their own. Should a dense filter set collapse? | **Option C chosen**, threshold five, with the date range narrowed to one column rather than made conditional. `/donations` went 264px to 38px. |
+| `pagination-options.html` | Which tables should paginate, and how many rows? | Awaiting a decision. Records that `items` computes pagination and never renders it (6,442px page), and that row heights vary 4.5× so one page size cannot serve every table. |
 | `filter-consistency-options.html` | Two bugs (every modal opens top-left; Calculate product totals is inside the filter bar), plus: should the disclosure threshold go, how does industry take a custom date range, and are two Clears needed? | **All built.** Both bugs fixed, the threshold and the second Clear deleted, and the date range rebuilt as a popover on a shared `popover` controller. `bin/design/overlay-audit.js` added, because neither existing audit had ever opened an overlay. |
 | `filters-and-summary-options.html` | Four questions: why filter controls are different widths and leave trailing white space; whether to auto-apply instead of a Filter button; what "recent and upcoming" means; and what subheader the summary card needs. | **All four recommendations built**, auto-filtering as option B: a grid bar, the preset renamed, a titled summary card with a scope sentence, and filters applied on change into a Turbo Frame. |
