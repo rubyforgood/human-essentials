@@ -28,11 +28,15 @@ RSpec.describe "Donation Site", type: :system, js: true do
         visit subject
         open_filters
         check "Also include inactive donation sites"
-        # Applies on change; the wait also covers the export link, which is rebuilt from the form
-        # when the frame loads and would otherwise still carry the previous query.
         wait_for_filters
 
         expect(page).to have_content("Inactive Donation Site")
+
+        # The export link is rebuilt from the form when the frame loads, so what this test is
+        # really waiting for is that rebuild -- not the rows. Asserting on the href says so, and
+        # removes a race that failed about one run in three with a CSV of the unfiltered list.
+        expect(page).to have_css("[data-filter-export][href*='include_inactive_donation_sites=1']", visible: :all)
+
         click_on "Export"
         wait_for_download
         @csv_content = File.read(download)

@@ -1521,3 +1521,38 @@ Stripe, Shopify, Xero, QuickBooks — is home, then the work, then read-only vie
 the pinned account item, ordered by how often each is wanted. By that rule Reports belongs after
 `Network`. Left in place pending a decision, because nav order is the sort of thing a particular
 bank may have a reason about, and the rule is now written into design.md either way.
+
+## 2026-08-20 · Spacing follows the section, and the flash no longer clears on filter
+
+**Reports moved** below the working groups, per the ordering rule recorded yesterday.
+
+**Spacing was the same mistake as weight, one layer down.** *Dashboard* and *Reports* shared one
+`<ul class="space-y-0.5">` — the spacing for items *inside* a section — so they sat 2px apart
+while every other top-level entry was 16px away. Measured: 2px, then 16, 16, 16. They were in one
+list only because both happened to be leaves, which is not what makes a section. Now a single
+`space-y-4` separates every top-level entry and the group partial carries no margin of its own.
+
+**The flash no longer clears when a filter applies, and that reverses a decision made yesterday.**
+Restoring what a full page load used to do seemed right, but removing 56px from above the results
+moves everything below it — under a cursor that is often already over a row action. It is a
+layout shift in response to an unrelated action, which is a hazard for a person, and it broke
+three specs that click a row action after filtering: storage locations, vendors and items, each
+failing in a full run and passing alone. A message about something that did happen is the cheaper
+problem, and it clears on the next real navigation.
+
+Worth naming: the first two of those three failures were treated as spec timing and patched with
+waits before the common shape became visible. The pattern only resolved once all three were on
+the table at once. A flake in one spec is a timing story; the same flake in three is a design
+one.
+
+**A real bug the specs caught on the way.** `auto_submit_controller` resolved its frame with
+`document.getElementById` in `connect()`. The form is parsed *before* the frame it targets, so
+that could return null — and then the export link was never rebuilt and the result was never
+announced, silently. It held in a browser and not under Cuprite, which is exactly the kind of
+difference that hides a real bug inside a timing story. It now listens on the document and
+resolves the frame when it needs it.
+
+**And one spec that was asserting the wrong thing.** After reactivating a storage location the row
+shows *Deactivate* — but disabled, whenever the location holds inventory. `have_button` requires
+an enabled button, so it is not a signal. *Reactivate* disappearing is the outcome, and waiting
+for that is what made the test deterministic.

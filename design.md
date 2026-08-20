@@ -526,7 +526,15 @@ Four things about that snippet are load-bearing, and all four were found by brea
 | **The form stays outside the frame** | Inside it, the controls are replaced on every change and focus is lost mid-filtering. |
 
 The **Export link** is in the page header, outside the frame, so `auto_submit_controller`
-rebuilds its query string from the form on every frame load. Exporting the previous filter's rows
+rebuilds its query string from the form on every frame load. It listens on the **document** and
+resolves the frame when it needs it, not in `connect()`: the form is parsed before the frame it
+targets, so resolving it early can return null and leave the link — and the announcement —
+silently dead.
+
+The flash is **not** cleared when a filter applies. It was, briefly; removing 56px from above the
+results moves everything below it under a cursor that is often already over a row action, and a
+layout shift in response to an unrelated action is a hazard. A stale message describes something
+that did happen, and it clears on the next navigation. Exporting the previous filter's rows
 is a worse failure than a stale table, because the file looks right and nothing on screen says
 otherwise.
 
@@ -847,9 +855,19 @@ disclosure is marked by an affordance, hierarchy by type.
 **Ordering.** Home first; then the work, grouped by the thing it acts on; then read-only views of
 that work; then the pinned account item. Stripe, Shopify, Xero and QuickBooks all order a rail
 this way, and the reason is frequency: you visit a report about what you did less often than you
-do the thing. *Reports* currently sits at the top beside *Dashboard*, which is a leftover from
-building the hub — grouping the two leaf items looked tidy in the markup and puts a derived view
-above the operational ones. It belongs after `Network`.
+do the thing. So: *Dashboard*, the three working groups, *Reports*, and *My organization* pinned.
+
+**Spacing follows the same idea as weight.** One `space-y-4` between every top-level entry —
+group or lone destination — and `space-y-0.5` between items inside a group, `mt-1` under a group
+header. *Dashboard* and *Reports* used to share a list at the inner spacing, so they clustered at
+2px while everything else sat 16px apart. A section is a meaningful grouping, not "the leaves that
+happen to be adjacent": each of those two is a section of one.
+
+| | Gap |
+| --- | --- |
+| Between top-level entries | 16px |
+| Group header to its first item | 4px |
+| Between items in a group | 2px |
 
 **The bottom strip.** The rail's pinned item and the page footer are both `h-14` with a full-bleed
 top border, so their rules meet at the same height and run into the rail's own `border-r` as one
