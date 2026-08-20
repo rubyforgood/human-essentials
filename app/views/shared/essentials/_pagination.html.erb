@@ -20,8 +20,8 @@
 %>
 <% if collection.respond_to?(:total_pages) && collection.total_pages > 1 %>
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <p class="text-xs text-slate-500">
-      Page <%= collection.current_page %> of <%= collection.total_pages %>
+    <p class="text-sm text-slate-600">
+      <%= essentials_pagination_summary(collection) %>
     </p>
     <%= paginate collection, params: (defined?(page_params) ? page_params : {}) %>
   </div>

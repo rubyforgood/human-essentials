@@ -839,6 +839,23 @@ truncation gap is a `<span>`, not a link to `#`. Every page link carries
 `data-turbo-frame="_self"`, so paging updates the results frame instead of doing a whole-page
 visit and throwing away the scroll position.
 
+#### The label states the range, not the page
+
+**"Showing 31–45 of 272 requests"**, from `essentials_pagination_summary` — never "Page 3 of
+19". A page number is a proxy: it changes meaning whenever the page size does, and it does not
+answer the question the filter bar above it raises, which is how big the result set is. Someone
+reading "Page 3 of 19" cannot tell whether the filter matched 140 records or 1,400.
+
+The range and the total are `font-medium text-slate-900` inside `text-sm text-slate-600`, so
+the numbers carry the emphasis and the words around them recede. The noun comes from Kaminari's
+`entry_name`, lowercased word by word — a word with an internal capital keeps it, so a future
+`/admin/ndbn_members` reads "NDBN members" and not "ndbn members".
+
+`« First` and `Last »` stay. The mockup's option A drew the pager without them, using an
+ellipsis and the last page number instead; they are kept because jumping to the oldest record
+is a real task on the audit and event tables, and because a number that moves as the result set
+changes is a worse target than a button that does not.
+
 #### Page size: three bands
 
 One number does not fit every table, because the rows are not the same height. Measured at

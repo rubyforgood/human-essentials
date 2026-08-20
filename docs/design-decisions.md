@@ -1691,3 +1691,38 @@ Neither is attributable to the pagination change. `/storage_locations` is not pa
 under it changed, and it renders the card without a `footer:` local — so the one shared edit that
 could have reached it (`if footer` becoming `if footer.present?`) evaluates identically for that
 page, `nil` either way.
+
+## 2026-08-20 · The pager says how many rows matched
+
+Four designs were put up in `docs/mockups/pagination-designs.html` and **A** was chosen: keep
+the numbered pager, and replace "Page 3 of 19" with "Showing 31–45 of 272 requests".
+
+The reason is that a page number is a proxy for the thing people want to know. It changes
+meaning whenever the page size does — and the page size had just been banded three ways, so
+"Page 3 of 19" means something different on `/purchases` than on `/adjustments`. More to the
+point, an index page in this app opens with a filter bar and a date range; the question that
+raises is *how much matched*, and the pager was the only place on the page that could answer it
+and did not.
+
+**Rejected: a rows-per-page select** (Material, Ant Design, AG Grid). It hands the user the
+decision the bands exist to settle, and to be worth anything it has to be remembered per table
+and per user — a preference store and a migration for something the design can just answer. It
+also puts a fourth control on a strip that already competes with the filter bar above it.
+
+**Rejected: load more / infinite scroll.** These are working tables. People print a
+distribution, Ctrl-F an item, and send a colleague a link to what they are looking at. An
+appended row cannot be linked to, the browser's find only sees what has been loaded, and the
+footer retreats every time the user reaches it.
+
+**Kept, against the mockup.** The A panel drew the pager without `« First` and `Last »`,
+reaching the last page through an ellipsis and the final page number instead. Both are kept:
+jumping to the oldest record is a real task on the audit and event tables, and a page number
+that moves as the result set changes is a worse click target than a button that does not. The
+prose beside option A described it as "one change: the label", which is what was built — the
+panel's pager was drawn idealised and that was an inconsistency in the mockup, not a decision.
+
+**The noun is lowercased word by word, not with `downcase`.** Kaminari's `entry_name` returns
+the humanised model name, which is capitalised and which an i18n entry may have set by hand —
+`ProductDrive` reads "Product Drive". A word keeps its case if it carries an internal capital,
+so `/admin/ndbn_members` will read "NDBN members" when it gets a pager rather than "ndbn
+members".
