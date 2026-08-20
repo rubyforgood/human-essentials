@@ -26,8 +26,12 @@ RSpec.describe "Donation Site", type: :system, js: true do
         create(:donation_site, name: "Active Donation Site")
         create(:donation_site, name: "Inactive Donation Site", active: false)
         visit subject
+        open_filters
         check "Also include inactive donation sites"
-        # Applies on change -- no Filter button on a single-filter bar.
+        # Applies on change; the wait also covers the export link, which is rebuilt from the form
+        # when the frame loads and would otherwise still carry the previous query.
+        wait_for_filters
+
         expect(page).to have_content("Inactive Donation Site")
         click_on "Export"
         wait_for_download

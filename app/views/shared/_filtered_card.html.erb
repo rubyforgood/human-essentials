@@ -21,7 +21,7 @@
     The shared filter bar rather than a hand-rolled form, so a report's date filter behaves like
     every other filter in the app: applied on change, into the frame below, with no button.
   %>
-  <%= render "shared/essentials/filter_bar", url: filter_url, frame: "report-results", clear: false do %>
+  <%= render "shared/essentials/filter_bar", url: filter_url, frame: "report-results" do %>
     <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 

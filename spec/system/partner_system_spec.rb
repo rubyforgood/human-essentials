@@ -204,6 +204,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
         # Counts travel in the status filter's option labels now, not a strip of chips.
+        open_filters
         expect(page).to have_select("Status",
           with_options: ["Active (3)", "All statuses (4)", "Deactivated (1)"])
       end
@@ -236,6 +237,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             expect(page).to have_css("tr", count: Partner.active.count)
           end
           # The single-filter bars apply on change; there is no Filter button to press.
+          open_filters
           select "Approved (#{approved_count})", from: "Status"
           within "table tbody" do
             expect(page).to have_css("tr", count: approved_count)
@@ -247,6 +249,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         context "when filtering" do
           it "preserves the filter constraints in the CSV output" do
             approved_partners = Partner.approved.to_a
+            open_filters
             select "Approved (#{approved_partners.size})", from: "Status"
             wait_for_filters
 

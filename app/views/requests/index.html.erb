@@ -14,6 +14,12 @@
           if info.requests.any?
             concat essentials_link_button("Export", requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
+          # A page action, not a filter. It lived in the filter bar, where it was laid out as a
+          # filter cell -- and once the bar collapsed it was hidden behind the Filters button.
+          concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
+            concat tag.i(nil, class: "bi-calculator", aria: {hidden: true})
+            concat " Calculate product totals"
+          end)
           if current_user.has_role?(Role::ORG_ADMIN, current_organization)
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "new-request"}) do
               concat tag.i(nil, class: "bi-plus-lg", aria: {hidden: true})
@@ -29,12 +35,6 @@
     <div class="min-w-0"><%= filter_select(label: "Status", scope: :by_status, collection: info.statuses, key: :last, value: :first, selected: info.selected_status) %></div>
     <div class="min-w-0">
       <%= render partial: "shared/date_range_picker" %>
-    </div>
-    <div class="pb-1">
-      <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>"
-              data-action="click->dialog#open" data-dialog-id-param="calculate-totals">
-        <i class="bi-calculator" aria-hidden="true"></i>Calculate product totals
-      </button>
     </div>
   <% end %>
   <%= turbo_frame_tag "requests-results", target: "_top", data: {turbo_action: "advance"} do %>

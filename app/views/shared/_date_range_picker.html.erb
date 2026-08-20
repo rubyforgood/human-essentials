@@ -1,88 +1,105 @@
 <%#
-  The date range filter: a preset menu, with two native date inputs revealed for the custom
-  case. See docs/design-decisions.md, 2026-08-19, for why this rather than a calendar widget.
+  The date range filter: one trigger showing the current range, opening a popover with the presets
+  on one side and a custom range on the other.
 
-  The wire format is unchanged. The server still receives ONE filters[date_range] string of
-  the form "June 19, 2026 - September 19, 2026", which #selected_interval splits on " - " and
-  parses with strptime. The hidden field below is that string; everything visible exists to
-  keep it correct. Do not rename it without reading DateRangeHelper first.
+  This is the shape Stripe, Shopify, Google Analytics, Metabase and Linear all use, and the reason
+  is layout. The previous version put the custom dates inline: choosing "Custom" turned a 64px
+  grid cell into a 216px one and added 152px to the filter bar at every width, with an empty
+  column beside it above 1360px. A panel is over the page, so it costs no layout at all.
 
-  filters[date_range_label] is the preset name, and it is now the select's own value. It used
-  to be a hidden copy of #date_range_label -- the rendered *prose* -- so it fed the next
-  request a string like "during the period 19 Jun to 19 Sep", which matches none of that
-  method's cases and collapsed every named period back to the generic wording.
+  The wire format is unchanged. The server still receives one filters[date_range] string --
+  "June 19, 2026 - September 19, 2026" -- which #selected_interval splits on " - " and parses with
+  strptime, plus filters[date_range_label] carrying the preset name. Both are hidden fields now
+  rather than a select, because the visible control is a button.
 
-  Locals: label (optional, defaults to "Date range"), show_label (optional, pass false when
-  the caller genuinely provides its own). The old css_class local is gone: it styled a text
-  input that no longer exists, and the control now owns its own appearance.
+  Locals: label (optional, defaults to "Date range").
 %>
 <%
   label ||= "Date range"
-  show_label = true if defined?(show_label).nil? || show_label.nil?
   presets = date_range_presets
   selected_preset = selected_date_range_preset
   default_preset = presets.key(default_date.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") })
   start_date, end_date = @selected_date_interval
+  wire = "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}"
+  summary = selected_preset || "#{start_date.to_fs(:date_picker)} to #{end_date.to_fs(:date_picker)}"
+  panel_id = "date-range-panel-#{SecureRandom.uuid}"
 %>
-<%#
-  One column wide, like every other filter, with the custom dates stacked underneath rather than
-  beside. A cell twice the width of its neighbours, to accommodate a state it is usually not in,
-  reads as a mistake; and two date inputs abreast in a single column leaves each about 119px
-  against a natural width of 149.
-
-  The industry answer is a popover -- Stripe, Shopify and Google Analytics all put the presets
-  and the custom range in a floating panel behind a single-width trigger. That needs a component
-  this design system does not have (anchoring, focus trap, escape, click-outside); stacking gets
-  the same width discipline out of markup we already own. See docs/design-decisions.md.
-%>
-<div class="flex flex-col gap-3"
-     data-controller="date-range"
+<div class="relative min-w-0"
+     data-controller="popover date-range"
      data-date-range-presets-value="<%= presets.transform_values { |from, to| [from.iso8601, to.iso8601] }.to_json %>">
 
-  <div class="min-w-0">
-    <% if show_label %>
-      <%= label_tag "filters_date_range_preset", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-    <% end %>
-    <%= select_tag "filters[date_range_label]",
-          options_for_select(presets.keys + ["Custom"], selected_preset || "Custom"),
-          id: "filters_date_range_preset",
-          class: EssentialsUiHelper::FILTER_SELECT_CLASSES,
-          data: {date_range_target: "preset", action: "change->date-range#choosePreset",
-                 # The range the page shows when nobody has chosen one. The filter summary treats
-                 # this value as "not filtered", and resets to it when its chip is dismissed.
-                 default_value: default_preset} %>
+  <%= label_tag "filters_date_range_trigger", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+  <button type="button" id="filters_date_range_trigger"
+          class="<%= EssentialsUiHelper::POPOVER_TRIGGER_CLASSES %>"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
+          data-popover-target="trigger" data-date-range-target="summary"
+          data-action="click->popover#toggle">
+    <span class="truncate"><%= summary %></span>
+    <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
+  </button>
+
+  <%#
+    Hidden with the attribute, not a class: Tailwind's preflight marks [hidden] !important, so it
+    cannot lose to a display utility -- which is how the Filter button once stayed visible.
+  %>
+  <div id="<%= panel_id %>" hidden
+       role="dialog" aria-label="Choose a date range"
+       data-popover-target="panel"
+       class="absolute left-0 z-30 w-[26rem] max-w-[calc(100vw-2rem)] p-3 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
+    <div class="grid gap-3 sm:grid-cols-2">
+      <ul class="max-h-64 space-y-0.5 overflow-y-auto sm:border-r sm:border-slate-100 sm:pr-3">
+        <% presets.each_key do |name| %>
+          <li>
+            <button type="button"
+                    class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
+                    <%= tag.attributes("aria-current": true) if name == selected_preset %>
+                    data-action="click->date-range#choosePreset"
+                    data-preset="<%= name %>"><%= name %></button>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="space-y-3">
+        <div>
+          <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+          <%= date_field_tag "date_range_start", start_date, id: "filters_date_range_start", name: nil,
+                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+                data: {date_range_target: "start", action: "change->date-range#validate"} %>
+        </div>
+        <div>
+          <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+          <%= date_field_tag "date_range_end", end_date, id: "filters_date_range_end", name: nil,
+                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+                aria: {describedby: "filters_date_range_error"},
+                data: {date_range_target: "end", action: "change->date-range#validate"} %>
+        </div>
+        <%# simple_form's error styling, so a filter error looks like a form error. %>
+        <p id="filters_date_range_error" class="mt-1 text-xs font-medium text-rose-700"
+           role="alert" data-date-range-target="error" hidden>The end date must be on or after the start date.</p>
+
+        <%#
+          Applied together, so setting From and then To costs one request rather than two -- the
+          inline version fired an intermediate query for a range the user never asked for.
+        %>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" class="<%= essentials_button_classes(variant: :ghost, size: :sm) %>"
+                  data-action="click->popover#close">Cancel</button>
+          <button type="button" class="<%= essentials_button_classes(variant: :primary, size: :sm) %>"
+                  data-date-range-target="apply"
+                  data-action="click->date-range#applyCustom">Apply</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <%#
-    Hidden with the attribute rather than a utility class: Tailwind's preflight marks
-    [hidden] !important, so it cannot lose to a display utility the way `class="hidden"` lost
-    to `inline-flex` on the Filter button.
+    data-filter-label names this for the filter summary chips: a hidden input has no <label> for
+    the controller to read. data-default-value is the range the page shows when nobody has chosen
+    one, so the chip appears only when the range is genuinely a filter.
   %>
-  <div class="flex flex-col gap-3" data-date-range-target="custom" <%= "hidden" if selected_preset %>>
-    <div>
-      <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-      <%= date_field_tag "date_range_start", start_date,
-            id: "filters_date_range_start",
-            name: nil,
-            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-            autocomplete: "off",
-            data: {date_range_target: "start", action: "change->date-range#chooseCustom"} %>
-    </div>
-    <div>
-      <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-      <%= date_field_tag "date_range_end", end_date,
-            id: "filters_date_range_end",
-            name: nil,
-            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-            autocomplete: "off",
-            aria: {describedby: "filters_date_range_error"},
-            data: {date_range_target: "end", action: "change->date-range#chooseCustom"} %>
-    </div>
-    <%# simple_form's error styling, so a filter error looks like a form error. %>
-    <p id="filters_date_range_error" class="mt-1 text-xs font-medium text-rose-700"
-       role="alert" data-date-range-target="error" hidden>The end date must be on or after the start date.</p>
-  </div>
-
-  <%= hidden_field_tag "filters[date_range]", "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}",
+  <%= hidden_field_tag "filters[date_range_label]", selected_preset || "Custom",
+        id: "filters_date_range_label", data: {date_range_target: "presetField",
+          filter_label: label, default_value: default_preset} %>
+  <%= hidden_field_tag "filters[date_range]", wire,
         id: "filters_date_range", data: {date_range_target: "range"} %>
 </div>

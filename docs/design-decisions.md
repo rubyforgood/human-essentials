@@ -1431,3 +1431,60 @@ Two other things the same investigation turned up: `turbo:frame-load` also fires
 **first connected**, so clearing the flash there deleted the message on every ordinary page load
 until it was guarded; and `wait_for_filters` must use a quiet period longer than the 400ms text
 debounce, or "idle" is satisfied by the pause before the request has been sent.
+
+## 2026-08-20 · One filter pattern, a date range popover, and every dialog was in the corner
+
+**The threshold is gone.** Every filter bar collapses, whatever its size. Two behaviours across
+sixteen pages is worse than one whichever one it is: someone who learns the filter bar on
+donations and then meets something else on transfers has learned nothing transferable. The
+argument for the threshold — that hiding a single row behind a click costs more than it saves —
+was true in isolation and wrong in aggregate.
+
+**Every modal in the app opened in the top-left corner.** Not one page: twenty-eight files. A
+native `<dialog>` opened with `showModal()` is centred by the browser's own `margin: auto`, and
+Tailwind's preflight resets `margin: 0` on every element. Measured on `/requests`: `:modal` true,
+`top: 0, left: 0`, `margin: 0px`. One rule in `@layer base` fixes all of it, along with the
+`max-height` and `max-width` preflight also takes, without which a long dialog grows past the
+viewport and its top scrolls out of reach.
+
+**That bug is the more useful finding.** It survived `page-audit.rb`, which reads markup, and
+`wcag-audit.js`, which scans pages as loaded, because **neither had ever opened anything**. Both
+reported these pages clean while every dialog on them was unusable. `bin/design/overlay-audit.js`
+now opens all of them — 3 dialogs and 14 popovers — and checks centring, viewport fit, accessible
+name, Escape, focus return and surface, and runs axe on the opened overlay. It found one more
+real thing on its first run: a `max-h-96 overflow-y-auto` list inside the calculate-totals dialog
+that could not be scrolled by keyboard, WCAG 2.1.1.
+
+**The date range is a popover**, which is how Stripe, Shopify, Google Analytics, Metabase and
+Linear all handle a custom range inside a filter set. The reason is layout, and it is measurable:
+inline, choosing *Custom* turned a 64px grid cell into a 216px one and added 152px to the bar at
+every width, with an empty column beside it above 1360px. A panel is over the page, so it costs
+nothing. It also lets both dates be applied together, which removes the intermediate request the
+inline version fired after the first field.
+
+**Popovers now share one controller**, and the account menu moved onto it from `shell`. The
+contract is written down in `design.md` because each clause is something a hand-rolled version
+gets wrong: Escape closes and returns focus; an outside click closes but does *not* pull focus
+back, because the click has already placed it; `aria-expanded` tracks state and the panel is
+`hidden` rather than merely invisible; and it flips above the trigger rather than off the bottom
+of the screen. Positioning is measured from the trigger's rectangle rather than done in CSS,
+because anchor positioning is still Chrome-only.
+
+A popover is deliberately **not** a modal: no focus trap, no inert background. You are meant to
+see what you are filtering while you filter it.
+
+**One elevation for anything above the page.** `POPOVER_SURFACE_CLASSES` is the dialog's surface.
+The account menus used `shadow-lg`, a third step in a two-step scale that nothing else shared.
+
+**One Clear.** "Clear all" beside the chips and "Clear filters" inside the panel did the same
+thing, and the second is invisible exactly when the panel is shut.
+
+**Calculate product totals** was rendered inside the filter bar, so it was laid out as a filter
+cell — the misalignment — and once the bar collapsed it was hidden behind the Filters button. It
+is a page action and now sits in the header.
+
+**Capybara's default wait went from 2s to 5s.** Filtering is asynchronous now, and a
+request-and-render under a full suite exceeds two seconds often enough to produce failures that
+read as wrong row counts rather than as timeouts. It only lengthens the path to a genuine
+failure; a passing assertion still returns as soon as it is true. Three specs were chasing this
+before the cause was clear.

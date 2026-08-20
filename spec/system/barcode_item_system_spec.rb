@@ -26,6 +26,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       b = create(:barcode_item, organization: organization)
       create(:barcode_item, organization: organization)
       visit subject
+      open_filters
       fill_in "filters[by_value]", with: b.value
       wait_for_filters
 
@@ -43,6 +44,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, barcodeable: item1)
       visit subject
 
+      open_filters
       expect(page.all('select[name="filters[barcodeable_id]"] option').map(&:text)).to eq(expected_order)
       expect(page.all('select[name="filters[barcodeable_id]"] option').map(&:text)).not_to eq(expected_order.reverse)
     end
@@ -51,6 +53,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       b = create(:barcode_item, organization: organization)
       create(:barcode_item, organization: organization)
       visit subject
+      open_filters
       select b.item.name, from: "filters[barcodeable_id]"
       wait_for_filters
 
@@ -64,6 +67,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, organization: organization, barcodeable: item2)
 
       visit subject
+      open_filters
       select BaseItem.first.name, from: "filters[by_item_partner_key]"
       wait_for_filters
 
@@ -101,6 +105,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       Item.delete_all
       item = create(:item, name: "1T Diapers")
       visit new_barcode_item_path
+      open_filters
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]

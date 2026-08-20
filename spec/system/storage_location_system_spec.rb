@@ -122,6 +122,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location3 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Baz", discarded_at: rand(2.years).seconds.ago)
       visit subject
 
+      open_filters
       select item.name, from: "filters[containing]"
       wait_for_filters
 
@@ -130,6 +131,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location3.name)
 
+      open_filters
       check "include_inactive_storage_locations"
       wait_for_filters
 
@@ -145,6 +147,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
 
+      open_filters
       check "include_inactive_storage_locations"
       wait_for_filters
 
@@ -168,6 +171,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(accept_confirm { click_on "Deactivate", match: :first }).to include "Are you sure you want to deactivate #{location1.name}"
       expect(page.find("[data-flash]")).to have_content "Storage Location deactivated successfully"
 
+      open_filters
       check "include_inactive_storage_locations"
       wait_for_filters
 
@@ -192,6 +196,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
       visit subject
 
+      open_filters
       expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).to eq(expected_order)
       expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).not_to eq(expected_order.reverse)
     end

@@ -105,6 +105,7 @@ RSpec.describe "Donations", type: :system, js: true do
         open_filters
         select a.business_name, from: "filters[by_product_drive_participant]"
         wait_for_filters
+        open_filters
         expect(page).to have_select("filters[by_product_drive_participant]", selected: a.business_name)
       end
 
@@ -176,6 +177,7 @@ RSpec.describe "Donations", type: :system, js: true do
         names = ["Zebra supplies", "Apple goods", "Mango wares"]
         names.each { |name| create(:item_category, name: name, organization: organization) }
         visit subject
+        open_filters
         rendered = find("select[name='filters[by_category]']").all("option").map(&:text)
         ours = rendered.select { |option| names.include?(option) }
         expect(ours).to eq(names.sort)
@@ -582,6 +584,7 @@ RSpec.describe "Donations", type: :system, js: true do
             # fill that in
             fill_in "Quantity", with: 10
             # saves new barcode
+            open_filters
             select Item.first.name, from: "Item"
             expect(page).to have_field("barcode_item_quantity", with: '10')
             expect(page).to have_field("barcode_item_value", with: new_barcode)

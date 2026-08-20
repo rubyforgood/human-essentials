@@ -326,14 +326,17 @@ module EssentialsUiHelper
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
-  # At how many filters the bar collapses behind a Filters button.
+  # A floating panel anchored to a trigger: the account menu, the date range picker.
   #
-  # Four or fewer is one grid row at desktop, and hiding one row behind a click costs more than
-  # it saves. Five is where a second row starts: /donations has nine and spent 264px before any
-  # data. Above the threshold the collapsed state carries chips for whatever is set, because a
-  # filter set that hides both itself and its effect is how someone concludes their records have
-  # disappeared.
-  FILTER_DISCLOSURE_THRESHOLD = 5
+  # Same surface as a dialog, because it is the same idea -- something above the page rather than
+  # part of it. The elevation scale has two steps on purpose: `shadow-sm` for things in the page,
+  # `shadow-xl` for things over it. The account menus used `shadow-lg`, which was a third step
+  # nothing else shared.
+  POPOVER_SURFACE_CLASSES = "rounded-2xl border border-slate-200 bg-white shadow-xl"
+
+  # The trigger reads as a control, not a button: it sits in a filter grid beside real selects and
+  # has to line up with them.
+  POPOVER_TRIGGER_CLASSES = "#{FILTER_CONTROL_BASE} flex items-center justify-between gap-2 px-3 text-left"
 
   # Meta text, per design.md: slate-500 at text-xs. 4.8:1 on white, which clears AA for body
   # text. Matches the hint style simple_form already uses on every form in the app.

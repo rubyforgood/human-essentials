@@ -62,6 +62,21 @@
     min-width: 0;
   }
 
+  /*
+   * A modal <dialog> is centred by the browser's own `margin: auto`, and preflight resets
+   * `margin: 0` on every element -- which took that away and left every dialog in the app in the
+   * top-left corner. Twenty-eight files, and invisible to both audits, because neither the page
+   * audit nor the axe run opens a dialog.
+   *
+   * `max-height` and `max-width` are restored for the same reason: without them a long dialog
+   * grows past the viewport and its top scrolls out of reach.
+   */
+  dialog:modal {
+    margin: auto;
+    max-height: calc(100% - 2rem);
+    max-width: calc(100% - 2rem);
+  }
+
   /* Bootstrap Icons are decorative by default; give them the same optical
      alignment everywhere rather than per-call-site margin fiddling. */
   [class^="bi-"]::before,

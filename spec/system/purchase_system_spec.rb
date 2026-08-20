@@ -59,6 +59,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, storage_location: storage2, organization: organization)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
+          open_filters
           select storage1.name, from: "filters[at_storage_location]"
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
@@ -75,6 +76,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit purchases_path
 
           expect(page).to have_css("table tbody tr", count: 2)
+          open_filters
           select vendor1.business_name, from: "filters[from_vendor]"
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
@@ -89,6 +91,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, :with_items, item_quantity: 30, item: item_2)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
+          open_filters
           select organization.item_categories.first.name, from: "filters[by_category]"
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)

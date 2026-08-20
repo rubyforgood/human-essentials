@@ -9,7 +9,7 @@
           concat essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: audits_path, frame: "audits-results", clear: false do %>
+  <%= render "shared/essentials/filter_bar", url: audits_path, frame: "audits-results" do %>
     <div class="min-w-0"><%= filter_select(label: "Storage location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location, include_blank: "All storage locations") %></div>
   <% end %>
   <%= turbo_frame_tag "audits-results", target: "_top", data: {turbo_action: "advance"} do %>

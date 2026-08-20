@@ -468,35 +468,37 @@ each line left, leaving 337px, 793px and 852px of ragged space at the ends. Equa
 both: the width follows the breakpoint, not the text, and a long option truncates rather than
 pushing its column past its share.
 
-**Every cell is one column, including the date range.** It holds three controls once *Custom* is
-chosen and they stack; a cell twice the width of its neighbours, to accommodate a state it is
-usually not in, reads as a mistake. The industry answer is a popover — Stripe, Shopify and Google
-Analytics all put presets and a custom range in a floating panel behind a single-width trigger —
-but that needs anchoring, a focus trap, escape and click-outside, none of which this system has.
+**Every cell is one column, including the date range**, which is a popover: one trigger showing
+the current range, opening a panel with the presets on one side and a custom range on the other.
+That is what Stripe, Shopify, Google Analytics, Metabase and Linear all do, and the reason is
+layout — a panel is over the page, so it costs nothing below it. Inline, choosing *Custom* turned
+a 64px cell into a 216px one and added 152px to the bar at every width.
 
 The actions are an ordinary cell with `self-end`, so they follow the last filter. On
 `col-span-full` they took a row of their own on every page, including the ones with a single
 filter.
 
-**Five filters or more and the bar collapses** behind a Filters button —
-`EssentialsUiHelper::FILTER_DISCLOSURE_THRESHOLD`, counted in the partial from the yielded block
-so no call site decides it. Four or fewer is one row at desktop, and hiding one row behind a
-click costs more than it saves.
+**Every bar collapses** behind a Filters button, whatever its size. This was a threshold — five
+filters or more — and two behaviours across sixteen pages is worse than one whichever one it is:
+learning the filter bar on donations and then meeting something else on transfers teaches nothing
+transferable.
 
-| Page | Filters | Before | After |
+| Page | Filters | Before all of this | Now |
 | --- | --- | --- | --- |
-| `/donations` | 9 | 264px, 4 rows | **38px**, collapsed |
-| `/distributions` | 7 | 188px | **38px**, collapsed |
-| `/requests` | 5 | 188px | **38px**, collapsed |
-| `/transfers` | 3 | 112px | **64px**, open |
-| `/items` | 2 | 112px | **64px**, open |
+| `/donations` | 9 | 264px, 4 rows | **38px** |
+| `/distributions` | 7 | 188px | **38px** |
+| `/transfers` | 3 | 112px | **38px** |
+| `/partners` | 1 | 112px | **38px** |
 
-The collapsed bar **shows what is set**, as chips built by `filter_summary_controller.js`: a
-count on the button, one dismissible chip per active filter, and *Clear all*. That is the price
-of collapsing at all — a filter set that hides both itself and its effect is how someone concludes
+The collapsed bar **shows what is set**, as chips built by `filter_summary_controller.js`: a count
+on the button, one dismissible chip per active filter, and *Clear all*. That is the price of
+collapsing at all — a filter set that hides both itself and its effect is how someone concludes
 their records have disappeared. The chips are built in the browser, not rendered by the server,
-for the same reason the export link is: the bar is outside the frame and does not re-render when
-a filter applies.
+for the same reason the export link is: the bar is outside the frame and does not re-render when a
+filter applies.
+
+**One Clear, beside the chips.** It used to be duplicated inside the panel, where it is invisible
+exactly when the panel is shut. It hides itself when nothing is set.
 
 The date range counts as set only when it is not the range the page would have shown anyway; its
 select carries `data-default-value` to say which that is.
@@ -690,6 +692,59 @@ adds backdrop-click closing and restores focus to whatever opened it.
 
 A trigger names its dialog with `data-dialog-id-param`. A trigger that names nothing is a
 trigger that does nothing.
+
+**Two things the browser does that preflight undoes**, both restored in `@layer base` on
+`dialog:modal`:
+
+| | Why it matters |
+| --- | --- |
+| `margin: auto` | A modal is centred by the UA's own `margin: auto`. Preflight sets `margin: 0` on every element, which put **every dialog in the app in the top-left corner** — 28 files. |
+| `max-height` / `max-width` | Without them a long dialog grows past the viewport and its top scrolls out of reach. |
+
+The dialog is `open:flex open:flex-col` — the `open:` variant, because a `display` utility applied
+unconditionally would override `dialog:not([open]) { display: none }` and show it always. The body
+scrolls rather than the whole dialog, so the header and footer stay put, and it carries
+`tabindex="0"`: a scrollable region has to be reachable by keyboard (WCAG 2.1.1).
+
+### Popovers
+
+An anchored floating panel — the account menu, the date range filter. `popover_controller.js`
+owns all of them.
+
+```erb
+<div class="relative" data-controller="popover">
+  <button type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel-id"
+          data-popover-target="trigger" data-action="click->popover#toggle">…</button>
+
+  <div id="panel-id" hidden role="dialog" aria-label="…"
+       data-popover-target="panel"
+       class="absolute left-0 z-30 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">…</div>
+</div>
+```
+
+**A popover is not a modal**, and the difference is deliberate: it must not trap focus or make the
+page inert, because you are meant to see what you are filtering while you filter it. What it does
+share is the rest of the contract, and every part of it is a thing hand-rolled versions get wrong:
+
+- **Escape closes it and focus returns to the trigger**, so the keyboard never ends up somewhere
+  invisible.
+- **A click outside closes it; a click inside does not** — otherwise choosing two dates would be
+  impossible. Closing by outside click does *not* pull focus back, because the click has already
+  put focus where the user meant it.
+- **`aria-expanded` on the trigger** tracks the state, and the panel is `hidden` while closed, so
+  it is out of the accessibility tree rather than merely invisible.
+- **It flips above the trigger** when there is no room below, and shifts left rather than leaving
+  the viewport. Measured from the trigger's rectangle: CSS anchor positioning is still Chrome-only.
+
+**One elevation for anything above the page.** `POPOVER_SURFACE_CLASSES` is the same surface as a
+dialog — `rounded-2xl border-slate-200 bg-white shadow-xl`. The scale has two steps on purpose:
+`shadow-sm` for things in the page, `shadow-xl` for things over it. The account menus used
+`shadow-lg`, a third step nothing else shared.
+
+**Open one in a test.** `bin/design/overlay-audit.js` opens every dialog and popover and checks
+centring, viewport fit, accessible name, Escape, focus return and surface, and runs axe on the
+opened overlay. It exists because the dialog centring bug survived both other audits: one reads
+markup and the other scans the page as loaded, and **neither had ever opened anything**.
 
 ### Flash messages
 

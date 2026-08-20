@@ -171,7 +171,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       it "can see link to switch to the other role" do
         visit admin_dashboard_path
-        find("[data-shell-target='accountToggle']").click
+        find("[data-account-menu]").click
         expect(page).to have_content "Switch to: #{organization.name}"
       end
     end
@@ -183,7 +183,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       it "does not see link to switch to another role" do
         visit admin_dashboard_path
-        find("[data-shell-target='accountToggle']").click
+        find("[data-account-menu]").click
         expect(page).not_to have_content "Switch to: #{organization.name}"
       end
     end

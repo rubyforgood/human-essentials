@@ -44,6 +44,7 @@ RSpec.describe "Authorization", type: :system, js: true do
       it "should redirect back and show a helpful message" do
         sign_in(user)
         visit new_distribution_path
+        open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         first('form[action="/distributions"] input[name="authenticity_token"]', visible: false).set("NOTAVALIDCSRFTOKEN")

@@ -27,9 +27,11 @@ RSpec.describe "Product Drives", type: :system, js: true do
     end
 
     it "Shows the expected filters with the expected values and in alphabetical order for name filter" do
+      open_filters
       expect(page.find("select[name='filters[by_name]']").find(:xpath, 'option[2]').text).to eq "Alpha Test name 3"
       expect(page.has_select?('filters[by_name]', with_options: @product_drives.map(&:name))).to be true
-      expect(page).to have_select('filters_date_range_preset', selected: 'Last 2 months and next month')
+      open_filters
+      expect(page).to have_button('Last 2 months and next month')
     end
 
     it "shows the expected product drives" do
