@@ -31,9 +31,12 @@ sidebar and never on it, and they sat with no page header and no `<h1>` for the 
 migration while every audit reported clean. On its first run `route-sweep.js` found eleven
 unlabelled selects in the partner portal, which the old list never visited.
 
-A 404 from `route-sweep.js` is usually a route with no action behind it — `resources :x`
-generates seven and most controllers implement four — so those are listed separately from the
-design findings rather than mixed in with them.
+A 404 from `route-sweep.js` is listed separately from the design findings rather than mixed in
+with them. It used to mean a route with no action behind it — `resources :x` generates seven and
+most controllers implement four — and 13 of the sweep's targets were that. They are gone; use
+`dead-routes.rb` for that question now. What is left in the bucket is the sweep's own
+approximations: a path whose `:partner_id` was filled with a user's id, and two records the role
+being used cannot see.
 
 `sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
 
@@ -50,6 +53,24 @@ This complements the specs rather than repeating them. It catches what renders w
 — and the specs catch what a static walk cannot: a form whose fields end up outside the form,
 a Stimulus controller toggling a class that no longer exists, a confirmation that never
 appears. Neither on its own is enough; that is the lesson of this migration.
+
+`dead-routes.rb` needs no browser and no server. It asks of every route whether the request
+would raise, and exits non-zero if any would.
+
+```bash
+bin/rails runner bin/design/dead-routes.rb
+```
+
+It decides with `recognize_path` rather than by reading each route's own controller and action,
+because another route can answer first — `POST /users` looks dead, and Devise handles it. When
+recognition raises, which it does for a route behind a constraint that needs a real request, it
+falls back to the declared target instead of skipping: skipping is how the first version lost
+`/partners/donations`, a dead route that had already been found by eye.
+
+It reports **shadowed** routes separately: declared, but another route answers that path first.
+That is a different defect with the same symptom — `/requests/partner_requests` resolved to
+`requests#show` with an id of `"partner_requests"`, because a second `resources :requests`
+declared a collection route below the first one's `/requests/:id`.
 
 `responsive-audit.js` visits every screen at **320, 375, 639, 641, 767, 769, 1023, 1025, 1280
 and 1440**, plus a landscape phone at 740×360, and reports what only goes wrong when a layout is

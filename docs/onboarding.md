@@ -244,11 +244,17 @@ pw bin/design/route-sweep.js         # every screen the router knows, in a real 
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
 pw bin/design/form-validation-audit.js    # required marking and error handling
 pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
+bin/rails runner bin/design/dead-routes.rb   # routes whose request would raise
 ```
 
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the
 version with a hardcoded list of 56 paths missed three pages that were in the sidebar the whole
 time and had no `<h1>`.
+
+`dead-routes.rb` is the one that does not need a browser. It asks, of every route, whether the
+request would raise — 28 did before it existed, nearly all of them actions `resources :x`
+generates and the controller never implemented. Run it after touching `config/routes.rb`; it
+exits non-zero when anything is dead.
 
 ## Where decisions live
 
@@ -298,6 +304,12 @@ against it roll up into its totals, which is how you find out whether a drive wa
 Everything arrives into a **storage location**: a warehouse, a room, a set of shelves. Inventory
 is counted per location, which is why moving goods between your own locations is a record rather
 than a note to yourself.
+
+**Five lists can be filled from a spreadsheet** rather than typed in one at a time: partners,
+storage locations, donation sites, vendors and product drive participants. Each has an **Import
+CSV** button on its page that offers a template to start from. Manufacturers is not one of them
+— it had a button until August 2026, but nothing behind it, so pressing it only produced an
+error page.
 
 ### Getting stock out
 

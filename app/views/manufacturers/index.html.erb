@@ -1,16 +1,15 @@
+<%# No CSV import here. The Import manufacturers button and its modal were removed in 2026:
+    none of the feature existed behind them. ManufacturersController does not include Importable,
+    Manufacturer has no import_csv, and public/manufacturers.csv was never added -- so submitting
+    the form raised. The five other index pages with this modal all have the controller and the
+    template. %>
 <% content_for :title, "Manufacturers - Community - #{current_organization.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Manufacturers",
         subtitle: "Companies that donate product directly to #{current_organization.name}.",
-        actions: capture {
-          concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
-            concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
-            concat " Import manufacturers"
-          end)
-          concat essentials_link_button("New manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg")
-        } %>
+        actions: essentials_link_button("New manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg") %>
 
   <%= render "shared/essentials/card", padded: false do %>
     <% if @manufacturers.empty? %>
@@ -33,13 +32,5 @@
         </table>
       </div>
     <% end %>
-  <% end %>
-
-  <%= render layout: "shared/essentials/csv_import_modal", locals: {
-        import_type: "Manufacturers", csv_template_url: "/manufacturers.csv", csv_import_url: import_csv_manufacturers_path
-      } do %>
-    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and enter the manufacturer names, emails and phone numbers in the matching columns.</li>
-    <li>Save the file as a CSV.</li>
   <% end %>
 </div>

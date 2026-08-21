@@ -189,6 +189,7 @@ specs ran — those had never been run during the migration and were failing 298
 | select2 had no stylesheet | `.select2-container` had no size; the enhanced selects were unclickable. |
 | `public/*.html` still linked `/assets/application.css` | Error pages served unstyled, including the 500 page that is served when nothing else can render. |
 | Four `fa-*` names still passed into the bank-side profile accordion | Four section headers rendered an empty `<i>`. Found later, by grep, not by the tooling — see below. |
+| The manufacturers CSV import was rebuilt on the new modal, and nothing was ever behind it | No `Importable`, no `Manufacturer.import_csv`, no `public/manufacturers.csv`: the button raised. It predates this branch — the same modal is on the pre-migration view — which is the point. A faithful rewrite asks whether a screen looks right, and a broken feature looks fine. Removed in August 2026 along with its route. |
 
 The lesson is recorded in [design-decisions.md](design-decisions.md): a static sweep catches
 what renders wrongly, and the system specs catch what renders fine but cannot be used. Neither
@@ -214,6 +215,10 @@ pw bin/design/overlay-audit.js    # opens every dialog and popover
 # selectors (`.mt-0\.5`), and a naive regex calls every such utility undefined -- the first
 # version produced 186 findings, ~100 of which were Tailwind working correctly.
 python3 bin/design/undefined-classes.py
+
+# Routes whose request would raise, and routes another route answers first. Needs no server.
+# Exits non-zero if anything is dead. 28 were, before it existed.
+bin/rails runner bin/design/dead-routes.rb
 ```
 
 Run all of them; each sees something the others cannot. The status script asks whether a view
@@ -249,7 +254,15 @@ The legacy `*_button_to` shims are no longer used inside any table cell: they ma
 `:primary` and `:danger`, which are filled, and that is wrong for a row. They remain in use on
 page headers and forms, where filled is correct.
 
-One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
+Two known inert leftovers, so you do not have to work them out again.
+
+`ProductDrivesController` includes `Importable` and no route reaches it: there is no
+`post :import_csv` on `resources :product_drives`, no `ProductDrive.import_csv`, and no template
+CSV. It is unreachable code rather than a dead route, so the August 2026 route cleanup left it
+where it was. The five imports that do work — partners, storage locations, donation sites,
+vendors, product drive participants — have all four pieces each.
+
+`class: 'form-horizontal'`
 survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this
 work either. It is left alone because removing it means editing option hashes rather than
 substituting a token, and that kind of edit has already broken markup once on this branch.

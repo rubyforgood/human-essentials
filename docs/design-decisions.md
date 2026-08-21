@@ -2132,3 +2132,81 @@ Fifth audit, same lesson. Two false positives, both decoration:
 Requiring either to be focusable would have put an unnamed tab stop in everyone's way. And the
 check had to learn that `inert` removes a subtree, or it went on reporting the drawer it had just
 been used to fix.
+
+## 2026-08-21 · Dead routes: 29 that could not work, removed rather than filled in
+
+`bin/rails runner bin/design/dead-routes.rb` asks of every route whether the request would
+raise. Of 375 verb-and-path combinations, **28 would**, and one more resolved somewhere other
+than where it was declared. They are gone; the audit reports 0 of each over the remaining 346.
+
+They were not a scattering. Almost all of them are the actions `resources :x` generates and the
+controller never implemented — `resources` writes seven, most of these controllers implement
+three or four, and the rest sat in the routing table looking like features:
+
+| Where | Dead |
+| --- | --- |
+| `requests` | `new`, `create`, `edit`, `update`, `print`, and `partner_requests` |
+| `users` | `show`, `edit`, `update`, `destroy` |
+| `kits` | `edit`, `update`, `destroy` |
+| `admin/users` | `show`, `destroy` |
+| `admin/partners` | `destroy` |
+| `admin/questions`, `admin/broadcast_announcements`, `broadcast_announcements` | `show` |
+| `adjustments` | `destroy` |
+| `partners#profile` | GET and PATCH |
+| `partners/authorized_family_members` | `index` |
+| `partners/donations` | the whole controller, which does not exist |
+| `manufacturers#import_csv` | the whole feature, which was never built |
+
+**Removed rather than implemented, because nothing was asking for them.** Eleven named helpers
+disappear with these routes and not one is referenced anywhere in `app/`, `spec/` or `lib/` —
+no view links to them, no spec exercises them, no hardcoded path string reaches them. A dead
+route is not a feature request; it is the default output of a macro. Writing eleven actions to
+satisfy a routing table would invent product that no one designed, and each one is a URL a
+stranger can reach. Deleting them is one line each to undo.
+
+**What a user could hit before this.** These were not all unreachable in practice. `resources`
+puts them at guessable URLs, and three of them were reachable by typing: `/partners/donations`
+raised `uninitialized constant Partners::DonationsController`, `/broadcast_announcements/1`
+raised a missing action, and `/requests/new` — a plausible thing for a bank user to try, since
+the index is full of requests — raised rather than saying requests come from partners.
+
+### Two things the audit had to be taught, which is now six audits in a row
+
+**Reading each route's own controller and action is not enough, because another route can
+answer first.** The first version reported `POST /users` as dead: `UsersController` has no
+`create`. Devise's registration route is declared earlier and handles that path. Only
+`recognize_path` knows which route wins, so that is what the tool asks. This is also what makes
+the shadowing check possible at all.
+
+**And `recognize_path` cannot be trusted to say nothing is there.** It runs outside a request,
+so a route behind a constraint that needs one raises `RoutingError`. The second version treated
+that as "skip", which quietly dropped `/partners/donations` — the one dead route I had already
+found by eye the day before, and the reason this cleanup was asked for. A tool that silently
+omits the known answer will silently omit the unknown ones. It falls back to the declared target
+now, and 28 became 29.
+
+### A collection route under a member route is unreachable
+
+`resources :requests` was declared **twice**, and the second declaration's collection routes sat
+below the first's `/requests/:id`. `/requests/partner_requests` resolved to `requests#show` with
+an id of `"partner_requests"` — not a 404, a wrong page. It is one declaration now. The general
+rule is worth keeping: routes match in declaration order, so a literal segment must be declared
+before the `:id` that would swallow it, and two `resources` blocks for the same name interleave
+in a way nobody reading either one can see.
+
+### The manufacturers CSV import: the button went too, not just the route
+
+`POST /manufacturers/import_csv` had a trigger button and a modal on the index page, and nothing
+else. `ManufacturersController` does not include `Importable`, `Manufacturer` has no
+`import_csv`, and `public/manufacturers.csv` — the template the modal offered to download —
+does not exist. Every layer was missing; the button raised.
+
+Six controllers include `Importable` and five of them render this modal. Manufacturers was the
+one page where the UI had been built and the feature had not. It **predates this branch** — the
+same modal is on the pre-migration view at `ae97376d1` — which is the interesting part: a
+faithful rewrite carries a broken feature across intact, because the rewrite's question is
+"does it look right", and it did.
+
+Removing the UI rather than leaving it pointed at nothing is the same judgement as the routes.
+If manufacturer import is wanted, it is four small pieces and one of them is a one-line
+`include`; what should not stay is a button that offers it and raises.
