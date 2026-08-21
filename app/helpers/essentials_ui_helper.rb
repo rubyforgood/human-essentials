@@ -379,13 +379,18 @@ module EssentialsUiHelper
   #   render "shared/essentials/card", padded: false,
   #          footer: essentials_pagination_footer(@paginated_things) do
   #
-  # It returns nil -- not an empty string -- for a collection that fits on one page, so the
-  # card skips the footer instead of drawing an empty bordered strip. Call sites used to do
-  # `capture { concat(render(...)) }` and let the card test the result for blankness, which
-  # worked in production and failed in development: annotate_rendered_view_with_filenames
+  # It renders for any table that has rows, including one that fits on a single page -- the
+  # count is the point, and a card that grows and loses a footer depending on how much data
+  # happens to be in it is a card of no fixed shape.
+  #
+  # It returns nil -- not an empty string -- when there is nothing to count, so the card skips
+  # the footer instead of drawing an empty bordered strip under an empty state. Call sites used
+  # to do `capture { concat(render(...)) }` and let the card test the result for blankness,
+  # which worked in production and failed in development: annotate_rendered_view_with_filenames
   # puts an HTML comment in the buffer, so the "blank" capture was never blank.
   def essentials_pagination_footer(collection, page_params: {})
-    return nil unless collection.respond_to?(:total_pages) && collection.total_pages > 1
+    return nil unless collection.respond_to?(:total_pages)
+    return nil if collection.total_count.zero?
 
     render "shared/essentials/pagination", collection: collection, page_params: page_params
   end
@@ -415,11 +420,13 @@ module EssentialsUiHelper
   # i18n entry may have set by hand — `ProductDrive` reads "Product Drive". A word keeps its
   # case if it carries an internal capital, so "NDBN member" does not become "ndbn member".
   def essentials_entry_name(collection, count)
-    name = if collection.respond_to?(:entry_name)
-      collection.entry_name(count: count)
-    else
-      "result".pluralize(count)
-    end
+    name = collection.respond_to?(:entry_name) ? collection.entry_name(count: count) : "result"
+
+    # Force the number rather than trusting the `count:` that was just passed. A model name set
+    # in the locale file as a plain string -- `product_drive: "Product Drive"` in en.yml -- comes
+    # back unpluralised whatever count it is given, because Rails only pluralises a locale entry
+    # written as a one/other hash. /product_drives read "Showing 1-2 of 2 product drive".
+    name = (count == 1) ? name.singularize : name.pluralize
 
     name.split.map { |word| /\p{Lu}.*\p{Lu}/.match?(word) ? word : word.downcase }.join(" ")
   end

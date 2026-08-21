@@ -8,16 +8,24 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
   end
 
   let(:super_admin) { create(:super_admin) }
-  context "while logged in as a super admin and there are no organizations" do
+  # This context used to be called "there are no organizations" and asserted that "Next" and
+  # "Last" were absent. Both claims were false: the super admin factory creates an organization
+  # of its own, after the delete_all above, so the list held one row -- and the assertion passed
+  # only because a single page drew no Next. Filtering to nothing is the way to actually get an
+  # empty list here.
+  context "while logged in as a super admin and no organizations match the filter" do
+    let!(:an_org) { create(:organization, name: 'first_org') }
+
     before do
       sign_in(super_admin)
     end
 
-    it "pagination does not appear" do
-      visit admin_organizations_path
+    it "no pagination strip appears at all" do
+      visit admin_organizations_path(filterrific: {search_name: "no organization is called this"})
 
-      expect(page).not_to have_content("Next ›")
-      expect(page).not_to have_content("Last »")
+      # Nothing to count, so the card ends after the empty state rather than carrying a
+      # bordered strip that says "0 of 0".
+      expect(page).not_to have_css("nav[aria-label='Pagination']")
     end
   end
 
@@ -30,12 +38,23 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       sign_in(super_admin)
     end
 
-    # The per page limit is set to 3 for the tests
-    it "pagination does not appear" do
+    # The per page limit is stubbed to 3 above.
+    it "shows the count, and Prev and Next inert" do
       visit admin_organizations_path
 
-      expect(page).not_to have_content("Next ›")
-      expect(page).not_to have_content("Last »")
+      expect(page).to have_text("Showing 1–3 of 3 organizations")
+
+      # The strip stays so the card keeps its shape, and the two controls stay so they do not
+      # move between pages -- but neither leads anywhere, and First and Last name nothing on a
+      # single page, so they are not drawn.
+      within "nav[aria-label='Pagination']" do
+        expect(page).to have_css("[aria-disabled='true']", text: "‹ Prev")
+        expect(page).to have_css("[aria-disabled='true']", text: "Next ›")
+        expect(page).to have_css("[aria-current='page']", text: "1")
+        expect(page).not_to have_text("« First")
+        expect(page).not_to have_text("Last »")
+        expect(page).to have_no_link("Next ›")
+      end
     end
   end
 
@@ -52,13 +71,16 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "pagination does appear" do
       visit admin_organizations_path
 
-      expect(page).to have_content("Next ›")
-      expect(page).to have_content("Last »")
+      # Links, not merely text: on page one the disabled "‹ Prev" is on the page too, so
+      # have_content would pass without anything being clickable.
+      expect(page).to have_link("Next ›")
+      expect(page).to have_link("Last »")
+      expect(page).to have_css("[aria-disabled='true']", text: "‹ Prev")
 
       click_on "Next ›"
 
-      expect(page).to have_content("‹ Prev")
-      expect(page).to have_content("« First")
+      expect(page).to have_link("‹ Prev")
+      expect(page).to have_link("« First")
     end
   end
 

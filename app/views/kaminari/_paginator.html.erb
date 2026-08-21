@@ -1,12 +1,19 @@
 <%#
   Kaminari's pagination. The <nav> and its label live here rather than at the call site,
   because three views call `paginate` directly and would otherwise ship an unlabelled list.
+
+  Prev and Next are always drawn, disabled when they lead nowhere, so the control set does not
+  change width as you page -- it used to be 7 controls on page 1, 14 on page 5 and 8 on the
+  last page, which moves the buttons under the cursor of the person using them.
+
+  First and Last are the exception: on a table that fits on one page they do not mean anything
+  at all, so they are not drawn. On a longer table they are, disabled at the ends.
 %>
 <%= paginator.render do %>
   <nav aria-label="Pagination">
     <ul class="flex flex-wrap items-center gap-1">
-      <%= first_page_tag unless current_page.first? %>
-      <%= prev_page_tag unless current_page.first? %>
+      <%= first_page_tag if total_pages > 1 %>
+      <%= prev_page_tag %>
       <% each_page do |page| %>
         <% if page.left_outer? || page.right_outer? || page.inside_window? %>
           <%= page_tag page %>
@@ -14,8 +21,8 @@
           <%= gap_tag %>
         <% end %>
       <% end %>
-      <%= next_page_tag unless current_page.last? %>
-      <%= last_page_tag unless current_page.last? %>
+      <%= next_page_tag %>
+      <%= last_page_tag if total_pages > 1 %>
     </ul>
   </nav>
 <% end %>

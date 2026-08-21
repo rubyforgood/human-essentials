@@ -80,10 +80,12 @@ export default class extends Controller {
     const scope = this.frame.querySelector("[data-filter-scope]")
     if (scope) return scope.textContent.trim()
 
-    // Otherwise count the rows -- but only when they are all of them. On a paginated page the
-    // rows on screen are not the total, and announcing "51 results" when 51 is merely the page
-    // size would be worse than saying nothing precise.
-    if (this.frame.querySelector("nav[aria-label='Pagination']")) return "Results updated"
+    // A paginated table states its own total, and that sentence is better than a row count:
+    // the rows on screen are one page of them. This used to return the literal "Results
+    // updated", because the pager only appeared when there were two pages and there was
+    // nothing on a single-page table to read.
+    const pager = this.frame.querySelector("[data-pagination-summary]")
+    if (pager) return pager.textContent.replace(/\s+/g, " ").trim()
 
     const rows = this.frame.querySelectorAll("table.data-table tbody tr").length
     return `${rows} ${rows === 1 ? "result" : "results"}`

@@ -1686,6 +1686,19 @@ The two runs after that gave one failure each, in different places, neither repr
   own file.
 - `storage_location_system_spec.rb:167` — the reactivation flash, asserted after the frame that
   carries it is replaced. This one had already been hardened once this week and still flakes.
+  **Measured on 21 August: it fails 4 times in 8 on a clean `HEAD` and 3 times in 8 with the
+  pagination work applied**, so it is a coin flip and not attributable to that work — but it is
+  much worse than "intermittent" and will fail CI about half the time. It deserves its own
+  piece of work rather than a sleep buried in someone else's commit.
+
+  What the captured page shows, so the next person does not start from nothing: at the moment of
+  failure the flash still reads "Storage Location deactivated successfully", the single row is
+  still marked Inactive, and `include_inactive_storage_locations` is unchecked. The confirm
+  assertion on the line above passes, so the dialog appeared with the right text and was
+  accepted — the PUT simply never lands. The suspicion is the interaction between a row action
+  and Turbo with Drive off: `data-turbo-confirm` shows a native `window.confirm`, and on accept
+  the submission has to survive `elementIsNavigatable` returning false for a form outside a
+  frame.
 
 Neither is attributable to the pagination change. `/storage_locations` is not paginated, no file
 under it changed, and it renders the card without a `footer:` local — so the one shared edit that
@@ -1726,3 +1739,57 @@ the humanised model name, which is capitalised and which an i18n entry may have 
 `ProductDrive` reads "Product Drive". A word keeps its case if it carries an internal capital,
 so `/admin/ndbn_members` will read "NDBN members" when it gets a pager rather than "ndbn
 members".
+
+## 2026-08-21 · The pager is always there, and so are its controls
+
+Option A of three in `docs/mockups/pagination-count-options.html`. The strip renders for any
+table with rows, and a control that leads nowhere is drawn disabled rather than removed.
+
+**Two reflows, not one.** The question was about single-page tables — nine of sixteen index
+pages showed no strip at all, so nothing said how many rows matched. Measuring it turned up the
+same fault on multi-page tables: `« First` and `‹ Prev` were not rendered on page 1 and `Next »`
+and `Last »` were not rendered on the last, so `/requests` was 7 controls on page 1, 14 on page
+5 and 8 on page 10. The row of buttons changed width as you used it, which moves a target out
+from under the cursor of the person clicking it.
+
+**This is the majority convention** for dense admin tables: Stripe, Shopify Polaris (whose docs
+say pagination should stay visible for consistency), Material UI `TablePagination`, Ant Design
+(`hideOnSinglePage` defaults to false), AG Grid, Atlassian.
+
+**With Stripe's control set rather than the full one.** `‹ Prev` and `Next ›` always; `« First`
+and `Last »` only when there is more than one page. Four dead controls under a three-row table
+is chrome that does nothing, and on a single page First and Last do not name anything at all.
+
+**Rejected: the count in the card header** (GitHub, Salesforce Lightning, Linear). It is the
+better idea in the abstract — the count reads before the table rather than after it, which is
+the order you want when the question is "did that filter do anything?" — but sixteen index
+cards in this app have no header, and would grow a 57px one directly below a summary card that
+already carries a scope sentence. Two counts, 60px apart.
+
+**Disabled is `<span aria-disabled="true">`, not a disabled link.** An `<a>` cannot be disabled:
+it stays focusable and announces nothing. This is already the rule here — `ui_helper.rb:226`
+renders an unavailable action as a non-focusable span for exactly that reason. Styling hangs off
+the attribute so markup and appearance cannot disagree. `opacity: 0.6` on slate-600 measures
+2.88:1 against white where a live link is 7.56:1. `slate-300` was tried first and is 1.48:1,
+which is not inactive so much as gone.
+
+**Kaminari renders nothing for one page, deliberately.** `Paginator#render` is
+`instance_eval(&block) if @options[:total_pages] > 1`, and returns `nil` so the call site can
+supply fall-back HTML — the gem's own comment says so. The single-page control set is therefore
+written out in `_pagination.html.erb` rather than in `app/views/kaminari/`, which is why those
+three controls appear in two places in the codebase.
+
+**Two bugs this surfaced, both of which had been passing.**
+
+`/product_drives` read "Showing 1–2 of 2 product drive". Kaminari's `entry_name` calls
+`model_name.human(count:)`, and Rails only pluralises a locale entry written as a `one`/`other`
+hash — `product_drive: "Product Drive"` in `en.yml` is a plain string, so it came back
+unchanged. The helper forces the number itself now. `donation_site` is the other one written
+that way and would have had the same fault.
+
+`admin/organizations_system_spec` had a context called "there are no organizations" that
+asserted `Next ›` and `Last »` were absent. Both claims were wrong: the super admin factory
+creates an organization of its own, *after* the `Organization.delete_all` in the `before` block,
+so the list held one row — and the assertion passed only because a single page drew no Next.
+The context now filters to nothing, which is the only way to get an empty list on that page, and
+asserts there is no strip at all.
