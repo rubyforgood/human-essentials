@@ -2044,17 +2044,29 @@ wrong the first time and the wrongness looks like findings.**
 - A form that accepts an empty submit, or one whose fields are hidden until a choice is made, is
   not a form that fails to show errors — there were none to show. Reported separately.
 
-### Left undone, and why
+### The last four, finished
 
-Four forms still show their errors only in a summary: `/audits/new`, `/account_requests/new`,
-`/partners/family_requests/new`, `/partners/users/new`. Each needs a different thing, and none is
-a one-line change:
+**`partners/users` redirected on failure**, so the entered name and email were thrown away along
+with the errors and the form came back empty under a flash. It re-renders now. Its view was also
+the last form in the app built from `form_for` with hand-rolled `label`/`text_field` pairs, which
+is why it had no required marker, no `aria-required` and no inline errors — it is
+`essentials_form_for` with `f.input` like everything else.
 
-- `audits` keeps its record and its errors are on `base`, which has no field to attach to. The
-  summary is the right home for those; the probe cannot drive the form reliably enough to
-  confirm the rest.
-- `partners/users` **redirects** on failure, so the entered values are lost as well as the
-  errors. Fixing it means re-rendering instead, which changes the flow.
-- `partners/family_requests` puts the service's errors in a flash and redirects, same shape.
-- `account_requests` hides its fields until an account type is chosen, so an empty submit does
-  not exercise it at all.
+**`partners/family_requests` did the same** and additionally had nowhere to show an error: the
+view never rendered `@errors`. It re-renders and shows them.
+
+**`/audits/new` and `/account_requests/new` were not defects.** The probe could not drive either:
+the audit form's submit carries `data-confirm`, and a dialog nobody accepts cancels the
+submission; the account request form hides its fields until an account type is chosen, so an
+empty submit never leaves the page. Driven by hand, audits shows a summary, one inline message
+and `aria-invalid`; account requests re-renders with "Invalid captcha submission", which is
+reCAPTCHA declining a headless submit rather than the form failing.
+
+Both taught the tool something. It accepts dialogs now, and it sets a marker on `window` before
+submitting so "the form did not submit" can be told from "the form submitted and came back with
+nothing" — and it reports the forms it could not exercise **even when there are no findings**,
+because a form the probe cannot drive is not a form that passed, and hiding that behind a clean
+result is how a green audit lies.
+
+One thing removed while there: `audits_controller#handle_audit_errors` built a flash out of the
+same errors the summary and the fields now show, and became dead code.

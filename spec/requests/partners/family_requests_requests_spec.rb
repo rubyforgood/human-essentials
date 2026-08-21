@@ -60,7 +60,9 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       child_with_unavailable_item = children[0]
       expected = "\"#{i.name}\" requested for #{child_with_unavailable_item.first_name} #{child_with_unavailable_item.last_name} is not currently available for request."
 
-      expect(response.request.flash[:error]).to eql expected
+      # Rendered in the page now, not flashed and redirected away from -- the selection the
+      # partner made survives the failure.
+      expect(response.body).to include(CGI.escapeHTML(expected))
     end
 
     it "does not allow requesting non-visible items for multiple children" do
@@ -80,7 +82,9 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       expected = "\"#{i.name}\" requested for #{child_formatting} is not currently available for request."
 
-      expect(response.request.flash[:error]).to eql expected
+      # Rendered in the page now, not flashed and redirected away from -- the selection the
+      # partner made survives the failure.
+      expect(response.body).to include(CGI.escapeHTML(expected))
     end
 
     it "submits the request" do

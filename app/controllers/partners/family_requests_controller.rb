@@ -29,7 +29,12 @@ module Partners
       if create_service.errors.none?
         redirect_to partners_request_path(create_service.partner_request), notice: "Requested items successfully!"
       else
-        redirect_to new_partners_family_request_path, error: create_service.errors.map { |error| error.message.to_s }.join(",").to_s
+        # Re-render, do not redirect. Redirecting discarded the children that had been picked
+        # along with the errors, so the page came back empty with a sentence at the top and the
+        # selection had to be made again.
+        @errors = create_service.errors
+        new
+        render :new, status: :unprocessable_content
       end
     end
 

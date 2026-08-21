@@ -157,7 +157,8 @@ RSpec.describe "Audits", type: :request do
         it "re-renders the 'new' template with an error message when an invalid storage location is given" do
           post audits_path(audit: invalid_storage_location_attributes)
           expect(response).to render_template(:new)
-          expect(flash[:error]).to eq("Storage location must exist")
+          # In the page rather than a flash: the summary lists it and the field carries it.
+          expect(response.body).to include("Storage location must exist")
         end
       end
     end

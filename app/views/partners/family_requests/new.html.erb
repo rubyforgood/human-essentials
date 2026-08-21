@@ -8,6 +8,10 @@
 </div>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <% if @errors.present? %>
+    <%= render partial: "partners/requests/error" %>
+  <% end %>
+
   <%# The filter block used the shared filter bar's shape by hand, and closed a div in the
       middle of the form so the reset link sat outside it. %>
   <%= form_for_filterrific @filterrific do |f| %>
