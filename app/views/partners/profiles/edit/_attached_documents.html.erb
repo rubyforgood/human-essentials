@@ -10,10 +10,10 @@
         </ul>
       </div>
       <div class="min-w-0">
-        <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+        <%= form.input :documents, as: :file, label: "Upload documents", input_html: {multiple: true} %>
       </div>
     </div>
   <% else %>
-    <%= form.file_field :documents, multiple: true, class: "-file block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+    <%= form.input :documents, as: :file, label: "Upload documents", input_html: {multiple: true} %>
   <% end %>
 <% end %>

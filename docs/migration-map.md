@@ -32,6 +32,7 @@ breaks that down.
 | --- | --- |
 | `HistoricalTrends::BaseController` | Abstract; it has no views. Its three subclasses are migrated. |
 | `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
+| `donations#add_item`, `donations#remove_item` | Removed in 2026, not migrated: routes with no actions whose only templates were 2018 scaffold stubs. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 
 ### Class names that style nothing, and are left alone
@@ -210,10 +211,18 @@ pw bin/design/sweep.js            # 56 pages in a real browser
 python3 bin/design/undefined-classes.py
 ```
 
-Run the grep as well as the other two. The status script asks whether a view has design system
-markup, and a view can have plenty while still passing a dead class into a partial; the sweep
-only visits 56 pages. The last defect found on this branch — four invisible icons on the
-bank-side profile editor — was invisible to both and obvious to the grep.
+Run all of them; each sees something the others cannot. The status script asks whether a view
+has design system markup, and a view can have plenty while still passing a dead class into a
+partial. `undefined-classes.py` catches the dead class but cannot tell you the page has no
+`<h1>`. The browser sweep sees both — but only on the pages it visits, which is why
+`route-sweep.js` asks the router for the list rather than carrying one.
+
+That distinction is not theoretical. `sweep.js` has a hardcoded list of 56 paths and the three
+historical trend pages were never on it. They were in the sidebar, on a design system layout,
+and rendered a bare chart with no page header and no `<h1>` for the length of the migration.
+Every audit ran clean over them the whole time. `route-sweep.js` covers 139 screens as three
+different users, and found two more defects on its first run — nine unlabelled selects on the
+partner profile editor and two on the child form, in a portal the old list never visited.
 
 The sweep calls a page clean when it has no leftover Bootstrap/AdminLTE or Font Awesome
 classes, exactly one `<h1>` and one `<main>`, no skipped heading levels, no unlabelled form
