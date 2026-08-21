@@ -254,9 +254,9 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
           const cs = getComputedStyle(el);
           if (cs.position !== "fixed" && cs.position !== "sticky") return false;
           if (el.closest(".profiler-results, #rack-mini-profiler")) return false;
-          // Third-party overlays are not this app's chrome. reCAPTCHA puts a full-viewport div at
-          // z-index 2147483640 on the account request page, and rack-mini-profiler one at 2e9.
-          // The app's own highest is z-40; anything past 100 belongs to somebody else.
+          // Third-party overlays are not this app's chrome: rack-mini-profiler's badge sits at
+          // z-index 2147483643 and reCAPTCHA's containers in the same range. The app's own
+          // highest is z-40, so anything past 100 belongs to somebody else.
           if (Number(cs.zIndex) > 100) return false;
           const r = el.getBoundingClientRect();
           // Only chrome that is actually over the content. The nav drawer below lg is
