@@ -48,7 +48,11 @@ targets, seen = [], {}
 Rails.application.routes.routes.each do |r|
   next unless r.verb.to_s.include?("GET")
   controller, action = r.defaults[:controller], r.defaults[:action]
-  next if controller.nil? || controller.start_with?("rails/", "turbo/", "active_storage/", "devise/")
+  # Not "devise/": those routes ARE the auth screens. The app has a users/invitations_controller
+  # and a users/passwords_controller, so the list looked covered -- but devise_for overrides only
+  # sessions and omniauth_callbacks, and Devise's own controllers serve the rest. Skipping them
+  # meant the sweep never visited the invitation pages, which rendered with no layout at all.
+  next if controller.nil? || controller.start_with?("rails/", "turbo/", "active_storage/")
   next if action.to_s.match?(SKIP_ACTION)
 
   path = r.path.spec.to_s.sub("(.:format)", "")
