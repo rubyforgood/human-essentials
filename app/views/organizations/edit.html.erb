@@ -57,7 +57,7 @@
           <%= f.label :logo, "Logo", class: "block text-sm font-medium text-slate-700" %>
           <% if current_organization.logo.attached? %>
             <div class="mt-2 flex items-center gap-3">
-              <%= image_tag current_organization.logo, alt: "", class: "main_logo h-12 w-auto rounded" %>
+              <%= image_tag current_organization.logo, alt: "", class: "h-12 w-auto rounded" %>
               <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
                       data-action="click->dialog#open" data-dialog-id-param="showTheLogo">
                 View original

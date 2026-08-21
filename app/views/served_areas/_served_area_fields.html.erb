@@ -6,15 +6,15 @@
     <div class="grid gap-6 mt-2 flex flex-row items-center justify-between">
       <div class='flex flex-col justify-center'>
         <div class='flex flex-row'>
-          <span class="pc-name">
+          <span>
             <%= fsa.input :county_id, collection: @counties, prompt: "County or equivalent", include_blank: "",
               label: false,
-              input_html: { class: "my-0 pc-county-select", "data-controller": "select2",
+              input_html: { class: "my-0", "data-controller": "select2",
                             "aria-label": "County or equivalent" } %>
           </span>
           <div class="mx-2">
             <%= fsa.input :client_share, collection: 1..100, placeholder: "Client Share", label: false, input_html: {
-              class: "pc-client-share percentage-selector",
+              class: "percentage-selector",
               "aria-label": "Client share, per cent",
               "data-area-served-target": "share", "data-served-area-target": "share",
               "data-action": "change->area-served#calculateClientShareTotal keyup->area-served#calculateClientShareTotal" } %>
@@ -29,6 +29,6 @@
       </div>
     </div>
 
-    <hr class="partner-county-separator">
+    <hr>
   </section>
 <% end %>

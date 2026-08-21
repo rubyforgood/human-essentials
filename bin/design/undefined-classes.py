@@ -30,7 +30,13 @@ for probe, expect in [("mt-0.5", True), ("focus:ring-2", True), ("gap-1.5", True
     if (probe in defined) != expect:
         sys.exit(f"extractor is wrong: {probe} defined={probe in defined}, expected {expect}. "
                  "Fix the selector regex before trusting any result below.")
-print(f"extractor sane; stylesheet defines {len(defined)} class tokens\n")
+# A view may define a class in an inline <style> block -- the filter bar does, so that its submit
+# button is visible without JavaScript. Those are real definitions and must not be reported.
+for path in glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True):
+    for block in re.findall(r"<style[^>]*>(.*?)</style>", pathlib.Path(path).read_text(errors="replace"), re.S):
+        defined |= {m.group(1).replace("\\", "") for m in re.finditer(r"\.((?:\\.|[A-Za-z0-9_-])+)", block)}
+
+print(f"extractor sane; stylesheet and inline styles define {len(defined)} class tokens\n")
 
 # Mailers are HTML email and static/ has its own stylesheet: neither is on the design system.
 SKIP = re.compile(r"app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/users/mailer/|app/views/static/")
@@ -38,6 +44,7 @@ SKIP = re.compile(r"app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/u
 NOT_A_CLASS = re.compile(r"[<>#{}%\"'()?:=,.]")
 
 hits = defaultdict(set)
+markup_tokens = set()
 for path in sorted(glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True)):
     rel = path[len(str(ROOT)) + 1:]
     if SKIP.search(rel): continue
@@ -45,7 +52,10 @@ for path in sorted(glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True)):
     for m in re.finditer(r'class(?:=|:\s*)(["\'])(.*?)\1', src, re.S):
         for tok in re.sub(r"<%.*?%>", " ", m.group(2), flags=re.S).split():
             tok = tok.strip(",")
-            if not tok or NOT_A_CLASS.search(tok) or tok.startswith("bi-") or tok in defined:
+            if not tok or NOT_A_CLASS.search(tok):
+                continue
+            markup_tokens.add(tok)
+            if tok.startswith("bi-") or tok in defined:
                 continue
             hits[tok].add(rel.replace("app/views/", ""))
 
@@ -54,7 +64,7 @@ def referenced_elsewhere(tok):
     for cmd in (["grep", "-rqF", "--include=*.js", "--include=*.rb", "--include=*.css", tok,
                  str(ROOT / "app"), str(ROOT / "lib"), str(ROOT / "config")],
                 ["grep", "-rqF", tok, str(ROOT / "spec")],
-                ["bash", "-lc", f"grep -rqF -- {tok!r} /usr/local/bundle/gems/*/app /usr/local/bundle/gems/*/vendor 2>/dev/null"]):
+                ["bash", "-lc", f"grep -rqF -- {tok!r} /usr/local/bundle/gems/*/app /usr/local/bundle/gems/*/vendor /usr/local/bundle/gems/*/lib 2>/dev/null"]):
         if subprocess.run(cmd, capture_output=True).returncode == 0:
             return True
     return False
@@ -63,8 +73,36 @@ hooks, orphans = [], []
 for tok, files in hits.items():
     (hooks if referenced_elsewhere(tok) else orphans).append((tok, sorted(files)))
 
+# JavaScript refers to classes too, and a controller left on the old icon set is invisible to a
+# scan of the templates. password_visibility_controller toggled fa-eye and fa-eye-slash against
+# markup that had been migrated to Bootstrap Icons, so the icon never changed and nothing failed.
+JS_CLASS = re.compile(r"""classList\.(?:add|remove|toggle|contains|replace)\(\s*["'`]([^"'`]+)["'`]"""
+                      r"""|(?:querySelector(?:All)?|closest|matches)\(\s*["'`]\.([A-Za-z0-9_-]+)""")
+js_hits = defaultdict(set)
+for path in sorted(glob.glob(str(ROOT / "app/javascript/**/*.js"), recursive=True)):
+    rel = path[len(str(ROOT)) + 1:]
+    for m in JS_CLASS.finditer(pathlib.Path(path).read_text(errors="replace")):
+        tok = (m.group(1) or m.group(2)).strip()
+        if not tok or " " in tok or tok.startswith("bi-") or tok in defined:
+            continue
+        # Fine if the markup carries it: then it is a selector for something real, not styling.
+        if tok in markup_tokens:
+            continue
+        # FullCalendar renders its own chrome; fc-* names belong to the library, not to us.
+        if tok.startswith("fc-"):
+            continue
+        js_hits[tok].add(rel)
+
 print(f"{len(orphans)} class tokens style nothing and are selected by nothing.")
 print(f"{len(hooks)} more are undefined in CSS but are deliberate hooks (JS, specs, or a gem).\n")
 for tok, files in sorted(orphans):
     print(f"  {tok:36} {', '.join(files[:2])}")
 print("\nThese are expected. docs/migration-map.md lists them and says why each is left alone.")
+
+if js_hits:
+    print(f"\n{len(js_hits)} class name(s) used by JavaScript that the stylesheet does not define:")
+    for tok, files in sorted(js_hits.items()):
+        print(f"  {tok:36} {', '.join(sorted(files))}")
+    print("A controller toggling a class nothing defines does nothing, silently.")
+else:
+    print("\nNo JavaScript refers to a class the stylesheet does not define.")

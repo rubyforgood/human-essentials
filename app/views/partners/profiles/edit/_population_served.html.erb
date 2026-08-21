@@ -4,10 +4,10 @@
   <%= render "shared/essentials/card", title: "Population served" do %>
     <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
     as: :radio_buttons,
-    wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+    wrapper_html: {}, input_html: {} %>
     <%= form.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
     as: :radio_buttons,
-    wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+    wrapper_html: {}, input_html: {} %>
   <% end %>
 
   <%= render "shared/essentials/card", title: "Race and ethnicity of client base" do %>

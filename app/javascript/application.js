@@ -83,8 +83,12 @@ $(document).ready(function(){
     calendarElement.querySelectorAll(".fc-prev-button, .fc-next-button, .fc-today-button")
       .forEach((button) => {
         if (button.textContent.trim() || button.getAttribute("aria-label")) return;
-        const which = button.classList.contains(".fc-prev-button") ? "Previous" : "Next";
-        button.setAttribute("aria-label", `${which} period`);
+        // classList.contains takes a bare token; with the leading dot it is always false, so
+        // every unnamed button here was announced as "Next period" -- including Today.
+        const label = button.classList.contains("fc-prev-button") ? "Previous period"
+          : button.classList.contains("fc-next-button") ? "Next period"
+            : "Today";
+        button.setAttribute("aria-label", label);
       });
   }
 });
