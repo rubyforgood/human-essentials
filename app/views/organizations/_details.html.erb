@@ -2,16 +2,14 @@
   <div class="px-4 py-6 sm:px-6 lg:px-8">
     <div class="grid gap-6">
       <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <% if can_administrate? %>
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= edit_button_to(edit_organization_path, {size: "md"}) %>
-            </div>
-          <% end %>
-
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Organization info</h2>
-          </div>
+        <%#
+          Two Edit buttons used to sit on this card -- one above the header and one below the
+          body -- and the top one was wrapped in `border-t`, footer chrome, so it drew a stray
+          hairline over the heading. The card component puts a card's action in its header.
+        %>
+        <%= render "shared/essentials/card", padded: false,
+              title: "Organization info",
+              actions: (can_administrate? ? edit_button_to(edit_organization_path, {size: "sm"}) : nil) do %>
 
           <div class="px-5 py-4">
             <h3 class="text-sm font-semibold text-slate-900">Basic information</h3>
@@ -281,12 +279,7 @@
             </div>
           </div>
 
-          <% if can_administrate? %>
-            <div class="border-t border-slate-200 px-5 py-3">
-              <%= edit_button_to(edit_organization_path, {size: "md"}) %>
-            </div>
-          <% end %>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>

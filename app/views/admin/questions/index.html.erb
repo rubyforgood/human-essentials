@@ -16,27 +16,17 @@
   <% else %>
     <div class="space-y-4" data-controller="disclosure">
       <% @bank_questions.each do |question| %>
-              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="flex flex-wrap items-start justify-between gap-3 px-5 py-4">
-                  <button type="button"
-                          class="flex min-w-0 flex-1 items-center justify-between gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                          aria-expanded="false"
-                          aria-controls="collapse<%= question.id %>"
-                          data-action="click->disclosure#toggle">
-                    <span class="text-base font-semibold text-slate-900"><%= question.title %></span>
-                    <i class="bi-chevron-down shrink-0 text-sm text-slate-500 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
-                  </button>
-                  <div class="flex gap-1.5">
-                    <%= essentials_link_button "Edit", edit_admin_question_path(question), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-                    <%= essentials_action_button "Delete", admin_question_path(question), method: :delete,
-                          variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
-                          confirm: confirm_delete_msg(question.title) %>
-                  </div>
-                </div>
-                <div id="collapse<%= question.id %>" class="hidden border-t border-slate-200 px-5 py-4 text-sm text-slate-700">
-                  <%= question.answer %>
-                </div>
-              </div>
+        <%= render "shared/essentials/disclosure",
+              panel_id: "collapse#{question.id}",
+              title: question.title,
+              actions: capture {
+                concat essentials_link_button("Edit", edit_admin_question_path(question), variant: :ghost, size: :sm, icon: "bi-pencil")
+                concat essentials_action_button("Delete", admin_question_path(question), method: :delete,
+                         variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                         confirm: confirm_delete_msg(question.title))
+              } do %>
+          <%= question.answer %>
+        <% end %>
       <% end %>
     </div>
   <% end %>

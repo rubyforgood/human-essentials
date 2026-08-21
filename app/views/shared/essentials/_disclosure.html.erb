@@ -1,0 +1,66 @@
+<%#
+  A card whose body opens and closes. The FAQ lists and the partner profile accordion each
+  hand-rolled this, and the three copies had drifted: one wrapped its trigger in an h2 and the
+  others did not, one put the row actions inside the button and the others beside it.
+
+    render "shared/essentials/disclosure", panel_id: "question-1", title: q.title do
+      ...the answer...
+    end
+
+  Locals:
+    panel_id  required; the id the trigger's aria-controls points at
+    title     required
+    icon      a bi-* class shown before the title
+    badge     rendered after the title -- a status pill, say
+    actions   rendered beside the trigger, outside it, so a link inside a button is impossible
+    open      start expanded; a section is opened on load when it has errors to show
+    heading   wrap the trigger in this heading tag, so the set is navigable by heading
+
+  The trigger is a real button carrying aria-expanded and aria-controls, never an anchor with a
+  fragment href: it toggles content in place rather than navigating. The chevron is marked with
+  data-disclosure-chevron, which is what disclosure_controller rotates.
+%>
+<%
+  # local_assigns, not defined?(): a partial rendered anywhere with a given local keeps that
+  # local defined-and-nil at the call sites that omit it. See design.md, Callouts.
+  icon = local_assigns[:icon]
+  badge = local_assigns[:badge]
+  actions = local_assigns[:actions]
+  open = local_assigns.fetch(:open, false)
+  heading = local_assigns[:heading]
+  trigger_class = "flex w-full items-center justify-between gap-3 px-5 py-4 text-left " \
+                  "hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 " \
+                  "focus-visible:outline-brand-600"
+%>
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <% trigger = capture do %>
+    <button type="button"
+            class="<%= trigger_class %>"
+            aria-expanded="<%= open %>"
+            aria-controls="<%= panel_id %>"
+            data-action="click->disclosure#toggle">
+      <span class="flex min-w-0 items-center gap-2">
+        <% if icon %><i class="<%= icon %> shrink-0 text-slate-500" aria-hidden="true"></i><% end %>
+        <span class="text-base font-semibold text-slate-900"><%= title %></span>
+        <%= badge %>
+      </span>
+      <i class="bi-chevron-down shrink-0 text-sm text-slate-500 transition-transform <%= "rotate-180" if open %>"
+         data-disclosure-chevron aria-hidden="true"></i>
+    </button>
+  <% end %>
+
+  <% if actions %>
+    <%# The actions sit beside the trigger, never inside it: a link inside a button is invalid
+        and a screen reader announces the whole thing as one control. %>
+    <div class="flex items-center gap-3 pr-5">
+      <%= heading ? content_tag(heading, trigger, class: "min-w-0 flex-1") : tag.div(trigger, class: "min-w-0 flex-1") %>
+      <div class="flex shrink-0 gap-1.5"><%= actions %></div>
+    </div>
+  <% else %>
+    <%= heading ? content_tag(heading, trigger) : trigger %>
+  <% end %>
+
+  <div id="<%= panel_id %>" class="border-t border-slate-200 px-5 py-4 text-sm text-slate-700 <%= "hidden" unless open %>">
+    <%= yield %>
+  </div>
+</div>

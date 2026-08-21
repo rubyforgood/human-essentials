@@ -808,6 +808,34 @@ Do not put ERB tags inside an ERB comment. `<%# … %>` ends at the first `%>`, 
 `<%= render … %>` in the documentation block terminates the comment and the rest of the file
 becomes markup. The same mistake had already been made once in `_pagination.html.erb`.
 
+### Disclosures
+
+A card whose body opens and closes — the FAQ lists, and the partner profile accordion.
+
+```erb
+<%= render "shared/essentials/disclosure", panel_id: "question-1", title: q.title do %>
+  <%= q.answer %>
+<% end %>
+```
+
+Locals: `panel_id` and `title` are required; `icon`, `badge`, `actions`, `open`, `heading`.
+
+The trigger is a real `<button>` carrying `aria-expanded` and `aria-controls`, never an anchor
+with a fragment `href`: it toggles content in place rather than navigating. `disclosure_controller`
+toggles `hidden` and rotates whatever carries `data-disclosure-chevron`.
+
+**`actions` render beside the trigger, never inside it.** A link inside a button is invalid, and
+a screen reader announces the whole thing as one control. The admin questions list had its Edit
+and Delete buttons next to a trigger that was itself a button, in a shared padded row; the
+component keeps that arrangement and makes it the only one available.
+
+**Pass `heading:` when the disclosures form a set.** The partner profile accordion uses
+`heading: "h2"`, which is what makes eleven collapsed sections navigable by heading rather than
+by tabbing through eleven buttons. A one-off disclosure does not need one.
+
+Three copies of this markup existed before it, and they had drifted: only one wrapped its
+trigger in a heading, and only one put its actions outside the button.
+
 ### Empty states
 
 Never render bare empty table chrome. Three flavours, and every screen picks one
