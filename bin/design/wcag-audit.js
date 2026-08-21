@@ -128,11 +128,23 @@ async function audit(page, label, path) {
   const browser = await chromium.launch();
   const all = [];
 
+  // Every screen the router knows, not the four hand-kept lists below. Those covered 61 pages
+  // while route-targets.rb enumerates 163 -- and a hardcoded list is what let three unmigrated
+  // pages hide from every audit for the length of the design system migration.
+  const { execSync } = require("child_process");
+  const routed = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
+    encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
+  }));
+  const forRole = (role) => routed
+    .filter((t) => (t.controller.startsWith("partners/") ? "partner"
+      : t.controller.startsWith("admin") ? "super" : "bank") === role)
+    .map((t) => [t.path, t.path]);
+
   for (const [email, pages] of [
     [null, SIGNED_OUT],
-    ["org_admin1@example.com", BANK],
-    ["superadmin@example.com", ADMIN],
-    ["verified@example.com", PARTNER]
+    ["org_admin1@example.com", forRole("bank")],
+    ["superadmin@example.com", forRole("super")],
+    ["verified@example.com", forRole("partner")]
   ]) {
     const page = await browser.newPage({ viewportSize: { width: 1280, height: 900 } });
     if (email) await signIn(page, email);

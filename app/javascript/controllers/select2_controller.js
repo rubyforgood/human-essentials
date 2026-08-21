@@ -1,35 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 import $ from 'jquery';
 import "select2"
+import { nameSelect2, nameOpenDropdown } from "utils/select2_accessibility"
 
 export default class extends Controller {
   static values = {
     config: { type: Object, default: {} },
     hideDropdown: { type: Boolean, default: false }
   };
-
-  // select2 replaces the <select> with its own markup, including a search <input> it creates
-  // itself. That input inherits no accessible name, so axe reports every select2 on the page as
-  // an unlabelled form field. The name is taken from whatever names the original select -- its
-  // <label for>, or its own aria-label -- and copied onto the search field.
-  //
-  // Fixing it here rather than per call site means every select2 in the app gets it, not just
-  // the ones an audit happened to visit.
-  accessibleName() {
-    const id = this.element.id;
-    const label = id && document.querySelector(`label[for="${CSS.escape(id)}"]`);
-    return (label && label.textContent.trim()) || this.element.getAttribute("aria-label") || null;
-  }
-
-  nameSearchFields() {
-    const name = this.accessibleName();
-    if (!name) return;
-    const container = this.element.nextElementSibling;
-    if (!container) return;
-    container.querySelectorAll("input.select2-search__field").forEach((field) => {
-      if (!field.getAttribute("aria-label")) field.setAttribute("aria-label", name);
-    });
-  }
 
   connect() {
     // select2 defaults to width: 'resolve', which reads the original select's computed width once
@@ -40,17 +18,11 @@ export default class extends Controller {
     // A caller can still override it; this only supplies the default.
     const select2 = $(this.element).select2({ width: "100%", ...this.configValue });
 
-    // The inline search exists once initialised; the dropdown search is created on open.
-    this.nameSearchFields();
+    // The inline search and the combobox exist once initialised; the dropdown search is
+    // created on open. See utils/select2_accessibility.
+    nameSelect2(this.element);
     $(this.element).on("select2:open", () => {
-      requestAnimationFrame(() => {
-        const name = this.accessibleName();
-        if (!name) return;
-        document.querySelectorAll(".select2-container--open input.select2-search__field")
-          .forEach((field) => {
-            if (!field.getAttribute("aria-label")) field.setAttribute("aria-label", name);
-          });
-      });
+      requestAnimationFrame(() => nameOpenDropdown(this.element));
     });
 
     if (this.hideDropdownValue) {

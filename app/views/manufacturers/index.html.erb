@@ -19,7 +19,7 @@
             body: "Add manufacturers so donations made directly by a company can be attributed to them.",
             action: essentials_link_button("Add your first manufacturer", new_manufacturer_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>Manufacturers and the total items donated by each</caption>
           <thead>

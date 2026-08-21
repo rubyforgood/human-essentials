@@ -11,7 +11,7 @@
         <%= render "shared/essentials/empty_state", kind: :all_clear,
               title: "Nothing scheduled for this day" %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Distributions scheduled for <%= @selected_date.strftime("%B %e, %Y").squeeze(" ") %></caption>
             <thead>
@@ -37,7 +37,7 @@
         <%= render "shared/essentials/empty_state", kind: :all_clear,
               title: "No items going out on this day" %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Total items going out on <%= @selected_date.strftime("%B %e, %Y").squeeze(" ") %></caption>
             <thead>

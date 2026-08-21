@@ -34,7 +34,7 @@
               body: essentials_filtered? ? "Clear the filters to see everything." : "A storage location is a physical place you keep inventory — a warehouse, a closet, a van.",
               action: essentials_filtered? ? nil : essentials_link_button("Add your first storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Storage locations with their current inventory totals</caption>
             <thead>

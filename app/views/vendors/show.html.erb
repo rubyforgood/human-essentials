@@ -24,7 +24,7 @@
               title: "No purchases from this vendor yet",
               body: "Purchases recorded against this vendor will be listed here." %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Purchases made from <%= @vendor.business_name %></caption>
             <thead>

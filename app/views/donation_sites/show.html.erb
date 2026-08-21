@@ -25,7 +25,7 @@
               title: "No donations from this site yet",
               body: "Donations recorded against this site will be listed here." %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Donations received at <%= @donation_site.name %></caption>
             <thead>

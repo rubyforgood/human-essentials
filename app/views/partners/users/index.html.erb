@@ -13,7 +13,7 @@
             body: "Invite a colleague so they can make requests on your agency's behalf.",
             action: essentials_link_button("Invite your first user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
     <% else %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>Users at <%= current_partner.name %></caption>
           <thead>

@@ -77,6 +77,22 @@ activates its control. Without those, the first version reported 28 failures on 
 every one of them fine, and 109 across the app of which most were select2's leftover 1×1
 `<select>`.
 
+`keyboard-audit.js` checks what axe cannot: that tabbing never walks into something invisible,
+that everything clickable can be operated from a keyboard, and that nothing uses a positive
+`tabindex`.
+
+```bash
+pw bin/design/keyboard-audit.js              # 1280
+WIDTH=375 pw bin/design/keyboard-audit.js    # and again on a phone
+```
+
+**Run it at both widths.** Below `lg` the sidebar is an off-canvas drawer, and a drawer moved out
+of sight with a transform is still in the tab order unless something says otherwise. That bug was
+invisible at 1280 and 27 tab stops deep at 375.
+
+It knows that `inert` removes a subtree, that an `aria-hidden` scrim and a `<dialog>` backdrop are
+decoration rather than controls, and that the keyboard equivalent of a backdrop click is Escape.
+
 `form-validation-audit.js` opens every `new` form, reads how its required fields are marked,
 submits it empty and reads what came back.
 

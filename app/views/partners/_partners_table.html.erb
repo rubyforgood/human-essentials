@@ -5,7 +5,7 @@
         body: essentials_filtered? ? "Choose \u201cAll statuses\u201d to see every partner agency." : "Partner agencies are the organizations you distribute essentials to.",
         action: essentials_filtered? ? nil : essentials_link_button("Add your first partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg") %>
 <% else %>
-  <div class="table-scroll">
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="data-table">
       <caption>Partner agencies and their current status</caption>
       <thead>

@@ -40,7 +40,7 @@
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "No donations from this drive yet" %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Donations credited to <%= @product_drive.name %></caption>
             <thead>
@@ -73,7 +73,7 @@
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "No participants recorded for this drive yet" %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Participants in <%= @product_drive.name %></caption>
             <thead>

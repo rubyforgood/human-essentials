@@ -23,7 +23,7 @@
               body: essentials_filtered? ? "Choose \u201cAll storage locations\u201d to see every audit." : "An audit records what is physically present at a storage location and sets inventory to match.",
               action: essentials_filtered? ? nil : essentials_link_button("Start your first audit", new_audit_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Inventory audits and their status</caption>
             <thead>

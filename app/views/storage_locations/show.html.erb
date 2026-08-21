@@ -67,7 +67,7 @@
                   title: "Nothing stored here yet",
                   body: "Inventory appears once a donation, purchase or audit puts items in this location." %>
           <% else %>
-            <div class="table-scroll">
+            <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
               <table class="data-table">
                 <caption>Items currently at <%= @storage_location.name %></caption>
                 <thead>
@@ -106,7 +106,7 @@
               <%= render "shared/essentials/empty_state", kind: :all_clear,
                     title: "Nothing #{phrase} this location" %>
             <% else %>
-              <div class="table-scroll">
+              <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
                 <table class="data-table">
                   <caption>Items <%= phrase %> <%= @storage_location.name %></caption>
                   <thead>

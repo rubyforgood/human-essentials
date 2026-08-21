@@ -66,7 +66,7 @@
               body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every donation." : "Record what comes in from donors, product drives, manufacturers and donation sites.",
               action: essentials_filtered? ? nil : essentials_link_button("Record your first donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Donations received, most recent first</caption>
             <thead>

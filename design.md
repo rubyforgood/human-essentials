@@ -866,6 +866,48 @@ A row action is a whole-page navigation ending in a redirect and a flash, not a 
 **Anything that redirects out of a frame should opt out of Turbo rather than rely on
 `target="_top"` to rescue it.**
 
+### Keyboard
+
+Audit with `pw bin/design/keyboard-audit.js`, at 1280 **and** at 375 — the two are different
+layouts and the drawer bug below only exists at one of them.
+
+**An off-canvas panel must be `inert` when it is closed.** The sidebar below `lg` is moved out of
+sight with `-translate-x-full`, which hides it from the eye and from nobody else: closed, its 27
+links stayed in the tab order, so a keyboard user tabbed from "Skip to main content" through the
+entire navigation — invisible, with no way to know where focus had gone — before reaching the
+page. `display: none` would remove it properly but would also break the slide. `inert` takes the
+subtree out of the tab order and the accessibility tree and leaves the transform alone.
+
+`shell_controller` keeps it in step: set on close, cleared on open, and **recomputed on resize**,
+because at `lg` the sidebar is a visible column and must not be inert whatever the drawer's last
+state was.
+
+**A scroll container needs `tabindex="0"`.** `.table-scroll` can be scrolled with a mouse and,
+without a tab stop, by nothing else — axe's `scrollable-region-focusable`, WCAG 2.1.1. It only
+showed up on the historical trend tables because every other table in the app contains links,
+which give the region a way in by accident. A focusable region also needs a name and a role, and
+a visible focus ring like anything else that takes focus.
+
+**Decoration that happens to be clickable is not a control.** The drawer scrim and a `<dialog>`'s
+backdrop both close on click and are correctly *not* focusable: the scrim is `aria-hidden`, and
+both actions are also on Escape and on a real close button. Adding a tab stop would put an
+unnamed one in the way of everyone.
+
+**Never use a positive `tabindex`.** It takes an element out of document order and puts it in
+front of everything without one. The audit fails on any.
+
+### select2 names nothing it builds
+
+select2 hides the `<select>` and builds a combobox, a value display and a search input beside it.
+None of them inherits the original's accessible name, and the combobox's own `aria-labelledby`
+points at its value container — empty until something is chosen, so the control has no name at
+all.
+
+`utils/select2_accessibility.js` names all three. It lives in a util rather than in
+`select2_controller` because **select2 is initialised in two places**: the fix lived in the
+controller for a while and the select on `/admin/users/new` is set up by `double_select_controller`
+instead, so it kept the exact fault the fix was written for.
+
 ### Forms: required fields and validation errors
 
 Audit with `pw bin/design/form-validation-audit.js`, which opens every `new` form, reads how its

@@ -30,7 +30,7 @@
               body: "Add the businesses you purchase essentials from so purchases can be attributed to them.",
               action: essentials_link_button("Add your first vendor", new_vendor_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Vendors and the total items purchased from each</caption>
             <thead>

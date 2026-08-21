@@ -51,7 +51,7 @@
               body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every purchase." : "Record essentials your bank has bought so their value is counted in your inventory.",
               action: essentials_filtered? ? nil : essentials_link_button("Record your first purchase", new_purchase_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Purchases, most recent first</caption>
             <thead>

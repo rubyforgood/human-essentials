@@ -43,7 +43,7 @@
               body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every drive." : "Record the collection drives run on your behalf so their donations can be credited.",
               action: essentials_filtered? ? nil : essentials_link_button("Add your first product drive", new_product_drive_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Product drives with their totals</caption>
             <thead>

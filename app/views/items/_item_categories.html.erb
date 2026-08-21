@@ -8,7 +8,7 @@
           body: "Categories group related items together and make reporting easier.",
           action: essentials_link_button("Add your first item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg") %>
   <% else %>
-    <div class="table-scroll">
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
       <table class="data-table">
         <caption>Item categories and the items in each</caption>
         <thead>

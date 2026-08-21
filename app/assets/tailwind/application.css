@@ -259,6 +259,12 @@
     overflow-x: auto;
   }
 
+  /* A focusable scroll region needs a visible ring like anything else that takes focus. */
+  .table-scroll:focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
   /*
    * The "Fields marked * are required." line. Rendered on every form by essentials_form_for and
    * shown only when the form actually contains a required field, so it can neither be forgotten

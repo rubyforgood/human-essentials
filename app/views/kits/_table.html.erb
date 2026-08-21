@@ -4,7 +4,7 @@
         body: "A kit bundles several items together so they can be distributed as one unit.",
         action: essentials_link_button("New kit", new_kit_path, variant: :primary, icon: "bi-plus-lg") %>
 <% else %>
-  <div class="table-scroll">
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="data-table table-items-location">
       <caption>Kits, what they contain and where they are allocated</caption>
       <thead>

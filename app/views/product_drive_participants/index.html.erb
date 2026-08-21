@@ -23,7 +23,7 @@
             body: "Add the businesses and people who run drives for you, so their donations can be credited.",
             action: essentials_link_button("Add your first participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>Product drive participants and the total items each has contributed</caption>
           <thead>
