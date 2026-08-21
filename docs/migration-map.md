@@ -254,15 +254,14 @@ The legacy `*_button_to` shims are no longer used inside any table cell: they ma
 `:primary` and `:danger`, which are filled, and that is wrong for a row. They remain in use on
 page headers and forms, where filled is correct.
 
-Two known inert leftovers, so you do not have to work them out again.
+CSV import now lines up exactly, in all four layers: five controllers include `Importable`, five
+routes reach `import_csv`, five models implement it, and `public/` holds five templates — the
+same five each time (partners, storage locations, donation sites, vendors, product drive
+participants). It did not before. `ProductDrivesController` included the concern with no route,
+no model method and no template, and the manufacturers page had the button and the modal and
+nothing else. Both were removed in August 2026. If you add an import, add all four.
 
-`ProductDrivesController` includes `Importable` and no route reaches it: there is no
-`post :import_csv` on `resources :product_drives`, no `ProductDrive.import_csv`, and no template
-CSV. It is unreachable code rather than a dead route, so the August 2026 route cleanup left it
-where it was. The five imports that do work — partners, storage locations, donation sites,
-vendors, product drive participants — have all four pieces each.
-
-`class: 'form-horizontal'`
+One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
 survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this
 work either. It is left alone because removing it means editing option hashes rather than
 substituting a token, and that kind of edit has already broken markup once on this branch.
