@@ -164,6 +164,15 @@ module EssentialsUiHelper
     6 => "sm:grid-cols-2 lg:grid-cols-3"
   }.freeze
 
+  # Tailwind generates a utility only if it finds the literal string in a source file, so a class
+  # built from a runtime value -- `lg:grid-cols-<%= metrics.size %>` -- exists only by luck,
+  # when some unrelated view happens to use the same number. Two grids were relying on that:
+  # `lg:grid-cols-1`, `-6`, `-7` and `-8` are not in the stylesheet at all today, so a fourth
+  # metric appearing on the partner header would have silently unstyled it. Go through the map.
+  def essentials_grid_columns(count)
+    STATS_COLUMNS.fetch(count, "sm:grid-cols-2 lg:grid-cols-4")
+  end
+
   # One card, with the figures separated by hairlines rather than each sitting in its own filled
   # box. Four fills read as four objects; the point of a summary band is that it is one reading.
   # This is the metric strip Stripe, Shopify and Linear all use.
@@ -173,7 +182,7 @@ module EssentialsUiHelper
   # columns. `divide-x` cannot: in a grid of more than one row it borders by DOM order rather
   # than by position, so a 2x2 arrangement comes out wrong.
   def essentials_stats_grid(stats)
-    columns = STATS_COLUMNS.fetch(stats.size, "sm:grid-cols-2 lg:grid-cols-4")
+    columns = essentials_grid_columns(stats.size)
 
     tag.dl(class: "grid gap-px bg-slate-200 #{columns}") do
       safe_join(stats.map { |stat|

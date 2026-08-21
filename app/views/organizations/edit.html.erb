@@ -104,7 +104,7 @@
                 class: "block text-sm font-medium text-slate-700" %>
           <%= f.select :partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true},
                 multiple: true,
-                class: "custom-select mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
                 data: {controller: "select2", "select2-config-value": "{}"} %>
         </div>
       </fieldset>
@@ -130,7 +130,7 @@
             <%= select_tag "organization[request_unit_names]",
                   options_from_collection_for_select(current_organization.request_units, "name", "name", ->(_) { true }),
                   multiple: true,
-                  class: "custom-select mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                  class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
                   data: {controller: "select2", "select2-hide-dropdown-value": true,
                          "select2-config-value": '{"selectOnClose": "true", "tags": "true", "tokenSeparators": [",", "\t"]}'} %>
           </div>

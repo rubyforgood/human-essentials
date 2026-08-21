@@ -40,19 +40,19 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       created_account_request = AccountRequest.last
 
       # Request Received
-      expect(page).to have_content('Request Received!')
-      expect(page).to have_content("We've sent you a email with instructions on next steps at #{created_account_request.email}!")
+      expect(page).to have_content('Request received')
+      expect(page).to have_content("We have sent instructions for the next steps to #{created_account_request.email}")
 
       # Access link within email they would have received
       visit confirmation_account_requests_path(token: created_account_request.identity_token)
 
       expect(created_account_request.confirmed_at).to eq(nil)
 
-      click_link 'I\'m ready! Let\'s go!'
+      click_link "I'm ready, let's go"
 
       expect(created_account_request.reload.confirmed_at).not_to eq(nil)
 
-      expect(page).to have_content('Confirmed!')
+      expect(page).to have_content('Confirmed')
       expect(page).to have_content('We will be processing your request now.')
 
       # Access link within email sent to admin user to process the request.

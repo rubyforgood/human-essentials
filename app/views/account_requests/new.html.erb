@@ -59,9 +59,12 @@
             </div>
 
             <div class="form-inputs">
-              <%= f.input :ndbn_member, label: 'NDBN Membership' do %>
-                <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
-              <% end %>
+              <%# f.association renders its own label, so the `for` matches the id it generates.
+                  The wrapping f.input produced for="account_request_ndbn_member" against a select
+                  whose id is account_request_ndbn_member_id -- the same defect already fixed in
+                  organizations/edit.html.erb, and the select was reported as unlabelled. %>
+              <%= f.association :ndbn_member, label: "NDBN membership",
+                    label_method: :full_name, value_method: :id %>
             </div>
 
             <div class="form-inputs">

@@ -242,8 +242,9 @@ Rails.application.routes.draw do
 
   resources :donations do
     get :print, on: :member
-    patch :add_item, on: :member
-    patch :remove_item, on: :member
+    # add_item and remove_item were removed in 2026: no controller actions, no links, and their
+    # only templates were 2018 scaffold stubs reading "Find me in app/views/donations/…".
+    # Implicit rendering meant PATCH /donations/:id/add_item served that text to a real user.
   end
 
   resources :purchases

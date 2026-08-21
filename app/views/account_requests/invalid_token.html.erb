@@ -1,8 +1,9 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <div class="px-5 py-4">
-    <div class="text-sm text-slate-700">
-      <h3> Sorry</h3>
-      <p> The account request is either invalid, confirmed already, or processed already.</p>
-    </div>
-  </div>
+<div class="mb-6">
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Sorry</h1>
 </div>
+
+<%= render "shared/essentials/card" do %>
+  <div class="space-y-2 text-sm text-slate-700">
+  <p>This account request is either invalid, already confirmed, or already processed.</p>
+  </div>
+<% end %>

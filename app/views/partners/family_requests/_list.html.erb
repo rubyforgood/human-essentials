@@ -28,7 +28,7 @@
         <div class="flex items-center gap-2">
           <% if child.requested_item_ids.any? %>
             <%= check_box_tag "child-#{child.id}", child.active, child.active,
-                              class: "custom-control-input",
+                              class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500",
                               id: "child-#{child.id}" %>
                             <label class="text-sm text-slate-700" for="child-<%= child.id %>">
                               <span class="sr-only">Include This Child?</span>
