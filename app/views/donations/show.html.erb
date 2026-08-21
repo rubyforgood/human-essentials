@@ -15,17 +15,15 @@
     <% if inactive %>
       <%# The reason edit and delete are unavailable is stated once, up front, rather than
           left to a disabled control the user has to work out for themselves. %>
-      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
-        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-        <div>
-          <p class="font-semibold">This donation cannot be corrected or deleted</p>
-          <p class="mt-1">
-            Donations can only be changed while all of their items are active. To delete this
-            donation or make a correction,
-            please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
-          </p>
-        </div>
-      </div>
+      <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
+        <p class="font-semibold">This donation cannot be corrected or deleted</p>
+        <p class="mt-1">
+        Donations can only be changed while all of their items are active. To delete this
+        donation or make a correction,
+        please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
+        </p>
+
+      <% end %>
     <% end %>
 
     <%= render "shared/essentials/card", title: "Details" do %>

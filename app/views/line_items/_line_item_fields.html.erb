@@ -8,10 +8,9 @@
   form-input Stimulus controller's remove action.
 %>
 <% if local_assigns[:changes_disallowed] %>
-  <div class="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
-    <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-    <span>This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.</span>
-  </div>
+  <%= render "shared/essentials/callout", tone: :warning, role: "status", wrapper_class: "mb-4" do %>
+    This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.
+  <% end %>
 <% end %>
 
 <%= form.simple_fields_for :line_items, defined?(object) ? object : nil do |field| %>

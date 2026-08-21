@@ -6,18 +6,18 @@
         subtitle: "Record the inventory actually present at a storage location.",
         back: {path: audits_path, label: "Back to audits"} %>
 
-  <div class="mb-6 flex gap-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3">
-    <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
+  <%= render "shared/essentials/callout", tone: :info, role: nil, wrapper_class: "mb-6" do %>
     <div class="text-sm text-sky-900">
-      <p class="font-semibold">How an audit works</p>
-      <ul class="mt-2 space-y-1">
-        <li>Enter the items and quantities present at the storage location. A partial audit is fine — anything you leave out keeps its recorded level.</li>
-        <li><strong>Save progress</strong> keeps a draft you can resume later.</li>
-        <li>After you <strong>confirm</strong> the audit, an administrator must <strong>finalize</strong> it before it takes effect.</li>
-        <li>We strongly recommend not recording donations, distributions or other transactions until the audit is finalized, since the audit sets the inventory levels.</li>
-      </ul>
+    <p class="font-semibold">How an audit works</p>
+    <ul class="mt-2 space-y-1">
+    <li>Enter the items and quantities present at the storage location. A partial audit is fine — anything you leave out keeps its recorded level.</li>
+    <li><strong>Save progress</strong> keeps a draft you can resume later.</li>
+    <li>After you <strong>confirm</strong> the audit, an administrator must <strong>finalize</strong> it before it takes effect.</li>
+    <li>We strongly recommend not recording donations, distributions or other transactions until the audit is finalized, since the audit sets the inventory levels.</li>
+    </ul>
     </div>
-  </div>
+
+  <% end %>
 
   <%= render partial: "audits/form" %>
 </div>

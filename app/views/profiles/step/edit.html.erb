@@ -7,10 +7,9 @@
         back: {path: partner_path(@partner), label: "Back to #{@partner.name}"} %>
 </div>
 
-<div class="mx-5 mt-3 flex items-start gap-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900" role="note">
-  <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
-  <span>Instructions: Please fill out the following form sections carefully. Ensure that all required fields are completed.</span>
-</div>
+<%= render "shared/essentials/callout", tone: :info, role: "note", wrapper_class: "mx-5 mt-3" do %>
+  Instructions: Please fill out the following form sections carefully. Ensure that all required fields are completed.
+<% end %>
 
 <div data-controller="accordion disclosure">
   <%= essentials_form_for @partner,

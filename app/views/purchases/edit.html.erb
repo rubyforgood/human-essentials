@@ -7,13 +7,11 @@
         back: {path: purchases_path, label: "Back to purchases"} %>
 
   <% if @audit_performed_and_finalized %>
-    <div class="mb-6 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
-      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-      <span>
-        You’ve had an audit since this purchase was started. In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,
-        you’ll need to make an adjustment to the inventory as well.
-      </span>
-    </div>
+    <%= render "shared/essentials/callout", tone: :warning, role: "status", wrapper_class: "mb-6" do %>
+      You’ve had an audit since this purchase was started. In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,
+      you’ll need to make an adjustment to the inventory as well.
+
+    <% end %>
   <% end %>
 
   <%= render partial: "purchase_form", object: @purchase %>

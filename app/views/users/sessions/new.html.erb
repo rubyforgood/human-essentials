@@ -4,10 +4,9 @@
 <p class="mt-1 text-sm text-slate-600">Sign in to your bank's account.</p>
 
 <% if @failed_login %>
-  <div class="mt-5 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
-    <i class="bi-x-circle mt-0.5 shrink-0 text-rose-600" aria-hidden="true"></i>
-    <span>Invalid credentials. Check your email and password and try again.</span>
-  </div>
+  <%= render "shared/essentials/callout", tone: :danger, wrapper_class: "mt-5" do %>
+    Invalid credentials. Check your email and password and try again.
+  <% end %>
 <% end %>
 
 <%= essentials_form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "mt-6"}) do |f| %>
