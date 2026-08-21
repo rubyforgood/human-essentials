@@ -46,11 +46,8 @@ Rails.application.routes.draw do
       post :active
     end
     resources :families
-    resources :authorized_family_members
+    resources :authorized_family_members, except: %i[index]
     resources :distributions, only: [:index] do
-      get :print, on: :member
-    end
-    resources :donations, only: [:index] do
       get :print, on: :member
     end
   end
@@ -61,8 +58,8 @@ Rails.application.routes.draw do
     get :dashboard
     resources :base_items
     resources :organizations, except: %i[edit update]
-    resources :partners, except: %i[new create]
-    resources :users do
+    resources :partners, only: %i[index show edit update]
+    resources :users, except: %i[show destroy] do
       delete :remove_role
       post :add_role
       post :resend_invitation
@@ -74,14 +71,14 @@ Rails.application.routes.draw do
       post :close, on: :collection
       get :for_rejection, on: :collection
     end
-    resources :questions
-    resources :broadcast_announcements
+    resources :questions, except: %i[show]
+    resources :broadcast_announcements, except: %i[show]
     resources :ndbn_members, only: :index do
       post :upload_csv, on: :collection
     end
   end
 
-  resources :users do
+  resources :users, only: %i[index new] do
     get :switch_to_role, on: :collection
     post :partner_user_reset_password, on: :collection
   end
@@ -100,7 +97,7 @@ Rails.application.routes.draw do
 
   resources :events, only: %i(index)
 
-  resources :adjustments, except: %i(edit update)
+  resources :adjustments, except: %i(edit update destroy)
 
   resources :audits do
     post :finalize
@@ -178,11 +175,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :manufacturers, except: [:destroy] do
-    collection do
-      post :import_csv
-    end
-  end
+  resources :manufacturers, only: %i[index new create show edit update]
 
   resources :vendors do
     collection do
@@ -194,7 +187,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :kits do
+  resources :kits, except: %i[edit update destroy] do
     member do
       get :allocations
       post :allocate
@@ -225,8 +218,6 @@ Rails.application.routes.draw do
       post :import_csv
     end
     member do
-      get :profile
-      patch :profile
       get :approve_application
       post :invite
       post :invite_and_approve
@@ -249,19 +240,20 @@ Rails.application.routes.draw do
 
   resources :purchases
 
-  resources :requests, only: %i(index new show) do
+  # One declaration, not two. There were two `resources :requests`, and the first one's
+  # /requests/:id swallowed the second's collection route: /requests/partner_requests resolved to
+  # requests#show with an id of "partner_requests". A collection route declared after a member
+  # route on the same path is unreachable.
+  #
+  # RequestsController has index, show, start, print_picklist and print_unfulfilled. It has no
+  # new, create, edit, update or print -- requests are made by partners, in Partners::RequestsController.
+  resources :requests, only: %i[index show] do
     member do
       post :start
+      get :print_picklist
     end
     get :print_unfulfilled, on: :collection
-    get :print_picklist, on: :member
-  end
-  resources :requests, except: %i(destroy) do
-    resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
-    get :print, on: :member
-    collection do
-      get :partner_requests
-    end
+    resource :cancelation, only: %i[new create], controller: "requests/cancelation"
   end
 
   get "dashboard", to: "dashboard#index"
@@ -285,7 +277,7 @@ Rails.application.routes.draw do
       get 'invalid_token'
     end
   end
-  resources :broadcast_announcements
+  resources :broadcast_announcements, except: %i[show]
 
   root "static#index"
 end

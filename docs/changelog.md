@@ -155,31 +155,40 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `fc4e62d32` | **The last four forms finished; the form audit reports no findings.** `partners/users` and `partners/family_requests` both **redirected** on failure, throwing away what had been typed or selected along with the errors — both re-render now, and the family request page never rendered `@errors` at all. `partners/users`' view was the last form built from `form_for` with hand-rolled `label`/`text_field` pairs, which is why it had no required marker and no aria; it is `essentials_form_for` with `f.input`. `/audits/new` and `/account_requests/new` turned out **not** to be defects — the probe could not drive either, because a `data-confirm` dialog nobody accepts cancels the submit and the account request form hides its fields until an account type is chosen. Both taught the tool something: it accepts dialogs, it sets a marker on `window` so "never submitted" can be told from "submitted and came back empty", and it reports the forms it could not exercise **even when there are no findings**. The 2021 `partners/requests` error and success panels — `bg-red-200`, a 150px inline SVG, `text-4xl font-extrabold` — were the last unmigrated error UI and are now callouts; a blank organization email had been rendering "Contact Some Bank at ." |
 | `236033619` | **Accessibility and keyboard audited; axe went from 61 pages to 152 and now reports zero.** `bin/design/keyboard-audit.js` added, and `wcag-audit.js` made route-driven — the four hand-kept lists were covering 61 of 152 screens. **The headline defect: below `lg` the closed off-canvas sidebar kept all 27 of its links in the tab order**, so a keyboard user on a phone tabbed from "Skip to main content" through the entire navigation, invisibly, before reaching the page — it is `inert` when closed now, recomputed on resize. Broadening axe found four more: `.table-scroll` could be scrolled by mouse only (all 62 are focusable now, with a name, a role and a focus ring); select2's combobox and value display had no accessible name; `/privacypolicy`'s footer was 4.06:1 against the 4.5 AA needs; and `/partners/authorized_family_members/new` **returned a 500** on any visit without a `family_id`. The select2 naming had been written once already and did not apply here, because that select is initialised by a second controller — it is a shared util now. |
 | `3c8401103` | **Two dead-class bugs in JavaScript, and the audit extended to find them.** `password_visibility_controller` toggled `fa-eye`/`fa-eye-slash` — Font Awesome, removed in the migration — against markup that had been moved to Bootstrap Icons, so the icon never changed and the button's `aria-label` stayed "Show password" whatever the state. `file_input_controller` added Bootstrap's `font-weight-bold` and `list-unstyled`, so the selected-files heading was not bold and the list kept its bullets. And `application.js` called `classList.contains(".fc-prev-button")` with a leading dot, which is always false, so every unnamed calendar button was announced as "Next period" — including Today. `undefined-classes.py` scans JavaScript now. **The 23 remaining inert class names were removed** rather than left documented: a permanently non-zero audit is one people stop reading. Three of them turned out not to be inert and would have been deleted on the script's word — `filterrific-periodically-observed` and `form-inputs` belong to gems, and `filter-bar-submit` is defined in an inline `<style>` inside a `<noscript>`, which is what makes the filter bar work without JavaScript. The script reads gem `lib/` and inline `<style>` blocks now. |
+| `PENDING` | **29 routes that could not work, removed.** `bin/design/dead-routes.rb` added: it asks of every route whether the request would raise. 28 did and one more resolved somewhere other than where it was declared; there are 0 of each now, over 346 verb-and-path combinations. Nearly all were actions `resources :x` generates and the controller never implemented — `requests` had six (`new`, `create`, `edit`, `update`, `print`, `partner_requests`), `users` four, `kits` three. Three were reachable by typing a plausible URL: `/partners/donations` raised `uninitialized constant Partners::DonationsController`, and `/requests/new` raised rather than saying requests come from partners. `resources :requests` was declared **twice**, and the second block's collection route sat below the first's `/requests/:id`, so `/requests/partner_requests` resolved to `requests#show` with an id of `"partner_requests"` — not a 404, a wrong page. It is one declaration now. The **manufacturers CSV import** lost its button and modal as well as its route: no `Importable`, no `Manufacturer.import_csv`, no `public/manufacturers.csv`, so every layer was missing and pressing it raised; it predates this branch, and the migration rebuilt it faithfully because it looked fine. Eleven route helpers disappear and none is referenced in `app/`, `spec/` or `lib/`. The audit itself was wrong twice before it was right — it called `POST /users` dead when Devise answers it, then silently dropped `/partners/donations` because `recognize_path` raises for constraint-guarded routes outside a request. |
 
 ---
 
 ## Current state
 
-Measured on 2026-08-18 as of `dbe7418b1`, the last entry above. Re-run the commands in
+Measured on 2026-08-21 as of `PENDING`, the last entry above. Re-run the commands in
 [migration-map.md](migration-map.md#verifying-a-migration) to check them.
 
 | | |
 | --- | --- |
-| Commits on the branch | 52 |
-| Files changed against `main` | 604 |
+| Commits on the branch | 149 |
+| Files changed against `main` | 714 |
 | Controllers on a design system layout | 63 of 65 |
-| Views carrying design system markup | 299 of 392 |
-| Stimulus controllers | 30 |
+| Views carrying design system markup | 331 of 364 |
+| Stimulus controllers | 32 |
 | Undefined legacy classes left in `app/views` | 0 |
+| Routes whose request would raise | 0 of 346 |
 
-Verified at `0fd3f13ca`: `bundle exec rspec` 2903 examples, 0 failures, 1 pending (a
-pre-existing `xit`); `rubocop` 648 files, no offenses; `erb_lint` 420 files, no errors.
+Verified at the same commit: `bundle exec rspec` 2958 examples, 0 failures, 1 pending (a
+pre-existing `xit`); `rubocop` 654 files, no offenses; `erb_lint` 413 files, no errors;
+`page-audit.rb` 0 defects across 330 views; `route-sweep.js` 139 screens as three roles, no
+findings; `wcag-audit.js` 152 pages, 0 axe violations; `wcag-manual.js` 8 pages; `overlay-audit.js`
+6 dialogs and 28 popovers at two viewports; `responsive-audit.js` 1,540 page-and-width
+combinations; `form-validation-audit.js` 26 forms; `keyboard-audit.js` 140 screens at 1280 and
+again at 375; `undefined-classes.py` 0 orphans; `dead-routes.rb` 0 dead and 0 shadowed.
 
-The 93 views without design system markup are not a backlog. 55 are ten lines or fewer, 39 are
-partials, 12 are mailer templates, and two are the `static/` marketing pages that are
-deliberately outside the app shell. The remainder carry no markup of their own: chart
-configuration, the `<head>` partial, and simple_form field lists whose markup comes from the
-`:essentials` wrapper.
+The 33 views without design system markup are not a backlog. 28 are partials and 21 are ten
+lines or fewer. The largest are simple_form field lists — the five `partners/profiles/step/`
+forms — whose markup comes from the `:essentials` wrapper rather than from the template. The
+rest carry none of their own: the `<head>` partial, chart configuration, and Kaminari's
+paginator template. Mailer templates and the `static/` marketing pages are excluded from the
+count altogether: HTML email is table layouts and inline styles on purpose, and `static/`
+renders with `layout false` and its own stylesheet.
 
 ### Known inert leftovers
 
