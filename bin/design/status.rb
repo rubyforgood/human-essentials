@@ -23,8 +23,19 @@ sources.each do |klass, entry|
   (layout.to_s.start_with?("essentials_") ? migrated : legacy) << entry[:name]
 end
 
-views = Dir.glob("app/views/**/*.html.erb")
-tw = views.count { |v| File.read(v).match?(/rounded-2xl|data-table|text-slate-|bg-brand-|essentials_/) }
+# A view counts as migrated if it carries design system markup OR renders a design system
+# partial. The pattern used to be `essentials_` with an underscore, which matches the helpers
+# but not `render "shared/essentials/page_header"` -- so a page built entirely out of the
+# components, which is the ideal, was counted as unmigrated. That understated the total by 51
+# pages, including every new/edit wrapper in the app.
+DESIGN_SYSTEM = %r{rounded-2xl|data-table|text-slate-|bg-brand-|essentials_|shared/essentials/}
+
+# Mailers are HTML email -- table layouts and inline styles, deliberately not the design system.
+# static/ renders with `layout false` and its own stylesheet (see docs/migration-map.md).
+EXEMPT = %r{app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/users/mailer/|app/views/static/}
+
+views = Dir.glob("app/views/**/*.html.erb").reject { |v| v.match?(EXEMPT) }
+tw = views.count { |v| File.read(v).match?(DESIGN_SYSTEM) }
 puts "controllers on design system: #{migrated.size} / #{migrated.size + legacy.size}"
 puts "views with design-system markup: #{tw} / #{views.size}"
 puts

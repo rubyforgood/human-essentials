@@ -12,7 +12,10 @@ RSpec.describe HistoricalDataCacheJob, type: :job do
   end
 
   it "caches the historical data" do
-    expected_data = {name: "Item 2", data: [0, 0, 0, 0, 0, 60, 0, 0, 30, 0, 0, 0], visible: false}
+    # An array of series, which is what HistoricalTrendService#series returns. This used to
+    # stub a bare Hash -- a shape the service cannot produce -- and the cache is read by
+    # HistoricalTrends#index, which iterates it.
+    expected_data = [{name: "Item 2", data: [0, 0, 0, 0, 0, 60, 0, 0, 30, 0, 0, 0], visible: false}]
     allow_any_instance_of(HistoricalTrendService).to receive(:series).and_return(expected_data)
 
     perform_enqueued_jobs { job }

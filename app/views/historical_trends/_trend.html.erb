@@ -1,0 +1,75 @@
+<%#
+  The three historical trend pages -- donations, purchases, distributions -- were identical
+  apart from a title and a series, and each was a bare Highcharts config with no page header,
+  no card and no <h1>. Their controllers had been given `layout "essentials_app"` and marked
+  migrated; the views were never touched.
+
+    render "historical_trends/trend", title: @title, series: @series
+
+  The chart carries no title of its own any more: the page header is the h1, and the chart
+  repeating it gave the page two headings that could drift apart.
+%>
+<% content_for :title, "#{title} - #{current_organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header",
+        title: title,
+        subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind." %>
+</div>
+
+<div class="space-y-6 px-4 pb-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/card" do %>
+    <%
+      config = {
+        chart: {type: "column", height: 850},
+        title: {text: nil},
+        xAxis: {categories: last_12_months, crosshair: true},
+        yAxis: {min: 0, title: {text: "Line items"}},
+        tooltip: {style: {zIndex: 100}, shared: true, useHTML: true},
+        plotOptions: {column: {pointPadding: 0.2, borderWidth: 0}},
+        series: series
+      }.to_json
+    %>
+    <%= render partial: "shared/highcharts", locals: {config: config} %>
+  <% end %>
+
+  <%#
+    The same figures as a table. design.md: a chart is never the only representation of the
+    data, because a chart is not readable by a screen reader and not printable in colour.
+    These three were the only chart pages in the app and none of them had one, so the rule had
+    nowhere it was actually being kept.
+  %>
+  <%= render "shared/essentials/card", padded: false do %>
+    <% if series.blank? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "Nothing to chart yet",
+            body: "Once there are twelve months of activity, the trend appears here." %>
+    <% else %>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption><%= title %>, by item and month</caption>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <% last_12_months.each do |month| %>
+                <th scope="col" class="quantity"><%= month %></th>
+              <% end %>
+              <th scope="col" class="quantity">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% series.each do |item| %>
+              <tr>
+                <th scope="row" class="font-medium text-slate-900"><%= item[:name] %></th>
+                <% item[:data].each do |value| %>
+                  <td class="quantity"><%= number_with_delimiter(value) %></td>
+                <% end %>
+                <td class="quantity font-medium text-slate-900"><%= number_with_delimiter(item[:data].sum) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+</div>
