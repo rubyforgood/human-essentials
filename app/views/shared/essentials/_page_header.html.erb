@@ -20,7 +20,7 @@
 %>
 <div class="<%= wrapper_class %>">
   <% if back %>
-    <%= link_to back[:path], class: "mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+    <%= link_to back[:path], class: "mb-2 inline-flex min-h-6 items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
       <i class="bi-chevron-left text-xs" aria-hidden="true"></i><%= back[:label] %>
     <% end %>
   <% end %>

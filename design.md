@@ -798,9 +798,19 @@ Tailwind's breakpoints, unchanged: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2x
 shell switches at **`lg`** — below it the sidebar is an off-canvas drawer, above it a sticky
 column.
 
-Audit with `pw bin/design/responsive-audit.js`, which visits every screen at **320, 375, 768,
-1024 and 1440**. 320 is not arbitrary: WCAG 1.4.10 Reflow is defined at 320 CSS px, which is
-also 1280px at 400% zoom.
+Audit with `pw bin/design/responsive-audit.js`, which visits every screen at **320, 375, 639,
+641, 767, 769, 1023, 1025, 1280 and 1440**, plus a landscape phone at **740×360**. 320 is not
+arbitrary: WCAG 1.4.10 Reflow is defined at 320 CSS px, which is also 1280px at 400% zoom.
+
+**The widths straddle each breakpoint.** 639 and 641 are different layouts and only one of them
+gets looked at by hand — a layout that breaks usually breaks at the switch, not in the middle of
+a range.
+
+Beyond the page geometry it checks the things that make a squeezed layout unusable rather than
+merely ugly: content clipped with no ellipsis to say so, a nav drawer that cannot be opened
+below `lg`, and fixed chrome covering more than half a short viewport. `overlay-audit.js` opens
+every dialog and popover at **320×640 as well as 1360×900** — an overlay that fits on a desktop
+tells you nothing about a phone, and that is where a 26rem panel runs out of room.
 
 ### The document never scrolls sideways
 

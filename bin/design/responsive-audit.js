@@ -18,7 +18,12 @@ const { execSync } = require("child_process");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
-const WIDTHS = (process.env.WIDTHS || "320,375,768,1024,1440").split(",").map(Number);
+// Tailwind's breakpoints, the two sides of each switch, and the ends. A layout that breaks
+// usually breaks *at* the boundary -- 639 and 641 are different layouts and only one of them
+// gets looked at by hand.
+const WIDTHS = (process.env.WIDTHS || "320,375,639,641,767,769,1023,1025,1280,1440").split(",").map(Number);
+// Landscape phone. Short viewports are where fixed and sticky chrome eats the screen.
+const SHORT = { width: 740, height: 360 };
 const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 
 const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
@@ -116,7 +121,49 @@ const measure = () => {
     .filter(visible)
     .filter((el) => el.textContent.trim() && parseFloat(getComputedStyle(el).fontSize) < 11).length;
 
+  // Text cut off with no way to see the rest. `truncate` and `line-clamp` are deliberate -- the
+  // title of a row is meant to end in an ellipsis -- so what is reported is content clipped by an
+  // ancestor's `overflow: hidden` with no ellipsis and no scrollbar: unreachable, and silent.
+  const clipped = [...document.querySelectorAll("main *")]
+    .filter(visible)
+    .filter((el) => {
+      if (!el.textContent.trim() || el.children.length) return false;
+      // An <option> is not clipped content. select2 leaves the native <select> at 1x1 while
+      // drawing its own control, so every option inside it looks like text overflowing a box.
+      if (el.closest("select, datalist")) return false;
+      const cs = getComputedStyle(el);
+      if (cs.textOverflow === "ellipsis" || cs.webkitLineClamp !== "none") return false;
+      const p = el.parentElement;
+      if (!p) return false;
+      const pcs = getComputedStyle(p);
+      if (pcs.overflowX !== "hidden" && pcs.overflowY !== "hidden") return false;
+      return el.getBoundingClientRect().right > p.getBoundingClientRect().right + 2 ||
+             el.getBoundingClientRect().bottom > p.getBoundingClientRect().bottom + 2;
+    })
+    .slice(0, 3)
+    .map((el) => `"${el.textContent.trim().slice(0, 24)}"`);
+
+  // Below lg the sidebar is an off-canvas drawer. If the control that opens it is missing or
+  // hidden, the navigation is unreachable and the page does not work at that width.
+  const drawer = (() => {
+    if (window.innerWidth >= 1024) return null;
+    // Only layouts that have a sidebar. The auth shell and the static pages have no navigation
+    // to reach, so there is nothing for a drawer toggle to open.
+    if (!document.querySelector("aside")) return null;
+    const toggle = document.querySelector("[aria-label='Open navigation']");
+    if (!toggle) return "no drawer toggle";
+    const r = toggle.getBoundingClientRect();
+    if (!r.width || !r.height) return "drawer toggle not visible";
+    const aside = document.querySelector("aside");
+    if (aside && aside.getBoundingClientRect().left >= 0 && aside.getBoundingClientRect().width > 0) {
+      return "sidebar is on screen below lg";
+    }
+    return null;
+  })();
+
   return {
+    clipped,
+    drawer,
     bodyOverflow: document.body.scrollWidth - vw,
     spilling,
     smallTargets: smallTargets.length,
@@ -157,7 +204,9 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
 
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
-        await page.waitForTimeout(120);
+        // Past the sidebar's `duration-200` slide. Measured mid-transition it is a full-height
+        // element part-way on screen, which reads as "the sidebar is on screen below lg".
+        await page.waitForTimeout(350);
         const m = await page.evaluate(measure);
         checks++;
 
@@ -188,8 +237,55 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
         if (m.spilling.length) problems.push("spills: " + m.spilling.join(", "));
         if (m.smallTargets) problems.push(`${m.smallTargets} target(s) under 24px, smallest ${m.smallestTarget}`);
         if (m.tinyText) problems.push(`${m.tinyText} run(s) of text under 11px`);
+        if (m.clipped.length) problems.push("clipped with no ellipsis: " + m.clipped.join(", "));
+        if (m.drawer) problems.push(m.drawer);
         if (problems.length) findings.push({ path: t.path, width, problems });
       }
+      // Landscape phone. A page "works" only if its own content is reachable with the fixed and
+      // sticky chrome in place, and a 360px-tall viewport is where that stops being free.
+      await page.setViewportSize(SHORT);
+      // 400ms, not 120: the sidebar slides back off-canvas with `duration-200`, and measured
+      // mid-flight it is a full-height element on screen covering the entire short viewport.
+      await page.waitForTimeout(400);
+      const short = await page.evaluate(() => {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const onScreen = [...document.querySelectorAll("body *")].filter((el) => {
+          const cs = getComputedStyle(el);
+          if (cs.position !== "fixed" && cs.position !== "sticky") return false;
+          if (el.closest(".profiler-results, #rack-mini-profiler")) return false;
+          // Third-party overlays are not this app's chrome. reCAPTCHA puts a full-viewport div at
+          // z-index 2147483640 on the account request page, and rack-mini-profiler one at 2e9.
+          // The app's own highest is z-40; anything past 100 belongs to somebody else.
+          if (Number(cs.zIndex) > 100) return false;
+          const r = el.getBoundingClientRect();
+          // Only chrome that is actually over the content. The nav drawer below lg is
+          // `fixed inset-y-0` translated off-canvas: full height, and covering nothing.
+          return r.height > 0 && r.width > 0 && r.right > 0 && r.left < vw && r.bottom > 0 && r.top < vh;
+        });
+        // Union of the vertical bands, not the sum: a topbar and a sticky sub-bar that overlap
+        // must not be counted twice.
+        const bands = onScreen
+          .map((el) => { const r = el.getBoundingClientRect(); return [Math.max(0, r.top), Math.min(vh, r.bottom)]; })
+          .sort((a, b) => a[0] - b[0]);
+        let eaten = 0, cursor = 0;
+        for (const [top, bottom] of bands) {
+          if (bottom <= cursor) continue;
+          eaten += bottom - Math.max(top, cursor);
+          cursor = Math.max(cursor, bottom);
+        }
+        const h1 = document.querySelector("main h1, h1");
+        return {
+          eaten: Math.round(eaten), vh,
+          h1Hidden: h1 ? h1.getBoundingClientRect().bottom < 0 || h1.getBoundingClientRect().top > vh : false,
+        };
+      });
+      checks++;
+      if (short.eaten > short.vh * 0.5) {
+        findings.push({ path: t.path, width: `${SHORT.width}x${SHORT.height}`,
+          problems: [`fixed/sticky chrome covers ${short.eaten}px of a ${short.vh}px viewport`] });
+      }
+
       await page.setViewportSize({ width: 1440, height: 900 });
     }
     await page.close();
@@ -201,7 +297,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   // Group by problem shape: one layout bug usually shows up on many pages at one width.
   const byWidth = {};
   for (const f of findings) (byWidth[f.width] ||= []).push(f);
-  for (const width of WIDTHS) {
+  for (const width of [...WIDTHS, `${SHORT.width}x${SHORT.height}`]) {
     const list = byWidth[width] || [];
     if (!list.length) continue;
     console.log(`== ${width}px — ${list.length} page(s)`);

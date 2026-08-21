@@ -87,15 +87,24 @@ export default class extends Controller {
   position() {
     const panel = this.panelTarget
     panel.style.top = panel.style.bottom = panel.style.left = ""
+    panel.style.maxHeight = panel.style.overflowY = ""
 
     const trigger = this.triggerTarget.getBoundingClientRect()
     const height = panel.offsetHeight
     const below = window.innerHeight - trigger.bottom
+    const above = trigger.top
 
-    if (below < height + 8 && trigger.top > below) {
-      panel.style.bottom = `${this.triggerTarget.offsetHeight + 4}px`
-    } else {
-      panel.style.top = `${this.triggerTarget.offsetHeight + 4}px`
+    const placeAbove = below < height + 8 && above > below
+    panel.style[placeAbove ? "bottom" : "top"] = `${this.triggerTarget.offsetHeight + 4}px`
+
+    // Neither side may be big enough -- on a 640px-tall phone the date range panel is 466px and
+    // has about 300px either way, so flipping does not help and it ran 143px off the bottom.
+    // Cap it to the room there is and let it scroll, which is what Stripe and Material both do
+    // before falling back to a full-screen sheet.
+    const room = (placeAbove ? above : below) - 12
+    if (height > room) {
+      panel.style.maxHeight = `${Math.max(room, 180)}px`
+      panel.style.overflowY = "auto"
     }
 
     const overflowRight = trigger.left + panel.offsetWidth - (window.innerWidth - 16)
