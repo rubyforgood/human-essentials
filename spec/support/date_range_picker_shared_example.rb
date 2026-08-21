@@ -12,9 +12,14 @@ end
 # The date range is a popover: a trigger button, then a panel holding the presets and a custom
 # range. Every filter bar also starts collapsed, so there are two things to open before any of it
 # is reachable.
+# Idempotent: the panel stays open after a custom range is applied -- only a preset closes it --
+# so clicking the trigger again would toggle it shut, and Cuprite would refuse the click anyway
+# because the open panel covers the trigger.
 def open_date_range
   open_filters
-  find("#filters_date_range_trigger").click
+  unless page.has_css?("[role='dialog'][aria-label='Choose a date range']", wait: 0)
+    find("#filters_date_range_trigger").click
+  end
   expect(page).to have_css("[role='dialog'][aria-label='Choose a date range']")
 end
 
@@ -24,22 +29,21 @@ def select_date_range_preset(name)
   wait_for_filters
 end
 
-# Choose an explicit range. Both dates are applied together with the Apply button, so this costs
-# one request rather than one per field.
+# Choose an explicit range. There is no Apply button -- the dates apply themselves, debounced, so
+# setting both still costs one request.
 #
 # The wait on the hidden field is the important part. filters[date_range] is what actually gets
-# submitted, and the Stimulus controller writes it in response to the click, so asserting without
+# submitted, and the Stimulus controller writes it after the debounce, so asserting without
 # waiting is a race. Checking Capybara's #value rather than a [value=...] selector because the
 # controller sets the property, which leaves the attribute untouched.
 def fill_in_date_range(start_date, end_date)
   open_date_range
   fill_in "filters_date_range_start", with: start_date.strftime("%Y-%m-%d")
   fill_in "filters_date_range_end", with: end_date.strftime("%Y-%m-%d")
-  click_on "Apply"
-  wait_for_filters
 
   expect(page).to have_field("filters_date_range",
     with: date_range_picker_params(start_date, end_date), type: "hidden", visible: :all, wait: 5)
+  wait_for_filters
 end
 
 RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
@@ -147,19 +151,20 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   end
 
   context "when the end date is before the start date" do
-    # The old control accepted free text, so this had to be caught by a window.alert() on blur.
-    # Native date inputs cannot hold a non-date, which leaves exactly one way to build an
-    # invalid range, and the controller reports it in the page and blocks the submit.
-    it "says so in the page and does not filter" do
+    # There is nothing to report. A range entered back to front is reordered rather than refused,
+    # which is what Google Flights, Airbnb and Material's range picker all do; it used to show
+    # "The end date must be on or after the start date." and sit there until the user fixed it.
+    it "reorders the dates rather than refusing them" do
       visit subject
       open_date_range
       fill_in "filters_date_range_start", with: "2019-09-01"
       fill_in "filters_date_range_end", with: "2019-08-01"
-      click_on "Apply"
 
-      # The panel stays open with the error showing, rather than closing on an invalid range.
-      expect(page).to have_css("[role='alert']", text: "The end date must be on or after the start date.")
-      expect(page).to have_field("filters_date_range_end", with: "2019-08-01")
+      expect(page).to have_field("filters_date_range_start", with: "2019-08-01")
+      expect(page).to have_field("filters_date_range_end", with: "2019-09-01")
+      expect(page).to have_field("filters_date_range", type: "hidden", visible: :all,
+        with: "August 1, 2019 - September 1, 2019", wait: 5)
+      expect(page).to have_no_css("[role='alert']")
     end
   end
 

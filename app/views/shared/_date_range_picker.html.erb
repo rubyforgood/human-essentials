@@ -21,7 +21,7 @@
   default_preset = presets.key(default_date.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") })
   start_date, end_date = @selected_date_interval
   wire = "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}"
-  summary = selected_preset || "#{start_date.to_fs(:date_picker)} to #{end_date.to_fs(:date_picker)}"
+  summary = selected_preset || "#{start_date.to_fs(:date_picker_short)} – #{end_date.to_fs(:date_picker_short)}"
   panel_id = "date-range-panel-#{SecureRandom.uuid}"
 %>
 <div class="relative min-w-0"
@@ -64,30 +64,21 @@
           <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
           <%= date_field_tag "date_range_start", start_date, id: "filters_date_range_start", name: nil,
                 class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                data: {date_range_target: "start", action: "change->date-range#validate"} %>
+                data: {date_range_target: "start", action: "change->date-range#changeCustom"} %>
         </div>
         <div>
           <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
           <%= date_field_tag "date_range_end", end_date, id: "filters_date_range_end", name: nil,
                 class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                aria: {describedby: "filters_date_range_error"},
-                data: {date_range_target: "end", action: "change->date-range#validate"} %>
+                data: {date_range_target: "end", action: "change->date-range#changeCustom"} %>
         </div>
-        <%# simple_form's error styling, so a filter error looks like a form error. %>
-        <p id="filters_date_range_error" class="mt-1 text-xs font-medium text-rose-700"
-           role="alert" data-date-range-target="error" hidden>The end date must be on or after the start date.</p>
-
         <%#
-          Applied together, so setting From and then To costs one request rather than two -- the
-          inline version fired an intermediate query for a range the user never asked for.
+          No Apply and no Cancel. The dates apply themselves, debounced so From-then-To is one
+          request, and the panel stays open so the range can be adjusted -- only a preset closes
+          it. An end before a start is reordered rather than refused, so there is no error state
+          left to display. See design.md.
         %>
-        <div class="flex justify-end gap-2 pt-1">
-          <button type="button" class="<%= essentials_button_classes(variant: :ghost, size: :sm) %>"
-                  data-action="click->popover#close">Cancel</button>
-          <button type="button" class="<%= essentials_button_classes(variant: :primary, size: :sm) %>"
-                  data-date-range-target="apply"
-                  data-action="click->date-range#applyCustom">Apply</button>
-        </div>
+        <p class="pt-1 text-xs text-slate-500">Applied as you choose them.</p>
       </div>
     </div>
   </div>

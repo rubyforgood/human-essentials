@@ -569,10 +569,33 @@ call sites.
 <%= render "shared/date_range_picker" %>
 ```
 
-A preset `<select>`, with two native `<input type="date">` fields revealed when **Custom** is
-chosen. No calendar widget and no third-party dependency: it is built from the same
-`FILTER_SELECT_CLASSES` and `FILTER_CONTROL_CLASSES` as every other filter, so it matches the
-rest of the bar by construction rather than by being re-themed.
+One trigger showing the current range, opening a popover with the presets on one side and two
+native `<input type="date">` fields on the other. No calendar widget and no third-party
+dependency: it is built from the same `FILTER_CONTROL_CLASSES` as every other filter, so it
+matches the rest of the bar by construction rather than by being re-themed.
+
+**No Apply button.** The dates apply themselves. An Apply is a second click for something the
+user has already said, and Stripe, Shopify, Linear and Notion all commit on selection; Google
+Analytics is the well-known exception and the one people complain about. Three things make that
+work with two fields rather than a calendar:
+
+- **The panel stays open** while custom dates are edited, so the range can be adjusted without
+  reopening it. Only choosing a preset closes it — a preset is a complete answer.
+- **A 350ms debounce**, so setting From and then To costs one request, not two. That was the real
+  argument for the Apply button, and it is a timing problem rather than a reason to ask twice.
+- **The From/To fields stop their `change` from bubbling.** They sit inside the filter bar's form
+  and the bar submits on any change reaching it, so without this, editing a date fired a query
+  carrying the *previous* range and then a second with the new one. Measured: three requests
+  became one.
+
+**An end before a start is reordered, not refused.** Google Flights, Airbnb and Material's range
+picker all reorder. This used to show *"The end date must be on or after the start date."* and do
+nothing until the user corrected it; there is no error state left in the control.
+
+**The trigger shows US short dates** — `6/19/2026 – 9/19/2026`. Spelled out it read
+*"June 19, 2026 to September 19, 2026"*, which needed 233px inside a 223px button and was
+truncated: the one thing the control exists to tell you was the thing cut off. The wire format
+below is unchanged; `:date_picker_short` is display only.
 
 The presets come from `DateRangeHelper#date_range_presets` and are computed **server-side**, in
 `Time.zone`. They are ordered shortest window to longest with the catch-alls last, and named in
@@ -587,7 +610,7 @@ The wire format is a single string, and changing it is a bigger job than it look
 
 The `date-range` Stimulus controller exists only to keep that hidden field in step with the
 visible controls. It does no date arithmetic — the server hands it the preset dates — and it
-reports an end-before-start range in the page, with `setCustomValidity` to block the submit.
+writes two formats: `:date_picker` for the wire and `:date_picker_short` for the trigger.
 
 **Say the period in words as well as in the control.** `date_range_label` returns a phrase
 built to be appended to a noun — `"13 distributions #{date_range_label}"` — so every branch
