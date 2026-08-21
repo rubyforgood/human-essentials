@@ -13,8 +13,11 @@
     <%= essentials_form_for authorized_family_member, html: {role: "form"} do |f| %>
       <%= f.input :first_name, label: "First name" %>
       <%= f.input :last_name, label: "Last name" %>
-      <%= f.input :date_of_birth, as: :date, start_year: 100.years.ago.year,
-            end_year: Time.current.year, label: "Date of birth" %>
+      <%# html5, like every other date in the app. The three-select form leaves the month
+          and day unlabelled -- simple_form's label points at the year -- and start_year and
+          end_year, which only the selects understand, become min and max. %>
+      <%= f.input :date_of_birth, as: :date, html5: true, label: "Date of birth",
+            input_html: {min: 100.years.ago.to_date, max: Time.zone.today} %>
       <%= f.input :gender, collection: ["Male", "Female"], label: "Gender" %>
       <%= f.input :comments, label: "Comments", as: :text, input_html: {rows: 3} %>
       <%= hidden_field_tag :family_id, authorized_family_member.family.id %>

@@ -237,9 +237,15 @@ sentence case, components as partials in `app/views/shared/essentials/` and help
 page exactly one `<h1>`, name every control, and never let colour be the only signal.
 
 ```bash
-ruby bin/design/status.rb   # which controllers are on a design system layout
-pw bin/design/sweep.js      # 56 pages audited in a real browser
+ruby bin/design/status.rb            # which controllers are on a design system layout
+ruby bin/design/page-audit.rb        # defects and debt, per view
+python3 bin/design/undefined-classes.py   # classes that render as nothing
+pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 ```
+
+`route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the
+version with a hardcoded list of 56 paths missed three pages that were in the sidebar the whole
+time and had no `<h1>`.
 
 ## Where decisions live
 

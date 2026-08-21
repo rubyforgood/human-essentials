@@ -33,7 +33,8 @@
     <%= pf.file_field :documents,
       multiple: true,
       direct_upload: true,
-      class: "-file hidden block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
+      class: "hidden block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none",
+      "aria-label": "Upload documents",
       data: { file_input_target: "input" } %>
 
     <%# Custom button to trigger file selection %>
