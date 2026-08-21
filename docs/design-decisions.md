@@ -1942,3 +1942,37 @@ September 19, 2026" and needed 233px inside a 223px button, so it was truncated 
 the control exists to tell you was the part cut off. `6/19/2026 – 9/19/2026` is 134px in the same
 button. The wire format is untouched: `filters[date_range]` still carries "%B %-d, %Y" because
 that is what `strptime` on the server is waiting for, and `:date_picker_short` is display only.
+
+## 2026-08-21 · Second responsive pass: the breakpoints themselves, and what a squeezed page loses
+
+The first pass checked three things at five widths and came back clean. Widening the question —
+"works correctly at all viewport sizes" is more than "does not scroll sideways" — found one real
+defect and taught the audit four things.
+
+**Test the two sides of each breakpoint, not the middle of each range.** The widths are now 320,
+375, 639, 641, 767, 769, 1023, 1025, 1280 and 1440. 639 and 641 are different layouts and only
+one of them ever gets looked at by hand; a layout that breaks does it at the switch.
+
+**Overlays have to be opened at phone size.** `overlay-audit.js` ran everything at 1360×900,
+where an overlay is least likely to overflow. At 320×640 the date range popover ran **143px off
+the bottom** on three pages. Its controller already flipped above the trigger when there was more
+room there — but at 320 there was 307px below and 301 above, so neither side fit and it did not
+flip. When neither side fits it caps its height and scrolls now, which is what Stripe and
+Material do before falling back to a full-screen sheet.
+
+**Four false-positive sources, each of which would have made the audit unreadable.** This keeps
+happening, and the pattern is worth naming: a new check is nearly always wrong the first time,
+and the wrongness always looks like a pile of findings.
+
+| Reported | Actually |
+| --- | --- |
+| 43 findings of "text clipped with no ellipsis" | `<option>` elements inside select2's leftover 1×1 `<select>`. Nothing is clipped; the select is hidden by design. |
+| "no drawer toggle" on three pages | The auth shell and the static pages have no sidebar, so there is no navigation for a drawer to open. |
+| "sidebar is on screen below lg" | Measured 120ms after a resize, mid-way through the sidebar's `duration-200` slide back off-canvas. |
+| "fixed chrome covers 360px of a 360px viewport" | reCAPTCHA's overlay at `z-index: 2147483640`. The app's own highest is `z-40`; anything past 100 belongs to somebody else. |
+
+**One thing found that is real but not responsive, and not ours.** On the dev server, reCAPTCHA
+renders a challenge overlay that covers `/account_requests/new` and blocks the name field — at
+every width, not just small ones. The specs pass because reCAPTCHA does not run in test. Worth
+knowing before someone reports the form as broken on mobile; it is broken in headless Chromium
+at every size, for a reason that has nothing to do with layout.

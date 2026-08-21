@@ -133,31 +133,43 @@ async function checkPopovers(page, path, findings) {
   return triggers.length;
 }
 
+// Desktop and a phone. An overlay that fits at 1360 tells you nothing about 320, which is where
+// a 26rem popover or a dialog with its own padding runs out of room -- and where "extends past
+// the viewport" stops being cosmetic and starts meaning the control cannot be used.
+const VIEWPORTS = [
+  { width: 1360, height: 900, label: "1360x900" },
+  { width: 320, height: 640, label: "320x640" },
+];
+
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
   const findings = [];
   let dialogs = 0;
   let popovers = 0;
-  let signedInAs = null;
 
-  for (const [email, path] of PAGES) {
-    if (signedInAs !== email) {
-      await signIn(page, email);
-      signedInAs = email;
+  for (const viewport of VIEWPORTS) {
+    const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
+    let signedInAs = null;
+
+    for (const [email, path] of PAGES) {
+      if (signedInAs !== email) {
+        await signIn(page, email);
+        signedInAs = email;
+      }
+      await page.goto(BASE + path, { waitUntil: "networkidle" });
+
+      // Filter bars start collapsed, and the date range popover lives inside one.
+      await page.click("[data-filter-toggle]").catch(() => {});
+      await page.waitForTimeout(150);
+
+      popovers += await checkPopovers(page, `${path} @${viewport.label}`, findings);
+      await page.goto(BASE + path, { waitUntil: "networkidle" });
+      dialogs += await checkDialogs(page, `${path} @${viewport.label}`, findings);
     }
-    await page.goto(BASE + path, { waitUntil: "networkidle" });
-
-    // Filter bars start collapsed, and the date range popover lives inside one.
-    await page.click("[data-filter-toggle]").catch(() => {});
-    await page.waitForTimeout(150);
-
-    popovers += await checkPopovers(page, path, findings);
-    await page.goto(BASE + path, { waitUntil: "networkidle" });
-    dialogs += await checkDialogs(page, path, findings);
+    await page.close();
   }
 
-  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages\n`);
+  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages at ${VIEWPORTS.map((v) => v.label).join(" and ")}\n`);
   if (findings.length === 0) {
     console.log("no findings");
   } else {

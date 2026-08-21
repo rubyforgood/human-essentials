@@ -51,9 +51,14 @@ This complements the specs rather than repeating them. It catches what renders w
 a Stimulus controller toggling a class that no longer exists, a confirmation that never
 appears. Neither on its own is enough; that is the lesson of this migration.
 
-`responsive-audit.js` visits every screen at 320, 375, 768, 1024 and 1440 and reports the three
-things that only go wrong when a layout is squeezed: the page scrolling sideways, tap targets
-below the minimum, and text below 11px.
+`responsive-audit.js` visits every screen at **320, 375, 639, 641, 767, 769, 1023, 1025, 1280
+and 1440**, plus a landscape phone at 740×360, and reports what only goes wrong when a layout is
+squeezed: the page scrolling sideways, tap targets below the minimum, text below 11px, content
+clipped with no ellipsis to say so, a nav drawer that cannot be opened below `lg`, and fixed
+chrome covering more than half a short viewport.
+
+**The widths straddle the breakpoints on purpose.** 639 and 641 are different layouts and only
+one of them ever gets looked at by hand; a layout that breaks usually breaks at the switch.
 
 ```bash
 pw bin/design/responsive-audit.js
