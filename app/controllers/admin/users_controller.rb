@@ -53,6 +53,14 @@ class Admin::UsersController < AdminController
     )
     flash[:notice] = existing_user ? "Added new role to existing user" : "Created a new user!"
     redirect_to admin_users_path
+  # A validation failure is the common case here -- a blank name, an email already in use -- and
+  # it carries the record that failed. Using it means the form comes back with the message beside
+  # the field rather than only a sentence at the top. Everything else the service raises is a
+  # RuntimeError with a sentence of its own ("Resource not found!"), which has no field to attach
+  # to and stays a flash.
+  rescue ActiveRecord::RecordInvalid => e
+    @user = e.record
+    render :new
   rescue => e
     flash.now[:error] = "Failed to create user: #{e}"
     render :new

@@ -1989,3 +1989,72 @@ always-pass test key, which is exactly the right thing for development.
 The lesson is about the probe rather than the app: **`elementFromPoint` on an element with a zero
 rect is a question about the origin of the viewport, not about that element.** Check that a
 target has a size before asking what covers it.
+
+## 2026-08-21 · Required fields and validation errors: three fixes in the system, four in controllers
+
+Every form audited by opening it, reading how its required fields are marked, submitting it
+empty and reading what came back — `bin/design/form-validation-audit.js`. **All 32 forms had
+findings.** Two changes to the design system cleared 19 of them; the rest were per-controller.
+
+### The systemic three
+
+**`aria-required`.** simple_form derives the `required` attribute from
+`required_field? && SimpleForm.browser_validations`, and browser_validations is off here —
+deliberately, because the server validates and a browser bubble competing with a rendered error
+is two answers to one question. Turning it off also removed the only programmatic signal that a
+field is required. The label's `<abbr title="required">*</abbr>` is read by most screen readers
+as "star". `EssentialsInputAria` puts the state back without the browser's UI.
+
+**`aria-describedby`.** simple_form rendered the error text into a `<p>` with no id, so nothing
+tied it to the field: a screen reader user tabbing into an invalid field heard the label and
+nothing else. The message is now wrapped in a span with an id and the input points at it. The
+`<p>` cannot carry it — wrapper options are static and the id has to be per-field.
+
+**The asterisk had nothing saying what it meant**, on 27 forms. `abbr@title` covers a screen
+reader; a sighted user got a bare glyph. `essentials_form_for` renders the legend now, hidden by
+`form:has(label abbr[title="required"])` so it cannot be forgotten on a new form and cannot lie
+on a form with nothing required. Scope the `:has()` to `label`, or the legend's own `abbr`
+satisfies it and the line shows everywhere.
+
+### What the controllers were doing
+
+**Rebuilding the record that failed.** `items`, `kits` and `admin/users` each caught a failure
+and rendered a *fresh* object built from the same params, with the real errors flattened into a
+flash sentence. Every field came back clean — no message, no red border, no `aria-invalid` — and
+the only sign of trouble was a line at the top of the page. Re-render the record that failed.
+
+**`/admin/questions` returned a 500 on every invalid submission.** The failure branch called
+`@question.punctuate(@question.errors.to_a)`, and `punctuate` exists nowhere in the app. Both
+`create` and `update` did it. The form now shows its errors and the flash is gone.
+
+**The error summary did not link to anything**, while its own comment said it did — "links each
+message to its input so a keyboard user can jump straight to the problem" above a plain `<li>`.
+It links now, which is the GOV.UK pattern and the reason a summary is worth having.
+
+### What the audit had to be taught
+
+The same lesson as every other audit this week, and it is now four for four: **a new check is
+wrong the first time and the wrongness looks like findings.**
+
+- A radio or checkbox is marked on its group's `<legend>`, not on each option. Flagging all three
+  delivery-method radios was wrong; "Delivery method *" is right.
+- A conditionally required field cannot carry a truthful marker. Product drive participants need
+  a business name *or* a contact name and say so in words; none of them is required alone, so
+  none should have `aria-required`.
+- A form that accepts an empty submit, or one whose fields are hidden until a choice is made, is
+  not a form that fails to show errors — there were none to show. Reported separately.
+
+### Left undone, and why
+
+Four forms still show their errors only in a summary: `/audits/new`, `/account_requests/new`,
+`/partners/family_requests/new`, `/partners/users/new`. Each needs a different thing, and none is
+a one-line change:
+
+- `audits` keeps its record and its errors are on `base`, which has no field to attach to. The
+  summary is the right home for those; the probe cannot drive the form reliably enough to
+  confirm the rest.
+- `partners/users` **redirects** on failure, so the entered values are lost as well as the
+  errors. Fixing it means re-rendering instead, which changes the flow.
+- `partners/family_requests` puts the service's errors in a flash and redirects, same shape.
+- `account_requests` hides its fields until an account type is chosen, so an empty submit does
+  not exercise it at all.

@@ -77,6 +77,23 @@ activates its control. Without those, the first version reported 28 failures on 
 every one of them fine, and 109 across the app of which most were select2's leftover 1×1
 `<select>`.
 
+`form-validation-audit.js` opens every `new` form, reads how its required fields are marked,
+submits it empty and reads what came back.
+
+```bash
+pw bin/design/form-validation-audit.js
+ONLY=/items/new pw bin/design/form-validation-audit.js
+```
+
+Submitting empty is safe — it fails validation, so nothing is created — and `novalidate` is set
+first, because otherwise the browser blocks the submit and the server-side path, the one that
+has to work, is never exercised.
+
+It knows three things a naive version gets wrong: a radio or checkbox group is marked on its
+`<legend>` and not on each option; a conditionally required field says so in words and correctly
+has no `aria-required`; and a form that accepts an empty submit had no errors to show, which is
+not the same as failing to show them.
+
 `undefined-classes.py` reports every class token in the views that the compiled stylesheet does
 not define. A class nothing defines renders as nothing, and this is the only check that finds
 one on a page no sweep visits.

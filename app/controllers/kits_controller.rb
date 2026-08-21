@@ -31,13 +31,15 @@ class KitsController < ApplicationController
       flash[:notice] = "Kit created successfully"
       redirect_to kits_path
     else
-      flash.now[:error] = kit_creation.errors
-        .map { |error| formatted_error_message(error) }
-        .join(", ")
-
       # Extract kit and item params separately since line_items belong to Item, not Kit
       kit_only_params = kit_params.except(:line_items_attributes)
       @kit = Kit.new(kit_only_params)
+
+      # The service reports its errors separately from the record, and this used to flatten them
+      # into a flash sentence and render a Kit with none -- so every field came back clean and
+      # the only sign of trouble was a line at the top. Copying them onto the record the form
+      # renders is what puts each message beside its own field.
+      kit_creation.errors.each { |error| @kit.errors.add(error.attribute, error.message) }
       load_form_collections
       @kit.kit_item ||= KitItem.new(organization: current_organization,
                                     **kit_params.slice(:line_items_attributes))

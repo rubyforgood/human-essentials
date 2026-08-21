@@ -866,6 +866,52 @@ A row action is a whole-page navigation ending in a redirect and a flash, not a 
 **Anything that redirects out of a frame should opt out of Turbo rather than rely on
 `target="_top"` to rescue it.**
 
+### Forms: required fields and validation errors
+
+Audit with `pw bin/design/form-validation-audit.js`, which opens every `new` form, reads how its
+required fields are marked, submits it empty and reads what came back.
+
+**Required is stated three ways, and all three come from the wrapper.**
+
+| | Where | Who it is for |
+| --- | --- | --- |
+| `<abbr title="required">*</abbr>` | in the label | sighted users |
+| `aria-required="true"` | on the input | screen readers |
+| "Fields marked * are required." | once per form | everyone, and it is what makes the asterisk mean anything |
+
+The legend is rendered by `essentials_form_for` and hidden by
+`form:has(label abbr[title="required"])`, so it cannot be forgotten on a new form and cannot lie
+on a form with nothing required. Scope the `:has()` to `label` — the legend contains an `abbr` of
+its own.
+
+`aria-required` is added by `EssentialsInputAria` rather than by simple_form's `html5` component,
+which derives `required` from `SimpleForm.browser_validations` — off here, deliberately, because
+the server validates and a browser bubble competing with a rendered error is two answers to one
+question. Turning it off also removed the only programmatic signal; this puts it back without
+the browser's UI.
+
+**A radio or checkbox group is marked on its `<legend>`, not on each option.** The group is what
+is required. Conditionally required fields — "business or contact name required" — say so in
+words and carry no `aria-required`, because none of them is required on its own.
+
+**An error belongs to its field, not only to a summary.**
+
+- `aria-invalid="true"` on the input, from simple_form's `html5` component.
+- `aria-describedby` pointing at the message, from `EssentialsInputAria`. The message text is
+  wrapped in a span with an id, because the `<p>` the wrapper builds cannot take a per-field one.
+- `essentials_error_summary` above the form, whose items **link to the fields**. That is the
+  GOV.UK error-summary pattern and the reason a summary is worth having.
+
+**Never render `f.input` with a block containing `f.input_field`.** It renders the label and then
+the block, so the field never goes through the input pipeline: no wrapper classes, no
+`aria-required`, no `aria-invalid`, no `aria-describedby`. It has been found three times — a
+checkbox on the admin partner editor, a select on the account request form, and both fields of
+the shared admin user partial, where the label said "Name *" and the input said nothing.
+
+**On failure, re-render the record that failed — not a new one built from the same params.**
+Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
+sentence at the top. `items`, `kits` and `admin/users` each did this.
+
 ### Callouts
 
 A notice that belongs to the **page** rather than to the request. The flash says "that worked";

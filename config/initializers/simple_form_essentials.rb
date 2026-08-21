@@ -6,6 +6,49 @@
 # with the rest of Bootstrap. `:essentials` is the default wrapper, so a plain
 # `simple_form_for` produces design system markup and the `essentials_form_for` helper is a
 # convenience rather than a requirement.
+# Two things every input needs that simple_form does not give it here, added in one place
+# rather than at 32 call sites.
+#
+# aria-required. The html5 component sets the `required` attribute from
+# `required_field? && SimpleForm.browser_validations`, and browser_validations is off in this
+# app -- deliberately, because the server is what validates and a browser bubble competing with
+# a rendered error is two answers to one question. Turning it off also removed the only
+# programmatic signal that a field is required: the label's `<abbr title="required">*</abbr>` is
+# read by most screen readers as "star". aria-required restores the state without restoring the
+# browser's own validation UI.
+#
+# aria-describedby. simple_form renders the error text into a <p> with no id, so nothing ties it
+# to the field it belongs to -- a screen reader user tabbing into an invalid field hears the
+# label and nothing else. The error is wrapped in a span carrying an id, and the input points at
+# it. WCAG 3.3.1.
+module EssentialsInputAria
+  def input_html_options
+    options = super
+    options["aria-required"] = "true" if required_field?
+    if has_errors? && self.options[:error] != false
+      # uniq, because input_html_options is asked for more than once while an input renders and
+      # a plain append produced the same id four times over.
+      ids = options["aria-describedby"].to_s.split(/\s+/) << essentials_error_id
+      options["aria-describedby"] = ids.uniq.reject(&:empty?).join(" ").presence
+    end
+    options
+  end
+
+  # The <p> the wrapper builds cannot take a per-field id -- wrapper options are static -- so the
+  # id goes on a span inside it, which is what aria-describedby points at.
+  def full_error(wrapper_options = nil)
+    return unless options[:error] != false && has_errors?
+
+    template.content_tag(:span, full_error_text, id: essentials_error_id)
+  end
+
+  def essentials_error_id
+    [object_name, attribute_name, "error"].join("_").parameterize.underscore
+  end
+end
+
+SimpleForm::Inputs::Base.prepend(EssentialsInputAria)
+
 SimpleForm.setup do |config|
   input_classes = "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm " \
                   "text-slate-900 placeholder:text-slate-400 shadow-sm " \

@@ -21,7 +21,12 @@ RSpec.describe "Item management", type: :system do
     visit new_item_path
     click_button "Save"
 
-    expect(page.find("[data-flash]")).to have_content "Name can't be blank and Reporting category can't be blank"
+    # Beside the field and in the summary, not a flash: the summary links to the field and the
+    # input carries aria-invalid, so the message is reachable rather than only readable.
+    expect(page).to have_css("[role=alert]", text: "Name can't be blank")
+    expect(page).to have_css("[role=alert]", text: "Reporting category can't be blank")
+    expect(page).to have_css("#item_name[aria-invalid='true']")
+    expect(page).to have_css("#item_name_error", text: "Name can't be blank")
   end
 
   it "can create a new item with dollars decimal amount for value field" do

@@ -221,7 +221,8 @@ RSpec.describe "Items", type: :request do
         it "shouldn't create an item with the same name" do
           expect { post items_path, params: item_params }.to_not change { Item.count }
 
-          expect(flash[:error]).to eq("Name - An item with that name already exists (could be an inactive item)")
+          # On the record now, not flattened into a flash, so the form can put it beside the field.
+          expect(response.body).to include("An item with that name already exists")
           expect(response).to render_template(:new)
         end
       end
@@ -263,17 +264,18 @@ RSpec.describe "Items", type: :request do
         end
       end
 
-      it "displays invalid parameter names in the flash message" do
+      it "renders every invalid parameter on the form" do
         # Attempt to create an item with invalid parameters
         post items_path, params: invalid_item_params
 
         # Expect to render the new template
         expect(response).to render_template(:new)
 
-        # Verify flash message includes invalid param messages
-        expect(flash[:error]).to include("Value in cents must be greater than or equal to 0")
-        expect(flash[:error]).to include("Name can't be blank")
-        expect(flash[:error]).to include("Reporting category is not included in the list")
+        # In the page rather than in a flash: the summary lists them and links each to its field,
+        # and the field itself carries the message through aria-describedby.
+        expect(response.body).to include("Value in cents must be greater than or equal to 0")
+        expect(response.body).to include("Name can&#39;t be blank")
+        expect(response.body).to include("Reporting category is not included in the list")
       end
     end
 

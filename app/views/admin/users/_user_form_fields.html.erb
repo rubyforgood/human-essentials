@@ -1,6 +1,10 @@
-<%= f.input :name, label: "Name", required: true, autofocus: true do %>
-  <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-<% end %>
-<%= f.input :email, label: "E-mail", required: true do %>
-  <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-<% end %>
+<%#
+  Plain f.input, not f.input rendering an f.input_field in a block.
+
+  The block form renders the label and then whatever the block returns, so the field inside it
+  never goes through simple_form's input pipeline: no design system classes from the wrapper, no
+  aria-required, no aria-invalid, no aria-describedby pointing at its error. The label said
+  "Name *" and the input said nothing at all. See design.md.
+%>
+<%= f.input :name, label: "Name", required: true, autofocus: true %>
+<%= f.input :email, label: "E-mail", required: true %>

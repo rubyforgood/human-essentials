@@ -193,7 +193,9 @@ RSpec.describe ItemsController, type: :controller do
         it "should show an error" do
           post :create, params: bad_params
 
-          expect(response).to have_error
+          # The errors live on the record the form re-renders, rather than in a flash.
+          expect(assigns(:item).errors).to be_present
+          expect(response).to render_template(:new)
         end
       end
     end
