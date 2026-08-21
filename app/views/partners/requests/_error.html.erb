@@ -1,22 +1,28 @@
-<div class='bg-red-200 p-3 mb-10 flex flex-col sm:flex-row items-center rounded text-center'>
-  <div class='p-4 text-red-500'>
-    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-    </svg>
-  </div>
-  <div class='text-red-600 md:text-left'>
-    <h3 class='text-4xl font-extrabold'>Oops! Something went wrong with your Request</h3>
-    <p class='text-lg font-bold'>
-      Ensure each line item has a item selected AND a quantity greater than 0.
-      <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
-        Please ensure a single unit is selected for each item that supports it.
-      <% end %>
-    </p>
-    <% if current_partner %>
-      <p class="text-base">
-      Still need help? Please contact your essentials bank, <%= current_partner.organization.name %>, if you need further assistance.<br>
-      Our email on record for them is: <%= mail_to current_partner.organization.email %>
+<%#
+  The request could not be created. This was the 2021 design -- bg-red-200, a 150px inline SVG
+  and a text-4xl heading -- and it was the last error UI in the app not on the design system.
+%>
+<%= render "shared/essentials/callout", tone: :danger, wrapper_class: "mb-6",
+      title: "That request could not be sent" do %>
+  <p class="mt-1">
+    Every line needs an item selected and a quantity greater than zero.
+    <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
+      Items that come in packs also need a unit chosen.
     <% end %>
+  </p>
+  <% if @errors.present? %>
+    <ul class="mt-2 list-inside list-disc space-y-1">
+      <% @errors.each do |error| %>
+        <li><%= error.respond_to?(:message) ? error.message : error %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if current_partner %>
+    <p class="mt-2">
+      <%# Guarded on the address: mail_to with a blank email renders nothing, which left the
+          sentence reading "Contact Some Bank at ." %>
+      Still stuck? Contact <%= current_partner.organization.name %><% if current_partner.organization.email.present? %>
+        at <%= mail_to current_partner.organization.email, class: "font-medium underline" %><% end %>.
     </p>
-  </div>
-</div>
+  <% end %>
+<% end %>

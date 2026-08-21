@@ -88,10 +88,10 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect { post partners_individuals_requests_path, params: params }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include("That request could not be sent")
+        expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
+        expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
+        expect(response.body).to include(partner.organization.email)
         expect(response.body).to include(partner.organization.email)
       end
     end
@@ -128,10 +128,10 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect { post partners_individuals_requests_path, params: params }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include("That request could not be sent")
+        expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
+        expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
+        expect(response.body).to include(partner.organization.email)
         expect(response.body).to include(partner.organization.email)
       end
     end

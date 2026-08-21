@@ -242,10 +242,10 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include("That request could not be sent")
+        expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
+        expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
+        expect(response.body).to include(partner.organization.email)
         expect(response.body).to include(partner.organization.email)
       end
     end
@@ -322,7 +322,7 @@ RSpec.describe "/partners/requests", type: :request do
           Flipper.enable(:enable_packs)
           expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
           expect(response).to be_unprocessable
-          expect(response.body).to include("Please ensure a single unit is selected for each item")
+          expect(response.body).to include("Items that come in packs also need a unit chosen")
         end
       end
     end
@@ -346,10 +346,10 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include("That request could not be sent")
+        expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
+        expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
+        expect(response.body).to include(partner.organization.email)
         expect(response.body).to include(partner.organization.email)
       end
     end

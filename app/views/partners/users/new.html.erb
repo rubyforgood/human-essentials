@@ -10,20 +10,18 @@
     <%= essentials_error_summary(@user) %>
 
     <%= render "shared/essentials/card" do %>
-      <%= form_for @user, html: {method: :post}, url: partners_users_path(@user) do |form| %>
-        <div class="space-y-4">
-          <div>
-            <%= form.label :name, class: "block text-sm font-medium text-slate-700" %>
-            <%= form.text_field :name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-          </div>
-          <div>
-            <%= form.label :email, class: "block text-sm font-medium text-slate-700" %>
-            <%= form.text_field :email, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-          </div>
-        </div>
+      <%#
+        essentials_form_for, not form_for with hand-rolled label/text_field pairs: going through
+        simple_form is what gives these fields the required marker, aria-required, aria-invalid
+        and an error message tied to the input. Hand-rolled, they had none of it.
+      %>
+      <%= essentials_form_for @user, url: partners_users_path, html: {method: :post} do |f| %>
+        <%= f.input :name, required: true %>
+        <%= f.input :email, required: true %>
 
         <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-          <%= form.submit "Send invitation", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Sending..."} %>
+          <%= f.button :button, "Send invitation", class: essentials_button_classes(variant: :primary, size: :md),
+                data: {disable_with: "Sending..."} %>
           <%= essentials_link_button "Cancel", partners_users_path, variant: :ghost, size: :md %>
         </div>
       <% end %>

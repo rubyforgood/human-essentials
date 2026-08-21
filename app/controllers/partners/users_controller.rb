@@ -34,12 +34,17 @@ module Partners
         flash[:success] = "You have invited #{user.display_name} to join your organization!"
         redirect_to partners_users_path
       else
-        flash[:error] = user.errors.full_messages.join("")
-        redirect_to new_partners_user_path
+        # Re-render, do not redirect. A redirect threw away the errors AND everything typed, so
+        # the form came back empty with a flash and no indication of which field was wrong.
+        @user = user
+        render :new, status: :unprocessable_content
       end
     rescue => e
-      flash[:error] = e.message
-      redirect_to new_partners_user_path
+      # The service also raises for things with no field to attach to -- an unknown role, a
+      # resource that is gone -- and those stay a message above the form.
+      @user = User.new(user_params)
+      flash.now[:error] = e.message
+      render :new, status: :unprocessable_content
     end
 
     private

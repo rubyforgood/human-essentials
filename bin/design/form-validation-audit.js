@@ -125,6 +125,10 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
 
   for (const [role, email] of Object.entries(users)) {
     let page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    // Accept confirms. A row action or a submit carrying data-confirm otherwise has its dialog
+    // auto-dismissed, the submit is cancelled, and the form reads as "shows no errors" when it
+    // was never submitted -- which is exactly what /audits/new did.
+    page.on("dialog", (d) => d.accept().catch(() => {}));
     await signIn(page, email).catch(() => {});
     for (const t of targets) {
       if (roleFor(t.controller) !== role) continue;
@@ -134,6 +138,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
       } catch {
         try { await page.close(); } catch {}
         page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+        page.on("dialog", (d) => d.accept().catch(() => {}));
         await signIn(page, email).catch(() => {});
         continue;
       }
@@ -153,8 +158,14 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
       });
       const submit = await page.$("main form button[type=submit], main form input[type=submit]");
       if (!submit) { rows.push({ path: t.path, marking, nativeBlocks, errors: null }); continue; }
+
+      // A marker that a navigation would destroy, so "the form did not submit" can be told from
+      // "the form submitted and came back with nothing". /account_requests/new hides its fields
+      // until an account type is chosen, so an empty submit does not leave the page at all.
+      await page.evaluate(() => { window.__submitProbe = true; });
       await submit.click().catch(() => {});
       await page.waitForTimeout(1400);
+      const neverSubmitted = await page.evaluate(() => window.__submitProbe === true);
       const errors = await page.evaluate(readErrors);
 
       // Some forms accept an empty submit -- a partner request with no items is still a request,
@@ -162,6 +173,10 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
       // submit does nothing at all. Neither is "errors are not shown"; there were none to show.
       // Reported separately so a page cannot hide in the wrong column.
       const stillOnForm = errors.url === t.path;
+      if (neverSubmitted && !errors.inline && !errors.summary) {
+        unsubmittable.push([t.path, "the submit never left the page"]);
+        continue;
+      }
       if (!stillOnForm && !errors.inline) { unsubmittable.push([t.path, `submitted to ${errors.url}`]); continue; }
 
       rows.push({ path: t.path, marking, nativeBlocks, errors });
@@ -184,7 +199,15 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   }
 
   console.log(`${rows.length} form(s) submitted empty and re-rendered with errors to check\n`);
-  if (!problems.length) { console.log("no findings"); await browser.close(); return; }
+  const report = () => {
+    if (!unsubmittable.length) return;
+    // Always printed, including when there are no findings: a form the probe cannot drive is not
+    // a form that passed, and hiding that behind a clean result is how a green audit lies.
+    console.log(`\n${unsubmittable.length} form(s) an empty submit does not exercise:`);
+    unsubmittable.forEach(([p, why]) => console.log("   " + p.padEnd(40) + why));
+  };
+
+  if (!problems.length) { console.log("no findings"); report(); await browser.close(); return; }
   const byProblem = {};
   for (const { path, problems: ps } of problems) for (const p of ps) (byProblem[p] ||= []).push(path);
   for (const [p, paths] of Object.entries(byProblem).sort((a, b) => b[1].length - a[1].length)) {
@@ -193,9 +216,6 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     console.log("");
   }
   console.log(`${problems.length} form(s) with findings`);
-  if (unsubmittable.length) {
-    console.log(`\n${unsubmittable.length} form(s) an empty submit does not exercise:`);
-    unsubmittable.forEach(([p, why]) => console.log("   " + p.padEnd(40) + why));
-  }
+  report();
   await browser.close();
 })();

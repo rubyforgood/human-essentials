@@ -66,7 +66,8 @@ class AuditsController < ApplicationController
     if @audit.save
       save_audit_status_and_redirect(params)
     else
-      handle_audit_errors
+      # No handle_audit_errors here: @audit keeps its errors, so the summary above the form lists
+      # them and each field carries its own. The flash was a third copy of the same sentence.
       set_storage_locations
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -84,14 +85,6 @@ class AuditsController < ApplicationController
   end
 
   private
-
-  def handle_audit_errors
-    error_message = @audit.errors.uniq(&:attribute).map do |error|
-      attr = (error.attribute.to_s == 'base') ? '' : error.attribute.capitalize
-      "#{attr} ".tr("_", " ") + error.message
-    end
-    flash.now[:error] = error_message.join(", ")
-  end
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])
