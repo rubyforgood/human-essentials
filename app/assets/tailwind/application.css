@@ -50,6 +50,22 @@
   /* The page surface. Every Tailwind layout sets this on <body>. */
   html {
     -webkit-text-size-adjust: 100%;
+
+    /*
+     * The document never scrolls sideways.
+     *
+     * A data table is allowed to be wider than a phone -- WCAG 1.4.10 exempts content that needs
+     * two-dimensional layout -- which is why it sits in `.table-scroll`. But Chrome still counts
+     * that clipped content in the root's scrollable overflow, so at 320px /items could be swiped
+     * 821px to the right, taking the heading and every control off screen and leaving blank
+     * space. Measured: h1 at left: 16 before the swipe, left: -805 after.
+     *
+     * `clip` rather than `hidden`: hidden makes the root a scroll container, which can break
+     * `position: sticky` descendants -- and the sidebar is `lg:sticky`. hidden is left first as
+     * the fallback for Safari below 16, which does not know `clip`.
+     */
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /*
@@ -244,6 +260,22 @@
   }
 
   /*
+   * A link in a table cell is a tap target, not just text. WCAG 2.5.8 (AA) asks for 24x24 and a
+   * text-sm link is 17px tall -- and on /events the "refers to" column links an id, so the
+   * target was 6x17. Every one of the 25 links on that page failed, all of them on both axes.
+   *
+   * inline-flex rather than padding: padding would grow the row, and these sit beside each
+   * other in the items column separated by <br>.
+   */
+  .data-table td a,
+  .data-table th a {
+    display: inline-flex;
+    min-width: calc(var(--spacing) * 6);
+    min-height: calc(var(--spacing) * 6);
+    align-items: center;
+  }
+
+  /*
    * Pagination. Kaminari renders through app/views/kaminari/*, six partials that would
    * otherwise repeat the same dozen-class string and drift apart one at a time.
    */
@@ -335,19 +367,21 @@
   }
 
   /*
-   * The account request form is wider than the auth column it sits in, so it breaks out.
-   * Below the breakpoint it stays inside, because otherwise the text is cut off.
+   * The account request form is wider than the auth column it sits in, so it breaks out of it.
+   *
+   * It may only do that when there is room. The auth shell is `lg:w-1/2` with `lg:px-16`, so the
+   * column's content box is `50vw - 128px`; the break-out needs 560px, which needs a viewport of
+   * at least 1376. At exactly 1024 the old rule put the form's right edge at 1036 -- 12px past
+   * the viewport -- and the page scrolled sideways. It stays inside the column below that.
    */
   .account-request {
-    width: 35rem;
-    margin-left: calc((360px - 35rem) / 2);
+    width: 100%;
   }
 
-  @media (max-width: 620px) {
+  @media (min-width: 1400px) {
     .account-request {
-      width: 100%;
-      max-width: 100%;
-      margin-left: 0;
+      width: 35rem;
+      margin-left: calc((360px - 35rem) / 2);
     }
   }
 }

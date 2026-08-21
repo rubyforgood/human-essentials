@@ -1,44 +1,57 @@
-<section class="container mx-auto my-5">
-  <h2 class="text-base font-semibold text-slate-900">Request history</h2>
-
-  <table class="w-full rounded-xl bg-white shadow-lg">
-    <thead>
-      <tr class="border-b border-slate-900">
-        <th scope="col" class="p-4 w-40">Request Date</th>
-        <th scope="col" class="p-4">Number of Items Requested</th>
-        <th scope="col" class="p-4">Items Requested</th>
-        <th scope="col" class="p-4">Comment and Sender</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @partner_requests.each do |partner_request| %>
-        <tr class="border-b last:border-none">
-          <td class="p-4">
-            <i class="bi-file-text mr-1 text-brand-700"></i>
-            <%= partner_request.created_at.strftime("%b %-d %Y") %>
-          </td>
-          <td class="p-4"><%= partner_request.total_items %></td>
-          <td class="p-4 flex flex-wrap">
-            <% partner_request.item_requests.map do |item| %>
-              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-slate-900 rounded">
-                <%= item.quantity %> <%= item.name_with_unit %>
-              </span>
-            <% end %>
-          </td>
-          <td class="p-4">
-            <% comment = partner_request.comments %>
-            <% if comment.present? %>
-              <%# Bootstrap tooltips are hover-only and unreachable by keyboard or touch,
-                  so the full comment is behind a <details> disclosure instead. %>
-              <details class="mb-2">
-                <summary class="cursor-pointer text-sm text-slate-700 marker:text-slate-400"><%= truncate(comment, length: 20) %></summary>
-                <p class="mt-1 max-w-prose text-sm text-slate-600"><%= comment %></p>
-              </details>
-            <% end %>
-            <a href="mailto:<%= partner_request.requester.email %>"><%= partner_request.requester.email %></a>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</section>
+<%#
+  Request history. This was a hand-rolled table -- `w-full rounded-xl bg-white shadow-lg` with
+  its own `p-4` cells and no scroll container -- so at 320px it pushed the page 248px wider than
+  the viewport. It is the card and data-table components now, and the table scrolls inside the
+  card the way every other table in the app does.
+%>
+<%= render "shared/essentials/card", title: "Request history", padded: false do %>
+  <% if @partner_requests.blank? %>
+    <%= render "shared/essentials/empty_state", kind: :cold_start,
+          title: "No requests yet",
+          body: "Requests you send to your bank appear here, with what you asked for and when." %>
+  <% else %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <caption>Requests you have sent, most recent first</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="date">Requested</th>
+            <th scope="col" class="quantity">Items</th>
+            <th scope="col">What was requested</th>
+            <th scope="col">Comment and sender</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @partner_requests.each do |partner_request| %>
+            <tr>
+              <td class="date whitespace-nowrap font-medium text-slate-900">
+                <i class="bi-file-text mr-1 text-brand-700" aria-hidden="true"></i>
+                <%= partner_request.created_at.strftime("%b %-d %Y") %>
+              </td>
+              <td class="quantity"><%= number_with_delimiter(partner_request.total_items) %></td>
+              <td>
+                <div class="flex flex-wrap gap-1.5">
+                  <% partner_request.item_requests.each do |item| %>
+                    <%= essentials_status_pill("#{item.quantity} #{item.name_with_unit}", tone: :neutral) %>
+                  <% end %>
+                </div>
+              </td>
+              <td>
+                <% comment = partner_request.comments %>
+                <% if comment.present? %>
+                  <%# Bootstrap tooltips are hover-only and unreachable by keyboard or touch,
+                      so the full comment is behind a <details> disclosure instead. %>
+                  <details class="mb-2">
+                    <summary class="cursor-pointer text-sm text-slate-700 marker:text-slate-400"><%= truncate(comment, length: 20) %></summary>
+                    <p class="mt-1 max-w-prose text-sm text-slate-600"><%= comment %></p>
+                  </details>
+                <% end %>
+                <%= mail_to partner_request.requester.email, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% end %>
