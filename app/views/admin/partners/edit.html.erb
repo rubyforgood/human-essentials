@@ -15,10 +15,10 @@
               <%= f.input :email, label: "E-mail" do %>
                 <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
               <% end %>
-              <%= f.input :send_reminders, label: "Send Reminders?" do %>
-                <div class="form-check">
-                  <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
-                </div>
+              <%= f.input :send_reminders, label: "Send reminders?" do %>
+                <%# No custom id: simple_form's label points at the generated one, so overriding
+                    the field's id left the label pointing at nothing and the control unlabelled. %>
+                <%= f.check_box :send_reminders, {class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"}, "true", "false" %>
               <% end %>
 
       <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">

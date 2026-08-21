@@ -14,7 +14,9 @@
             <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
               <div class="grid gap-6">
                 <div class="mb-4 min-w-0">
-                  <%= label_tag "Filter By Item Category" %>
+                  <%# label_tag with one argument makes for="filter_by_item_category"; the select is
+                      filters_barcodeable_id, so the label pointed at nothing. %>
+                  <%= label_tag "filters_barcodeable_id", "Filter by item category" %>
                   <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
                 </div>
               </div>

@@ -12,7 +12,7 @@
 %>
 <% if options.any? %>
   <%= render "shared/essentials/card", title: "Make a request" do %>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-<%= options.size %>">
+    <div class="grid gap-4 <%= essentials_grid_columns(options.size) %>">
       <% options.each do |option| %>
         <article class="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 p-4">
           <div class="flex gap-3">
