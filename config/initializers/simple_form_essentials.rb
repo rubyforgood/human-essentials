@@ -36,9 +36,12 @@ SimpleForm.setup do |config|
   config.wrappers :essentials_boolean, tag: "div", class: "mb-4" do |b|
     b.use :html5
     b.optional :readonly
-    b.wrapper tag: "div", class: "flex items-start gap-2" do |ba|
+    # py-0.5 on the label below, and min-h-6 here: a checkbox and its label are one target and
+    # WCAG 2.5.8 asks for 24x24, but a size-4 box beside a text-sm label is 20px tall. The
+    # padding goes on the label because the row wrapper's own box is not clickable.
+    b.wrapper tag: "div", class: "flex min-h-6 items-start gap-2" do |ba|
       ba.use :input, class: "mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30"
-      ba.use :label, class: "text-sm text-slate-700"
+      ba.use :label, class: "py-0.5 text-sm text-slate-700"
     end
     b.use :full_error, wrap_with: {tag: "p", class: error_classes}
     b.use :hint, wrap_with: {tag: "p", class: hint_classes}
@@ -48,8 +51,8 @@ SimpleForm.setup do |config|
   config.wrappers :essentials_collection,
     tag: "fieldset",
     class: "mb-4",
-    item_wrapper_class: "flex items-center gap-2",
-    item_label_class: "text-sm text-slate-700" do |b|
+    item_wrapper_class: "flex min-h-6 items-center gap-2",
+    item_label_class: "py-0.5 text-sm text-slate-700" do |b|
     b.use :html5
     b.optional :readonly
     b.wrapper tag: "legend", class: "#{label_classes} mb-1.5" do |ba|

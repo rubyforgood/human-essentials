@@ -44,12 +44,41 @@ const record = (criterion, page, detail) => fails.push({ criterion, page, detail
 async function horizontalOverflow(page, label, width, criterion) {
   await page.setViewportSize({ width, height: 800 });
   await page.waitForTimeout(300);
-  const result = await page.evaluate(() => {
-    window.scrollTo(9999, 0);
-    const scrolled = window.scrollX;
-    window.scrollTo(0, 0);
+
+  // Swipe, do not call scrollTo. The three obvious measurements each answer a different question
+  // and two of them are wrong:
+  //
+  //   documentElement.scrollWidth  counts content clipped inside a scroll container. A data table
+  //                                in `.table-scroll` makes it report ~1140px on a 320px screen.
+  //   body.scrollWidth             stays at the viewport width even when the page does scroll.
+  //   window.scrollTo(9999, 0)     gets past `overflow-x: clip` on the root, which a finger
+  //                                cannot. This used to be measured, stored in `scrolled`, and
+  //                                then never read -- and when it was finally read it reported
+  //                                four pages that no user can actually scroll.
+  //
+  // What is left is to swipe and see whether the page moved, which is the question the criterion
+  // is asking. Data tables are exempt from 1.4.10 anyway: it excludes content that requires
+  // two-dimensional layout, so the table may scroll inside its own container.
+  const anchor = await page.evaluate(() => {
+    const h = document.querySelector("main h1, h1");
+    return h ? { y: Math.round(h.getBoundingClientRect().top + 8), left: Math.round(h.getBoundingClientRect().left) } : null;
+  });
+  let moved = 0;
+  if (anchor) {
+    await page.mouse.move(Math.round(width / 2), Math.max(anchor.y, 90));
+    await page.mouse.wheel(900, 0);
+    await page.waitForTimeout(250);
+    moved = await page.evaluate((before) => {
+      const h = document.querySelector("main h1, h1");
+      const d = h ? before - Math.round(h.getBoundingClientRect().left) : window.scrollX;
+      window.scrollTo(0, 0);
+      return d;
+    }, anchor.left);
+  }
+
+  const outside = await page.evaluate(() => {
     const vw = document.documentElement.clientWidth;
-    const outside = [...document.querySelectorAll("main *")]
+    return [...document.querySelectorAll("main *")]
       .filter((el) => el.getBoundingClientRect().right > vw + 2)
       // Anything inside a horizontal scroller is reachable, which is what the criterion asks.
       // Determined by computed style rather than a class list, so a scroller nobody named still
@@ -57,17 +86,19 @@ async function horizontalOverflow(page, label, width, criterion) {
       .filter((el) => {
         for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
           const ox = getComputedStyle(a).overflowX;
-          if (ox === "auto" || ox === "scroll") return false;
+          if (ox === "auto" || ox === "scroll" || ox === "hidden" || ox === "clip") return false;
         }
         return true;
       })
       .slice(0, 3)
       .map((el) => `${el.tagName.toLowerCase()}.${(el.className || "").toString().split(" ")[0]}`);
-    return { bodyOverflow: document.body.scrollWidth - vw, scrolled, outside };
   });
-  if (result.bodyOverflow > 2 || result.outside.length) {
-    record(criterion, label,
-      `page overflows by ${result.bodyOverflow}px at ${width}px${result.outside.length ? ": " + result.outside.join(", ") : ""}`);
+
+  if (moved > 2 || outside.length) {
+    const parts = [];
+    if (moved > 2) parts.push(`swipes ${moved}px sideways`);
+    if (outside.length) parts.push("outside any scroller: " + outside.join(", "));
+    record(criterion, label, `${parts.join("; ")} at ${width}px`);
   }
   await page.setViewportSize({ width: 1280, height: 900 });
 }

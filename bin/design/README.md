@@ -51,6 +51,27 @@ This complements the specs rather than repeating them. It catches what renders w
 a Stimulus controller toggling a class that no longer exists, a confirmation that never
 appears. Neither on its own is enough; that is the lesson of this migration.
 
+`responsive-audit.js` visits every screen at 320, 375, 768, 1024 and 1440 and reports the three
+things that only go wrong when a layout is squeezed: the page scrolling sideways, tap targets
+below the minimum, and text below 11px.
+
+```bash
+pw bin/design/responsive-audit.js
+WIDTHS=320 ONLY=/items,/donations pw bin/design/responsive-audit.js   # while fixing
+```
+
+**It swipes rather than calling `scrollTo`,** and that is the whole reason it finds anything.
+The three obvious measurements all lie: `documentElement.scrollWidth` counts clipped content
+nobody can reach, `body.scrollWidth` stays at the viewport width even when the page does scroll,
+and `window.scrollTo` gets past `overflow-x: clip` when a finger cannot. Only a wheel gesture,
+followed by reading where the `<h1>` ended up, answers the question a phone user is asking.
+
+Tap targets are WCAG 2.5.8's 24×24 **with the exceptions applied** — inline in prose, and the
+spacing rule — and the target is the control *plus its label*, because clicking a label
+activates its control. Without those, the first version reported 28 failures on the dashboard,
+every one of them fine, and 109 across the app of which most were select2's leftover 1×1
+`<select>`.
+
 `undefined-classes.py` reports every class token in the views that the compiled stylesheet does
 not define. A class nothing defines renders as nothing, and this is the only check that finds
 one on a page no sweep visits.

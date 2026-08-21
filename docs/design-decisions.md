@@ -1847,3 +1847,62 @@ those three are reported as hooks.
 **Not removed: the pulse animation's intent.** `animate-pulse-once` is gone, but restoring the
 effect on the partner request success and error messages is a `@keyframes` and one class. That
 is a design decision, so it is offered rather than taken.
+
+## 2026-08-21 · Responsive: three measurements that lie, and one that does not
+
+The app was audited at 320, 375, 768, 1024 and 1440 — 700 page/width combinations. The
+interesting part was not the defects; it was that finding them at all required throwing away
+the obvious way to measure.
+
+**`document.documentElement.scrollWidth` over-reports.** It counts content clipped inside a
+scroll container. A data table in `.table-scroll` makes it read ~1141px on a 320px screen even
+when the table is properly contained. A previous author had already found this and written it
+down in `wcag-manual.js`.
+
+**`document.body.scrollWidth` under-reports.** It sat at exactly 320 on a page that really did
+scroll 821px sideways. That is what let `/items` ship broken: the check tested `bodyOverflow`,
+which was 0.
+
+**`window.scrollTo(9999, 0)` over-reports, differently.** It scrolls past `overflow-x: clip`,
+which a finger cannot. It is also the measurement `wcag-manual.js` took, stored in a variable
+called `scrolled`, and then never read. Wiring that variable up reported four pages nobody can
+actually scroll.
+
+**Swiping and reading where the `<h1>` ended up is the only one that matches the user.** Both
+audits do that now.
+
+### What the swipe found
+
+`/items` at 320px could be swiped 821px to the right: the heading went from `left: 16` to
+`left: -805`, and the user was left looking at blank space with every control off screen. The
+screenshot at rest is 33KB; the screenshot scrolled right is 5KB, and the only thing painted in
+it is the dev profiler badge.
+
+The cause is a genuine Chrome behaviour: content clipped inside a scroll container still counts
+towards the *root's* scrollable overflow. The table was in a working `overflow-x: auto`
+container, inside an ancestor with `overflow: hidden`, and the page scrolled anyway.
+`min-width: 0` on the flex ancestors changes nothing. Only clipping the root does:
+`html { overflow-x: clip }`.
+
+`clip` rather than `hidden`, because `hidden` makes the root a scroll container and can break
+`position: sticky` descendants — the sidebar is `lg:sticky`. Both were measured against the
+sticky sidebar at 1440 and both held in Chrome, but `clip` is the one that is correct by
+construction. `overflow-x: hidden` stays in front of it for Safari below 16.
+
+### Tap targets, and the cost of a check that cries wolf
+
+WCAG 2.5.8 (AA) is 24×24, and a naive implementation of it is worse than none. The first pass
+reported 28 failures on the dashboard and 109 across the app. Almost all were wrong:
+
+- **28 on the dashboard** were date links in table cells that pass the *spacing* exception.
+- **Most of the rest** were select2's leftover native `<select>`, which it leaves in the DOM at
+  1×1 while drawing its own control beside it. Not a target anyone can hit.
+- **The checkbox findings** measured a 16×16 box and ignored its label. Clicking a `<label for>`
+  activates its control, so the target is the union of the two.
+
+With inline, spacing, and label-union applied, 109 findings became 8, and all 8 were real.
+
+**Where the 24px floor is not the standard.** A control that only exists on touch gets 44×44 —
+Apple's HIG and Material both say so, and 24px is a floor for things that happen to be small,
+not a target to design to. The drawer's open and close buttons were `p-2` and `p-1`, giving
+32×32 and 22×32; both are `size-11` now.

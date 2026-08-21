@@ -769,6 +769,55 @@ only when something actually went wrong.
 
 Keys map `success → :success`, `error → :danger`, `alert → :warning`, anything else `→ :info`.
 
+## Responsive
+
+Tailwind's breakpoints, unchanged: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536. The
+shell switches at **`lg`** — below it the sidebar is an off-canvas drawer, above it a sticky
+column.
+
+Audit with `pw bin/design/responsive-audit.js`, which visits every screen at **320, 375, 768,
+1024 and 1440**. 320 is not arbitrary: WCAG 1.4.10 Reflow is defined at 320 CSS px, which is
+also 1280px at 400% zoom.
+
+### The document never scrolls sideways
+
+`html { overflow-x: clip }`, in `@layer base`. A wide data table belongs in `.table-scroll` —
+1.4.10 exempts content needing two-dimensional layout, so the *table* may scroll — but the page
+must not.
+
+That rule is load-bearing, and it is not what you would guess. **Chrome counts content clipped
+inside a scroll container towards the root's scrollable overflow**, so a table in a working
+`overflow-x: auto` container, inside an ancestor with `overflow: hidden`, still let `/items` be
+swiped 821px sideways at 320px: the heading went from `left: 16` to `left: -805` and the user
+was left looking at blank space. `min-width: 0` on the flex ancestors does not fix it; only
+clipping the root does.
+
+`clip` and not `hidden`: `hidden` makes the root a scroll container, which can break
+`position: sticky` descendants, and the sidebar is `lg:sticky`. `overflow-x: hidden` is left in
+front of it as the fallback for Safari below 16.
+
+### How to measure it
+
+**Swipe, do not call `scrollTo`.** They answer different questions, and the difference is why
+this shipped:
+
+| Measure | Says |
+| --- | --- |
+| `document.documentElement.scrollWidth` | Counts clipped content no user can reach. Over-reports. |
+| `document.body.scrollWidth` | Stays at the viewport width even when the page does scroll. Under-reports. |
+| `window.scrollTo(9999, 0)` | Scrolls past `overflow-x: clip`, which a gesture cannot. Over-reports. |
+| **A wheel gesture, then read an element's `left`** | What a person on a phone gets. |
+
+### Tap targets
+
+WCAG 2.5.8 (AA) is **24×24 CSS px** — but with the exceptions, or the check is noise. A first
+pass reported 28 failures on the dashboard, every one a date link in a table cell that passes on
+spacing. The audit implements *inline* and *spacing* (a 24px circle centred on the target
+touching no other target).
+
+Controls that exist only on touch get the **industry 44×44**, not the 24px floor: the drawer's
+open and close buttons are `size-11`. They were `p-1` and `p-2`, giving 22×32 and 32×32.
+
 ### Row actions are not Turbo's
 
 `essentials_action_button` renders `data-turbo="false"`, so the browser submits the form itself.
