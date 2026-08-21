@@ -2210,3 +2210,45 @@ faithful rewrite carries a broken feature across intact, because the rewrite's q
 Removing the UI rather than leaving it pointed at nothing is the same judgement as the routes.
 If manufacturer import is wanted, it is four small pieces and one of them is a one-line
 `include`; what should not stay is a button that offers it and raises.
+
+## 2026-08-21 · The unreachable `Importable`, and a probe that measured the wrong thing
+
+`ProductDrivesController` included `Importable` and nothing reached it: no `post :import_csv` on
+`resources :product_drives`, no `ProductDrive.import_csv`, no template CSV. Unreachable code
+rather than a dead route, which is why the route cleanup earlier the same day left it alone and
+merely wrote it down. Removing it was the right follow-up: the four layers of CSV import now
+correspond exactly — five controllers, five routes, five models, five templates, the same five
+each time — and that is a property you can check, where "five and a half" is not.
+
+**The include was doing one thing that looked load-bearing.** `Importable` carries
+
+```ruby
+included do
+  helper_method :current_organization, :current_user
+end
+```
+
+so removing it could plausibly take `current_user` out of the views — and
+`product_drives/show.html.erb` calls `current_user.has_cached_role?` to decide whether to draw
+Delete. The first probe said exactly that: `_helper_methods` lost `current_user`, and the page
+looked like it would raise.
+
+It was wrong, in a way worth remembering. **`bin/rails runner` does not draw the routes unless
+something asks for them**, and Devise registers `current_user` as a helper from `devise_for`,
+when the routes are drawn. Probing a fresh runner therefore reports the state of the app *before
+Devise has spoken*:
+
+```ruby
+ProductDrivesController._helpers.instance_methods.include?(:current_user)  # => false
+Rails.application.routes.routes.first                                      # draws them
+ProductDrivesController._helpers.instance_methods.include?(:current_user)  # => true
+```
+
+`current_user` comes from `ActionController::Base::HelperMethods` and `current_organization` from
+`ApplicationController`. The concern's `helper_method` line is redundant for both, and has been
+for as long as both existed. It is left in place: it is shared by five controllers, and this
+change was about the one that should not have been including it.
+
+The thing that settled it was not a better probe but the app itself — the request spec renders
+`show` and asserts on its body, and a cold-booted server serves the page with the Delete button
+on it. **When a static probe and a running request disagree, the request is right.**
