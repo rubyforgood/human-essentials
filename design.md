@@ -769,6 +769,45 @@ only when something actually went wrong.
 
 Keys map `success → :success`, `error → :danger`, `alert → :warning`, anything else `→ :info`.
 
+### Callouts
+
+A notice that belongs to the **page** rather than to the request. The flash says "that worked";
+a callout says "this is how things are here" — the purchase is too old to edit, the kit cannot
+be recomposed once saved, this cannot be undone. It is rendered on every load, for as long as
+the condition holds.
+
+```erb
+<%= render "shared/essentials/callout", tone: :warning do %>
+  <p class="font-semibold">This cannot be undone.</p>
+  <p class="mt-1">You are cancelling the request made for …</p>
+<% end %>
+```
+
+Locals: `tone` (`:info`, `:success`, `:warning`, `:danger`), `title`, `role`, `icon`,
+`wrapper_class`, `callout_id`, `data`.
+
+Tint, border and glyph come from `FLASH_STYLES`, the same map the flash strip uses, so the two
+cannot drift into different shades of amber. The role follows the same rule — `alert` for
+warning and danger, `status` otherwise — and `role: nil` is honoured for a callout that is
+plain page furniture and wants no live region at all.
+
+**`wrapper_class` is for the margin only.** A callout does not know where it sits, so spacing
+stays with the page that places it.
+
+Before this existed there were 21 copies of the same twelve-class string across 20 files, each
+with its own margin baked in and no two agreeing on the role.
+
+**Two traps, both of which bit while extracting it.**
+
+Write the preamble with `local_assigns`, never `defined?()`. A partial that is rendered
+somewhere with `role:` keeps `role` *defined* at the call sites that do not pass it — defined
+and `nil` — so `defined?(role) ? role : default` silently drops the default. Every callout that
+relied on it lost its `role` attribute, and nothing failed.
+
+Do not put ERB tags inside an ERB comment. `<%# … %>` ends at the first `%>`, so an example
+`<%= render … %>` in the documentation block terminates the comment and the rest of the file
+becomes markup. The same mistake had already been made once in `_pagination.html.erb`.
+
 ### Empty states
 
 Never render bare empty table chrome. Three flavours, and every screen picks one

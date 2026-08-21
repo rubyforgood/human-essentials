@@ -1,0 +1,45 @@
+<%#
+  A notice that belongs to the page rather than to the request.
+
+  The flash says "that worked"; a callout says "this is how things are here" -- the purchase is
+  too old to edit, the kit cannot be recomposed once saved, this cannot be undone. It is
+  rendered by the page, on every load, for as long as the condition holds.
+
+    render "shared/essentials/callout", tone: :warning do
+      ...the message, as ordinary markup...
+    end
+
+  Locals: tone (:info, :success, :warning, :danger), title, role, icon, wrapper_class.
+
+  Sixteen copies of the same twelve-class string existed across fifteen files before this, each
+  with its own margin baked in and no two agreeing on whether the role was status or alert. The
+  tint, border and glyph come from FLASH_STYLES, the same map the flash strip uses, so the two
+  cannot drift into different shades of amber.
+
+  `wrapper_class` is for the margin only. A callout does not know where it sits, so spacing
+  stays with the page that places it.
+%>
+<%
+  # local_assigns, not defined?(): a partial compiled for a call site that passes `role:` keeps
+  # `role` defined at the call sites that do not, so defined?(role) was true and nil there, and
+  # every callout that relied on the default silently lost its role attribute.
+  tone = local_assigns.fetch(:tone, :warning).to_sym
+  style = essentials_flash_style(tone)
+  title = local_assigns[:title]
+  icon = local_assigns[:icon].presence || style[:icon]
+  wrapper_class = local_assigns[:wrapper_class]
+  callout_id = local_assigns[:callout_id]
+  data = local_assigns.fetch(:data, {})
+  # Same rule as the flash: interrupt only for the tones that mean something went wrong.
+  # `role: nil` is honoured -- a callout that is plain page furniture is read in document order
+  # and does not want a live region at all.
+  role = local_assigns.key?(:role) ? local_assigns[:role] : ([:warning, :danger].include?(tone) ? "alert" : "status")
+%>
+<div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %> <%= wrapper_class %>"
+     <%= tag.attributes(id: callout_id, role: role, **data) %>>
+  <i class="<%= icon %> mt-0.5 shrink-0" aria-hidden="true"></i>
+  <div class="min-w-0 flex-1">
+    <% if title %><p class="font-semibold"><%= title %></p><% end %>
+    <%= yield %>
+  </div>
+</div>

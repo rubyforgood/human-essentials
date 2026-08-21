@@ -42,22 +42,21 @@
           always visible on the page it warns about.
         %>
         <% if Rails.env.staging? %>
-          <div id="staging-warning" role="alert"
-               class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <%= render "shared/essentials/callout", tone: :warning, wrapper_class: "mb-6", callout_id: "staging-warning" do %>
             <p class="flex items-start gap-2 font-semibold">
-              <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-              This site is for TEST purposes only!
+            This site is for TEST purposes only!
             </p>
             <p class="mt-2">
-              You are on staging.humanessentials.app, a demo site for
-              <%= link_to "humanessentials.app", "https://humanessentials.app", class: "font-medium underline" %>.
-              It is not safe to upload, enter or save any sensitive data here.
+            You are on staging.humanessentials.app, a demo site for
+            <%= link_to "humanessentials.app", "https://humanessentials.app", class: "font-medium underline" %>.
+            It is not safe to upload, enter or save any sensitive data here.
             </p>
             <p class="mt-2">
-              To sign in to your live account, go to
-              <%= link_to "humanessentials.app/users/sign_in", "https://humanessentials.app/users/sign_in", class: "font-medium underline" %>.
+            To sign in to your live account, go to
+            <%= link_to "humanessentials.app/users/sign_in", "https://humanessentials.app/users/sign_in", class: "font-medium underline" %>.
             </p>
-          </div>
+
+          <% end %>
         <% end %>
 
         <%= render "shared/essentials/flash" %>

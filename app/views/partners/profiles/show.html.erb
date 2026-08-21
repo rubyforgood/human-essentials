@@ -2,10 +2,9 @@
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <% if current_partner.status == "recertification_required" %>
-    <div class="mb-6 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
-      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-rose-600" aria-hidden="true"></i>
-      <span>Please review your application details and submit them for approval.</span>
-    </div>
+    <%= render "shared/essentials/callout", tone: :danger, icon: "bi-exclamation-triangle text-rose-600", wrapper_class: "mb-6" do %>
+      Please review your application details and submit them for approval.
+    <% end %>
   <% end %>
 
   <%= render "shared/essentials/page_header",

@@ -9,17 +9,15 @@
 
   <div class="space-y-6">
     <% if inactive %>
-      <div class="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
-        <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-        <div>
-          <p class="font-semibold">This purchase cannot be corrected or deleted</p>
-          <p class="mt-1">
-            Purchases can only be changed while all of their items are active. To delete this
-            purchase or make a correction,
-            please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
-          </p>
-        </div>
-      </div>
+      <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
+        <p class="font-semibold">This purchase cannot be corrected or deleted</p>
+        <p class="mt-1">
+        Purchases can only be changed while all of their items are active. To delete this
+        purchase or make a correction,
+        please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
+        </p>
+
+      <% end %>
     <% end %>
 
     <%= render "shared/essentials/card", title: "Details" do %>

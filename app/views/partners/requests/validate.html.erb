@@ -41,10 +41,9 @@
   </p>
 
   <% if @quota_exceeded %>
-    <div class="mt-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
-      <i class="bi-exclamation-triangle mt-0.5 shrink-0 text-amber-600" aria-hidden="true"></i>
-      <span>You are ordering <strong><%= number_with_delimiter(@total_items) %></strong> total items. Are you sure?</span>
-    </div>
+    <%= render "shared/essentials/callout", tone: :warning, wrapper_class: "mt-4" do %>
+      You are ordering <strong><%= number_with_delimiter(@total_items) %></strong> total items. Are you sure?
+    <% end %>
   <% end %>
 </div>
 

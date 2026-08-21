@@ -35,10 +35,9 @@
                                   "checkbox-with-nested-element-target": "checkbox"}} %>
 
         <div class="hidden pl-5" data-checkbox-with-nested-element-target="nestedElement">
-          <div class="flex items-start gap-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900" role="note">
-            <i class="bi-info-circle mt-0.5 shrink-0 text-sky-600" aria-hidden="true"></i>
-            <span>Reminders need a schedule and a deadline day. Fill in both below.</span>
-          </div>
+          <%= render "shared/essentials/callout", tone: :info, role: "note" do %>
+            Reminders need a schedule and a deadline day. Fill in both below.
+          <% end %>
 
           <div class="mt-4">
             <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @partner_group %>
