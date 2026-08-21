@@ -1906,3 +1906,39 @@ With inline, spacing, and label-union applied, 109 findings became 8, and all 8 
 Apple's HIG and Material both say so, and 24px is a floor for things that happen to be small,
 not a target to design to. The drawer's open and close buttons were `p-2` and `p-1`, giving
 32×32 and 22×32; both are `size-11` now.
+
+## 2026-08-21 · The date range applies itself, and reorders itself
+
+Three changes to the date range filter, all of them removing something.
+
+**The Apply button is gone.** It was a second click for something the user had already said.
+Stripe, Shopify, Linear and Notion all commit a date range on selection; Google Analytics is the
+well-known exception, and the Apply button is the thing people complain about in it.
+
+The argument for keeping it was real and is recorded in the old comment: with two separate date
+fields rather than a calendar, committing on `change` means setting From and then To costs two
+requests, and the first one queries a range nobody asked for. That is a timing problem, and the
+answer is a 350ms debounce, not a second click.
+
+Two details make it work:
+
+- **The panel stays open** while custom dates are edited, so the range can be adjusted without
+  reopening it; only choosing a preset closes it, because a preset is a complete answer. The
+  spec helper `open_date_range` had to become idempotent — clicking a trigger that an open panel
+  is covering is a Cuprite failure, not a no-op.
+- **The From/To fields stop their `change` event bubbling.** They sit inside the filter bar's
+  form, and the bar submits on any change that reaches it — so before this, editing a date fired
+  a query carrying the *previous* range from the hidden field, then a second one when the
+  debounce committed the new one. Measured on `/donations`: three requests for one edit, now
+  one, and the one carries the right range.
+
+**An end before a start is reordered rather than refused.** It used to show "The end date must
+be on or after the start date." and do nothing until the user fixed it. Google Flights, Airbnb,
+Booking and Material's range picker all reorder or reset; none of them argue with you. There is
+no error state left in the control, which is also one fewer thing to keep accessible.
+
+**The trigger shows US short dates.** Spelled out, a custom range read "June 19, 2026 to
+September 19, 2026" and needed 233px inside a 223px button, so it was truncated — the one thing
+the control exists to tell you was the part cut off. `6/19/2026 – 9/19/2026` is 134px in the same
+button. The wire format is untouched: `filters[date_range]` still carries "%B %-d, %Y" because
+that is what `strptime` on the server is waiting for, and `:date_picker_short` is display only.

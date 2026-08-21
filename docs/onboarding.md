@@ -342,6 +342,14 @@ Every page that filters by date uses the same control: a button showing the rang
 at, opening a panel of the usual ones — *Today*, *Last 7 days*, *Last 30 days*, *This month*,
 *This year*, *All time* — beside **From** and **To** boxes for any other range.
 
+**There is nothing to press.** Choose a preset and the panel closes and the table updates. Type
+or pick your own From and To and it updates as you go, with the panel staying open so you can
+nudge either date. If you put the dates the wrong way round, they swap themselves — you will not
+be told off for it.
+
+The button shows the range in the usual American form, **6/19/2026 – 9/19/2026**, so it fits and
+you can read it at a glance.
+
 **Filters apply as you choose them.** There is no Filter button: pick a value and the table and
 its totals update underneath, without the page reloading and without losing your place. Typing
 in a filter waits until you stop.
