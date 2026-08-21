@@ -30,6 +30,13 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
+  # Per-process, not on disk. The default is a FileStore under tmp/cache, which survives between
+  # runs -- so a value written by one example is read by a later example, in a later run, for a
+  # different record that happens to have been given the same id. That is exactly what happened:
+  # historical_data_cache_job_spec writes a stubbed series, and HistoricalTrends#index read it
+  # back weeks later and rendered someone else's fixture. 65MB and 9,317 files had accumulated.
+  config.cache_store = :memory_store
+
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
 
