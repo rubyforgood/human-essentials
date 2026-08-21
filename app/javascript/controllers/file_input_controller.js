@@ -60,15 +60,17 @@ export default class extends Controller {
     // Create subheader
     const header = document.createElement("p");
     header.textContent = "Selected files:";
-    header.classList.add("font-weight-bold", "mb-1");
+    // font-weight-bold and list-unstyled below are Bootstrap; neither is defined any more, so
+    // the heading was not bold and the list kept its bullets.
+    header.classList.add("text-sm", "font-semibold", "text-slate-900", "mb-1");
 
     // Create file list
     const ul = document.createElement("ul");
-    ul.classList.add("list-unstyled", "mt-2");
+    ul.classList.add("list-none", "mt-2");
 
     fileNames.forEach((name) => {
       const li = document.createElement("li");
-      li.classList.add("p-1", "rounded", "mb-1");
+      li.classList.add("rounded", "p-1", "mb-1", "text-sm", "text-slate-700");
       li.textContent = name;
       ul.appendChild(li);
     });

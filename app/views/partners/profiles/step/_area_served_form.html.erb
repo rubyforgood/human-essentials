@@ -3,16 +3,16 @@
     <%# Was a fieldset with an empty <legend>, which announces a group and names it nothing.
         The heading above already names it, so a plain wrapper is honest. %>
     <div class="mb-8">
-      <div id="served_areas" class="partner-served-area-fields partner-served-areas">
+      <div id="served_areas">
         <%= render 'served_areas/served_area_fields', form: pf %>
       </div>
 
-      <div class="partner-served_areas-total-row grid gap-6">
-        <div class="partners-served-areas-total-prompt col-w">Total is:</div>
-        <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value min-w-0 numeric" data-area-served-target="total">
+      <div class="grid gap-6">
+        <div>Total is:</div>
+        <span id="partners-served-areas-client-share-total" class="min-w-0 numeric" data-area-served-target="total">
           <%= @client_share_total %> %
         </span>
-        <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning min-w-0" data-area-served-target="warning">
+        <div id="partners-served-areas-client-share-total-warning" class="min-w-0" data-area-served-target="warning">
           The total client share must be either 0 or 100 %.
         </div>
       </div>

@@ -47,7 +47,20 @@ module EssentialsUiHelper
   # verb, CSRF token and disable_with guard are all handled.
   def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil, confirm: nil, **html_attrs)
     classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
-    data = {disable_with: "Please wait..."}.merge(html_attrs.delete(:data) || {})
+    # `turbo: false`, so the browser submits the form itself.
+    #
+    # These buttons sit in table rows, and the tables sit inside a results turbo-frame. Turbo's
+    # `elementIsNavigatable` returns true for anything inside a frame *even when Drive is off*,
+    # so Turbo intercepted the submission, fetched the redirect, and then had to promote it to a
+    # top-level visit because the frame carries `target="_top"`. That last step is where it came
+    # apart: the confirm was accepted, the submit event fired, the server handled the PUT -- and
+    # about half the time the page never changed. Reactivate stayed on screen with the previous
+    # flash still above it.
+    #
+    # A row action is a whole-page navigation that ends in a redirect and a flash, not a frame
+    # update, so opting out is what it wanted all along. Measured on
+    # storage_location_system_spec:167, which had been failing 4 runs in 8: 0 in 20 after.
+    data = {disable_with: "Please wait...", turbo: false}.merge(html_attrs.delete(:data) || {})
     # data-confirm, not data-turbo-confirm: rails-ujs is what this app loads, and Turbo would
     # only act on its own attribute where Turbo Drive is enabled -- which is per-action here.
     data[:confirm] = confirm if confirm

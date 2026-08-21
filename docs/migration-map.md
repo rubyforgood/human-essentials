@@ -35,31 +35,32 @@ breaks that down.
 | `donations#add_item`, `donations#remove_item` | Removed in 2026, not migrated: routes with no actions whose only templates were 2018 scaffold stubs. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 
-### Class names that style nothing, and are left alone
+### Class names that style nothing
 
-Twenty-six class tokens appear in the views, are defined nowhere in the stylesheet, and are
-selected by no JavaScript, spec or gem. They render as nothing and always did. They are written
-down rather than removed, because a known-inert leftover costs nothing and the churn of touching
-twenty-seven files does not.
+**None.** `bin/design/undefined-classes.py` reports zero.
 
-Verify the list with the extractor in the verification commands below. During the August 2026
-sweep the raw count of undefined tokens went from 86 to 79 as dead Bootstrap classes were
-removed; of those 79, 26 are the orphans listed here and 33 are deliberate hooks the script
-separates out. The remainder are ERB fragments the extractor cannot tell from class names.
+Twenty-three inert class names were removed in August 2026 — AdminLTE-era layout hooks
+(`form-yesno`, `radio-yesno`, `col-w`), hooks for a served-areas script that no longer exists
+(`pc-*`, `partner-served-*`), FullCalendar v4 names the library stopped emitting (`fc-ltr`,
+`fc-unthemed`), and `animate-pulse-once`, which was a Tailwind theme extension added in 2021
+(#2438) and dead from the moment Tailwind was first removed later that year. If that pulse on
+the partner request success and error messages is wanted back, it is a `@keyframes` and one
+class in `application.css`; nothing else survives of it.
 
-| Leftover | Where | Note |
-| --- | --- | --- |
-| `animate-pulse-once` | `partners/requests/_error`, `_success` | Added in 2021 (#2438) as a Tailwind theme extension, `'pulse-once': 'pulse 1s ease-in-out'`. Tailwind was removed later that year and the animation went with it, so this has done nothing since. Restoring it is four lines in `application.css` if the feedback is wanted. |
-| `fc-ltr`, `fc-unthemed` | `distributions/schedule` | FullCalendar v4 class names, applied by hand. v5 sets its own; these are ignored. |
-| `form-yesno`, `radio-yesno`, `col-w`, `links` | partner profile edit and step forms | AdminLTE-era layout hooks. |
-| `pc-*`, `partner-served-*`, `partners-served-areas-*`, `partner-county-separator` | `served_areas/_served_area_fields`, partner profile area-served | Hooks for a served-areas script that no longer exists. |
-| `county-heading`, `county-name`, `client-share` | partner profile show | As above, on the read-only side. |
-| `account-type-choice`, `account_type` | `account_requests/new` | |
-| `main_logo`, `float-center`, `li-requested`, `filter-bar-submit` | assorted | |
+They were documented as harmless leftovers first and then removed, because a permanently
+non-zero audit is one people learn to ignore — the next dead class should stand out on its own.
 
-Two that look inert and are **not**: `filterrific-periodically-observed` is the filterrific
-gem's own JS hook, and `form-inputs` is simple_form's. Neither is defined in this app's
-stylesheet and both must stay.
+**Three false positives the script had to learn**, each of which would have had something
+deleted that mattered:
+
+| Looked inert | Actually |
+| --- | --- |
+| `filterrific-periodically-observed` | The filterrific gem's own JS hook. |
+| `form-inputs` | simple_form's. The gem scan had to include `lib/`, not just `app/` and `vendor/`. |
+| `filter-bar-submit` | Defined in an inline `<style>` inside a `<noscript>`, which is what makes the filter bar submit without JavaScript. The script reads inline `<style>` blocks now. |
+
+A class can also be deliberate without being styled — a Stimulus target or a spec selector. The
+script separates those (32 of them) from genuine orphans rather than reporting them.
 
 ### Index tables without a pager
 
@@ -201,13 +202,17 @@ bundle exec rubocop
 bundle exec erb_lint --lint-all
 ruby bin/design/status.rb         # which controllers are on a design system layout
 ruby bin/design/page-audit.rb     # defects and debt, per view
-bin/start                         # then, with the app running:
-pw bin/design/sweep.js            # 56 pages in a real browser
 
-# Every class token in the views that the compiled stylesheet does not define. Expect 26, all
-# listed above, plus 33 deliberate hooks the script separates out. The script sanity-checks its own extractor first: Tailwind escapes `.` and `:`
-# in selectors (`.mt-0\.5`), and a naive regex reports every such utility as undefined -- the
-# first version of this check produced 186 findings, 100 of which were Tailwind working fine.
+bin/start                         # then, with the app running:
+pw bin/design/route-sweep.js      # every HTML screen the router knows, as three roles
+pw bin/design/wcag-audit.js       # axe, WCAG 2.1 A/AA
+pw bin/design/overlay-audit.js    # opens every dialog and popover
+
+# Every class token the views or the JavaScript use that nothing defines. Expect 0 orphans; the
+# ~32 it also lists are Stimulus targets, spec selectors and gem classes, and are meant to be
+# there. It sanity-checks its own extractor before reporting: Tailwind escapes `.` and `:` in
+# selectors (`.mt-0\.5`), and a naive regex calls every such utility undefined -- the first
+# version produced 186 findings, ~100 of which were Tailwind working correctly.
 python3 bin/design/undefined-classes.py
 ```
 

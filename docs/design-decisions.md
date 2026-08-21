@@ -1793,3 +1793,57 @@ creates an organization of its own, *after* the `Organization.delete_all` in the
 so the list held one row — and the assertion passed only because a single page drew no Next.
 The context now filters to nothing, which is the only way to get an empty list on that page, and
 asserts there is no strip at all.
+
+## 2026-08-21 · The row action was Turbo's, and should not have been
+
+`storage_location_system_spec:167` had been failing about half the time for a week. It was
+recorded twice as an intermittent flake and measured at 4 runs in 8 on a clean `HEAD`. It was
+not a flake; it was a real defect in every row action in the app, showing up half the time.
+
+**What the evidence said, in order.** The failing and passing runs made *identical* server
+requests, so it was not the backend. A probe on the real spec showed that on a failure the page
+never changed at all: same filtered URL, previous flash still above the table, Reactivate still
+on screen three seconds after the confirm was accepted. Listening for rails-ujs events showed
+`confirm:complete answer=true` and a `submit` event with the right action on failures as well as
+passes — so the confirm was accepted and the form *was* submitted.
+
+**The cause.** Row actions are `button_to` forms, and the tables sit inside a results
+turbo-frame. Turbo's `elementIsNavigatable` returns true for anything inside a frame **even when
+Drive is off**, which it is app-wide here. So Turbo intercepted the submission, fetched the
+redirect, and then had to promote it to a top-level visit because the frame carries
+`target="_top"`. That promotion is where it came apart.
+
+**The fix** is `data: {turbo: false}` in `essentials_action_button`, so the browser submits the
+form itself. A row action is a whole-page navigation ending in a redirect and a flash, not a
+frame update, so opting out is what it wanted all along. 0 failures in 20 runs, against 4 in 8
+before. The full suite passes.
+
+**What this says about the earlier judgement.** Writing it down as "a pre-existing flake, not
+mine" was true and verifiable — it did fail on a clean `HEAD` — and it was still the wrong
+place to stop. A test that fails half the time is not noise, it is a defect with a poor
+reproduction, and the reproduction here took about twenty minutes of instrumenting rather than
+re-running. The rule worth keeping: measure the rate before attributing, then, if the rate is
+high, treat it as a bug rather than a flake.
+
+## 2026-08-21 · Inert class names removed rather than documented
+
+Twenty-three class names that styled nothing and that no JavaScript, spec or gem selected were
+deleted. They had been written up as known-harmless leftovers a day earlier, on the principle
+that a documented leftover costs nothing.
+
+That principle is right when the list is long and uncertain. It was wrong here, for one reason:
+**a permanently non-zero audit is one people stop reading.** With 26 known-and-fine findings in
+the output, the twenty-seventh — a real one — arrives invisible. Zero is the only count that
+makes the next defect stand out, and the documentation of what was removed lives in the change
+log and in `migration-map.md` either way.
+
+Three of the twenty-six turned out not to be inert at all, and each would have been deleted if
+the script had been trusted rather than the individual entries checked:
+`filterrific-periodically-observed` and `form-inputs` belong to gems, and `filter-bar-submit` is
+defined in an inline `<style>` inside a `<noscript>` — it is what makes the filter bar work
+without JavaScript. The script now scans gem `lib/` directories and inline `<style>` blocks, and
+those three are reported as hooks.
+
+**Not removed: the pulse animation's intent.** `animate-pulse-once` is gone, but restoring the
+effect on the partner request success and error messages is a `@keyframes` and one class. That
+is a design decision, so it is offered rather than taken.

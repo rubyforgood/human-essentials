@@ -154,13 +154,13 @@
     <% if partner_profile_fields.include?('area_served') || partner_profile_fields.empty? %>
       <h2 class="text-base font-semibold text-slate-900">Area served</h2>
       <table>
-        <th class="county-heading">County</th><th class="county-heading">% of Clients in county</th>
+        <th>County</th><th>% of Clients in county</th>
 
         <% served_area_col = Partners::ServedArea.where(partner_profile: partner_profile) %>
         <% if served_area_col.any? %>
           <%= render partial: "partners/profiles/show/served_area_row", collection: served_area_col %>
         <% else %>
-          <tr><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100%</td></tr>
+          <tr><td><%= "No County Specified" %></td><td class="percent">100%</td></tr>
         <% end %>
       </table>
       <br>

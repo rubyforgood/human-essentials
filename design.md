@@ -769,6 +769,21 @@ only when something actually went wrong.
 
 Keys map `success → :success`, `error → :danger`, `alert → :warning`, anything else `→ :info`.
 
+### Row actions are not Turbo's
+
+`essentials_action_button` renders `data-turbo="false"`, so the browser submits the form itself.
+
+Row actions are `button_to` forms and the tables sit inside a results turbo-frame. Turbo's
+`elementIsNavigatable` returns true for anything inside a frame **even with Drive off**, which
+it is app-wide here — so Turbo intercepted the submission, fetched the redirect and had to
+promote it to a top-level visit because the frame carries `target="_top"`. About half the time
+that promotion did nothing: the confirm was accepted, the server handled the request, and the
+page never changed.
+
+A row action is a whole-page navigation ending in a redirect and a flash, not a frame update.
+**Anything that redirects out of a frame should opt out of Turbo rather than rely on
+`target="_top"` to rescue it.**
+
 ### Callouts
 
 A notice that belongs to the **page** rather than to the request. The flash says "that worked";
