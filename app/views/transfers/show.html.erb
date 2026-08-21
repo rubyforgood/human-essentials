@@ -8,7 +8,7 @@
 
   <%= render "shared/essentials/card", title: "Items moved", padded: false,
         footer: (@transfer.comment.presence && capture { concat(tag.p("Note: #{@transfer.comment}", class: "text-sm text-slate-600")) }) do %>
-    <div class="table-scroll">
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
       <table class="data-table">
         <caption>Items moved in this transfer</caption>
         <thead>

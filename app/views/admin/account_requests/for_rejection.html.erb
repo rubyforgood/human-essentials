@@ -15,7 +15,7 @@
 
   <% if @account_request %>
     <%= render "shared/essentials/card", padded: false do %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>The account request named by this link</caption>
           <thead>

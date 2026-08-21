@@ -2070,3 +2070,65 @@ result is how a green audit lies.
 
 One thing removed while there: `audits_controller#handle_audit_errors` built a flash out of the
 same errors the summary and the fields now show, and became dead code.
+
+## 2026-08-21 · Accessibility and keyboard: the drawer nobody could see, and 91 pages axe was not looking at
+
+### axe was auditing 61 pages of 152
+
+`wcag-audit.js` walked four hand-kept lists. `route-targets.rb` enumerates 163 routes. Pointing
+axe at the router took it from 61 pages to 152 and immediately found three violations and a 500
+that the lists had never visited:
+
+- **`scrollable-region-focusable`** on the three historical trend pages. `.table-scroll` can be
+  scrolled with a mouse and by nothing else. It surfaced there and nowhere else because every
+  other table in the app contains links, which give the region a way in by accident — the fault
+  was app-wide and visible on three pages. All 62 scroll containers are focusable now.
+- **`aria-input-field-name`** on `/admin/users/new`, twice over. See below.
+- **`color-contrast`** on `/privacypolicy`: the footer copyright at 4.06:1 against the 4.5 AA
+  needs. `#a0aec0` is 7.23:1.
+- **`/partners/authorized_family_members/new` returned a 500.** Its route is not nested under
+  families, so `family_id` arrives as a query parameter; without one, `family` was nil and
+  `family.authorized_family_members` raised. Every link supplies it. A bookmark does not.
+
+This is the third audit this week whose real finding was hiding behind a hardcoded list. Ask the
+router.
+
+### The drawer was 27 invisible tab stops
+
+Below `lg` the sidebar is moved off screen with `-translate-x-full`. That hides it from the eye
+and from nobody else: closed, all 27 of its links and buttons stayed in the tab order. A keyboard
+user on a phone tabbed from "Skip to main content" through the entire navigation — invisible,
+with no indication of where focus had gone — before reaching any page content.
+
+`inert` is what removes a subtree: out of the tab order, out of the accessibility tree, and
+without the `display: none` that would break the slide. `shell_controller` sets it on close,
+clears it on open, and **recomputes it on resize**, because at `lg` the sidebar is a visible
+column and must not be inert whatever the drawer's last state was.
+
+**It was invisible at 1280 and 27 stops deep at 375**, which is the argument for running the
+keyboard audit at both widths rather than one.
+
+### select2 names nothing it builds, and is initialised twice
+
+select2 hides the `<select>` and builds a combobox, a value display marked `role="textbox"`, and
+a search input. None inherits the original's name, and the combobox's `aria-labelledby` points at
+its own value container — empty until something is chosen.
+
+The naming had already been written once, in `select2_controller`, for the search field. It did
+not apply to `/admin/users/new`, because **that select is initialised by `double_select_controller`
+instead** — a second call site the first fix never knew about. It is a shared util now, used by
+both, and it names all three generated elements. The label's id goes in front of select2's
+container id rather than replacing it, so the control announces its name and then its value.
+
+### What the keyboard audit had to be taught
+
+Fifth audit, same lesson. Two false positives, both decoration:
+
+- the drawer scrim, which is `aria-hidden`, closes on click, and whose behaviour is also on
+  Escape and on a real close button;
+- a `<dialog>`'s own click handler, which is backdrop dismissal — the keyboard equivalent is
+  Escape, which the browser provides and `overlay-audit` checks on every dialog.
+
+Requiring either to be focusable would have put an unnamed tab stop in everyone's way. And the
+check had to learn that `inert` removes a subtree, or it went on reporting the drawer it had just
+been used to fix.

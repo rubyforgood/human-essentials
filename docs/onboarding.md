@@ -243,6 +243,7 @@ python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
 pw bin/design/form-validation-audit.js    # required marking and error handling
+pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
 ```
 
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the

@@ -29,7 +29,7 @@
               body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every adjustment." : "An adjustment manually increases or decreases inventory at a storage location.",
               action: essentials_filtered? ? nil : essentials_link_button("Record your first adjustment", new_adjustment_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Manual inventory adjustments</caption>
             <thead>

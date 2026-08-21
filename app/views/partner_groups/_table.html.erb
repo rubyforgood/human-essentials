@@ -4,7 +4,7 @@
         body: "Groups let you set requestable item categories and reminder schedules for several partners at once.",
         action: essentials_link_button("Add your first partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg") %>
 <% else %>
-  <div class="table-scroll">
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="data-table">
       <caption>Partner groups, their members and reminder settings</caption>
       <thead>

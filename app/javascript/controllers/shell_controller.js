@@ -19,16 +19,39 @@ export default class extends Controller {
 
   connect() {
     this.closeOnEscape = this.closeOnEscape.bind(this)
+    this.syncInert = this.syncInert.bind(this)
     document.addEventListener("keydown", this.closeOnEscape)
+    window.addEventListener("resize", this.syncInert)
+    this.syncInert()
   }
 
   disconnect() {
     document.removeEventListener("keydown", this.closeOnEscape)
+    window.removeEventListener("resize", this.syncInert)
+  }
+
+  // The drawer is moved off screen with a transform, which hides it from the eye and from nobody
+  // else: closed, its 27 links stayed in the tab order, so a keyboard user tabbed from "Skip to
+  // main content" through the entire navigation -- invisible -- before reaching the page.
+  // `inert` is what actually removes a subtree: out of the tab order and out of the
+  // accessibility tree, without the display: none that would break the slide.
+  //
+  // Recomputed on resize as well, because at `lg` the sidebar is a visible column and must not
+  // be inert no matter what the drawer's last state was.
+  syncInert() {
+    if (!this.hasDrawerTarget) return
+
+    const atDesktop = window.matchMedia("(min-width: 1024px)").matches
+    const open = this.hasDrawerToggleTarget &&
+                 this.drawerToggleTarget.getAttribute("aria-expanded") === "true"
+
+    this.drawerTarget.inert = !atDesktop && !open
   }
 
   // --- Sidebar drawer (mobile) ---------------------------------------------
 
   openDrawer() {
+    this.drawerTarget.inert = false
     this.drawerTarget.classList.remove("-translate-x-full")
     this.scrimTarget.classList.remove("hidden")
     this.drawerToggleTarget.setAttribute("aria-expanded", "true")
@@ -41,6 +64,8 @@ export default class extends Controller {
     this.scrimTarget.classList.add("hidden")
     this.drawerToggleTarget.setAttribute("aria-expanded", "false")
     this.drawerToggleTarget.focus()
+    // After the focus move, or the browser is asked to blur an element it is about to make inert.
+    this.syncInert()
   }
 
   toggleDrawer() {

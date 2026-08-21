@@ -30,7 +30,7 @@
               body: "Add the places where donors can drop off essentials.",
               action: essentials_link_button("Add your first donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Donation drop-off sites</caption>
             <thead>

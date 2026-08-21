@@ -45,7 +45,7 @@
               title: "Not held at any storage location",
               body: "This item appears here once a donation, purchase or audit puts it into a location." %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Storage locations holding <%= @item.name %></caption>
             <thead>
@@ -80,7 +80,7 @@
 
     <% if @barcodes_for.present? %>
       <%= render "shared/essentials/card", title: "Barcodes for this item", padded: false do %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Barcodes registered against <%= @item.name %></caption>
             <thead>

@@ -3,6 +3,11 @@ module Partners
     layout 'essentials_partner'
 
     def new
+      # The route is not nested under families, so family_id arrives as a query parameter -- and
+      # a visit without one made `family` nil and this a 500 rather than a page. Every link to
+      # here supplies it; a bookmark, a typo or an audit does not.
+      return redirect_to partners_families_path, error: "Choose a family first." if family.nil?
+
       @authorized_family_member = family.authorized_family_members.new
     end
 

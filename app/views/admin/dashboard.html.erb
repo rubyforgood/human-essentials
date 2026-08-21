@@ -83,7 +83,7 @@
           padded: false,
           footer: capture { essentials_link_button("View all items", admin_base_items_path, variant: :secondary, size: :sm) } do %>
       <% if @top_10_other.any? %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Item names most often filed under the Other base item</caption>
             <thead>
@@ -110,7 +110,7 @@
 
     <%= render "shared/essentials/card", title: "Recently active users", padded: false do %>
       <% if @active_users.any? %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Users who made a request in the last week</caption>
             <thead>

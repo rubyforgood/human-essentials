@@ -50,7 +50,7 @@
 
   <%= render "shared/essentials/card", title: "Children", padded: false do %>
     <% if @family.children.any? %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>Children in this family</caption>
           <thead>
@@ -95,7 +95,7 @@
 
   <%= render "shared/essentials/card", title: "Authorized to collect", padded: false do %>
     <% if @family.authorized_family_members.any? %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>People other than the guardian who may collect essentials for this family</caption>
           <thead>

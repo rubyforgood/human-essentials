@@ -2,7 +2,7 @@
   <div class="flex justify-end border-b border-slate-200 px-5 py-3">
     <%= essentials_link_button "New item", new_item_path, variant: :secondary, size: :sm, icon: "bi-plus-lg" %>
   </div>
-  <div class="table-scroll">
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="data-table table-items-location">
       <caption>Quantity of each item at each storage location</caption>
       <thead>

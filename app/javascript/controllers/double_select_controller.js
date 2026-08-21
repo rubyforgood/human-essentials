@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import $ from 'jquery';
 import "select2"
+import { nameSelect2, nameOpenDropdown } from "utils/select2_accessibility"
 
 export default class extends Controller {
   static targets = ['source', 'destination']
@@ -19,6 +20,8 @@ export default class extends Controller {
         dataType: 'json'
       }
     });
+    // select2 rebuilds its markup here, so the names have to be reapplied.
+    nameSelect2(this.destinationTarget);
 
   }
 
@@ -26,7 +29,8 @@ export default class extends Controller {
     /**
      * This is a workaround to auto focus on the select2 input when it is opened.
      */
-    $(this.destinationTarget).on('select2:open', function (e) {
+    $(this.destinationTarget).on('select2:open', () => {
+      nameOpenDropdown(this.destinationTarget);
       $(".select2-search__field")[0].focus();
     })
     this.sourceChanged();

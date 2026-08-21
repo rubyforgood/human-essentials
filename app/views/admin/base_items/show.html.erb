@@ -31,7 +31,7 @@
 
   <%= render "shared/essentials/card", title: "Items created from this base item", padded: false do %>
     <% if @items.any? %>
-      <div class="table-scroll">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
           <caption>Every organization's own item that maps onto this base item</caption>
           <thead>

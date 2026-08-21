@@ -27,7 +27,7 @@
               body: essentials_filtered? ? "Clear the filters to see every barcode." : "Register a barcode so scanning a box fills in the item and quantity for you.",
               action: essentials_filtered? ? nil : essentials_link_button("Add your first barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg") %>
       <% else %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Registered barcodes</caption>
             <thead>

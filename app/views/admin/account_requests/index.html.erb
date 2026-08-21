@@ -20,7 +20,7 @@
     <%= render "shared/essentials/card", title: "Open requests", padded: false,
           footer: essentials_pagination_footer(@open_account_requests) do %>
       <% if @open_account_requests.any? %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table" id="open-account-requests">
             <caption>Account requests still waiting on a decision</caption>
             <thead>
@@ -48,7 +48,7 @@
     <%= render "shared/essentials/card", title: "Closed requests", padded: false,
           footer: essentials_pagination_footer(@closed_account_requests) do %>
       <% if @closed_account_requests.any? %>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table" id="closed-account-requests">
             <caption>Account requests that have already been decided</caption>
             <thead>
