@@ -245,11 +245,23 @@ pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
 pw bin/design/form-validation-audit.js    # required marking and error handling
 pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
 bin/rails runner bin/design/dead-routes.rb   # routes whose request would raise
+bin/rails runner bin/design/dead-code.rb     # code no route, render or caller reaches
 ```
 
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the
 version with a hardcoded list of 56 paths missed three pages that were in the sidebar the whole
 time and had no `<h1>`.
+
+`dead-code.rb` is the mirror of `dead-routes.rb` and reports 118 findings today — six controllers
+no route reaches, 24 helper methods nothing calls, 81 files in `public/` nothing links to. They
+are documented rather than deleted; read [design-decisions.md](design-decisions.md) before acting
+on any of them, and read the exemptions at the top of the script before adding a check. Every one
+of them is a false positive that was believed once.
+
+**Two things about running the browser audits.** They default to `BASE_URL=http://127.0.0.1:3000`,
+so point them somewhere else with that variable rather than assuming they follow whatever server
+you started last. And `config/application.rb` is not reloaded in development — restart the server
+after changing it, or you will spend an afternoon watching an audit report a defect you fixed.
 
 `dead-routes.rb` is the one that does not need a browser. It asks, of every route, whether the
 request would raise — 28 did before it existed, nearly all of them actions `resources :x`

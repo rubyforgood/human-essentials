@@ -219,7 +219,15 @@ python3 bin/design/undefined-classes.py
 # Routes whose request would raise, and routes another route answers first. Needs no server.
 # Exits non-zero if anything is dead. 28 were, before it existed.
 bin/rails runner bin/design/dead-routes.rb
+
+# The opposite question: code with no route, no render and no caller in front of it.
+bin/rails runner bin/design/dead-code.rb
 ```
+
+**Restart the server after touching `config/application.rb`.** It is not reloaded in development,
+and every browser audit here talks to a long-running process on port 3000. A stale one reported
+a defect that had already been fixed, three times, while the app served the fix correctly on
+another port.
 
 Run all of them; each sees something the others cannot. The status script asks whether a view
 has design system markup, and a view can have plenty while still passing a dead class into a
@@ -230,7 +238,7 @@ partial. `undefined-classes.py` catches the dead class but cannot tell you the p
 That distinction is not theoretical. `sweep.js` has a hardcoded list of 56 paths and the three
 historical trend pages were never on it. They were in the sidebar, on a design system layout,
 and rendered a bare chart with no page header and no `<h1>` for the length of the migration.
-Every audit ran clean over them the whole time. `route-sweep.js` covers 139 screens as three
+Every audit ran clean over them the whole time. `route-sweep.js` covers 140 screens as three
 different users, and found two more defects on its first run — nine unlabelled selects on the
 partner profile editor and two on the child form, in a portal the old list never visited.
 
@@ -260,6 +268,25 @@ same five each time (partners, storage locations, donation sites, vendors, produ
 participants). It did not before. `ProductDrivesController` included the concern with no route,
 no model method and no template, and the manufacturers page had the button and the modal and
 nothing else. Both were removed in August 2026. If you add an import, add all four.
+
+`bin/design/dead-code.rb` lists what the migration left behind, in full. The parts of its 118
+findings that belong to this migration rather than to the app's own history:
+
+- **6.1MB of fonts in `public/fonts` and `public/webfonts`** — Font Awesome, Lato and Raleway.
+  Nothing has referenced them since ADR 0011 removed AdminLTE. They are the largest single piece
+  of dead weight in the repo.
+- **24 `public/img` files**, mostly old DiaperBase logos. Two files in that directory are live:
+  `essentials.svg`, used twice by the auth shell.
+- **Four partials nothing renders**, two of them carrying pre-migration markup that would have
+  been caught if anything had rendered them — `class="date"` in
+  `admin/organizations/_organization_row`, and `content_for :sidebar` with `class="vertical menu"`
+  in `users/shared/_account_management_menu`.
+- **11 of the 14 `*_button_to` shims in `ui_helper.rb` have no call sites left.** Only
+  `new_button_to` (5), `edit_button_to` (1), `modal_button_to` (3), `refresh_button_to`,
+  `cancel_button_to` and `download_button_to` (1 each) are still called, along with
+  `submit_button` (19), `add_element_button` (11) and `remove_element_button` (5). The file's own
+  comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
+  AdminLTE version, not this one.
 
 One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
 survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this

@@ -2252,3 +2252,129 @@ change was about the one that should not have been including it.
 The thing that settled it was not a better probe but the app itself — the request spec renders
 `show` and asserts on its body, and a cold-booted server serves the page with the Delete button
 on it. **When a static probe and a running request disagree, the request is right.**
+
+## 2026-08-21 · Dead code: 118 findings, two live defects hiding behind them, and thirteen false positives first
+
+`bin/design/dead-code.rb` is the companion to `dead-routes.rb`. That one asks for routes with no
+code behind them; this one asks for code with nothing in front of it — no route, no render, no
+caller. It reports **118**:
+
+| What | How many |
+| --- | --- |
+| Controllers no route reaches | 6 |
+| Actions no route reaches | 2 |
+| Templates nothing renders | 1 |
+| Partials nothing renders | 4 |
+| Helper methods nothing calls | 24 |
+| `public/` files nothing references | 81 |
+
+Services, query objects, jobs, mailers, events, concerns, Stimulus controllers, importmap pins
+and CSS component classes are all clean at zero. The object layer is tight; the rot is in the
+view layer, the helpers, and the things a migration leaves on disk.
+
+### Five of the six dead controllers are Devise overrides that Devise never asked for
+
+`app/controllers/users/` holds seven controllers. **Two are routed.** `devise_for :users` names
+only `sessions` and `omniauth_callbacks`, so passwords, registrations, invitations, confirmations
+and unlocks are served by Devise's own classes. The app's versions are empty shells — `def new;
+super; end` and a `layout` line — and one of them,
+`Users::InvitationsController < Devise::SessionsController`, does not even inherit from the right
+base class. Nothing noticed, because nothing runs it.
+
+The views under `app/views/users/passwords/` and friends **are** live: `config.scoped_views = true`
+sends Devise's own controllers to look there. Views live, controllers dead, in the same directory
+tree — which is most of why this survived.
+
+Two of the five are dead twice over: the `User` model enables neither `confirmable` nor
+`lockable`, so `users/confirmations/new.html.erb`, `users/unlocks/new.html.erb` and four mailer
+templates cannot be reached either, and `config/application.rb` sets a layout on two Devise
+controllers that have no routes at all.
+
+### The dead file was hiding a live defect
+
+`app/controllers/users/invitations_controller.rb` sets `layout "essentials_auth"`. It never runs.
+The controller that does run, `Devise::InvitationsController`, was **not** in the `to_prepare`
+block that assigns the auth layout, and `layouts/application` was deleted with AdminLTE. An
+unnamed layout is optional in Rails, so nothing raised: `/users/invitation/new` and
+`/users/invitation/accept` returned **200 OK with no layout at all** — no stylesheet, no nav,
+Times New Roman. That is the first screen every invited user sees.
+
+**And the audit that should have caught it was skipping those routes.** `route-targets.rb` had
+
+```ruby
+next if controller.start_with?("rails/", "turbo/", "active_storage/", "devise/")
+```
+
+which is defensible right up until you notice that `devise/` **is** the auth screens here. The
+app having a `users/invitations_controller.rb` made the family look covered. Both are fixed: the
+layout is assigned, and the sweep visits Devise-served screens — 139 screens became 140, and axe
+went from 152 pages to 154.
+
+This is the same shape as the manufacturers CSV import and the `Importable` include: a piece of
+dead code that looks like the thing being done, so nobody looks for the thing actually doing it.
+Three times in two days is a pattern worth naming. **Dead code is not inert. It answers the
+question you were about to ask, wrongly.**
+
+### The other live defect: a template link that never pointed at anything
+
+The product drive participants import offered `/product_drive_participants.csv`. The file on disk
+was `diaper_drive_participants.csv` — renamed everywhere except here when diaper drives became
+product drives. Its contents are right, headers and all. The file is renamed rather than the link
+changed, because every other template is named for its resource. This one predates the migration.
+
+### A third variant of "the probe and the app disagreed"
+
+The sweep reported the invitation page unstyled after I had fixed it and watched it render in
+Figtree three times. Both were true. **The browser audits default to `BASE_URL=127.0.0.1:3000`
+and I was verifying on 3003**, a second server started for the same repo — and
+`config/application.rb` is not reloaded in development, so the long-running 3000 process was
+still serving the old layout configuration hours after the file changed.
+
+The rule from the `Importable` entry was "when a static probe and a running request disagree, the
+request is right". It needs a clause: **and check they are the same running app.** Guessing cost
+four rounds; dumping the URL alongside the failing HTML answered it in one.
+
+### Thirteen ways to be wrong about dead code
+
+Every check here was wrong on its first run, and each time the wrongness looked exactly like
+findings. In order of how much they would have cost:
+
+1. **The design system's own fonts.** Figtree and Bootstrap Icons are named only by `@font-face`
+   in the stylesheet. Drop `.css` from the source glob and the audit recommends deleting the
+   fonts every page depends on. This one would have taken the whole site down.
+2. **`\b` after a name ending in `?`.** `foo?(x)` has no word boundary between the `?` and the
+   `(`, so the first helper pass called every predicate in the app dead: 12 of 33.
+3. **A lookbehind excluding `:`.** Added to skip `Foo::Bar`, it also skips `before_action
+   :require_admin` — so a method with its `before_action` three lines above it read as uncalled.
+4. **`render partial: "partners/profiles/show/#{x}"`** names a directory, not a file. 24 live
+   profile sections in the first run of 46.
+5. **"Is `index` used anywhere?"** is true in every codebase ever written. Asking the whole app
+   instead of the controller suppressed both real findings in that category.
+6. **Receiver methods.** `item.active?` is a method on a struct, not a helper. Reflection —
+   `instance_methods(false)` — knows the difference; scanning `def` lines does not.
+7. **`clock.rb` and `Rakefile` live at the repo root.** A glob starting at `app/` reports all
+   three jobs Clockwork schedules as dead.
+8. **Unqualified constants.** Code inside `module Partners` calls `UpdateFamily`.
+9. **`site.webmanifest`** is the only thing naming the android-chrome icons, and it is not Ruby.
+10. **fullcalendar 6 imports preact, luxon and `@fullcalendar/core/` itself.** No static read of
+    our code can see a CDN module's own imports.
+11. **`sinon`** is imported from a `<script type="module">` in an ERB partial.
+12. **`"data-controller": "trigger-change-event"`** — the quoted-key hash form, alongside
+    `data-controller=` in HTML and `data: {controller:}` in Ruby.
+13. **Base classes and gem classes.** `HistoricalTrends::BaseController` has no routes of its own
+    and every subclass does; `DeviseController` is not ours to delete.
+
+The tool carries all thirteen as commented exemptions, because the next person to add a check
+will hit the fourteenth.
+
+### Reported, not removed
+
+The 118 are a list, not a change. Removing dead code is a judgement per item — a `public/img`
+logo may be somebody's brand asset, a helper may be about to be used by the page being written
+this week — and the ask was an audit. The two **defects** are fixed, because those are bugs. The
+dead code is written down here and in the change log, and stays until someone decides item by
+item. It was 119 until the CSV template was renamed: fixing that link took the file it should
+have been pointing at off the unreferenced list.
+
+The one number worth acting on soon: **6.1MB of `public/fonts` and `public/webfonts` is Font
+Awesome, Lato and Raleway**, none referenced since ADR 0011 removed AdminLTE.

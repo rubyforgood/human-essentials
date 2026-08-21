@@ -16,6 +16,12 @@ module Diaper
       Devise::ConfirmationsController.layout "essentials_auth"
       Devise::UnlocksController.layout "essentials_auth"
       Devise::RegistrationsController.layout "essentials_app"
+      # Accepting an invitation is a new user's first screen. It was missing from this list and
+      # rendered with no layout at all -- no stylesheet, no nav, Times New Roman -- because
+      # layouts/application was removed with AdminLTE and an unnamed layout is optional, so
+      # nothing raised. app/controllers/users/invitations_controller.rb sets a layout but no
+      # route reaches it; devise_for only overrides sessions and omniauth_callbacks.
+      Devise::InvitationsController.layout "essentials_auth"
     end
 
     # Initialize configuration defaults for originally generated Rails version.

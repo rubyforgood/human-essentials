@@ -16,7 +16,7 @@ dev credentials (`org_admin1@example.com` / `password!`).
 Read the output as a checklist: `legacyClassesPresent` and `faIcons` must both be empty/zero on
 a migrated page, `hOrder` must not skip a level, and `activeNav` must be brand-50 on brand-700.
 
-`route-sweep.js` does the same checks across **every HTML screen the router knows about** — 139
+`route-sweep.js` does the same checks across **every HTML screen the router knows about** — 140
 of them, as a super admin, a bank admin and a partner — and prints only what is wrong.
 
 ```bash
@@ -71,6 +71,23 @@ It reports **shadowed** routes separately: declared, but another route answers t
 That is a different defect with the same symptom — `/requests/partner_requests` resolved to
 `requests#show` with an id of `"partner_requests"`, because a second `resources :requests`
 declared a collection route below the first one's `/requests/:id`.
+
+`dead-code.rb` asks the opposite question to `dead-routes.rb`: not routes with no code behind
+them, but code with nothing in front of it — no route, no render, no caller.
+
+```bash
+bin/rails runner bin/design/dead-code.rb
+```
+
+It covers controllers, actions, templates, partials, helper methods, services, queries, jobs,
+mailers, events, concerns, Stimulus controllers, importmap pins and `public/`. **Read the
+exemptions at the top of the file before adding a check.** There are thirteen and every one is a
+false positive that was reported, investigated and disproved — including the one that would have
+recommended deleting Figtree and Bootstrap Icons, which are named only by `@font-face` in the
+stylesheet and by nothing in Ruby or ERB.
+
+Its findings are a list to work through, not a build failure. It exits non-zero anyway, so wire
+it into anything at your own risk.
 
 `responsive-audit.js` visits every screen at **320, 375, 639, 641, 767, 769, 1023, 1025, 1280
 and 1440**, plus a landscape phone at 740×360, and reports what only goes wrong when a layout is
