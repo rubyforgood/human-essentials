@@ -1971,8 +1971,21 @@ and the wrongness always looks like a pile of findings.
 | "sidebar is on screen below lg" | Measured 120ms after a resize, mid-way through the sidebar's `duration-200` slide back off-canvas. |
 | "fixed chrome covers 360px of a 360px viewport" | reCAPTCHA's overlay at `z-index: 2147483640`. The app's own highest is `z-40`; anything past 100 belongs to somebody else. |
 
-**One thing found that is real but not responsive, and not ours.** On the dev server, reCAPTCHA
-renders a challenge overlay that covers `/account_requests/new` and blocks the name field — at
-every width, not just small ones. The specs pass because reCAPTCHA does not run in test. Worth
-knowing before someone reports the form as broken on mobile; it is broken in headless Chromium
-at every size, for a reason that has nothing to do with layout.
+**One thing reported here that turned out to be nothing, and how the probe fooled itself.** This
+entry first said reCAPTCHA rendered a challenge overlay over `/account_requests/new` and blocked
+the name field at every width. It does not, and there is no defect.
+
+`#account_request_name` is hidden until an account type is chosen — the form opens on "I am an
+Essentials Bank" / "I am a Partner Agency" and reveals its fields after. The probe filled the
+field without choosing, so it timed out on a hidden element whose rect is `[0, 0, 0, 0]`; then
+`elementFromPoint(0, 0)` returned whatever sits in the top-left corner of the screen, which is
+**rack-mini-profiler's badge** at `z-index: 2147483643`. A huge z-index was read as reCAPTCHA's
+and the story was built from there.
+
+Verified after choosing the account type: the field fills at 1440×900, 740×360 and 320×640, and
+the reCAPTCHA widget is present and blocking nothing. The site key in `.env` is Google's official
+always-pass test key, which is exactly the right thing for development.
+
+The lesson is about the probe rather than the app: **`elementFromPoint` on an element with a zero
+rect is a question about the origin of the viewport, not about that element.** Check that a
+target has a size before asking what covers it.
