@@ -242,6 +242,7 @@ ruby bin/design/page-audit.rb        # defects and debt, per view
 python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
+pw bin/design/form-validation-audit.js    # required marking and error handling
 ```
 
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the

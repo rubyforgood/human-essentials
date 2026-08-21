@@ -44,12 +44,12 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.value.name} added!"
     else
-      # Define a @item to be used in the `new` action to be rendered with
-      # the provided parameters. This is required to render the page again
-      # with the error + the invalid parameters.
-      @item_categories = current_organization.item_categories.order('name ASC') # Load categories here
-      @item = current_organization.items.new(item_params)
-      flash.now[:error] = result.error.record.errors.full_messages.to_sentence
+      # The record the service failed on, errors and all -- not a fresh one built from the same
+      # params. Rebuilding lost the errors, so every field rendered clean: no message beside it,
+      # no red border, no aria-invalid, and the only sign anything was wrong was a flash sentence
+      # at the top of the page. The error summary and the per-field messages both read from here.
+      @item_categories = current_organization.item_categories.order('name ASC')
+      @item = result.error.record
       render action: :new
     end
   end

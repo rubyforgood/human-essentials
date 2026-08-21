@@ -10,12 +10,15 @@ class Admin::QuestionsController < AdminController
     @question = Question.new
   end
 
+  # No flash on failure: @question carries its errors, so the form shows each one beside its own
+  # field and the summary above lists them. The flash that used to be here called
+  # `@question.punctuate(...)`, a method that exists nowhere in the app, so every invalid
+  # submission raised NoMethodError and returned a 500 instead of the form.
   def create
     @question = Question.create(question_params)
     if @question.save
       redirect_to admin_questions_path
     else
-      flash.now[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
       render :new
     end
   end
@@ -29,7 +32,6 @@ class Admin::QuestionsController < AdminController
     if @question.update(question_params)
       redirect_to admin_questions_path
     else
-      flash.now[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
       render :edit
     end
   end

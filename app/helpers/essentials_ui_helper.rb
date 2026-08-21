@@ -296,11 +296,23 @@ module EssentialsUiHelper
   # passing `wrapper:` at every call site -- forgetting it silently renders a Bootstrap form
   # on a page with no Bootstrap CSS, which looks like an unstyled browser default.
   def essentials_form_for(record, options = {}, &block)
-    simple_form_for(
-      record,
-      options.deep_merge(wrapper: :essentials, wrapper_mappings: WRAPPER_MAPPINGS),
-      &block
-    )
+    simple_form_for(record, options.deep_merge(wrapper: :essentials, wrapper_mappings: WRAPPER_MAPPINGS)) do |f|
+      safe_join([essentials_required_legend, capture(f, &block)])
+    end
+  end
+
+  # "Fields marked * are required." An asterisk that nothing explains fails the point of WCAG
+  # 3.3.2: `<abbr title="required">` covers a screen reader, and a sighted user gets a bare glyph.
+  # Nielsen Norman and GOV.UK both say mark the required fields and say what the mark means.
+  #
+  # Rendered on every form and hidden by CSS unless the form actually contains a required field
+  # -- `form:has(abbr[title="required"])`. Putting it here rather than at 32 call sites means it
+  # cannot be forgotten on the next form, and :has means it cannot be wrong on a form that has no
+  # required fields.
+  def essentials_required_legend
+    tag.p(class: "essentials-required-legend mb-4 text-xs text-slate-500") do
+      safe_join(["Fields marked ", tag.abbr("*", title: "required", class: "font-semibold text-slate-700"), " are required."])
+    end
   end
 
   # The error summary that sits above a form. Named the field, has role="alert", and links
@@ -312,7 +324,14 @@ module EssentialsUiHelper
       concat tag.p("#{pluralize(record.errors.count, "error")} prevented this from being saved:",
         class: "flex items-center gap-2 text-sm font-semibold text-rose-900")
       concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-rose-800") do
-        safe_join(record.errors.map { |error| tag.li(error.full_message) })
+        # Each message links to the field it is about. This comment claimed that for a while
+        # before it was true: the items were plain <li>, so on a long form the summary told you
+        # what was wrong and left you to find it. Linking them is the GOV.UK error-summary
+        # pattern and is why a summary is worth having at all.
+        safe_join(record.errors.map { |error|
+          tag.li(link_to(error.full_message, "##{field_id(record, error.attribute)}",
+            class: "underline decoration-rose-300 underline-offset-2 hover:decoration-rose-600"))
+        })
       end)
     end
   end

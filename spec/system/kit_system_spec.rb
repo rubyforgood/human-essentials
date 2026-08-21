@@ -221,7 +221,7 @@ RSpec.describe "Kit management", type: :system do
 
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "Name can't be blank"
+      expect(page).to have_css("[role=alert]", text: "Name can't be blank")
       expect(page).to have_content(kit_traits[:quantity])
       expect(page).to have_content(item.name)
     end

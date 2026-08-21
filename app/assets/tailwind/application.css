@@ -260,6 +260,21 @@
   }
 
   /*
+   * The "Fields marked * are required." line. Rendered on every form by essentials_form_for and
+   * shown only when the form actually contains a required field, so it can neither be forgotten
+   * on a new form nor be a lie on one with nothing required.
+   */
+  .essentials-required-legend {
+    display: none;
+  }
+
+  /* `label abbr`, not any abbr: the legend contains one itself, so an unscoped :has() would
+     always match and the line would show on forms with nothing required. */
+  form:has(label abbr[title="required"]) .essentials-required-legend {
+    display: block;
+  }
+
+  /*
    * A link in a table cell is a tap target, not just text. WCAG 2.5.8 (AA) asks for 24x24 and a
    * text-sm link is 17px tall -- and on /events the "refers to" column links an id, so the
    * target was 6x17. Every one of the 25 links on that page failed, all of them on both axes.
