@@ -282,6 +282,21 @@
     color: var(--color-white);
   }
 
+  /* An end-stop that leads nowhere is drawn rather than removed, so the control set keeps its
+     width as you page. `opacity-60` and `cursor-not-allowed` are what every other unavailable
+     action in this app uses (ui_helper.rb), and on slate-600 it measures 2.88:1 against white
+     where a live link is 7.56:1 -- plainly inactive, still legible. WCAG 1.4.3 exempts an
+     inactive control from the 4.5:1 minimum; being invisible is not the goal. */
+  .pagination-link[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .pagination-link[aria-disabled="true"]:hover {
+    background-color: transparent;
+    color: var(--color-slate-600);
+  }
+
   /* The truncation marker is not a control: it was a link to "#", which is focusable,
      announces as a link and goes nowhere. */
   .pagination-gap {

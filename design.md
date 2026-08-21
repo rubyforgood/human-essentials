@@ -815,7 +815,11 @@ Go through the helper, never the partial directly:
       footer: essentials_pagination_footer(@paginated_donations) do %>
 ```
 
-The helper returns `nil` for a collection that fits on one page, so the card skips the footer.
+**The strip renders for every table that has rows**, including one that fits on a single page.
+The count is the point, and a card that gains and loses a footer depending on how much data
+happens to be in it is a card of no fixed shape. The helper returns `nil` only when the
+collection is empty, so an empty state is not followed by a strip reading "0 of 0".
+
 Call sites used to do `capture { concat(render(...)) }` and let the card test the result for
 blankness; that worked in production and failed in development, where
 `annotate_rendered_view_with_filenames` puts an HTML comment in the buffer and a "blank"
@@ -851,10 +855,36 @@ the numbers carry the emphasis and the words around them recede. The noun comes 
 `entry_name`, lowercased word by word — a word with an internal capital keeps it, so a future
 `/admin/ndbn_members` reads "NDBN members" and not "ndbn members".
 
-`« First` and `Last »` stay. The mockup's option A drew the pager without them, using an
-ellipsis and the last page number instead; they are kept because jumping to the oldest record
-is a real task on the audit and event tables, and because a number that moves as the result set
-changes is a worse target than a button that does not.
+#### The control set does not change width
+
+`‹ Prev` and `Next ›` are **always drawn**, disabled when they lead nowhere. They used not to be
+rendered at all at the ends, which meant the row of buttons changed width as you paged —
+`/requests` was 7 controls on page 1, 14 on page 5 and 8 on page 10, so a target moved out from
+under the cursor of the person using it.
+
+`« First` and `Last »` are the exception: on a table that fits on one page they do not name
+anything, so they are not drawn. On a longer table they are, disabled at the ends. Keeping them
+at all is deliberate — jumping to the oldest record is a real task on the audit and event
+tables, and a page number that moves as the result set changes is a worse target than a button
+that does not.
+
+Disabled means `<span aria-disabled="true">`, never a disabled link: an `<a>` cannot be
+disabled, it stays focusable and announces nothing. This is the same treatment every
+unavailable action gets here (`ui_helper.rb`). The styling hangs off the attribute, so markup
+and appearance cannot disagree:
+
+```css
+.pagination-link[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; }
+```
+
+That measures **2.88:1** against white where a live link is 7.56:1 — plainly inactive, still
+legible. WCAG 1.4.3 exempts an inactive control from the 4.5:1 minimum, but being invisible is
+not the goal; `slate-300` was tried first and is 1.48:1.
+
+Kaminari's `Paginator#render` evaluates its template only when there is more than one page, and
+returns `nil` otherwise so the call site can supply fall-back HTML. That is the hook the
+single-page control set uses — it is written out in `_pagination.html.erb` rather than coming
+from `app/views/kaminari/`.
 
 #### Page size: three bands
 

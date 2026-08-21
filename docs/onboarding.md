@@ -351,19 +351,22 @@ A page you have not filtered opens on *Last 2 months and next month*. It reaches
 on purpose: a distribution can be scheduled before it happens, and a range ending today would
 hide everything already booked in.
 
-### Long lists
+### How many rows am I looking at?
 
-A table longer than one page gets a pager along the bottom of its card, and beside it a line
-saying **Showing 31–45 of 272 requests** — the rows you are looking at, and how many your
-filters matched in total. That total is the answer to "did that filter do anything?", so it is
-worth a glance after you change one.
+Every table with anything in it carries a line along the bottom of its card saying **Showing
+31–45 of 272 requests** — the rows in front of you, and how many your filters matched
+altogether. That total is the answer to "did that filter do anything?", so it is worth a glance
+after you change one. A table with nothing in it says so in the middle of the card instead.
+
+Beside that line are the page controls. **Prev** and **Next** are always there, greyed out when
+there is nowhere to go, so they stay in the same place instead of appearing and disappearing
+under your cursor. **`« First`** and **`Last »`** show up once there is more than one page — on
+the audit and event lists the oldest record is often the one you want, and `Last »` is the way
+to it.
 
 How many rows fit on a page depends on how tall the rows are, not on a setting: lists of short
 entries show fifty at a time, lists whose rows carry several lines each show fifteen. There is
 nothing to configure, and no page is more than about three screens long.
-
-`« First` and `Last »` jump to the ends. On the audit and event lists the oldest record is
-often the one you want, and `Last »` is the way to it.
 
 The whole filter lives in the address bar, so a filtered view can be bookmarked or sent to
 someone and it will show them the same thing.

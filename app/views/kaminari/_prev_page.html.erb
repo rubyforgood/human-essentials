@@ -1,5 +1,10 @@
 <li>
   <%= link_to_unless current_page.first?, raw(t "views.pagination.previous"), url,
         rel: "prev", remote: remote, class: "pagination-link", data: {turbo_frame: "_self"},
-        aria: {label: "Go to the previous page"} %>
+        aria: {label: "Go to the previous page"} do |name| %>
+    <%# Not a link, and not a disabled link: a disabled <a> stays focusable and announces
+        nothing. This is the same treatment any unavailable action gets here -- see
+        ui_helper.rb -- and the styling hangs off aria-disabled so the two cannot disagree. %>
+    <span class="pagination-link" aria-disabled="true"><%= name %></span>
+  <% end %>
 </li>
