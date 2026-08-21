@@ -34,6 +34,32 @@ breaks that down.
 | `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 
+### Class names that style nothing, and are left alone
+
+Twenty-six class tokens appear in the views, are defined nowhere in the stylesheet, and are
+selected by no JavaScript, spec or gem. They render as nothing and always did. They are written
+down rather than removed, because a known-inert leftover costs nothing and the churn of touching
+twenty-seven files does not.
+
+Verify the list with the extractor in the verification commands below. During the August 2026
+sweep the raw count of undefined tokens went from 86 to 79 as dead Bootstrap classes were
+removed; of those 79, 26 are the orphans listed here and 33 are deliberate hooks the script
+separates out. The remainder are ERB fragments the extractor cannot tell from class names.
+
+| Leftover | Where | Note |
+| --- | --- | --- |
+| `animate-pulse-once` | `partners/requests/_error`, `_success` | Added in 2021 (#2438) as a Tailwind theme extension, `'pulse-once': 'pulse 1s ease-in-out'`. Tailwind was removed later that year and the animation went with it, so this has done nothing since. Restoring it is four lines in `application.css` if the feedback is wanted. |
+| `fc-ltr`, `fc-unthemed` | `distributions/schedule` | FullCalendar v4 class names, applied by hand. v5 sets its own; these are ignored. |
+| `form-yesno`, `radio-yesno`, `col-w`, `links` | partner profile edit and step forms | AdminLTE-era layout hooks. |
+| `pc-*`, `partner-served-*`, `partners-served-areas-*`, `partner-county-separator` | `served_areas/_served_area_fields`, partner profile area-served | Hooks for a served-areas script that no longer exists. |
+| `county-heading`, `county-name`, `client-share` | partner profile show | As above, on the read-only side. |
+| `account-type-choice`, `account_type` | `account_requests/new` | |
+| `main_logo`, `float-center`, `li-requested`, `filter-bar-submit` | assorted | |
+
+Two that look inert and are **not**: `filterrific-periodically-observed` is the filterrific
+gem's own JS hook, and `form-inputs` is simple_form's. Neither is defined in this app's
+stylesheet and both must stay.
+
 ### Index tables without a pager
 
 Every other index table paginates (`design.md` → Pagination). These eight do not. Row heights
@@ -173,11 +199,15 @@ bundle exec rspec                 # system specs included -- they catch what a s
 bundle exec rubocop
 bundle exec erb_lint --lint-all
 ruby bin/design/status.rb         # which controllers are on a design system layout
+ruby bin/design/page-audit.rb     # defects and debt, per view
 bin/start                         # then, with the app running:
 pw bin/design/sweep.js            # 56 pages in a real browser
 
-# Classes nothing defines any more. Expect no hits outside prose in comments.
-grep -rnE 'btn btn-|card-body|form-group|col-md-|fa-|modal-dialog' app/views/
+# Every class token in the views that the compiled stylesheet does not define. Expect 26, all
+# listed above, plus 33 deliberate hooks the script separates out. The script sanity-checks its own extractor first: Tailwind escapes `.` and `:`
+# in selectors (`.mt-0\.5`), and a naive regex reports every such utility as undefined -- the
+# first version of this check produced 186 findings, 100 of which were Tailwind working fine.
+python3 bin/design/undefined-classes.py
 ```
 
 Run the grep as well as the other two. The status script asks whether a view has design system

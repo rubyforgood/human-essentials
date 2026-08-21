@@ -1,19 +1,9 @@
 <div class="space-y-4" data-controller="disclosure">
   <% @bank_questions.each do |bank_question| %>
-    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <%# The trigger is a button, not an anchor with a fragment href: it toggles content in
-          place rather than navigating anywhere. %>
-      <button type="button"
-              class="flex w-full items-center justify-between gap-3 px-5 py-4 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-              aria-expanded="false"
-              aria-controls="question<%= bank_question.id %>"
-              data-action="click->disclosure#toggle">
-        <span class="text-base font-semibold text-slate-900"><%= bank_question.title %></span>
-        <i class="bi-chevron-down shrink-0 text-sm text-slate-500 transition-transform" data-disclosure-chevron aria-hidden="true"></i>
-      </button>
-      <div id="question<%= bank_question.id %>" class="hidden border-t border-slate-200 px-5 py-4 text-sm text-slate-700">
-        <%= bank_question.answer %>
-      </div>
-    </div>
+    <%= render "shared/essentials/disclosure",
+          panel_id: "question#{bank_question.id}",
+          title: bank_question.title do %>
+      <%= bank_question.answer %>
+    <% end %>
   <% end %>
 </div>
