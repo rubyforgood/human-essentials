@@ -13,6 +13,13 @@
   <%= turbo_frame_tag "kits-results", target: "_top", data: {turbo_action: "advance"} do %>
 
     <%= render "shared/essentials/card", padded: false do %>
+      <%#
+        Kits is the fifth tab of the item catalogue. It keeps its own title and subtitle rather
+        than borrowing the items header, because it is also a destination in its own right in the
+        sidebar -- clicking "Kits" there and landing on a page headed "Items & inventory" would
+        make the sidebar lie. The strip is here so the tab is a way in and a way back out.
+      %>
+      <%= render "items/catalogue_tabs", current: :kits %>
       <%= render partial: "kits/table" %>
     <% end %>
   <% end %>

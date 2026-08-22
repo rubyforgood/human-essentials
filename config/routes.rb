@@ -199,12 +199,19 @@ Rails.application.routes.draw do
   resources :profiles, only: %i(edit update)
 
   resources :items do
+    # The item catalogue is five page tabs, not five panels in one response: the page header's
+    # primary action follows the tab, and a tab you can link to is one you can come back to.
+    # See design.md. These two are collection routes so they resolve ahead of items#show.
+    collection do
+      get :quantity_and_location
+      get :inventory
+    end
     delete :deactivate, on: :member
     patch :restore, on: :member
     patch :remove_category, on: :member
   end
 
-  resources :item_categories, except: [:index]
+  resources :item_categories
 
   resources :partners do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do

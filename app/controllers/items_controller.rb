@@ -4,33 +4,23 @@ class ItemsController < ApplicationController
   # Migrated to the Ruby for Good design system (ADR 0011).
   layout "essentials_app"
 
+  # The item catalogue's three item-shaped views. Each is its own URL so the page header's
+  # primary action can follow the tab -- see design.md. The other two tabs are other
+  # resources entirely: item_categories#index and kits#index.
+  before_action :load_catalogue, only: %i[index quantity_and_location inventory]
+  before_action :load_storage_matrix, only: %i[quantity_and_location inventory]
+
   def index
-    @items = current_organization
-      .items
-      .includes(:kit, :line_items, :request_units, :item_category)
-      .alphabetized
-      .class_filter(filter_params)
-      .group('items.id')
-    @items = @items.active unless params[:include_inactive_items]
-
-    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
-    @kits = current_organization.kits.includes(kit_item: {line_items: :item})
-    @storages = current_organization.storage_locations.active.order(id: :asc)
-
-    @include_inactive_items = params[:include_inactive_items]
-    @selected_reporting_category = filter_params[:by_reporting_category]
-
-    @paginated_items = @items.page(params[:page]).per(Pagination::TALL)
-
-    @inventory = View::Inventory.new(current_organization.id)
-    @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.call(organization: current_organization,
-      inventory: @inventory,
-      filter_params: filter_params)
-
     respond_to do |format|
       format.html
       format.csv { send_data Item.generate_csv_from_inventory(@items, @inventory), filename: "Items-#{Time.zone.today}.csv" }
     end
+  end
+
+  def quantity_and_location
+  end
+
+  def inventory
   end
 
   def create
@@ -139,6 +129,36 @@ class ItemsController < ApplicationController
   end
 
   private
+
+  # Shared by the three item-shaped views and by the CSV export.
+  def load_catalogue
+    @items = current_organization
+      .items
+      .includes(:kit, :line_items, :request_units, :item_category)
+      .alphabetized
+      .class_filter(filter_params)
+      .group('items.id')
+    @items = @items.active unless params[:include_inactive_items]
+
+    @kits = current_organization.kits.includes(kit_item: {line_items: :item})
+
+    @include_inactive_items = params[:include_inactive_items]
+    @selected_reporting_category = filter_params[:by_reporting_category]
+
+    @paginated_items = @items.page(params[:page]).per(Pagination::TALL)
+    @inventory = View::Inventory.new(current_organization.id)
+  end
+
+  # Only the two matrix views need this, and it is the expensive one. While all five tabs were
+  # panels of a single response, every visit to the item list paid for it.
+  def load_storage_matrix
+    @storages = current_organization.storage_locations.active.order(id: :asc)
+    @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.call(
+      organization: current_organization,
+      inventory: @inventory,
+      filter_params: filter_params
+    )
+  end
 
   def reporting_category_hint
     item = current_organization.items.find(params[:id])

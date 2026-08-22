@@ -122,7 +122,9 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
 
-      click_on "Items, quantity and location" # href="#sectionC"
+      # The catalogue tabs are page tabs: this is a navigation, not a panel swap.
+      click_on "Items, quantity and location"
+      expect(page).to have_current_path(quantity_and_location_items_path)
       tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
       expect(tab_items_quantity_location_text).to have_content "Quantity"
       expect(tab_items_quantity_location_text).to have_content storage_name
@@ -137,7 +139,8 @@ RSpec.describe "Item management", type: :system do
     end
 
     it "should display an Item Inventory table", js: true do
-      click_on "Item inventory" # href="#sectionD"
+      click_on "Item inventory"
+      expect(page).to have_current_path(inventory_items_path)
       tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
       expect(tab_items_quantity_location_text).to have_content "Quantity"
       expect(tab_items_quantity_location_text).to have_content item_pullups.name
@@ -180,6 +183,9 @@ RSpec.describe "Item management", type: :system do
 
       context 'and associating to a existing item' do
         before do
+          # Saving a category now lands on the categories tab, which is where it belongs.
+          # The items are one tab over.
+          click_on 'Item list'
           find("tr[data-item-id=\"#{item.id}\"]").find('a', text: 'Edit').click
           select new_item_category, from: 'Category'
           click_on 'Save'
@@ -195,6 +201,7 @@ RSpec.describe "Item management", type: :system do
         let(:new_item_name) { 'Test Item' }
 
         before do
+          click_on 'Item list'
           click_on 'New item'
           select "Other", from: "NDBN reporting category"
           fill_in 'Name *', with: new_item_name

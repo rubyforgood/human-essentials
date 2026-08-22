@@ -1,0 +1,68 @@
+<% content_for :title, "Item categories - Items & Inventory - #{current_organization.name}" %>
+
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The page's primary action follows the tab: on the item list it is "New item", here it is
+    "New item category". One place a page's main action ever appears, rather than a button
+    tucked between the tab strip and the table. See design.md.
+  %>
+  <%= render "shared/essentials/page_header",
+        title: "Items & inventory",
+        subtitle: "What #{current_organization.name} stocks, and how much of it.",
+        actions: capture {
+          concat essentials_link_button("New item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg")
+        } %>
+
+  <%= render "shared/essentials/card", padded: false do %>
+    <%= render "items/catalogue_tabs", current: :categories %>
+
+    <% if @item_categories.blank? %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No item categories yet",
+            body: "Categories group related items together and make reporting easier.",
+            action: essentials_link_button("Add your first item category", new_item_category_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% else %>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+        <table class="data-table">
+          <caption>Item categories and the items in each</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Items in category</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @item_categories.each do |item_category| %>
+              <tr data-item-category-id="<%= item_category.id %>">
+                <td class="font-medium text-slate-900">
+                  <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
+                </td>
+                <td class="max-w-prose text-slate-600"><%= item_category.description %></td>
+                <td>
+                  <ul class="space-y-0.5">
+                    <% item_category.items.each do |item| %>
+                      <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
+                    <% end %>
+                  </ul>
+                </td>
+                <td class="text-right">
+                  <div class="flex justify-end gap-1.5">
+                    <%= essentials_link_button "View", item_category_path(item_category), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                    <%= essentials_link_button "Edit", edit_item_category_path(item_category.id), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    <% if item_category.items.count <= 0 %>
+                      <%= essentials_action_button "Delete", item_category_path(item_category.id), method: :delete,
+                            variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                            confirm: confirm_delete_msg(item_category.name) %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+</div>

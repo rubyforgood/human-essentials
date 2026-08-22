@@ -412,6 +412,13 @@ nothing to configure, and no page is more than about three screens long.
 The whole filter lives in the address bar, so a filtered view can be bookmarked or sent to
 someone and it will show them the same thing.
 
+The same is true of tabs. **Items & inventory** is five of them — the item list, item
+categories, items by quantity and location, item inventory, and kits — and each one is its own
+address. Bookmark the view you check every morning, send someone a link to it, and use the back
+button to get out of it. The button at the top right follows the tab you are on: it says *New
+item* on the item list and *New item category* on the categories tab, so the thing you came to
+create is always in the same corner of the screen.
+
 ## If you are a partner agency
 
 You have your own portal. You see your own agency's data and nothing else.

@@ -1,4 +1,4 @@
-<% content_for :title, "Items & Inventory - #{current_organization.name}" %>
+<% content_for :title, "Items, quantity and location - Items & Inventory - #{current_organization.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
@@ -11,15 +11,15 @@
           concat essentials_link_button("New item", new_item_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: items_path, frame: "items-results" do %>
+  <%= render "shared/essentials/filter_bar", url: quantity_and_location_items_path, frame: "items-results" do %>
     <div class="min-w-0"><%= filter_select(label: "NDBN reporting category", scope: :by_reporting_category, collection: Item.reporting_categories_for_select, selected: @selected_reporting_category) %></div>
     <div class="pb-2"><%= filter_checkbox(label: "Also include inactive items", scope: "include_inactive_items", selected: @include_inactive_items) %></div>
   <% end %>
   <%= turbo_frame_tag "items-results", target: "_top", data: {turbo_action: "advance"} do %>
 
     <%= render "shared/essentials/card", padded: false do %>
-      <%= render "items/catalogue_tabs", current: :list %>
-      <%= render partial: "item_list", locals: {items: @paginated_items, inventory: @inventory, kits: @kits.active} %>
+      <%= render "items/catalogue_tabs", current: :quantity_and_location %>
+      <%= render partial: "items_quantity_and_location" %>
     <% end %>
   <% end %>
 </div>
