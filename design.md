@@ -451,6 +451,19 @@ if the tab is a URL — which is how "New partner group" stopped being a fourth 
 above a table. It is also how a tab becomes something you can link to, bookmark and go back
 from.
 
+**Nothing sits between a tab strip and the first row of its table except that table's own
+filters.** A filter earns the space because it changes the rows underneath it; an action does
+not, and an action there is the signal to use page tabs instead. The item catalogue had this on
+four of five tabs — a 55px strip holding one secondary button, and on two of them that button
+was the page header's own "New item" a second time. It is five page tabs now: `/items`,
+`/item_categories`, `/items/quantity_and_location`, `/items/inventory`, `/kits`, each with the
+primary action for what it shows.
+
+A page tab may lead somewhere that is also a destination in its own right — "Kits" is both the
+fifth tab of the catalogue and a sidebar entry. When it is, the page keeps its own title rather
+than borrowing the strip's, because the sidebar has to be telling the truth about where it just
+sent you. Render the strip there anyway, so the tab is a way back as well as a way in.
+
 ### Filter bar
 
 ```erb

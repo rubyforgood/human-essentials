@@ -2410,3 +2410,90 @@ Two things noticed in passing and deliberately left alone, both older than this 
 - design.md says the organization's name is in the top bar. It is in the sidebar
   (`_essentials_sidebar.html.erb:12`). The claim about tenancy being visible holds; the location
   in the sentence does not.
+
+## 2026-08-22 · The button between the tab strip and the table
+
+Four of the five tabs on `/items` carried a full-width strip holding one secondary button,
+between the tab strip and the first row. Measured in Chromium at 1440×900: **55px** on each of
+Item categories, Items quantity and location, Item inventory and Kits.
+
+This was not an open question. `design.md` already said both halves of the answer — the page
+header rule ends "do not tuck it above a table; see the tabs rule below", and the tabs rule says
+"prefer page tabs when a tab needs its own action". `partners/index` and `partner_groups/index`
+had already been converted for exactly this reason. `/items` was the page the rule was written
+about and never applied to.
+
+### Two of the four were not a design question
+
+"Items, quantity and location" and "Item inventory" both offered **New item** — the page
+header's own primary action, eleven lines up in the same template, rendered a second time 55px
+below as a secondary. Deleting those two was the whole fix for them: no decision, no regression,
+110px back. That went in first, on its own, so the interesting change would not be carrying it.
+
+### What the industry does, and why the header wins
+
+GitHub, Linear, Stripe and Shopify all put the tab-scoped action in the page header and make the
+tabs URLs. Atlassian and Material are the only mainstream systems that sanction a trailing action
+on the tab row itself. Nobody puts a band between the strip and the first row.
+
+The tab-row variant was the tempting cheap option — no routing, panel tabs stay — and it was
+rejected on measurement rather than taste. The five labels are **598px** at every width. The
+tightest container is **702px at a 1024px viewport**, the fixed sidebar taking the rest, leaving
+**104px**; "New item category" is **146px**. It wraps at 1024 and below, which is the 55px strip
+again with a worse border. It only works from about 1100px up.
+
+### Five page tabs, three controllers
+
+| Tab | URL | Primary action |
+| --- | --- | --- |
+| Item list | `/items` | New item |
+| Item categories | `/item_categories` | New item category |
+| Items, quantity and location | `/items/quantity_and_location` | New item |
+| Item inventory | `/items/inventory` | New item |
+| Kits | `/kits` | New kit |
+
+The two matrix views are collection routes, so they resolve ahead of `items#show`. Verified:
+`dead-routes.rb` reports 0 dead and 0 shadowed over 349 routes.
+
+`item_categories#index` had been excluded from the resource (`except: [:index]`) because the
+categories table lived inside `items#index`. Creating or deleting a category redirected to
+`items_path`, which is to say: to a different tab from the one you were on. Both redirect to
+`item_categories_path` now.
+
+**Kits keeps its own title.** The partners precedent has an identical header on both tabs, which
+makes the pair read as one page. Kits cannot do that, because it is also a sidebar destination —
+clicking "Kits" in the rail and landing on a page headed "Items & inventory" would make the
+sidebar lie. It keeps "Kits" and its own filter bar, and renders the strip so the tab is a way
+back as well as a way in. This is the one place the two precedents disagree, and the sidebar wins.
+
+### A performance consequence that was not the point
+
+`items#index` built all five tabs' data on every request — the item list, the categories, the
+per-storage matrix, the inventory tree and the kits — whichever tab you were looking at. The
+expensive one is `ItemsByStorageCollectionAndQuantityQuery`, and the item list paid for it on
+every visit. It is a `before_action` on the two matrix views now.
+
+### Filters were deliberately left out of the rule
+
+The rule is phrased "except that table's own filters", and the carve-out is doing work. The
+"Inventory" tab of `storage_locations/show` has a band in the same position, holding "Show
+inventory at date" and a View button. It is **125px** — more than twice the strip this change
+removed — and it stays.
+
+A filter changes the rows underneath it, so being adjacent to them is the point; an action
+creates a record and navigates away, and has no relationship to the rows it sits on. Same shape,
+opposite job. A rule that caught both would also contradict the filter bar rule — "a plain bar
+sits 16px above the table it filters" — on all 19 pages that use the component. And moving this
+particular filter would make it lie: `version_date` scopes one of three tabs, and the standard
+position is above the card, where it would appear to scope all three.
+
+Two things about that band are wrong for other reasons, and are a filter-consistency job rather
+than this one:
+
+- It is hand-rolled `form_for` + `label_tag` + `date_field_tag` + a bare submit, not the
+  `filter_bar` and `filter_*` helpers 19 other pages use. `admin/barcode_items/index` is the
+  same class of defect — a filter card with its own "Filters" heading.
+- **It works only because Inventory is the first tab.** Submitting reloads to `?version_date=…`
+  with no fragment, and `tabs_controller` falls back to whichever tab the server marked selected,
+  which is always the first. Put that filter on tab two and submitting would silently return the
+  user to tab one. Verified in the browser. It is correct today by ordering, not by design.

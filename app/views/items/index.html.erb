@@ -18,21 +18,8 @@
   <%= turbo_frame_tag "items-results", target: "_top", data: {turbo_action: "advance"} do %>
 
     <%= render "shared/essentials/card", padded: false do %>
-      <div data-controller="tabs">
-        <%= render "shared/essentials/tabs", tabs: [
-              {id: "item-list", label: "Item list"},
-              {id: "item-categories", label: "Item categories"},
-              {id: "quantity-location", label: "Items, quantity and location"},
-              {id: "item-inventory", label: "Item inventory"},
-              {id: "kits", label: "Kits"}
-            ] %>
-
-        <%= render partial: "item_list", locals: {items: @paginated_items, inventory: @inventory, kits: @kits.active} %>
-        <%= render partial: "item_categories", locals: {item_categories: @item_categories} %>
-        <%= render partial: "items_quantity_and_location" %>
-        <%= render partial: "items_inventory" %>
-        <%= render partial: "kits" %>
-      </div>
+      <%= render "items/catalogue_tabs", current: :list %>
+      <%= render partial: "item_list", locals: {items: @paginated_items, inventory: @inventory, kits: @kits.active} %>
     <% end %>
   <% end %>
 </div>

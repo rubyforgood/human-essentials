@@ -114,7 +114,7 @@ Counts are files changed on the branch.
 | Shared partials | 18 | Where the design system's own components live (`shared/essentials/*`). |
 | Users and auth | 15 | Devise views moved to the split auth shell. |
 | Reports | 14 | Fifteen reports, renamed `Subject — cut` so they sort together in the rail. |
-| Items and inventory | 14 | Tab strip; expandable rows for per-location quantities. |
+| Items and inventory | 14 | Five page tabs across three controllers; expandable rows for per-location quantities. |
 | Distributions | 14 | The confirmation flow, which turned out never to have worked. |
 | Vendors, manufacturers, product drives, donation sites, participants | 44 | Mostly index/form/show triples; the most mechanical part of the work. |
 | Storage locations, transfers, purchases, donations, requests, kits, audits, adjustments | ~50 | Core inventory movement. |

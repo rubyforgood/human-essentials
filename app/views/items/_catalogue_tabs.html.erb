@@ -1,0 +1,18 @@
+<%#
+  The item catalogue's five views, as page tabs. Declared once here and rendered by
+  items#index, items#quantity_and_location, items#inventory, item_categories#index and
+  kits#index; `current:` names the active one.
+
+    render "items/catalogue_tabs", current: :categories
+
+  Page tabs rather than panel tabs because three of the five carry a different primary action
+  -- "New item", "New item category", "New kit" -- and a page header can only follow the tab
+  if the tab is a URL. See design.md.
+%>
+<%= render "shared/essentials/page_tabs", tabs: [
+      {label: "Item list", path: items_path, current: current == :list},
+      {label: "Item categories", path: item_categories_path, current: current == :categories},
+      {label: "Items, quantity and location", path: quantity_and_location_items_path, current: current == :quantity_and_location},
+      {label: "Item inventory", path: inventory_items_path, current: current == :inventory},
+      {label: "Kits", path: kits_path, current: current == :kits}
+    ] %>

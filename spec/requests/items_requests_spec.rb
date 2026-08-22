@@ -31,14 +31,18 @@ RSpec.describe "Items", type: :request do
           create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons)
           create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons)
 
-          get items_path(format: response_format)
-          page = Nokogiri::HTML(response.body)
-
           # Below-minimum totals are no longer flagged by red bold text alone: the cell pairs
           # the number with a "Below minimum" pill carrying an icon and the word, so it
-          # survives greyscale and colour blindness. Both tab panels flag the same item.
-          %w[panel-item-inventory panel-quantity-location].each do |panel_id|
-            cell = page.at_css("##{panel_id} td[data-column='total']")
+          # survives greyscale and colour blindness. The two matrix views are their own pages
+          # now rather than panels of items#index, so each is fetched on its own.
+          {
+            inventory_items_path => "items-inventory",
+            quantity_and_location_items_path => "items-quantity-location"
+          }.each do |path, container_id|
+            get path
+            page = Nokogiri::HTML(response.body)
+
+            cell = page.at_css("##{container_id} td[data-column='total']")
             expect(cell.text).to include("59")
             expect(cell.text).to include("Below minimum")
             expect(cell.at_css(".text-rose-700")).to be_present

@@ -2,6 +2,12 @@ class ItemCategoriesController < ApplicationController
   # Migrated to the Ruby for Good design system (ADR 0011).
   layout "essentials_app"
 
+  # One of the item catalogue's five page tabs. It is its own URL rather than a panel of
+  # items#index so that "New item category" can be this page's primary action -- see design.md.
+  def index
+    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
+  end
+
   def new
     @item_category = ItemCategory.new
   end
@@ -11,7 +17,7 @@ class ItemCategoriesController < ApplicationController
     @item_category.assign_attributes(item_category_params)
 
     if @item_category.save
-      redirect_to items_path
+      redirect_to item_categories_path
     else
       render :new
     end
@@ -44,7 +50,7 @@ class ItemCategoriesController < ApplicationController
       @item_category.destroy
       flash[:notice] = "#{@item_category.name} has been deleted."
     end
-    redirect_to items_path
+    redirect_to item_categories_path
   end
 
   private

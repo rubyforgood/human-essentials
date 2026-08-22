@@ -51,7 +51,7 @@ RSpec.describe "ItemCategories", type: :request do
         expect {
           post item_categories_url(item_category: valid_attributes)
         }.to change(ItemCategory, :count).by(1)
-        expect(response).to redirect_to(items_path)
+        expect(response).to redirect_to(item_categories_path)
         expect(ItemCategory.last.organization).to eq(organization)
       end
     end
@@ -102,7 +102,7 @@ RSpec.describe "ItemCategories", type: :request do
         expect {
           delete item_category_url(id: item_category.id)
         }.to change(ItemCategory, :count).by(-1)
-        expect(response).to redirect_to(items_path)
+        expect(response).to redirect_to(item_categories_path)
       end
     end
 
@@ -113,7 +113,7 @@ RSpec.describe "ItemCategories", type: :request do
         expect {
           delete item_category_url(id: item_category.id)
         }.not_to change(ItemCategory, :count)
-        expect(response).to redirect_to(items_path)
+        expect(response).to redirect_to(item_categories_path)
         expect(flash[:alert]).to eq("Cannot delete item category because it has associated items.")
       end
     end
