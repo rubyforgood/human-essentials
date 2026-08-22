@@ -36,6 +36,26 @@ module FilterHelper
       text_field(:filters, scope, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, id: id, value: selected)
   end
 
+  # A single date, not a range -- `shared/date_range_picker` is the range control, and the two
+  # are different questions: a range narrows a list of records to a window, this one asks what
+  # the inventory looked like at a moment.
+  #
+  # Submits as a bare param rather than under `filters[...]`, for the same reason
+  # `filter_checkbox` does. `Filterable#class_filter` walks that hash and calls
+  # `public_send(key, value)` on the model, so every name in it has to be a real scope. A point
+  # in time is not one, and putting it there would turn a filtered index into a NoMethodError.
+  def filter_date(scope:, label: nil, selected: nil, min: nil, max: nil, hint: nil)
+    label ||= "Filter #{scope.to_s.tr("_", " ")}"
+    id = "filters_#{scope}_#{SecureRandom.uuid}"
+    hint_id = "#{id}_hint" if hint
+
+    label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
+      date_field_tag(scope, selected,
+        class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, id: id, min: min, max: max,
+        aria: {describedby: hint_id}.compact) +
+      (hint ? tag.p(hint, id: hint_id, class: EssentialsUiHelper::FILTER_HINT_CLASSES) : "".html_safe)
+  end
+
   def filter_checkbox(label:, scope:, selected: nil)
     id = "filters_#{scope}_#{SecureRandom.uuid}"
 

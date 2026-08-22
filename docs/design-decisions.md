@@ -2551,3 +2551,60 @@ smaller number down it was measured at `c0de28eb1`, the branch tip before any of
 there too. The audit's nine pages include nothing these commits touched, and the likeliest
 explanation is the manufacturers CSV import, whose modal was deleted along with its route in
 `f644de0ef` — recorded in the change log, not carried into the verification line beneath it.
+
+## 2026-08-22 · The storage location date band, and the filter nobody could see
+
+The "Inventory" tab of `storage_locations/show` held the app's last hand-rolled filter: a
+`form_for` with a `label_tag`, a `date_field_tag` carrying its own copy of the control classes,
+a bare submit button, and a `w-full` hint paragraph that forced a second line. **125px**, always
+open, while the nineteen other filtered pages used the `filter_bar` component. It is that
+component now: **71px collapsed**, 183px open.
+
+### It stays inside the tab panel
+
+The component's documented home is 16px above the table it filters, which here would be above
+the card — above the tab strip, where it would look like it scoped all three tabs while scoping
+one. The rule written two commits ago allows a table's own filters between a strip and its first
+row, and this is the instance it was written for.
+
+### The frame is not decoration
+
+`version_date` used to submit as a full page load, and a full page load re-renders the tab strip
+with whichever tab the server marked `aria-selected`, which is always the first. **The filter
+only worked because Inventory happens to be first.** Moving it to tab two would have silently
+returned the user to tab one on every apply, and nothing would have failed. Applying into a
+frame removes the question rather than answering it: the strip is never re-rendered. The rule in
+design.md now says an in-panel filter must use a frame, and says why.
+
+### `filters[…]` is reserved for scopes, which is why two helpers nest and two do not
+
+The obvious move was to submit `filters[version_date]` like `filter_select` and `filter_text`.
+That would have been a bug. `Filterable#class_filter` walks the `filters` hash and calls
+`public_send(key, value)` on the model, so a name in there that is not a scope raises — and
+`filter_params` is shared with `storage_locations#index`, which does call `class_filter`. This
+is also, in retrospect, why `filter_checkbox` submits a bare param: `include_inactive_items` is
+not a scope either. `filter_date` follows it, the split is written down in design.md, and the
+existing `version_date` URLs keep working.
+
+### The chip that never appeared
+
+`filter_summary_controller` skipped **every** `input[type=date]`:
+
+```js
+if (field.type === "date") return []
+```
+
+That was correct while the only date inputs in a filter bar were the two inside the date range
+popover, which reports through a hidden field — counting them too would chip one filter twice.
+`filter_date` put the first standalone date input in a bar, and it inherited the exclusion: a
+page arrived at by a filtered URL showed the right rows, the right caption and the field
+correctly pre-filled, with **no chip, no count badge and no "Clear all"**. The only way back to
+the unfiltered view was to empty the field by hand.
+
+The discriminator is the one `clearField` was already using — whether the input is inside
+`[data-controller~='date-range']`. Verified both ways: the standalone control now chips and
+clears, and `/donations` still shows exactly one "Date range: Today" chip rather than three.
+
+This is the second time in two days that a control was invisible to something because the
+something assumed the four cases it had seen were all of them — `page-audit.rb` and its four
+page kinds was the first. Both were found by adding a fifth case, not by reading the code.

@@ -100,6 +100,7 @@ they render as nothing at all.
 | Date range filter | Litepicker + its `ranges` plugin, two unversioned jsDelivr pins | A preset `<select>` and two native `<input type="date">`; no dependency |
 | Totals | `<tfoot>` under each table, and a separate summary report | `essentials_stats` above the table: one card, hairline separators, columns following the figure count, titled and scoped |
 | Filter bars | A flex row of content-sized controls, applied with a Filter button, reloading the page | A grid of equal columns, applied on change into a Turbo Frame; no button, no reload |
+| The storage location "show inventory at date" band | A hand-rolled `form_for` with its own copy of the control classes and a submit button, 125px and always open | `filter_bar` with `filter_date`, 71px collapsed. The last filter in the app that was not the component |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
 
 ## What was migrated, by area

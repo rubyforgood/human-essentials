@@ -225,5 +225,41 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       expect(page.find("#panel-out", visible: true)).to have_content "100"
     end
+
+    describe "the inventory date filter" do
+      it "reports itself as a chip and clears from one" do
+        visit subject
+
+        open_filters
+        fill_in "Show inventory at date", with: "2024-01-15"
+        wait_for_filters
+
+        expect(page).to have_content("Show inventory at date:")
+        expect(page).to have_link("Clear all")
+
+        click_on "Clear all"
+        wait_for_filters
+
+        expect(page).not_to have_content("Show inventory at date:")
+        # The caption is the table's accessible name and `.data-table caption` hides it visually,
+        # so it is matched with visible: :all rather than as page text.
+        expect(page).to have_css("#panel-inventory caption",
+          text: "Items currently at #{storage_location.name}", visible: :all)
+      end
+
+      # It applies into a frame rather than reloading, and the difference is load-bearing: a
+      # reload re-renders the tab strip with the first tab selected, so before the frame this
+      # only worked because Inventory happens to be the first of the three.
+      it "leaves the tab strip alone" do
+        visit subject
+
+        open_filters
+        fill_in "Show inventory at date", with: "2024-01-15"
+        wait_for_filters
+
+        expect(page).to have_css("#tab-inventory[aria-selected='true']")
+        expect(page.find("#panel-inventory", visible: true)).to be_present
+      end
+    end
   end
 end
