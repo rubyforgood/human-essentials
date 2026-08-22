@@ -1,64 +1,48 @@
 <% content_for :title, "Admin - Barcode Items" %>
+
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    `modal_button_to` takes Font Awesome names and maps them to Bootstrap Icons; an unmapped
+    name silently becomes `bi-dot`, so the icon here is "plus" rather than the "plus-lg" it
+    ends up rendering.
+  %>
   <%= render "shared/essentials/page_header",
         title: "Barcode items",
-        subtitle: "Global barcodes, shared by every organization." %>
-</div>
+        subtitle: "Global barcodes, shared by every organization.",
+        actions: modal_button_to("#newBarcode", {text: "New barcode", icon: "plus", size: "md", type: "primary"}) %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Filters</h2>
-          </div>
-          <div class="px-5 py-4">
-            <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
-              <div class="grid gap-6">
-                <div class="mb-4 min-w-0">
-                  <%# label_tag with one argument makes for="filter_by_item_category"; the select is
-                      filters_barcodeable_id, so the label pointed at nothing. %>
-                  <%= label_tag "filters_barcodeable_id", "Filter by item category" %>
-                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none") %>
-                </div>
-              </div>
-              <div class="border-t border-slate-200 px-5 py-3">
-                <%= button_tag type: "submit", class: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                   Filter
-                <% end %>
-                <%= link_to admin_barcode_items_path, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                  <i class="bi-slash-circle"></i> Clear Filters
-                <% end %>
-                <span class="ml-auto">
-                    <%= modal_button_to("#newBarcode", {text: "Add New Barcode", icon: "check-circle", size: "md", type: "success"}) %>
-                  </span>
-              </div>
-            <% end # form %>
-          </div>
-        </div>
-
-      </div>
+  <%= render "shared/essentials/filter_bar", url: admin_barcode_items_path, frame: "admin-barcode-items-results" do %>
+    <div class="min-w-0">
+      <%= filter_select(label: "Base item", scope: :barcodeable_id, collection: @items,
+            key: :id, value: :name, selected: @selected_barcodeable_id) %>
     </div>
+  <% end %>
+  <%= turbo_frame_tag "admin-barcode-items-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-  </div>
-
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
+    <%= render "shared/essentials/card", padded: false,
+          footer: essentials_pagination_footer(@paginated_barcode_items) do %>
+      <% if @barcode_items.blank? %>
+        <%= render "shared/essentials/empty_state",
+              kind: essentials_filtered? ? :no_results : :cold_start,
+              title: essentials_filtered? ? "No barcodes match those filters" : "No global barcodes yet",
+              body: essentials_filtered? ? "Clear the filters to see every global barcode." : "A global barcode maps a scan to a base item, for every organization at once." %>
+      <% else %>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+          <table class="data-table">
+            <caption>Global barcodes</caption>
+            <thead>
               <tr>
-                <th>Item Type</th>
-                <th>Quantity in the Box</th>
-                <th>Barcode</th>
-                <th class="text-right">Actions</th>
+                <th scope="col">Item type</th>
+                <th scope="col" class="quantity">Quantity in the box</th>
+                <th scope="col">Barcode</th>
+                <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "barcode_item_row", collection: @barcode_items %>
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody><%= render partial: "barcode_item_row", collection: @paginated_barcode_items %></tbody>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
 </div>
 

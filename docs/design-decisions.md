@@ -2608,3 +2608,64 @@ clears, and `/donations` still shows exactly one "Date range: Today" chip rather
 This is the second time in two days that a control was invisible to something because the
 something assumed the four cases it had seen were all of them — `page-audit.rb` and its four
 page kinds was the first. Both were found by adding a fifth case, not by reading the code.
+
+## 2026-08-22 · The admin barcode filter, which had never filtered anything
+
+`admin/barcode_items/index` was the other filter that was not the component, and rebuilding it
+turned up something the styling was hiding.
+
+```ruby
+def index
+  @barcode_items = BarcodeItem.global
+  @items = BaseItem.alphabetized.all
+end
+```
+
+**No `class_filter`.** The page rendered a "Filter by item category" select and a Filter button;
+pressing it reloaded the same full list with the choice sitting in the query string. The private
+`filter_params` method existed directly below and nothing called it. A request spec now covers
+it, and it fails against the old action — that is how the claim was checked, because the dev
+database has no global barcodes at all, so nothing on screen could have shown it either way.
+
+An earlier attempt to demonstrate the bug in a browser did show "51 rows before, 51 rows after",
+which looked like proof and was not: `BarcodeItem.global.count` is 0 in dev and those 51 rows
+belonged to the modal's own tables further down the page. The number was real and meant nothing.
+The evidence that counts is the spec.
+
+### `filter_params` was carrying four names that are not scopes
+
+```ruby
+params.require(:filters).slice(:barcodeable_id, :less_than_quantity,
+  :greater_than_quantity, :equal_to_quantity, :base_item_id)
+```
+
+Of those five, only `barcodeable_id` is a scope on `BarcodeItem`. `class_filter` calls
+`public_send(key, value)` for every key it is given, so `?filters[base_item_id]=1` would have
+raised the moment the filter was wired up — the fix for the dead filter would have shipped a
+500 with it. It permits the one name the page offers, and `slice` became `permit`, which is what
+it should have been.
+
+This is the same hazard `filter_date` was designed around a few hours earlier, arriving from the
+other direction: there, the question was which namespace a new control should submit under; here,
+a namespace that had quietly accumulated names nothing would answer.
+
+### What else went with it
+
+The page was the last one built out of hand-rolled markup rather than components, and the filter
+could not be replaced without replacing its surroundings:
+
+- **Its div nesting did not balance.** Four closing tags with nothing open, and the table's card
+  hand-rolled from `CARD_CLASSES` pasted inline. `page-audit.rb` did not report the pasted card,
+  because it only reports one when the file renders no `shared/essentials/card` at all — and this
+  file rendered one properly and then hand-rolled a second. Worth knowing; not fixed here.
+- **"Add New Barcode" sat in the filter's button row**, beside Filter and Clear Filters. A page's
+  main action goes in the page header; the filter bar's action cell is for applying and clearing.
+  It is a primary action in the header now, and sentence case — "New barcode", the same label its
+  non-admin twin uses.
+- **No pagination**, where the twin paginates at `Pagination::COMPACT`. Global barcodes are
+  unbounded: every organization shares them and only super admins add them, so the list only grows.
+- The table had no `<caption>`, no `scope="col"`, and no `table-scroll` wrapper, so it was neither
+  named nor reachable by keyboard when it overflowed.
+
+The non-admin `barcode_items/index` had all of this already. The two pages are now the same page
+with a different collection behind them, which is what they always should have been.

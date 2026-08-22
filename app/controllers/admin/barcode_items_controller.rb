@@ -19,8 +19,12 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def index
-    @barcode_items = BarcodeItem.global
     @items = BaseItem.alphabetized.all
+    @selected_barcodeable_id = filter_params[:barcodeable_id]
+    # `class_filter` was never called here, so the filter select on this page had no effect at
+    # all: choosing a base item reloaded the same full list with the choice in the query string.
+    @barcode_items = BarcodeItem.global.includes(:barcodeable).class_filter(filter_params)
+    @paginated_barcode_items = @barcode_items.page(params[:page]).per(Pagination::COMPACT)
   end
 
   def new
@@ -61,10 +65,15 @@ class Admin::BarcodeItemsController < AdminController
     params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity)
   end
 
-  def filter_params
+  # Only names that are real scopes on BarcodeItem. `class_filter` calls `public_send(key, value)`
+  # for each of these, so a key that is not a scope raises -- and this list used to carry four
+  # that are not: less_than_quantity, greater_than_quantity, equal_to_quantity and base_item_id.
+  # Harmless only for as long as nothing called `class_filter`, which nothing did.
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :base_item_id)
+    params.require(:filters).permit(:barcodeable_id)
   end
 
   def load_barcode_item
