@@ -11,7 +11,8 @@ RSpec.describe "Coworking invitations", type: :system, js: true do
         login_as(partner_user)
         visit partner_user_root_path
 
-        click_on partner_user.email
+        # The partner top bar shows initials, not the email; the menu opens from its hook.
+        find("[data-account-menu]").click
         click_on 'My co-workers'
 
         click_on 'Invite new user'

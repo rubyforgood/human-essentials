@@ -35,6 +35,10 @@ RSpec.describe "User account management", type: :system, js: true do
       fill_in "user_current_password", with: DEFAULT_USER_PASSWORD
       click_button "Save"
 
+      expect(page).to have_content('Your account has been updated successfully.')
+      # The top bar shows initials, not the name -- the name is one layer in, in the account
+      # menu panel, along with the email and the role. See design.md.
+      find("[data-account-menu]").click
       expect(page).to have_content(name)
     end
 
