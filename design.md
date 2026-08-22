@@ -376,6 +376,14 @@ word; pass an `icon:` when the pill is doing real signalling work rather than la
 A soft coloured tile behind an icon means "a stat or a status". A **person** is an initials
 avatar instead. Keeping these disjoint is what makes either one readable at a glance.
 
+The account menu's trigger in either top bar is the avatar **alone** — initials and a chevron,
+no name beside it. The name is not gone, it is one layer in: the panel opens with the name, the
+email and the role. A name in the bar is the one piece of text on the page that never changes,
+so it competes with the page for the eye at every width and truncates at the narrow ones, and
+the initials already say whose account it is. Because the avatar is `aria-hidden`, that makes
+the trigger an icon-only control, so it carries the name in its own `aria-label` — `Account menu
+for …` — and a screen reader is told what the initials tell everyone else.
+
 ### Cards
 
 The surface everything sits on: white, hairline border, `rounded-2xl`, `shadow-sm`.
