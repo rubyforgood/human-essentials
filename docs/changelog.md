@@ -160,18 +160,19 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `af58446c6` | **Dead-code audit: 118 findings, and two live defects that were hiding behind them.** `bin/design/dead-code.rb` added — the companion to `dead-routes.rb`, asking for code with nothing in front of it: 6 controllers no route reaches, 2 actions, 1 template, 4 partials, 24 helper methods and 81 `public/` files. Services, queries, jobs, mailers, events, concerns, Stimulus controllers, importmap pins and CSS classes are all at zero. **Five of the six dead controllers are the `app/controllers/users/` Devise overrides**: `devise_for` names only `sessions` and `omniauth_callbacks`, so Devise's own classes serve passwords, registrations, invitations, confirmations and unlocks, and one shell inherits from the wrong base class entirely. Their *views* are live — `scoped_views` sends Devise to look there — which is most of why it survived. **Two defects fixed.** `Devise::InvitationsController` was missing from the `to_prepare` layout block and `layouts/application` no longer exists, so `/users/invitation/new` and `/users/invitation/accept` served **200 OK with no layout at all** — no stylesheet, Times New Roman — to every invited user; `app/controllers/users/invitations_controller.rb` sets the right layout and never runs. And the product drive participants import offered `/product_drive_participants.csv` while the file on disk was still called `diaper_drive_participants.csv`; the file is renamed. **`route-targets.rb` skipped `devise/`**, which is why the sweep never visited the screens with the broken layout — it does now: 139 screens became 140 and axe went from 152 pages to 154. Thirteen classes of false positive were found and disproved before any of this was believed, the most expensive being that Figtree and Bootstrap Icons are named only by `@font-face`, so a glob without `.css` recommends deleting the fonts every page needs. The 118 are reported, not removed. |
 | `333f12dbf` | **The account menu is the avatar alone.** Both top bars put the user's name beside the initials — `display_name` on the bank side, `email` on the partner side — and both already hid it below `sm` and truncated it above, so the trigger had two layouts and the narrow one was the honest one. It is the avatar and the chevron at every width now; the name, email and role were always in the panel and still are. The chevron stays, because it is the only thing marking a circle of letters as a control. **Removing the text removed the button's accessible name**: the avatar span is `aria-hidden`, so the trigger became icon-only and design.md's rule about icon-only controls started applying to it — it carries `aria-label="Account menu for …"`, which keeps for a screen reader the identity the initials keep for everyone else. Verified in both portals: 64×44 trigger, `"JB"` visible, panel unchanged. |
 | `f25f683c8` | **The item catalogue is five page tabs, not five panels of one response.** Four of the five tabs on `/items` carried a 55px strip between the tab strip and the first row, holding one secondary button. **Two of them were not a design question**: "Items, quantity and location" and "Item inventory" both offered **New item**, the page header's own primary action, eleven lines up in the same template, rendered a second time — deleting those is 110px back and nothing else changes. The other two strips held actions that were real — "New item category" and "New kit" — and `design.md` already said where those go: the page header, which can only follow the tab if the tab is a URL. It is `/items`, `/item_categories`, `/items/quantity_and_location`, `/items/inventory` and `/kits` now, each with the primary action for what it shows, and 0px between the tabs and the table on all five. `item_categories#index` existed as `except: [:index]` because the table lived inside `items#index`; create and destroy redirected to `items_path`, which is to say to a different tab from the one you were on. **Kits keeps its own title** rather than borrowing the strip's, because it is also a sidebar destination and the rail has to be telling the truth about where it just sent you — the one place the partners precedent and the sidebar disagree. A consequence that was not the point: `items#index` built all five tabs' data on every request, so the item list paid for `ItemsByStorageCollectionAndQuantityQuery` every visit; it is a `before_action` on the two matrix views now. The tab-row variant was rejected on measurement — the five labels are 598px, the tightest container is 702px at a 1024px viewport, and "New item category" is 146px, so it wraps at 1024 and below. **Filters are exempt by design**: the 125px date band on `storage_locations/show` stays, because a filter changes the rows underneath it and an action does not. See design-decisions.md. |
+| `5510c24d2` | **Eight specs the avatar change broke, and the fifth page kind `page-audit.rb` did not know about.** Three specs opened the account menu by clicking the user's name or email in the top bar, which the avatar change had removed; two more asserted the name was visible after saving it. They use `[data-account-menu]` now — the hook `admin/users_system` already used — and the account spec opens the menu before looking for the name, which is where the name now is. **They did not fail when the avatar change landed because only a subset of the system specs was run**; the full 2958 are green here. Separately, `page-audit.rb` classified views as show, index, form or partial, and those four are not exhaustive — a template named after a collection action matched none of them and was audited by nothing. An `action` catch-all found **25 views that had never been audited**, and one real gap behind them: Devise's mailer views live in `users/mailer/`, which the `_mailer/` exclusion misses, so six HTML emails were being read as pages with layout `&nbsp;` in them. The per-kind totals used looser exclusions than the scan itself, so every "N files" line was slightly too big — `index` counted `static/index.html.erb` and then skipped it. Both go through one `audited?` predicate now: 354 views, 0 defects. |
 
 ---
 
 ## Current state
 
-Measured on 2026-08-22 as of `f25f683c8`, the last entry above. Re-run the commands in
+Measured on 2026-08-22 as of `5510c24d2`, the last entry above. Re-run the commands in
 [migration-map.md](migration-map.md#verifying-a-migration) to check them.
 
 | | |
 | --- | --- |
-| Commits on the branch | 157 |
-| Files changed against `main` | 721 |
+| Commits on the branch | 159 |
+| Files changed against `main` | 722 |
 | Controllers on a design system layout | 63 of 65 |
 | Views carrying design system markup | 333 of 366 |
 | Stimulus controllers | 32 |
@@ -179,14 +180,23 @@ Measured on 2026-08-22 as of `f25f683c8`, the last entry above. Re-run the comma
 | Routes whose request would raise | 0 of 349 |
 | Code no route, render or caller reaches | 118 findings, documented in design-decisions.md |
 
-Verified at the same commit: `bundle exec rspec` 2958 examples, 0 failures, 1 pending (a
-pre-existing `xit`); `rubocop` 654 files, no offenses; `erb_lint` 413 files, no errors;
-`page-audit.rb` 0 defects across 330 views; `route-sweep.js` 140 screens as three roles, no
-findings; `wcag-audit.js` 154 pages, 0 axe violations; `wcag-manual.js` 8 pages; `overlay-audit.js`
-6 dialogs and 28 popovers at two viewports; `responsive-audit.js` 1,551 page-and-width
-combinations across 152 routes; `form-validation-audit.js` 26 forms; `keyboard-audit.js` 141
-screens at 1280 and again at 375; `undefined-classes.py` 0 orphans; `dead-routes.rb` 0 dead and
-0 shadowed; `dead-code.rb` 118 findings, all of them documented rather than removed.
+Re-run at this commit: `bundle exec rspec` 2958 examples, 0 failures, 1 pending (a pre-existing
+`xit`); `rubocop` no offenses; `erb_lint` 415 files, no errors; `page-audit.rb` 0 defects across
+354 views; `route-sweep.js` 142 screens as three roles, no findings; `wcag-audit.js` 156 pages,
+0 axe violations; `overlay-audit.js` 4 dialogs and 28 popovers at two viewports, no findings;
+`undefined-classes.py` 0 orphans; `dead-routes.rb` 0 dead and 0 shadowed over 349;
+`dead-code.rb` 118 findings, all of them documented rather than removed.
+
+Three of those numbers moved for reasons worth naming. **354 views, not 330**: `page-audit.rb`
+only knew four page kinds and a template named after a collection action matched none of them,
+so 25 views had never been audited — see the entry above. **156 pages and 142 screens**, up two
+each, are the two new item URLs. **4 dialogs, not the 6 recorded here before**: measured at
+`c0de28eb1` as well, before any of this branch's last three commits, and it was 4 there too. The
+number was already stale; the audit's nine pages include nothing these commits touched.
+
+Not re-run at this commit, and carried forward from `af58446c6`: `wcag-manual.js` 8 pages,
+`responsive-audit.js` 1,551 page-and-width combinations across 152 routes,
+`form-validation-audit.js` 26 forms, `keyboard-audit.js` 141 screens at 1280 and again at 375.
 
 The 33 views without design system markup are not a backlog. 28 are partials and 21 are ten
 lines or fewer. The largest are simple_form field lists — the five `partners/profiles/step/`

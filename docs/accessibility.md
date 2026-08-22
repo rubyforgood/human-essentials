@@ -1,7 +1,11 @@
 # Accessibility
 
-Audited 2026-08-19. **WCAG 2.1 A/AA: 0 violations across 61 pages**, by axe-core 4.13.0, plus
+Audited 2026-08-22. **WCAG 2.1 A/AA: 0 violations across 156 pages**, by axe-core 4.13.0, plus
 eight criteria axe cannot test, checked by driving a browser.
+
+The page count is not a list anyone maintains: `wcag-audit.js` asks the router. It was 61 while
+four hand-kept lists decided what got audited, 152 once it became route-driven, 154 when
+`route-targets.rb` stopped skipping `devise/`, and 156 with the two new item catalogue URLs.
 
 ## Running it
 
@@ -9,7 +13,7 @@ eight criteria axe cannot test, checked by driving a browser.
 npm install --no-save --prefix /tmp/axe axe-core   # once
 bin/start                                          # then, with the app running:
 
-pw bin/design/wcag-audit.js       # axe-core, WCAG 2.1 A/AA, 61 pages, all four roles
+pw bin/design/wcag-audit.js       # axe-core, WCAG 2.1 A/AA, every route, all four roles
 pw bin/design/wcag-manual.js      # the criteria axe cannot check
 pw bin/design/overlay-audit.js    # opens every dialog and popover, then checks them
 bundle exec rspec spec/system/accessibility_system_spec.rb
