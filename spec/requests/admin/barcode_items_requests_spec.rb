@@ -11,6 +11,27 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
         get admin_barcode_items_path
         expect(response).to be_successful
       end
+
+      # The filter select on this page rendered for years without the action ever calling
+      # `class_filter`, so choosing a base item reloaded the same full list.
+      context 'with a base item filter' do
+        let!(:wanted) { create(:base_item, name: 'Wanted base item') }
+        let!(:other) { create(:base_item, name: 'Other base item') }
+        let!(:wanted_barcode) { create(:global_barcode_item, barcodeable: wanted, value: '111') }
+        let!(:other_barcode) { create(:global_barcode_item, barcodeable: other, value: '222') }
+
+        it 'shows every global barcode when nothing is chosen' do
+          get admin_barcode_items_path
+          expect(response.body).to include('111')
+          expect(response.body).to include('222')
+        end
+
+        it 'narrows the list to the chosen base item' do
+          get admin_barcode_items_path(filters: {barcodeable_id: wanted.id})
+          expect(response.body).to include('111')
+          expect(response.body).not_to include('222')
+        end
+      end
     end
 
     describe 'GET #new' do

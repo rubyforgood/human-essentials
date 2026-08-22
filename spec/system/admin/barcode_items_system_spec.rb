@@ -27,7 +27,7 @@ RSpec.describe "Barcode Items Admin", type: :system do
       end
 
       it 'creates a new global barcode item' do
-        click_on "Add New Barcode"
+        click_on "New barcode"
 
         fill_in "Quantity", with: 100
         select item.base_item.name, from: "barcode_item_barcodeable_id"
