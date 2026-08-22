@@ -2669,3 +2669,49 @@ could not be replaced without replacing its surroundings:
 
 The non-admin `barcode_items/index` had all of this already. The two pages are now the same page
 with a different collection behind them, which is what they always should have been.
+
+## 2026-08-22 · The card check that reported zero because it was wrong twice
+
+`page-audit.rb` reported "hand-rolled card" as debt: a view that pastes the card's classes
+inline instead of rendering `shared/essentials/card`, so a change to the component never reaches
+it. It reported **0**, and there were **4**.
+
+```ruby
+debt << "hand-rolled card" if src.include?(CARD_CLASSES) && !src.include?("shared/essentials/card")
+```
+
+Two holes, and each on its own was enough to hide every instance.
+
+**The escape hatch.** `&& !src.include?("shared/essentials/card")` was presumably meant to avoid
+flagging the component's own definition — but `shared/essentials/` is already skipped a few lines
+above, so all this clause did was excuse any file that rendered one card properly and pasted a
+second one inline. Both pages fixed this week were doing exactly that: `admin/barcode_items` and
+`admin/ndbn_members` each render a real card and then wrap their table in a hand-rolled one.
+
+**The substring.** `CARD_CLASSES` is `"rounded-2xl border border-slate-200 bg-white shadow-sm"`,
+matched with `include?`. A card is a *surface*, not a string, and one utility inserted anywhere in
+that run breaks the match. Three of the four write `bg-white p-4 shadow-sm` or `bg-white p-5
+shadow-sm`, so even without the escape hatch they were invisible.
+
+It is four tokens inside one `class` attribute now, order-independent —
+`rounded-2xl`, `border-slate-200`, `bg-white`, `shadow-sm`. All four must be in the *same*
+attribute, so a rounded wrapper around a white child is not a card.
+
+### The check now proves itself before it runs
+
+Two versions of this check were each wrong in a way that printed zero, which is the failure mode
+that looks like success — and it printed zero for long enough that the number reached the change
+log's verification line. So it follows `undefined-classes.py` and probes the detector against
+known answers before reporting anything, aborting with the failing input if any probe disagrees.
+The probes include the padding-interleaved case that used to slip through, and a case where the
+four tokens are split across two elements and must *not* match. Regressing the detector to the
+old substring now stops the script with exit 1 rather than a clean-looking report.
+
+### The four are reported, not converted
+
+DEBT is defined here as reported and not enforced, and the exit code is unchanged. Two of the
+four are a straightforward swap — `reports/index` and `admin/ndbn_members/index` are plain card
+surfaces. The other two are not obviously the component's job: `admin/dashboard` and
+`partners/_show_header` use the card surface for a small `flex items-center gap-3` tile, and the
+card renders a title/subtitle/actions header a tile does not want. Converting all four is a
+judgement per file and a separate change; what this one fixes is that the audit can see them.

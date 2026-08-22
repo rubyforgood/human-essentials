@@ -28,7 +28,41 @@ UNDEFINED = %w[text-bold text-italic form-horizontal form-group control-label he
 BARE_CARD = /class="[^"]*\bcard\b[^"]*"/
 
 DS_H1 = "text-2xl font-bold tracking-tight text-slate-900"
-CARD_CLASSES = "rounded-2xl border border-slate-200 bg-white shadow-sm"
+
+# A card is a *surface*, not a string: white, hairline border, `rounded-2xl`, `shadow-sm`
+# (design.md). So the check is for those tokens together inside one `class` attribute, not for
+# the exact `rounded-2xl border border-slate-200 bg-white shadow-sm` substring it used to be.
+#
+# The substring version caught 0 of the 4 hand-rolled cards in the app. One padding utility
+# between `bg-white` and `shadow-sm` is enough to slip past it, and three of the four do exactly
+# that -- `bg-white p-4 shadow-sm`. All four tokens have to be in the *same* attribute, so a
+# rounded div wrapping a white one is not a card.
+CARD_TOKENS = %w[rounded-2xl border-slate-200 bg-white shadow-sm].freeze
+
+def hand_rolled_card?(src)
+  src.scan(/class="([^"]*)"/).flatten.any? do |attr|
+    names = attr.split(/\s+/)
+    CARD_TOKENS.all? { |token| names.include?(token) }
+  end
+end
+
+# Same idea as `undefined-classes.py`: prove the detector before trusting a run of it. The last
+# two versions of this check were each wrong in a way that reported zero, which is the failure
+# mode that looks like success.
+[
+  ['<div class="rounded-2xl border border-slate-200 bg-white shadow-sm">', true],   # the canonical order
+  ['<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">', true], # padding interleaved
+  ['<div class="flex gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">', true],
+  ['<div class="bg-white shadow-sm border border-slate-200 rounded-2xl">', true],   # reordered
+  ['<div class="rounded-2xl bg-white">', false],                                    # not a card
+  ['<div class="rounded-2xl border-slate-200"><p class="bg-white shadow-sm">', false] # split across two
+].each do |markup, expected|
+  next if hand_rolled_card?(markup) == expected
+
+  abort "card detector is wrong: #{markup.inspect} => #{!expected}, expected #{expected}. " \
+        "Fix it before trusting any result below."
+end
+
 LTE_COMMENT = /<!--\s*(left column|right column|jquery validation|form start|Default box|\/?\.[\w-]+)\s*-->/
 
 # The four RESTful shapes, and then everything else. "action" is the catch-all, and it exists
@@ -95,7 +129,10 @@ kinds.each do |kind, pattern|
     end
 
     debt = []
-    debt << "hand-rolled card" if src.include?(CARD_CLASSES) && !src.include?("shared/essentials/card")
+    # No "...unless the file also renders the component" here. It used to read
+    # `&& !src.include?("shared/essentials/card")`, which let a file render one card properly
+    # and paste a second one inline -- which is what both pages found this week were doing.
+    debt << "hand-rolled card" if hand_rolled_card?(src)
     comments = raw.scan(LTE_COMMENT).size
     debt << "#{comments} AdminLTE comment#{"s" if comments > 1}" if comments.positive?
 
