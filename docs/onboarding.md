@@ -388,6 +388,11 @@ one filter, or **Clear all** to drop the lot.
 **Date range** is one of those filters, and it opens a small panel: the common ranges down one
 side, and **From** and **To** boxes down the other for anything else. Set both and press **Apply**.
 
+A storage location has a filter of its own on its **Inventory** tab: **Show inventory at date**,
+which asks what was on those shelves on a given day rather than narrowing a list to a window.
+It sits behind the same Filters button, chips the same way, and changing it leaves you on the
+Inventory tab — you do not have to find your way back to it.
+
 A page you have not filtered opens on *Last 2 months and next month*. It reaches into the future
 on purpose: a distribution can be scheduled before it happens, and a range ending today would
 hide everything already booked in.

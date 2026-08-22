@@ -40,9 +40,12 @@ export default class extends Controller {
       if (!label) return []
 
       if (field.type === "checkbox") return field.checked ? [{ field, label, value: null }] : []
-      // Date inputs are the inside of the date range popover; the range itself reports through a
-      // hidden field, which is why hidden fields are not skipped outright.
-      if (field.type === "date") return []
+      // A date input inside the range popover is one half of a range that reports through its own
+      // hidden field -- counting it too would chip the same filter twice. This used to skip every
+      // date input, which was the same thing while the popover owned all of them; `filter_date`
+      // put a standalone one in a bar and it reported nothing, so a page arrived at by a filtered
+      // URL showed no chip and no way to clear it.
+      if (field.type === "date" && field.closest("[data-controller~='date-range']")) return []
 
       // The date range is always set to something, so it only counts as a filter when it is not
       // the range the page would have shown anyway.

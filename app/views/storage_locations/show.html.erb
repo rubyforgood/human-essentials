@@ -46,57 +46,73 @@
             ] %>
 
         <div id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory" data-tabs-target="panel">
-          <div class="border-b border-slate-200 px-5 py-4">
-            <%= form_for @storage_location, method: :get, html: {class: "flex flex-wrap items-end gap-3"} do %>
-              <div>
-                <%= label_tag "version_date", "Show inventory at date", class: "block text-sm font-medium text-slate-700" %>
-                <%= date_field_tag "version_date", params[:version_date],
-                      min: InventoryItem::EARLIEST_VERSION, autocomplete: "on",
-                      class: "mt-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+          <%#
+            The one filter in the app that sits inside a tab panel rather than above the card:
+            it scopes this tab and not the other two, and above the card it would look like it
+            scoped all three. design.md allows a table's own filters between a tab strip and its
+            first row, and nothing else.
+
+            It applies into a frame, and that is not only for the usual reason. A full reload
+            re-renders the tab strip with the first tab selected, because `tabs_controller` falls
+            back to whichever tab the server marked -- so this filter only ever worked because
+            Inventory happens to be first. Updating a frame leaves the strip alone.
+          %>
+          <div class="border-b border-slate-200 px-5 pt-4">
+            <%= render "shared/essentials/filter_bar",
+                  url: storage_location_path(@storage_location),
+                  frame: "storage-location-inventory" do %>
+              <div class="min-w-0">
+                <%= filter_date(scope: :version_date, label: "Show inventory at date",
+                      selected: params[:version_date], min: InventoryItem::EARLIEST_VERSION,
+                      hint: "Historical data has been collected since #{Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y")}.") %>
               </div>
-              <button type="submit" class="<%= essentials_button_classes(variant: :secondary, size: :md) %>">View</button>
-              <p class="w-full text-xs text-slate-500">
-                Historical data has been collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>.
-              </p>
             <% end %>
           </div>
 
-          <% rows = @inventory ? @inventory.items_for_location(@storage_location.id, include_omitted: true) : (@legacy_inventory || []) %>
-          <% if rows.blank? %>
-            <%= render "shared/essentials/empty_state", kind: :cold_start,
-                  title: "Nothing stored here yet",
-                  body: "Inventory appears once a donation, purchase or audit puts items in this location." %>
-          <% else %>
-            <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
-              <table class="data-table">
-                <caption>Items currently at <%= @storage_location.name %></caption>
-                <thead>
-                  <tr><th scope="col">Item</th><th scope="col" class="quantity">Quantity</th></tr>
-                </thead>
-                <tbody>
-                  <% rows.each do |item| %>
+          <%= turbo_frame_tag "storage-location-inventory", target: "_top", data: {turbo_action: "advance"} do %>
+            <% rows = @inventory ? @inventory.items_for_location(@storage_location.id, include_omitted: true) : (@legacy_inventory || []) %>
+            <% if rows.blank? %>
+              <%= render "shared/essentials/empty_state", kind: :cold_start,
+                    title: "Nothing stored here yet",
+                    body: "Inventory appears once a donation, purchase or audit puts items in this location." %>
+            <% else %>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+                <table class="data-table">
+                  <caption>
+                    <% if params[:version_date].present? %>
+                      Items at <%= @storage_location.name %> on <%= params[:version_date].to_date.strftime("%b %-d, %Y") %>
+                    <% else %>
+                      Items currently at <%= @storage_location.name %>
+                    <% end %>
+                  </caption>
+                  <thead>
+                    <tr><th scope="col">Item</th><th scope="col" class="quantity">Quantity</th></tr>
+                  </thead>
+                  <tbody>
+                    <% rows.each do |item| %>
+                      <tr>
+                        <td><%= link_to item.name, item_path(item.item_id), class: "font-medium text-brand-700 hover:text-brand-800" %></td>
+                        <td class="quantity"><%= number_with_delimiter(item.quantity) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                  <tfoot>
                     <tr>
-                      <td><%= link_to item.name, item_path(item.item_id), class: "font-medium text-brand-700 hover:text-brand-800" %></td>
-                      <td class="quantity"><%= number_with_delimiter(item.quantity) %></td>
+                      <td>Total</td>
+                      <td class="quantity">
+                        <% if @inventory %>
+                          <%= number_with_delimiter(@inventory.quantity_for(storage_location: @storage_location.id)) %>
+                        <% elsif @legacy_inventory %>
+                          <%= number_with_delimiter(@legacy_inventory.sum(&:quantity)) %>
+                        <% else %>
+                          <%= number_with_delimiter(@storage_location.size) %>
+                        <% end %>
+                      </td>
                     </tr>
-                  <% end %>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td>Total</td>
-                    <td class="quantity">
-                      <% if @inventory %>
-                        <%= number_with_delimiter(@inventory.quantity_for(storage_location: @storage_location.id)) %>
-                      <% elsif @legacy_inventory %>
-                        <%= number_with_delimiter(@legacy_inventory.sum(&:quantity)) %>
-                      <% else %>
-                        <%= number_with_delimiter(@storage_location.size) %>
-                      <% end %>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                  </tfoot>
+                </table>
+              </div>
+            <% end %>
           <% end %>
         </div>
 

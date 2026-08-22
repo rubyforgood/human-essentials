@@ -453,7 +453,10 @@ from.
 
 **Nothing sits between a tab strip and the first row of its table except that table's own
 filters.** A filter earns the space because it changes the rows underneath it; an action does
-not, and an action there is the signal to use page tabs instead. The item catalogue had this on
+not, and an action there is the signal to use page tabs instead. A filter that lives there is
+still the `filter_bar` component, and it **must apply into a frame**: a full reload re-renders
+the tab strip with whichever tab the server marked selected, which throws away the tab the
+person was on. `storage_locations/show` is the one instance. The item catalogue had this on
 four of five tabs — a 55px strip holding one secondary button, and on two of them that button
 was the page header's own "New item" a second time. It is five page tabs now: `/items`,
 `/item_categories`, `/items/quantity_and_location`, `/items/inventory`, `/kits`, each with the
@@ -575,9 +578,20 @@ reaching a control on a bar that collapses. There is no longer a click to synchr
 `spec/support/filter_helpers.rb` for why it waits on network idle rather than on the frame's
 `busy` attribute, and why the quiet period is longer than the debounce.
 
-`FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_checkbox`) and
-gives each one a UUID-suffixed id with a matching label, so a filter control is always named.
-`EssentialsUiHelper::FILTER_CONTROL_CLASSES` is the single definition of what one looks like.
+`FilterHelper` builds the controls (`filter_select`, `filter_text`, `filter_date`,
+`filter_checkbox`) and gives each one a UUID-suffixed id with a matching label, so a filter
+control is always named. `EssentialsUiHelper::FILTER_CONTROL_CLASSES` is the single definition
+of what one looks like.
+
+**Two of them submit under `filters[…]` and two do not, and the split is not arbitrary.**
+`Filterable#class_filter` walks that hash and calls `public_send(key, value)` on the model, so
+every name inside it has to be a real scope. `filter_checkbox` and `filter_date` submit a bare
+param because what they carry — "include inactive", "at this date" — is not a scope, and putting
+it under `filters[…]` would turn a filtered index into a `NoMethodError`.
+
+`filter_date` is a single date, not a range: use the date range picker below when the question
+is "between when and when", and this when it is "as it stood on". It takes `min:`, `max:` and
+`hint:`.
 
 The date range picker owns its own label, for the same reason. Callers used to add
 `label_tag "Date Range"`, which pointed at `date_range` while the input's id was
