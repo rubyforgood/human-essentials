@@ -2497,3 +2497,57 @@ than this one:
   with no fragment, and `tabs_controller` falls back to whichever tab the server marked selected,
   which is always the first. Put that filter on tab two and submitting would silently return the
   user to tab one. Verified in the browser. It is correct today by ordering, not by design.
+
+## 2026-08-22 · Eight specs, and the page kind the audit did not have
+
+The avatar change removed the user's name from the top bar and broke eight examples across
+`account_system`, `organization_system` and `partners/coworker_invitations`. All eight had the
+same shape: they opened the account menu by clicking the user's name or email, because that text
+was the only handle on it. Two also asserted the name was visible on the page after saving it.
+
+They use `[data-account-menu]` now — the hook `admin/users_system` was already using, which is
+why that one spec kept passing — and the account spec opens the menu before looking for the
+name, which is where the name now lives.
+
+**Why they were not caught.** Only a subset of the system specs was run when the avatar change
+landed: the shell, accessibility, layout, navigation and admin-users specs, chosen because they
+were the ones that mentioned the topbar or the account menu. That was the wrong selection rule.
+A change to a shared layout partial is a change to every page, and the specs that broke were the
+ones that used the topbar incidentally, on their way to testing something else — which is
+exactly the set that grepping for "topbar" does not find. `CLAUDE.md` says to run the system
+specs for anything that touches a view; for a layout, that means all of them.
+
+### A fifth page kind, and 25 views nobody was auditing
+
+`page-audit.rb` classified every view as `show`, `index`, `form` or `partial`. Those four are not
+exhaustive, and the new item pages proved it: a template named after a collection action —
+`items/inventory.html.erb`, `items/quantity_and_location.html.erb` — matches none of the four
+patterns, so it was scanned by nothing and counted in no total. It would have been possible to
+add a page with a bare `card` class, an inline style and no `page_header` and have the audit
+report zero defects.
+
+The catch-all `action` kind fixes the shape of the problem rather than the instance:
+
+```ruby
+"action" => %r{\A(?!.*/_)(?!.*/(show|index|new|edit)\.html\.erb$).*\.html\.erb$}
+```
+
+Every view is now one of five kinds, so a page cannot fall out of the audit by being named
+oddly. It found **25 templates that had never been audited** — and one genuine gap behind them.
+The mailer exclusion is `rel.include?("_mailer/")`, which catches our own `distribution_mailer/`
+and misses Devise's, which is plain `users/mailer/`. Six HTML emails were being read as app
+pages, and reported as defects for having `<td>&nbsp;</td>` spacers in them — which is what HTML
+email is made of. The exclusion takes both spellings now.
+
+The per-kind totals were computed separately from the scan, with a shorter list of exclusions, so
+every "N files" line was slightly too big: `index` counted `static/index.html.erb` and then
+skipped it. There is one `audited?` predicate now and both go through it. The count moves from
+330 to 354, and 0 defects is a claim about all of them for the first time.
+
+### The dialog count that was already wrong
+
+`overlay-audit.js` reports 4 dialogs where the change log had recorded 6. Before writing the
+smaller number down it was measured at `c0de28eb1`, the branch tip before any of this work: 4
+there too. The audit's nine pages include nothing these commits touched, and the likeliest
+explanation is the manufacturers CSV import, whose modal was deleted along with its route in
+`f644de0ef` — recorded in the change log, not carried into the verification line beneath it.

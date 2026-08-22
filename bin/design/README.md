@@ -16,7 +16,7 @@ dev credentials (`org_admin1@example.com` / `password!`).
 Read the output as a checklist: `legacyClassesPresent` and `faIcons` must both be empty/zero on
 a migrated page, `hOrder` must not skip a level, and `activeNav` must be brand-50 on brand-700.
 
-`route-sweep.js` does the same checks across **every HTML screen the router knows about** — 140
+`route-sweep.js` does the same checks across **every HTML screen the router knows about** — 142
 of them, as a super admin, a bank admin and a partner — and prints only what is wrong.
 
 ```bash
@@ -37,6 +37,26 @@ most controllers implement four — and 13 of the sweep's targets were that. The
 `dead-routes.rb` for that question now. What is left in the bucket is the sweep's own
 approximations: a path whose `:partner_id` was filled with a user's id, and two records the role
 being used cannot see.
+
+`page-audit.rb` reads the templates rather than rendering them, and is the only audit here that
+needs neither a browser nor a server. It reports two severities — a DEFECT is wrong now (a class
+nothing defines, an inline style, layout built from `&nbsp;`, Title Case in a heading, a page
+with an `<h1>` and no `page_header`), and DEBT renders correctly but has a component's classes
+pasted inline, so a change to the component will never reach it. It exits non-zero on a defect
+and reports debt without enforcing it.
+
+```bash
+bin/rails runner bin/design/page-audit.rb          # all kinds
+bin/rails runner bin/design/page-audit.rb action   # one kind
+```
+
+**Five kinds, and the fifth is a catch-all on purpose.** `show`, `index`, `form` and `partial`
+are the RESTful shapes; `action` is everything else, which means a template named after a
+collection action — `items/inventory.html.erb` — cannot fall out of the audit by being named
+oddly. It could before: those four patterns were treated as exhaustive, and 25 views matched
+none of them and were scanned by nothing. Adding the catch-all also surfaced that the mailer
+exclusion knew about `*_mailer/` but not Devise's `users/mailer/`, so six HTML emails were being
+audited as app pages.
 
 `sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
 
