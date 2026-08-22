@@ -13,7 +13,7 @@
 #   DEBT     The page renders correctly but has the card's classes pasted inline instead of
 #            rendering the component, so a change to the card will never reach it.
 #
-# Usage: ruby bin/design/page-audit.rb [show|index|form|partial]
+# Usage: ruby bin/design/page-audit.rb [show|index|form|partial|action]
 #        Exits non-zero if any DEFECT is found. DEBT is reported, not enforced.
 AUTH = %w[users/sessions users/passwords users/confirmations users/unlocks
   users/invitations users/registrations account_requests].freeze
@@ -31,14 +31,33 @@ DS_H1 = "text-2xl font-bold tracking-tight text-slate-900"
 CARD_CLASSES = "rounded-2xl border border-slate-200 bg-white shadow-sm"
 LTE_COMMENT = /<!--\s*(left column|right column|jquery validation|form start|Default box|\/?\.[\w-]+)\s*-->/
 
+# The four RESTful shapes, and then everything else. "action" is the catch-all, and it exists
+# because the first four are not exhaustive: a controller may render a template named after a
+# collection action -- items/inventory, items/quantity_and_location -- and for as long as the
+# list stopped at `partial` those templates matched nothing and were audited by nothing. Any
+# view is one of these five, so a new page cannot fall out of the audit by being named oddly.
 KINDS = {
   "show" => %r{/show\.html\.erb$},
   "index" => %r{/index\.html\.erb$},
   "form" => %r{/(new|edit)\.html\.erb$|/_form\.html\.erb$},
-  "partial" => %r{/_[^/]+\.html\.erb$}
+  "partial" => %r{/_[^/]+\.html\.erb$},
+  "action" => %r{\A(?!.*/_)(?!.*/(show|index|new|edit)\.html\.erb$).*\.html\.erb$}
 }.freeze
 
 def strip_comments(src) = src.gsub(/<%#.*?%>/m, "")
+
+# The one place the exclusions live. They used to be written twice -- once as `next if` guards in
+# the scan and once, less completely, in the per-kind total -- so the totals counted files the
+# audit had skipped and every "N files" line was slightly too big.
+def audited?(rel, kind)
+  return false unless rel.match?(KINDS[kind])
+  return false if rel.start_with?("shared/essentials/")
+  return false if kind == "partial" && rel.match?(KINDS["form"])
+  return false if rel.include?("_mailer/") || rel.include?("/mailer/") || rel.start_with?("layouts/mailer")
+  return false if rel.start_with?("static/")
+
+  true
+end
 
 scope = ARGV.first
 kinds = scope ? {scope => KINDS.fetch(scope)} : KINDS
@@ -47,16 +66,12 @@ rows = []
 kinds.each do |kind, pattern|
   Dir.glob("app/views/**/*.html.erb").sort.each do |file|
     rel = file.sub("app/views/", "")
-    next unless rel.match?(pattern)
-    # The design system's own components are the definition, not a copy of it.
-    next if rel.start_with?("shared/essentials/")
-    # A form partial is audited as a form, not twice.
-    next if kind == "partial" && rel.match?(KINDS["form"])
-    # Mailer templates are styled for email clients, where inline style is the only option.
-    next if rel.include?("_mailer/") || rel.start_with?("layouts/mailer")
-    # The marketing pages are standalone public documents on their own stylesheet, deliberately
-    # outside the design system -- see docs/migration-map.md.
-    next if rel.start_with?("static/")
+    # Excluded, and why:
+    #   shared/essentials/  the design system's own components are the definition, not a copy
+    #   form partials       audited as a form, not twice
+    #   mailers             styled for email clients, where inline style is the only option
+    #   static/             standalone public documents on their own stylesheet, see migration-map
+    next unless audited?(rel, kind)
 
     raw = File.read(file)
     src = strip_comments(raw)
@@ -88,14 +103,10 @@ kinds.each do |kind, pattern|
   end
 end
 
-%w[show index form partial].each do |kind|
+%w[show index form partial action].each do |kind|
   next unless kinds.key?(kind)
   of_kind = rows.select { |r| r[0] == kind }
-  total = Dir.glob("app/views/**/*.html.erb").count { |f|
-    rel = f.sub("app/views/", "")
-    rel.match?(KINDS[kind]) && !rel.start_with?("shared/essentials/") &&
-      !rel.include?("_mailer/") && !(kind == "partial" && rel.match?(KINDS["form"]))
-  }
+  total = Dir.glob("app/views/**/*.html.erb").count { |f| audited?(f.sub("app/views/", ""), kind) }
   defects = of_kind.reject { |r| r[2].empty? }
   puts "== #{kind} (#{total} files, #{defects.size} with defects, #{of_kind.size - defects.size} debt only)"
   of_kind.each do |_, rel, d, t|

@@ -194,9 +194,9 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     before(:each) do
       visit admin_dashboard_path
-      within "header" do
-        click_on super_admin_org_admin.name.to_s
-      end
+      # The account menu's trigger is the avatar, so it is found by its hook rather than by the
+      # user's name -- the name is inside the panel it opens.
+      find("[data-account-menu]").click
       click_link "Switch to: #{organization.name}"
     end
 
