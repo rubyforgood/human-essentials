@@ -58,6 +58,31 @@ none of them and were scanned by nothing. Adding the catch-all also surfaced tha
 exclusion knew about `*_mailer/` but not Devise's `users/mailer/`, so six HTML emails were being
 audited as app pages.
 
+**The hand-rolled card check matches a surface, not a string.** A card is white, hairline
+border, `rounded-2xl`, `shadow-sm`; the check looks for those four tokens inside one `class`
+attribute, in any order. It used to compare against the exact
+`rounded-2xl border border-slate-200 bg-white shadow-sm` substring **and** skip any file that
+also rendered `shared/essentials/card` — two holes that between them hid every hand-rolled card
+in the app. One padding utility (`bg-white p-4 shadow-sm`) defeats a substring, and a file can
+render the component properly in one place and paste it in another, which is what both pages
+fixed this week were doing. It reports 4.
+
+**How to test it.** The script proves the detector before it reports anything, the same way
+`undefined-classes.py` proves its extractor: a table of markup fragments with expected answers,
+including the padding-interleaved case that used to slip through and a split-across-two-elements
+case that must *not* match. Break the detector and the script refuses to run —
+
+```
+card detector is wrong: "<div class=\"…bg-white p-4 shadow-sm\">" => false, expected true.
+Fix it before trusting any result below.
+```
+
+and exits 1 without printing a report, because a check that silently reports zero is the failure
+mode that looks like success. To exercise it end to end, add
+`<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">` to any view and
+re-run: that file should appear under `debt`. Debt does not change the exit code — only defects
+do.
+
 `sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
 
 ```bash
