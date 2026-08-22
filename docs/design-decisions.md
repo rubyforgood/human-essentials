@@ -2378,3 +2378,35 @@ have been pointing at off the unreferenced list.
 
 The one number worth acting on soon: **6.1MB of `public/fonts` and `public/webfonts` is Font
 Awesome, Lato and Raleway**, none referenced since ADR 0011 removed AdminLTE.
+
+## 2026-08-22 · The account menu shows the avatar, not the name
+
+The trigger in both top bars was avatar, then name, then chevron — `current_user.display_name`
+on the bank side and `current_user.email` on the partner side. It is the avatar and the chevron
+now, and the name moved nowhere: the panel already opened with the name, the email and the role,
+which is why removing it from the bar costs nothing.
+
+The name in the bar was the only text on the page guaranteed not to change between screens. That
+is precisely what makes it expensive — it sits at the top right, where the eye goes for the page
+actions, and it is the one thing there that is never the answer to anything. Both copies were
+already conceding the point at small widths (`hidden … sm:block`, `max-w-[12rem] truncate`), so
+the layout had two behaviours to reason about and the narrow one was the honest one.
+
+**The chevron stays.** It was tempting to read "just the avatar" as the whole trigger, but the
+chevron is the only thing marking a circle of letters as a control rather than decoration, and
+`aria-haspopup` says so to everyone except the people looking at it.
+
+**Removing the name removed the accessible name with it.** The avatar span is `aria-hidden` —
+correctly, since "JB" read aloud is noise — so with the text gone the button had nothing left to
+announce, and design.md's rule that a control with only an icon carries its own `aria-label` had
+just started applying to it. It is `aria-label="Account menu for …"`, interpolating the same
+expression the avatar uses. Plain "Account menu" would have satisfied the rule and quietly lost
+information a sighted user still gets from the initials.
+
+Two things noticed in passing and deliberately left alone, both older than this change:
+
+- The trigger has `aria-expanded` but no `aria-controls`; the panel has no `id` to point at. The
+  accessibility rules in design.md ask for both on anything that opens a region.
+- design.md says the organization's name is in the top bar. It is in the sidebar
+  (`_essentials_sidebar.html.erb:12`). The claim about tenancy being visible holds; the location
+  in the sentence does not.
