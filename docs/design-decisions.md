@@ -2965,3 +2965,67 @@ colour, because the thing that was wrong — a glyph inset inside its own backgr
 invisible in the CSS and invisible to a computed-style check. All three now paint their chevron
 with its box edge 12px from the border, matching `pl-3` on the other side, and the app-wide sweep
 reports one signature for all 116 visible selects where it used to report three.
+
+## 2026-08-23 · The required marker is a red asterisk, and the legend is gone
+
+Two changes, one of which reverses a call made on this branch three days ago.
+
+### The asterisk was grey, with three dots under it
+
+`<abbr title="required">*</abbr>` inherits the label's colour — slate-700 — and every browser's
+default stylesheet gives `abbr[title]` `text-decoration: underline dotted`. Under a single
+asterisk that renders as a star with three dots beneath it. Nothing in the design system turned
+it off, so the marker was neither red nor cleanly an asterisk, on every form in the app.
+
+It is `rose-600` with `text-decoration: none` now. **The class comes from the locale, not from an
+attribute selector.** `simple_form.en.yml` sets `required.html` to
+`<abbr class="required-marker" title="required">*</abbr>`, and the Spanish file sets the same
+class with `title="necesario"`. Styling `abbr[title="required"]` would have worked in English and
+silently not in Spanish, which is the sort of thing that survives for years.
+
+Evidence that the browser default had been met before and only patched locally:
+`requests/_request_row.html.erb` puts `class="no-underline"` on an unrelated `<abbr>`. Somebody
+hit it, fixed the one they could see, and moved on.
+
+### The legend is removed, and that reverses `fc4e62d32`
+
+`essentials_form_for` rendered "Fields marked * are required." above every form, CSS-hidden
+unless the form actually had a required field. It was added deliberately, for WCAG 3.3.2, with
+the reasoning: *"`abbr@title` covers a screen reader; a sighted user got a bare glyph."*
+
+The counter-argument, and the one taken: a **red** asterisk is not a bare glyph. Grey-with-dots
+was, which is most of why the legend felt necessary. The line cost roughly 32px at the top of
+every form's card, and the two profile step pages carried a second one — an info callout reading
+"Instructions: Please fill out the following form sections carefully. Ensure that all required
+fields are completed." — which pushed the first card from 274px down to 350px.
+
+**Nothing programmatic changed.** The `abbr@title` is still there and still read by screen
+readers; `aria-required="true"` is still put on every required input by `EssentialsInputAria`.
+What was removed is a visible restatement for sighted users, who now get colour and shape
+instead of a sentence. WCAG 3.3.2 asks for labels or instructions, not for a legend; Material and
+Polaris both mark required fields without one, and GOV.UK avoids asterisks entirely rather than
+explaining them. This is a defensible position rather than an obviously correct one, which is why
+it is written down as a reversal rather than as a fix.
+
+### Two consequences that had to move with it
+
+**`form-validation-audit.js` asserted the legend exists.** Left alone it would have reported
+"asterisk with nothing saying what it means" on 26 forms — verified by running the old audit
+against the new app. The check is now `markerStyled`: the marker must not inherit the label
+colour and must not carry a text decoration. That is a test for the defect that actually existed,
+where the old one tested for the absence of a mitigation.
+
+**Four labels wrote their own asterisk.** `product_drive_participants/_form` marks four
+conditionally-required fields — business name or contact name, phone or email — with a literal
+`*` in the label text plus a parenthetical explaining the condition. Harmless while the real
+marker was also a grey glyph; not harmless once it is red, because the page then shows two
+asterisks in two colours meaning two different things. The asterisks went and the parentheticals
+stayed, which is the half that ever carried the meaning.
+
+### One finding this did not cause
+
+The form audit reports `/partners/family_requests/new` with no inline errors and no
+`aria-invalid`, against a change log entry claiming the audit had no findings. That form is
+`form_with` with no `f.input` and never touches simple_form, and running the *previous* audit
+against the current app reports the same thing. It predates this work and is recorded in
+[todo.md](todo.md).

@@ -306,24 +306,12 @@ module EssentialsUiHelper
   # simple_form_for with the design system's wrappers already applied. Use this rather than
   # passing `wrapper:` at every call site -- forgetting it silently renders a Bootstrap form
   # on a page with no Bootstrap CSS, which looks like an unstyled browser default.
+  # No required legend. The marker is a red asterisk, which is the convention, and a line of
+  # explanatory text above every form was costing ~32px of the card's first screen to restate it.
+  # The programmatic signals are unchanged: `abbr@title` on the marker, `aria-required` on the
+  # input. See docs/design-decisions.md -- this reverses an earlier call.
   def essentials_form_for(record, options = {}, &block)
-    simple_form_for(record, options.deep_merge(wrapper: :essentials, wrapper_mappings: WRAPPER_MAPPINGS)) do |f|
-      safe_join([essentials_required_legend, capture(f, &block)])
-    end
-  end
-
-  # "Fields marked * are required." An asterisk that nothing explains fails the point of WCAG
-  # 3.3.2: `<abbr title="required">` covers a screen reader, and a sighted user gets a bare glyph.
-  # Nielsen Norman and GOV.UK both say mark the required fields and say what the mark means.
-  #
-  # Rendered on every form and hidden by CSS unless the form actually contains a required field
-  # -- `form:has(abbr[title="required"])`. Putting it here rather than at 32 call sites means it
-  # cannot be forgotten on the next form, and :has means it cannot be wrong on a form that has no
-  # required fields.
-  def essentials_required_legend
-    tag.p(class: "essentials-required-legend mb-4 text-xs text-slate-500") do
-      safe_join(["Fields marked ", tag.abbr("*", title: "required", class: "font-semibold text-slate-700"), " are required."])
-    end
+    simple_form_for(record, options.deep_merge(wrapper: :essentials, wrapper_mappings: WRAPPER_MAPPINGS), &block)
   end
 
   # The error summary that sits above a form. Named the field, has role="alert", and links

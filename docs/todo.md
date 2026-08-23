@@ -6,6 +6,17 @@ was left, and what fixing it involves — so picking one up does not start with 
 This is not a wish list. Nothing goes here that has not been confirmed in the code, and anything
 fixed comes out in the same commit as the fix, with a row in [changelog.md](changelog.md).
 
+## Test suite
+
+**`bundle exec rspec --seed 43125` fails 7 examples in
+`spec/services/reports/adult_incontinence_report_service_spec.rb`**, all of them
+`create(:kit, organization: organization)` raising `Validation failed: Name has already been
+taken`. It is order-dependent, not date-dependent: the file passes 8/8 on its own, and the same
+seed reproduces the same seven failures on a tree with no local changes at all — checked by
+stashing. Something earlier in that ordering leaves a kit name behind, or the kit factory's
+`sequence(:name)` collides with one created through `kit_item`'s `after(:build)`. Reproducible,
+which is the hard part of a flake already done.
+
 ## Design system
 
 **The getting-started step badges repeat their class string five times.**
@@ -24,6 +35,13 @@ because it renders identically and the move was not part of the tabs change. Com
 says the same.
 
 ## Accessibility
+
+**`/partners/family_requests/new` shows only an error summary, with no inline errors and no
+`aria-invalid`.** The change log entry for `fc4e62d32` claims the form audit had no findings; it
+has one now, and it is not from recent work — the form is `form_with` with no `f.input`, so it
+never touches simple_form, and running the pre-change audit against the current app reports the
+same thing. Fix: the form needs per-field error rendering, which for a non-simple_form form means
+doing by hand what the `:essentials` wrapper does.
 
 **The account menu trigger has `aria-expanded` with no `aria-controls`.** Both top bars. The
 panel has no `id` for it to point at. design.md's accessibility rules ask for both on anything

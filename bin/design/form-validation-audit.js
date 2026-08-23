@@ -56,16 +56,16 @@ const readForm = () => {
   //   fields is required on its own.
   const markedFor = (f) => {
     const l = f.labels && f.labels[0];
-    if (l && (l.querySelector("abbr[title=required]") || /\brequired\b/i.test(l.textContent))) return true;
+    if (l && (l.querySelector(".required-marker") || /\brequired\b/i.test(l.textContent))) return true;
     if (f.type === "radio" || f.type === "checkbox") {
       const lg = f.closest("fieldset") && f.closest("fieldset").querySelector("legend");
-      if (lg && (lg.querySelector("abbr[title=required]") || /\brequired\b/i.test(lg.textContent))) return true;
+      if (lg && (lg.querySelector(".required-marker") || /\brequired\b/i.test(lg.textContent))) return true;
     }
     return false;
   };
   const conditional = (f) => {
     const l = f.labels && f.labels[0];
-    return !!l && /\brequired\b/i.test(l.textContent) && !l.querySelector("abbr[title=required]");
+    return !!l && /\brequired\b/i.test(l.textContent) && !l.querySelector(".required-marker");
   };
 
   const required = fields.filter((f) => f.required || f.getAttribute("aria-required") === "true");
@@ -80,13 +80,15 @@ const readForm = () => {
     required: required.length,
     unmarked: required.length - markedInLabel.length,
     markedNotRequired: markedNotRequired.length,
-    // An asterisk with nothing saying what it means. abbr@title covers a screen reader; a sighted
-    // user gets a bare *.
-    asteriskExplained: !!document.querySelector("main .essentials-required-legend") &&
-      getComputedStyle(document.querySelector("main .essentials-required-legend")).display !== "none",
-    // In a label, not anywhere: the legend contains an abbr of its own, so an unscoped query is
-    // true on every form and reports "unexplained asterisk" for forms with nothing required.
-    hasAsterisk: !!form.querySelector("label abbr[title=required]"),
+    // The marker is a red asterisk and nothing else -- there is no legend explaining it any
+    // more, so there is nothing to check for. What still has to hold is that it is red rather
+    // than inheriting the label colour, and that the browser's dotted underline for
+    // `abbr[title]` is off: both were true for a year and neither was.
+    hasAsterisk: !!form.querySelector("label .required-marker"),
+    markerStyled: [...form.querySelectorAll("label .required-marker")].every((m) => {
+      const c = getComputedStyle(m);
+      return c.textDecorationLine === "none" && c.color !== getComputedStyle(m.parentElement).color;
+    }),
   };
 };
 
@@ -189,7 +191,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     const p = [];
     if (r.marking.unmarked) p.push(`${r.marking.unmarked} required field(s) not marked in the label`);
     if (r.marking.markedNotRequired) p.push(`${r.marking.markedNotRequired} field(s) marked required but not required programmatically`);
-    if (r.marking.hasAsterisk && !r.marking.asteriskExplained) p.push("asterisk with nothing saying what it means");
+    if (r.marking.hasAsterisk && !r.marking.markerStyled) p.push("required marker not styled: it inherits the label colour, or keeps the browser's dotted underline");
     if (r.errors) {
       if (!r.errors.inline) p.push("no inline error next to any field" + (r.errors.summary ? " (only a summary)" : " (and no summary either)"));
       if (!r.errors.invalid) p.push("no aria-invalid on any field");

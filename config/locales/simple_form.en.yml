@@ -5,9 +5,11 @@ en:
     required:
       text: 'required'
       mark: '*'
-      # You can uncomment the line below if you need to overwrite the whole required html.
-      # When using html, text and mark won't be used.
-      # html: '<abbr title="required">*</abbr>'
+      # `html` is set so the marker carries a class of its own. Styling it by attribute selector
+      # would mean matching on the localised title -- "required" here, "necesario" in es -- and a
+      # marker that only turns red in one locale is the kind of thing nobody notices.
+      # `text` and `mark` are unused while `html` is set; both are left as documentation.
+      html: '<abbr class="required-marker" title="required">*</abbr>'
     error_notification:
       default_message: "Please review the problems below:"
     # Examples

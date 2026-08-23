@@ -5,9 +5,9 @@ es:
     required:
       text: 'necesario'
       mark: '*'
-      # You can uncomment the line below if you need to overwrite the whole required html.
-      # When using html, text and mark won't be used.
-      # html: '<abbr title="required">*</abbr>'
+      # See the note in simple_form.en.yml: the class is what the stylesheet matches on, and the
+      # title stays localised.
+      html: '<abbr class="required-marker" title="necesario">*</abbr>'
     error_notification:
       default_message: "Por favor revise los siguientes problemas:"
     # Examples
