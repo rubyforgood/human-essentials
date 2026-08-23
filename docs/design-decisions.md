@@ -2867,3 +2867,43 @@ heading block is captured once and used in both branches. **Checked rather than 
 height and `h2` position were measured for every card on five pages before and after, and the
 only difference anywhere is the announcements `h2` moving 48px right — the 36px tile plus its
 `gap-3`. Every other card is identical.
+
+## 2026-08-23 · The icon tile gets one definition too
+
+`essentials_icon_tile` rendered 36px, `rounded-xl`, `text-brand-600`. The reports hub rendered
+28px, `rounded-lg`, `text-brand-700` — inline, by hand. Three properties had drifted, not one,
+which is roughly what a single hand-rolled copy of a component looks like once nobody is
+comparing them side by side.
+
+### Two sizes is the honest answer, not one
+
+The hub could have been forced onto the 36px default, and it would have been wrong. Its card is a
+compact cell in a 3×2 grid with a `text-sm` heading; a 36px tile beside 14px text is heavy, and
+the file's own comment says the grid was tuned to stay above the fold. So the helper takes
+`size:` — `md` (36px, `rounded-xl`) default, `sm` (28px, `rounded-lg`) — named the way the button
+sizes already are, which gives the pair of legitimate sizes one definition instead of one
+definition and one copy.
+
+**The colour moved and that is the point.** Converting the hub takes its icon from
+`text-brand-700` to the helper's `text-brand-600`, 7.07:1 down to 5.62:1 against `bg-brand-50`.
+Both are far past the 3:1 that non-text contrast asks for, and the icon is `aria-hidden`
+decoration in a card whose heading carries the meaning. The alternative — moving the *helper* to
+700 — would have changed the tile everywhere to preserve the one place that was out of step.
+Geometry is unchanged: 28×28, 8px radius, same header, card and grid heights.
+
+### The discriminator for the audit is `rounded-full`
+
+A tile check that matched every tone-coloured fixed-size rounded box would also flag the topbar
+avatars and the five numbered step badges on the getting-started card. It does not, because those
+are circles and tiles are not. That is not a convenience — design.md already keeps avatars and
+tiles disjoint on the grounds that it is what makes either readable at a glance, and the audit now
+draws its line in the same place. Both sweeps live together now, asking one question of everything
+that emits markup: did someone rebuild a thing the design system already defines?
+
+### What was checked and left alone
+
+Eight tone-coloured rounded boxes exist in the app. Two are topbar avatars, five are the
+getting-started step badges, one was the reports hub. Only the last was a tile. The step badges
+repeat the same 100-character class string five times in one file, which is its own small drift
+risk — but they are a numbered badge rather than an icon tile, and five copies in one file is a
+different problem from one copy hiding in another component. Written down rather than fixed.

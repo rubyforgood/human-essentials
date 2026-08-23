@@ -222,18 +222,29 @@ module EssentialsUiHelper
   #
   # A soft coloured tile behind an icon means "a stat or a status". A person is an
   # initials avatar instead. Keeping these disjoint is what makes either one readable.
-  def essentials_icon_tile(icon, tone: :brand)
-    tone_classes = {
-      brand: "bg-brand-50 text-brand-600",
-      info: "bg-sky-50 text-sky-600",
-      success: "bg-emerald-50 text-emerald-600",
-      warning: "bg-amber-50 text-amber-600",
-      danger: "bg-rose-50 text-rose-600",
-      neutral: "bg-slate-100 text-slate-600"
-    }.fetch(tone.to_sym)
+  # Two sizes, named as the buttons are: `md` is the default and stands beside a figure or a
+  # `text-base` heading; `sm` is for a compact card header, where a 36px tile next to a `text-sm`
+  # heading reads as heavy. The reports hub had built its own `sm` inline -- 28px, `rounded-lg`
+  # and `text-brand-700` against this helper's `text-brand-600`, so three things had drifted
+  # rather than one.
+  ICON_TILE_SIZES = {
+    sm: "size-7 rounded-lg",
+    md: "size-9 rounded-xl"
+  }.freeze
 
+  ICON_TILE_TONES = {
+    brand: "bg-brand-50 text-brand-600",
+    info: "bg-sky-50 text-sky-600",
+    success: "bg-emerald-50 text-emerald-600",
+    warning: "bg-amber-50 text-amber-600",
+    danger: "bg-rose-50 text-rose-600",
+    neutral: "bg-slate-100 text-slate-600"
+  }.freeze
+
+  def essentials_icon_tile(icon, tone: :brand, size: :md)
     tag.span(tag.i(nil, class: icon, aria: {hidden: true}),
-      class: "grid h-9 w-9 shrink-0 place-items-center rounded-xl #{tone_classes}")
+      class: "grid shrink-0 place-items-center " \
+             "#{ICON_TILE_SIZES.fetch(size.to_sym)} #{ICON_TILE_TONES.fetch(tone.to_sym)}")
   end
 
   # --- Identity -------------------------------------------------------------

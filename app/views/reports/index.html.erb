@@ -18,9 +18,7 @@
                aria-labelledby="reports-<%= section.label.parameterize %>-heading">
         <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
           <div class="flex min-w-0 items-center gap-2">
-            <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-              <i class="<%= section.icon %>" aria-hidden="true"></i>
-            </span>
+            <%= essentials_icon_tile(section.icon, tone: :brand, size: :sm) %>
             <h2 id="reports-<%= section.label.parameterize %>-heading"
                 class="truncate text-sm font-semibold text-slate-900"><%= section.label %></h2>
           </div>
