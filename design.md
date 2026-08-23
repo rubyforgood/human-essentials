@@ -776,8 +776,8 @@ the wrapper mappings explicitly.
 - **Do not pass a block to `f.input` just to restyle the field.** A block tells simple_form
   to skip the wrapper's input, which is why several forms ended up with the wrapper's own
   class string copy-pasted in by hand.
-- `essentials_error_summary` sits above the form: `role="alert"`, names each field, links
-  each message to its input.
+- `essentials_error_summary` sits above the form: `role="alert"`, and names each field in a
+  plain bulleted list.
 - Error text on a **form field** is `slate-700` behind a `rose-600` glyph — the glyph signals and
   the sentence reads. See [required fields and validation errors](#forms-required-fields-and-validation-errors).
   `rose-700` remains the tone for error text that has no glyph beside it; `rose-600` is a border,
@@ -1036,8 +1036,19 @@ words and carry no `aria-required`, because none of them is required on its own.
 - `aria-invalid="true"` on the input, from simple_form's `html5` component.
 - `aria-describedby` pointing at the message, from `EssentialsInputAria`. The message text is
   wrapped in a span with an id, because the `<p>` the wrapper builds cannot take a per-field one.
-- `essentials_error_summary` above the form, whose items **link to the fields**. That is the
-  GOV.UK error-summary pattern and the reason a summary is worth having.
+- `essentials_error_summary` above the form, listing every failure in one place.
+- **The summary's items are plain text, not links.** They were anchors to each field once --
+  the GOV.UK pattern -- and inside a red box they read as blue underlined links, a third colour
+  in a component that already has two. Two rules were being broken at once: the underline,
+  because [Interaction](#interaction) says a link that is its own block takes none, and the
+  tone, because brand blue on a danger surface points at nothing the reader can act on. A plain
+  bulleted list under a bold line is also what Polaris, Carbon and Atlassian show. The jump is
+  not missed: every message is repeated at its own field and tied to the input by
+  `aria-describedby`, so the summary says **what** is wrong and the field says **where**.
+- **The glyph sits in its own column, and the heading and list share the next**, so the bullets
+  line up under the heading's text instead of under the glyph. The alignment is structural --
+  a flex row -- rather than left padding measured against the icon, which is a number that goes
+  stale the moment the type scale moves.
 - The inline message is **slate-700 body text behind a `rose-600` glyph**, from `.field-error`.
   The glyph is the signal and the sentence is the words — which is what lets the sentence be
   slate rather than rose. It reads better (10.35:1 on white against rose-700's 6.29:1) and a
