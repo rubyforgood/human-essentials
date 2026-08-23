@@ -3099,3 +3099,61 @@ the design system and match it. Grey is also the hint colour: `slate-500` at `te
 same slot under the same field, so a grey error and the hint it replaces would be near
 indistinguishable. The icon was the missing half, and it is the half that removes the reliance on
 colour.
+
+## 2026-08-23 · The error message goes slate, and three checks that were keyed to its colour
+
+A follow-up to the entry above, reversing the half of it that kept the inline message red.
+
+### The glyph signals; the sentence reads
+
+The argument for `rose-700` was design.md's colour table: a failure is `danger`, text tones use
+the `-700` step. The argument against is that **there is an icon now**, and it is the icon doing
+the signalling. Once that is true the sentence is just words, and words read better in body
+text: `slate-700` is **10.35:1** on white against rose-700's **6.29:1**. A form with six problems
+also stops being six lines of red.
+
+The objection raised the first time — that a grey error is indistinguishable from the grey hint
+in the same slot — is answered by the same icon. The hint is `slate-500` with no glyph; the error
+is `slate-700` with one. Two differences, neither of them hue alone.
+
+The summary followed: `slate-900` heading, `slate-700` items, on the `rose-50` surface inside its
+`rose-200` border. The frame and the mark carry the danger; colouring the sentences as well says
+it a third time, and slate-900 on rose-50 is 16.25:1 where rose-900 was 8.71:1.
+
+### A tile on white, a plain glyph on a tint
+
+The inline glyph got a `rose-50` chip, 16px, because it sits on the card's white. The summary's
+glyph was built the same way and **could not be seen** — a `rose-50` tile on a `rose-50` surface.
+design.md already says this about the flash bar: *"a message bar gets a plain glyph, never an
+icon tile: a soft `-50` tile on a `-50` surface is invisible."* A summary is the same kind of
+object. Measured before believing it: both came back `oklch(0.969 0.015 12.422)`.
+
+### The bullets had a red underline under grey words
+
+Each summary item is a link to its field, and they carried `decoration-rose-300`. That was
+coherent while the item text was `rose-800`; the moment the text became slate it was a red rule
+under grey words, matching nothing else in the app. They are ordinary links now — `brand-700`,
+underlined, 7.19:1 on rose-50 — which is also what they should have looked like all along, since
+the entire point of the GOV.UK summary is that the items are clickable.
+
+### Three audit checks were testing for a colour
+
+`form-validation-audit.js` looked for `main p.text-rose-700` to decide whether a field had an
+inline error, and for a `rose` class in the ancestry to decide whether `aria-describedby` pointed
+at one. Both went wrong the instant the message stopped being rose — reporting first 2 and then
+**27 forms** with defects that did not exist. They key on `.field-error` now, which is the thing
+being asked about rather than the colour it happens to be painted.
+
+This is the third audit in three days found to be checking a proxy rather than the property:
+`page-audit`'s four page kinds, its substring match for a card, and now these. The pattern is
+worth naming — a check written against today's markup passes for as long as nothing changes, and
+a design system is a thing that changes.
+
+### `admin/partners/edit` builds its fields properly now
+
+The three `f.input :name do ... f.input_field ... end` blocks are plain `f.input`. The block form
+replaces the wrapper's input, so those fields had no `aria-required`, no `aria-invalid`, no
+`aria-describedby` and no inline message, and carried a hand-copied version of the wrapper's
+class string that could never follow it. Confirmed in a browser: the name field now reports
+`aria-required`, and an empty save gives `aria-invalid`, a linked description and a message
+beside the field where previously there was nothing at all.

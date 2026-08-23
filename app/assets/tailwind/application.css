@@ -316,25 +316,36 @@
   }
 
   /*
-   * An inline field error carries a glyph as well as its colour.
+   * An inline field error: a tinted danger glyph, and the message in ordinary body text.
    *
-   * design.md: "Never colour alone. Every coloured signal carries a word, and usually an icon
-   * too." The message is the word; the icon was the missing half. Without it a field error and
-   * the hint it replaces are the same size, the same weight-ish and in the same place, telling
-   * them apart by hue alone -- which is what WCAG 1.4.1 is about.
+   * The glyph carries the signal and the text carries the words. That split is what lets the
+   * message be `slate-700` rather than `rose-700`: design.md's rule is "never colour alone --
+   * every coloured signal carries a word, and usually an icon too", and once the icon exists it
+   * is the icon doing the signalling, not the hue of the sentence. It also reads better --
+   * slate-700 is 10.35:1 on white against rose-700's 6.29:1 -- and it stops a form with six
+   * problems turning into six lines of red.
+   *
+   * It is still distinct from a hint, which sits in the same slot at the same size: the hint has
+   * no glyph and is `slate-500`, the muted step, where this is `slate-700`, the body step.
    *
    * `::before` rather than markup because simple_form's error component renders text into a <p>
-   * and takes a class, not a block. The glyph is decorative: it is `aria-hidden` by construction
-   * (generated content is not in the accessibility tree in any current browser) and the message
-   * beside it already says what is wrong.
+   * and takes a class, not a block. The glyph is decorative: generated content is not in the
+   * accessibility tree, and the message beside it already says what is wrong.
    */
   .field-error::before {
     content: "\f33b"; /* bi-exclamation-triangle */
     font-family: bootstrap-icons !important;
     font-weight: normal;
+    color: var(--color-rose-600);
+    background-color: var(--color-rose-50);
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
     margin-right: calc(var(--spacing) * 1.5);
-    display: inline-block;
-    vertical-align: -0.05em;
+    vertical-align: -0.2em;
   }
 
   /*

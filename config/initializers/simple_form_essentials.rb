@@ -66,13 +66,11 @@ SimpleForm.setup do |config|
   invalid_classes = "border-rose-400 focus:border-rose-500 focus:ring-rose-500/30"
   label_classes = "block text-sm font-medium text-slate-700"
   hint_classes = "mt-1 block text-xs text-slate-500"
-  # rose-600 is 4.51:1 on white -- it passes, but only just, so error text uses -700.
-  #
-  # `.field-error` adds the glyph. design.md's rule is "never colour alone -- every coloured
-  # signal carries a word, and usually an icon too": the message was the word, and the icon was
-  # missing, which left an error and the hint it replaces distinguished by hue alone. They are
-  # otherwise the same size, in the same place, under the same field.
-  error_classes = "field-error mt-1 block text-xs font-medium text-rose-700"
+  # The glyph in `.field-error` is the danger signal; the sentence is body text. slate-700 rather
+  # than rose-700 because the icon is what says "error" -- and it reads better, 10.35:1 on white
+  # against 6.29:1, without turning a form with six problems into six lines of red. The hint
+  # above uses slate-500 and no glyph, so the two are still told apart by more than hue.
+  error_classes = "field-error mt-1 flex items-center text-xs font-medium text-slate-700"
 
   config.wrappers :essentials, tag: "div", class: "mb-4" do |b|
     b.use :html5
