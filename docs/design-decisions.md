@@ -2715,3 +2715,50 @@ surfaces. The other two are not obviously the component's job: `admin/dashboard`
 `partners/_show_header` use the card surface for a small `flex items-center gap-3` tile, and the
 card renders a title/subtitle/actions header a tile does not want. Converting all four is a
 judgement per file and a separate change; what this one fixes is that the audit can see them.
+
+## 2026-08-23 · One of the two "straight swaps" was not one
+
+Of the four hand-rolled cards the fixed check found, two were called straight swaps. Reading
+them, only one was.
+
+**`admin/ndbn_members/index` was.** It is the same shape `admin/barcode_items` was in before it
+was rebuilt: a real card rendered at the top, four closing tags with nothing open, and a second
+card hand-rolled around the table — with everything from the upload form down accidentally
+nested inside the first card's block. It is two cards now, the second `padded: false` around a
+table that has a caption, `scope="col"` and a scroll region, plus an empty state for the case
+where nothing has been uploaded. Headings went to sentence case, which is what moved the request
+spec's `th` assertion.
+
+**`reports/index` was not.** Its six cards are `<section>` elements that each carry
+`aria-labelledby` pointing at their own `<h2>`, a 28px icon tile, a count, a `text-sm` heading
+and a `pb-2.5` divider. `shared/essentials/card` has none of that: no way to label the section,
+no icon slot, no meta slot, and a hardcoded `text-base` heading in a `px-5 py-4` header. Swapping
+it would:
+
+- **remove six labelled regions.** An unnamed `<section>` is not exposed as a region at all, so
+  this is a real loss that axe would not report as a violation.
+- **grow each card by roughly 25px** — measured: the header is 39px today against the component's
+  ~56px, and the body would go from `p-4` to `p-5`. The grid ends at 659px in a 900px viewport,
+  so it would still clear the fold here, but the file's own comment says the design was chosen to
+  keep it there.
+
+So it is not debt in the sense the check means, and it is not a swap. It is a page whose card
+is a genuinely different component.
+
+### The recommendation for the remaining three
+
+`reports/index`, `admin/dashboard` and `partners/_show_header` all want the card *surface* without
+the card *component* — two of them for a `flex items-center gap-3` stat tile, one for a compact
+titled section. And there is a fifth the audit cannot even see: `essentials_stats` pastes the same
+classes in `app/helpers/essentials_ui_helper.rb:118`, and `page-audit.rb` only globs
+`app/views/**/*.html.erb`.
+
+Converting them to the component is the wrong fix in all four cases. The right one is to stop the
+surface being a copied string at all: define it once as a component class next to `.data-table` in
+the Tailwind entry, and have `_card.html.erb`, `essentials_stats`, the two tiles and the reports
+section all use that. Then a change to the card reaches every surface in the app — which is the
+only thing the debt was ever about — the check becomes "you pasted the tokens instead of using the
+class", and it can be zero honestly rather than by exception.
+
+Not done here: it is a design system change rather than a page fix, and it should be one commit
+that moves all five together.
