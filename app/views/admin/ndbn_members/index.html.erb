@@ -9,8 +9,9 @@
     <%= render "shared/essentials/card", title: "Upload NDBN members" do %>
       <p class="max-w-prose text-sm text-slate-600">
         The current NDBN member list is at
+        <%# Underlined because it sits inside a sentence: WCAG 1.4.1, and axe's link-in-text-block. %>
         <%= link_to "this link", "https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915",
-              class: "text-brand-700 hover:text-brand-800" %>.
+              class: "font-medium text-brand-700 underline hover:text-brand-800" %>.
         Export it as CSV and remove the initial "Updated" row before uploading.
       </p>
 

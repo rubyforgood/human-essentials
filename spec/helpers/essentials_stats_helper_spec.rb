@@ -30,7 +30,9 @@ RSpec.describe EssentialsUiHelper, type: :helper do
     it "puts the figures in one card rather than a filled box each" do
       html = helper.essentials_stats([{label: "A", value: 1}, {label: "B", value: 2}])
 
-      expect(html).to include("rounded-2xl border border-slate-200 bg-white shadow-sm")
+      # `.card-surface` is the one definition of that surface -- the helper used to paste the
+      # four utilities, which is why a change to the card never reached it.
+      expect(html).to include("card-surface")
       expect(html).to include("gap-px bg-slate-200")
       expect(html).not_to include("bg-slate-50")
       expect(html).not_to include("rounded-xl")

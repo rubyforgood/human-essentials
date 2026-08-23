@@ -165,6 +165,24 @@
   }
 
   /*
+   * The card surface: white, hairline border, rounded-2xl, shadow-sm (design.md).
+   *
+   * Defined once because five different things need this surface and only one of them is the
+   * card component. `essentials_stats` builds its own container, the admin dashboard and the
+   * partner header build stat tiles, and the reports hub builds a compact labelled section --
+   * none of which wants the component's header/body/footer structure, and all of which were
+   * pasting the four utilities instead. A change to the card reached one of the five.
+   *
+   * `@apply` rather than hand-written CSS on purpose, and it is the only `@apply` in this file:
+   * the point of the class is to be *exactly* those four utilities, and `shadow-sm` alone
+   * composes five custom properties. Restating them here would be a copy that drifts, which is
+   * the thing this class exists to stop.
+   */
+  .card-surface {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  /*
    * Data tables.
    *
    * Deliberately component classes rather than repeated utility strings: there are ~78
