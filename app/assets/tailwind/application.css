@@ -299,18 +299,20 @@
   }
 
   /*
-   * The "Fields marked * are required." line. Rendered on every form by essentials_form_for and
-   * shown only when the form actually contains a required field, so it can neither be forgotten
-   * on a new form nor be a lie on one with nothing required.
+   * The required marker: a red asterisk, and nothing else.
+   *
+   * `text-decoration: none` is the whole reason this rule has to exist. The marker is an
+   * `<abbr title="required">`, and every browser's default stylesheet underlines `abbr[title]`
+   * with a dotted line -- under an asterisk that renders as a star with three dots beneath it.
+   * Nothing in the design system had turned it off, so the marker was a grey asterisk with a
+   * dotted underline where the convention is a red asterisk.
+   *
+   * The title stays: it is what a screen reader reads, alongside the `aria-required` that
+   * `EssentialsInputAria` puts on the input.
    */
-  .essentials-required-legend {
-    display: none;
-  }
-
-  /* `label abbr`, not any abbr: the legend contains one itself, so an unscoped :has() would
-     always match and the line would show on forms with nothing required. */
-  form:has(label abbr[title="required"]) .essentials-required-legend {
-    display: block;
+  .required-marker {
+    color: var(--color-rose-600);
+    text-decoration: none;
   }
 
   /*

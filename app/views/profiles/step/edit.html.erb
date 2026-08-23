@@ -7,10 +7,6 @@
         back: {path: partner_path(@partner), label: "Back to #{@partner.name}"} %>
 </div>
 
-<%= render "shared/essentials/callout", tone: :info, role: "note", wrapper_class: "mx-5 mt-3" do %>
-  Instructions: Please fill out the following form sections carefully. Ensure that all required fields are completed.
-<% end %>
-
 <div data-controller="accordion disclosure">
   <%= essentials_form_for @partner,
             url: profile_path,

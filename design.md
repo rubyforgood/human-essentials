@@ -992,18 +992,31 @@ instead, so it kept the exact fault the fix was written for.
 Audit with `pw bin/design/form-validation-audit.js`, which opens every `new` form, reads how its
 required fields are marked, submits it empty and reads what came back.
 
-**Required is stated three ways, and all three come from the wrapper.**
+**Required is stated two ways, and both come from the wrapper.**
 
 | | Where | Who it is for |
 | --- | --- | --- |
-| `<abbr title="required">*</abbr>` | in the label | sighted users |
+| a **red asterisk** — `<abbr class="required-marker" title="required">*</abbr>` | in the label | sighted users |
 | `aria-required="true"` | on the input | screen readers |
-| "Fields marked * are required." | once per form | everyone, and it is what makes the asterisk mean anything |
 
-The legend is rendered by `essentials_form_for` and hidden by
-`form:has(label abbr[title="required"])`, so it cannot be forgotten on a new form and cannot lie
-on a form with nothing required. Scope the `:has()` to `label` — the legend contains an `abbr` of
-its own.
+**The marker is `rose-600` and carries `text-decoration: none`, and the second half matters as
+much as the first.** Every browser underlines `abbr[title]` with a dotted line, so for a year the
+marker rendered as a slate-700 asterisk with three dots under it — neither red, nor plainly an
+asterisk. The class comes from the `simple_form.*.yml` `required.html` key rather than an
+attribute selector, because the `title` is localised and a marker that only turns red in English
+is worse than one that never does.
+
+**There is no legend explaining the asterisk.** There was — "Fields marked * are required.",
+rendered by `essentials_form_for` and CSS-hidden on forms with nothing required — and it was
+removed: a red asterisk is the convention, and a line restating it cost ~32px at the top of every
+form's card. This reverses an earlier decision taken for WCAG 3.3.2; the reasoning both ways is in
+[design-decisions.md](docs/design-decisions.md). Nothing programmatic changed — `abbr@title` and
+`aria-required` both remain.
+
+**Do not write an asterisk into label text.** A red one means required; a black one written by
+hand means something the reader has to guess at. Four labels on the product drive participant
+form used to do this for conditionally-required fields, and say the condition in words as well —
+the words stayed and the asterisks went.
 
 `aria-required` is added by `EssentialsInputAria` rather than by simple_form's `html5` component,
 which derives `required` from `SimpleForm.browser_validations` — off here, deliberately, because
