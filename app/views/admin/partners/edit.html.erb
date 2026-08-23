@@ -8,31 +8,23 @@
 
 <%= essentials_form_for @partner, url: admin_partner_path do |f| %>
 <div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
-  <%#
-    This page had no error display at all: no summary, and the fields below use
-    `f.input ... do f.input_field`, which design.md forbids precisely because it skips the input
-    pipeline -- no aria-invalid, no aria-describedby, no inline message. A failed save showed a
-    flash and nothing else, and once the flash became the fallback rather than the convention it
-    would have shown nothing. The block form is recorded in docs/todo.md.
-  %>
   <%= essentials_error_summary(@partner) %>
   <%= render "shared/essentials/card" do %>
-              <%= f.input :name, label: "Name" do %>
-                <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-              <% end %>
-              <%= f.input :email, label: "E-mail" do %>
-                <%= f.input_field :email, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
-              <% end %>
-              <%= f.input :send_reminders, label: "Send reminders?" do %>
-                <%# No custom id: simple_form's label points at the generated one, so overriding
-                    the field's id left the label pointing at nothing and the control unlabelled. %>
-                <%= f.check_box :send_reminders, {class: "size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"}, "true", "false" %>
-              <% end %>
+    <%#
+      Plain `f.input`, no blocks. These three used to pass a block containing `f.input_field`,
+      which replaces the wrapper's input and so skips the whole pipeline: the fields had no
+      `aria-required`, no `aria-invalid`, no `aria-describedby` and no inline error, and they
+      carried a hand-copied version of the wrapper's class string that could not follow it.
+      design.md names this as the mistake and says it had already been found three times.
+    %>
+    <%= f.input :name, label: "Name" %>
+    <%= f.input :email, label: "E-mail" %>
+    <%= f.input :send_reminders, label: "Send reminders?", as: :boolean %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= submit_button %>
-        <%= essentials_link_button "Cancel", admin_partners_path, variant: :ghost, size: :md %>
-      </div>
+    <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+      <%= submit_button %>
+      <%= essentials_link_button "Cancel", admin_partners_path, variant: :ghost, size: :md %>
+    </div>
   <% end %>
 </div>
 <% end %>

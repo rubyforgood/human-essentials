@@ -324,21 +324,30 @@ module EssentialsUiHelper
     # message was; it is here now and they need something to hold on to that is not a class.
     tag.div(class: "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3",
       role: "alert", data: {error_summary: true}) do
-      # The `gap-2` had been sitting here with one child since the summary was written. Same
-      # glyph as the inline field errors: a summary and the messages it links to are one event
-      # at two scales, and should not be told apart by which icon they carry.
-      concat(tag.p(class: "flex items-center gap-2 text-sm font-semibold text-rose-900") do
-        concat tag.i(nil, class: "bi-exclamation-triangle shrink-0", aria: {hidden: true})
+      # A plain glyph, not an icon tile. The inline field errors sit on white and give theirs a
+      # rose-50 chip; this one sits on a rose-50 surface, where a rose-50 tile is invisible --
+      # design.md says exactly that about the flash bar, and a summary is the same kind of
+      # object. It was built as a tile first and the tile could not be seen.
+      #
+      # The words are slate, not rose. The tinted surface and the glyph already say "this
+      # failed"; colouring the sentences too is the same signal a third time, and slate-900 on
+      # rose-50 is 16.25:1 where rose-900 is 8.71:1. What is red here is the frame and the mark.
+      concat(tag.p(class: "flex items-center gap-2 text-sm font-semibold text-slate-900") do
+        concat tag.i(nil, class: "bi-exclamation-triangle shrink-0 text-rose-600", aria: {hidden: true})
         concat "#{pluralize(record.errors.count, "error")} prevented this from being saved:"
       end)
-      concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-rose-800") do
+      concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-slate-700") do
         # Each message links to the field it is about. This comment claimed that for a while
         # before it was true: the items were plain <li>, so on a long form the summary told you
         # what was wrong and left you to find it. Linking them is the GOV.UK error-summary
         # pattern and is why a summary is worth having at all.
+        # These are links, and they should look like the app's links: brand-700, underlined,
+        # 7.19:1 on rose-50. The underline used to be `decoration-rose-300`, which made sense
+        # while the item text was rose-800 and stopped making sense the moment it became slate --
+        # a red rule under grey words, matching nothing else on the page.
         safe_join(record.errors.map { |error|
           tag.li(link_to(error.full_message, "##{field_id(record, error.attribute)}",
-            class: "underline decoration-rose-300 underline-offset-2 hover:decoration-rose-600"))
+            class: "font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"))
         })
       end)
     end

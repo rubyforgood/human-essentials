@@ -778,7 +778,10 @@ the wrapper mappings explicitly.
   class string copy-pasted in by hand.
 - `essentials_error_summary` sits above the form: `role="alert"`, names each field, links
   each message to its input.
-- Error text is `rose-700`. `rose-600` is only a border.
+- Error text on a **form field** is `slate-700` behind a `rose-600` glyph — the glyph signals and
+  the sentence reads. See [required fields and validation errors](#forms-required-fields-and-validation-errors).
+  `rose-700` remains the tone for error text that has no glyph beside it; `rose-600` is a border,
+  a filled background, or a mark like the required asterisk.
 - `required: true` sets the HTML5 `required` attribute regardless of `browser_validations`.
   Conditional validators are *not* inferred as required — mark them explicitly or not at all.
 
@@ -1035,10 +1038,18 @@ words and carry no `aria-required`, because none of them is required on its own.
   wrapped in a span with an id, because the `<p>` the wrapper builds cannot take a per-field one.
 - `essentials_error_summary` above the form, whose items **link to the fields**. That is the
   GOV.UK error-summary pattern and the reason a summary is worth having.
-- The inline message is `rose-700` **and carries `bi-exclamation-triangle`**, from
-  `.field-error`. Colour is never the only signal, and a hint and an error sit in the same
-  place, at the same size, under the same field — hue was the only thing telling them apart.
-  The summary's heading carries the same glyph: one event at two scales.
+- The inline message is **slate-700 body text behind a `rose-600` glyph**, from `.field-error`.
+  The glyph is the signal and the sentence is the words — which is what lets the sentence be
+  slate rather than rose. It reads better (10.35:1 on white against rose-700's 6.29:1) and a
+  form with six problems does not become six lines of red. It is still distinct from a hint in
+  the same slot: the hint is slate-500 with no glyph.
+- **Where the glyph sits on white it gets a `rose-50` chip; on a tinted surface it does not.**
+  The inline error is on the card, so its glyph is a 16px rounded chip. The summary sits on
+  `rose-50` already, and a `rose-50` tile on a `rose-50` surface is invisible — the same reason
+  [Flash messages](#flash-messages) says a message bar gets a plain glyph and never a tile.
+- **The summary's words are slate too**: `slate-900` heading, `slate-700` items, on the `rose-50`
+  surface inside a `rose-200` border. The frame and the glyph carry the danger; colouring the
+  sentences as well is the same signal three times.
 
 **One failure, one alert. The summary is the convention; a flash is the fallback.**
 

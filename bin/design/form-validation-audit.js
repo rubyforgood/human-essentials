@@ -95,15 +95,20 @@ const readForm = () => {
 const readErrors = () => {
   const form = document.querySelector("main form:not([action*='sign_out'])");
   const fields = form ? [...form.querySelectorAll("input:not([type=hidden]), select, textarea")] : [];
-  const inline = document.querySelectorAll("main p.text-rose-700, main .field_with_errors").length;
+  // `.field-error` is the class the wrapper puts on an inline message. This used to look for
+  // `p.text-rose-700`, which stopped matching the moment the message went slate behind a glyph --
+  // a check keyed to a colour rather than to the thing it is checking for.
+  const inline = document.querySelectorAll("main p.field-error, main .field_with_errors").length;
   const invalid = fields.filter((f) => f.getAttribute("aria-invalid") === "true").length;
-  // The id points at a span inside the error <p>; the rose class is on the <p>. Walk up.
+  // The id points at a span inside the error <p>, and `.field-error` is on the <p>, so walk up.
+  // This used to test for a `rose` class anywhere in the ancestry -- keyed to the colour, like
+  // the `inline` check above, and just as wrong once the message stopped being rose.
   const described = fields.filter((f) => {
     const id = f.getAttribute("aria-describedby");
     if (!id) return false;
     return id.split(/\s+/).some((x) => {
       const e = document.getElementById(x);
-      return e && (/rose/.test(e.className) || e.closest("[class*='rose']"));
+      return e && (e.classList.contains("field-error") || e.closest(".field-error"));
     });
   }).length;
   const summary = [...document.querySelectorAll("main [class*='bg-rose-50'], main [role=alert], [data-flash]")]

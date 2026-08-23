@@ -17,19 +17,28 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
       context 'with a base item filter' do
         let!(:wanted) { create(:base_item, name: 'Wanted base item') }
         let!(:other) { create(:base_item, name: 'Other base item') }
-        let!(:wanted_barcode) { create(:global_barcode_item, barcodeable: wanted, value: '111') }
-        let!(:other_barcode) { create(:global_barcode_item, barcodeable: other, value: '222') }
+        let!(:wanted_barcode) { create(:global_barcode_item, barcodeable: wanted, value: 'WANTED-BARCODE') }
+        let!(:other_barcode) { create(:global_barcode_item, barcodeable: other, value: 'OTHER-BARCODE') }
+
+        # Read the table, not the whole page. The base item names appear in the filter select as
+        # well as in the rows, so a page-wide `include?` cannot tell "this row is listed" from
+        # "this is an option you could pick". The values are words rather than digits for the
+        # same reason: the factory's default is a 12-digit random number, and an earlier version
+        # of this spec used '111' and '222', which turn up inside one often enough to fail on
+        # some orderings and not others.
+        def listed_barcodes
+          Nokogiri::HTML(response.body).css('table.data-table tbody tr').map(&:text)
+        end
 
         it 'shows every global barcode when nothing is chosen' do
           get admin_barcode_items_path
-          expect(response.body).to include('111')
-          expect(response.body).to include('222')
+          expect(listed_barcodes.join(' ')).to include('WANTED-BARCODE').and include('OTHER-BARCODE')
         end
 
         it 'narrows the list to the chosen base item' do
           get admin_barcode_items_path(filters: {barcodeable_id: wanted.id})
-          expect(response.body).to include('111')
-          expect(response.body).not_to include('222')
+          expect(listed_barcodes.join(' ')).to include('WANTED-BARCODE')
+          expect(listed_barcodes.join(' ')).not_to include('OTHER-BARCODE')
         end
       end
     end
