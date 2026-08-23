@@ -1,19 +1,22 @@
 <% if @broadcast_announcements.any? %>
-  <%= render "shared/essentials/card", title: "Announcements", subtitle: "From the Human Essentials team" do %>
+  <%#
+    The megaphone marks the card, not each announcement. It used to repeat down every row, where
+    an identical glyph distinguishes nothing and gives the eye a second column to skip -- see
+    design.md, "one icon per card, not one per row".
+  %>
+  <%= render "shared/essentials/card", title: "Announcements", subtitle: "From the Human Essentials team",
+        icon: "bi-megaphone", icon_tone: :warning do %>
     <ul class="divide-y divide-slate-100">
       <% @broadcast_announcements.each do |announcement| %>
-        <li class="flex gap-3 py-3 first:pt-0 last:pb-0">
-          <%= essentials_icon_tile("bi-megaphone", tone: :warning) %>
-          <div class="min-w-0 flex-1">
-            <p class="text-xs font-medium text-slate-500">
-              <%= announcement.created_at.strftime(announcement.created_at.year == Date.current.year ? "%B %-d" : "%B %-d %Y") %>
-            </p>
-            <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
-            <% if announcement.link.present? %>
-              <%= link_to "More info", announcement.link,
-                    class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
-            <% end %>
-          </div>
+        <li class="py-3 first:pt-0 last:pb-0">
+          <p class="text-xs font-medium text-slate-500">
+            <%= announcement.created_at.strftime(announcement.created_at.year == Date.current.year ? "%B %-d" : "%B %-d %Y") %>
+          </p>
+          <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
+          <% if announcement.link.present? %>
+            <%= link_to "More info", announcement.link,
+                  class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+          <% end %>
         </li>
       <% end %>
     </ul>

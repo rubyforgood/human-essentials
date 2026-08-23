@@ -2823,3 +2823,47 @@ few commits earlier, which replaced a bare `<a>` (browser-underlined) with a bra
 so it does now: a link inside a sentence is `font-medium text-brand-700 underline
 hover:text-brand-800`; a link that is its own block does not need the underline because there is
 no body text to confuse it with. Back to 0 violations across 156 pages.
+
+## 2026-08-23 · The megaphone that marked nothing
+
+Both announcement cards — `dashboard/_announcements` and
+`partners/dashboards/_broadcast_announcement` — stamped `essentials_icon_tile("bi-megaphone")`
+on every row, inside a card already titled "Announcements". The icon is on the card now, once,
+beside the `h2`.
+
+### The rule already existed, in the wrong place
+
+`design.md` said it: *"One icon per card, not one per row. The icon marks the subject. Repeating
+it down every row gives the eye a second column of glyphs to skip and marks nothing out."* It sat
+under **Cards in a grid**, written while building the reports hub, and read as a fact about
+grids. The reasoning is not about grids at all. It is restated under **Icon tiles and avatars**
+now, where someone reaching for `essentials_icon_tile` will meet it, and the grid section points
+at it rather than owning it.
+
+Industry practice is the same rule from the other end. Material's list item leading element,
+Polaris's `ResourceItem` media, Primer's leading visuals and Atlassian's list iconography are all
+specified as *identifying the item* — an avatar, a thumbnail, a status glyph that differs. Every
+one of them puts a section-level icon in the header slot instead. GitHub's issue list is the
+apparent exception and is really the proof: its per-row icon changes with state, open against
+closed against draft, which is exactly what makes it worth a column.
+
+### The test is mechanical, which is why it is worth writing down
+
+Four places in this app put an icon tile inside a loop. Three pass a value from the row —
+`stat[:icon]`, `metric[:icon]`, `option[:icon]` — and are correct. The two that were wrong passed
+a **string literal**. "Is the icon a literal or does it come from the row?" decides it without
+any judgement about whether the glyph is pretty, and it is now the wording in design.md.
+
+### The card grew an `icon:` local rather than a captured title
+
+`shared/essentials/card` had no icon slot, and the alternative — passing markup through `title:`
+— would have put the icon inside the `<h2>` and into the heading's accessible name. `icon:` and
+`icon_tone:` render the tile as a sibling of the heading block, `aria-hidden`, so the accessible
+name is still "Announcements".
+
+The header markup only gains a wrapper when there is an icon, because the row is
+`justify-between` and a bare icon sibling would be pushed to the far side of the title. The
+heading block is captured once and used in both branches. **Checked rather than assumed**: header
+height and `h2` position were measured for every card on five pages before and after, and the
+only difference anywhere is the announcements `h2` moving 48px right — the 36px tile plus its
+`gap-3`. Every other card is identical.
