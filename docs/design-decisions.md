@@ -2907,3 +2907,61 @@ getting-started step badges, one was the reports hub. Only the last was a tile. 
 repeat the same 100-character class string five times in one file, which is its own small drift
 risk — but they are a numbered badge rather than an icon tile, and five copies in one file is a
 different problem from one copy hiding in another component. Written down rather than fixed.
+
+## 2026-08-23 · Three dropdowns, three gaps, three reasons
+
+Every `<select>` in the app drew its own arrow in its own place. Measured across 151 screens:
+
+| Dropdown | Count | Glyph | Painted gap to right border | Left padding |
+| --- | --- | --- | --- | --- |
+| simple_form select | 75 | the browser's native arrow | 4.5px | 12px |
+| `.filter-select` | 41 | the app's SVG chevron | **18.5px** | 12px |
+| select2 | ~44 | a CSS triangle in `#888` | 7px | **8px** |
+
+Three causes, none of them the same mistake twice.
+
+**The chevron was positioned by its box, not by its glyph.** The SVG drew `M6 8l4 4 4-4` inside
+`viewBox="0 0 20 20"`, so the path was inset 6 units from either side of its own box, and CSS
+positions the box. `background-position: right 0.75rem` was chosen to mirror `pl-3`, and left the
+painted chevron 18.5px from the border against 12px of padding on the other side. The number
+looked right in the source and was wrong on screen, which is exactly the class of thing that
+survives review. The viewBox is wrapped tightly around the path now — `0 0 10 6` — so positioning
+the box positions the glyph, and `right 0.75rem` means 12px.
+
+**simple_form had no entry for `select`.** Its `:essentials` wrapper applies one `input_classes`
+string to every input type, and `wrapper_mappings` named boolean, check_boxes, radio_buttons and
+file. A select is not a text field: the browser draws an arrow inside the box and `px-3` cannot
+move it. Seventy-five dropdowns — the majority of the app's — fell through to the text-input
+wrapper and kept the browser's arrow. There is an `:essentials_select` wrapper now.
+
+**select2 was vendored, not restyled.** The migration kept select2 and brought its stylesheet
+across as-is, so it arrived with a 2014 CSS triangle 7px from the border and 8px of text padding.
+Its arrow is the app's chevron now, at 12px, with the triangle hidden.
+
+### The names were lying, and that is part of how it happened
+
+The CSS class was `filter-select` and the Ruby constant `FILTER_SELECT_CLASSES`. Both say
+"filter", and the chevron belongs to every select — the ones outside a filter bar were the
+majority. A name that scopes itself to one context is an invitation not to use it in the others,
+and that is roughly what happened: seven selects were given `FILTER_CONTROL_CLASSES` instead, the
+*text input* constant, and kept the native arrow because of it. They are `.select-chevron` and
+`SELECT_CLASSES` now.
+
+Those seven also revealed a smaller thing: `FILTER_CONTROL_BASE` already begins with `mt-1.5`, and
+nine call sites wrote `class: "mt-1.5 #{FILTER_CONTROL_CLASSES}"`, emitting the class twice.
+Harmless, and removed.
+
+### The chevron is one CSS variable
+
+`--chevron-down`, defined at `:root` rather than inside `@theme`, because three different
+mechanisms need it: a component class for real selects, and an unlayered override for select2,
+which cannot take a padding class because the element the user sees is a `<span>` select2 builds.
+A data-URI SVG copied into three places would have drifted the way the tile and the surface did.
+
+### Verified by pixels, not by CSS
+
+The gaps above were measured by screenshotting each control at 4× and scanning for the stroke
+colour, because the thing that was wrong — a glyph inset inside its own background box — is
+invisible in the CSS and invisible to a computed-style check. All three now paint their chevron
+with its box edge 12px from the border, matching `pl-3` on the other side, and the app-wide sweep
+reports one signature for all 116 visible selects where it used to report three.

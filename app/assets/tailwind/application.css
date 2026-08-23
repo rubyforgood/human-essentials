@@ -29,6 +29,15 @@
 @source "../../javascript";
 @source "../../components";
 
+/*
+ * The dropdown chevron, defined once so the three things that draw one cannot drift: the filter
+ * bar's selects, simple_form's selects, and select2's replacement for a select. slate-500, and a
+ * viewBox wrapped tightly around the path so that positioning the box positions the glyph.
+ */
+:root {
+  --chevron-down: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M1 1 5 5 9 1'/%3e%3c/svg%3e");
+}
+
 @theme {
   /* Typeface: Figtree, a warm humanist sans — friendly but credible. */
   --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -124,22 +133,28 @@
   }
 
   /*
-   * Filter select.
+   * The chevron every dropdown in the app draws, wherever it comes from.
    *
    * A native <select> draws its arrow at the far right of the border box, and no amount of
    * padding-right moves it -- `pr-10` pushes the option text away and leaves the arrow 4px
-   * from the border, which is what it looked like. The only way to control the arrow's
-   * position is to turn the native one off and draw it as a background image.
+   * from the border. The only way to control it is to turn the native one off and paint it.
+   *
+   * **The viewBox is tight around the path on purpose.** The first version drew `M6 8l4 4 4-4`
+   * inside `0 0 20 20`, so the glyph was inset 6 units from each side of its own box. CSS
+   * positions the *box*, so `right 0.75rem` -- chosen to mirror `pl-3` -- actually left the
+   * painted chevron 18.5px from the border against 12px of padding on the left. Nobody had
+   * measured it. With the box wrapped tightly around the glyph, `right 0.75rem` means 12px,
+   * and the same variable can be handed to select2, which cannot take a padding class.
    *
    * A component class rather than a utility string because the value is a data-URI SVG, and
    * that inside an arbitrary-value class is unreadable and easy to break when it is copied.
    */
-  .filter-select {
+  .select-chevron {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-image: var(--chevron-down);
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
-    background-size: 1.25rem 1.25rem;
+    background-size: 0.625rem 0.375rem;
   }
 
   /*
@@ -467,4 +482,34 @@ trix-toolbar .trix-button:focus-visible {
 
 .fc .fc-day-other .fc-daygrid-day-number {
   color: var(--color-slate-500);
+}
+
+/*
+ * select2's arrow, replaced with the app's chevron.
+ *
+ * select2 draws a CSS triangle -- `border-width: 5px 4px 0 4px` in #888 -- 7px from the border,
+ * in a widget whose text starts 8px in. Beside a filter select at 12px and a form select the
+ * browser drew for itself, that was a third dropdown appearance on the same page. The stylesheet
+ * was vendored rather than restyled when select2 was kept, so it arrived with its 2014 arrow.
+ *
+ * Unlayered, like the Trix and FullCalendar rules above: the vendored select2 CSS is imported
+ * unlayered, and a layered rule loses to it however specific it is.
+ */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  right: 0.75rem;
+  width: 0.625rem;
+  background-image: var(--chevron-down);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.625rem 0.375rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+  display: none;
+}
+
+/* 12px, so the value lines up with every other control's text rather than sitting 4px inside it. */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  padding-left: 0.75rem;
+  padding-right: 1.75rem;
 }

@@ -19,7 +19,7 @@
               class: "block text-sm font-medium text-slate-700" %>
         <%= f.select :requested_item_ids, @requestable_items, {include_hidden: true},
               multiple: true,
-              class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+              class: EssentialsUiHelper::SELECT_CLASSES,
               data: {controller: "select2", "select2-config-value": "{}"} %>
       </div>
 
