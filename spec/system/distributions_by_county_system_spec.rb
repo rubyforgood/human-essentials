@@ -125,9 +125,9 @@ RSpec.feature "Distributions by County", type: :system do
   context "with kits" do
     context "with reporting category" do
       it "works for all time" do
-        @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_1 = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         visit_distribution_by_county_with_specified_filters("All Time", "Pads", nil)
 
@@ -142,9 +142,9 @@ RSpec.feature "Distributions by County", type: :system do
 
     context "with item filter" do
       it "works for all time" do
-        @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_1 = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         visit_distribution_by_county_with_specified_filters("All Time", nil, item_3.name)
 

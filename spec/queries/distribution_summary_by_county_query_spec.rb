@@ -92,7 +92,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
 
       it "divides the item numbers and values according to the partner profile" do
-        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
 
         breakdown = DistributionSummaryByCountyQuery.call(**params)
@@ -111,7 +111,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
 
       it "divides the item numbers and values according to the partner profile" do
-        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_3, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
         breakdown = DistributionSummaryByCountyQuery.call(**params)
@@ -151,7 +151,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
 
       it "divides the item numbers and values according to the partner profile" do
-        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
 
         breakdown = DistributionSummaryByCountyQuery.call(**params)
@@ -170,7 +170,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
 
       it "divides the item numbers and values according to the partner profile" do
-        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_3, organization: user.organization, partner: partner_1)
         create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
         breakdown = DistributionSummaryByCountyQuery.call(**params)

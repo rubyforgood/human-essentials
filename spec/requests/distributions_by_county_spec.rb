@@ -22,10 +22,10 @@ RSpec.describe "DistributionsByCounties", type: :request do
     end
 
     it "includes loose items, but not kits in item dropdown" do
-      create(:distribution, :with_items, item: kit_a.item, organization: organization, partner: partner_1, issued_at: issued_at_present) # This is just to make sure the system creates the kit and items within it
+      create(:distribution, :with_items, item: kit_a, organization: organization, partner: partner_1, issued_at: issued_at_present) # This is just to make sure the system creates the kit and items within it
       get distributions_by_county_report_path
       expect(response.body).to include item_3.name
-      expect(response.body).to_not include(kit_a.item.name)
+      expect(response.body).to_not include(kit_a.name)
     end
 
     context "basic behaviour with served areas" do
@@ -58,8 +58,8 @@ RSpec.describe "DistributionsByCounties", type: :request do
       before do
         current_year = Time.current.year
         issued_at_last_year = Time.current.change(year: current_year - 1).to_datetime
-        @distribution_last_year = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
-        @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_last_year = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        @distribution_current_1 = create(:distribution, :with_items, item: kit_a, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_3 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @all_time_string = "January 1,1909 - January 1,9999"
