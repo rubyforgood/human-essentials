@@ -64,8 +64,19 @@ attribute, in any order. It used to compare against the exact
 `rounded-2xl border border-slate-200 bg-white shadow-sm` substring **and** skip any file that
 also rendered `shared/essentials/card` — two holes that between them hid every hand-rolled card
 in the app. One padding utility (`bg-white p-4 shadow-sm`) defeats a substring, and a file can
-render the component properly in one place and paste it in another, which is what both pages
-fixed this week were doing. It reports 4.
+render the component properly in one place and paste it in another.
+
+It is **not** a per-kind check. It sweeps `app/views`, `app/helpers`, `app/javascript` and
+`app/components`, including `shared/essentials/`, because the last two copies were in exactly the
+places the per-kind scan cannot reach: `essentials_stats` is a helper, and `_disclosure` is a
+design system partial that every other check skips as "the definition, not a copy". Since
+`.card-surface` exists there is no definition left to protect — the component uses the class like
+everybody else. It reports 0, and the remedy for a finding is always the same: use the class.
+
+The bare-`card` check moved from `/class="[^"]*\bcard\b[^"]*"/` to a class-token split at the same
+time. `\b` does not stop at a hyphen, so that pattern matched inside `card-surface`,
+`content-card` and `data-card` — harmless while nothing legitimate contained the substring, and
+then every card in the app reported as a dead Bootstrap class the moment one did.
 
 **How to test it.** The script proves the detector before it reports anything, the same way
 `undefined-classes.py` proves its extractor: a table of markup fragments with expected answers,

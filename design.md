@@ -186,6 +186,11 @@ Target is **WCAG 2.1 AA**. These are the rules this app has actually had to enfo
   `aria-disabled`, and an unavailable form action as a genuinely `disabled` `<button>`.
 - **Focus is always visible**: `focus-visible:outline-2 focus-visible:outline-offset-2`.
   Nothing sets `outline: none` without replacing it.
+- **A link inside a sentence is underlined.** Brand colour alone is not enough to distinguish it
+  from the prose around it — WCAG 1.4.1, and axe reports it as `link-in-text-block`. Use
+  `font-medium text-brand-700 underline hover:text-brand-800`. A link that is its own block —
+  a table cell, a list item, a card row — does not need one, because there is no body text for it
+  to be confused with.
 - **Disclosure state is announced**: `aria-expanded` plus `aria-controls` on anything that
   opens or closes a region.
 - **Colour is never the only signal** (see [Colour](#colour)).
@@ -387,6 +392,22 @@ for …` — and a screen reader is told what the initials tell everyone else.
 ### Cards
 
 The surface everything sits on: white, hairline border, `rounded-2xl`, `shadow-sm`.
+
+**That surface is `.card-surface`, and it is written in exactly one place** — a component class
+in the Tailwind entry, beside `.data-table`. Never paste `rounded-2xl border border-slate-200
+bg-white shadow-sm` into a template; `page-audit.rb` sweeps views, helpers and JavaScript for it
+and reports every copy.
+
+The class exists because the component is not the only thing that needs the surface, and the
+other four callers should not be forced through it: `essentials_stats` builds its own container,
+the admin dashboard and the partner header build `flex` stat tiles, the reports hub builds a
+compact labelled `<section>`, and `shared/essentials/_disclosure` wraps a panel. None of them
+wants a title/subtitle/actions header. All five were pasting the utilities, so a change to the
+card reached one of six places.
+
+**Use the component when you want a card; use the class when you only want the surface.** If you
+reach for the class to avoid the component's header, that is the right call — if you reach for it
+to build a second card, render the component instead.
 
 ```erb
 <%= render "shared/essentials/card",

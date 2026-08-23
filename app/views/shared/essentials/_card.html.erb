@@ -14,7 +14,7 @@
   card_class ||= nil
   card_id ||= nil
 %>
-<section <%= tag.attributes(id: card_id) if card_id %> class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm <%= card_class %>">
+<section <%= tag.attributes(id: card_id) if card_id %> class="card-surface overflow-hidden <%= card_class %>">
   <% if title || actions %>
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
       <div class="min-w-0">

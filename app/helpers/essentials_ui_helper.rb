@@ -115,7 +115,7 @@ module EssentialsUiHelper
   def essentials_stats(stats, title: nil, subtitle: nil)
     grid = essentials_stats_grid(stats)
 
-    tag.div(class: "overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm") do
+    tag.div(class: "card-surface overflow-hidden") do
       if title.present?
         concat(tag.div(class: "border-b border-slate-200 px-5 py-3") do
           concat tag.h2(title, class: "text-base font-semibold text-slate-900")

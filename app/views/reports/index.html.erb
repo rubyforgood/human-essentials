@@ -14,7 +14,7 @@
   <div class="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <% reports_catalog.each do |section| %>
       <section id="reports-<%= section.label.parameterize %>"
-               class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+               class="card-surface p-4"
                aria-labelledby="reports-<%= section.label.parameterize %>-heading">
         <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
           <div class="flex min-w-0 items-center gap-2">

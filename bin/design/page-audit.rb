@@ -23,9 +23,27 @@ UNDEFINED = %w[text-bold text-italic form-horizontal form-group control-label he
   collapsed-card card-body].freeze
 
 # `card` on its own is the Bootstrap/AdminLTE card and is defined nowhere now, so an element
-# carrying it has no border, background or shadow. Matched with word boundaries inside a class
-# attribute so `card-body`, `content-card` and `data-card` do not trip it.
-BARE_CARD = /class="[^"]*\bcard\b[^"]*"/
+# carrying it has no border, background or shadow.
+#
+# Split into class tokens rather than matched with `\bcard\b`, which was never as narrow as its
+# comment claimed: `-` is a non-word character, so that pattern matches inside `card-surface`,
+# `content-card` and `data-card` too. It went unnoticed while nothing legitimate contained the
+# substring; adding `.card-surface` made every card in the app report as a dead Bootstrap class.
+def bare_card?(src)
+  src.scan(/class="([^"]*)"/).flatten.any? { |attr| attr.split(/\s+/).include?("card") }
+end
+
+[
+  ['<div class="card">', true],
+  ['<div class="card mb-3">', true],
+  ['<div class="card-surface overflow-hidden">', false],
+  ['<div class="content-card">', false],
+  ['<div data-card="1" class="p-4">', false]
+].each do |markup, expected|
+  next if bare_card?(markup) == expected
+
+  abort "bare-card detector is wrong: #{markup.inspect} => #{!expected}, expected #{expected}."
+end
 
 DS_H1 = "text-2xl font-bold tracking-tight text-slate-900"
 
@@ -55,7 +73,9 @@ end
   ['<div class="flex gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">', true],
   ['<div class="bg-white shadow-sm border border-slate-200 rounded-2xl">', true],   # reordered
   ['<div class="rounded-2xl bg-white">', false],                                    # not a card
-  ['<div class="rounded-2xl border-slate-200"><p class="bg-white shadow-sm">', false] # split across two
+  ['<div class="rounded-2xl border-slate-200"><p class="bg-white shadow-sm">', false], # split across two
+  ['<div class="card-surface overflow-hidden">', false],                            # the class, not a paste
+  ['<div class="card-surface flex items-center gap-3 p-5">', false]
 ].each do |markup, expected|
   next if hand_rolled_card?(markup) == expected
 
@@ -113,7 +133,7 @@ kinds.each do |kind, pattern|
 
     defects = []
     dead = UNDEFINED.select { |c| src.include?(c) }
-    dead << "card" if src.match?(BARE_CARD)
+    dead << "card" if bare_card?(src)
     defects << "dead class: #{dead.join(", ")}" if dead.any?
     inline = src.scan(/style=['"]/).size
     defects << "#{inline} inline style#{"s" if inline > 1}" if inline.positive?
@@ -129,10 +149,6 @@ kinds.each do |kind, pattern|
     end
 
     debt = []
-    # No "...unless the file also renders the component" here. It used to read
-    # `&& !src.include?("shared/essentials/card")`, which let a file render one card properly
-    # and paste a second one inline -- which is what both pages found this week were doing.
-    debt << "hand-rolled card" if hand_rolled_card?(src)
     comments = raw.scan(LTE_COMMENT).size
     debt << "#{comments} AdminLTE comment#{"s" if comments > 1}" if comments.positive?
 
@@ -153,6 +169,23 @@ end
   puts
 end
 
+# The card surface is checked across everything that emits markup, not per page kind, because
+# the two places it hid were both outside the per-kind scan: `essentials_stats` is a helper and
+# `page-audit` only globs views, and `_disclosure` is in `shared/essentials/`, which every other
+# check skips as "the definition, not a copy". Since `.card-surface` exists there is no longer a
+# definition to protect -- the component uses the class like everyone else.
+PASTED_SURFACE = Dir.glob("{app/views/**/*.html.erb,app/helpers/**/*.rb,app/javascript/**/*.js,app/components/**/*}")
+  .select { |f| File.file?(f) }
+  .reject { |f| f.include?("_mailer/") || f.include?("/mailer/") || f.start_with?("app/views/static/") }
+  .select { |f| hand_rolled_card?(File.read(f, encoding: "UTF-8", invalid: :replace, undef: :replace, replace: "")) }
+
+unless PASTED_SURFACE.empty?
+  puts "== card surface pasted instead of .card-surface (#{PASTED_SURFACE.size})"
+  PASTED_SURFACE.sort.each { |f| puts format("    debt  %s", f) }
+  puts
+end
+
 defect_count = rows.count { |r| r[2].any? }
-puts "#{defect_count} files with defects, #{rows.size - defect_count} with debt only"
+debt_count = (rows.size - defect_count) + PASTED_SURFACE.size
+puts "#{defect_count} files with defects, #{debt_count} with debt only"
 exit(defect_count.zero? ? 0 : 1)

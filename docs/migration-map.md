@@ -102,6 +102,7 @@ they render as nothing at all.
 | Filter bars | A flex row of content-sized controls, applied with a Filter button, reloading the page | A grid of equal columns, applied on change into a Turbo Frame; no button, no reload |
 | The storage location "show inventory at date" band | A hand-rolled `form_for` with its own copy of the control classes and a submit button, 125px and always open | `filter_bar` with `filter_date`, 71px collapsed |
 | `admin/barcode_items` filter | A "Filters" card with its own heading, a Filter button, a Clear Filters link — and no `class_filter` behind any of it | `filter_bar` + `filter_select`, applying into a frame, and an action that actually filters. The last two filters that were not the component |
+| The card surface | `rounded-2xl border border-slate-200 bg-white shadow-sm` pasted into six places, only one of them the card component | `.card-surface`, one component class in the Tailwind entry, used by all six |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
 
 ## What was migrated, by area

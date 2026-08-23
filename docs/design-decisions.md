@@ -2762,3 +2762,64 @@ class", and it can be zero honestly rather than by exception.
 
 Not done here: it is a design system change rather than a page fix, and it should be one commit
 that moves all five together.
+
+## 2026-08-23 · One definition of the card surface
+
+Six places drew the card surface and only one of them was the card component. A change to the
+card's radius, border or shadow reached one of six.
+
+They are not all cards, which is why converting them was the wrong fix. `essentials_stats` builds
+its own container, `admin/dashboard` and `partners/_show_header` build `flex items-center gap-3`
+stat tiles, `reports/index` builds a compact labelled `<section>`, and
+`shared/essentials/_disclosure` wraps a panel. None wants the component's title/subtitle/actions
+header. What they share is a *surface*.
+
+So the surface is a component class now — `.card-surface`, in the Tailwind entry beside
+`.data-table` — and all six use it, the card component included.
+
+### `@apply`, and it is the only one in the file
+
+The entry writes explicit CSS with `var()` everywhere else. This class uses `@apply`, because the
+point of it is to be *exactly* `rounded-2xl border border-slate-200 bg-white shadow-sm` and
+nothing else. `shadow-sm` alone compiles to a `--tw-shadow` declaration plus a five-part
+`box-shadow` composition; restating that by hand would be the same copy this class exists to
+remove, one level down, and it would drift the next time Tailwind changes how shadows compose.
+The compiled output is identical to the four utilities.
+
+**Verified as a no-op, not assumed.** Computed `border-radius`, `border-width`, `border-color`,
+`background-color` and `box-shadow` were read from every matching element on `/items`,
+`/donations`, `/reports`, `/partners/:id` and `/admin/dashboard` before and after — 26 elements —
+and all 26 are byte-identical, with the counts unchanged and every one now served by the class
+rather than by pasted utilities.
+
+### The audit's card check is no longer per-page
+
+Two of the six were invisible to `page-audit.rb` for structural reasons rather than by accident:
+`essentials_stats` is a helper and the script only globs views, and `_disclosure` is in
+`shared/essentials/`, which every check skips as "the definition, not a copy". That skip was
+right when the component's own markup *was* the definition. It is not any more — the definition
+is a CSS class, and the component is just another caller — so the card check moved out of the
+per-kind loop into a sweep over views, helpers, JavaScript and components, `shared/essentials/`
+included. It reports 0, and a finding always has the same remedy.
+
+### The bare-`card` regex was wrong in the same way, and only now noticed
+
+`BARE_CARD = /class="[^"]*\bcard\b[^"]*"/` carried a comment claiming word boundaries kept it from
+matching `card-body`, `content-card` and `data-card`. They do not: `-` is a non-word character, so
+`\b` sits happily between `card` and `-`. Nothing legitimate contained the substring, so it never
+mattered — until `.card-surface` did, and every card in the app reported as a dead Bootstrap
+class. It splits class attributes into tokens now and looks for exactly `card`, with its own probe
+table. Two detectors in this file have now been wrong in a way that only showed up when something
+new was added, which is the argument for the probes.
+
+### One violation, from the NDBN rebuild rather than the surface
+
+The axe sweep came back with a `link-in-text-block` on `/admin/ndbn_members`: the Google Sheets
+link in that page's instructions. It is not from the surface work — it arrived with the rebuild a
+few commits earlier, which replaced a bare `<a>` (browser-underlined) with a brand-coloured
+`link_to` and no underline. Colour alone does not distinguish a link from the prose around it.
+
+`app/views/help/show.html.erb` already had the right pattern and design.md did not write it down,
+so it does now: a link inside a sentence is `font-medium text-brand-700 underline
+hover:text-brand-800`; a link that is its own block does not need the underline because there is
+no body text to confuse it with. Back to 0 violations across 156 pages.
