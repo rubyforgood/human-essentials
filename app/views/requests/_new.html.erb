@@ -6,7 +6,7 @@
       <%= form.label :partner_id, "Partner", class: "block text-sm font-medium text-slate-700" %>
       <%= form.collection_select(:partner_id, @requests_info.partners.active, :id, :name,
             {include_blank: "Select a partner", required: true},
-            {class: "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"}) %>
+            {class: "mt-1.5 #{EssentialsUiHelper::SELECT_CLASSES}"}) %>
     </div>
     <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>" data-disable-with="Please wait...">Next</button>
   <% end %>

@@ -55,6 +55,14 @@ SimpleForm.setup do |config|
                   "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none " \
                   "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
 
+  # A select is not a text field: the browser draws an arrow inside the box, and `px-3` leaves it
+  # 4px from the border with no way to move it. Every filter select in the app already turned the
+  # native arrow off and painted its own, but simple_form's `wrapper_mappings` had no entry for
+  # `select`, so 75 of the app's dropdowns fell through to the text-input wrapper and kept the
+  # browser's. Same treatment for both now: `.select-chevron`, and `pr-10` so a long option does
+  # not run underneath it.
+  select_classes = input_classes.sub("px-3", "select-chevron pl-3 pr-10")
+
   invalid_classes = "border-rose-400 focus:border-rose-500 focus:ring-rose-500/30"
   label_classes = "block text-sm font-medium text-slate-700"
   hint_classes = "mt-1 block text-xs text-slate-500"
@@ -71,6 +79,16 @@ SimpleForm.setup do |config|
     b.optional :readonly
     b.use :label, class: label_classes
     b.use :input, class: "mt-1.5 #{input_classes}", error_class: invalid_classes
+    b.use :full_error, wrap_with: {tag: "p", class: error_classes}
+    b.use :hint, wrap_with: {tag: "p", class: hint_classes}
+  end
+
+  # Identical to :essentials but for the input classes -- see `select_classes` above.
+  config.wrappers :essentials_select, tag: "div", class: "mb-4" do |b|
+    b.use :html5
+    b.optional :readonly
+    b.use :label, class: label_classes
+    b.use :input, class: "mt-1.5 #{select_classes}", error_class: invalid_classes
     b.use :full_error, wrap_with: {tag: "p", class: error_classes}
     b.use :hint, wrap_with: {tag: "p", class: hint_classes}
   end
@@ -128,7 +146,8 @@ SimpleForm.setup do |config|
     boolean: :essentials_boolean,
     check_boxes: :essentials_collection,
     radio_buttons: :essentials_collection,
-    file: :essentials_file
+    file: :essentials_file,
+    select: :essentials_select
   }
 
   # Error notification and validation state, in design system colours. rose-600 is 4.51:1 on

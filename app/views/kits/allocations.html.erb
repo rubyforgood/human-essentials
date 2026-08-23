@@ -49,7 +49,7 @@
               <%= f.label :storage_location_id, "Storage location", class: "block text-sm font-medium text-slate-700" %>
               <%= f.collection_select :storage_location_id, @storage_locations, :id, :name,
                     {include_blank: true},
-                    class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+                    class: EssentialsUiHelper::SELECT_CLASSES,
                     data: {kit_allocation_target: "location", action: "change->kit-allocation#locationChanged"} %>
             </div>
             <div>

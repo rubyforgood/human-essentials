@@ -2,7 +2,7 @@
   <tr>
     <td>
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
-      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
+      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: EssentialsUiHelper::SELECT_CLASSES} %>
 
     </td>
     <td>

@@ -1,17 +1,22 @@
 # View audit
 
-Cleared 2026-08-19. **329 views, 0 defects.** Three hand-rolled cards remain as debt, each with a
-reason below.
+Cleared 2026-08-23. **354 views, 0 defects, 0 debt.**
 
 ```
 == show     (31 files,  0 defects, 0 debt)
 == index    (43 files,  0 defects, 0 debt)
 == form     (98 files,  0 defects, 0 debt)
-== partial  (157 files, 0 defects, 3 debt)
+== partial  (157 files, 0 defects, 0 debt)
+== action   (25 files,  0 defects, 0 debt)
 ```
 
-Re-run with `ruby bin/design/page-audit.rb [show|index|form|partial]`. It exits non-zero on a
-defect; debt is reported and not enforced.
+Re-run with `bin/rails runner bin/design/page-audit.rb [show|index|form|partial|action]`. It
+exits non-zero on a defect; debt is reported and not enforced.
+
+**329 became 354 because the audit could not see 25 of them.** It classified views as show,
+index, form or partial, and treated those four as exhaustive — a template named after a
+collection action matched none of them and was scanned by nothing. `action` is a catch-all, so a
+page cannot fall out of the audit by being named oddly.
 
 `status.rb` asks whether a view contains design system markup. Every page here does, which is why
 it reported them all as migrated. **The layout is not the page.**
@@ -19,16 +24,19 @@ it reported them all as migrated. **The layout is not the page.**
 Excluded: `shared/essentials/*` (the components are the definition), mailer templates (inline
 style is the only thing email clients honour), and `static/*` (deliberately outside the system).
 
-## The three remaining, and why
+## The three that used to be debt
 
-| Partial | Why the card component does not fit |
+| Partial | What happened |
 | --- | --- |
-| `help/_bank_questions` | The card's header is a disclosure button, not a title. `title:` takes text. |
-| `partners/profiles/step/_accordion_section` | Same: the header is the accordion trigger. |
-| `organizations/_details` | An admin-only edit button renders above the header, so the card has content before its title. |
+| `help/_bank_questions` | Renders `shared/essentials/disclosure` now — the card's header could not be a disclosure button, and the disclosure component can. |
+| `partners/profiles/step/_accordion_section` | Same. |
+| `organizations/_details` | Was never a card. Its `rounded-2xl` belongs to a `<dialog>`, and a dialog is `shadow-xl` — the over-the-page elevation. The old substring check could not tell the two apart. |
 
-Passing `title: capture { button }` would satisfy the audit and make the markup worse. They are
-recorded rather than forced.
+None of them was forced into the component. The card *surface* is `.card-surface`, one class in
+the Tailwind entry, and the things that need a surface without the component's header — the
+disclosure, `essentials_stats`, two stat tiles and the reports hub — use it directly. The audit
+checks for the four utilities being pasted, which now happens nowhere in views, helpers or
+JavaScript.
 
 ## Two severities
 

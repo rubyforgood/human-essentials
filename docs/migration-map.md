@@ -104,6 +104,7 @@ they render as nothing at all.
 | `admin/barcode_items` filter | A "Filters" card with its own heading, a Filter button, a Clear Filters link — and no `class_filter` behind any of it | `filter_bar` + `filter_select`, applying into a frame, and an action that actually filters. The last two filters that were not the component |
 | The card surface | `rounded-2xl border border-slate-200 bg-white shadow-sm` pasted into six places, only one of them the card component | `.card-surface`, one component class in the Tailwind entry, used by all six |
 | The icon tile | `essentials_icon_tile` at 36px, and the reports hub's own 28px copy that had also drifted on radius and text colour | One helper with `size: :sm` and `size: :md`; `page-audit.rb` sweeps for hand-rolled ones |
+| The dropdown chevron | Three: the browser's native arrow on 75 simple_form selects, an SVG chevron 18.5px from the border on 41 filter selects, and select2's CSS triangle at 7px | One `--chevron-down` variable, one `.select-chevron` class, one `SELECT_CLASSES` constant and an `:essentials_select` wrapper. Every visible select, 12px |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
 
 ## What was migrated, by area

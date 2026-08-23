@@ -372,9 +372,14 @@ module EssentialsUiHelper
   FILTER_CONTROL_CLASSES = "#{FILTER_CONTROL_BASE} px-3"
 
   # Selects: `pr-10` reserves room so the longest option ("Recertification required (1)") does
-  # not run under the chevron, and `.filter-select` replaces the native arrow with one we can
+  # not run under the chevron, and `.select-chevron` replaces the native arrow with one we can
   # position -- the native one sits 4px from the border whatever the padding says.
-  FILTER_SELECT_CLASSES = "#{FILTER_CONTROL_BASE} filter-select pl-3 pr-10"
+  #
+  # Named `SELECT_CLASSES`, not `FILTER_SELECT_CLASSES`, and the CSS class is `select-chevron`,
+  # not `filter-select`. Both used to say "filter", and both were wrong about most of the app's
+  # dropdowns: the chevron belongs to every select, and the ones outside a filter bar are the
+  # majority. Use it for any `select_tag` or `f.select` that simple_form does not build.
+  SELECT_CLASSES = "#{FILTER_CONTROL_BASE} select-chevron pl-3 pr-10"
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
@@ -401,7 +406,7 @@ module EssentialsUiHelper
 
     label_tag(id, label, class: FILTER_LABEL_CLASSES) +
       select_tag("filters[#{scope}]", options_for_select(options, selected),
-        include_blank: true, class: FILTER_SELECT_CLASSES, id: id)
+        include_blank: true, class: SELECT_CLASSES, id: id)
   end
 
   # --- Top bar help link ----------------------------------------------------

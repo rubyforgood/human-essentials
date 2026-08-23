@@ -5,7 +5,7 @@
       <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},
                        data: { :'item-units-target' => 'itemSelect',
                                action: 'change->item-units#itemSelected'},
-                               class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>
+                               class: EssentialsUiHelper::SELECT_CLASSES %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
@@ -16,7 +16,7 @@
       <td>
         <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
         <%= field.select :request_unit, [], {include_blank: 'units'},
-                         { :'data-item-units-target' => 'requestSelect', class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"} %>
+                         { :'data-item-units-target' => 'requestSelect', class: EssentialsUiHelper::SELECT_CLASSES} %>
 
       </td>
     <% end %>

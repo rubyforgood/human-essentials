@@ -3,11 +3,11 @@
   <%= form_tag invite_user_organization_path, class: "space-y-4" do %>
     <div>
       <%= label_tag :name, "Name", class: "block text-sm font-medium text-slate-700" %>
-      <%= text_field_tag :name, nil, class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}", placeholder: "Name" %>
+      <%= text_field_tag :name, nil, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, placeholder: "Name" %>
     </div>
     <div>
       <%= label_tag :email, "Email", class: "block text-sm font-medium text-slate-700" %>
-      <%= email_field_tag :email, nil, class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}", placeholder: "Email" %>
+      <%= email_field_tag :email, nil, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, placeholder: "Email" %>
     </div>
     <%= hidden_field_tag :org, current_organization.id %>
 

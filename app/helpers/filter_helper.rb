@@ -23,7 +23,7 @@ module FilterHelper
     label_tag(id, label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES) +
       collection_select(:filters, scope, collection || {}, key, value,
         {include_blank: include_blank, selected: selected},
-        {class: EssentialsUiHelper::FILTER_SELECT_CLASSES, id: id,
+        {class: EssentialsUiHelper::SELECT_CLASSES, id: id,
          aria: {describedby: hint_id}.compact}) +
       (hint ? tag.p(hint, id: hint_id, class: EssentialsUiHelper::FILTER_HINT_CLASSES) : "".html_safe)
   end

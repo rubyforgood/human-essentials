@@ -287,8 +287,10 @@ Two things that bite:
 - A select submits `""` where an absent link submits nothing. `Filterable#class_filter` skips
   blank values, so a blank option falls through to *unfiltered* rather than the default scope.
   Compact the params in the controller.
-- `FILTER_SELECT_CLASSES`, not `FILTER_CONTROL_CLASSES`, for a `<select>`. The browser draws the
-  chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3`.
+- `SELECT_CLASSES`, not `FILTER_CONTROL_CLASSES`, for a `<select>`. The browser draws the
+  chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3` —
+  and it needs `.select-chevron` to turn the browser's own arrow off. Seven selects in the app
+  had been given the text-input constant and kept the native arrow because of it.
 
 ### Stats
 

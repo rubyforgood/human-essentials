@@ -22,7 +22,7 @@
         <div class="mb-4">
           <%= label_tag :resource_type, "Role type", class: "block text-sm font-medium text-slate-700" %>
           <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-                class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                class: EssentialsUiHelper::SELECT_CLASSES,
                 data: {
                   "double-select-target": "source",
                   "hide-by-source-val-target": "source",
@@ -33,7 +33,7 @@
         <div class="mb-4" data-hide-by-source-val-target="destination">
           <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
           <%= select_tag :resource_id, [],
-                class: "mt-1.5 #{EssentialsUiHelper::FILTER_CONTROL_CLASSES}",
+                class: EssentialsUiHelper::SELECT_CLASSES,
                 data: {"double-select-target": "destination"} %>
         </div>
       </div>
