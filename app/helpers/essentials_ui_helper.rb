@@ -322,33 +322,37 @@ module EssentialsUiHelper
     # `data-error-summary` is the stable hook, the counterpart to the flash strip's `data-flash`.
     # Specs used to reach for the flash to assert a validation failure, because that is where the
     # message was; it is here now and they need something to hold on to that is not a class.
-    tag.div(class: "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3",
+    # Glyph in its own column, heading and list in the next, so the list aligns under the
+    # heading's text rather than under the glyph. The alignment is structural: no padding tuned
+    # to the width of an icon, which is a number that goes stale the moment the type scale moves.
+    tag.div(class: "mb-5 flex gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3",
       role: "alert", data: {error_summary: true}) do
       # A plain glyph, not an icon tile. The inline field errors sit on white and give theirs a
       # rose-50 chip; this one sits on a rose-50 surface, where a rose-50 tile is invisible --
       # design.md says exactly that about the flash bar, and a summary is the same kind of
       # object. It was built as a tile first and the tile could not be seen.
-      #
-      # The words are slate, not rose. The tinted surface and the glyph already say "this
-      # failed"; colouring the sentences too is the same signal a third time, and slate-900 on
-      # rose-50 is 16.25:1 where rose-900 is 8.71:1. What is red here is the frame and the mark.
-      concat(tag.p(class: "flex items-center gap-2 text-sm font-semibold text-slate-900") do
-        concat tag.i(nil, class: "bi-exclamation-triangle shrink-0 text-rose-600", aria: {hidden: true})
-        concat "#{pluralize(record.errors.count, "error")} prevented this from being saved:"
-      end)
-      concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-slate-700") do
-        # Each message links to the field it is about. This comment claimed that for a while
-        # before it was true: the items were plain <li>, so on a long form the summary told you
-        # what was wrong and left you to find it. Linking them is the GOV.UK error-summary
-        # pattern and is why a summary is worth having at all.
-        # These are links, and they should look like the app's links: brand-700, underlined,
-        # 7.19:1 on rose-50. The underline used to be `decoration-rose-300`, which made sense
-        # while the item text was rose-800 and stopped making sense the moment it became slate --
-        # a red rule under grey words, matching nothing else on the page.
-        safe_join(record.errors.map { |error|
-          tag.li(link_to(error.full_message, "##{field_id(record, error.attribute)}",
-            class: "font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"))
-        })
+      concat tag.i(nil, class: "bi-exclamation-triangle mt-px shrink-0 text-sm text-rose-600",
+        aria: {hidden: true})
+      concat(tag.div(class: "min-w-0") do
+        # The words are slate, not rose. The tinted surface and the glyph already say "this
+        # failed"; colouring the sentences too is the same signal a third time, and slate-900 on
+        # rose-50 is 16.25:1 where rose-900 is 8.71:1. What is red is the frame and the mark.
+        concat tag.p("#{pluralize(record.errors.count, "error")} prevented this from being saved:",
+          class: "text-sm font-semibold text-slate-900")
+        # Plain text, not links. These were anchors to each field -- the GOV.UK pattern -- and
+        # they read as blue underlined links dropped into a red box, because that is what they
+        # were. Two things were wrong with that. design.md already says a link that is its own
+        # block, "a table cell, a list item, a card row", takes no underline, and these are list
+        # items; and a summary styled as a link list is Ruby for Good's odd one out, where
+        # Polaris, Carbon and Atlassian all use a plain bulleted list under a bold line.
+        #
+        # Losing the jump costs little here: every one of these messages is also printed at its
+        # own field, tied to the input by aria-describedby, so the summary says what is wrong and
+        # the field says where. Restore the anchors only if a form gets long enough that
+        # scrolling to the field is real work.
+        concat(tag.ul(class: "mt-1.5 list-disc space-y-1 ps-5 text-sm text-slate-700") do
+          safe_join(record.errors.map { |error| tag.li(error.full_message) })
+        end)
       end)
     end
   end
