@@ -15,7 +15,7 @@ class Admin::BaseItemsController < AdminController
     if @base_item.update(base_item_params)
       redirect_to admin_base_items_path, notice: "Updated base item!"
     else
-      flash.now[:error] = "Failed to update this base item."
+      flash_error_unless_summarised(@base_item, "Failed to update this base item.")
       render :edit
     end
   end
@@ -34,7 +34,7 @@ class Admin::BaseItemsController < AdminController
     if @base_item.save
       redirect_to admin_base_items_path, notice: "Base Item added!"
     else
-      flash.now[:error] = "Failed to create Base Item."
+      flash_error_unless_summarised(@base_item, "Failed to create Base Item.")
       render :new
     end
   end

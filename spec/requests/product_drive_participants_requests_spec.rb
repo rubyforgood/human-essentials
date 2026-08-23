@@ -113,7 +113,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
       it "flash error" do
         post product_drive_participants_path(product_drive_participant: { name: "test" }, xhr: true)
         expect(response).to be_successful
-        expect(response).to have_error(/try again/i)
+        expect(response).to have_error(/Must provide/i)
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
       it "flash error" do
         post product_drive_participants_path(product_drive_participant: { name: "test" }, xhr: true)
         expect(response).to be_successful
-        expect(response).to have_error(/try again/i)
+        expect(response).to have_error(/Must provide/i)
       end
     end
   end

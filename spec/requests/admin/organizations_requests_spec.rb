@@ -80,7 +80,7 @@ RSpec.describe "Admin::Organizations", type: :request do
           }.to change(Organization, :count).by(0)
 
           expect(subject).to render_template("new")
-          expect(flash[:error]).to be_present
+          expect(response).to have_error
         end
 
         it "preserves user attributes" do

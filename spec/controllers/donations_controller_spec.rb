@@ -43,7 +43,10 @@ RSpec.describe DonationsController, type: :controller do
       it "renders GET#new with error on failure" do
         post :create, params: { donation: { storage_location_id: nil, donation_site_id: nil, source: nil } }
         expect(response).to be_successful # Will render :new
-        expect(response).to have_error(/error/i)
+        # A controller spec does not render the view, so the error summary is not in the body to
+        # look at. What this action is responsible for is coming back with the record that failed,
+        # errors and all -- the summary is the view's job and is covered by the request specs.
+        expect(assigns(:donation).errors).to be_present
       end
     end
 

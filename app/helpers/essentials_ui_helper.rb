@@ -319,9 +319,18 @@ module EssentialsUiHelper
   def essentials_error_summary(record)
     return if record.blank? || record.errors.empty?
 
-    tag.div(class: "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3", role: "alert") do
-      concat tag.p("#{pluralize(record.errors.count, "error")} prevented this from being saved:",
-        class: "flex items-center gap-2 text-sm font-semibold text-rose-900")
+    # `data-error-summary` is the stable hook, the counterpart to the flash strip's `data-flash`.
+    # Specs used to reach for the flash to assert a validation failure, because that is where the
+    # message was; it is here now and they need something to hold on to that is not a class.
+    tag.div(class: "mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3",
+      role: "alert", data: {error_summary: true}) do
+      # The `gap-2` had been sitting here with one child since the summary was written. Same
+      # glyph as the inline field errors: a summary and the messages it links to are one event
+      # at two scales, and should not be told apart by which icon they carry.
+      concat(tag.p(class: "flex items-center gap-2 text-sm font-semibold text-rose-900") do
+        concat tag.i(nil, class: "bi-exclamation-triangle shrink-0", aria: {hidden: true})
+        concat "#{pluralize(record.errors.count, "error")} prevented this from being saved:"
+      end)
       concat(tag.ul(class: "mt-2 list-inside list-disc space-y-1 text-sm text-rose-800") do
         # Each message links to the field it is about. This comment claimed that for a while
         # before it was true: the items were plain <li>, so on a long form the summary told you

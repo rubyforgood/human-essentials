@@ -3029,3 +3029,73 @@ The form audit reports `/partners/family_requests/new` with no inline errors and
 `form_with` with no `f.input` and never touches simple_form, and running the *previous* audit
 against the current app reports the same thing. It predates this work and is recorded in
 [todo.md](todo.md).
+
+## 2026-08-23 · Two error conventions on one page, and the glyph the rule already asked for
+
+### Eighteen forms announced one failure twice
+
+Submitting `/donations/new` empty produced two `role="alert"` regions: a flash at the very top,
+above the back link, and the error summary above the first card. Measured across every `new` and
+`edit` form in the app, **18 did this** and 13 showed the summary alone.
+
+They also disagreed. `/adjustments` flashed `storage_location: must exist` — raw attribute names
+— while the summary above it said "Storage location must exist". Eight forms flashed "Something
+didn't work quite right -- try again?", which is not information. Six flattened the record's own
+errors into a sentence, duplicating the summary in a format that cannot link to a field.
+
+`design.md` had already decided this, twice over. The summary is "the GOV.UK error-summary
+pattern and the reason a summary is worth having", and the entry on rebuilding a failed record
+describes the symptom of the old bug as *"the only sign of trouble is a sentence at the top"*.
+The flash sentence **was** the old pattern; the summary replaced it, and on 18 forms nobody
+removed the thing it replaced.
+
+### The fix is a guard, not a deletion
+
+Deleting the flash outright would have been wrong. `essentials_error_summary` renders nothing for
+a record with no errors, and a failure can leave a record clean: a service raises, or a business
+rule fails without touching validation — `can_deactivate?` on an item, an inventory shortfall on
+a distribution, `validate_role_resource_params` raising before `admin/users` ever validates. Those
+would have re-rendered with no sign of trouble at all.
+
+`ApplicationController#flash_error_unless_summarised(record, message)` sets the flash only when
+there is nothing to summarise. Operational failure keeps its flash; validation failure gets the
+summary; never both. 33 call sites across 21 controllers.
+
+Three of those flashes built their message *out of* `record.errors`, which the guard makes
+unreachable — they would have rendered an empty bar on the one path that can still reach them.
+Those took a plain operational sentence instead.
+
+`/admin/users/new` is the shape worth keeping in mind: it still flashes, and should. Its create
+action raises `"Please select an associated resource"` from a parameter check before any
+validation runs, so the record is clean and the summary has nothing to show.
+
+### The audit selector was wrong in a way that flattered the result
+
+The sweep counted a page as having a summary if `main [role=alert].bg-rose-50` matched — and the
+**danger flash carries `bg-rose-50` and lives inside `<main>`**, so a page with only a flash
+counted as having both. It reported 1 remaining form that direct inspection showed was correct.
+The selector now excludes anything inside `turbo-frame#flash`. Reported as it happened because
+the same mistake would flatter a future run: 18 → 0 is the number after fixing the check, not
+before.
+
+### The inline error had the colour and not the glyph
+
+`design.md`: *"Never colour alone. Every coloured signal carries a word, and usually an icon
+too."* The message was the word; there was no icon. And a hint and an error render in the same
+place, at the same size, under the same field — `mt-1 block text-xs`, differing only in hue and
+weight. Hue was doing the work on its own, which is what WCAG 1.4.1 is about.
+
+`.field-error` adds `bi-exclamation-triangle` through `::before`, because simple_form's error
+component renders text into a `<p>` and takes a class rather than a block. Generated content is
+not in the accessibility tree, which is right here — the message beside it already says what is
+wrong. The summary's heading gained the same glyph; its `flex items-center gap-2` had been
+sitting there with a single child since the summary was written, space reserved for an icon
+nobody added.
+
+**The text stays `rose-700`, and this is a deliberate departure from what was asked for.** The
+request was for grey. `design.md` maps a failure to the `danger` tone, says text tones use the
+`-700` step, and says error text specifically is `rose-700` — and the instruction was to check
+the design system and match it. Grey is also the hint colour: `slate-500` at `text-xs`, in the
+same slot under the same field, so a grey error and the hint it replaces would be near
+indistinguishable. The icon was the missing half, and it is the half that removes the reliance on
+colour.

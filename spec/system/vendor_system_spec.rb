@@ -86,7 +86,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       visit subject
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "didn't work"
+      expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
     end
   end
 
@@ -111,7 +111,7 @@ RSpec.describe "Vendor", type: :system, js: true do
       fill_in "Contact name", with: ""
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "didn't work"
+      expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
     end
   end
 

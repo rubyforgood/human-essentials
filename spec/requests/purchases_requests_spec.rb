@@ -170,7 +170,7 @@ RSpec.describe "Purchases", type: :request do
         it "renders GET#new with error" do
           post purchases_path(purchase: { storage_location_id: nil, amount_spent: nil })
           expect(response).to be_successful # Will render :new
-          expect(response.body).to include('Failed to create purchase due to')
+          expect(response).to have_error(/Amount spent/i)
         end
 
         context "with invalid issued_at param" do
@@ -178,7 +178,7 @@ RSpec.describe "Purchases", type: :request do
             issued_at = ""
             post purchases_path(purchase: purchase.merge(issued_at:))
 
-            expect(flash[:error]).to include("Purchase date can't be blank")
+            expect(response).to have_error("Purchase date can't be blank")
           end
         end
       end

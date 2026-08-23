@@ -53,7 +53,7 @@ RSpec.describe PartnerGroupsController, type: :request do
           expect(subject).to render_template(:new)
           expect(assigns(:partner_group)).to be_a_new(PartnerGroup)
           expect(assigns(:item_categories)).to eq([category_item, category_item2])
-          expect(subject).to have_error("Something didn't work quite right -- try again?")
+          expect(subject).to have_error(/has already been taken/i)
           expect(response.body).to include("Test Item")
           expect(response.body).to include("Another Test Item")
         end
@@ -105,7 +105,7 @@ RSpec.describe PartnerGroupsController, type: :request do
           expect(subject).to render_template(:edit)
           expect(assigns(:partner_group)).to eq(partner_group)
           expect(assigns(:item_categories)).to eq([category_item, category_item2])
-          expect(subject).to have_error("Something didn't work quite right -- try again?")
+          expect(subject).to have_error(/can.t be blank/i)
           expect(response.body).to include("Test Item")
           expect(response.body).to include("Another Test Item")
         end

@@ -316,6 +316,28 @@
   }
 
   /*
+   * An inline field error carries a glyph as well as its colour.
+   *
+   * design.md: "Never colour alone. Every coloured signal carries a word, and usually an icon
+   * too." The message is the word; the icon was the missing half. Without it a field error and
+   * the hint it replaces are the same size, the same weight-ish and in the same place, telling
+   * them apart by hue alone -- which is what WCAG 1.4.1 is about.
+   *
+   * `::before` rather than markup because simple_form's error component renders text into a <p>
+   * and takes a class, not a block. The glyph is decorative: it is `aria-hidden` by construction
+   * (generated content is not in the accessibility tree in any current browser) and the message
+   * beside it already says what is wrong.
+   */
+  .field-error::before {
+    content: "\f33b"; /* bi-exclamation-triangle */
+    font-family: bootstrap-icons !important;
+    font-weight: normal;
+    margin-right: calc(var(--spacing) * 1.5);
+    display: inline-block;
+    vertical-align: -0.05em;
+  }
+
+  /*
    * A link in a table cell is a tap target, not just text. WCAG 2.5.8 (AA) asks for 24x24 and a
    * text-sm link is 17px tall -- and on /events the "refers to" column links an id, so the
    * target was 6x17. Every one of the 25 links on that page failed, all of them on both axes.

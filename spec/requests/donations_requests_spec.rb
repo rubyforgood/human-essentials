@@ -158,7 +158,7 @@ RSpec.describe "Donations", type: :request do
         it "flashes the correct validation error" do
           post donations_path(params)
 
-          expect(flash[:error]).to include("Issue date can't be blank")
+          expect(response).to have_error("Issue date can't be blank")
         end
       end
 
@@ -167,7 +167,7 @@ RSpec.describe "Donations", type: :request do
 
         it "flashes the correct validation error" do
           post donations_path(params)
-          expect(flash[:error]).to include("Money raised must be greater than or equal to 0")
+          expect(response).to have_error("Money raised must be greater than or equal to 0")
         end
       end
     end

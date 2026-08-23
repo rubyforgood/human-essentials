@@ -57,7 +57,7 @@ RSpec.describe "Admin::Partners", type: :request do
 
         it "renders #edit template with error message" do
           expect(subject).to render_template(:edit)
-          expect(flash[:error]).to be_present
+          expect(response).to have_error
         end
       end
     end

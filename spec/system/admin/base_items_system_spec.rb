@@ -27,7 +27,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
 
       it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
-        expect(page.find("[data-flash]")).to have_content "ailed"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
-        expect(page.find("[data-flash]")).to have_content "ailed"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
 
       it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
-        expect(page.find("[data-flash]")).to have_content "ailed"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
     end
 
@@ -105,7 +105,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
-        expect(page.find("[data-flash]")).to have_content "ailed"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
     end
 

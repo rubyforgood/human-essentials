@@ -43,7 +43,7 @@ class DonationsController < ApplicationController
     rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
-      flash.now[:error] = "There was an error starting this donation: #{e.message}"
+      flash_error_unless_summarised(@donation, "There was an error starting this donation: #{e.message}")
       Rails.logger.error "[!] DonationsController#create Error: #{e.message}"
       render action: :new
     end

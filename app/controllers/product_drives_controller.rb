@@ -51,7 +51,7 @@ class ProductDrivesController < ApplicationController
         format.js
       else
         set_tags
-        flash.now[:error] = "Something didn't work quite right -- try again?"
+        flash_error_unless_summarised(@product_drive, "Something didn't work quite right -- try again?")
         format.html { render action: :new }
         format.js { render template: "product_drives/new_modal" }
       end
@@ -84,7 +84,7 @@ class ProductDrivesController < ApplicationController
       redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
     else
       set_tags
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash_error_unless_summarised(@product_drive, "Something didn't work quite right -- try again?")
       render action: :edit
     end
   end

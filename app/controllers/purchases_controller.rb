@@ -48,7 +48,7 @@ class PurchasesController < ApplicationController
     rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash.now[:error] = "Failed to create purchase due to:\n#{e.message}"
+      flash_error_unless_summarised(@purchase, "Failed to create purchase due to:\n#{e.message}")
       Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end

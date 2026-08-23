@@ -45,7 +45,7 @@ class AuditsController < ApplicationController
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
     else
-      flash.now[:error] = @audit.errors.full_messages.join("\n")
+      flash_error_unless_summarised(@audit, "This audit could not be saved.")
       @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -74,7 +74,7 @@ class AuditsController < ApplicationController
       render :new
     end
   rescue Errors::InsufficientAllotment, InventoryError => e
-    flash.now[:error] = e.message
+    flash_error_unless_summarised(@audit, e.message)
     render :new
   end
 

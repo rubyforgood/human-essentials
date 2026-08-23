@@ -84,7 +84,8 @@ RSpec.describe TransfersController, type: :controller do
         post :create, params: { transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
-        expect(flash.keys).to match_array(['error'])
+        # Controller specs do not render views; the summary is asserted in the request specs.
+        expect(assigns(:transfer).errors).to be_present
       end
     end
 

@@ -181,7 +181,7 @@ RSpec.describe "Vendors", type: :request do
       it "flash error" do
         post vendors_path(vendor: { name: "test" })
         expect(response).to be_successful
-        expect(response).to have_error(/try again/i)
+        expect(response).to have_error(/can.t be blank/i)
       end
     end
 
@@ -195,7 +195,7 @@ RSpec.describe "Vendors", type: :request do
       it "flash error" do
         post vendors_path(vendor: { name: "test" }, xhr: true)
         expect(response).to be_successful
-        expect(response).to have_error(/try again/i)
+        expect(response).to have_error(/can.t be blank/i)
       end
     end
 

@@ -37,7 +37,7 @@ RSpec.describe "Manufacturer", type: :system do
     visit new_manufacturer_path
     click_button "Save"
 
-    expect(page.find("[data-flash]")).to have_content "didn't work"
+    expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
   end
 
   it "allows a user to update the contact info for a manufacturer" do
@@ -57,7 +57,7 @@ RSpec.describe "Manufacturer", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find("[data-flash]")).to have_content "didn't work"
+    expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
   end
 
   context "When the Manufacturers have donations associated with them already" do

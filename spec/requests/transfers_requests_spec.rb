@@ -73,7 +73,7 @@ RSpec.describe "Transfers", type: :request do
         post transfers_path(transfer: { from_id: nil, to_id: nil })
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
-        expect(flash.keys).to match_array(['error'])
+        expect(response).to have_error
       end
     end
 

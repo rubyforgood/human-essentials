@@ -316,7 +316,7 @@ RSpec.describe "Distributions", type: :request do
         post distributions_path(distribution: distribution.except(:partner_id), format: :turbo_stream)
 
         expect(response).to have_http_status(400)
-        expect(flash[:error]).to include("Sorry, we weren't able to save the distribution.")
+        expect(response).to have_error(/Partner must exist/i)
 
         expect(response.body).to include("Item 1 (0)")
       end
@@ -357,7 +357,7 @@ RSpec.describe "Distributions", type: :request do
           post distributions_path(distribution:, format: :turbo_stream)
 
           expect(response).to have_http_status(400)
-          expect(flash[:error]).to include("Distribution date and time can't be blank")
+          expect(response).to have_error("Distribution date and time can't be blank")
         end
       end
 
@@ -666,7 +666,7 @@ RSpec.describe "Distributions", type: :request do
         it "fails and returns validation error message" do
           patch distribution_path(distribution_params)
 
-          expect(flash[:error]).to include("Distribution date and time can't be blank")
+          expect(response).to have_error("Distribution date and time can't be blank")
           expect(response).not_to redirect_to(anything)
         end
 

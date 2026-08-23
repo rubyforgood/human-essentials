@@ -141,7 +141,7 @@ class DistributionsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:error] = flash_error
+          flash_error_unless_summarised(@distribution, flash_error)
           render turbo_stream: [
             turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
             turbo_stream.replace("flash", partial: "shared/essentials/flash")
@@ -216,7 +216,7 @@ class DistributionsController < ApplicationController
       perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
-      flash.now[:error] = insufficient_error_message(result.error.message)
+      flash_error_unless_summarised(@distribution, insufficient_error_message(result.error.message))
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @request = @distribution.request

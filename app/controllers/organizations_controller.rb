@@ -24,7 +24,7 @@ class OrganizationsController < ApplicationController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path, notice: "Updated your organization!"
     else
-      flash.now[:error] = @organization.errors.full_messages.join("\n")
+      flash_error_unless_summarised(@organization, "Your organization could not be updated.")
       render :edit
     end
   end

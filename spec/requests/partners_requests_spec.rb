@@ -321,7 +321,7 @@ RSpec.describe "Partners", type: :request do
 
       it 'should display the error message' do
         subject.call
-        expect(response.body).to include("Failed to add partner due to: ")
+        expect(response).to have_error(/can.t be blank/i)
       end
     end
   end

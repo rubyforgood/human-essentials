@@ -17,6 +17,15 @@ stashing. Something earlier in that ordering leaves a kit name behind, or the ki
 `sequence(:name)` collides with one created through `kit_item`'s `after(:build)`. Reproducible,
 which is the hard part of a flake already done.
 
+## Forms
+
+**`admin/partners/edit` builds its fields with `f.input :name do ... f.input_field ... end`.**
+design.md forbids exactly this: the block replaces the wrapper's input, so the field never goes
+through the input pipeline — no `aria-required`, no `aria-invalid`, no `aria-describedby`, no
+inline error message. The page now renders an error summary, so a failed save is at least
+reported, but the fields themselves still say nothing. Fix: drop the blocks and let `f.input`
+build the field.
+
 ## Design system
 
 **The getting-started step badges repeat their class string five times.**

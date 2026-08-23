@@ -224,7 +224,7 @@ RSpec.describe "ProductDrives", type: :request do
         it "preserves tags entered" do
           post product_drives_path(product_drive: invalid_params)
 
-          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response).to have_error(/enter a start date/i)
           expect(response.body).to include("Foo")
         end
       end
@@ -256,7 +256,7 @@ RSpec.describe "ProductDrives", type: :request do
         it "preserves tags entered" do
           put product_drive_path(id: product_drive.id, product_drive: invalid_params)
 
-          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response).to have_error(/enter a start date/i)
           expect(response.body).to include("Foo", "Bar")
         end
       end

@@ -62,7 +62,7 @@ class Admin::UsersController < AdminController
     @user = e.record
     render :new
   rescue => e
-    flash.now[:error] = "Failed to create user: #{e}"
+    flash_error_unless_summarised(@user, "Failed to create user: #{e}")
     render :new
   end
 

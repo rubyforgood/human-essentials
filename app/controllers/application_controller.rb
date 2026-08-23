@@ -113,6 +113,22 @@ class ApplicationController < ActionController::Base
     @turbo = true
   end
 
+  # One convention for a validation failure: the error summary above the form. It names each
+  # field and links to it, which is the GOV.UK pattern and the reason a summary is worth having.
+  #
+  # Eighteen forms used to render a flash *as well*, so one failure produced two `role="alert"`
+  # regions -- announced twice, and disagreeing about what to say. The summary said "Storage
+  # location must exist"; the flash said "storage_location: must exist" on /adjustments and
+  # "Something didn't work quite right -- try again?" on eight others, which is not information.
+  #
+  # The flash is still right when there is nothing to summarise. A service can raise without
+  # putting anything on the record, and `essentials_error_summary` renders nothing for a record
+  # with no errors -- so without this guard the page would come back with no sign of trouble at
+  # all. Operational failure gets the flash; validation failure gets the summary; never both.
+  def flash_error_unless_summarised(record, message)
+    flash.now[:error] = message if record.nil? || record.errors.empty?
+  end
+
   def not_found!
     respond_to do |format|
       format.html { render template: "errors/404", layout: "layouts/essentials_app", status: :not_found }

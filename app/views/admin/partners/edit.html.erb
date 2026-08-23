@@ -8,6 +8,14 @@
 
 <%= essentials_form_for @partner, url: admin_partner_path do |f| %>
 <div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    This page had no error display at all: no summary, and the fields below use
+    `f.input ... do f.input_field`, which design.md forbids precisely because it skips the input
+    pipeline -- no aria-invalid, no aria-describedby, no inline message. A failed save showed a
+    flash and nothing else, and once the flash became the fallback rather than the convention it
+    would have shown nothing. The block form is recorded in docs/todo.md.
+  %>
+  <%= essentials_error_summary(@partner) %>
   <%= render "shared/essentials/card" do %>
               <%= f.input :name, label: "Name" do %>
                 <%= f.input_field :name, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none" %>

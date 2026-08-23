@@ -77,7 +77,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       visit subject
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "didn't work"
+      expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
     end
   end
 
@@ -130,7 +130,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "didn't work"
+      expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
     end
 
     it "does not allow updating to an existing donation site with empty required attributes[Address]" do
@@ -139,7 +139,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
       click_button "Save"
 
-      expect(page.find("[data-flash]")).to have_content "didn't work"
+      expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
     end
   end
 end

@@ -45,11 +45,11 @@ class Admin::OrganizationsController < AdminController
       SnapshotEvent.publish(@organization) # need one to start with
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
-      flash.now[:error] = "Failed to create Organization."
+      flash_error_unless_summarised(@organization, "Failed to create Organization.")
       render :new
     end
   rescue => e
-    flash.now[:error] = e
+    flash_error_unless_summarised(@organization, e)
     render :new
   end
 

@@ -18,7 +18,7 @@ module Partners
         flash[:success] = "User information was successfully updated!"
         redirect_to edit_partners_user_path(@user)
       else
-        flash.now[:error] = "Failed to update this user."
+        flash_error_unless_summarised(@user, "Failed to update this user.")
         render :edit
       end
     end
@@ -43,7 +43,7 @@ module Partners
       # The service also raises for things with no field to attach to -- an unknown role, a
       # resource that is gone -- and those stay a message above the form.
       @user = User.new(user_params)
-      flash.now[:error] = e.message
+      flash_error_unless_summarised(@user, e.message)
       render :new, status: :unprocessable_content
     end
 
