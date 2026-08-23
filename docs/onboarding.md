@@ -258,6 +258,13 @@ are documented rather than deleted; read [design-decisions.md](design-decisions.
 on any of them, and read the exemptions at the top of the script before adding a check. Every one
 of them is a false positive that was believed once.
 
+**Stop the dev server before running the full suite.** The box has 8GB; `bin/start` is five Puma
+processes, a Delayed Job worker and a Tailwind watcher, and the system specs add a Chromium per
+example. Running both put available memory under 600MB and the suite reported six failures, then
+a hundred, in files that pass on their own — timeouts reported as assertion failures. With the
+server stopped the same commit is 2,962 examples, 0 failures. If a system spec fails in a file
+you have not touched, check `free -m` before you check the diff.
+
 **Two things about running the browser audits.** They default to `BASE_URL=http://127.0.0.1:3000`,
 so point them somewhere else with that variable rather than assuming they follow whatever server
 you started last. And `config/application.rb` is not reloaded in development — restart the server
