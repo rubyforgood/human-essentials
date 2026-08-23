@@ -11,7 +11,7 @@ class RequestDestroyService
 
     request.discarded_at = Time.current
     request.discard_reason = reason
-    request.status = :discarded
+    request.status = :cancelled
     request.save!
 
     unless request.partner.deactivated?
@@ -29,7 +29,7 @@ class RequestDestroyService
     if request.blank?
       errors.add(:base, 'request_id is invalid')
     elsif request.discarded_at.present?
-      errors.add(:base, 'request already discarded')
+      errors.add(:base, 'request already cancelled')
     end
 
     errors.none?

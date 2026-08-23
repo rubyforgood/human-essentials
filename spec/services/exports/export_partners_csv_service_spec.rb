@@ -303,9 +303,15 @@ RSpec.describe Exports::ExportPartnersCSVService do
     end
 
     it "should handle a partner with missing profile info" do
-      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields
+      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields.
+      # Destroy the existing profile first; otherwise the factory's `partner { Partner.first || create(:partner) }`
+      # default attaches the new profile to the same partner, briefly leaving two partner_profiles rows with the
+      # same partner_id and making the has_one lookup nondeterministic on CI.
+      partners.first.profile.destroy!
+      partners.first.reload
       partners.first.update(profile: create(
         :partner_profile,
+        partner: partners.first,
         no_social_media_presence: nil,
         primary_contact_name: nil,
         primary_contact_email: nil

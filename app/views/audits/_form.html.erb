@@ -13,7 +13,7 @@
               <div class="box-header with-border">
               </div>
               <div class="box-body">
-                <%= simple_form_for @audit, data: { controller: "form-input audit-duplicates" }, html: {class: "storage-location-required"} do |f| %>
+                <%= simple_form_for @audit, data: { controller: "form-input duplicate-items" }, html: {class: "storage-location-required"} do |f| %>
                   <%= render partial: "storage_locations/source", object: f, locals: { label: "Storage location", error: "What storage location are you auditing?", include_omitted_items: true } %>
                   <fieldset style="margin-bottom: 2rem;">
                     <legend>Items in this audit</legend>
@@ -33,8 +33,9 @@
                   <div class="card-footer">
                     <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {
                         confirm: "Are you sure?\n\nPlease note that this audit must also be finalized by someone with organization admin rights before changes to inventory will take place.\n\nWe strongly recommend completing that step before doing any further actions that affect inventory.",
+                        "duplicate-items-target": "itemSubmitButton"
                     }) %>
-                    <%= submit_button({text: 'Save Progress', name: 'save_progress', size: 'md'}) %>
+                    <%= submit_button({text: 'Save Progress', name: 'save_progress', size: 'md'}, {"duplicate-items-target": "itemSubmitButton"}) %>
                   </div>
                 <% end %>
                 </div>

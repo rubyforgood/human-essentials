@@ -17,13 +17,5 @@
 #
 #   # Assert something based on the double click.
 def ferrum_double_click(css_selector)
-  node = Capybara.page.driver.browser.at_css(css_selector)
-  x, y = node.find_position
-  mouse = node.page.mouse
-  mouse.move(x:, y:)
-  mouse.down
-  mouse.up
-  sleep(0.05)
-  mouse.down
-  mouse.up
+  Capybara.page.driver.browser.at_css(css_selector).click(mode: :double, delay: 0.05)
 end

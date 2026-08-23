@@ -198,7 +198,7 @@ Only take multiple issues if they are related and you can solve all of them at t
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
 
 ## Debugging
-If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, or running `bundle exec rspec path/to/spec.rb:line_no`, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
+If starting server directly, via `rails s` or `rails console`, or built-in debugger in RubyMine, or running `bundle exec rspec path/to/spec.rb:line_no`, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
 
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote

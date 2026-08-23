@@ -18,6 +18,8 @@ class ItemCategory < ApplicationRecord
   has_many :items, -> { order(name: :asc) }, inverse_of: :item_category, dependent: :nullify
   has_and_belongs_to_many :partner_groups, dependent: :nullify
 
+  scope :alphabetized, -> { order(:name) }
+
   before_destroy :ensure_no_associated_partner_groups
 
   private

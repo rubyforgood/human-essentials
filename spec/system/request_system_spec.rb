@@ -4,8 +4,8 @@ RSpec.describe "Requests", type: :system, js: true do
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
-  let(:partner1) { create(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
-  let(:partner2) { create(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
+  let(:partner1) { build(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
+  let(:partner2) { build(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
   let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
@@ -114,6 +114,7 @@ RSpec.describe "Requests", type: :system, js: true do
         end
       end
     end
+
     it_behaves_like "Date Range Picker", Request, :created_at
 
     it "doesn't display New Quantity Request link" do
@@ -253,7 +254,7 @@ RSpec.describe "Requests", type: :system, js: true do
         visit requests_path
       end
 
-      it 'should set the request as canceled/discarded and contain the reason' do
+      it 'should set the request as canceled and contain the reason' do
         click_on 'Cancel'
         fill_in 'Cancellation reason *', with: reason
         click_on 'Yes. Cancel Request'

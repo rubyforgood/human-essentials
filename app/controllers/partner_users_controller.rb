@@ -17,8 +17,7 @@ class PartnerUsersController < ApplicationController
       resource: @partner
     )
     if @user.valid?
-      redirect_back(fallback_location: "/",
-        notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
+      redirect_back_or_to("/", notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
     else
       flash.now[:alert] = "Invitation failed. Check the form for errors."
       @users = @partner.users
@@ -33,9 +32,9 @@ class PartnerUsersController < ApplicationController
     user = User.find(params[:id])
 
     if user.remove_role(Role::PARTNER, @partner)
-      redirect_back(fallback_location: "/", notice: "Access to #{@partner.name} has been revoked for #{user.display_name}.")
+      redirect_back_or_to("/", notice: "Access to #{@partner.name} has been revoked for #{user.display_name}.")
     else
-      redirect_back(fallback_location: "/", alert: "Invitation failed. Check the form for errors.")
+      redirect_back_or_to("/", alert: "Invitation failed. Check the form for errors.")
     end
   end
 
@@ -49,9 +48,9 @@ class PartnerUsersController < ApplicationController
     end
 
     if user.errors.none?
-      redirect_back(fallback_location: "/", notice: "Invitation email sent to #{user.email}")
+      redirect_back_or_to("/", notice: "Invitation email sent to #{user.email}")
     else
-      redirect_back(fallback_location: "/", alert: user.errors.full_messages.to_sentence)
+      redirect_back_or_to("/", alert: user.errors.full_messages.to_sentence)
     end
   end
 
@@ -59,7 +58,7 @@ class PartnerUsersController < ApplicationController
     user = User.find(params[:id])
 
     user.send_reset_password_instructions
-    redirect_back(fallback_location: root_path, notice: "Password e-mail sent!")
+    redirect_back_or_to(root_path, notice: "Password e-mail sent!")
   end
 
   private

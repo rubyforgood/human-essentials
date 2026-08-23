@@ -9,8 +9,6 @@ class Reports::AnnualReportsController < ApplicationController
     @actual_year = Time.current.year
 
     @years = (foundation_year...@actual_year).to_a
-
-    @month_remaining_to_report = 12 - Time.current.month
   end
 
   def show

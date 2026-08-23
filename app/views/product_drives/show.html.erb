@@ -95,6 +95,18 @@
             To add additional donations to this product drive, please edit that donation and select this product drive from the appropriate dropdown.
           </p>
           <!-- /.card-footer-->
+          <div class="card-footer">
+            <span class="float-right">
+              <%=
+                if @product_drive.donations.length > 0
+                  download_button_to(
+                    product_drive_path(@product_drive, format: :csv),
+                    text: "Export Product Drive Participants"
+                  )
+                end
+              %>
+            </span>
+          </div>
         </div>
         <!-- /.card -->
       </div>

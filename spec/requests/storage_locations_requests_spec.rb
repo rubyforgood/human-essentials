@@ -165,19 +165,19 @@ RSpec.describe "StorageLocations", type: :request do
           })
           get storage_locations_path(format: response_format)
 
-          expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))
+          expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name, 'inactive item'].join(','))
         end
 
         it "Generates csv with Storage Location fields, alphabetized item names, item quantities lined up in their columns, and zeroes for no inventory" do
           get storage_locations_path(format: response_format)
           # The first address below is quoted since it contains commas
           csv = <<~CSV
-            Name,Address,Square Footage,Warehouse Type,Total Inventory,Fair Market Value,A,B,C,D
-            Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0.0,0,0,1,0
-            Storage Location with Items,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0
-            Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0.0,0,0,0,5
-            Test Storage Location,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0
-            Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0
+            Name,Address,Square Footage,Warehouse Type,Total Inventory,Fair Market Value,A,B,C,D,inactive item
+            Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0.0,0,0,1,0,0
+            Storage Location with Items,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0,0
+            Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0.0,0,0,0,5,0
+            Test Storage Location,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0,0
+            Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0,0
           CSV
           expect(response.body).to eq(csv)
         end
@@ -210,13 +210,13 @@ RSpec.describe "StorageLocations", type: :request do
             get storage_locations_path(include_inactive_storage_locations: "1", format: response_format)
 
             csv = <<~CSV
-              Name,Address,Square Footage,Warehouse Type,Total Inventory,Fair Market Value,A,B,C,D
-              Inactive Storage Location,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0
-              Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0.0,0,0,1,0
-              Storage Location with Items,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0
-              Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0.0,0,0,0,5
-              Test Storage Location,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0
-              Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0
+              Name,Address,Square Footage,Warehouse Type,Total Inventory,Fair Market Value,A,B,C,D,inactive item
+              Inactive Storage Location,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0,0
+              Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0.0,0,0,1,0,0
+              Storage Location with Items,123 Donation Site Way,100,Residential space used,3,0.0,1,1,1,0,0
+              Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0.0,0,0,0,5,0
+              Test Storage Location,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0,0
+              Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0.0,0,0,0,0,0
             CSV
 
             expect(response.body).to eq(csv)

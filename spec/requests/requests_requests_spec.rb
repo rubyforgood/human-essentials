@@ -11,10 +11,6 @@ RSpec.describe 'Requests', type: :request do
         response
       end
 
-      before do
-        create(:request)
-      end
-
       context "html" do
         let(:response_format) { 'html' }
 
@@ -25,35 +21,71 @@ RSpec.describe 'Requests', type: :request do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+
+        context 'when exporting as CSV' do
+          it "exports only the cancelled requests CSV when 'Filter by Status' is 'Cancelled'" do
+            create(:request, :started)
+            create(:request, :cancelled)
+
+            get requests_path(format: :csv, params: {filters: { by_status: :cancelled}})
+
+            csv = CSV.parse(response.body, headers: true)
+
+            expect(csv.count).to eq(1)
+            expect(csv.first["Status"]).to eq("Cancelled")
+          end
+        end
       end
 
-      context "when there are pending or started requests" do
-        it "shows print unfulfilled picklists button with correct quantity" do
-          Request.delete_all
+      it "shows print unfulfilled picklists button with correct quantity, including cancelled requests" do
+        create(:request, :pending)
+        create(:request, :started)
+        create(:request, :fulfilled)
+        create(:request, :cancelled)
 
-          create(:request, :pending)
-          create(:request, :started)
-          create(:request, :fulfilled)
-          create(:request, :discarded)
+        get requests_path
 
-          get requests_path
+        expect(response.body).to include('Print Unfulfilled Picklists (2)')
+        expect(response.body).to match(%r{<span class="badge badge-danger bg-danger">\s*Cancelled\s*</span>})
+      end
 
-          expect(response.body).to include('Print Unfulfilled Picklists (2)')
+      context "when filtering by Cancelled" do
+        it "constrains the list for cancelled requests only" do
+          create(:request, :started, comments: "Need more supplies")
+          create(:request, :pending, comments: "Awaiting for confirmation")
+          create(:request, :cancelled, comments: 'Not necessary anymore')
+
+          get requests_path, params: {filters: {by_status: :cancelled}}
+
+          expect(response.body).to include("Not necessary anymore")
+          expect(response.body).not_to include("Need more supplies")
+          expect(response.body).not_to include("Awaiting for confirmation")
+        end
+
+        it 'does not display the Cancel button' do
+          cancelled_request = create(:request, :cancelled)
+
+          get requests_path, params: {filters: {by_status: :cancelled}}
+
+          page = Nokogiri::HTML(response.body)
+
+          cancelled_request_cancel_button = page.at_css("form[action='/requests/#{cancelled_request.id}/cancelation/new']")
+          expect(cancelled_request_cancel_button).to be_nil
         end
       end
 
       context "when there is a filter applied" do
         it "shows only filtered requests, print unfulfilled picklists button with correct quantity" do
-          Request.delete_all
-
           create(:request, :started, comments: "Started request - should appear")
           create(:request, :pending, comments: "Pending request - should not appear")
+          create(:request, :cancelled, comments: 'Cancelled request - a comment')
 
           get requests_path({ filters: { by_status: :started} })
 
           expect(response.body).to include("Print Unfulfilled Picklists (1)")
           expect(response.body).to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
+          expect(response.body).not_to include("Cancelled request - a comment")
         end
       end
     end
@@ -154,6 +186,37 @@ RSpec.describe 'Requests', type: :request do
           get request_path(request)
 
           expect(response.body).not_to include('Units (if applicable)')
+        end
+      end
+
+      context 'when the request has a Fulfilled status' do
+        it 'does not display the Cancel button' do
+          fulfilled_request = create(:request, :fulfilled)
+
+          get requests_path(fulfilled_request)
+
+          page = Nokogiri::HTML(response.body)
+          cancel_button = page.at_css('button') { |el| el.text.strip == 'Cancel' }
+
+          expect(cancel_button).not_to be_present
+        end
+      end
+
+      context 'when the request has a cancelled status' do
+        it 'does not display the Cancel and Fulfill request buttons' do
+          cancelled_request = create(:request, :cancelled, organization:)
+
+          get request_path(cancelled_request)
+
+          page = Nokogiri::HTML(response.body)
+
+          cancel_button = page.at_css("form[action='/requests/#{cancelled_request.id}/cancelation/new']")
+          fulfill_button = page.at_css("form[action='/requests/#{cancelled_request.id}/start']")
+          expect(cancel_button).to be_nil
+          expect(fulfill_button).to be_nil
+
+          print_link = page.at_css("a[href='/requests/#{cancelled_request.id}/print_picklist']")
+          expect(print_link).to be_present
         end
       end
     end

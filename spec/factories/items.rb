@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -27,8 +28,7 @@ FactoryBot.define do
     sequence(:name) { |n| "#{n}Dont test this" }
     organization { Organization.try(:first) || create(:organization) }
     partner_key { nil }
-    reporting_category { kit ? nil : "disposable_diapers" }
-    kit { nil }
+    reporting_category { "disposable_diapers" }
 
     trait :active do
       active { true }
