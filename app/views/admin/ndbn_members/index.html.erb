@@ -1,58 +1,55 @@
 <% content_for :title, "Community - NDBN Member Upload" %>
+
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "NDBN member upload",
         subtitle: "Import the NDBN membership list." %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
-          <div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-base font-semibold text-slate-900">Upload NDBN Members</h2>
-          </div>
-          <div class="px-5 py-4">
-            <div class="grid gap-6">
-              <p>The Current NDBN member list is found at
-                <a
-                  href="https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915.">this link.</a>
-                Export the list as CSV and remove the initial 'Updated' row before uploading.</p>
-            </div>
-            <%= form_with(url: upload_csv_admin_ndbn_members_path) do |form| %>
-              <div class="grid gap-6">
-                <%= form.label :member_file, "Select CSV File to Upload" %>
-              </div>
-              <%= form.file_field :member_file, required: true, accept: "text/csv" %>
-              <%= submit_button({ text: "Upload" }) %>
-            <% end %>
-          </div>
+  <div class="space-y-6">
+    <%= render "shared/essentials/card", title: "Upload NDBN members" do %>
+      <p class="max-w-prose text-sm text-slate-600">
+        The current NDBN member list is at
+        <%= link_to "this link", "https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915",
+              class: "text-brand-700 hover:text-brand-800" %>.
+        Export it as CSV and remove the initial "Updated" row before uploading.
+      </p>
+
+      <%= form_with(url: upload_csv_admin_ndbn_members_path, class: "mt-4 space-y-3") do |form| %>
+        <div>
+          <%= form.label :member_file, "Select CSV file to upload", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.file_field :member_file, required: true, accept: "text/csv",
+                class: "mt-1.5 block w-full text-sm text-slate-900 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-600 file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-700" %>
         </div>
+        <%= submit_button({text: "Upload"}) %>
+      <% end %>
+    <% end %>
 
-      </div>
-    </div>
-
-  </div>
-
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
+    <%= render "shared/essentials/card", padded: false do %>
+      <% if ndbn_members.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No NDBN members yet",
+              body: "Upload the membership CSV above and the list will appear here." %>
+      <% else %>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+          <table class="data-table">
+            <caption>NDBN members, by member number</caption>
+            <thead>
+              <tr>
+                <th scope="col">NDBN member number</th>
+                <th scope="col">Member name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% ndbn_members.each do |member| %>
                 <tr>
-                  <th>NDBN Member Number</th>
-                  <th>Member Name</th>
+                  <td><%= member.ndbn_member_id %></td>
+                  <td><%= member.account_name %></td>
                 </tr>
-              </thead>
-              <tbody>
-                <%- ndbn_members.each do |member| %>
-                  <tr>
-                    <td><%= member.ndbn_member_id %></td>
-                    <td><%= member.account_name %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-  <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>
