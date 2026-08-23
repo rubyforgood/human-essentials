@@ -141,7 +141,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
         fill_in "Quantity", id: "barcode_item_quantity", with: ""
         click_button "Save"
 
-        expect(page.find("[data-flash]")).to have_content "didn't work"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
     end
   end
@@ -150,6 +150,6 @@ RSpec.describe "Barcode management", type: :system, js: true do
     visit new_barcode_item_path
     click_button "Save"
 
-    expect(page.find("[data-flash]")).to have_content "didn't work"
+    expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
   end
 end

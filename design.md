@@ -1035,6 +1035,24 @@ words and carry no `aria-required`, because none of them is required on its own.
   wrapped in a span with an id, because the `<p>` the wrapper builds cannot take a per-field one.
 - `essentials_error_summary` above the form, whose items **link to the fields**. That is the
   GOV.UK error-summary pattern and the reason a summary is worth having.
+- The inline message is `rose-700` **and carries `bi-exclamation-triangle`**, from
+  `.field-error`. Colour is never the only signal, and a hint and an error sit in the same
+  place, at the same size, under the same field — hue was the only thing telling them apart.
+  The summary's heading carries the same glyph: one event at two scales.
+
+**One failure, one alert. The summary is the convention; a flash is the fallback.**
+
+A validation failure gets the error summary and the inline messages, and nothing else. It used
+to get a flash as well, on **18 forms** — two `role="alert"` regions for one event, announced
+twice and disagreeing about what to say. The summary said "Storage location must exist"; the
+flash said `storage_location: must exist` on `/adjustments`, and "Something didn't work quite
+right -- try again?" on eight others.
+
+Use `flash_error_unless_summarised(record, message)` rather than `flash.now[:error] =` in any
+action that re-renders a form. It sets the flash only when the record has no errors, which is
+the case a flash is genuinely for: a service raised, or a business rule failed without putting
+anything on the record — `can_deactivate?` on an item, an inventory shortfall on a distribution.
+Operational failure gets the flash; validation failure gets the summary; never both.
 
 **Never render `f.input` with a block containing `f.input_field`.** It renders the label and then
 the block, so the field never goes through the input pipeline: no wrapper classes, no

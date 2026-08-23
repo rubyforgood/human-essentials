@@ -58,7 +58,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "URL", with: "notavalidemail"
         click_on "Save"
-        expect(page.find("[data-flash]")).to have_content "Url it should look like 'http://www.example.com'"
+        expect(page.find("[data-error-summary]")).to have_content "Url it should look like 'http://www.example.com'"
 
         fill_in "URL", with: "http://www.diaperbase.com"
         click_on "Save"

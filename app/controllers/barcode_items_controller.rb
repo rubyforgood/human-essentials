@@ -33,7 +33,7 @@ class BarcodeItemsController < ApplicationController
         format.html { redirect_to barcode_items_path, notice: msg }
       end
     else
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash_error_unless_summarised(@barcode_item, "Something didn't work quite right -- try again?")
       load_items
       render action: :new
     end
@@ -83,7 +83,7 @@ class BarcodeItemsController < ApplicationController
     if @barcode_item.update(barcode_item_params)
       redirect_to barcode_items_path, notice: "Barcode updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash_error_unless_summarised(@barcode_item, "Something didn't work quite right -- try again?")
       load_items
       render action: :edit
     end

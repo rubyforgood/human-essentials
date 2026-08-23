@@ -207,13 +207,14 @@ RSpec.describe "Purchases", type: :system, js: true do
             expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
             click_button "Save"
 
-            expect(page).to have_content("Failed to create purchase due to:")
+            expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
             expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
           end
 
           it "should display failure with error messages" do
             click_button "Save"
-            expect(page).to have_content("Failed to create purchase due to:\nVendor must exist\nAmount spent is not a number\nAmount spent in cents must be greater than 0")
+            expect(page).to have_css("[data-error-summary]", text: /Vendor must exist/)
+            expect(page).to have_css("[data-error-summary]", text: /Amount spent is not a number/)
           end
         end
       end

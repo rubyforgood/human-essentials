@@ -31,7 +31,7 @@ class TransfersController < ApplicationController
     TransferCreateService.call(@transfer)
     redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
   rescue StandardError => e
-    flash.now[:error] = e.message
+    flash_error_unless_summarised(@transfer, e.message)
     load_form_collections
     @transfer.line_items.build if @transfer.line_items.empty?
     render :new

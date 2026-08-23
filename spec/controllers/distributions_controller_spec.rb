@@ -214,9 +214,13 @@ RSpec.describe DistributionsController, type: :controller do
         end
         subject { post :create, params: params.merge(format: :turbo_stream) }
 
-        it "flashes an error" do
+        it "reports the error" do
           expect(subject).to have_http_status(:bad_request)
-          expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be at least 1")
+          # The quantity is a validation failure on the record, so it reports through the error
+          # summary rather than a flash -- see design.md, "one failure, one alert". A controller
+          # spec renders no view, so the record's errors are what there is to assert here.
+          expect(assigns(:distribution).errors.full_messages.join(" "))
+            .to match(/quantity needs to be at least 1/i)
         end
       end
 

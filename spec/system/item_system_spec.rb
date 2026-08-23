@@ -58,7 +58,7 @@ RSpec.describe "Item management", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find("[data-flash]")).to have_content "didn't work"
+    expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
   end
 
   it "can make the item invisible to partners" do

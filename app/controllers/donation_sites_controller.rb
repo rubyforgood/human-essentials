@@ -27,7 +27,7 @@ class DonationSitesController < ApplicationController
                       notice: "Donation site #{@donation_site.name} added!"
         end
       else
-        flash.now[:error] = "Something didn't work quite right -- try again?"
+        flash_error_unless_summarised(@donation_site, "Something didn't work quite right -- try again?")
         if request.format.turbo_stream?
           format.html { render partial: "donation_sites/new_modal", status: :unprocessable_content }
         end
@@ -61,7 +61,7 @@ class DonationSitesController < ApplicationController
     if @donation_site.update(donation_site_params)
       redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash_error_unless_summarised(@donation_site, "Something didn't work quite right -- try again?")
       render action: :edit
     end
   end

@@ -19,7 +19,7 @@ class Admin::PartnersController < AdminController
     if @partner.update(partner_attributes)
       redirect_to admin_partners_path, notice: "#{@partner.name} updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash_error_unless_summarised(@partner, "Something didn't work quite right -- try again?")
       render action: :edit
     end
   end

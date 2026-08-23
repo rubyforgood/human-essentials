@@ -111,7 +111,7 @@ RSpec.feature "Distributions", type: :system do
 
       click_button "Save"
 
-      expect(page).to have_css("[data-flash='error']", text: /partner/i)
+      expect(page).to have_css("[data-error-summary]", text: /partner/i)
 
       # Fix validation error by filling in a partner
       open_filters
@@ -340,7 +340,7 @@ RSpec.feature "Distributions", type: :system do
 
     click_button "Save", match: :first
 
-    expect(page).to have_css("[data-flash='error']", text: /storage location/i)
+    expect(page).to have_css("[data-error-summary]", text: /storage location/i)
 
     # 4438- Bug Fix
     select storage_location.name, from: "From storage location"

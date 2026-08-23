@@ -131,7 +131,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         it 'should have not added a new partner and indicate the failure' do
-          assert page.has_content? "Failed to add partner due to: "
+          expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
           assert page.has_content? "New partner agency"
 
           partner = Partner.find_by(name: partner_attributes[:name])
@@ -364,7 +364,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         visit subject
         click_button "Add partner agency"
 
-        expect(page.find("[data-flash]")).to have_content "Failed to add partner due to:"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
 
       it "should not display inactive storage locations in dropdown" do
@@ -394,7 +394,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         fill_in "Name", with: ""
         click_button "Update partner"
 
-        expect(page.find("[data-flash]")).to have_content "Something didn't work quite right -- try again?"
+        expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
       end
 
       it "User can uncheck send_reminders" do

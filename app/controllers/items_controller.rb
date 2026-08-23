@@ -69,7 +69,9 @@ class ItemsController < ApplicationController
     @item.attributes = item_params
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
-      flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
+      # Not a validation error -- `can_deactivate?` is a business rule and puts nothing on the
+      # record, so there is no summary for this and the flash is the only place it can go.
+      flash_error_unless_summarised(@item, "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!")
       render action: :edit
       return
     end
@@ -77,7 +79,7 @@ class ItemsController < ApplicationController
     if update_item
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
+      flash_error_unless_summarised(@item, "This item could not be saved.")
       render action: :edit
     end
   end

@@ -48,7 +48,7 @@ class AdjustmentsController < ApplicationController
       flash[:notice] = "Adjustment was successful."
       redirect_to adjustment_path(@adjustment)
     else
-      flash.now[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
+      flash_error_unless_summarised(@adjustment, "This adjustment could not be saved.")
       load_form_collections
       render :new
     end
