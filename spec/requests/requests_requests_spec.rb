@@ -196,7 +196,7 @@ RSpec.describe 'Requests', type: :request do
           get requests_path(fulfilled_request)
 
           page = Nokogiri::HTML(response.body)
-          cancel_button = page.at_css('button') { |el| el.text.strip == 'Cancel' }
+          cancel_button = page.at_css('button[data-disable-with="Please wait..."], input[value="Cancel"]')
 
           expect(cancel_button).not_to be_present
         end
