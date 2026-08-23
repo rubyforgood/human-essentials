@@ -73,6 +73,15 @@ design system partial that every other check skips as "the definition, not a cop
 `.card-surface` exists there is no definition left to protect — the component uses the class like
 everybody else. It reports 0, and the remedy for a finding is always the same: use the class.
 
+**A second sweep asks the same question of the icon tile.** A tone-coloured, fixed-size rounded
+box that is not `rounded-full` should have come from `essentials_icon_tile`. `rounded-full` is the
+whole discriminator, and it is doing real work: a circle is an avatar or a numbered step badge,
+which design.md keeps deliberately disjoint from tiles, and both appear in the app. The reports
+hub was the one copy, and it had drifted on size, radius *and* text colour — 28px/`rounded-lg`/
+`text-brand-700` against the helper's 36px/`rounded-xl`/`text-brand-600` — which is what a single
+hand-rolled component looks like after a while. The helper takes `size: :sm` now and the hub uses
+it.
+
 The bare-`card` check moved from `/class="[^"]*\bcard\b[^"]*"/` to a class-token split at the same
 time. `\b` does not stop at a hyphen, so that pattern matched inside `card-surface`,
 `content-card` and `data-card` — harmless while nothing legitimate contained the substring, and

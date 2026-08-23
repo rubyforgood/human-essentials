@@ -375,11 +375,20 @@ word; pass an `icon:` when the pill is doing real signalling work rather than la
 
 ```erb
 <%= essentials_icon_tile "bi-box-seam", tone: :brand %>
+<%= essentials_icon_tile "bi-graph-up", tone: :brand, size: :sm %>
 <%= essentials_avatar_initials current_user.name %>
 ```
 
+**Two sizes, named as the buttons are.** `md` (36px, `rounded-xl`) is the default and stands
+beside a figure or a `text-base` heading. `sm` (28px, `rounded-lg`) is for a compact card header,
+where the larger tile beside a `text-sm` heading reads as heavy. Never build one by hand: the
+reports hub did, and drifted on all three of size, radius and text colour before anyone noticed.
+
 A soft coloured tile behind an icon means "a stat or a status". A **person** is an initials
-avatar instead. Keeping these disjoint is what makes either one readable at a glance.
+avatar instead. Keeping these disjoint is what makes either one readable at a glance, and it is
+also the line `page-audit.rb` draws: a tone-coloured fixed-size box that is **not** `rounded-full`
+is a tile and must come from the helper; a circle is an avatar or a numbered step badge and is
+left alone.
 
 **A tile earns its place by being different from the tile next to it.** In a row of stats or a
 list of options each icon names its own item, so it is doing work. The same glyph repeated down

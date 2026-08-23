@@ -64,6 +64,34 @@ def hand_rolled_card?(src)
   end
 end
 
+# An icon tile hand-rolled instead of calling `essentials_icon_tile`: a tone-coloured, fixed-size
+# rounded box. `rounded-full` is excluded, and that is the whole discriminator -- a circle is an
+# avatar or a numbered badge, which design.md keeps deliberately disjoint from tiles. The reports
+# hub had built its own at 28px/`rounded-lg`/`text-brand-700` against the helper's
+# 36px/`rounded-xl`/`text-brand-600`, so three properties had drifted rather than one.
+TILE_TONES = %w[bg-brand-50 bg-sky-50 bg-emerald-50 bg-amber-50 bg-rose-50 bg-slate-100].freeze
+
+def hand_rolled_tile?(src)
+  src.scan(/class="([^"]*)"/).flatten.any? do |attr|
+    names = attr.split(/\s+/)
+    names.any? { |n| n.start_with?("rounded") } && !names.include?("rounded-full") &&
+      TILE_TONES.any? { |t| names.include?(t) } &&
+      names.any? { |n| n.match?(/\A(size-\d+|h-\d+)\z/) }
+  end
+end
+
+[
+  ['<span class="flex size-7 shrink-0 rounded-lg bg-brand-50 text-brand-700">', true],
+  ['<span class="grid h-9 w-9 place-items-center rounded-xl bg-amber-50">', true],
+  ['<span class="grid h-8 w-8 place-items-center rounded-full bg-brand-100">', false], # avatar
+  ['<span class="grid h-5 w-5 place-items-center rounded-full bg-brand-100">', false], # step badge
+  ['<div class="rounded-lg bg-brand-50 p-4">', false]                                  # no fixed size
+].each do |markup, expected|
+  next if hand_rolled_tile?(markup) == expected
+
+  abort "tile detector is wrong: #{markup.inspect} => #{!expected}, expected #{expected}."
+end
+
 # Same idea as `undefined-classes.py`: prove the detector before trusting a run of it. The last
 # two versions of this check were each wrong in a way that reported zero, which is the failure
 # mode that looks like success.
@@ -169,23 +197,35 @@ end
   puts
 end
 
-# The card surface is checked across everything that emits markup, not per page kind, because
-# the two places it hid were both outside the per-kind scan: `essentials_stats` is a helper and
-# `page-audit` only globs views, and `_disclosure` is in `shared/essentials/`, which every other
-# check skips as "the definition, not a copy". Since `.card-surface` exists there is no longer a
-# definition to protect -- the component uses the class like everyone else.
-PASTED_SURFACE = Dir.glob("{app/views/**/*.html.erb,app/helpers/**/*.rb,app/javascript/**/*.js,app/components/**/*}")
+# Two checks that ask "did someone rebuild a thing the design system already defines?", run
+# across everything that emits markup rather than per page kind. Both had to be global: the
+# copies they were written for hid in a helper (`essentials_stats`) and in `shared/essentials/`
+# (`_disclosure`), and the per-kind scan reaches neither -- it globs views only, and skips the
+# design system's own partials as "the definition, not a copy". That skip made sense while a
+# component's markup was the definition. It is a CSS class and a helper now, so the components
+# are callers like everybody else.
+EMITS_MARKUP = Dir.glob("{app/views/**/*.html.erb,app/helpers/**/*.rb,app/javascript/**/*.js,app/components/**/*}")
   .select { |f| File.file?(f) }
   .reject { |f| f.include?("_mailer/") || f.include?("/mailer/") || f.start_with?("app/views/static/") }
-  .select { |f| hand_rolled_card?(File.read(f, encoding: "UTF-8", invalid: :replace, undef: :replace, replace: "")) }
+  .to_h { |f| [f, File.read(f, encoding: "UTF-8", invalid: :replace, undef: :replace, replace: "")] }
 
-unless PASTED_SURFACE.empty?
-  puts "== card surface pasted instead of .card-surface (#{PASTED_SURFACE.size})"
-  PASTED_SURFACE.sort.each { |f| puts format("    debt  %s", f) }
+# The helper defines the tile, so it is not a copy of itself.
+TILE_DEFINITION = "app/helpers/essentials_ui_helper.rb"
+
+GLOBAL_DEBT = {
+  "card surface pasted instead of .card-surface" =>
+    EMITS_MARKUP.select { |_f, src| hand_rolled_card?(src) }.keys,
+  "icon tile hand-rolled instead of essentials_icon_tile" =>
+    EMITS_MARKUP.reject { |f, _| f == TILE_DEFINITION }.select { |_f, src| hand_rolled_tile?(src) }.keys
+}.reject { |_label, files| files.empty? }
+
+GLOBAL_DEBT.each do |label, files|
+  puts "== #{label} (#{files.size})"
+  files.sort.each { |f| puts format("    debt  %s", f) }
   puts
 end
 
 defect_count = rows.count { |r| r[2].any? }
-debt_count = (rows.size - defect_count) + PASTED_SURFACE.size
+debt_count = (rows.size - defect_count) + GLOBAL_DEBT.values.sum(&:size)
 puts "#{defect_count} files with defects, #{debt_count} with debt only"
 exit(defect_count.zero? ? 0 : 1)
