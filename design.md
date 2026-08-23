@@ -381,6 +381,18 @@ word; pass an `icon:` when the pill is doing real signalling work rather than la
 A soft coloured tile behind an icon means "a stat or a status". A **person** is an initials
 avatar instead. Keeping these disjoint is what makes either one readable at a glance.
 
+**A tile earns its place by being different from the tile next to it.** In a row of stats or a
+list of options each icon names its own item, so it is doing work. The same glyph repeated down
+every row of a list is not — it gives the eye a second column of identical marks to skip and
+distinguishes nothing. If every row would carry the same icon, it belongs to the card: pass
+`icon:` to `shared/essentials/card` and it renders once, beside the `h2`. Both announcement
+cards used to stamp a megaphone on every announcement, inside a card already titled
+"Announcements".
+
+The test is mechanical: **is the icon a literal, or does it come from the row?**
+`essentials_icon_tile(stat[:icon], …)` varies per row and stays; `essentials_icon_tile("bi-megaphone", …)`
+inside a loop does not and moves to the header.
+
 The account menu's trigger in either top bar is the avatar **alone** — initials and a chevron,
 no name beside it. The name is not gone, it is one layer in: the panel opens with the name, the
 email and the role. A name in the bar is the one piece of text on the page that never changes,
@@ -1459,7 +1471,9 @@ short qualifier.
 is a menu; a sentence per entry turns a menu into reading.
 
 **One icon per card, not one per row.** The icon marks the subject. Repeating it down every row
-gives the eye a second column of glyphs to skip and marks nothing out.
+gives the eye a second column of glyphs to skip and marks nothing out. This is not a rule about
+grids — it is the general one under [Icon tiles and avatars](#icon-tiles-and-avatars), and it was
+written here first, which is most of why the dashboard's announcement cards went on breaking it.
 
 **A drill-through link names its destination.** Not "See more…" — it went from the distributions
 *report* to the distributions *table*, which is a different page about different things.

@@ -2,8 +2,12 @@
   Surface. White, hairline border, soft shadow, 2xl radius.
   Render it with a block:  render "shared/essentials/card", title: "Filters" do ... end
 
-  Locals: title, subtitle, actions, footer, card_class, and `padded: false` when the body
-  is a table that should meet the card edges.
+  Locals: title, subtitle, actions, footer, card_class, icon, icon_tone, and `padded: false`
+  when the body is a table that should meet the card edges.
+
+  `icon:` marks the card's subject, and is the only place an icon belongs on a card: one per
+  card, never one per row. See design.md. It sits beside the h2 rather than inside it, so it
+  stays out of the heading's accessible name.
 %>
 <%
   title ||= nil
@@ -13,18 +17,32 @@
   padded = true if defined?(padded).nil? || padded.nil?
   card_class ||= nil
   card_id ||= nil
+  icon ||= nil
+  icon_tone ||= :brand
 %>
 <section <%= tag.attributes(id: card_id) if card_id %> class="card-surface overflow-hidden <%= card_class %>">
   <% if title || actions %>
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
-      <div class="min-w-0">
-        <% if title %>
-          <h2 class="text-base font-semibold text-slate-900"><%= title %></h2>
-        <% end %>
-        <% if subtitle %>
-          <p class="mt-0.5 text-sm text-slate-600"><%= subtitle %></p>
-        <% end %>
-      </div>
+      <% heading = capture do %>
+        <div class="min-w-0">
+          <% if title %>
+            <h2 class="text-base font-semibold text-slate-900"><%= title %></h2>
+          <% end %>
+          <% if subtitle %>
+            <p class="mt-0.5 text-sm text-slate-600"><%= subtitle %></p>
+          <% end %>
+        </div>
+      <% end %>
+      <%# The wrapper only exists when there is an icon to group with the heading: the outer row
+          is `justify-between`, so a bare icon sibling would be pushed away from the title. %>
+      <% if icon %>
+        <div class="flex min-w-0 items-center gap-3">
+          <%= essentials_icon_tile(icon, tone: icon_tone) %>
+          <%= heading %>
+        </div>
+      <% else %>
+        <%= heading %>
+      <% end %>
       <% if actions %>
         <div class="flex flex-wrap items-center gap-2"><%= actions %></div>
       <% end %>
