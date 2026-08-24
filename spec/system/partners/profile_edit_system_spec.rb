@@ -173,7 +173,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       within "#attached_documents" do
         document_name = "document1.md"
         document_li = find("li.attached-document", text: document_name)
-        document_li.find("a", text: "Remove").click
+        document_li.find("button", text: "Remove").click
         expect(page).not_to have_selector("li.attached-document", text: document_name)
       end
 

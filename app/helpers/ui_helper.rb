@@ -51,22 +51,28 @@ module UiHelper
   # to make this work you need to:
   #  - set data-controller="form-input" on the form element
   #  - container selector needs to be a unique css selector
+  # A real <button>, not an anchor carrying `role="button"`.
+  #
+  # These were `link_to "javascript:void(0)"` with `role="button"`, which is a control that
+  # *announces* itself as a button and then does not behave as one: a native anchor fires on
+  # Enter and ignores Space, and the ARIA button pattern requires both. Measured, Enter removed a
+  # line item and Space did nothing -- WCAG 4.1.2, and invisible to axe, which cannot test
+  # behaviour. It also put every one of them in a screen reader's list of links.
+  #
+  # `type: "button"` is not optional: these sit inside forms, where a button defaults to submit.
   def add_element_button(label, container_selector:, **html_attrs, &block)
     default_html_attrs = {
       class: essentials_button_classes(variant: :secondary, size: :md),
       data: {form_input_target: "addButton",
              add_dest_selector: container_selector,
              action: "click->form-input#addItem:prevent"},
-      role: "button",
-      href: "javascript:void(0)"
+      type: "button"
     }
     attrs = default_html_attrs.merge(html_attrs)
 
     content_tag :div do
       concat(
-        # link_to with a block takes the URL first; the href in attrs is what actually lands
-        # on the element, and the anchor is inert (the Stimulus controller handles the click).
-        link_to(attrs[:href] || "javascript:void(0)", attrs) do
+        content_tag(:button, **attrs) do
           safe_join([ui_icon("plus"), label], " ")
         end
       )
@@ -93,14 +99,14 @@ module UiHelper
         remove_soft: soft ? true : false,
         remove_parent_selector: container_selector
       },
-      href: "javascript:void(0)",
-      role: "button"
+      type: "button"
     }
     default_html_attrs[:aria] = {label: label} if icon_only
 
     attrs = default_html_attrs.merge(html_attrs)
 
-    link_to(attrs[:href] || "javascript:void(0)", attrs) do
+    # See add_element_button: a real button, so Space works as well as Enter.
+    content_tag(:button, **attrs) do
       icon_only ? ui_icon("trash") : safe_join([ui_icon("trash"), label], " ")
     end
   end

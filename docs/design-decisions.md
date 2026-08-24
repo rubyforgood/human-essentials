@@ -3395,3 +3395,54 @@ with both a "please" and a position in it.
 - **Checking prose in `docs/` and `bin/`.** The audit's scope is what a *user* reads. Three
   "sanity-check"s in contributor docs were fixed by hand for consistency with the rule, and the
   audit deliberately does not police documentation.
+
+
+---
+
+## 2026-08-24 · Icon-only buttons: kept, made real buttons, and no tooltip
+
+**Area.** `UiHelper#add_element_button`, `UiHelper#remove_element_button`, `design.md` &sect; Icons.
+
+**Decision.** Icon-only stays for the line item row action. Both helpers render a real
+`<button type="button">` instead of an anchor carrying `role="button"`. **No tooltip.**
+
+**Are they recommended?** For a *repeating row action*, yes, and the industry is unanimous:
+QuickBooks, Xero, Shopify and Stripe all end an editable line item with a bare glyph. The row
+supplies the context a label would, and eight rows of "Remove" text is eight repetitions of a word
+that says nothing new. For a **one-off** action, no — a single destructive control in a page
+header gets its words. That distinction is now in `design.md`, because "use icon buttons" without
+it is how a page ends up with an unlabelled glyph nobody can identify.
+
+**Should they have a visible label?** No, and the row is the reason. **A hover label?** Also no,
+and this was the closer call. Material, Fluent and Carbon all pair icon buttons with tooltips, and
+the argument for one here is real: a sighted mouse user meeting a trash glyph has nothing but the
+glyph. Rejected on three grounds. A `title` attribute is the cheap version and is the worst of
+both — **not shown on keyboard focus**, unavailable on touch, and announced inconsistently on top
+of the `aria-label`, which produces a double announcement. A real tooltip is a component this app
+does not have, and WCAG 1.4.13 requires it to be dismissible, hoverable and persistent, which is a
+Stimulus controller and a preview of its own. And the glyph is a **trash can at the end of a row
+that has a delete affordance in every comparable product** — the recognition cost is close to
+zero, unlike an ambiguous glyph where a tooltip would be doing real work. Worth revisiting if a
+second icon-only action ever joins it in the row, because then the two need telling apart.
+
+**Are they screen reader compliant? They were not, and axe said they were.** The accessible name
+was fine — `aria-label="Remove this item"`, icon `aria-hidden`, and the accessibility tree read
+`{role: button, name: "Remove this item"}`. The **behaviour** was wrong. A native `<a>` fires on
+Enter and ignores Space; the ARIA button pattern requires both, so a control that announces
+itself as a button and then ignores Space fails **WCAG 4.1.2 Name, Role, Value**. Measured on
+`/donations/new`: Enter removed a line item, **Space did nothing**. axe cannot catch it, because
+axe reads markup and this is behaviour, and the markup was impeccable.
+
+The fix is not a keydown handler; it is to stop pretending. Both helpers render `<button
+type="button">` now — Enter and Space for free, no `href="javascript:void(0)"`, and they leave a
+screen reader's *list of links*, where fourteen inert "Add another item" entries had been sitting.
+`type: "button"` is load-bearing: these are inside forms, where a button defaults to submit.
+
+**Alternatives rejected.**
+
+- **Adding a `keydown` handler for Space to the anchor.** It reimplements a native control badly,
+  and leaves the anchors in the links list.
+- **`title` as a cheap tooltip.** See above: invisible to keyboard focus, absent on touch, and
+  doubles the announcement.
+- **A visible "Remove" label.** ~45px per row on a control the row already explains, and it is
+  what the mockup measured and the user chose against.
