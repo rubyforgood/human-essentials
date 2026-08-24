@@ -96,6 +96,32 @@ SimpleForm.setup do |config|
     b.use :hint, wrap_with: {tag: "p", class: hint_classes}
   end
 
+  # A cell in a repeating row -- see design.md, Line item rows. The label lives in the row of
+  # column headings above, so the wrapper renders none and takes no bottom margin; the control
+  # loses the `mt-1.5` that exists to clear a label. The error still renders under the control,
+  # which is what makes this a wrapper rather than a bare `field.text_field`.
+  #
+  # A control with no visible label still needs an accessible name: pass one as `aria-label`.
+  config.wrappers :essentials_cell, tag: "div", class: "min-w-0" do |b|
+    b.use :html5
+    b.use :placeholder
+    b.optional :maxlength
+    b.optional :minlength
+    b.optional :pattern
+    b.optional :min_max
+    b.optional :readonly
+    b.use :input, class: input_classes, error_class: invalid_classes
+    b.use :full_error, wrap_with: {tag: "p", class: error_classes}
+  end
+
+  # Identical to :essentials_cell but for the input classes -- see `select_classes` above.
+  config.wrappers :essentials_cell_select, tag: "div", class: "min-w-0" do |b|
+    b.use :html5
+    b.optional :readonly
+    b.use :input, class: select_classes, error_class: invalid_classes
+    b.use :full_error, wrap_with: {tag: "p", class: error_classes}
+  end
+
   # A single checkbox: control and label sit on one line, label to the right.
   config.wrappers :essentials_boolean, tag: "div", class: "mb-4" do |b|
     b.use :html5

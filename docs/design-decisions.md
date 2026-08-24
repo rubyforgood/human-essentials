@@ -3157,3 +3157,75 @@ replaces the wrapper's input, so those fields had no `aria-required`, no `aria-i
 class string that could never follow it. Confirmed in a browser: the name field now reports
 `aria-required`, and an empty save gives `aria-invalid`, a linked description and a message
 beside the field where previously there was nothing at all.
+
+---
+
+## 2026-08-24 · The line item row becomes a table, and the scan field leaves the row
+
+**Area.** `line_items/_line_item_table`, `line_items/_line_item_fields`, and the seven forms that
+render them — donation, purchase, distribution, transfer, adjustment, audit, kit.
+
+**Decision.** Option C of three offered in
+[`docs/mockups/line-item-row-options.html`](mockups/line-item-row-options.html): one scan bar per
+card, column headings once in a heading row, an icon-only remove at the end of the row, and a
+running total in the footer. All seven forms render one shared partial instead of assembling the
+card body by hand.
+
+**Why the row was a mess, measured before anything was changed.** Five controls on what is
+supposed to be one line, landing on **three different bottom edges** — 910, 924 and 926px at a
+1440px viewport. Against the app's 38px/8px/14px control: the barcode input matched, the scanner
+button was **42px** and 34×42 rather than square, the remove link 28px, and the item dropdown
+**28px tall, 4px radius, 16px text, 575px wide** — wrong on every axis. The row is 58px now and
+every control shares one edge.
+
+**Why a table and not three equal columns.** The literal reading of "match the convention for
+number of columns per card" would have been `sm:grid-cols-2 lg:grid-cols-3`, which is what the two
+cards above it use. That was rejected: those cards hold *one form filled in once*, and this one
+holds *a repeating collection*. Three equal columns would make Item and Quantity the same width,
+and quantity is always the narrow one — no inventory app does otherwise. What the card inherits is
+**column discipline**, not a column count.
+
+**Why the scan field left the row.** It was the deepest fault and the least visible one. A barcode
+field belongs to the document being built, not to a line of it. Square, Zoho Inventory, Odoo and
+Amazon Seller all put one scan field at the top of a receiving screen and append rows as you scan;
+this form rendered "Scan a barcode", an "or" and a full item picker **per row**, so a ten-line
+donation had ten scan fields. The behaviour that replaced it is the one the old code was reaching
+for through a proxy: it used to detect a repeat scan by comparing the value left sitting in every
+row's own barcode input, which is why the three-scan package prompt worked at all. The count is
+`data-scan-count` on the row now — first scan sets the barcode's quantity, second adds it again,
+third and later ask how many packages in total, exactly as before.
+
+**Alternatives rejected.**
+
+- **Option A, align the existing row.** Correct as far as it went, and it touched no JavaScript,
+  but it keeps three labels, a scan field and an "or" on every line. Offered as the small-appetite
+  choice.
+- **Option B, headings only.** This *is* C without the scan bar, so it was not so much rejected as
+  passed through: building B first would not have been wasted work if C had proved too much.
+- **A camera glyph for the scanner.** `bi-upc-scan` is the barcode mark Shopify, Square and Zoho
+  all use; a camera says "photo".
+- **The scan button inside the field as a trailing adornment.** Tidiest, but a ~36px hit area
+  inside a text input is easy to mis-tap, and this is a warehouse form used on tablets.
+- **A remove control revealed on hover.** There is no hover on touch.
+- **Keeping `.li-name` / `.li-quantity`.** They were layout wrappers, used by exactly one spec.
+  Reintroducing them would have meant markup existing only for a test; the spec uses the
+  documented `.line_item_name` and `.quantity` hooks instead.
+- **`Capybara.enable_aria_label = true`.** It would have let `have_field("Quantity")` keep working
+  now that the control's name comes from `aria-label` — and it would have made that selector
+  *ambiguous*, because the barcode dialog has a Quantity field too. The one spec affected matches
+  by id, which is what its neighbours already did.
+
+**A third thing measurement caught.** The first build put four columns on the row at every width,
+and at 320px that leaves the item picker **72px** — narrower than the quantity box beside it, on
+the screen where the item name matters most. 320 is not an arbitrary width to check: WCAG 1.4.10
+Reflow is defined there, and `responsive-audit.js` visits it. The row stacks below `sm` now, which
+takes the picker to 196px; the heading row goes with the columns, so each cell grows its own
+`sm:hidden` label, and the `aria-label` on the control is what carries the name at the width where
+that label is `display: none`. Narrowing the quantity column instead was tried on paper first and
+rejected — 4rem gets the picker only to 122px, and the heading "QUANTITY" stops fitting.
+
+**Two defects created and fixed on the way**, both recorded in `design.md` because neither is
+specific to this screen: a `MutationObserver` whose callback wrote inside the subtree it observed
+(an unbroken loop that hung the tab on the first scan), and the assumption that jQuery's `.val()`
+and `.trigger()` are visible to a native `addEventListener` (they are not, which left the running
+total one scan behind).

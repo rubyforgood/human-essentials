@@ -74,9 +74,20 @@ module UiHelper
     end
   end
 
-  def remove_element_button(label, container_selector:, soft: false, **html_attrs)
+  # `icon_only:` renders the glyph alone and moves the label into `aria-label`. That is the
+  # convention for a repeating row -- see design.md, Line item rows -- and it is deliberately
+  # slate until hover, so a form with eight rows does not carry eight red marks down its edge.
+  def remove_element_button(label, container_selector:, soft: false, icon_only: false, **html_attrs)
+    default_class =
+      if icon_only
+        "#{EssentialsUiHelper::ICON_BUTTON_CLASSES} text-slate-500 " \
+          "hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-rose-600"
+      else
+        essentials_button_classes(variant: :ghost_danger, size: :sm)
+      end
+
     default_html_attrs = {
-      class: essentials_button_classes(variant: :ghost, size: :sm, extra: "text-rose-700 hover:bg-rose-50"),
+      class: default_class,
       data: {
         action: "click->form-input#removeItem:prevent",
         remove_soft: soft ? true : false,
@@ -85,11 +96,12 @@ module UiHelper
       href: "javascript:void(0)",
       role: "button"
     }
+    default_html_attrs[:aria] = {label: label} if icon_only
 
     attrs = default_html_attrs.merge(html_attrs)
 
     link_to(attrs[:href] || "javascript:void(0)", attrs) do
-      safe_join([ui_icon("trash"), label], " ")
+      icon_only ? ui_icon("trash") : safe_join([ui_icon("trash"), label], " ")
     end
   end
 

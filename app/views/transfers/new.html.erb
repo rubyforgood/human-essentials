@@ -25,19 +25,7 @@
       <% end %>
 
       <%= render "shared/essentials/card", title: "Items in this transfer", padded: false do %>
-        <fieldset class="px-5 py-4">
-          <legend class="sr-only">Items in this transfer</legend>
-          <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
-            <%= render "line_items/line_item_fields", form: f %>
-          </div>
-          <div class="mt-4">
-            <%= add_element_button "Add another item", container_selector: "#transfer_line_items",
-                  id: "__add_line_item",
-                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
-              <%= render "line_items/line_item_fields", form: f, object: LineItem.new %>
-            <% end %>
-          </div>
-        </fieldset>
+        <%= render "line_items/line_item_table", form: f, id: "transfer_line_items", noun: "transfer" %>
       <% end %>
 
       <div class="flex items-center gap-2">

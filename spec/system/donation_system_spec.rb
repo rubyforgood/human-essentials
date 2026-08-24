@@ -457,12 +457,15 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
         end
 
-        # Bug fix -- Issue #526
-        it "Ensures Barcode Entry fields have unique ids" do
+        # Bug fix -- Issue #526. That bug was duplicate ids across per-row barcode fields; there
+        # is one scan field for the whole card now, so the stronger invariant is that adding rows
+        # never produces a second one.
+        it "keeps exactly one barcode field however many rows are added" do
           page.find(:css, "#__add_line_item").click
           page.find(:css, "#__add_line_item").click
-          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          expect(page).to have_xpath("//input[@id='_barcode-lookup-2']")
+          expect(page).to have_css(".line_item_section", count: 3)
+          expect(page).to have_css(".__barcode_item_lookup", count: 1)
+          expect(page).to have_field(Barcode::SCAN_FIELD)
         end
 
         it "Verifies unusually large donation quantities", js: true do
@@ -540,10 +543,8 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to add items by barcode", :js do
           # enter the barcode into the barcode field
 
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(@existing_barcode.value)
           # the form should update
           expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
           expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @existing_barcode.item.name)).to eq(true)
@@ -552,21 +553,17 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(qty).to eq(@existing_barcode.quantity.to_s)
 
           # the form should add another empty line
-          expect(page).to have_field("_barcode-lookup-1", focused: true)
+          expect(page).to have_field(Barcode::SCAN_FIELD, focused: true)
         end
 
         it "Updates the line item when the same barcode is scanned twice", :js do
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(@existing_barcode.value)
 
           expect(page).to have_field "donation_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(@existing_barcode.value)
 
           expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
         end
@@ -574,10 +571,8 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to add items that do not yet have a barcode", :js do
           new_barcode = @existing_barcode.value + "000"
           # enter a new barcode
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(new_barcode)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(new_barcode)
 
           # form finds no barcode and responds by prompting user to choose an item and quantity
           within "#newBarcode" do
@@ -593,19 +588,15 @@ RSpec.describe "Donations", type: :system, js: true do
 
           # form updates
           within "#donation_line_items" do
-            barcode_field = page.find(:xpath, "//input[@id='_barcode-lookup-0']").value
-            expect(barcode_field).to eq(new_barcode)
-            qty_field = page.find(:xpath, "//input[@id='donation_line_items_attributes_0_quantity']").value
+            qty_field = page.find(:xpath, ".//input[@id='donation_line_items_attributes_0_quantity']").value
             expect(qty_field).to eq("10")
-            item_field = page.find(:xpath, "//select[@id='donation_line_items_attributes_0_item_id']").value
+            item_field = page.find(:xpath, ".//select[@id='donation_line_items_attributes_0_item_id']").value
             expect(item_field).to eq(Item.first.id.to_s)
           end
 
-          # new line item was added and has focus
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-            expect(page).to have_css('#_barcode-lookup-1', focused: true)
-          end
+          # the scan field is emptied and keeps focus, ready for the next scan
+          expect(page).to have_field(Barcode::SCAN_FIELD, with: "")
+          expect(page).to have_field(Barcode::SCAN_FIELD, focused: true)
         end
 
         context "When the barcode is a global barcode" do
@@ -621,10 +612,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
           it "Adds the oldest item it can find for the global barcode" do
             visit new_donation_path
-            within "#donation_line_items" do
-              expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-              Barcode.boop(@global_barcode.value)
-            end
+            expect(page).to have_field(Barcode::SCAN_FIELD)
+            Barcode.boop(@global_barcode.value)
             expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
             expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
             qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value

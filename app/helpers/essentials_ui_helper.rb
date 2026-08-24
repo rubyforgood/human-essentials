@@ -18,8 +18,21 @@ module EssentialsUiHelper
     primary: "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600",
     secondary: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:outline-brand-600",
     danger: "bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600",
-    ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600"
+    ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600",
+    # A destructive action with no fill. Not `ghost` plus `extra: "text-rose-700"` -- that puts two
+    # colour utilities in one class attribute, and the cascade picks the winner rather than the
+    # attribute order, so the rose lost to the ghost's own slate everywhere it was tried.
+    # `remove_element_button` did exactly that, and one caller had already worked around it by
+    # passing a whole replacement class string.
+    ghost_danger: "text-rose-700 hover:bg-rose-50 hover:text-rose-800 focus-visible:outline-rose-600"
   }.freeze
+
+  # A square button holding one glyph, sized to the app's 38px control height so it can sit beside
+  # an input without making the row ragged. See design.md, Control height. `size-[2.375rem]` rather
+  # than a spacing step, because no Tailwind size lands on 38px.
+  ICON_BUTTON_CLASSES = "inline-flex size-[2.375rem] shrink-0 items-center justify-center " \
+                        "rounded-lg transition-colors " \
+                        "focus-visible:outline-2 focus-visible:outline-offset-2"
 
   BUTTON_SIZES = {
     sm: "px-2.5 py-1.5 text-xs",

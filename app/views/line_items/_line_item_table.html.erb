@@ -1,0 +1,112 @@
+<%#
+  The whole "Items in this <thing>" card body: a scan bar, a row of column headings, the rows
+  themselves, and a footer holding the add button and a running total. Shared by all seven forms
+  that take line items -- donation, purchase, distribution, transfer, adjustment, audit and kit --
+  each of which used to assemble these by hand and had drifted.
+
+    render "line_items/line_item_table", form: f, id: "donation_line_items", noun: "donation",
+           object: donation_form.line_items, changes_disallowed: @changes_disallowed
+
+  Locals:
+    form                required; the parent form builder
+    id                  required; the rows container's id, which the add button targets
+    noun                required; "donation", for the legend and the scan hint
+    object              the collection to render rows for; omit to let simple_fields_for decide
+    changes_disallowed  render everything read-only and drop the scan bar, add and remove
+    scan                false to omit the scan bar on a form whose page has no barcode modal
+
+  Render it inside `card ... padded: false`: each band supplies its own `px-5` so the scan bar
+  and the heading row can meet the card's edges.
+
+  The scan bar is **one per card, not one per row** -- see design.md. It used to be repeated
+  inside every row, so a ten-line donation drew ten barcode fields and ten "or"s.
+%>
+<%
+  object = local_assigns[:object]
+  changes_disallowed = local_assigns[:changes_disallowed]
+  scan = local_assigns.fetch(:scan, true) && !changes_disallowed
+  # The distribution form is the only one that shows what the partner asked for, and only when
+  # the distribution came from a request. The column is decided once, here, so the headings and
+  # the rows cannot disagree about how many there are.
+  requested_column = form.object.respond_to?(:request) && form.object.request.present?
+
+  # Below `sm` the row stacks: item and the remove button on the first line, then quantity (then
+  # the requested figure) beneath. Four columns in 320px CSS pixels leaves the item picker 72px,
+  # which is not a control anyone can use -- and 320 is the width WCAG 1.4.10 Reflow is defined
+  # at. Placement is explicit rather than left to auto-flow, because auto-flow puts the remove
+  # button under the item instead of beside it.
+  if requested_column
+    grid_class = "grid-cols-[1fr_2.375rem] sm:grid-cols-[1fr_6rem_7rem_2.375rem]"
+    cells = {
+      item: "col-start-1 row-start-1 sm:row-start-1",
+      requested: "col-start-1 row-start-3 sm:col-start-2 sm:row-start-1",
+      quantity: "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1",
+      remove: "col-start-2 row-start-1 sm:col-start-4 sm:row-start-1"
+    }
+  else
+    grid_class = "grid-cols-[1fr_2.375rem] sm:grid-cols-[1fr_7rem_2.375rem]"
+    cells = {
+      item: "col-start-1 row-start-1 sm:row-start-1",
+      quantity: "col-start-1 row-start-2 sm:col-start-2 sm:row-start-1",
+      remove: "col-start-2 row-start-1 sm:col-start-3 sm:row-start-1"
+    }
+  end
+%>
+<fieldset data-controller="line-item-total" data-line-item-total-noun-value="<%= noun %>">
+  <legend class="sr-only">Items in this <%= noun %></legend>
+
+  <% if scan %>
+    <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+      <%= label_tag "line-item-scan", "Scan a barcode",
+            class: "block text-sm font-medium text-slate-700" %>
+      <%# Joined, not two controls with a gap: the field and its button share one border, so they
+          cannot come out different heights the way they did when the button was a separate box. %>
+      <div class="mt-1.5 flex max-w-md">
+        <input type="text" id="line-item-scan" autocomplete="off"
+               class="__barcode_item_lookup block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+               placeholder="Barcode entry">
+        <button type="button" id="barcode-scanner-btn"
+                class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                aria-label="Scan a barcode with the camera">
+          <i class="bi-upc-scan" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="mt-1 text-xs text-slate-500">
+        Each scan adds a row below, or adds to the row that item is already on.
+      </p>
+    </div>
+  <% end %>
+
+  <%# A row of headings, not a label on every control. `aria-hidden`, because each control
+      carries the same word as its own aria-label -- announcing both would say it twice. %>
+  <%# Hidden below `sm`, where the row is stacked and there are no columns for it to head. Each
+      cell carries its own label at that width instead. %>
+  <div class="hidden <%= grid_class %> items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid"
+       aria-hidden="true">
+    <div>Item</div>
+    <% if requested_column %><div class="text-right">Requested</div><% end %>
+    <div class="text-right">Quantity</div>
+    <div></div>
+  </div>
+
+  <div id="<%= id %>" class="line-item-fields divide-y divide-slate-100" data-capture-barcode="true"
+       data-line-item-total-target="rows">
+    <%= render "line_items/line_item_fields", form: form, object: object,
+          changes_disallowed: changes_disallowed, grid_class: grid_class,
+          requested_column: requested_column, cells: cells %>
+  </div>
+
+  <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-3">
+    <% if changes_disallowed %>
+      <span></span>
+    <% else %>
+      <%= add_element_button "Add another item", container_selector: "##{id}",
+            id: "__add_line_item",
+            class: essentials_button_classes(variant: :secondary, size: :md) do %>
+        <%= render "line_items/line_item_fields", form: form, object: LineItem.new,
+              grid_class: grid_class, requested_column: requested_column, cells: cells %>
+      <% end %>
+    <% end %>
+    <p class="text-sm text-slate-600" data-line-item-total-target="summary" aria-live="polite"></p>
+  </div>
+</fieldset>

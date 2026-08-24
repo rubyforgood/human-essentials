@@ -49,21 +49,7 @@
           title: "Items in this distribution",
           subtitle: distribution.request ? "The requested column shows what the partner asked for." : nil,
           padded: false do %>
-      <fieldset class="px-5 py-4">
-        <legend class="sr-only">Items in this distribution</legend>
-        <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-          <%= render "line_items/line_item_fields", form: f, changes_disallowed: @changes_disallowed %>
-        </div>
-        <% unless @changes_disallowed %>
-          <div class="mt-4">
-            <%= add_element_button "Add another item", container_selector: "#distribution_line_items",
-                  id: "__add_line_item",
-                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
-              <%= render "line_items/line_item_fields", form: f, object: LineItem.new %>
-            <% end %>
-          </div>
-        <% end %>
-      </fieldset>
+      <%= render "line_items/line_item_table", form: f, id: "distribution_line_items", noun: "distribution", changes_disallowed: @changes_disallowed %>
     <% end %>
 
     <div class="flex items-center gap-2">

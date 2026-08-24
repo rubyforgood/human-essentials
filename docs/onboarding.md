@@ -330,6 +330,21 @@ CSV** button on its page that offers a template to start from. Manufacturers is 
 — it had a button until August 2026, but nothing behind it, so pressing it only produced an
 error page.
 
+**Entering the items themselves is scan-first.** Every form that takes a list of items — donation,
+purchase, distribution, transfer, adjustment, audit and kit — has **one barcode field at the top
+of the items card**. Scan into it and a row appears below with the item and the quantity that
+barcode stands for. Scan the same barcode again and it adds to the row that is already there
+rather than starting a second one; scan it a third time and it asks how many packages you have in
+total, so a pallet is one question instead of forty scans. The field empties and keeps the cursor
+after each scan, so a handheld reader can run straight down a delivery without anyone touching the
+keyboard. If a barcode is not known yet, a dialog offers to record it, and the scan then completes
+by itself.
+
+Nothing forces you to scan: the **Item** dropdown on each row is searchable and always available,
+and **Add another item** adds an empty row. The foot of the card keeps a running count — *"3 items
+· 412 units"* — which is the quickest way to check a long delivery before saving. Until August
+2026 every row carried its own barcode field, so a ten-line donation showed ten of them.
+
 ### Getting stock out
 
 A partner submits a **request**; you turn it into a **distribution**. Two records, deliberately:

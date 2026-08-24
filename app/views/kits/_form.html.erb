@@ -10,19 +10,7 @@
 
     <%= fields_for @kit.kit_item do |ff| %>
       <%= render "shared/essentials/card", title: "Items in this kit", padded: false do %>
-        <fieldset class="px-5 py-4">
-          <legend class="sr-only">Items in this kit</legend>
-          <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
-            <%= render "line_items/line_item_fields", form: ff %>
-          </div>
-          <div class="mt-4">
-            <%= add_element_button "Add another item", container_selector: "#kit_line_items",
-                  id: "__add_line_item",
-                  class: essentials_button_classes(variant: :secondary, size: :md) do %>
-              <%= render "line_items/line_item_fields", form: ff, object: LineItem.new %>
-            <% end %>
-          </div>
-        </fieldset>
+        <%= render "line_items/line_item_table", form: ff, id: "kit_line_items", noun: "kit" %>
       <% end %>
     <% end %>
 

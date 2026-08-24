@@ -763,7 +763,11 @@ RSpec.feature "Distributions", type: :system do
         Barcode.boop(barcode_value)
 
         expect(page).to have_text("VerySpecificItem")
-        expect(page).to have_field("Quantity", with: "51")
+        # By id, not by the label "Quantity": the row's quantity control has no visible label any
+        # more -- the column heading carries the word and the control carries it as an aria-label,
+        # which Capybara does not match unless enable_aria_label is on. Matching by text here found
+        # the barcode dialog's own Quantity field instead.
+        expect(page).to have_field("distribution_line_items_attributes_0_quantity", with: "51")
       end
     end
   end
