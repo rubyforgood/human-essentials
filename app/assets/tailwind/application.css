@@ -320,6 +320,35 @@
     overflow-x: auto;
   }
 
+  /*
+   * The bubble `clipped_text_controller` puts over a clipped `.notes` cell. Fixed, because it has
+   * to escape `.table-scroll`'s overflow and the card's `overflow-hidden`; the controller places
+   * it and hides it on any scroll, since a fixed element does not follow what it points at.
+   */
+  .tip-bubble {
+    position: fixed;
+    z-index: 60;
+    max-width: 22rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-slate-900);
+    color: white;
+    padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5);
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    white-space: normal;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* A clipped cell takes focus, so it needs a ring like anything else that does. */
+  .data-table td.notes[data-clipped] {
+    cursor: help;
+  }
+
+  .data-table td.notes[data-clipped]:focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: -2px;
+  }
+
   /* A focusable scroll region needs a visible ring like anything else that takes focus. */
   .table-scroll:focus-visible {
     outline: 2px solid var(--color-brand-600);
