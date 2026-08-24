@@ -11,7 +11,7 @@
       system page -- the menu would never have opened. There are at most two actions, so they
       are shown inline instead of behind a menu that has to be built and named.
     %>
-    <div class="flex flex-wrap justify-end gap-1.5">
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
         <%= essentials_action_button "Promote to admin", promote_to_org_admin_organization_path(user_id: user.id), method: :post,
               variant: :ghost, size: :sm, icon: "bi-arrow-up-circle",

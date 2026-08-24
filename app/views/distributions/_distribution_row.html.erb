@@ -14,7 +14,7 @@
   <td class="notes text-slate-600"><%= distribution_row.comment %></td>
   <td><%= distribution_row.state&.humanize %></td>
   <td class="text-right">
-    <div class="flex flex-wrap justify-end gap-1.5">
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <%= essentials_link_button "View", distribution_path(distribution_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
       <% if distribution_row.request %>
         <%= essentials_link_button "View request", request_path(distribution_row.request), variant: :ghost, size: :sm, icon: "bi-file-text" %>

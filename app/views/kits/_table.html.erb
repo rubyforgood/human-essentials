@@ -45,7 +45,7 @@
               <% end %>
             </td>
             <td class="text-right">
-              <div class="flex flex-wrap justify-end gap-1.5">
+              <div class="flex justify-end gap-1.5 whitespace-nowrap">
                 <%= essentials_link_button "Modify allocation", allocations_kit_path(kit), variant: :ghost, size: :sm, icon: "bi-sliders" %>
                 <% if kit.active %>
                   <%= deactivate_kit_button(kit, @inventory) %>

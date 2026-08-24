@@ -279,11 +279,21 @@ should be through one of these methods.*
 so a second weight implies a hierarchy that does not survive the next row — on a partner list
 "Review profile" and "Request recertification" are each the main thing to do for their own row,
 and emphasising one of them tracks the action's name rather than its importance. Destructive row
-actions stay `:ghost` too, tinted with `text-rose-700 hover:bg-rose-50`; the confirmation is
-what protects the user, not the colour.
+actions use **`:ghost_danger`** — `slate-600` at rest, rose on hover and focus. Not `:ghost` with
+`extra: "text-rose-700"`, which is what 27 views did and what none of them got: two colour
+utilities in one class attribute are resolved by the cascade, not by attribute order. The
+confirmation is what protects the user, not the colour.
 
 `:primary` belongs in the page header, once. If a row action looks like the page's main action,
 the page has as many main actions as it has rows.
+
+**A row's actions are one unit and do not wrap.** `flex justify-end gap-1.5 whitespace-nowrap`,
+never `flex-wrap`. Five row partials wrapped, and on a wide table the actions column gets squeezed
+until the buttons stack one per line: `/distributions` had **155–171px** rows with its two visible
+actions on two lines in a 114px cell, and `/items` **121px** with three on three. Not wrapping
+makes the column take the width it needs and the table scroll inside `.table-scroll`, which is
+what that region is for. Measured after: distributions **85–105px**, items **65–85px**, every
+action on one line. Modal footers are the exception — those *should* wrap.
 
 Do not reach for the legacy `edit_button_to` / `delete_button_to` / `view_button_to` shims in a
 row: they map onto `:primary` and `:danger`, which are filled.
