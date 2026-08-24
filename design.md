@@ -868,6 +868,18 @@ Four rules, all of which the hand-assembled version broke:
 - **The footer carries a running total.** "2 items · 36 units", from `line_item_total_controller`.
   Every inventory app has one; this card had none, so a long donation could not be checked without
   adding it up by hand.
+- **No divider between rows.** A divider separates rows of *text*; between rows of *controls* it
+  is redundant, because every cell already draws its own box, and it puts a second horizontal line
+  between each pair. Four rows drew **7** card-wide rules and now draw **4**. Xero, Stripe and
+  Shopify all draw none between editable line items. The rules that stay are the ones separating
+  **bands** — under the scan bar, under the headings, above the footer — because those mark a
+  change of kind. Index tables keep their row dividers: there the rows *are* text.
+- **One spacing number: 20px.** `py-2.5` on the rows container and `py-2.5` on each row puts 20px
+  between every pair of controls *and* 20px from either band border to the nearest one. The band
+  edges must not be smaller than the gap between rows — at 12px against 20px the first row read as
+  attached to the heading strip rather than as the first of a set, which is the grouping the
+  divider had been papering over. Within a row, stacked below `sm`, the gap is 8px: between has to
+  beat within.
 
 The scan field and its button are **joined** — one rounded rectangle sharing a border — rather
 than two controls with a gap between them. That is what keeps them the same height by

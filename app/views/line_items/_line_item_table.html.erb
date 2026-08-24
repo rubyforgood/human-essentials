@@ -99,7 +99,22 @@
     <div></div>
   </div>
 
-  <div id="<%= id %>" class="line-item-fields divide-y divide-slate-100" data-capture-barcode="true"
+  <%# No divider between rows -- see design.md, Line item rows. A divider separates rows of text;
+      between rows of controls it is redundant, because every cell already draws its own box, and
+      it put a second horizontal line between each pair. Four rows drew seven card-wide rules and
+      now draw four. The rules that stay are the ones separating *bands*: under the scan bar,
+      under the headings, above the footer.
+
+      The spacing is one number. `py-2.5` on this container and `py-2.5` on each row puts **20px
+      between every pair of controls and 20px from either band border to the nearest one** -- an
+      even rhythm with nothing to notice. It matters that the band edges are not *smaller* than
+      the gap between rows: at 12px against 20px the first row read as attached to the heading
+      strip rather than as the first of a set, which is the grouping the divider had been
+      papering over.
+
+      Within a row, stacked below `sm`, the gap is 8px (`gap-y-2`). Between has to beat within or
+      the grouping inverts again. %>
+  <div id="<%= id %>" class="line-item-fields py-2.5" data-capture-barcode="true"
        data-line-item-total-target="rows">
     <%= render "line_items/line_item_fields", form: form, object: object,
           changes_disallowed: changes_disallowed, grid_class: grid_class,
