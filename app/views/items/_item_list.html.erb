@@ -11,7 +11,7 @@
           <th scope="col" class="quantity">Quantity per individual</th>
           <th scope="col" class="numeric">Fair market value (per item)</th>
           <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.any? %>
-            <th scope="col">Custom request units</th>
+            <th scope="col" class="notes">Custom request units</th>
           <% end %>
           <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
         </tr>

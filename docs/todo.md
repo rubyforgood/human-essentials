@@ -75,3 +75,37 @@ validates that it has at least one, so the empty branch is unreachable:
 
 Worth revisiting only if one of those validations is relaxed. Written down so the next sweep does
 not spend an afternoon rediscovering that they are fine.
+
+## The document can be swiped sideways when a table overflows
+
+`html { overflow-x: clip }` is set for exactly this and **does not work**. Measured on
+`/purchases` at 375px *before* any of the `.notes` work: the `<h1>` could be swiped from
+`left: 16` to `left: -670`, taking the heading and every control off screen. The computed style on
+`html` really is `clip`, no element overflows once clipping ancestors are accounted for, and the
+whole ancestor chain of the table is properly clipped — Chrome still counts the clipped table in
+the root's scrollable overflow and lets the viewport pan.
+
+`body { overflow-x: clip }` was tried and did not help; the change was reverted rather than left
+in as dead CSS.
+
+**`responsive-audit.js` does not catch it**, which is the more useful half of this finding. It
+compares `scrollWidth` with `clientWidth`, and that is the very number the `clip` rule was written
+to neutralise — so the audit reads a proxy and reports clean while the page pans. The honest check
+is the one used here: scroll the window and see whether the `h1` moves.
+
+Not fixed because it is pre-existing and its own piece of work. The `.notes` pass made it
+*reachable at 1440* on `/purchases` for a while by widening the table past its scroll region; the
+column is capped at 16rem specifically so that no longer happens.
+
+## A column of links has no convention yet
+
+`item_categories/index` renders "Items in category" as a `<ul>` of anchors — 651 characters in the
+worst row, making it 439px tall. It cannot take `.notes`: clipping would leave focusable links
+invisible. It needs a count, or the first few and a "+N more". One table, so it is recorded rather
+than invented.
+
+## Distribution rows are tall because of their actions, not their text
+
+`/distributions` rows are 155–171px with a 6-character comment. The driver is the **Actions**
+column — 97 characters of buttons wrapping. A separate problem from long text, and not addressed
+by the `.notes` pass.

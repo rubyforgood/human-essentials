@@ -11,7 +11,7 @@
   <td class="numeric"><%= dollar_value(@distribution_totals[distribution_row.id].value) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td class="numeric"><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
-  <td class="max-w-prose text-slate-600"><%= distribution_row.comment %></td>
+  <td class="notes text-slate-600"><%= distribution_row.comment %></td>
   <td><%= distribution_row.state&.humanize %></td>
   <td class="text-right">
     <div class="flex flex-wrap justify-end gap-1.5">

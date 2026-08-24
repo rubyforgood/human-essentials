@@ -275,6 +275,34 @@
   }
 
   /*
+   * The fourth kind of column: free text of unbounded length -- a comment, a note, a reason, an
+   * address. A cell holding one sets the row height to whatever somebody typed, and `/purchases`
+   * measured rows of 145 to 245px against a normal 45px, fourteen of them making a 2,711px table.
+   * A table's value is that rows are comparable at a glance, and that needs a predictable height.
+   *
+   * Clipped on the cell itself, so applying it is one class on the `th` and the `td` rather than
+   * an extra span inside every cell. `text-overflow` needs all three of `max-width`,
+   * `overflow: hidden` and `white-space: nowrap` on the same box to do anything.
+   *
+   * 16rem, and the number is load-bearing. `nowrap` makes the column *demand* its max-width
+   * rather than shrink by wrapping, so this value sets how wide every table carrying one gets.
+   * At 22rem the purchases table grew from 1,061px to 1,298px, crossed its scroll region and
+   * started the whole document swiping sideways at 1440 -- which it had not done before. 16rem
+   * is the widest that leaves it where it was. A clipped preview does not need more.
+   *
+   * The text is not lost: CSS clipping leaves the whole string in the DOM, so a screen reader
+   * reads all of it, and every row carrying one of these has a View action to a page that shows
+   * it in full. No `title` tooltip -- not shown on keyboard focus, absent on touch, and announced
+   * on top of the text it duplicates. See design.md.
+   */
+  .data-table .notes {
+    max-width: 16rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /*
    * Zebra striping, for the itemized reports. Those tables are wide enough that following a
    * row across the page is genuinely hard without it. It is a modifier on .data-table rather
    * than a default because striping every table in the app would be noise.

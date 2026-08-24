@@ -11,7 +11,7 @@
           <th scope="col"><%= sortable "guardian_last_name", "Guardian last name" %></th>
           <th scope="col"><%= sortable "guardian_first_name", "Guardian first name" %></th>
           <th scope="col"><%= sortable "case_manager", "Case manager" %></th>
-          <th scope="col">Comments</th>
+          <th scope="col" class="notes">Comments</th>
           <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
         </tr>
       </thead>
@@ -21,7 +21,7 @@
             <td class="font-medium text-slate-900"><%= family.guardian_last_name %></td>
             <td><%= family.guardian_first_name %></td>
             <td><%= family.case_manager %></td>
-            <td class="max-w-prose text-slate-600"><%= family.comments %></td>
+            <td class="notes text-slate-600"><%= family.comments %></td>
             <td class="text-right">
               <div class="flex justify-end gap-1.5">
                 <%= essentials_link_button "View", family, variant: :ghost, size: :sm, icon: "bi-eye" %>

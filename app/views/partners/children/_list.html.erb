@@ -13,7 +13,7 @@
           <th scope="col" class="date"><%= sortable "date_of_birth", "Date of birth" %></th>
           <th scope="col"><%= sortable "active", "Active" %></th>
           <th scope="col">Guardian</th>
-          <th scope="col">Comments</th>
+          <th scope="col" class="notes">Comments</th>
           <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
         </tr>
       </thead>
@@ -31,7 +31,7 @@
               <% end %>
             </td>
             <td><%= child.family.guardian_display_name %></td>
-            <td class="max-w-prose text-slate-600"><%= child.comments %></td>
+            <td class="notes text-slate-600"><%= child.comments %></td>
             <td class="text-right">
               <div class="flex justify-end gap-1.5">
                 <%= essentials_link_button "View", child, variant: :ghost, size: :sm, icon: "bi-eye" %>

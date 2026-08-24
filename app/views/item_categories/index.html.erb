@@ -28,8 +28,11 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Description</th>
-              <th scope="col">Items in category</th>
+              <th scope="col" class="notes">Description</th>
+              <%# Not `notes`: this cell is a <ul> of links, and clipping it would leave focusable links
+                    invisible. A long list of links in a cell needs its own answer -- a count, or
+                    "+N more" -- which is recorded in docs/todo.md. %>
+                <th scope="col">Items in category</th>
               <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
@@ -39,7 +42,7 @@
                 <td class="font-medium text-slate-900">
                   <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
                 </td>
-                <td class="max-w-prose text-slate-600"><%= item_category.description %></td>
+                <td class="notes text-slate-600"><%= item_category.description %></td>
                 <td>
                   <ul class="space-y-0.5">
                     <% item_category.items.each do |item| %>
