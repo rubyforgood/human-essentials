@@ -9,7 +9,7 @@
   <td class="quantity"><%= partner_row.quota %></td>
   <td><%= essentials_partner_status_pill(status) %></td>
   <td class="text-right">
-    <div class="flex flex-wrap justify-end gap-1.5">
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <% case status %>
       <% when "uninvited" %>
         <% if one_step %>

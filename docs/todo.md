@@ -104,8 +104,16 @@ worst row, making it 439px tall. It cannot take `.notes`: clipping would leave f
 invisible. It needs a count, or the first few and a "+N more". One table, so it is recorded rather
 than invented.
 
-## Distribution rows are tall because of their actions, not their text
+## The distributions table has more columns than it has room for
 
-`/distributions` rows are 155–171px with a 6-character comment. The driver is the **Actions**
-column — 97 characters of buttons wrapping. A separate problem from long text, and not addressed
-by the `.notes` pass.
+The actions column is fixed — see the change log — and the rows are 85–105px instead of 155–171px.
+What is left is ordinary text being crushed: **"Pawnee Pregnancy Center" wraps to three lines in a
+105px Partner column**, and "Bulk Storage Location" to two in 128px. Twelve columns in a 1,118px
+region.
+
+Fixing it is a decision about *which columns the table carries*, not a styling change, so it is
+not folded in with the actions fix. Two dates sit next to each other — "Initial allocation" and
+"Date of distribution" — and shipping cost is empty on every row in the seed data. The alternative
+is to let every cell in a scrolling table be `whitespace-nowrap`, which is what Carbon and Material
+do: fixed row height, scroll sideways. That would be a change to every table in the app and wants
+a preview.

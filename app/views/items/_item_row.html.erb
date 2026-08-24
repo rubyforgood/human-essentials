@@ -16,7 +16,7 @@
     <td class="notes"><%= item_row.request_units.pluck(:name).join(", ") %></td>
   <% end %>
   <td class="text-right">
-    <div class="flex flex-wrap justify-end gap-1.5">
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <%= essentials_link_button "View", item_path(item_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
       <%= essentials_link_button "Edit", edit_item_path(item_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
       <% if item_row.active? %>
