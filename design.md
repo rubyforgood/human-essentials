@@ -800,6 +800,61 @@ the wrapper mappings explicitly.
 - `required: true` sets the HTML5 `required` attribute regardless of `browser_validations`.
   Conditional validators are *not* inferred as required — mark them explicitly or not at all.
 
+### Line item rows
+
+A repeating collection of items with a quantity each — the body of "Items in this donation" and
+its six siblings. **This is a table, not a stack of forms.** Every one of the seven forms that
+takes line items renders one partial:
+
+```erb
+<%= render "shared/essentials/card", title: "Items in this donation", padded: false do %>
+  <%= render "line_items/line_item_table", form: f, id: "donation_line_items",
+        noun: "donation", object: donation_form.line_items %>
+<% end %>
+```
+
+Four rules, all of which the hand-assembled version broke:
+
+- **Label the columns once, in a heading row.** Not once per control per row. Three labels on a
+  three-row form, not nine. The controls carry the same words as `aria-label`, because a control
+  with no visible label still needs a name — and the heading row is `aria-hidden`, so it is not
+  announced twice. Use the `:essentials_cell` / `:essentials_cell_select` wrappers: no label, no
+  bottom margin, error still under the control.
+- **One scan field per card, not one per row.** A barcode field belongs to the *document* being
+  built, not to a line of it — Square, Zoho Inventory, Odoo and Amazon Seller all put one at the
+  top of a receiving screen, and scanning appends a row or adds to the row that item is already
+  on. Repeating it per row gave a ten-line donation ten barcode fields and ten "or"s.
+- **The remove control is the glyph alone**, at the end of the row, `aria-label`led, and
+  `slate-500` until hover. QuickBooks, Xero, Shopify and Stripe all end a line item this way. It
+  goes rose on hover and focus only, so an eight-row form does not carry eight red marks down its
+  edge — the same argument that took the inline error message grey.
+- **The footer carries a running total.** "2 items · 36 units", from `line_item_total_controller`.
+  Every inventory app has one; this card had none, so a long donation could not be checked without
+  adding it up by hand.
+
+The scan field and its button are **joined** — one rounded rectangle sharing a border — rather
+than two controls with a gap between them. That is what keeps them the same height by
+construction; as separate boxes they had drifted to 38px and 42px.
+
+**Below `sm` the row stacks** and the heading row disappears with it: item and the remove button
+on the first line, quantity beneath. Four columns at 320px leaves the item picker **72px**, which
+is not a control anyone can use, and 320 is the width [Reflow](#responsive) is defined at — the
+stack takes it to 196px. Placement is explicit (`col-start-*`, `row-start-*`), because auto-flow
+puts the remove button under the item rather than beside it. Each cell then carries **its own
+label, `sm:hidden`**, since at that width there is no heading row to name it; the `aria-label`
+stays on the control either way, which is what names it when the visible label is `display: none`.
+
+Two traps, both of which produced a defect here:
+
+- **A `MutationObserver` must not observe what its callback writes.** Assigning `textContent`
+  replaces a text node, which is a childList mutation like any other, so a summary inside the
+  observed subtree is an unbroken loop. The total observes the *rows* container and guards the
+  write; the first version did neither and hung the tab on the first scan.
+- **`.val()` and `.trigger()` are jQuery's, and a native listener does not see either.** jQuery
+  sets the property and runs its own handler list. Anything bound with `addEventListener` — every
+  Stimulus controller — needs a real `dispatchEvent`, which is why the running total sat one scan
+  behind the quantity it was adding up.
+
 ### Modals
 
 Native `<dialog>`, opened with `showModal()`.

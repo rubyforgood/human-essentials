@@ -57,7 +57,7 @@ RSpec.describe "Kit management", type: :system do
     new_barcode = "1234567890"
     quantity = "1"
 
-    find(:id, "_barcode-lookup-0").set(new_barcode).send_keys(:enter)
+    find(:id, Barcode::SCAN_FIELD).set(new_barcode).send_keys(:enter)
 
     within "#newBarcode" do
       expect(page).to have_field("Quantity", with: "")
@@ -74,8 +74,10 @@ RSpec.describe "Kit management", type: :system do
     expect(page).to have_content("Barcode Added to Inventory")
     # Check that item details have been filled in via javascript
     expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity)
-    # Check that new field has been added via javascript
-    expect(page).to have_css(".line_item_section", count: 2)
+    # A scan fills the row that is already there rather than appending one, so the count is
+    # unchanged -- and there is still exactly one scan field for the card.
+    expect(page).to have_css(".line_item_section", count: 1)
+    expect(page).to have_css(".__barcode_item_lookup", count: 1)
   end
 
   it 'can allocate and deallocate quantity per storage location from kit index' do

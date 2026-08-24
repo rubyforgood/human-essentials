@@ -1,20 +1,14 @@
 module Barcode
-  def self.boop(value, barcode_field = nil)
-    barcode_field ||= get_last_empty_barcode_field
-    Capybara.find(id: "_barcode-lookup-" + barcode_field.to_s).click
+  # The id of the one scan field on a line item card. There used to be one per row, named
+  # `_barcode-lookup-<index>`, and this helper's job was to hunt for the last empty one.
+  SCAN_FIELD = "line-item-scan".freeze
+
+  # `barcode_field` is accepted and ignored. It named which row's barcode input to type into,
+  # and there is only one field now, so every call site would otherwise have had to drop an
+  # argument that no longer means anything.
+  def self.boop(value, _barcode_field = nil)
+    Capybara.find(id: SCAN_FIELD).click
     Capybara.page.driver.browser.keyboard.type(value + "\n")
-  end
-
-  def self.get_last_empty_barcode_field
-    last_empty_field = 0
-    last_empty_field += 1 until is_empty?(last_empty_field)
-    last_empty_field
-  end
-
-  def self.is_empty?(field)
-    Capybara.find("#_barcode-lookup-" + field.to_s).value == ""
-  rescue Capybara::ElementNotFound
-    false
   end
 end
 

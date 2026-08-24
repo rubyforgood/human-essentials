@@ -3,7 +3,7 @@ $(document).ready(function() {
   /* Barcode readers will often "helpfully" send a CRLF at the end of the
      scanned string. We're going to capture this and use it to invoke the
      lookup method instead, since we don't want to submit the form just yet. */
-  $('[data-capture-barcode="true"]').on('keypress', '.__barcode_item_lookup', capture_entry);
+  $(document).on('keypress', '.__barcode_item_lookup', capture_entry);
 
   /**
   capture_entry
@@ -24,6 +24,7 @@ $(document).ready(function() {
    @param src : the DOM source, so we can callback to it.
    */
   function barcode_item_lookup(value, src) {
+    if (!value) return;
     // Hardcoding magic URLs isn't ideal but it works for now
     $.getJSON("/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
          // Preserve this for reference of where we came from.
@@ -33,59 +34,118 @@ $(document).ready(function() {
          // item that matches.
          data['item_id'] = data['item']['id'];
          data['quantity'] = data['barcode_item']['quantity'];
-         console.log(data);
          // Pass it all along to the .done() method
          return data;
       })
       .done(fill_fields_with_barcode_results)
-      .fail(function(data) { prompt_for_new_barcode_item(data, value, src); } )
-      .always(function(data){
-        // ...
-    });
+      .fail(function(data) { prompt_for_new_barcode_item(data, value, src); } );
   }
 
   /**
   fill_fields_with_barcode_results
-    @brief Sets the fields for the line item with the results. Event handler for above.
+    @brief Puts the scanned item on a row. Event handler for above.
     @param data : JSON object result from the above method. Expecting a JSON-serialized BarcodeItem
+
+    There is one scan field per card now, not one per row, so a scan no longer means "fill in the
+    row I am standing in" -- there is no such row. It means: find the row this item is already on
+    and add to it, or start a new one. That is what Square, Zoho and Odoo all do on a receiving
+    screen, and it is why the field can keep focus and take the next scan immediately.
+
+    The three-scan behaviour is kept from the previous version, which counted repeats by comparing
+    the values left in each row's own barcode field: the first scan sets the barcode's quantity,
+    the second adds it again, and the third and later ones ask how many packages there are in
+    total. The count lives on the row as `data-scan-count` now, because the fields it used to be
+    inferred from no longer exist.
   */
   function fill_fields_with_barcode_results(data) {
-    let line_item = $(data['src']).closest('.nested-fields');
-      let line_item_quantity = data['quantity'];
-      $('.__barcode_item_lookup').each(function () {
-          if (data['src'] != this && data['value'] == this.value) {
-              line_item = this.closest('.nested-fields');
-              if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  let current_total = parseInt($(line_item).find('[data-quantity]').val());
-                  let current_boops = (current_total / line_item_quantity) + 1;
-                  let total_boops = prompt('Enter total number of packages for this item', current_boops);
-                  if (total_boops != null) {
-                      total_boops = parseInt(total_boops);
-                      line_item_quantity = total_boops * line_item_quantity;
-                  } else {
-                      total_boops = 0;
-                      line_item_quantity = 0;
-                  }
-              }
-              if ($(line_item).attr('scanned_more_than_two_times') != "true") {
-                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('[data-quantity]').val());
-              }
-              $(line_item).attr('scanned_more_than_two_times', true);
-          }
-      })
-      $(line_item).find('[data-quantity]').val(line_item_quantity);
-      $(line_item).find('select').val(data['item_id']);
-      $(line_item).find('select').trigger('change');
+    const scope = $(data['src']).closest('fieldset');
+    const container = scope.find('[data-capture-barcode="true"]').first();
+    const itemId = String(data['item_id']);
+    const perScan = Number(data['quantity']);
 
-      if ($(data['src']).closest('.nested-fields')[0] != $(line_item).closest('section')[0]) {
-          $(data['src']).closest('.nested-fields').remove();
-          $('.line-item-separator:last').remove();
+    let row = rowForItem(container, itemId);
+
+    if (row) {
+      const scans = Number($(row).attr('data-scan-count') || 1) + 1;
+      const quantityField = $(row).find('[data-quantity]');
+      const current = Number(quantityField.val()) || 0;
+
+      if (scans >= 3) {
+        const suggested = perScan ? Math.round(current / perScan) + 1 : 1;
+        const packages = prompt('Enter total number of packages for this item', suggested);
+        quantityField.val(packages === null ? current : Number(packages) * perScan);
+      } else {
+        quantityField.val(current + perScan);
       }
-    // This will facilitate serial barcode inputs.
-    // First trigger the "add new line item"
-    document.getElementById('__add_line_item').click();
-    // Now focus on the barcode field
-    $("input.__barcode_item_lookup").last().focus();
+      $(row).attr('data-scan-count', scans);
+    } else {
+      row = emptyRow(container) || addRow(container);
+      if (!row) return;
+      // jQuery's trigger('change') is what select2 listens for; the native event below is what
+      // anything using addEventListener sees. They are not the same dispatch.
+      $(row).find('.line_item_name').val(itemId).trigger('change');
+      $(row).find('[data-quantity]').val(perScan);
+      $(row).attr('data-scan-count', 1);
+      announce(row, '.line_item_name', 'change');
+    }
+
+    announce(row, '[data-quantity]', 'input');
+
+    // Clear the field and keep the caret in it, so the next scan needs no click.
+    $(data['src']).val('').trigger('focus');
+  }
+
+  /**
+   * Fire a real DOM event, so listeners registered with addEventListener see the change.
+   *
+   * jQuery's .val() sets the property and .trigger() runs jQuery's own handler list -- neither
+   * reaches a native listener, which is how the running total came to sit one scan behind the
+   * quantity it was adding up.
+   */
+  function announce(row, selector, type) {
+    const el = $(row).find(selector)[0];
+    if (el) el.dispatchEvent(new Event(type, { bubbles: true }));
+  }
+
+  /** The visible, not-destroyed row already holding this item, if there is one. */
+  function rowForItem(container, itemId) {
+    let found = null;
+    container.find('.line_item_section').each(function() {
+      if (isDropped(this)) return undefined;
+      const select = $(this).find('.line_item_name');
+      if (select.length && String(select.val()) === itemId) {
+        found = this;
+        return false;
+      }
+    });
+    return found;
+  }
+
+  /** A row nobody has chosen an item on yet -- the blank one a new form starts with. */
+  function emptyRow(container) {
+    let found = null;
+    container.find('.line_item_section').each(function() {
+      if (isDropped(this)) return undefined;
+      const select = $(this).find('.line_item_name');
+      if (select.length && !select.val()) {
+        found = this;
+        return false;
+      }
+    });
+    return found;
+  }
+
+  function isDropped(row) {
+    if (row.style.display === 'none') return true;
+    const destroy = row.querySelector("input[name*='_destroy']");
+    return Boolean(destroy && destroy.value === '1');
+  }
+
+  function addRow(container) {
+    const button = document.getElementById('__add_line_item');
+    if (!button) return null;
+    button.click();
+    return container.find('.line_item_section').last()[0] || null;
   }
 
   function prompt_for_new_barcode_item(data, value, src) {

@@ -96,16 +96,8 @@ $(function() {
 
   $(document).on("change", control_id, handleSourceSelection);
 
-  $(document).on(
-    "form-input-after-insert",
-    "#donation_line_items",
-    (e) => {
-      const insertedItem = $(e.detail);
-      insertedItem
-        .find("input.__barcode_item_lookup")
-        .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`)
-    }
-  )
+  // A handler that renumbered each inserted row's own barcode field used to live here. There is
+  // one scan field per card now, outside the rows, so there is nothing per row to renumber.
 
   const large_donation_boundary = 100000;
   $(document).on("click", "form#new_donation button[type='submit']", (e, _) =>

@@ -186,8 +186,8 @@ RSpec.describe "Purchases", type: :system, js: true do
           select @vendor.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
           page.find(:css, "#__add_line_item").click
-          all(".li-name select").last.find('option', text: @item.name).select_option
-          all(".li-quantity input").last.set(11)
+          all("select.line_item_name").last.find('option', text: @item.name).select_option
+          all("input.quantity").last.set(11)
 
           fill_in "purchase_amount_spent", with: "10"
 
@@ -295,35 +295,27 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         it "a user can add items via scanning them in by barcode" do
           # enter the barcode into the barcode field
-          within "#purchase_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(@existing_barcode.value)
           expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
         end
 
         it "User scan same barcode 2 times" do
-          within "#purchase_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(@existing_barcode.value)
 
           expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-          within "#purchase_line_items" do
-            expect(page).to have_css('.__barcode_item_lookup', count: 2)
-            Barcode.boop(@existing_barcode.value)
-          end
+          expect(page).to have_css(".__barcode_item_lookup", count: 1)
+          Barcode.boop(@existing_barcode.value)
 
           expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
         end
 
         it "a user can add items that do not yet have a barcode" do
           new_barcode_value = "8594159081517"
-          within "#purchase_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            Barcode.boop(new_barcode_value)
-          end
+          expect(page).to have_field(Barcode::SCAN_FIELD)
+          Barcode.boop(new_barcode_value)
 
           expect(page.find("dialog[open] h2").text).to eq("Add new barcode")
 
@@ -334,7 +326,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           end
 
           expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: 3
-          expect(page).to have_field "_barcode-lookup-0", with: new_barcode_value
+          expect(page).to have_field Barcode::SCAN_FIELD, with: ""
 
           new_barcode_item = BarcodeItem.last
           expect(new_barcode_item.value).to eq(new_barcode_value)
