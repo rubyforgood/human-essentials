@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long text in a table - options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* PROPOSED, written as it would appear in application.css beside .numeric and .date.
+     Declared here because Tailwind does not scan docs/mockups -- see the README. */
+  .data-table .notes { max-width: 22rem; min-width: 12rem; }
+  .data-table .notes .clip {
+    display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .data-table .notes .clip-2 {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Long text in a table column</h1>
+    <p class="max-w-3xl text-slate-600">
+      Measured on <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code>: rows are
+      <strong>145 to 245px</strong> where a table row is normally about 45px, and fourteen rows make
+      a <strong>2,711px</strong> table. One column is doing all of it. The figures under each panel
+      are measured from this page.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What the row height is for</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">A table's value is that rows are comparable at a glance.</p>
+      <p class="mt-1">
+        Predictable row height is not decoration &mdash; it is the thing that lets the eye run down a
+        column and compare. A free-text field has no length limit, so a cell holding one sets the row
+        height to whatever somebody typed, and fourteen purchases become a page you scroll rather
+        than a table you read.
+      </p>
+      <p class="mt-2">
+        Every design system says the same thing. <strong>Carbon</strong>: truncate, and put the full
+        value on the detail page. <strong>Material</strong>, <strong>Salesforce Lightning</strong>
+        (<code class="rounded bg-slate-200 px-1 text-xs">slds-truncate</code>),
+        <strong>Atlassian</strong>, <strong>Stripe</strong>, <strong>Linear</strong> and
+        <strong>GitHub</strong> all clip to one line. <strong>Polaris</strong> and Notion allow two.
+        Nobody lets the cell grow.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Four options</h2>
+    <div class="space-y-2"><h3 class="text-base font-semibold">Option A - As it is</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th>Storage location</th><th class="">Comments</th><th class="numeric">Quantity</th><th class="numeric">Amount spent</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td>Pawnee Main</td><td class=""><span class="">Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</span></td><td class="numeric">1,240</td><td class="numeric">$842.00</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td>Warehouse B</td><td class=""><span class="">Short-dated stock, use first.</span></td><td class="numeric">310</td><td class="numeric">$118.40</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td>Pawnee Main</td><td class=""><span class=""></span></td><td class="numeric">980</td><td class="numeric">$603.15</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td>Warehouse B</td><td class=""><span class="">Split delivery across three boxes; box 2 arrived damaged and was returned to the carrier.</span></td><td class="numeric">460</td><td class="numeric">$291.00</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-info">today</span> The cell wraps to as many lines as the text needs, and every other column in the row is dragged down with it.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option B - One line, clipped</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th>Storage location</th><th class="notes">Comments</th><th class="numeric">Quantity</th><th class="numeric">Amount spent</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td>Pawnee Main</td><td class="notes"><span class="clip">Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</span></td><td class="numeric">1,240</td><td class="numeric">$842.00</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td>Warehouse B</td><td class="notes"><span class="clip">Short-dated stock, use first.</span></td><td class="numeric">310</td><td class="numeric">$118.40</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td>Pawnee Main</td><td class="notes"><span class="clip"></span></td><td class="numeric">980</td><td class="numeric">$603.15</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td>Warehouse B</td><td class="notes"><span class="clip">Split delivery across three boxes; box 2 arrived damaged and was returned to the carrier.</span></td><td class="numeric">460</td><td class="numeric">$291.00</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> A <code class="rounded bg-slate-200 px-1 text-xs">.notes</code> column class beside the existing <code class="rounded bg-slate-200 px-1 text-xs">.numeric</code> and <code class="rounded bg-slate-200 px-1 text-xs">.date</code>: capped width, one line, ellipsis. Every row the same height.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option C - Two lines, clamped</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th>Storage location</th><th class="notes">Comments</th><th class="numeric">Quantity</th><th class="numeric">Amount spent</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td>Pawnee Main</td><td class="notes"><span class="clip-2">Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</span></td><td class="numeric">1,240</td><td class="numeric">$842.00</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td>Warehouse B</td><td class="notes"><span class="clip-2">Short-dated stock, use first.</span></td><td class="numeric">310</td><td class="numeric">$118.40</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td>Pawnee Main</td><td class="notes"><span class="clip-2"></span></td><td class="numeric">980</td><td class="numeric">$603.15</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td>Warehouse B</td><td class="notes"><span class="clip-2">Split delivery across three boxes; box 2 arrived damaged and was returned to the carrier.</span></td><td class="numeric">460</td><td class="numeric">$291.00</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600">Keeps a second line of context. Rows are still bounded, but two heights exist -- one line or two -- so the column no longer scans evenly.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option D - Drop the column</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th>Storage location</th><th class="numeric">Quantity</th><th class="numeric">Amount spent</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td>Pawnee Main</td><td class="numeric">1,240</td><td class="numeric">$842.00</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td>Warehouse B</td><td class="numeric">310</td><td class="numeric">$118.40</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td>Pawnee Main</td><td class="numeric">980</td><td class="numeric">$603.15</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td>Warehouse B</td><td class="numeric">460</td><td class="numeric">$291.00</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600">The comment only appears on the record. Honest, and the strongest option if the field is rarely filled -- but it removes information some banks scan for.</p></div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Option B, as a <code class="rounded bg-slate-200 px-1 text-xs">.notes</code> column
+        class.</strong> The design system already types its columns &mdash;
+        <code class="rounded bg-slate-200 px-1 text-xs">.numeric</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">.quantity</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">.date</code> &mdash; and this is the fourth
+        kind of column the app has: free text of unbounded length. A class rather than a utility
+        string is what stops the next long-text column arriving at a different width.
+      </p>
+      <p>
+        <strong>The full text is not lost, and that is what makes clipping safe here.</strong> CSS
+        clipping leaves the whole string in the DOM, so a screen reader still reads all of it &mdash;
+        and every one of these rows already has a <strong>View</strong> action leading to a page
+        where the comment is shown in full. Nothing becomes unreachable; it becomes one click away.
+      </p>
+      <p>
+        <strong>No <code class="rounded bg-slate-200 px-1 text-xs">title</code> tooltip.</strong> It
+        is the obvious addition and it is the same trap as the icon button two rounds ago: not shown
+        on keyboard focus, absent on touch, and announced on top of the text it duplicates.
+      </p>
+      <p class="text-slate-600">
+        <strong>C</strong> was the near miss. Two lines reads generously, but a column that is
+        sometimes one line and sometimes two gives the table two row heights, which is most of the
+        problem in miniature. <strong>D</strong> is right for any of the eighteen columns that turn
+        out to be almost always empty &mdash; worth checking per table rather than assuming.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  document.querySelectorAll("[data-panel]").forEach(function (panel) {
+    var rows = Array.prototype.slice.call(panel.querySelectorAll("tbody tr"));
+    var hs = rows.map(function (r) { return Math.round(r.getBoundingClientRect().height); });
+    var uniq = hs.filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (a, b) { return a - b; });
+    var note = panel.parentElement.querySelector("p");
+    var tag = document.createElement("strong");
+    tag.className = "tick";
+    tag.textContent = "rows " + uniq.join(" / ") + "px \u00b7 table " +
+      Math.round(panel.querySelector("table").getBoundingClientRect().height) + "px \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>

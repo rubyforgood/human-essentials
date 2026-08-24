@@ -3506,3 +3506,52 @@ doing one job is what the tab-actions pass removed.
   check that the existing ones match each other, and all 64 do — 0 without a deliberate `kind:`.
   Nine of the sixteen are reachable-empty and need a title, a body and an action decision each;
   they are triaged in `docs/todo.md` rather than folded in here.
+
+
+---
+
+## 2026-08-24 · Free text in a table column
+
+**Area.** `.data-table .notes`, 16 columns across 15 views, `design.md`.
+
+**Decision.** Option B of [`long-text-in-tables.html`](mockups/long-text-in-tables.html): a
+`.notes` column class, one line, clipped at **16rem**, beside the existing `.numeric`, `.quantity`
+and `.date`. The app already types its columns; free text of unbounded length is the fourth kind.
+
+**Measured.** `/purchases` rows were **145–245px** against a normal 45px, fourteen of them making a
+**2,711px** table. With `.notes` the table is **1,111px**. Carbon, Material, Salesforce, Atlassian,
+Stripe, Linear and GitHub all clip to one line; Polaris and Notion allow two. Two lines was the
+near miss — it gives the column two row heights, which is the original problem in miniature.
+
+**Two exceptions, and the test between them.** `partners/requests/_history` and the partner
+dashboard already used a `<details>` disclosure, with a comment saying it had replaced a Bootstrap
+tooltip because tooltips are hover-only. **I did not show that option in the preview and should
+have** — it was in the app already. Checking why it was there gave the rule: those rows **lead
+nowhere**, so a clipped comment would be unreadable rather than one click away. *Is the full text
+one click away? clip. Is it not? disclose.* A third table, `admin/account_requests`, has no detail
+page either and was left alone for the same reason. And `item_categories` renders its items as a
+`<ul>` of anchors, where clipping would leave focusable links invisible; that needs a count or a
+"+N more" and is recorded rather than invented.
+
+**16rem is load-bearing, and the first value was 22rem.** `nowrap` makes a column *demand* its
+max-width rather than shrink by wrapping, so this one number sets how wide every table carrying a
+`.notes` column becomes. At 22rem the purchases table grew from 1,061 to 1,298px, crossed its
+scroll region, and **started the whole document swiping sideways at 1440**, which it had not done
+before. 16rem is the widest that leaves it where it was.
+
+**What that regression exposed.** Chasing it turned up a pre-existing bug: `html { overflow-x:
+clip }` is set for exactly this and does not work — at 375px the `h1` on `/purchases` could already
+be swiped from `left: 16` to `left: -670` before any of this work. Worse, **`responsive-audit.js`
+does not catch it**, because it compares `scrollWidth` with `clientWidth` and that is the very
+number the `clip` rule exists to neutralise. The audit reads a proxy and reports clean while the
+page pans; the honest check is to scroll the window and see whether the `h1` moves. Recorded in
+`docs/todo.md` with the measurements. `body { overflow-x: clip }` was tried, did not help, and was
+reverted rather than left in as dead CSS.
+
+**Alternatives rejected.**
+
+- **Two-line clamp.** Bounded, but two row heights.
+- **Dropping the columns.** Right for any that turn out to be almost always empty — worth checking
+  per table rather than assuming, and not checked here.
+- **A `title` tooltip for the full text.** The third time this has come up and the third refusal:
+  not shown on keyboard focus, absent on touch, announced on top of the text it duplicates.

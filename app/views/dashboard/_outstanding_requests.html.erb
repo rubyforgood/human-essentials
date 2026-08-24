@@ -17,7 +17,7 @@
             <th scope="col" class="date">Date</th>
             <th scope="col">Partner</th>
             <th scope="col">Requestor</th>
-            <th scope="col">Comments</th>
+            <th scope="col" class="notes">Comments</th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +29,7 @@
               </td>
               <td class="font-medium text-slate-900"><%= request.partner.name %></td>
               <td><%= request.partner_user&.formatted_email %></td>
-              <td class="max-w-prose text-slate-600"><%= request.comments %></td>
+              <td class="notes text-slate-600"><%= request.comments %></td>
             </tr>
           <% end %>
         </tbody>

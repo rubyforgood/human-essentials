@@ -794,6 +794,7 @@ its meaning instead of re-deciding alignment cell by cell:
 | Class | Effect |
 | --- | --- |
 | `.numeric`, `.quantity`, `.percent` | Right-aligned, tabular figures |
+| `.notes` | Free text of unbounded length: clipped to one line at 16rem |
 | `.date` | No wrapping |
 
 Every table gets a `<caption>` (visually hidden) saying what it lists. `.table-scroll` is the
@@ -1359,6 +1360,37 @@ by tabbing through eleven buttons. A one-off disclosure does not need one.
 
 Three copies of this markup existed before it, and they had drifted: only one wrapped its
 trigger in a heading, and only one put its actions outside the button.
+
+<a id="long-text-in-a-table"></a>
+**Free text in a column gets `.notes`.** A comment, a note, a reason, an address — anything a
+person types with no length limit. The cell sets the row height to whatever was typed, and a
+table's whole value is that rows are comparable at a glance: `/purchases` measured rows of
+**145–245px** against a normal 45px, fourteen of them making a **2,711px** table. With `.notes`
+that table is **1,111px** and the rows are one height.
+
+Every design system says the same. Carbon: truncate, full value on the detail page. Material,
+Salesforce (`slds-truncate`), Atlassian, Stripe, Linear and GitHub all clip to one line; Polaris
+and Notion allow two. Nobody lets the cell grow. Two lines was the near miss here — it gives the
+column two row heights, which is the original problem in miniature.
+
+Three things about it:
+
+- **The text is not lost, and that is what makes clipping safe.** CSS clipping leaves the whole
+  string in the DOM, so a screen reader reads all of it, and every row carrying one has a **View**
+  action to a page that shows it in full. **No `title` tooltip** — not shown on keyboard focus,
+  absent on touch, and announced on top of the text it duplicates.
+- **Not where the row leads nowhere.** `partners/requests/_history` and the partner dashboard have
+  no detail page, so a clipped comment would be unreadable rather than one click away. Those use a
+  `<details>` disclosure — bounded when collapsed, full text in place, keyboard reachable. That is
+  the test: **is the full text one click away? clip. Is it not? disclose.**
+- **Not for a cell of links.** `item_categories` lists its items as a `<ul>` of anchors; clipping
+  would leave focusable links invisible. A long list of links needs a count or a "+N more", which
+  is not built.
+
+**`max-width` is load-bearing at 16rem.** `nowrap` makes the column *demand* its max-width rather
+than shrink by wrapping, so this one number sets how wide every table carrying a `.notes` column
+gets. At 22rem the purchases table grew from 1,061 to 1,298px, crossed its scroll region, and
+started the whole document swiping sideways at 1440 — which it had not done before.
 
 ### Empty states
 

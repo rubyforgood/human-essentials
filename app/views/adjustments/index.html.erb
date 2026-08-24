@@ -36,7 +36,7 @@
               <tr>
                 <th scope="col" class="date">Created</th>
                 <th scope="col">Storage location</th>
-                <th scope="col">Comment</th>
+                <th scope="col" class="notes">Comment</th>
                 <th scope="col">Summary</th>
                 <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
               </tr>
@@ -46,7 +46,7 @@
                 <tr>
                   <td class="date"><%= adjustment.created_at.strftime("%m/%d/%Y") %></td>
                   <td class="font-medium text-slate-900"><%= adjustment.storage_location.name %></td>
-                  <td class="max-w-prose text-slate-600"><%= adjustment.comment %></td>
+                  <td class="notes text-slate-600"><%= adjustment.comment %></td>
                   <td><%= pluralize(adjustment.line_items.size, "change") %></td>
                   <td class="text-right">
                     <%= essentials_link_button "View", adjustment, variant: :ghost, size: :sm, icon: "bi-eye" %>

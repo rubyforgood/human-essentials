@@ -103,7 +103,7 @@
               <th scope="col">First name</th>
               <th scope="col">Last name</th>
               <th scope="col">Date of birth</th>
-              <th scope="col">Comments</th>
+              <th scope="col" class="notes">Comments</th>
               <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
@@ -113,7 +113,7 @@
                 <td class="font-medium text-slate-900"><%= member.first_name %></td>
                 <td><%= member.last_name %></td>
                 <td class="date"><%= member.date_of_birth %></td>
-                <td><%= member.comments %></td>
+                <td class="notes"><%= member.comments %></td>
                 <td class="text-right">
                   <div class="flex justify-end gap-1.5">
                     <%= essentials_link_button "View", partners_authorized_family_member_path(member),

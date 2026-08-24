@@ -18,6 +18,9 @@
             <th scope="col" class="date">Requested</th>
             <th scope="col" class="quantity">Items</th>
             <th scope="col">What was requested</th>
+            <%# No `notes` clipping here: these rows lead nowhere, so a clipped comment would be
+                unreadable rather than one click away. The cell is a <details> disclosure
+                instead -- bounded when collapsed, full text in place. See design.md. %>
             <th scope="col">Comment and sender</th>
           </tr>
         </thead>
