@@ -17,8 +17,8 @@
               variant: :ghost, size: :sm, icon: "bi-arrow-up-circle",
               confirm: "This will promote the user to admin status. Are you sure that you want to submit this?" %>
         <%= essentials_action_button "Remove user", remove_user_organization_path(user_id: user.id), method: :post,
-              variant: :ghost, size: :sm, icon: "bi-person-dash",
-              class: "deactivate text-rose-700 hover:bg-rose-50", id: dom_id(user),
+              variant: :ghost_danger, size: :sm, icon: "bi-person-dash",
+              class: "deactivate", id: dom_id(user),
               confirm: "This will revoke the user's organization permissions. Are you sure that you want to submit this?" %>
       <% end %>
       <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) && user.id != current_user.id %>

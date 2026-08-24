@@ -1,37 +1,44 @@
 <div class="px-5 py-4">
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Organization</th>
-        <th>Contact E-mail</th>
-        <th class="date text-left">Added On</th>
-      <th class="date text-left">Last Distribution Date</th>
-        <th class="text-right">Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @organizations.each do |organization| %>
+  <% if @organizations.any? %>
+    <table class="data-table">
+      <thead>
         <tr>
-          <td><%= organization.name %></td>
-          <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
-          <td class="date text-left"><%= organization.created_at.strftime("%F") %></td>
-        <td class="date text-left"><%= organization.display_last_distribution_date %></td>
-          <td class="text-right">
-            <div class="flex justify-end gap-1.5">
-              <%= essentials_link_button "View", admin_organization_path(organization.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
-              <% unless Organization.count <= 1 %>
-                <%= essentials_action_button "Delete", admin_organization_path(organization.id), method: :delete,
-                      variant: :ghost, size: :sm, icon: "bi-trash",
-                      class: "text-rose-700 hover:bg-rose-50",
-                      confirm: confirm_delete_msg(organization.name) %>
-              <% end %>
-            </div>
-          </td>
+          <th>Organization</th>
+          <th>Contact E-mail</th>
+          <th class="date text-left">Added On</th>
+        <th class="date text-left">Last Distribution Date</th>
+          <th class="text-right">Actions</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        <% @organizations.each do |organization| %>
+          <tr>
+            <td><%= organization.name %></td>
+            <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
+            <td class="date text-left"><%= organization.created_at.strftime("%F") %></td>
+          <td class="date text-left"><%= organization.display_last_distribution_date %></td>
+            <td class="text-right">
+              <div class="flex justify-end gap-1.5">
+                <%= essentials_link_button "View", admin_organization_path(organization.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                <% unless Organization.count <= 1 %>
+                  <%= essentials_action_button "Delete", admin_organization_path(organization.id), method: :delete,
+                        variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
+                        confirm: confirm_delete_msg(organization.name) %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <%= render "shared/essentials/empty_state", kind: :cold_start,
+          title: "No organizations yet",
+          body: "An organization is a bank using Human Essentials. Add the first one to get started.",
+          action: essentials_link_button("New organization", new_admin_organization_path, variant: :primary, icon: "bi-plus-lg") %>
+  <% end %>
 </div>
 <% if (pager = essentials_pagination_footer(organizations)) %>
   <div class="border-t border-slate-200 px-5 py-3"><%= pager %></div>

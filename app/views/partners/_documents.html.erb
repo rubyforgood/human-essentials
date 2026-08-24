@@ -6,7 +6,7 @@
         <%= link_to doc.blob.filename.to_s, rails_blob_path(doc),
               class: "min-w-0 flex-1 truncate font-medium text-brand-700 hover:text-brand-800" %>
         <%= essentials_action_button "Remove", attachment_path(doc), method: :delete,
-              variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+              variant: :ghost_danger, size: :sm, icon: "bi-trash",
               confirm: "Are you sure you want to permanently remove this document?" %>
       </li>
     <% end %>

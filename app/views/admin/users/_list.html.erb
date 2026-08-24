@@ -1,31 +1,37 @@
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>Roles</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th class="text-right">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
+<% if @users.any? %>
+  <table class="data-table">
+    <thead>
       <tr>
-        <td>
-          <%= user.roles.map { |role| "#{role.name} (#{role.resource&.name.presence || "N/A"})" }.compact.uniq.sort.join(", ") %>
-        </td>
-        <td><%= user.display_name %></td>
-        <td><%= user.email %></td>
-        <td class="text-right">
-          <div class="flex justify-end gap-1.5">
-            <% if user.invitation_sent_at.present? %>
-              <%= essentials_action_button "Re-send invite", admin_user_resend_invitation_path(user), method: :post,
-                    variant: :ghost, size: :sm, icon: "bi-envelope",
-                    confirm: "Re-send an invitation to #{user.preferred_name}?" %>
-            <% end %>
-            <%= essentials_link_button "Edit", edit_admin_user_path(user), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-          </div>
-        </td>
+        <th>Roles</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th class="text-right">Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td>
+            <%= user.roles.map { |role| "#{role.name} (#{role.resource&.name.presence || "N/A"})" }.compact.uniq.sort.join(", ") %>
+          </td>
+          <td><%= user.display_name %></td>
+          <td><%= user.email %></td>
+          <td class="text-right">
+            <div class="flex justify-end gap-1.5">
+              <% if user.invitation_sent_at.present? %>
+                <%= essentials_action_button "Re-send invite", admin_user_resend_invitation_path(user), method: :post,
+                      variant: :ghost, size: :sm, icon: "bi-envelope",
+                      confirm: "Re-send an invitation to #{user.preferred_name}?" %>
+              <% end %>
+              <%= essentials_link_button "Edit", edit_admin_user_path(user), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <%= render "shared/essentials/empty_state", kind: :no_results,
+        title: "No users match this search",
+        body: "Try a different name or email address, or clear the search to see everyone." %>
+<% end %>

@@ -7,8 +7,8 @@
       <%= essentials_link_button "View", admin_barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
       <%= essentials_link_button "Edit", edit_admin_barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
       <%= essentials_action_button "Delete", admin_barcode_item_path(barcode_item_row), method: :delete,
-            variant: :ghost, size: :sm, icon: "bi-trash",
-            class: "text-rose-700 hover:bg-rose-50",
+            variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
             confirm: confirm_delete_msg(barcode_item_row.item.name) %>
     </div>
   </td>

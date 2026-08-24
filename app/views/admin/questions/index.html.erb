@@ -22,7 +22,7 @@
               actions: capture {
                 concat essentials_link_button("Edit", edit_admin_question_path(question), variant: :ghost, size: :sm, icon: "bi-pencil")
                 concat essentials_action_button("Delete", admin_question_path(question), method: :delete,
-                         variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                         variant: :ghost_danger, size: :sm, icon: "bi-trash",
                          confirm: confirm_delete_msg(question.title))
               } do %>
           <%= question.answer %>

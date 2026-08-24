@@ -14,8 +14,8 @@
       <% if vendor_row.active? %>
         <% if vendor_row&.purchases&.none? %>
           <%= essentials_action_button "Delete", vendor_path(vendor_row), method: :delete,
-                variant: :ghost, size: :sm, icon: "bi-trash",
-                class: "text-rose-700 hover:bg-rose-50",
+                variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
                 confirm: confirm_delete_msg(vendor_row.business_name) %>
         <% else %>
           <%= essentials_action_button "Deactivate", deactivate_vendor_path(vendor_row), method: :put,

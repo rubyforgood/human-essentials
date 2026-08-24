@@ -24,7 +24,7 @@
       <%= essentials_link_button "View", request_path(request_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
       <% unless request_row.status_cancelled? || request_row.status_fulfilled? %>
         <%= essentials_link_button "Cancel", new_request_cancelation_path(request_id: request_row.id),
-              variant: :ghost, size: :sm, icon: "bi-x-circle", class: "text-rose-700 hover:bg-rose-50" %>
+              variant: :ghost_danger, size: :sm, icon: "bi-x-circle" %>
       <% end %>
       <%= essentials_link_button "Print", print_picklist_request_path(request_row), variant: :ghost, size: :sm, icon: "bi-printer" %>
     </div>

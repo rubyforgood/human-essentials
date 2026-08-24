@@ -19,7 +19,7 @@
 
     <% if partner.deletable? %>
       <%= essentials_action_button "Delete partner", partner_path(partner), method: :delete,
-            variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+            variant: :ghost_danger, size: :sm, icon: "bi-trash",
             confirm: confirm_delete_msg(partner.name) %>
     <% end %>
   </div>

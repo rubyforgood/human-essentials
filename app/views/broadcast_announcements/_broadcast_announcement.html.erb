@@ -11,8 +11,8 @@
     <div class="flex justify-end gap-1.5">
       <%= essentials_link_button "Edit", edit_broadcast_announcement_path(broadcast_announcement), variant: :ghost, size: :sm, icon: "bi-pencil" %>
       <%= essentials_action_button "Delete", broadcast_announcement, method: :delete,
-            variant: :ghost, size: :sm, icon: "bi-trash",
-            class: "text-rose-700 hover:bg-rose-50",
+            variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
             confirm: "Are you sure?" %>
     </div>
   </td>

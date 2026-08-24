@@ -16,7 +16,7 @@
           end
           if info.cancellable?
             concat essentials_link_button("Cancel request", new_request_cancelation_path(request_id: request.id),
-                     variant: :ghost, icon: "bi-x-circle", class: "text-rose-700 hover:bg-rose-50")
+                     variant: :ghost_danger, icon: "bi-x-circle", )
           end
         } %>
 

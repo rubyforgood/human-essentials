@@ -12,22 +12,29 @@
             <div class='flex justify-end mb-4'>
               <%= new_button_to new_broadcast_announcement_path, {text: "New Announcement"} %>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th class="w-50">Announcement</th>
-                  <th>More info</th>
-                  <th>Sent by</th>
-                  <th class="date text-left">Expiration</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @broadcast_announcements.each do |broadcast_announcement| %>
-                  <%= render broadcast_announcement %>
-                <% end %>
-              </tbody>
-            </table>
+              <% if @broadcast_announcements.any? %>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th class="w-50">Announcement</th>
+                    <th>More info</th>
+                    <th>Sent by</th>
+                    <th class="date text-left">Expiration</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @broadcast_announcements.each do |broadcast_announcement| %>
+                    <%= render broadcast_announcement %>
+                  <% end %>
+                </tbody>
+              </table>
+              <% else %>
+                <%= render "shared/essentials/empty_state", kind: :cold_start,
+                      title: "No announcements yet",
+                      body: "An announcement shows on your partners' dashboards until it expires.",
+                      action: essentials_link_button("New announcement", new_broadcast_announcement_path, variant: :primary, icon: "bi-plus-lg") %>
+              <% end %>
 
           </div>
   <% end %>

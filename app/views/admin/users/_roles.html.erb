@@ -4,33 +4,39 @@
           </div>
 
           <div class="px-5 py-4">
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>Role Type</th>
-      <th>Resource</th>
-      <th class="text-right">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% user.roles.each do |role| %>
+<% if user.roles.any? %>
+  <table class="data-table">
+    <thead>
       <tr>
-        <td><%= role.title %></td>
-        <td>
-          <%= role.resource&.name || "Super Admin" %> <%= role.resource&.id ? "(id: #{role.resource&.id})" : "" %>
-        </td>
-        <td class="text-right">
-          <div class="flex justify-end gap-1.5">
-            <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
-                  variant: :ghost, size: :sm, icon: "bi-trash",
-                  class: "text-rose-700 hover:bg-rose-50",
-                  confirm: "Are you sure you want to remove this role?" %>
-          </div>
-        </td>
+        <th>Role Type</th>
+        <th>Resource</th>
+        <th class="text-right">Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% user.roles.each do |role| %>
+        <tr>
+          <td><%= role.title %></td>
+          <td>
+            <%= role.resource&.name || "Super Admin" %> <%= role.resource&.id ? "(id: #{role.resource&.id})" : "" %>
+          </td>
+          <td class="text-right">
+            <div class="flex justify-end gap-1.5">
+              <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
+                    variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
+                    confirm: "Are you sure you want to remove this role?" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <%= render "shared/essentials/empty_state", kind: :cold_start,
+        title: "No roles yet",
+        body: "This user cannot reach anything until they have one. Add a role below." %>
+<% end %>
 <div data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
 <h3 class="text-sm font-semibold text-slate-900">Add role</h3>
 <%# Both selects had a bare <label> with no `for`, so neither was named. %>
