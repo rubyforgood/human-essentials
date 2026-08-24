@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tooltip on a clipped cell - options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .data-table .notes { max-width: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* PROPOSED tooltip, written as it would appear in application.css. */
+  .tip-bubble {
+    position: fixed; z-index: 60; max-width: 22rem;
+    border-radius: var(--radius-md); background: var(--color-slate-900); color: #fff;
+    padding: .375rem .625rem; font-size: var(--text-xs); line-height: 1.45;
+    box-shadow: var(--shadow-lg); white-space: normal;
+  }
+  .data-table .notes[data-tip][tabindex]:focus-visible {
+    outline: 2px solid var(--color-brand-600); outline-offset: -2px;
+  }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Can a clipped cell show its full text on hover?</h1>
+    <p class="max-w-3xl text-slate-600">
+      Yes &mdash; and unlike the last three times a tooltip came up, here it is the standard answer.
+      Hover the long comments below, and <strong>Tab</strong> into the last table to see the
+      difference focus makes.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Why this one is different</h2>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+      <p>
+        I have argued against a tooltip three times in this work &mdash; on the scan button, the
+        remove button and the clipped cell &mdash; and those were the same case each time: a control
+        that needed a <em>name</em>, where a word solved it for free and a tooltip was a component
+        bought to avoid typing one.
+      </p>
+      <p class="mt-2">
+        <strong>Truncated text is the opposite case.</strong> The words are already written, already
+        in the DOM, and deliberately hidden to keep the table scannable. Revealing them on demand is
+        the textbook use of a tooltip, and the design systems say so: <strong>Carbon</strong> ships a
+        documented "tooltip on truncated table text" pattern, <strong>Ant Design</strong> has
+        <code class="rounded bg-slate-200 px-1 text-xs">ellipsis: {showTitle: true}</code> on table
+        columns and recommends a real Tooltip over it, <strong>AG&nbsp;Grid</strong> has
+        <code class="rounded bg-slate-200 px-1 text-xs">tooltipField</code> built in, and
+        <strong>Salesforce</strong> pairs <code class="rounded bg-slate-200 px-1 text-xs">slds-truncate</code>
+        with a title. The pattern is <em>clip plus reveal</em>, not clip alone.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Three ways to reveal it</h2>
+    <div class="space-y-2"><h3 class="text-base font-semibold">Option A - Clipped, no reveal</h3><div class="card-surface overflow-hidden"><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th class="notes">Comments</th><th class="numeric">Quantity</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td class="notes">Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</td><td class="numeric">1,240</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td class="notes">Short-dated stock.</td><td class="numeric">310</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td class="notes"></td><td class="numeric">980</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td class="notes">Split delivery across three boxes; box 2 arrived damaged and went back to the carrier.</td><td class="numeric">460</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-info">today</span> Scannable, and the long comments are simply unreadable without opening the record.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option B - The native <code>title</code> attribute</h3><div class="card-surface overflow-hidden"><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th class="notes">Comments</th><th class="numeric">Quantity</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td class="notes" title="Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.">Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</td><td class="numeric">1,240</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td class="notes" title="Short-dated stock.">Short-dated stock.</td><td class="numeric">310</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td class="notes"></td><td class="numeric">980</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td class="notes" title="Split delivery across three boxes; box 2 arrived damaged and went back to the carrier.">Split delivery across three boxes; box 2 arrived damaged and went back to the carrier.</td><td class="numeric">460</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-bad">not recommended</span> One attribute, and it shows on hover after about a second. Nothing on keyboard focus, nothing on touch, no control over appearance, and screen readers announce it on top of the text they just read. Hover a comment to see the browser's own tooltip.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option C - A real tooltip, hover and focus</h3><div class="card-surface overflow-hidden"><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Purchases</caption><thead><tr><th>Purchased from</th><th class="notes">Comments</th><th class="numeric">Quantity</th><th class="date">Purchased</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td>Costco</td><td class="notes" data-tip>Picked up from the Tuesday drive at the community centre; two pallets were short so the remainder is expected next week. Invoice sent to finance on the 14th.</td><td class="numeric">1,240</td><td class="date">2026-08-14</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Target</td><td class="notes" data-tip>Short-dated stock.</td><td class="numeric">310</td><td class="date">2026-08-12</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Sam's Club</td><td class="notes" data-tip></td><td class="numeric">980</td><td class="date">2026-08-09</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr><tr><td>Amazon</td><td class="notes" data-tip>Split delivery across three boxes; box 2 arrived damaged and went back to the carrier.</td><td class="numeric">460</td><td class="date">2026-08-05</td><td class="text-right"><a href="#" class="text-sm font-medium text-brand-700">View</a></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> Hover it, or <strong>Tab</strong> to it and press <strong>Escape</strong>. Only cells that are actually clipped get one &mdash; and only those take a tab stop.</p></div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Option C</strong> &mdash; a real tooltip on hover <em>and</em> focus, and only on
+        cells whose text is actually clipped.
+      </p>
+      <p>
+        <strong>Only-when-clipped is the part that makes it affordable.</strong> A tooltip repeating
+        text you can already read is noise, and making every cell focusable would add a tab stop per
+        row &mdash; 42 of them on <code class="rounded bg-slate-200 px-1 text-xs">/adjustments</code>.
+        Comparing <code class="rounded bg-slate-200 px-1 text-xs">scrollWidth</code> with
+        <code class="rounded bg-slate-200 px-1 text-xs">clientWidth</code> per cell means only the
+        cells that are hiding something become interactive. In the table above that is
+        <strong id="focus-count">?</strong> of four.
+      </p>
+      <p>
+        <strong>WCAG 1.4.13</strong> is the whole reason this needs a controller rather than a
+        <code class="rounded bg-slate-200 px-1 text-xs">title</code>. Content shown on hover or focus
+        must be <em>dismissible</em> (Escape closes it without moving the pointer),
+        <em>hoverable</em> (you can move onto the tooltip to read or select the text) and
+        <em>persistent</em> (it does not time out).
+        <code class="rounded bg-slate-200 px-1 text-xs">title</code> is none of those, shows nothing
+        on keyboard focus, does not exist on touch, and is announced on top of the cell text a screen
+        reader already read.
+      </p>
+      <p class="text-slate-600">
+        Touch is the honest gap: there is no hover on a phone, and a tap target the size of a table
+        cell fights the row. The detail page stays the answer there, which is what it already is.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+// Demo of the proposed behaviour. A shipped version is a Stimulus controller.
+(function () {
+  var bubble = null;
+  function show(el) {
+    if (bubble) hide();
+    bubble = document.createElement("div");
+    bubble.className = "tip-bubble";
+    bubble.setAttribute("role", "tooltip");
+    bubble.id = "tip-" + Math.random().toString(36).slice(2);
+    bubble.textContent = el.textContent.trim();
+    document.body.appendChild(bubble);
+    el.setAttribute("aria-describedby", bubble.id);
+    // WCAG 1.4.13 "hoverable" means you can move onto the tooltip to read or select it. Keeping it
+    // alive is only half of that -- it has to close when you leave the tooltip too, which the first
+    // draft of this demo forgot, so the bubble stayed on screen forever.
+    bubble.addEventListener("mouseleave", function (e) {
+      if (e.relatedTarget !== el) hide();
+    });
+    var r = el.getBoundingClientRect(), b = bubble.getBoundingClientRect();
+    bubble.style.left = Math.max(8, Math.min(r.left, window.innerWidth - b.width - 8)) + "px";
+    bubble.style.top = (r.bottom + 6 + b.height > window.innerHeight ? r.top - b.height - 6 : r.bottom + 6) + "px";
+  }
+  function hide() {
+    if (!bubble) return;
+    document.querySelectorAll("[aria-describedby^=tip-]").forEach(function (e) { e.removeAttribute("aria-describedby"); });
+    bubble.remove(); bubble = null;
+  }
+  // Only cells whose text is actually clipped get a tooltip -- and only those become focusable,
+  // so a table of short comments adds no tab stops at all.
+  document.querySelectorAll("[data-tip]").forEach(function (el) {
+    if (el.scrollWidth <= el.clientWidth || !el.textContent.trim()) return;
+    el.tabIndex = 0;
+    el.addEventListener("mouseenter", function () { show(el); });
+    el.addEventListener("mouseleave", function (e) { if (!bubble || !bubble.contains(e.relatedTarget)) hide(); });
+    el.addEventListener("focus", function () { show(el); });
+    el.addEventListener("blur", hide);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  // report how many cells became focusable
+  var n = document.querySelectorAll("[data-tip][tabindex]").length;
+  var t = document.getElementById("focus-count");
+  if (t) t.textContent = n;
+})();
+</script>
+</body>
+</html>
