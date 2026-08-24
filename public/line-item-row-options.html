@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line item row — options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* ------------------------------------------------------------------
+     Rules PROPOSED by this mockup, written out as they would appear in
+     app/assets/tailwind/application.css. Tailwind does not scan this
+     directory, so anything new has to be declared here -- see
+     docs/mockups/README.md.
+     ------------------------------------------------------------------ */
+
+  /* The measured select2 box, reproduced so the comparison is real and not
+     a drawing of one. These are the numbers read off /donations/new. */
+  .s2-today {
+    height: 28px; border: 1px solid #aaa; border-radius: 4px;
+    font-size: 16px; background: #fff; display: flex; align-items: center;
+    padding-left: .75rem; padding-right: 1.75rem; color: #444; position: relative;
+  }
+  .s2-today::after {
+    content: ""; position: absolute; right: .75rem; top: 50%;
+    width: .625rem; height: .375rem; transform: translateY(-50%);
+    background: var(--chevron-down) center / .625rem .375rem no-repeat;
+  }
+
+  /* PROPOSED: give select2's single-select the app's control box.
+     Unlayered, beside the arrow rules already in application.css, because the
+     vendored select2 stylesheet is imported unlayered and a layered rule loses
+     to it however specific it is. */
+  .select2-container--default .select2-selection--single {
+    height: 2.375rem;                    /* 38px -- the app's control height */
+    border-radius: var(--radius-lg);     /* 8px, not select2's 4px */
+    border-color: var(--color-slate-300);
+    font-size: var(--text-sm);           /* 14px, not select2's 16px */
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ------------------------------------------------------------------
+     Utilities used below that no view uses yet, so Tailwind has not
+     emitted them into mockup.css. Written out with the values Tailwind
+     would generate, per docs/mockups/README.md. Without these the mockup
+     renders a lie: the icon buttons collapse to 24px and the joined input
+     group comes out with four rounded corners instead of two. Both of
+     those happened on the first draft of this file.
+     ------------------------------------------------------------------ */
+  .size-\[38px\] { width: 2.375rem; height: 2.375rem; }
+  .h-\[38px\]    { height: 2.375rem; }
+  .w-56 { width: 14rem; }
+  .w-28 { width: 7rem; }
+  .rounded-l-lg { border-top-left-radius: var(--radius-lg); border-bottom-left-radius: var(--radius-lg); }
+  .rounded-r-lg { border-top-right-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg); }
+  .border-l-0 { border-left-width: 0; }
+  .grid-cols-\[1fr_7rem_38px\] { grid-template-columns: 1fr 7rem 2.375rem; }
+
+  /* Annotation furniture -- mockup only, never shipped. */
+  .anno { outline: 1px dashed var(--color-rose-400); outline-offset: 2px; }
+  .tick { font-variant-numeric: tabular-nums; }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-bad  { background: var(--color-rose-100);  color: var(--color-rose-800); }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-info { background: var(--color-slate-200); color: var(--color-slate-800); }
+  .baseline { position: relative; }
+  .baseline::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    border-bottom: 1px dashed var(--color-rose-400);
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">&ldquo;Items in this donation&rdquo; &mdash; the line item row</h1>
+    <p class="max-w-3xl text-slate-600">
+      Four questions: how many columns the card should have, what the barcode affordance should be,
+      what the remove control should be, and whether there is a better shape for the row than the one
+      it has. Every number below was measured on <code class="rounded bg-slate-200 px-1 text-xs">/donations/new</code>
+      at a 1440px viewport, not estimated.
+    </p>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- WHAT IS THERE NOW                                            -->
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">What is there now</h2>
+    <p class="max-w-3xl text-sm text-slate-600">
+      A replica, built from the measured values. The dashed rules mark where each control's
+      bottom edge actually falls &mdash; there are <strong>three different ones</strong> in a row
+      whose controls are supposed to sit on a line together.
+    </p>
+
+    <div class="card-surface p-5">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div class="flex min-w-0 flex-1 flex-wrap items-end gap-3">
+          <div class="min-w-[12rem]">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex items-center gap-2">
+              <input type="text" placeholder="Barcode entry"
+                     class="anno block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
+              <button type="button" class="anno rounded-lg border border-slate-300 bg-white p-2 text-slate-600">
+                <i class="bi-upc-scan" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <span class="pb-2 text-xs font-medium uppercase tracking-wide text-slate-500">or</span>
+
+          <div class="min-w-[14rem] flex-1">
+            <label class="block text-sm font-medium text-slate-700">Item</label>
+            <div class="mt-1.5 s2-today anno">Choose an item</div>
+          </div>
+
+          <div class="w-32">
+            <label class="block text-sm font-medium text-slate-700">Quantity</label>
+            <input type="text" placeholder="Quantity"
+                   class="anno mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
+          </div>
+        </div>
+        <div class="pb-4">
+          <span class="anno inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600">Remove</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Measured metrics of every control in the row</caption>
+        <thead>
+          <tr>
+            <th scope="col">Control</th>
+            <th scope="col" class="numeric">Height</th>
+            <th scope="col" class="numeric">Radius</th>
+            <th scope="col" class="numeric">Font</th>
+            <th scope="col" class="numeric">Width</th>
+            <th scope="col">Verdict</th>
+          </tr>
+        </thead>
+        <tbody class="tick">
+          <tr><td><strong>App standard</strong> (every control in the two cards above)</td>
+              <td class="numeric">38px</td><td class="numeric">8px</td><td class="numeric">14px</td>
+              <td class="numeric">&mdash;</td><td><span class="pill pill-info">reference</span></td></tr>
+          <tr><td>Barcode input</td><td class="numeric">38px</td><td class="numeric">8px</td>
+              <td class="numeric">14px</td><td class="numeric">184px</td>
+              <td><span class="pill pill-good">matches</span></td></tr>
+          <tr><td>Scanner icon button</td><td class="numeric">42px</td><td class="numeric">8px</td>
+              <td class="numeric">16px</td><td class="numeric">34px</td>
+              <td><span class="pill pill-bad">4px too tall, not square</span></td></tr>
+          <tr><td>Item dropdown (select2)</td><td class="numeric">28px</td><td class="numeric">4px</td>
+              <td class="numeric">16px</td><td class="numeric">575px</td>
+              <td><span class="pill pill-bad">wrong on all four</span></td></tr>
+          <tr><td>Quantity</td><td class="numeric">38px</td><td class="numeric">8px</td>
+              <td class="numeric">14px</td><td class="numeric">128px</td>
+              <td><span class="pill pill-good">matches</span></td></tr>
+          <tr><td>Remove</td><td class="numeric">28px</td><td class="numeric">8px</td>
+              <td class="numeric">12px</td><td class="numeric">83px</td>
+              <td><span class="pill pill-bad">renders slate-600, code asks for rose-700</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Three causes, and only one of them is this page's fault.</p>
+      <ul class="mt-2 list-disc space-y-1 ps-5">
+        <li><strong>select2 was never restyled.</strong> The chevron pass (<code>f9f61d837</code>) fixed its
+            arrow and text padding but not its box, so it still carries the vendored 2014 metrics: 28px tall,
+            4px radius, 16px text. <strong>Six selects across five views</strong> have this, not just
+            donations &mdash; organizations (two), product drives, served areas and partner children.</li>
+        <li><strong>The row overrides the select wrapper.</strong> The partial passes
+            <code>wrapper: :essentials</code> explicitly, which is the <em>text input</em> wrapper, so the
+            select never reaches <code>:essentials_select</code> that <code>wrapper_mappings</code> would
+            have given it.</li>
+        <li><strong>The scanner button and the barcode input are hand-rolled class strings</strong>, not the
+            design system's control, so nothing keeps them in step with it.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Q1 COLUMNS                                                   -->
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Q1 &mdash; How many columns?</h2>
+    <p class="max-w-3xl text-sm text-slate-600">
+      The two cards above this one are both
+      <code class="rounded bg-slate-200 px-1 text-xs">grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3</code>.
+      The items card is a <code class="rounded bg-slate-200 px-1 text-xs">flex-wrap</code> row with no
+      column structure at all, which is why its controls come out 184px, 575px and 128px wide.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">A caution about reading &ldquo;match the convention&rdquo; too literally.</p>
+      <p class="mt-1">
+        The other two cards hold <em>one form filled in once</em>. This card holds <em>a repeating
+        collection</em>, and those are different objects with different conventions. Forcing three
+        equal columns onto a repeating row would put Item and Quantity in equal-width cells, which no
+        inventory app does &mdash; quantity is always the narrow one. What this card should inherit is
+        <strong>column discipline</strong>: fixed, aligned, predictable columns. That is what options
+        B and C below give it, and what a table has always given it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Q2 BARCODE                                                   -->
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Q2 &mdash; The barcode affordance</h2>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">1. Icon button beside the field <span class="pill pill-info">today, sized correctly</span></p>
+        <div class="flex items-end gap-2">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <input type="text" placeholder="Barcode entry" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+          </div>
+          <button type="button" aria-label="Scan a barcode with the camera"
+                  class="inline-flex size-[38px] shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50">
+            <i class="bi-upc-scan" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">Smallest change. Two boxes still read as two controls doing unrelated jobs.</p>
+      </div>
+
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">2. Joined input group <span class="pill pill-good">industry default</span></p>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+          <div class="mt-1.5 flex">
+            <input type="text" placeholder="Barcode entry"
+                   class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Scan a barcode with the camera"
+                    class="inline-flex size-[38px] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100">
+              <i class="bi-upc-scan" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">One control, one rectangle. Shopify, Square, Zoho and Bootstrap&rsquo;s input-group all draw a scan field this way.</p>
+      </div>
+
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">3. Icon inside the field</p>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+          <div class="relative mt-1.5">
+            <input type="text" placeholder="Barcode entry"
+                   class="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Scan a barcode with the camera"
+                    class="absolute inset-y-0 right-0 inline-flex w-9 items-center justify-center rounded-r-lg text-slate-500 hover:text-slate-800">
+              <i class="bi-upc-scan" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Tidiest, but a 36px hit area inside a text field is easy to miss and easy to mis-tap on touch.</p>
+      </div>
+
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">4. Labelled button</p>
+        <div class="flex items-end gap-2">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <input type="text" placeholder="Barcode entry" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+          </div>
+          <button type="button" class="inline-flex h-[38px] shrink-0 items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <i class="bi-upc-scan" aria-hidden="true"></i> Scan
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">Unambiguous, no <code>aria-label</code> needed. Costs ~40px of row width per line.</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Recommendation: option 2, and move it out of the row (see Q4/C).</p>
+      <p class="mt-1">
+        The icon itself is fine &mdash; <code>bi-upc-scan</code> is the barcode glyph Shopify, Square and
+        Zoho all use, and swapping it for a camera would say &ldquo;photo&rdquo; rather than
+        &ldquo;scan&rdquo;. What is wrong is its <em>box</em>: 42px next to a 38px field, unpadded to a
+        34&times;42 rectangle rather than a square. Joining it to the input fixes the alignment by
+        construction, because they share one border.
+      </p>
+      <p class="mt-2">
+        The larger point is that <strong>no inventory app puts a scan field on every line</strong>.
+        Square, Zoho Inventory, Odoo and Amazon Seller all put <em>one</em> scan field at the top of the
+        receiving document; scanning appends a row. Today this page renders &ldquo;Scan a barcode&rdquo;,
+        an &ldquo;or&rdquo;, and a full item picker <em>per row</em>, so a ten-line donation has ten scan
+        fields and ten &ldquo;or&rdquo;s. That is the real cost, and it is what option C removes.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Q3 REMOVE                                                    -->
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Q3 &mdash; The remove control</h2>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="card-surface p-4 space-y-2">
+        <p class="text-sm font-semibold">1. Text, ghost <span class="pill pill-info">today</span></p>
+        <div class="flex h-14 items-center">
+          <span class="inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600">Remove</span>
+        </div>
+        <p class="text-xs text-slate-500">83px of every row. Reads as grey, though the code asks for rose-700 &mdash; the ghost variant&rsquo;s own <code>text-slate-600</code> collides with it and wins.</p>
+      </div>
+
+      <div class="card-surface p-4 space-y-2">
+        <p class="text-sm font-semibold">2. Icon only <span class="pill pill-good">industry default</span></p>
+        <div class="flex h-14 items-center">
+          <button type="button" aria-label="Remove this item"
+                  class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700">
+            <i class="bi-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">38px, aligned to the control line. QuickBooks, Xero, Shopify and Stripe all end a line item this way.</p>
+      </div>
+
+      <div class="card-surface p-4 space-y-2">
+        <p class="text-sm font-semibold">3. Icon + text</p>
+        <div class="flex h-14 items-center">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50">
+            <i class="bi-trash" aria-hidden="true"></i> Remove
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">Clearest of the four, widest of the four.</p>
+      </div>
+
+      <div class="card-surface p-4 space-y-2">
+        <p class="text-sm font-semibold">4. Reveal on hover <span class="pill pill-bad">not recommended</span></p>
+        <div class="flex h-14 items-center">
+          <button type="button" aria-label="Remove this item"
+                  class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-300">
+            <i class="bi-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">There is no hover on touch, and a control that appears on approach fails WCAG 2.1 content-on-hover expectations.</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Recommendation: option 2, icon-only, always visible, at the end of the row.</p>
+      <p class="mt-1">
+        It is the dominant pattern for line items and it buys back ~45px of row width for the item name,
+        which is the field that actually needs it. It needs an <code>aria-label</code> naming the row
+        &mdash; design.md already requires that of icon-only controls &mdash; and it stays
+        <strong>slate until hover</strong>, going rose only on hover and focus, so a form with eight rows
+        does not have eight red marks down its right edge. That is the same argument that took the
+        inline error message grey in <code>a5cef7c35</code>.
+      </p>
+      <p class="mt-2">
+        Whichever is chosen, the colour bug is worth fixing: passing
+        <code>extra: "text-rose-700"</code> to a <code>ghost</code> button cannot work, because both
+        utilities land in the class attribute and the cascade, not the attribute order, picks the winner.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Q4 ROW SHAPE                                                 -->
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Q4 &mdash; A better shape for the row</h2>
+    <p class="max-w-3xl text-sm text-slate-600">
+      Three options, cheapest first. All three assume the select2 box fix, without which none of them
+      line up.
+    </p>
+
+    <!-- OPTION A -->
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option A &mdash; Align what is there</h3>
+      <p class="max-w-3xl text-sm text-slate-600">
+        Same structure, same JS hooks, correct metrics: every control 38px on one baseline, the scanner
+        joined to its field, the remove control icon-only.
+      </p>
+      <div class="card-surface p-5">
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="w-56">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan a barcode with the camera" class="inline-flex size-[38px] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100">
+                <i class="bi-upc-scan" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <span class="pb-2.5 text-xs font-medium uppercase tracking-wide text-slate-500">or</span>
+          <div class="min-w-[16rem] flex-1">
+            <label class="block text-sm font-medium text-slate-700">Item</label>
+            <select class="mt-1.5 block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Choose an item</option></select>
+          </div>
+          <div class="w-28">
+            <label class="block text-sm font-medium text-slate-700">Quantity</label>
+            <input type="text" inputmode="numeric" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm">
+          </div>
+          <button type="button" aria-label="Remove this item" class="inline-flex size-[38px] shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700">
+            <i class="bi-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-good">low risk</span>
+        Fixes the mess. Still repeats three labels, a scan field and an &ldquo;or&rdquo; on every line.</p>
+    </div>
+
+    <!-- OPTION B -->
+    <div class="space-y-2 pt-4">
+      <h3 class="text-base font-semibold">Option B &mdash; Label the columns once</h3>
+      <p class="max-w-3xl text-sm text-slate-600">
+        The labels move to a header row, so rows two through ten carry data and nothing else.
+      </p>
+      <div class="card-surface overflow-hidden">
+        <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div>Item</div><div class="text-right">Quantity</div><div><span class="sr-only">Actions</span></div>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 px-5 py-2.5">
+            <select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) &mdash; 1,240 on hand</option></select>
+            <input type="text" inputmode="numeric" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Remove Kids (Size 4)" class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 px-5 py-2.5">
+            <select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes &mdash; 380 on hand</option></select>
+            <input type="text" inputmode="numeric" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Remove Wipes" class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <i class="bi-plus-lg" aria-hidden="true"></i> Add another item
+          </button>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-info">medium</span>
+        Three labels total instead of three per row. Row height drops from 96px to ~59px, so an
+        eight-line donation loses ~300px. The barcode field still has to live somewhere &mdash; that is C.</p>
+    </div>
+
+    <!-- OPTION C -->
+    <div class="space-y-2 pt-4">
+      <h3 class="text-base font-semibold">Option C &mdash; Scan-first: one scan bar, then rows <span class="pill pill-good">recommended</span></h3>
+      <p class="max-w-3xl text-sm text-slate-600">
+        Option B, plus the barcode field promoted out of the rows to a single bar at the top of the card.
+        Scanning appends a row; the picker stays for anything without a barcode. This is how Square,
+        Zoho Inventory, Odoo and Amazon Seller all build a receiving screen.
+      </p>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <label class="block text-sm font-medium text-slate-700" for="scan-c">Scan a barcode</label>
+          <div class="mt-1.5 flex max-w-md">
+            <input id="scan-c" type="text" placeholder="Barcode entry" autofocus
+                   class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Scan a barcode with the camera"
+                    class="inline-flex size-[38px] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 hover:bg-slate-100">
+              <i class="bi-upc-scan" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">Each scan adds a row below, or increments the row it is already on.</p>
+        </div>
+
+        <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div>Item</div><div class="text-right">Quantity</div><div><span class="sr-only">Actions</span></div>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 px-5 py-2.5">
+            <select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) &mdash; 1,240 on hand</option></select>
+            <input type="text" inputmode="numeric" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Remove Kids (Size 4)" class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_38px] items-center gap-3 px-5 py-2.5">
+            <select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes &mdash; 380 on hand</option></select>
+            <input type="text" inputmode="numeric" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm">
+            <button type="button" aria-label="Remove Wipes" class="inline-flex size-[38px] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <i class="bi-plus-lg" aria-hidden="true"></i> Add another item
+          </button>
+          <p class="text-sm text-slate-600">2 items &middot; <span class="font-semibold text-slate-900 tick">36</span> units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-bad">most work</span>
+        One scan field instead of N. The running total in the footer is the other thing every inventory
+        app has here and this page does not.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RECOMMENDATION                                               -->
+  <!-- ============================================================ -->
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Fix select2's box first, on its own.</strong> It is six selects, it is the single
+        biggest visual mismatch on the page, and every option below depends on it. This is worth doing
+        even if none of A/B/C is chosen.
+      </p>
+      <p>
+        <strong>Then option C</strong>, arrived at through B &mdash; B is C without the scan bar, so
+        building B first is not wasted work if C turns out to be too much. C is the shape every
+        inventory app converges on because it matches how receiving actually happens: you scan
+        repeatedly into one field, and you read a list of what you have so far.
+      </p>
+      <p>
+        <strong>If the appetite is small, option A alone is a real improvement</strong> and touches no
+        JavaScript: the row stops being ragged, and the scanner and remove controls stop being two
+        sizes nothing else on the page uses.
+      </p>
+      <p class="text-slate-600">
+        One caveat on B and C worth stating before anything is built: the row markup is shared by
+        <strong>seven forms</strong> &mdash; donation, purchase, distribution, transfer, adjustment,
+        audit and kit &mdash; and the distribution form adds a &ldquo;Requested&rdquo; column the others
+        do not have. Whatever is chosen has to work for all seven, or the partial has to take a variant.
+      </p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

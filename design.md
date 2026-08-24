@@ -292,6 +292,21 @@ Two things that bite:
   and it needs `.select-chevron` to turn the browser's own arrow off. Seven selects in the app
   had been given the text-input constant and kept the native arrow because of it.
 
+<a id="control-height"></a>
+**The control height is 38px**, and it is not a Tailwind step. It falls out of `py-2` plus a
+14px line box plus two 1px borders, so anything that has to sit level with an input — an icon
+button beside it, a third-party widget, a grid column holding one — is `2.375rem` and not a
+spacing utility. Three things in the app are that number by hand: `.select2-selection`, the line
+item row's icon buttons, and the scan bar's joined button.
+
+**select2 is restyled, not vendored as-is.** It ships a 28px-tall, 4px-radius, 16px-text control
+in a `#aaa` border, and the app's is 38px, 8px and 14px in `slate-300`. Six selects across five
+views use it — two single, four multiple — and beside a plain input all six read as a control
+from a different application. `application.css` restyles the box, the arrow, the value's padding
+and the focus ring, all **unlayered**, because the vendored stylesheet is imported unlayered and
+a layered rule loses to it however specific it is. The multi-select takes `min-height`, not
+`height`, because it is supposed to grow as chips are added.
+
 ### Stats
 
 A figure and the words that say what it counts. `essentials_stats` renders a description list,
