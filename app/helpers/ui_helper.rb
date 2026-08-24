@@ -80,20 +80,13 @@ module UiHelper
     end
   end
 
-  # `icon_only:` renders the glyph alone and moves the label into `aria-label`. That is the
-  # convention for a repeating row -- see design.md, Line item rows -- and it is deliberately
-  # slate until hover, so a form with eight rows does not carry eight red marks down its edge.
-  def remove_element_button(label, container_selector:, soft: false, icon_only: false, **html_attrs)
-    default_class =
-      if icon_only
-        "#{EssentialsUiHelper::ICON_BUTTON_CLASSES} text-slate-500 " \
-          "hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-rose-600"
-      else
-        essentials_button_classes(variant: :ghost_danger, size: :sm)
-      end
-
+  # One rendering for all five call sites: a `ghost_danger` button with the trash glyph and the
+  # word. There was an `icon_only:` variant for the line item row, and it made that row the only
+  # place in the app where this control had no label -- while the partner request form, which is
+  # the same shape, rendered the words two screens away. See docs/design-decisions.md.
+  def remove_element_button(label, container_selector:, soft: false, **html_attrs)
     default_html_attrs = {
-      class: default_class,
+      class: essentials_button_classes(variant: :ghost_danger, size: :sm),
       data: {
         action: "click->form-input#removeItem:prevent",
         remove_soft: soft ? true : false,
@@ -101,13 +94,12 @@ module UiHelper
       },
       type: "button"
     }
-    default_html_attrs[:aria] = {label: label} if icon_only
 
     attrs = default_html_attrs.merge(html_attrs)
 
     # See add_element_button: a real button, so Space works as well as Enter.
     content_tag(:button, **attrs) do
-      icon_only ? ui_icon("trash") : safe_join([ui_icon("trash"), label], " ")
+      safe_join([ui_icon("trash"), label], " ")
     end
   end
 

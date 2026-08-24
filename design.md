@@ -88,6 +88,15 @@ Heading level is document structure, not size. AdminLTE used `<h5>`/`<h6>` as "s
 bold", which left pages jumping from `h1` to `h5` and gave screen-reader users a broken
 outline. Size is a class; the level says where you are in the document.
 
+<a id="buttons"></a>
+**A destructive action with no fill is `ghost_danger`, and it is `slate-600` at rest.** Rose comes
+on hover and focus only. It was rose at rest, and a form with eight rows then carried eight red
+marks down its edge, none of them louder than the others — the word "Remove" and the trash glyph
+already say what the control does, and colour saying it a third time on every row says nothing at
+all. The same argument that took the inline error message grey. Do **not** reach for `ghost` plus
+`extra: "text-rose-700"`: two colour utilities in one class attribute are resolved by the cascade,
+not by attribute order, and the rose loses.
+
 ### Sentence case
 
 **Sentence case for everything a person reads**: headings, buttons, labels, table headers,
@@ -872,10 +881,15 @@ Four rules, all of which the hand-assembled version broke:
   built, not to a line of it — Square, Zoho Inventory, Odoo and Amazon Seller all put one at the
   top of a receiving screen, and scanning appends a row or adds to the row that item is already
   on. Repeating it per row gave a ten-line donation ten barcode fields and ten "or"s.
-- **The remove control is the glyph alone**, at the end of the row, `aria-label`led, and
-  `slate-500` until hover. QuickBooks, Xero, Shopify and Stripe all end a line item this way. It
-  goes rose on hover and focus only, so an eight-row form does not carry eight red marks down its
-  edge — the same argument that took the inline error message grey.
+- **The remove control is `remove_element_button`, the same one every other repeating row uses**
+  — the trash glyph *and* the word, `ghost_danger`. It was icon-only here, which made this the one
+  place in the app where the control had no label, while the partner request form — the same
+  shape, a repeating row of item and quantity — rendered the words two screens away. Five call
+  sites, one rendering. See [buttons](#buttons) for why `ghost_danger` is slate at rest.
+- **The card has an empty state.** Remove the last row and the column headings go with it, because
+  there are no columns left to head; `line_item_total_controller` swaps them for a `:cold_start`
+  state. It offers no action, deliberately: the footer's **Add another item** is 60px below it,
+  and two buttons doing one job is the thing the tab-actions pass removed.
 - **The footer carries a running total.** "2 items · 36 units", from `line_item_total_controller`.
   Every inventory app has one; this card had none, so a long donation could not be checked without
   adding it up by hand.
