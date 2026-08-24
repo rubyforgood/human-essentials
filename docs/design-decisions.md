@@ -3286,3 +3286,50 @@ uses `e.currentTarget` and the region's own input now.
   which is the same keypress a handheld reader sends and what `create.js.erb` already simulates.
   Deliberately *not* done in the barcode dialog: the field there holds the barcode being created,
   and looking it up is the thing that just failed.
+
+
+---
+
+## 2026-08-24 · The scan field takes a grid column, and the width rule gets its missing half
+
+**Area.** `line_items/_line_item_table`, `design.md` &sect; Forms.
+
+**Decision.** Option A of
+[`docs/mockups/scan-field-width-options.html`](mockups/scan-field-width-options.html): the scan
+bar sits on the same `gap-x-5 sm:grid-cols-2 lg:grid-cols-3` grid as the two cards above it and
+takes column one. Its left and right edges land on the storage location select's at every width.
+
+**This reverses the entry above it, one day old.** That entry sized the field to its content —
+`15rem`, from a 14-digit GTIN measuring 138px — citing GOV.UK and USWDS, and it stated the rule in
+`design.md` without the condition that makes it true. The condition is **neighbours**. GOV.UK's
+narrow inputs sit in a column of stacked fields, where the field above and the field below share
+the left edge; that repetition is what makes a short width read as deliberate. The scan field is
+alone in a tinted band with nothing to establish a rhythm, so the same short width reads as
+unfinished. Both rules are real and they are about different situations; I applied the one whose
+precondition did not hold.
+
+**The measurement that settles it.** A fixed width cannot align to a fluid grid at more than one
+viewport. `15rem` was 106px short of the column at 1440, 53px short at 1280 — and at **1024 it was
+33px *wider* than the column**, crossing a boundary every other control on the page respects. That
+is not a ragged right edge, which is a defensible aesthetic; it is a control overhanging its cell.
+On the grid it is 346/293/207/329/265/301/246px at the seven audited widths and aligned at all of
+them.
+
+**The content measurement was not wasted.** It became the check in the other direction: the column
+must never be *too small* for the content. At 1024, where the three-column grid is narrowest, the
+field is 169px against 138px of barcode. If that had come out negative, option A would have been
+the wrong answer.
+
+**Alternatives rejected.**
+
+- **Half the card**, the other option offered. At `lg` the cards use thirds, so a half falls
+  between column two and column three — a line the page does not draw. At `md`, where the grid is
+  two columns and a half ought to coincide, it overshoots by **10px**, which is exactly half the
+  `gap-x-5` gutter: a column is `(W − 20) / 2` and a half is `W / 2`. Near-miss at one breakpoint,
+  arbitrary at the rest.
+- **Keeping `15rem`.** Worth revisiting only if the scan bar ever gains a second control beside
+  it — a storage location, say — because then there would be a column of stacked fields for a
+  short width to sit inside, and GOV.UK's rule would start applying properly.
+- **A wider camera viewport spanning the band.** The viewport stays inside column one with the
+  field it belongs to; a preview that broke the column would reintroduce exactly the unmoored edge
+  this change removes.
