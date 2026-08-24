@@ -24,7 +24,7 @@ import { Controller } from "@hotwired/stimulus";
  * -- including to the barcode field that triggered it.
  */
 export default class extends Controller {
-  static targets = ["summary", "rows"];
+  static targets = ["summary", "rows", "empty", "headings"];
 
   connect() {
     this.recount = this.recount.bind(this);
@@ -70,6 +70,23 @@ export default class extends Controller {
     // A soft-removed row is still in the DOM with `_destroy` set; it is not part of the total.
     const text = items === 0 ? "" : `${this.plural(items, "item")} · ${this.plural(units, "unit")}`;
     if (this.summaryTarget.textContent !== text) this.summaryTarget.textContent = text;
+
+    this.toggleEmpty();
+  }
+
+  // Rows, not items: a row with nothing chosen in it is still a row to type into, and the card is
+  // only empty when there is not even one of those. Removing the last row used to leave the column
+  // headings over a 20px void -- see design.md, Empty states.
+  toggleEmpty() {
+    if (!this.hasEmptyTarget) return;
+
+    const rows = [...this.rowsTarget.querySelectorAll(".line_item_section")]
+      .filter((row) => !this.dropped(row)).length;
+
+    this.emptyTarget.classList.toggle("hidden", rows > 0);
+    // The headings are `hidden sm:grid`, so `sm:hidden` is what actually removes them at the
+    // width they exist at. Toggling `hidden` alone would do nothing above 640px.
+    if (this.hasHeadingsTarget) this.headingsTarget.classList.toggle("sm:hidden", rows === 0);
   }
 
   dropped(row) {

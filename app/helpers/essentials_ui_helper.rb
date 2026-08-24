@@ -24,15 +24,15 @@ module EssentialsUiHelper
     # attribute order, so the rose lost to the ghost's own slate everywhere it was tried.
     # `remove_element_button` did exactly that, and one caller had already worked around it by
     # passing a whole replacement class string.
-    ghost_danger: "text-rose-700 hover:bg-rose-50 hover:text-rose-800 focus-visible:outline-rose-600"
+    #
+    # `slate-600` at rest, like `ghost`, and rose only on hover and focus. It was rose-700 at rest,
+    # which contradicted the rule design.md already carried for the same control in a repeating
+    # row: an eight-row form should not carry eight red marks down its edge. The word "Remove" and
+    # the trash glyph say it is destructive; the colour does not have to say it a third time, and
+    # saying it on every row makes the one you are pointing at no louder than the rest. Same
+    # argument that took the inline error message grey.
+    ghost_danger: "text-slate-600 hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-rose-600"
   }.freeze
-
-  # A square button holding one glyph, sized to the app's 38px control height so it can sit beside
-  # an input without making the row ragged. See design.md, Control height. `size-[2.375rem]` rather
-  # than a spacing step, because no Tailwind size lands on 38px.
-  ICON_BUTTON_CLASSES = "inline-flex size-[2.375rem] shrink-0 items-center justify-center " \
-                        "rounded-lg transition-colors " \
-                        "focus-visible:outline-2 focus-visible:outline-offset-2"
 
   BUTTON_SIZES = {
     sm: "px-2.5 py-1.5 text-xs",

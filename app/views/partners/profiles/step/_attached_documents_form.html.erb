@@ -14,7 +14,11 @@
                 <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-semibold" %>
                 <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
               </div>
-              <%= remove_element_button "Remove", container_selector: "li", class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" %>
+              <%# The class string that used to be here was a workaround for `ghost_danger` losing its
+                  colour to `ghost`'s slate in the cascade. The variant is correct now, so the
+                  override is both unnecessary and the odd one out -- it was the only Remove in the
+                  app still rose at rest. %>
+              <%= remove_element_button "Remove", container_selector: "li" %>
             </li>
           <% end %>
         <% end %>

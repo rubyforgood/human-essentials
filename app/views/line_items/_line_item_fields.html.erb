@@ -68,11 +68,13 @@
     <%# `self-end` below `sm`: the button shares row 1 with the item's label *and* control, and the
         section is `items-start`, so left alone it lines up with the word rather than the box.
         Aligning to the end of the cell puts its bottom on the control's bottom whatever the label
-        is -- an invisible spacer would have done the same thing with a number in it. %>
-    <div class="<%= cells[:remove] %> self-end sm:self-start">
+        is -- an invisible spacer would have done the same thing with a number in it.
+
+        `sm:self-center`, because the labelled button is 28px against the controls' 38px and
+        top-aligning a shorter thing next to a taller one reads as a mistake. %>
+    <div class="<%= cells[:remove] %> self-end sm:self-center">
       <% unless local_assigns[:changes_disallowed] %>
-        <%= remove_element_button "Remove this item", container_selector: "section",
-              icon_only: true %>
+        <%= remove_element_button "Remove", container_selector: "section" %>
       <% end %>
     </div>
   </section>

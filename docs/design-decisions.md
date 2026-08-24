@@ -3446,3 +3446,63 @@ screen reader's *list of links*, where fourteen inert "Add another item" entries
   doubles the announcement.
 - **A visible "Remove" label.** ~45px per row on a control the row already explains, and it is
   what the mockup measured and the user chose against.
+
+
+---
+
+## 2026-08-24 · The labelled remove button, a destructive ghost that is not red, and the empty state
+
+**Area.** `UiHelper#remove_element_button`, `EssentialsUiHelper::BUTTON_VARIANTS`,
+`line_items/_line_item_table`, `line_item_total_controller`, `design.md`.
+
+**Decision.** Option C of
+[`remove-control-and-empty-state.html`](mockups/remove-control-and-empty-state.html) for the
+control and option B for the empty state. `ghost_danger` becomes **`slate-600` at rest**, rose on
+hover and focus.
+
+**The control: consistency, and it reverses my own earlier recommendation.** I argued for
+icon-only two rounds ago on density, citing QuickBooks, Xero and Stripe. That is a good argument
+about line item editors in general and the wrong one about *this* app, because
+`remove_element_button` has five call sites and four already rendered the words — including
+`partners/requests/_item_request`, which is the same shape as the bank row and sat two screens
+away rendering "Remove" at 83×28. The 45px the label costs is smaller than the cost of one control
+having two appearances. It is one rendering now; the `icon_only:` branch and the
+`ICON_BUTTON_CLASSES` constant that existed only to serve it are both gone.
+
+**The colour, which the preview got wrong.** I drew the ghost button rose-700 at rest, and
+`ghost_danger` really was rose at rest — but `design.md` had *already* carried the opposite rule
+for this exact control: *"`slate-500` until hover… so an eight-row form does not carry eight red
+marks down its edge."* I had written that sentence for the icon and then contradicted it in the
+variant and again in the preview. It is `slate-600` at rest now, matching plain `ghost`, with rose
+reserved for hover and focus. The word and the trash glyph say the action is destructive; colour
+saying it a third time, on every row, makes the row you are pointing at no louder than the rest.
+Same reasoning as the grey error message. Verified: rest `oklch(0.446 0.043 257.281)`, hover
+`oklch(0.514 0.222 16.935)` on `rose-50`, focus outline `rose-600`.
+
+One consequence worth having: `partners/profiles/step/_attached_documents_form` was passing a
+whole replacement class string to force rose, a workaround for `ghost_danger` losing to `ghost` in
+the cascade. The variant is correct, so the workaround is deleted, and that call site stops being
+the only Remove in the app still red at rest.
+
+**The empty state: `:cold_start`, and no action in it.** Removing the last row left the column
+headings over a 20px void and a footer with a blank total, which is exactly what *"never render
+bare empty table chrome"* is about. The state is rendered hidden and switched on by
+`line_item_total_controller`, because rows come and go without a round trip; the headings are
+hidden with it, since there are no columns left to head. **It deliberately offers no action**:
+`:cold_start` normally does, but the footer's **Add another item** is 60px below, and two buttons
+doing one job is what the tab-actions pass removed.
+
+**Alternatives rejected.**
+
+- **A tooltip on the icon.** A whole component with WCAG 1.4.13 obligations — dismissible,
+  hoverable, persistent — bought to solve what a word solves for free. `title` is not a shortcut:
+  the preview measured the tooltip at opacity 0 at rest and 1 **on focus**, which is precisely what
+  `title` cannot do, on top of doubling the announcement over the `aria-label`.
+- **"Never allow empty"**, keeping one blank row with the remove disabled on the last one. What
+  Xero and Stripe actually do, and genuinely tempting, since an empty state nobody can reach is
+  dead code. It needs a disabled control with `aria-disabled` and a reason, or the user finds a
+  button that does nothing; the empty state is less machinery.
+- **Fixing the sixteen tables with no empty state at all**, found while sweeping. The ask was to
+  check that the existing ones match each other, and all 64 do — 0 without a deliberate `kind:`.
+  Nine of the sixteen are reachable-empty and need a title, a body and an action decision each;
+  they are triaged in `docs/todo.md` rather than folded in here.

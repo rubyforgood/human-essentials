@@ -35,8 +35,11 @@
   # which is not a control anyone can use -- and 320 is the width WCAG 1.4.10 Reflow is defined
   # at. Placement is explicit rather than left to auto-flow, because auto-flow puts the remove
   # button under the item instead of beside it.
+  # 5.5rem for the action column: the labelled button measures 83px and needs somewhere to sit.
+  # Below `sm` the column is `auto`, because the button shares the first line with the item there
+  # and a fixed width would strand it.
   if requested_column
-    grid_class = "grid-cols-[1fr_2.375rem] sm:grid-cols-[1fr_6rem_7rem_2.375rem]"
+    grid_class = "grid-cols-[1fr_auto] sm:grid-cols-[1fr_6rem_7rem_5.5rem]"
     cells = {
       item: "col-start-1 row-start-1 sm:row-start-1",
       requested: "col-start-1 row-start-3 sm:col-start-2 sm:row-start-1",
@@ -44,7 +47,7 @@
       remove: "col-start-2 row-start-1 sm:col-start-4 sm:row-start-1"
     }
   else
-    grid_class = "grid-cols-[1fr_2.375rem] sm:grid-cols-[1fr_7rem_2.375rem]"
+    grid_class = "grid-cols-[1fr_auto] sm:grid-cols-[1fr_7rem_5.5rem]"
     cells = {
       item: "col-start-1 row-start-1 sm:row-start-1",
       quantity: "col-start-1 row-start-2 sm:col-start-2 sm:row-start-1",
@@ -92,7 +95,7 @@
   <%# Hidden below `sm`, where the row is stacked and there are no columns for it to head. Each
       cell carries its own label at that width instead. %>
   <div class="hidden <%= grid_class %> items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500 sm:grid"
-       aria-hidden="true">
+       aria-hidden="true" data-line-item-total-target="headings">
     <div>Item</div>
     <% if requested_column %><div class="text-right">Requested</div><% end %>
     <div class="text-right">Quantity</div>
@@ -119,6 +122,16 @@
     <%= render "line_items/line_item_fields", form: form, object: object,
           changes_disallowed: changes_disallowed, grid_class: grid_class,
           requested_column: requested_column, cells: cells %>
+  </div>
+
+  <%# Never bare empty table chrome -- design.md. Remove the last row and the card used to keep
+      its column headings over a 20px void and a footer with a blank total. `:cold_start` is the
+      right flavour: nothing exists yet, so explain and offer the action. Rendered hidden and
+      switched on by the controller, because rows come and go without a round trip. %>
+  <div class="hidden" data-line-item-total-target="empty">
+    <%= render "shared/essentials/empty_state", kind: :cold_start,
+          title: "No items on this #{noun} yet",
+          body: scan ? "Scan a barcode above, or add a row and choose an item." : "Add a row and choose an item." %>
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-3">
