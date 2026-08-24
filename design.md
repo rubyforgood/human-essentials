@@ -177,6 +177,17 @@ Rules:
 
 - An icon that sits beside its own label is decorative and is `aria-hidden="true"`.
 - A control with **only** an icon carries its own `aria-label`. There is no third option.
+- **An icon-only control is a `<button>`, never an anchor with `role="button"`.** A native anchor
+  fires on Enter and ignores Space; the ARIA button pattern requires both, so an anchor that
+  *announces* itself as a button and then ignores Space fails **WCAG 4.1.2**. `add_element_button`
+  and `remove_element_button` were both built that way, and it was measured rather than reviewed:
+  Enter removed a line item, Space did nothing. **axe cannot catch this** — it reads markup, not
+  behaviour — so the keyboard audit and a real key press are the only things that will. Inside a
+  form, `type: "button"` is not optional: a button defaults to submit.
+- **Icon-only is for a repeating row action, not for a one-off.** The row gives the context the
+  label would: sixteen "Remove this item" buttons down a column read as a column of removes, and
+  the item beside each one says which. A single destructive action in a page header gets its
+  words. That is why the line item rows are glyphs and the page actions are not.
 - `IconHelper#fa_icon` still exists and still takes Font Awesome names, because ~40 call
   sites use it; it maps them to Bootstrap Icons and always sets `aria-hidden`. New code
   should write the `<i class="bi-…">` directly or pass `icon:` to a component helper.

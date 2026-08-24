@@ -35,12 +35,18 @@ RSpec.describe UiHelper, type: :helper do
         page = Nokogiri::HTML(subject).css("div").first
         expect(page).to_not be_nil
 
-        button = page.css("a").first
+        button = page.css("button").first
         expect(button).to_not be_nil
         expect(button.attributes["data-form-input-target"].value).to eq("addButton")
         expect(button.attributes["data-add-dest-selector"].value).to eq("Container")
         expect(button.attributes["data-action"].value).to eq("click->form-input#addItem:prevent")
-        expect(button.attributes["role"].value).to eq("button")
+        expect(button.name).to eq("button")
+        expect(button.attributes["type"].value).to eq("button")
+        # No role and no href: it is a button, not an anchor pretending. An anchor with
+        # role="button" fires on Enter and ignores Space, which the ARIA button pattern
+        # requires -- measured, and axe cannot see it because it cannot test behaviour.
+        expect(button.attributes["role"]).to be_nil
+        expect(button.attributes["href"]).to be_nil
         expect(button.text.strip).to eq("Label")
 
         icon = button.css("i").first
@@ -65,7 +71,7 @@ RSpec.describe UiHelper, type: :helper do
         page = Nokogiri::HTML(subject).css("div").first
         expect(page).to_not be_nil
 
-        button = page.css("a").first
+        button = page.css("button").first
         expect(button).to_not be_nil
         expect(button.attributes["class"].value).to eq("Class")
         expect(button.attributes["id"].value).to eq("Id")
@@ -73,7 +79,13 @@ RSpec.describe UiHelper, type: :helper do
         expect(button.attributes["data-form-input-target"]).to be_nil
         expect(button.attributes["data-add-dest-selector"]).to be_nil
         expect(button.attributes["data-action"]).to be_nil
-        expect(button.attributes["role"].value).to eq("button")
+        expect(button.name).to eq("button")
+        expect(button.attributes["type"].value).to eq("button")
+        # No role and no href: it is a button, not an anchor pretending. An anchor with
+        # role="button" fires on Enter and ignores Space, which the ARIA button pattern
+        # requires -- measured, and axe cannot see it because it cannot test behaviour.
+        expect(button.attributes["role"]).to be_nil
+        expect(button.attributes["href"]).to be_nil
         expect(button.text.strip).to eq("Label")
 
         template = page.css("template").first
@@ -89,15 +101,20 @@ RSpec.describe UiHelper, type: :helper do
       subject { helper.remove_element_button("Label", container_selector: "Container") }
 
       it "generates a button with the attributes the form-input controller reads" do
-        button = Nokogiri::HTML(subject).css("a").first
+        button = Nokogiri::HTML(subject).css("button").first
         expect(button).to_not be_nil
 
         expect(button.attributes["data-action"].value).to eq("click->form-input#removeItem:prevent")
         expect(button.attributes["data-remove-parent-selector"].value).to eq("Container")
         expect(button.attributes["data-remove-soft"].value).to eq("false")
         expect(button.text.strip).to eq("Label")
-        expect(button.attributes["role"].value).to eq("button")
-        expect(button.attributes["href"].value).to eq("javascript:void(0)")
+        expect(button.name).to eq("button")
+        expect(button.attributes["type"].value).to eq("button")
+        # No role and no href: it is a button, not an anchor pretending. An anchor with
+        # role="button" fires on Enter and ignores Space, which the ARIA button pattern
+        # requires -- measured, and axe cannot see it because it cannot test behaviour.
+        expect(button.attributes["role"]).to be_nil
+        expect(button.attributes["href"]).to be_nil
 
         icon = button.css("i").first
         expect(icon).to_not be_nil
@@ -108,7 +125,7 @@ RSpec.describe UiHelper, type: :helper do
         subject { helper.remove_element_button("Label", container_selector: "Container", soft: true) }
 
         it "marks the removal as soft" do
-          button = Nokogiri::HTML(subject).css("a").first
+          button = Nokogiri::HTML(subject).css("button").first
           expect(button).to_not be_nil
           expect(button.attributes["data-remove-soft"].value).to eq("true")
         end
@@ -119,7 +136,7 @@ RSpec.describe UiHelper, type: :helper do
       subject { helper.remove_element_button("Label", container_selector: "Container", class: "test", data: {test: "test"}) }
 
       it "lets the caller replace the defaults" do
-        button = Nokogiri::HTML(subject).css("a").first
+        button = Nokogiri::HTML(subject).css("button").first
         expect(button).to_not be_nil
 
         expect(button.attributes["class"].value).to eq("test")
