@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remove control and empty state - options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* Utilities and the proposed tooltip, written out because Tailwind does not scan this
+     directory -- see docs/mockups/README.md. */
+  .grid-cols-\[1fr_7rem_5\.5rem\] { grid-template-columns: 1fr 7rem 5.5rem; }
+
+  /* PROPOSED tooltip. Shown on hover AND focus -- a title attribute is neither, which is why it
+     is not the answer. A shipped version owes WCAG 1.4.13: dismissible with Escape, hoverable,
+     and persistent until dismissed. That is a Stimulus controller, not this. */
+  .tip { position: relative; display: inline-flex; }
+  .tip-bubble {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    white-space: nowrap; border-radius: var(--radius-md);
+    background: var(--color-slate-900); color: #fff;
+    padding: .25rem .5rem; font-size: var(--text-xs); font-weight: 500;
+    opacity: 0; pointer-events: none; transition: opacity .12s;
+  }
+  .tip:hover .tip-bubble, .tip:focus-within .tip-bubble { opacity: 1; }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-12">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The remove control, and the empty state</h1>
+    <p class="max-w-3xl text-slate-600">
+      Two questions. Hover or focus the trash icon in option B to see the tooltip behave.
+    </p>
+  </header>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">1. Tooltip, or a labelled ghost button?</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">The app already disagrees with itself.</p>
+      <p class="mt-1">
+        <code class="rounded bg-slate-200 px-1 text-xs">remove_element_button</code> has five call
+        sites. <strong>Four render the labelled ghost button</strong> &mdash; served areas,
+        attached documents, and both partner request forms. Only the bank line item row is
+        icon-only. And the closest analogue is not a distant screen: the
+        <strong>partner request form is the same shape</strong>, a repeating row of item + quantity,
+        and it renders <strong>"Remove" at 83&times;28 in rose-700</strong> inside a real table.
+        Whatever is chosen should probably apply to both.
+      </p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option A - Icon only, no tooltip</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="py-2.5">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4)</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 4)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5)</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 5)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Wipes" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M)</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Adult briefs (M)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-info">today</span> 38px. Nothing for a sighted mouse user who does not recognise the glyph; fine for a screen reader, which reads the <code class="rounded bg-slate-200 px-1 text-xs">aria-label</code>.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option B - Icon only, with a tooltip</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="py-2.5">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4)</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><span class="tip"><button type="button" aria-label="Remove Kids (Size 4)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button><span class="tip-bubble" role="presentation">Remove</span></span></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5)</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><span class="tip"><button type="button" aria-label="Remove Kids (Size 5)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button><span class="tip-bubble" role="presentation">Remove</span></span></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><span class="tip"><button type="button" aria-label="Remove Wipes" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button><span class="tip-bubble" role="presentation">Remove</span></span></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M)</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><span class="tip"><button type="button" aria-label="Remove Adult briefs (M)" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button><span class="tip-bubble" role="presentation">Remove</span></span></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">Same 38px. The tooltip shows on <strong>hover and focus</strong>, which a <code class="rounded bg-slate-200 px-1 text-xs">title</code> attribute does not. Needs a Stimulus controller to satisfy WCAG 1.4.13 &mdash; dismissible with Escape, hoverable, persistent.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option C - Labelled ghost button</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_5.5rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="py-2.5">
+          <div class="grid grid-cols-[1fr_7rem_5.5rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4)</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 hover:text-rose-800"><i class="bi-trash" aria-hidden="true"></i> Remove</button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_5.5rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5)</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 hover:text-rose-800"><i class="bi-trash" aria-hidden="true"></i> Remove</button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_5.5rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 hover:text-rose-800"><i class="bi-trash" aria-hidden="true"></i> Remove</button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_5.5rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M)</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 hover:text-rose-800"><i class="bi-trash" aria-hidden="true"></i> Remove</button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> 83px, matching the four other call sites and the partner request form. Costs 45px of row width; the item column is 904px at 1440 and 377px at 641, so it is affordable at both.</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Recommendation: C.</p>
+      <p class="mt-1">
+        Consistency is the deciding argument and it is not a close call once you know the partner
+        form exists: the same control, in the same kind of row, two screens apart, rendered two
+        ways. C makes five call sites out of five, and deletes the
+        <code class="rounded bg-slate-200 px-1 text-xs">icon_only:</code> branch rather than
+        spreading it.
+      </p>
+      <p class="mt-2">
+        <strong>Against my own earlier recommendation</strong>, which was the icon. That argument
+        was about density &mdash; QuickBooks, Xero and Stripe do use bare glyphs &mdash; and it is
+        a good argument in isolation. It is the wrong one here, because the cost of being
+        inconsistent inside one app is larger than the 45px, and because a tooltip (B) is a whole
+        component with WCAG 1.4.13 obligations bought to solve a problem that a word solves for
+        free.
+      </p>
+      <p class="mt-2 text-slate-600">
+        If density does win later, B is the honest version of A and A should not stay as it is:
+        an icon with no hover affordance is the one option here with a real gap in it.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">2. The empty state, which does not exist</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Remove the last row today and the card keeps its furniture.</p>
+      <p class="mt-1">
+        Measured: column headings still rendered, a <strong>20px empty strip</strong> where the
+        rows were, and a footer whose total is blank. <code class="rounded bg-slate-200 px-1 text-xs">design.md</code>
+        is explicit &mdash; <em>"Never render bare empty table chrome"</em> &mdash; and this card
+        was built without one.
+      </p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option A - Headings stay, one line of text</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="py-2.5"><div class="px-5 py-2.5 text-sm text-slate-500">No items yet.</div></div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600"></p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">Cheapest. Still headings over nothing, which is the thing the rule is against.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option B - The app's empty state component</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
+          <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600"><i class="bi-inbox" aria-hidden="true"></i></span>
+          <p class="mt-3 text-sm font-semibold text-slate-900">No items on this donation yet</p>
+          <p class="mt-1 max-w-prose text-sm text-slate-600">Scan a barcode above, or add a row and pick an item.</p>
+          <div class="mt-4"><button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add an item</button></div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> <code class="rounded bg-slate-200 px-1 text-xs">kind: :cold_start</code>, headings hidden because there are no columns to head. Uses the component every other empty screen uses, and offers the action.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option C - Never allow empty</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3"><div>
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+          </div><div></div><div></div></div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="py-2.5">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-500 shadow-sm"><option>Choose an item</option></select></div>
+            <div class="min-w-0"><input type="text" placeholder="0" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm shadow-sm"></div>
+            <div class="self-end"><span class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-300" aria-hidden="true"><i class="bi-trash"></i></span></div>
+          </div>
+        </div><div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600"></p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">Always keep one blank row; the remove control on a lone row is disabled. What QuickBooks, Xero and Stripe do &mdash; there is always a line to type into. No empty state needed, but a disabled control needs explaining.</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Recommendation: B, and C is a real alternative.</p>
+      <p class="mt-1">
+        <strong>B</strong> uses the component the rest of the app already uses, hides the headings
+        because there are no columns to head, and offers the action &mdash; which is what
+        <code class="rounded bg-slate-200 px-1 text-xs">:cold_start</code> is for. It is also the
+        only option that says <em>why</em> the card is empty.
+      </p>
+      <p class="mt-2">
+        <strong>C</strong> is what the line-item editors actually do, and it is tempting: an empty
+        state you can never reach is dead code. But it needs a disabled control on the last row,
+        and a disabled control with no explanation is its own accessibility problem &mdash;
+        <code class="rounded bg-slate-200 px-1 text-xs">aria-disabled</code> plus a reason, or the
+        user just finds a button that does nothing. B is less machinery.
+      </p>
+      <p class="mt-2 text-slate-600">
+        Either way the <strong>footer total should disappear when there is nothing to total</strong>,
+        rather than rendering an empty paragraph as it does now.
+      </p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
