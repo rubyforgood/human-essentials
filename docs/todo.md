@@ -63,36 +63,15 @@ tables were rebuilt (`admin/barcode_items`, `admin/ndbn_members`, the item catal
 the count of tables in `app/views` is now 78. Worth re-running rather than re-reading.
 (`docs/view-audit.md` was in the same state and has been brought up to date.)
 
-## Sixteen collection-driven tables with no empty state
+## Seven tables with no empty state, deliberately
 
-Found by sweeping `app/views` for a `<tbody>` or `.data-table` driven by a `.each` with no
-`shared/essentials/empty_state` anywhere in the file. `design.md` says *"never render bare empty
-table chrome"*, and the **64 empty states that do exist all pick a `kind:` deliberately** — 29
-`cold_start`, 13 `all_clear`, 9 `no_results`, 13 choosing at render time with
-`essentials_filtered?`. Zero defects among them. These are the tables that have none at all.
+A sweep for a `<tbody>` or `.data-table` driven by a `.each` with no
+`shared/essentials/empty_state` in the file found sixteen. **Nine were built** — see the change
+log. These seven are the remainder, and each shows the line items of a *saved* record whose model
+validates that it has at least one, so the empty branch is unreachable:
 
-Triaged, because roughly half cannot actually be empty:
+`adjustments/show`, `audits/show`, `distributions/validate`, `transfers/show`,
+`transfers/_validate_modal`, `partners/requests/validate`, `requests/show`.
 
-**Reachable-empty, worth an empty state (9).**
-
-| View | Collection |
-| --- | --- |
-| `admin/organizations/_list` | `@organizations` |
-| `admin/partners/index` | `@partners` |
-| `admin/users/_list` | `@users` |
-| `admin/users/_roles` | `user.roles` |
-| `admin/broadcast_announcements/index` | `@broadcast_announcements` |
-| `broadcast_announcements/index` | `@broadcast_announcements` |
-| `partner_users/_users` | `users` |
-| `users/index` | `@users` |
-| `reports/annual_reports/show` | `entries` |
-
-**Cannot be empty in practice (7)** — each shows the line items of a *saved* record, and every one
-of those models validates that it has at least one: `adjustments/show`, `audits/show`,
-`distributions/validate`, `transfers/show`, `transfers/_validate_modal`,
-`partners/requests/validate`, `requests/show`. Worth a state only if that validation is ever
-relaxed.
-
-Not done here because the ask was to check that the existing empty states match each other, and
-they do. Each of the nine needs a title, a body and a decision about whether it offers an action,
-which is nine small copy decisions rather than one mechanical change.
+Worth revisiting only if one of those validations is relaxed. Written down so the next sweep does
+not spend an afternoon rediscovering that they are fine.

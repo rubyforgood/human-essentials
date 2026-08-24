@@ -22,7 +22,7 @@
       <% if item_row.active? %>
         <% if item_row.can_delete?(inventory, kits) %>
           <%= essentials_action_button "Delete", item_path(item_row), method: :delete,
-                variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                variant: :ghost_danger, size: :sm, icon: "bi-trash",
                 confirm: confirm_delete_msg(item_row.name) %>
         <% elsif item_row.can_deactivate_or_delete?(inventory, kits) %>
           <%= essentials_action_button "Deactivate", deactivate_item_path(item_row), method: :delete,

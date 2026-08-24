@@ -21,19 +21,25 @@
 <div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
   <% @report.each_report do |section_name, entries| %>
     <%= render "shared/essentials/card", title: section_name, padded: false do %>
-      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
-        <table class="data-table">
-          <caption><%= section_name %> figures for <%= params[:year] %></caption>
-          <tbody>
-            <% entries.each do |entry_name, value| %>
-              <tr>
-                <th scope="row" class="font-medium text-slate-900"><%= entry_name %></th>
-                <td><%= value %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+      <% if entries.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :all_clear,
+              title: "Nothing recorded for #{section_name}",
+              body: "There were no figures in this section for #{params[:year]}." %>
+      <% else %>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+          <table class="data-table">
+            <caption><%= section_name %> figures for <%= params[:year] %></caption>
+            <tbody>
+              <% entries.each do |entry_name, value| %>
+                <tr>
+                  <th scope="row" class="font-medium text-slate-900"><%= entry_name %></th>
+                  <td><%= value %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

@@ -8,8 +8,8 @@
       <%= essentials_link_button "Edit", edit_admin_organization_path(organization_row.id), variant: :ghost, size: :sm, icon: "bi-pencil" %>
       <% unless Organization.count <= 1 %>
         <%= essentials_action_button "Delete", admin_organization_path(organization_row.id), method: :delete,
-              variant: :ghost, size: :sm, icon: "bi-trash",
-              class: "text-rose-700 hover:bg-rose-50",
+              variant: :ghost_danger, size: :sm, icon: "bi-trash",
+
               confirm: confirm_delete_msg(organization_row.name) %>
       <% end %>
     </div>

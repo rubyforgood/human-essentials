@@ -73,7 +73,7 @@
                 <%= essentials_link_button "Edit", edit_partner_group_path(pg), variant: :ghost, size: :sm, icon: "bi-pencil" %>
                 <% if pg.partners.none? %>
                   <%= essentials_action_button "Delete", partner_group_path(pg), method: :delete,
-                        variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                        variant: :ghost_danger, size: :sm, icon: "bi-trash",
                         confirm: confirm_delete_msg(pg.name) %>
                 <% end %>
               </div>

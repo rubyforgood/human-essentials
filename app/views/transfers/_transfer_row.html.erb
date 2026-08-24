@@ -8,7 +8,7 @@
     <div class="flex justify-end gap-1.5">
       <%= essentials_link_button "View", transfer_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
       <%= essentials_action_button "Delete", transfer_path(transfer_row.id), method: :delete,
-            variant: :ghost, size: :sm, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+            variant: :ghost_danger, size: :sm, icon: "bi-trash",
             confirm: "Are you sure you want to permanently remove this transfer?" %>
     </div>
   </td>

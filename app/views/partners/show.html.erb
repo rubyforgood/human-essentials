@@ -19,7 +19,7 @@
                      confirm: confirm_reactivate_msg(@partner.name))
           else
             concat essentials_action_button("Deactivate partner", deactivate_partner_path(@partner), method: :put,
-                     variant: :ghost, icon: "bi-slash-circle", class: "text-rose-700 hover:bg-rose-50",
+                     variant: :ghost_danger, icon: "bi-slash-circle",
                      confirm: confirm_deactivate_msg(@partner.name))
           end
         } %>

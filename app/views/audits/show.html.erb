@@ -16,7 +16,7 @@
           end
           if @audit.in_progress? || @audit.confirmed?
             concat essentials_action_button("Delete audit", audit_path(@audit), method: :delete,
-                     variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                     variant: :ghost_danger, icon: "bi-trash",
                      confirm: "Are you sure?")
           end
         } %>

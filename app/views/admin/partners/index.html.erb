@@ -8,29 +8,35 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/card", padded: false do %>
           <div class="px-5 py-4">
-            <table class="data-table">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Organization</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @partners.each do |partner| %>
+          <% if @partners.any? %>
+              <table class="data-table">
+                <thead>
                 <tr>
-                  <td><%= partner.name %></td>
-                  <td><%= partner.organization&.name %></td>
-                  <td class="text-right">
-                    <div class="flex justify-end gap-1.5">
-                      <%= essentials_link_button "View", admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-eye" %>
-                      <%= essentials_link_button "Edit", edit_admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-                    </div>
-                  </td>
-              <% end %>
-              </tr>
-              </tbody>
-            </table>
+                  <th>Name</th>
+                  <th>Organization</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @partners.each do |partner| %>
+                  <tr>
+                    <td><%= partner.name %></td>
+                    <td><%= partner.organization&.name %></td>
+                    <td class="text-right">
+                      <div class="flex justify-end gap-1.5">
+                        <%= essentials_link_button "View", admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                        <%= essentials_link_button "Edit", edit_admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                      </div>
+                    </td>
+                <% end %>
+                </tr>
+                </tbody>
+              </table>
+          <% else %>
+            <%= render "shared/essentials/empty_state", kind: :cold_start,
+                  title: "No partners yet",
+                  body: "Partner agencies appear here once a bank invites them. Banks create their own partners." %>
+          <% end %>
           </div>
   <% end %>
 </div>

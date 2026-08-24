@@ -1371,6 +1371,18 @@ deliberately:
 | `:no_results` | A filter matched nothing | Clearing the filter |
 | `:all_clear` | Genuinely nothing to do | Reassurance |
 
+**`cold_start` offers the create action unless one is already on screen.** Eighteen of them offer
+none, and that is right in two situations: a nested list on a detail page where creating happens
+elsewhere, and a card whose footer already carries the button — the line item card's state sits
+60px above **Add another item**, and two buttons doing one job is what the tab-actions pass
+removed.
+
+**A collection-driven table needs one, and the check is whether the collection can be empty.** A
+sweep of `app/views` for a `<tbody>` driven by a `.each` with no empty state found sixteen; nine
+were reachable-empty and were built, and the other seven show the line items of a *saved* record
+whose model validates it has at least one. Those are listed in [todo.md](docs/todo.md) so the next
+sweep does not rediscover them.
+
 ```erb
 <%= render "shared/essentials/empty_state", kind: :no_results,
       title: "No donations found",

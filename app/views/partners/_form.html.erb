@@ -49,7 +49,7 @@
                       class: "min-w-0 flex-1 truncate font-medium text-brand-700 hover:text-brand-800" %>
                 <%= f.hidden_field :documents, multiple: true, value: doc.signed_id %>
                 <%= f.button :button, formmethod: :delete, formaction: attachment_path(doc),
-                      class: essentials_button_classes(variant: :ghost, size: :sm, extra: "text-rose-700 hover:bg-rose-50"),
+                      class: essentials_button_classes(variant: :ghost_danger, size: :sm, ),
                       data: {disable_with: "Please wait..."} do %>
                   <i class="bi-trash" aria-hidden="true"></i>Remove
                 <% end %>

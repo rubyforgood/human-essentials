@@ -78,7 +78,7 @@
         <%= essentials_link_button "Make a correction", edit_donation_path(@donation), variant: :secondary, icon: "bi-pencil" %>
         <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
           <%= essentials_action_button "Delete", donation_path(@donation), method: :delete,
-                variant: :ghost, icon: "bi-trash", class: "text-rose-700 hover:bg-rose-50",
+                variant: :ghost_danger, icon: "bi-trash",
                 confirm: "Are you sure you want to permanently remove this donation?" %>
         <% end %>
       <% end %>

@@ -1,62 +1,68 @@
 <%= render "shared/essentials/card", title: "Users", padded: false do %>
 
   <div class="px-5 py-4">
-    <table class="data-table whitespace-nowrap">
-      <thead>
-        <tr>
-          <th>Name & Email</th>
-          <th>Last Login</th>
-          <th>Invitation Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% users.order(name: :asc).each do |user| %>
+    <% if users.any? %>
+      <table class="data-table whitespace-nowrap">
+        <thead>
           <tr>
-            <td>
-              <div class='flex flex-col'>
-                <span><%= user.name %></span>
-                <small><%= user.email %></small>
-              </div>
-            </td>
-            <td>
-              <small>
-                <% if user.last_sign_in_at.present? %>
-                  <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)</small>
-                <% else %>
-                  <%= essentials_status_pill("Never", tone: :neutral, icon: "bi-dash-circle") %>
-                <% end %>
-              </small>
-            </td>
-            <td>
-              <% if user.invitation_accepted_at %>
-                <%= essentials_status_pill("Accepted", tone: :success, icon: "bi-check-circle") %>
-              <% else %>
-                <div class='flex flex-col justify-center items-start'>
-                  <%= essentials_status_pill("Waiting acceptance", tone: :warning, icon: "bi-hourglass-split") %>
-                  <small class="text-xs text-slate-500">
-                    Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago on <%= user.invitation_sent_at.strftime('%b %d %Y') %></strong>
-                  </small>
-                </div>
-              <% end %>
-            </td>
-            <td class='flex flex-col'>
-              <% unless user.invitation_accepted_at %>
-                <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                  <i class="bi-envelope"></i> Resend Invitation
-                <% end %>
-              <% end %>
-              <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-                   Reset Password
-              <% end %>
-              <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" do %>
-                  <i class="bi-slash-circle"></i> Remove Access
-              <% end %>
-
-            </td>
+            <th>Name & Email</th>
+            <th>Last Login</th>
+            <th>Invitation Status</th>
+            <th>Action</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% users.order(name: :asc).each do |user| %>
+            <tr>
+              <td>
+                <div class='flex flex-col'>
+                  <span><%= user.name %></span>
+                  <small><%= user.email %></small>
+                </div>
+              </td>
+              <td>
+                <small>
+                  <% if user.last_sign_in_at.present? %>
+                    <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)</small>
+                  <% else %>
+                    <%= essentials_status_pill("Never", tone: :neutral, icon: "bi-dash-circle") %>
+                  <% end %>
+                </small>
+              </td>
+              <td>
+                <% if user.invitation_accepted_at %>
+                  <%= essentials_status_pill("Accepted", tone: :success, icon: "bi-check-circle") %>
+                <% else %>
+                  <div class='flex flex-col justify-center items-start'>
+                    <%= essentials_status_pill("Waiting acceptance", tone: :warning, icon: "bi-hourglass-split") %>
+                    <small class="text-xs text-slate-500">
+                      Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago on <%= user.invitation_sent_at.strftime('%b %d %Y') %></strong>
+                    </small>
+                  </div>
+                <% end %>
+              </td>
+              <td class='flex flex-col'>
+                <% unless user.invitation_accepted_at %>
+                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                    <i class="bi-envelope"></i> Resend Invitation
+                  <% end %>
+                <% end %>
+                <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                     Reset Password
+                <% end %>
+                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" do %>
+                    <i class="bi-slash-circle"></i> Remove Access
+                <% end %>
+
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No users yet",
+            body: "Invite someone so this partner can sign in and request items." %>
+    <% end %>
   </div>
 <% end %>

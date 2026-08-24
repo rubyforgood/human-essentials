@@ -121,8 +121,8 @@
                     <%= essentials_link_button "Edit", edit_partners_authorized_family_member_path(member),
                           variant: :ghost, size: :sm, icon: "bi-pencil" %>
                     <%= essentials_action_button "Delete", partners_authorized_family_member_path(member),
-                          method: :delete, variant: :ghost, size: :sm, icon: "bi-trash",
-                          class: "text-rose-700 hover:bg-rose-50", confirm: "Are you sure?" %>
+                          method: :delete, variant: :ghost_danger, size: :sm, icon: "bi-trash",
+                           confirm: "Are you sure?" %>
                   </div>
                 </td>
               </tr>
