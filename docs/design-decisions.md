@@ -3555,3 +3555,52 @@ reverted rather than left in as dead CSS.
   per table rather than assuming, and not checked here.
 - **A `title` tooltip for the full text.** The third time this has come up and the third refusal:
   not shown on keyboard focus, absent on touch, announced on top of the text it duplicates.
+
+
+---
+
+## 2026-08-24 · A tooltip for clipped table cells, after refusing three
+
+**Area.** `clipped_text_controller`, `.tip-bubble`, `design.md`.
+
+**Decision.** Option C of [`clipped-cell-tooltip.html`](mockups/clipped-cell-tooltip.html): a real
+tooltip on hover **and** focus, only on cells whose text is actually clipped.
+
+**Why this reverses three earlier refusals without contradicting them.** I argued against a
+tooltip on the scan button, the remove button and then the clipped cell. Those were one case:
+**a control that needed a name**, where a word solved it for free and a tooltip was a component
+bought to avoid typing one. Truncated text is the opposite — the words are already written,
+already in the DOM, and hidden *on purpose* to keep the table scannable. Revealing them on demand
+is what a tooltip is for, and the systems ship both halves: Carbon has a documented tooltip for
+truncated table text, Ant Design pairs `ellipsis` with a Tooltip, AG Grid has `tooltipField`,
+Salesforce pairs `slds-truncate` with a title. Clipping without revealing was the incomplete half
+of the pattern. `design.md` now says which case is which, so the distinction survives.
+
+**Only where it is clipped, and that is what makes it affordable.** `scrollWidth > clientWidth`
+per cell. A tooltip repeating text you can already read is noise, and a `tabindex` on every notes
+cell would add a tab stop per row — measured, `/adjustments` has **42** notes cells and **0** are
+clipped, so it gains neither a tooltip nor a tab stop. `/purchases` has 14 and all 14 are clipped.
+
+**The bubble is `aria-hidden` and the cell gets no `aria-describedby`** — a correction to the
+mockup, which had used one. CSS clipping is visual only: the whole string is in the DOM and a
+screen reader has already read it, so describing the cell with a copy of its own text would
+announce it twice. That is the main fault of `title`, and it would be no better for being ours.
+
+**WCAG 1.4.13 is why this is a controller.** Dismissible with Escape, hoverable so you can move
+onto the bubble to read or select the text, persistent. The mockup got "hoverable" half right —
+the bubble stayed on screen forever once the pointer left it, because only the cell had a
+`mouseleave`. Fixed in both.
+
+**Alternatives rejected.**
+
+- **The `title` attribute.** Shown in the preview so it could be compared directly: nothing on
+  keyboard focus, nothing on touch, no control over appearance, ~1s delay, and announced on top of
+  the text a screen reader just read.
+- **Making every notes cell focusable.** 42 extra tab stops on one page for no gain.
+- **Rendering the tooltip inside the cell.** It would be clipped by the thing it exists to escape —
+  `.table-scroll`'s overflow and the card's `overflow-hidden`. It is `position: fixed` on the body,
+  which is also why the controller hides it on any scroll: a fixed element does not follow what it
+  points at.
+
+**Touch is the honest gap.** There is no hover on a phone and a tap target the size of a table cell
+fights the row. The detail page remains the answer there, which is what it already was.

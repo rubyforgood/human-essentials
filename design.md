@@ -1377,8 +1377,24 @@ Three things about it:
 
 - **The text is not lost, and that is what makes clipping safe.** CSS clipping leaves the whole
   string in the DOM, so a screen reader reads all of it, and every row carrying one has a **View**
-  action to a page that shows it in full. **No `title` tooltip** — not shown on keyboard focus,
-  absent on touch, and announced on top of the text it duplicates.
+  action to a page that shows it in full.
+- **A clipped cell reveals its text on hover and focus**, from `clipped_text_controller`. This is
+  the second half of the pattern and the systems ship both: Carbon has a documented tooltip for
+  truncated table text, Ant Design pairs `ellipsis` with a Tooltip, AG Grid has `tooltipField`.
+  Three things about ours:
+  - **Only where the text is actually clipped**, from `scrollWidth > clientWidth` per cell. A
+    tooltip repeating text you can already read is noise, and only clipped cells take a
+    `tabindex`, so a table of short comments adds no tab stops — `/adjustments` has 42 notes cells
+    and 0 of either.
+  - **The bubble is `aria-hidden` and the cell gets no `aria-describedby`.** The whole string is
+    already in the DOM and has already been read; describing the cell with a copy of its own text
+    would announce it twice, which is the main fault of `title` and no better for being ours.
+  - **WCAG 1.4.13**: dismissible with Escape, hoverable — you can move onto the bubble to read or
+    select it — and persistent. A `title` is none of those and shows nothing on keyboard focus,
+    which is why this is a controller. Touch has no hover; the detail page is the answer there.
+
+  **Not a general tooltip component.** It reveals text that is present and clipped. A control that
+  needs a *name* gets a visible label or an `aria-label` — see [Icons](#icons).
 - **Not where the row leads nowhere.** `partners/requests/_history` and the partner dashboard have
   no detail page, so a clipped comment would be unreadable rather than one click away. Those use a
   `<details>` disclosure — bounded when collapsed, full text in place, keyboard reachable. That is
