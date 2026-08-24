@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan field width — options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* Annotation furniture -- mockup only, never shipped. */
+  .guide { position: relative; }
+  .guide::after {
+    content: ""; position: absolute; top: 0; bottom: 0; right: 0;
+    border-right: 2px dashed var(--color-rose-500);
+  }
+  .guide-ok::after { border-right-color: var(--color-emerald-500); }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">How wide should the barcode field be?</h1>
+    <p class="max-w-3xl text-slate-600">
+      Its <strong>left</strong> edge already aligns with everything &mdash; the scan bar and the cards
+      above it all sit on the card's <code class="rounded bg-slate-200 px-1 text-xs">px-5</code>, so
+      they start on the same vertical at every width. It is the <strong>right</strong> edge that is
+      unmoored. Every number below was measured on
+      <code class="rounded bg-slate-200 px-1 text-xs">/donations/new</code>.
+    </p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">What is there now, and why it is worse than &ldquo;ragged&rdquo;</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Measured widths and right edges at six viewports</caption>
+        <thead>
+          <tr>
+            <th scope="col">Viewport</th>
+            <th scope="col" class="numeric">Grid column</th>
+            <th scope="col" class="numeric">Storage location right edge</th>
+            <th scope="col" class="numeric">Scan field</th>
+            <th scope="col" class="numeric">Its right edge</th>
+            <th scope="col">Relationship</th>
+          </tr>
+        </thead>
+        <tbody class="tick">
+          <tr><td>1440</td><td class="numeric">346px</td><td class="numeric">655</td><td class="numeric">240px</td><td class="numeric">549</td><td><span class="pill pill-bad">106px short</span></td></tr>
+          <tr><td>1280</td><td class="numeric">293px</td><td class="numeric">602</td><td class="numeric">240px</td><td class="numeric">549</td><td><span class="pill pill-bad">53px short</span></td></tr>
+          <tr><td><strong>1024</strong></td><td class="numeric">207px</td><td class="numeric">516</td><td class="numeric">240px</td><td class="numeric">549</td><td><span class="pill pill-bad">33px <strong>over</strong> — crosses the column</span></td></tr>
+          <tr><td>768</td><td class="numeric">329px</td><td class="numeric">374</td><td class="numeric">240px</td><td class="numeric">285</td><td><span class="pill pill-bad">89px short</span></td></tr>
+          <tr><td>640</td><td class="numeric">265px</td><td class="numeric">310</td><td class="numeric">240px</td><td class="numeric">285</td><td><span class="pill pill-bad">25px short</span></td></tr>
+          <tr><td>375</td><td class="numeric">301px</td><td class="numeric">338</td><td class="numeric">240px</td><td class="numeric">277</td><td><span class="pill pill-bad">61px short</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">The 1024 row is the real fault.</p>
+      <p class="mt-1">
+        A fixed 240px against a fluid three-column grid does not merely stop short of a line &mdash;
+        at <strong>1024px it is 33px wider than the column it sits in</strong>, so it crosses a
+        boundary that every other control on the page respects. A fixed width cannot align to a
+        fluid grid at more than one viewport, and 240px happens to align at none of them.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">The two schools, and which one this is</h2>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">Fill the grid cell <span class="pill pill-info">Carbon, Material, Polaris, Fluent</span></p>
+        <p class="text-sm text-slate-600">
+          The layout grid is the discipline. A control takes the cell it is given; its right edge
+          therefore lands on a line by construction, and nothing has to be measured per field.
+        </p>
+      </div>
+      <div class="card-surface p-5 space-y-2">
+        <p class="text-sm font-semibold">Size to the content <span class="pill pill-info">GOV.UK, USWDS</span></p>
+        <p class="text-sm text-slate-600">
+          Short values of known length get a deliberately narrow field &mdash;
+          <code class="rounded bg-slate-200 px-1 text-xs">govuk-input--width-10</code> and friends
+          &mdash; on the reasoning that width tells you how much is wanted. A ragged right edge is
+          accepted as the cost.
+        </p>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Both are right, about different situations, and I applied the wrong one.</p>
+      <p class="mt-1">
+        GOV.UK's narrow fields sit in a <em>column of stacked fields</em>. The field above and the
+        field below share the left edge, and that repetition is what carries the rhythm &mdash; the
+        ragged right reads as deliberate because there is an obvious column holding everything.
+        <strong>This field has no neighbours.</strong> It is one control alone in a tinted band, so
+        there is no rhythm for a short width to sit inside, and it reads as unfinished. That is what
+        you are seeing.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Three options, drawn to scale</h2>
+    <p class="max-w-3xl text-sm text-slate-600">
+      Each panel shows <strong>Storage location</strong> from the card above and the scan bar
+      beneath it, exactly as they stack on the page. The dashed rule marks the scan field's right
+      edge; <span class="font-semibold text-emerald-700">green</span> means it lands on the same
+      line as the field above, <span class="font-semibold text-rose-700">red</span> means it does not.
+      Resize the window to see each one hold or break.
+    </p>
+
+    <!-- OPTION A -->
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option A &mdash; One grid column, matching Storage location <span class="pill pill-good">recommended</span></h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Donation details</p>
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="guide guide-ok">
+              <label class="block text-sm font-medium text-slate-700">Storage location</label>
+              <select class="mt-1.5 block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Pawnee Main Warehouse</option></select>
+            </div>
+            <div></div><div></div>
+          </div>
+        </div>
+        <div class="bg-slate-50 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Items in this donation</p>
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="guide guide-ok">
+              <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+              <div class="mt-1.5 flex">
+                <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                <button type="button" aria-label="Scan a barcode with the camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+              </div>
+              <p class="mt-1 text-xs text-slate-500">Each scan adds a row below.</p>
+            </div>
+            <div></div><div></div>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">
+        The scan bar joins the same <code class="rounded bg-slate-200 px-1 text-xs">gap-x-5 sm:grid-cols-2 lg:grid-cols-3</code>
+        grid the two cards above already use, and takes column one. <strong>346px at 1440, 293px at
+        1280, 207px at 1024</strong> &mdash; fluid, so it can never overshoot the way a fixed width
+        does. Even at its narrowest the field is 169px for a 138px barcode.
+      </p>
+    </div>
+
+    <!-- OPTION B -->
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option B &mdash; Half the card</h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Donation details</p>
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="guide">
+              <label class="block text-sm font-medium text-slate-700">Storage location</label>
+              <select class="mt-1.5 block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Pawnee Main Warehouse</option></select>
+            </div>
+            <div></div><div></div>
+          </div>
+        </div>
+        <div class="bg-slate-50 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Items in this donation</p>
+          <div class="w-1/2 guide">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan a barcode with the camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">Each scan adds a row below.</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">
+        <strong>540px at 1440.</strong> Aligns with a half, which is a line the page does not
+        otherwise draw &mdash; the cards use thirds at <code class="rounded bg-slate-200 px-1 text-xs">lg</code>,
+        so a half falls between column two and column three. It comes <em>close</em> at
+        <code class="rounded bg-slate-200 px-1 text-xs">md</code>, where the grid is two columns
+        &mdash; but measured, it overshoots by <strong>10px</strong>, which is exactly half the
+        <code class="rounded bg-slate-200 px-1 text-xs">gap-x-5</code> gutter: a grid column is
+        <code class="rounded bg-slate-200 px-1 text-xs">(W&nbsp;&minus;&nbsp;20)&nbsp;/&nbsp;2</code>
+        and a half is <code class="rounded bg-slate-200 px-1 text-xs">W&nbsp;/&nbsp;2</code>. So it
+        is near-miss at one breakpoint and plainly arbitrary at the rest. Also 540px of box for a
+        14-digit barcode.
+      </p>
+    </div>
+
+    <!-- OPTION C -->
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option C &mdash; Leave it content-sized <span class="pill pill-bad">today</span></h3>
+      <div class="card-surface overflow-hidden">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Donation details</p>
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="guide">
+              <label class="block text-sm font-medium text-slate-700">Storage location</label>
+              <select class="mt-1.5 block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Pawnee Main Warehouse</option></select>
+            </div>
+            <div></div><div></div>
+          </div>
+        </div>
+        <div class="bg-slate-50 px-5 py-4">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Items in this donation</p>
+          <div class="w-full max-w-[15rem] guide">
+            <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+            <div class="mt-1.5 flex">
+              <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+              <button type="button" aria-label="Scan a barcode with the camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">Each scan adds a row below.</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">
+        240px at every width, which is the GOV.UK answer applied where its precondition does not
+        hold. Defensible if the scan bar ever gains a second field beside it &mdash; a storage
+        location, say &mdash; because then there would be a column of stacked controls for a short
+        width to sit inside.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Option A.</strong> Put the scan bar on the same grid as the two cards above it and
+        give it column one. Your instinct to match Storage location is the right one, and it is
+        the stronger of the two you offered: a half is a line this page does not draw at
+        <code class="rounded bg-slate-200 px-1 text-xs">lg</code>, whereas a column is a line every
+        other control on the page already sits on.
+      </p>
+      <p>
+        It also fixes the 1024 defect for free. Fluid columns cannot overshoot; a fixed width
+        against a fluid grid was always going to be wrong at every viewport but one.
+      </p>
+      <p class="text-slate-600">
+        <strong>What this costs.</strong> 346px of field for 138px of content at the widest, which
+        is the thing content-sizing is meant to prevent. I think alignment wins here because the
+        field is alone in its band with nothing to establish a rhythm &mdash; but it is a real
+        trade, not a free win, and <code class="rounded bg-slate-200 px-1 text-xs">design.md</code>
+        currently states the content-sizing rule without this caveat. If A is chosen I will correct
+        that entry rather than leave the two contradicting each other.
+      </p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
