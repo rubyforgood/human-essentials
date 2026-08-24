@@ -29,7 +29,7 @@ RSpec.describe "Transfer management", type: :system do
       create_transfer("10", from_storage_location.name, to_storage_location.name, click_confirm: false)
 
       expect(page).to have_content("Confirm this transfer")
-      expect(page).to have_content("Please confirm that the list above is what you meant to transfer and that the comment is correct.")
+      expect(page).to have_content("Confirm that this is what you meant to transfer and that the comment is correct.")
       expect(page).to have_content("No, I need to make changes")
       expect(page).to have_content("Yes, it's correct")
     end

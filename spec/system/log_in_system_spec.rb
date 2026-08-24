@@ -47,7 +47,7 @@ RSpec.describe "Authentication", type: :system, js: true do
         end
 
         it 'should render the warning' do
-          expect(page).to have_content 'This site is for TEST purposes only!'
+          expect(page).to have_content 'This site is for testing only.'
         end
       end
 

@@ -9,7 +9,7 @@ Two things this script is careful about, both of which produced a wrong answer f
 
   * Tailwind escapes `.` and `:` in selectors -- `.mt-0\\.5`, `.focus\\:ring-2`. A regex that
     does not unescape them reports every such utility as undefined. That version found 186
-    "problems", most of which were Tailwind working correctly, so the extractor sanity-checks
+    "problems", most of which were Tailwind working correctly, so the extractor proves itself
     itself against known-good and known-dead tokens before reporting anything.
 
   * A class can be deliberate without being styled: a Stimulus target, a spec selector, or a

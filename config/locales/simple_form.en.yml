@@ -11,7 +11,10 @@ en:
       # `text` and `mark` are unused while `html` is set; both are left as documentation.
       html: '<abbr class="required-marker" title="required">*</abbr>'
     error_notification:
-      default_message: "Please review the problems below:"
+      # Nothing calls `error_notification` now -- the app renders `essentials_error_summary`. The
+      # wording is kept correct anyway so the key is not a landmine: no "please", and no
+      # "below", which is a position and fails WCAG 1.3.3 for anyone who cannot see the layout.
+      default_message: "There is a problem with this form."
     # Examples
     # labels:
     #   defaults:

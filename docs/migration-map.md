@@ -220,7 +220,7 @@ pw bin/design/overlay-audit.js    # opens every dialog and popover
 
 # Every class token the views or the JavaScript use that nothing defines. Expect 0 orphans; the
 # ~32 it also lists are Stimulus targets, spec selectors and gem classes, and are meant to be
-# there. It sanity-checks its own extractor before reporting: Tailwind escapes `.` and `:` in
+# there. It proves its own extractor before reporting: Tailwind escapes `.` and `:` in
 # selectors (`.mt-0\.5`), and a naive regex calls every such utility undefined -- the first
 # version produced 186 findings, ~100 of which were Tailwind working correctly.
 python3 bin/design/undefined-classes.py

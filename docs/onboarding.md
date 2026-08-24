@@ -279,6 +279,12 @@ looks wrong — more than one of them means an earlier restart leaked.
 If a system spec fails in a file you have not touched, still check `free -m` before you check the
 diff. The failure mode is real; it is just not caused by the server existing.
 
+**Copy is audited too.** `ruby bin/design/copy-audit.rb` reads the app's words -- link text that
+says nothing out of context, instructions that depend on position, gendered or ableist wording,
+"please", and shouting. It reads *copy*, not source, so it will not flag an identifier that
+happens to contain a pattern. `design.md` has the rules under **Copy**; the audit checks the
+mechanical half of them.
+
 **Two things about running the browser audits.** They default to `BASE_URL=http://127.0.0.1:3000`,
 so point them somewhere else with that variable rather than assuming they follow whatever server
 you started last. And `config/application.rb` is not reloaded in development — restart the server

@@ -9,7 +9,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
     it 'should prompt prospective users to request an account on the live app' do
       visit new_account_request_path
-      expect(page).to have_link('click here', href: 'https://humanessentials.app/account_requests/new')
+      expect(page).to have_link('request an account on humanessentials.app', href: 'https://humanessentials.app/account_requests/new')
     end
   end
 
@@ -77,7 +77,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
         choose(option: 'partner')
 
-        expect(page).to have_link('here', href: 'https://humanessentials.app/users/sign_in')
+        expect(page).to have_link('Sign in to Human Essentials', href: 'https://humanessentials.app/users/sign_in')
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
         expect(find_field('account_partner')).to_not be_checked
         expect(page).to have_css('#create_bank', visible: true)
         expect(page).to have_css('#partner_info', visible: :hidden)
-        expect(page).to have_content('Please review the problems below')
+        expect(page).to have_css('[data-error-summary]', text: /prevented this from being saved/)
       end
     end
   end

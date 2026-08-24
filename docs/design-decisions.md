@@ -3333,3 +3333,65 @@ the wrong answer.
 - **A wider camera viewport spanning the band.** The viewport stays inside column one with the
   field it belongs to; a preview that broke the column would reintroduce exactly the unmoored edge
   this change removes.
+
+
+---
+
+## 2026-08-24 · A copy audit, and what it had to learn before it could be believed
+
+**Area.** `bin/design/copy-audit.rb` (new), `design.md` &sect; Copy (new), and 56 strings across
+views, mailers and locales.
+
+**Decision.** Copy is part of the design system and gets an audit like everything else. Six
+checks: link text (WCAG 2.4.4), sensory instructions (WCAG 1.3.3), gendered wording, ableist
+wording, "please", and all-capital shouting. `design.md` gains a **Copy** section, which it did
+not have at all — which is why none of this had a rule to drift from.
+
+**The findings, after the audit was made honest.** Gendered: **0**. Ableist: **0** — the app was
+already clean on both, and the value of the checks is that it stays that way. Real: 5 vague link
+labels, 2 sensory instructions, 1 piece of shouting, 48 "please".
+
+**Three things the audit got wrong first, each caught by its own probe table rather than by
+review.** This matters more than the findings, because a copy audit that reports a confident zero
+is worse than none:
+
+- **It read source, not copy.** The first `he/she` pattern matched `render
+  "organizations/header"` — "organization[s/he]ader" contains it. Every check now runs against
+  strings pulled from where copy actually lives: locale values, template text nodes, and the
+  arguments to the helpers that put words on screen.
+- **It did not know a link from a heading.** WCAG 2.4.4 is about link labels and nothing else.
+  Applied to all copy, the vague-text check reported **all sixteen cards titled "Details"** —
+  headings, and entirely correct. Corpus entries carry a kind now, and the count fell 22 → 5.
+- **Its `/x` regexes had their spaces stripped.** Ruby's extended mode removes literal
+  whitespace, so `VAGUE_LINK` was looking for `clickhere` and `SENSORY` for `tothe left`. Every
+  multi-word branch uses `\s+` and every branch has a probe.
+
+A fourth, less subtle: the acronym allowlist was too short, so FPL, JPEG, PDX and GMT reported as
+shouting. 21 → 1. **Adding a real acronym to the list is the right fix; rewording around it is
+not**, and that is written down.
+
+**On short link labels.** Two "More info" links keep their visible words and gain an `aria-label`
+that *extends* them — "More info about the announcement of 22 August". Replacing the visible text
+outright would have satisfied 2.4.4 and broken **WCAG 2.5.3 Label in Name**, which requires the
+visible label to be part of the accessible name, and voice control with it. The audit understands
+that exemption, and the exemption is itself probed: strip the `aria-label` and the finding comes
+back, which was verified rather than assumed.
+
+**What was found on the way.** `account_requests/new` was still rendering simple_form's
+`f.error_notification` rather than the app's `essentials_error_summary` — the single-convention
+sweep in `6d2cdb6e2` looked for a *flash* beside a summary and so never saw it. It surfaced here
+only because the notification's default message, "Please review the problems below:", is copy
+with both a "please" and a position in it.
+
+**Alternatives rejected.**
+
+- **Leaving "please" in mailers and the privacy policy.** Tempting, because it reads as warmth
+  rather than filler. Rejected for consistency: a rule with a "except when it feels nice" clause
+  is not a rule, and none of the 48 read worse without it.
+- **Leaving the Devise locale strings alone** as upstream defaults. They are in our locale files
+  and shown to our users, so they are our copy. The cost is drift if Devise changes them, which
+  is a merge conflict rather than a defect.
+- **Rewording around flagged acronyms.** FPL, NDBN and GTIN are the words the domain uses.
+- **Checking prose in `docs/` and `bin/`.** The audit's scope is what a *user* reads. Three
+  "sanity-check"s in contributor docs were fixed by hand for consistency with the rule, and the
+  audit deliberately does not police documentation.

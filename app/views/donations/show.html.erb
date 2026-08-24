@@ -20,7 +20,7 @@
         <p class="mt-1">
         Donations can only be changed while all of their items are active. To delete this
         donation or make a correction,
-        please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
+        reactivate these items: <%= @donation.inactive_items.map(&:name).join(", ") %>
         </p>
 
       <% end %>
