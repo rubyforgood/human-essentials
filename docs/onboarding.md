@@ -258,12 +258,26 @@ are documented rather than deleted; read [design-decisions.md](design-decisions.
 on any of them, and read the exemptions at the top of the script before adding a check. Every one
 of them is a false positive that was believed once.
 
-**Stop the dev server before running the full suite.** The box has 8GB; `bin/start` is five Puma
-processes, a Delayed Job worker and a Tailwind watcher, and the system specs add a Chromium per
-example. Running both put available memory under 600MB and the suite reported six failures, then
-a hundred, in files that pass on their own — timeouts reported as assertion failures. With the
-server stopped the same commit is 2,962 examples, 0 failures. If a system spec fails in a file
-you have not touched, check `free -m` before you check the diff.
+**You do not have to stop the dev server to run the full suite — but do stop it *properly* when
+you stop it at all.** This note used to say the opposite, and the advice was treating a symptom.
+
+The box has 8GB and the system specs add a Chromium per example, so memory does matter. Two things
+were eating it, neither of them inherent:
+
+- **`workers 2` in `config/puma.rb`.** A two-worker cluster is ~1.4GB for a server one person is
+  looking at. `WEB_CONCURRENCY=0` runs Puma in single mode: **301MB**.
+- **Orphaned `rails jobs:work` processes.** Killing foreman with `pkill -f foreman` does not reap
+  its children. Every restart left the Delayed Job worker and the Tailwind watcher behind, and
+  after six restarts in one session there were **seven job workers holding 2,260MB** — which is
+  the memory pressure that made the suite look flaky in the first place. Foreman shuts them down
+  cleanly on Ctrl-C in a real terminal; a backgrounded one needs the children killed by name.
+
+Started lean the whole stack is **930MB**, and the full suite runs **2,962 examples, 0 failures**
+with the server up and still serving afterwards. Check `ps -eo rss,cmd | grep jobs:work` if memory
+looks wrong — more than one of them means an earlier restart leaked.
+
+If a system spec fails in a file you have not touched, still check `free -m` before you check the
+diff. The failure mode is real; it is just not caused by the server existing.
 
 **Two things about running the browser audits.** They default to `BASE_URL=http://127.0.0.1:3000`,
 so point them somewhere else with that variable rather than assuming they follow whatever server
