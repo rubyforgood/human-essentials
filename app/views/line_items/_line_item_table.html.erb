@@ -56,24 +56,31 @@
   <legend class="sr-only">Items in this <%= noun %></legend>
 
   <% if scan %>
-    <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+    <div class="border-b border-slate-200 bg-slate-50 px-5 py-4" data-barcode-scan>
       <%= label_tag "line-item-scan", "Scan a barcode",
             class: "block text-sm font-medium text-slate-700" %>
       <%# Joined, not two controls with a gap: the field and its button share one border, so they
-          cannot come out different heights the way they did when the button was a separate box. %>
-      <div class="mt-1.5 flex max-w-md">
+          cannot come out different heights the way they did when the button was a separate box.
+
+          15rem, not the width of a column: an input's width is a hint about how much belongs in
+          it, and the longest barcode in common use is a 14-digit GTIN, which measures 138px in
+          this face at this size. The field is 202px inside the group -- room for about 21
+          characters. It was `max-w-md` here and in the mockup, which is 410px of field for 138px
+          of content, and that was a guess rather than a measurement. See design.md. %>
+      <div class="mt-1.5 flex w-full max-w-[15rem]">
         <input type="text" id="line-item-scan" autocomplete="off"
                class="__barcode_item_lookup block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
                placeholder="Barcode entry">
-        <button type="button" id="barcode-scanner-btn"
+        <button type="button"
                 class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                aria-label="Scan a barcode with the camera">
+                aria-label="Scan a barcode with the camera" aria-expanded="false">
           <i class="bi-upc-scan" aria-hidden="true"></i>
         </button>
       </div>
       <p class="mt-1 text-xs text-slate-500">
         Each scan adds a row below, or adds to the row that item is already on.
       </p>
+      <div class="mt-2 hidden overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-2 text-xs text-white [&_canvas]:hidden [&_canvas.drawingBuffer]:block [&_video]:w-full" data-barcode-viewport role="status"></div>
     </div>
   <% end %>
 

@@ -799,6 +799,17 @@ the wrapper mappings explicitly.
   a filled background, or a mark like the required asterisk.
 - `required: true` sets the HTML5 `required` attribute regardless of `browser_validations`.
   Conditional validators are *not* inferred as required — mark them explicitly or not at all.
+- **Size an input to what goes in it, when what goes in it has a known length.** A field's width
+  is the clearest hint available about how much is expected, and a box three times longer than
+  its content invites hesitation about whether the right thing is being asked for. GOV.UK ships
+  fixed width classes (`govuk-input--width-10`, `--width-20`) for exactly this, and USWDS the
+  same; Baymard reports it from checkout testing. The line item scan field is **15rem** because
+  the longest barcode in common use is a 14-digit GTIN, which measures **138px** in Figtree at
+  14px — the field is 202px inside the group, about 21 characters. It was `max-w-md`, 410px of
+  field for 138px of content, which was a guess and not a measurement.
+
+  This does not apply to free text. A name, an address line, an item or a comment has no known
+  length and takes the column it is in.
 
 ### Line item rows
 
@@ -843,6 +854,16 @@ stack takes it to 196px. Placement is explicit (`col-start-*`, `row-start-*`), b
 puts the remove button under the item rather than beside it. Each cell then carries **its own
 label, `sm:hidden`**, since at that width there is no heading row to name it; the `aria-label`
 stays on the control either way, which is what names it when the visible label is `display: none`.
+
+**A camera scanner renders into its own viewport, never into the button that starts it.** Quagga
+is given a `target` element and fills it with a `<video>` and a `<canvas>`; it used to be handed
+the 38px button, which pushed the glyph 339px out of it, and on a successful read the code called
+`.empty()` on that same button and deleted the glyph for good. Each scanner is a
+`[data-barcode-scan]` region holding its input, its button and a `[data-barcode-viewport]`, and
+the button toggles with `aria-expanded`. **Nothing is wired by id**: three partials carried
+`id="barcode-scanner-btn"`, a donation form renders two of them, and the dialog's camera therefore
+drew its picture inside the scan bar's button. axe will not catch that — `duplicate-id` was
+deprecated in axe-core 4.9.
 
 Two traps, both of which produced a defect here:
 

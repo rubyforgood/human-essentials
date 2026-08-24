@@ -3229,3 +3229,60 @@ specific to this screen: a `MutationObserver` whose callback wrote inside the su
 (an unbroken loop that hung the tab on the first scan), and the assumption that jQuery's `.val()`
 and `.trigger()` are visible to a native `addEventListener` (they are not, which left the running
 total one scan behind).
+
+
+---
+
+## 2026-08-24 · The scan field's width, and the camera that drew itself into the button
+
+**Area.** `line_items/_line_item_table`, both `barcode_items/_barcode_modal` partials,
+`utils/barcode_scan.js`.
+
+**Decision.** The scan field is **15rem**, sized to its content rather than to a column. The
+camera renders into a `[data-barcode-viewport]` inside a `[data-barcode-scan]` region, and no
+scanner is wired by id.
+
+**Why not one column wide.** The question was a fair one — the scan bar sits directly above a
+table, and matching a column would give the two a visible relationship. It was rejected because
+the Item column is `1fr`: 904px at 1440 and 377px at 641. Tying the field to it would make the
+width of a barcode box depend on the size of the window, and a barcode is 12 to 14 digits on
+every screen there is. The alignment that does mean something is already there — the scan bar and
+the Item column share the card's `px-5`, so they start on the same vertical.
+
+**Where 15rem comes from.** Measured, not chosen: a 14-digit GTIN — the longest barcode in common
+use, longer than EAN-13 or UPC-A — renders at **138px** in Figtree at 14px including the field's
+padding. The group is 240px, of which the field is 202px and the button 38px, so about 21
+characters fit. The previous value was `max-w-md`, which is **410px of field for 138px of
+content**, and it came from the mockup, where I picked it by eye and never measured it. Industry
+says the same thing in three places: GOV.UK ships fixed-width input classes precisely so that a
+field's width signals expected length, USWDS has the same set, and Baymard reports oversized
+fields causing hesitation in checkout testing. Promoted into `design.md` as a general rule, with
+the explicit carve-out that free text — a name, an address, a comment — takes its column.
+
+**The camera bug, which was three bugs.** Quagga is handed a `target` element and fills it with a
+`<video>` and a `<canvas>`. It was handed **the button**: `target: "#barcode-scanner-btn"`.
+Measured before and after a click, the glyph moved from x=730 to **x=391** — 339px outside the
+38px control that owns it — because the button is a centring flex box and its contents had
+suddenly become a camera feed. Second, on a successful read the code called `.empty()` on that
+same button, deleting the glyph permanently. Both looked like they "reset on refresh" because
+neither was ever persisted. Third, and the reason a fix by id would not have held:
+`id="barcode-scanner-btn"` is in **three partials**, and a donation form renders two of them, so
+pressing the *dialog's* camera button drew the picture inside the *scan bar's* button. axe does
+not report that — `duplicate-id` was deprecated in axe-core 4.9.
+
+A fourth, found while reading rather than from the report: `last_target.prev().val(code)` took
+`$(e.target)`, which is the `<i>` inside the button as often as the button itself, and an icon's
+previous sibling is nothing — so a camera read frequently had nowhere to write its result. It
+uses `e.currentTarget` and the region's own input now.
+
+**Alternatives rejected.**
+
+- **Keeping the button as the target and restoring it afterwards.** The damage is visible for the
+  whole time the camera is open, which is the part the user actually saw.
+- **Unique ids per scanner.** It would work, and it would leave the next person to invent a
+  scheme for generating them in a partial rendered once per card and twice per page. A region
+  with a data attribute needs no scheme.
+- **Auto-running the lookup after a camera read on every scanner.** Done for the line item field,
+  which is the same keypress a handheld reader sends and what `create.js.erb` already simulates.
+  Deliberately *not* done in the barcode dialog: the field there holds the barcode being created,
+  and looking it up is the thing that just failed.

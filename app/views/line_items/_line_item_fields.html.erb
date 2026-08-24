@@ -65,11 +65,12 @@
                          inputmode: "numeric", "aria-label": "Quantity"} %>
     </div>
 
-    <div class="<%= cells[:remove] %>">
+    <%# `self-end` below `sm`: the button shares row 1 with the item's label *and* control, and the
+        section is `items-start`, so left alone it lines up with the word rather than the box.
+        Aligning to the end of the cell puts its bottom on the control's bottom whatever the label
+        is -- an invisible spacer would have done the same thing with a number in it. %>
+    <div class="<%= cells[:remove] %> self-end sm:self-start">
       <% unless local_assigns[:changes_disallowed] %>
-        <%# `sm:mt-0` and the spacer: below `sm` this sits beside the item's label-and-control, so
-            it needs the label's height cleared to line up with the control rather than the word. %>
-        <span class="mb-1 block text-xs sm:hidden" aria-hidden="true">&nbsp;</span>
         <%= remove_element_button "Remove this item", container_selector: "section",
               icon_only: true %>
       <% end %>
