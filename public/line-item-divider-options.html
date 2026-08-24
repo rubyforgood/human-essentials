@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line item row dividers - options</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* Utilities no view uses yet, written out as Tailwind would emit them -- see
+     docs/mockups/README.md. Without these the zebra panel renders with no stripes at all. */
+  .zebra > *:nth-child(odd) { background-color: var(--color-slate-50); }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Does a line item row need a divider?</h1>
+    <p class="max-w-3xl text-slate-600">
+      Four rows, drawn four ways. The count under each panel is the number of <em>distinct
+      horizontal rules</em> the card draws &mdash; measured from the rendered page, not counted by eye.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Why it reads as busy</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">A row of bordered inputs is already a row.</p>
+      <p class="mt-1">
+        In a read-only table a divider earns its place: there is nothing else to separate one line
+        of text from the next. Here every cell holds a control with its own 1px border, so the row
+        is grouped before any divider is drawn &mdash; and the divider then adds a <em>second</em>
+        horizontal line between each pair. On the real page four rows draw <strong>7</strong>
+        card-wide rules; without the dividers the same card draws <strong>4</strong>. The panels
+        below measure themselves the same way, and the count is the first thing in each caption.
+      </p>
+      <p class="mt-2">
+        Editors that do this for a living agree: <strong>Xero</strong>, <strong>Stripe</strong> and
+        <strong>Shopify</strong> draw no divider between editable line items.
+        <strong>QuickBooks</strong> and <strong>Zoho</strong> keep a faint one. Nobody draws a full
+        divider between rows that are already boxes.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Four options</h2>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option A - Dividers between every row</h3>
+      <div class="card-surface overflow-hidden" data-panel>
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+              <div class="mt-1.5 flex">
+                <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+              </div>
+            </div><div></div><div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) - 1,240 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 4) - 1,240 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5) - 860 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 5) - 860 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes - 380 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Wipes - 380 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M) - 145 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Adult briefs (M) - 145 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-info">today</span> Every pair of rows gets a rule on top of the control borders.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option B - No dividers, spacing does the work</h3>
+      <div class="card-surface overflow-hidden" data-panel>
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+              <div class="mt-1.5 flex">
+                <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+              </div>
+            </div><div></div><div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) - 1,240 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 4) - 1,240 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5) - 860 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 5) - 860 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes - 380 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Wipes - 380 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M) - 145 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Adult briefs (M) - 145 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> The control boxes group each row; the bands above and below keep their rules, because those separate different <em>kinds</em> of thing.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option C - Zebra striping</h3>
+      <div class="card-surface overflow-hidden" data-panel>
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+              <div class="mt-1.5 flex">
+                <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+              </div>
+            </div><div></div><div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="zebra">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) - 1,240 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 4) - 1,240 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5) - 860 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 5) - 860 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes - 380 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Wipes - 380 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-2.5">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M) - 145 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Adult briefs (M) - 145 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">Good for scanning a wide grid across many columns. With three columns it is decoration, and the tint fights the white control fills.</p>
+    </div>
+    
+    <div class="space-y-2">
+      <h3 class="text-base font-semibold">Option D - No dividers, more air</h3>
+      <div class="card-surface overflow-hidden" data-panel>
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+          <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Scan a barcode</label>
+              <div class="mt-1.5 flex">
+                <input type="text" placeholder="Barcode entry" class="block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm">
+                <button type="button" aria-label="Scan with camera" class="inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600"><i class="bi-upc-scan" aria-hidden="true"></i></button>
+              </div>
+            </div><div></div><div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-[1fr_7rem_2.375rem] items-center gap-3 border-b border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-500" aria-hidden="true">
+          <div>Item</div><div class="text-right">Quantity</div><div></div>
+        </div>
+        <div class="">
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-3">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 4) - 1,240 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="24" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 4) - 1,240 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-3">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Kids (Size 5) - 860 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="12" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Kids (Size 5) - 860 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-3">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Wipes - 380 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="8" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Wipes - 380 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+          <div class="grid grid-cols-[1fr_7rem_2.375rem] items-start gap-x-3 gap-y-2 px-5 py-3">
+            <div class="min-w-0"><select class="block w-full select-chevron rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm text-slate-900 shadow-sm"><option>Adult briefs (M) - 145 on hand</option></select></div>
+            <div class="min-w-0"><input type="text" value="30" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm text-slate-900 shadow-sm"></div>
+            <div class="self-end"><button type="button" aria-label="Remove Adult briefs (M) - 145 on hand" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700"><i class="bi-trash" aria-hidden="true"></i></button></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700"><i class="bi-plus-lg" aria-hidden="true"></i> Add another item</button>
+          <p class="text-sm text-slate-600">4 items &middot; 74 units</p>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600">Option B with <code class="rounded bg-slate-200 px-1 text-xs">py-3</code> instead of <code class="rounded bg-slate-200 px-1 text-xs">py-2.5</code>. Calmer, and 4px a row taller.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Option B.</strong> Drop the dividers between rows and keep the three that separate
+        <em>bands</em> &mdash; under the scan bar, under the column headings, above the footer.
+        Those mark a change of kind; the ones between rows mark a change of nothing, because the
+        control borders already did it.
+      </p>
+      <p>
+        <strong>D if it still feels tight</strong> once the lines are gone. It costs 4px a row,
+        which on an eight-line donation is 32px &mdash; cheap, and easy to change later.
+      </p>
+      <p class="text-slate-600">
+        <strong>The rule this suggests for design.md:</strong> a divider separates rows of
+        <em>text</em>. Between rows of <em>controls</em> it is redundant, because every control
+        already draws its own box. That is why the index tables keep theirs and this card should
+        not &mdash; and it is testable, which the current "looks busy" is not.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  // Count distinct horizontal rules per panel, from the rendered page.
+  document.querySelectorAll("[data-panel]").forEach(panel => {
+    const box = panel.getBoundingClientRect();
+    const ys = new Set();
+    panel.querySelectorAll("*").forEach(el => {
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      // Container rules only. Width alone is not the discriminator -- in this narrower page the
+      // selects are 95% of the panel, so a threshold counted every control border as a rule and
+      // made the difference between the options look like noise.
+      if (/^(SELECT|INPUT|TEXTAREA|BUTTON|A|LABEL)$/.test(el.tagName)) return;
+      if (r.width < box.width * 0.9) return;
+      if (parseFloat(cs.borderTopWidth) > 0 && cs.borderTopStyle !== "none") ys.add(Math.round(r.top));
+      if (parseFloat(cs.borderBottomWidth) > 0 && cs.borderBottomStyle !== "none") ys.add(Math.round(r.bottom));
+    });
+    const note = panel.parentElement.querySelector("p");
+    const tag = document.createElement("strong");
+    tag.className = "tick";
+    tag.textContent = ys.size + " horizontal rules \u00b7 " + Math.round(box.height) + "px tall \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>

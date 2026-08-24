@@ -99,6 +99,19 @@ Not `New Donation`, `Print Unfulfilled Picklists`, `FMV`. Proper nouns keep thei
 (NDBN, Human Essentials, a partner's name). This is the house style across Ruby for Good and
 it is the single most common review note on UI PRs here.
 
+**That includes `uppercase`, which is how it keeps coming back.** Sentence case is about what the
+reader sees, so a `text-transform` breaks the rule exactly as much as typing the capitals would.
+The only `text-transform` in the stylesheet is `.data-table thead th { text-transform: none }`,
+set deliberately. Uppercase also removes word shape, which is the thing you scan a column of
+headings by.
+
+**A column heading is `text-xs font-semibold text-slate-500`** and nothing else — no
+`uppercase`, no `tracking-wide`. That is what `.data-table thead th` renders, and anything
+outside a `<table>` that heads a column has to match it by hand: at the time of writing the only
+one is the line item grid's heading row, which reintroduced the uppercase eyebrow and had to be
+put back. The `uppercase` utility appears nowhere in `app/views` or `app/helpers`; if a grep
+finds one, that is the regression.
+
 ### Colour
 
 Brand is **indigo**, declared as a `--color-brand-*` scale in `@theme` so `bg-brand-600`,
