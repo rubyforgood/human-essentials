@@ -6,7 +6,7 @@ RSpec.describe PartnerMailer, type: :mailer do
     it "renders the body with text that indicates to recertify and link to where" do
       expect(subject.body.encoded).to include("Hi #{partner.name}")
       expect(subject.body.encoded).to include("It's time to update your agency information!")
-      expect(subject.body.encoded).to include("Please log in to your account at #{new_user_session_url}")
+      expect(subject.body.encoded).to include("Log in to your account at #{new_user_session_url}")
     end
 
     it "should be sent to the partner main email with the correct subject line" do

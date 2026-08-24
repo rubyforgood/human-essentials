@@ -10,7 +10,7 @@
     <% if @distribution.issued_at && !@distribution.future? %>
       <%= render "shared/essentials/callout", tone: :warning do %>
         The current date is past the date this distribution was scheduled for.
-        Please be very careful when editing this record;
+        Take care when editing this record;
         the contents should match what was given to the recipient.
 
       <% end %>

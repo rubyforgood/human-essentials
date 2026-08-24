@@ -14,7 +14,12 @@
           </p>
           <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
           <% if announcement.link.present? %>
+            <%# The visible words stay short because the card is a compact grid cell, and the
+                accessible name carries the context WCAG 2.4.4 wants -- "More info" on its own
+                says nothing in a screen reader's list of links. The visible text is a prefix of
+                the accessible name, which is what WCAG 2.5.3 Label in Name requires. %>
             <%= link_to "More info", announcement.link,
+                  aria: {label: "More info about the announcement of #{announcement.created_at.strftime("%B %-d")}"},
                   class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           <% end %>
         </li>

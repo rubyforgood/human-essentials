@@ -19,10 +19,10 @@ en:
       invitation_instructions:
         subject: "Your Human Essentials App Account Approval"
         hello: "Hello %{email}"
-        someone_invited_you: "Someone has invited you to %{url}, you can accept it through the link below."
+        someone_invited_you: "Someone has invited you to %{url}. Use the Accept invitation button in this email to get started."
         accept: "Accept invitation"
         accept_until: "This invitation will expire at %{due_date} GMT or if a new password reset is triggered."
-        ignore: "If you don't want to accept the invitation, please ignore this email.<br />\nYour account won't be created until you access the link above and set your password."
+        ignore: "If you do not want to accept the invitation, ignore this email.<br />\nYour account will not be created until you use the invitation link and set a password."
   time:
     formats:
       devise:

@@ -24,8 +24,7 @@
         <p class="font-semibold">This distribution cannot be corrected</p>
         <p class="mt-1">
         Distributions can only be corrected while all of their items are active.
-        If you need to make a correction,
-        please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
+        To make a correction, reactivate these items: <%= @distribution.inactive_items.map(&:name).join(", ") %>
         </p>
 
       <% end %>

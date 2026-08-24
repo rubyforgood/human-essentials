@@ -14,7 +14,7 @@
         <p class="mt-1">
         Purchases can only be changed while all of their items are active. To delete this
         purchase or make a correction,
-        please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
+        reactivate these items: <%= @purchase.inactive_items.map(&:name).join(", ") %>
         </p>
 
       <% end %>

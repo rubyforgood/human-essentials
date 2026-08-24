@@ -17,7 +17,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     it 'renders the body' do
       organization.update!(email: "me@org.com")
       expect(mail.body.encoded).to match('This email confirms')
-      expect(mail.body.encoded).to match('For more info, please e-mail me@org.com')
+      expect(mail.body.encoded).to match('For more information, email me@org.com')
       expect(mail.body.encoded).to match('You will receive a notification when a distribution has been created.')
     end
 

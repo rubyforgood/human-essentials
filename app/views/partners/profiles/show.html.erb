@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <% if current_partner.status == "recertification_required" %>
     <%= render "shared/essentials/callout", tone: :danger, icon: "bi-exclamation-triangle text-rose-600", wrapper_class: "mb-6" do %>
-      Please review your application details and submit them for approval.
+      Review your application details and submit them for approval.
     <% end %>
   <% end %>
 

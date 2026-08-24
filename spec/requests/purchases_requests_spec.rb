@@ -402,7 +402,7 @@ RSpec.describe "Purchases", type: :request do
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
         expect(edit).to be_present
-        expect(response.body).not_to match(/please make the following items active:/)
+        expect(response.body).not_to match(/reactivate these items:/)
       end
 
       context "with an inactive item - non-organization admin user" do
@@ -417,7 +417,7 @@ RSpec.describe "Purchases", type: :request do
           # announces nothing -- so the unavailable action is omitted and a banner says why.
           edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
           expect(edit).to be_nil
-          expect(response.body).to match(/please make the following items active: #{item.name}/)
+          expect(response.body).to match(/reactivate these items: #{item.name}/)
         end
       end
 
@@ -434,7 +434,7 @@ RSpec.describe "Purchases", type: :request do
           delete = page.at_css("form[action='#{purchase_path(purchase.id)}'] button")
           expect(edit).to be_nil
           expect(delete).to be_nil
-          expect(response.body).to match(/please make the following items active: #{item.name}/)
+          expect(response.body).to match(/reactivate these items: #{item.name}/)
         end
       end
     end

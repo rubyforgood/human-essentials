@@ -247,7 +247,7 @@ RSpec.describe "Donations", type: :request do
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
         expect(edit).to be_present
-        expect(response.body).not_to match(/please make the following items active:/)
+        expect(response.body).not_to match(/reactivate these items:/)
       end
 
       context "with an inactive item - non organization admin user" do
@@ -263,7 +263,7 @@ RSpec.describe "Donations", type: :request do
           # the reason in a banner instead of shipping a decorative disabled link.
           edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
           expect(edit).to be_nil
-          expect(response.body).to match(/please make the following items active: #{item.name}/)
+          expect(response.body).to match(/reactivate these items: #{item.name}/)
         end
       end
 
@@ -280,7 +280,7 @@ RSpec.describe "Donations", type: :request do
           delete = page.at_css("form[action='#{donation_path(donation.id)}'] button")
           expect(edit).to be_nil
           expect(delete).to be_nil
-          expect(response.body).to match(/please make the following items active: #{item.name}/)
+          expect(response.body).to match(/reactivate these items: #{item.name}/)
         end
       end
     end

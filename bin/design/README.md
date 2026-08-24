@@ -221,7 +221,7 @@ one on a page no sweep visits.
 python3 bin/design/undefined-classes.py
 ```
 
-It sanity-checks its own extractor before reporting anything: Tailwind escapes `.` and `:` in
+It proves its own extractor before reporting anything: Tailwind escapes `.` and `:` in
 selectors (`.mt-0\.5`, `.focus\:ring-2`), and a regex that does not unescape them calls every
 such utility undefined — the first version produced 186 findings, most of which were Tailwind
 working correctly. It also separates deliberate hooks from orphans, because a class can be
@@ -234,3 +234,24 @@ inheritance.
 ```bash
 ruby bin/design/status.rb
 ```
+
+`copy-audit.rb` reads the app's *words* and checks the things axe cannot: link text that says
+nothing out of context (WCAG 2.4.4), instructions that depend on position (WCAG 1.3.3), gendered
+and ableist wording, "please", and all-capital shouting.
+
+```bash
+ruby bin/design/copy-audit.rb
+ruby bin/design/copy-audit.rb --verbose
+```
+
+It reads **copy**, not source, and it distinguishes a **link** from a **heading** — both of which
+it had to learn. A grep cannot tell a sentence from an identifier: the first `he/she` pattern
+matched `render "organizations/header"`. And WCAG 2.4.4 is about link labels alone, so run over
+all copy the vague-text check reported all sixteen cards titled "Details", which are headings and
+perfectly fine. A short label carrying an `aria-label` that extends it is treated as named, which
+is the WCAG 2.5.3 way of keeping a compact visible label — and that exemption is itself probed,
+because it would otherwise be a hole.
+
+Its probe table caught a bug review would not have: in a Ruby `/x` regex literal spaces are
+stripped, so `VAGUE_LINK` was quietly looking for `clickhere`. Every multi-word branch now uses
+`\s+`, and every branch has a probe. Break any check and the script refuses to run.

@@ -525,7 +525,7 @@ RSpec.describe "Distributions", type: :request do
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
         expect(edit).to be_present
-        expect(response.body).not_to match(/please make the following items active:/)
+        expect(response.body).not_to match(/reactivate these items:/)
       end
 
       context "with an inactive item" do
@@ -538,7 +538,7 @@ RSpec.describe "Distributions", type: :request do
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
           expect(edit).to be_nil
-          expect(response.body).to match(/please make the following items active: #{item.name}/)
+          expect(response.body).to match(/reactivate these items: #{item.name}/)
         end
       end
 

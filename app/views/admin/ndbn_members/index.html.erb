@@ -8,9 +8,11 @@
   <div class="space-y-6">
     <%= render "shared/essentials/card", title: "Upload NDBN members" do %>
       <p class="max-w-prose text-sm text-slate-600">
-        The current NDBN member list is at
-        <%# Underlined because it sits inside a sentence: WCAG 1.4.1, and axe's link-in-text-block. %>
-        <%= link_to "this link", "https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915",
+        <%# Underlined because it sits inside a sentence: WCAG 1.4.1, and axe's link-in-text-block.
+            The label names the destination rather than saying "this link" -- WCAG 2.4.4, which is
+            about what a link says when it is read out of context in a list of links. %>
+        The current member list is the
+        <%= link_to "NDBN member spreadsheet", "https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915",
               class: "font-medium text-brand-700 underline hover:text-brand-800" %>.
         Export it as CSV and remove the initial "Updated" row before uploading.
       </p>

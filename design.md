@@ -980,6 +980,57 @@ only when something actually went wrong.
 
 Keys map `success → :success`, `error → :danger`, `alert → :warning`, anything else `→ :info`.
 
+## Copy
+
+The words are part of the design system. `bin/design/copy-audit.rb` checks the mechanical half of
+what follows; the rest is judgement.
+
+**Write the label, not the request.** No "please". GOV.UK, Mailchimp and Shopify all say the same
+thing and the reasoning is the same in each: in an instruction the reader has no choice about it
+is not really a courtesy, and it is a word on every screen. "Check your spam filter", not "Please
+check your spam filter". Forty-seven instances went in one pass and none of them read worse for it.
+
+**A link says where it goes** — WCAG 2.4.4. "Click here", "this link", "read more" and "here" are
+all the same failure: a screen reader can list every link on a page, and out of context those say
+nothing. Name the destination: "NDBN member spreadsheet", not "this link".
+
+  Where the visible label has to stay short — a compact card, a dense row — give the link an
+  `aria-label` that *extends* the visible words rather than replacing them. `More info` with
+  `aria-label="More info about the announcement of 22 August"` satisfies 2.4.4 and also
+  **WCAG 2.5.3 Label in Name**, which requires the visible text to be part of the accessible
+  name. Replacing the words outright breaks 2.5.3 and voice control with it.
+
+**No instruction depends on where something is** — WCAG 1.3.3. "The list above", "the link below",
+"the button on the right" and "the green button" all fail for anyone who cannot see the layout,
+and they go stale the moment the layout reflows — which on this app is at every breakpoint. Say
+what the thing is called: "Confirm that this is what you want to distribute", not "confirm that
+the list above is".
+
+**Gendered and ableist wording.** No `he/she`, `s/he`, `chairman`, `manpower`; no `crazy`,
+`insane`, `lame`, `dummy`, `sanity check`, or `blind to`. The app was already clean on both when
+first audited — the value of the check is that it stays that way.
+
+**Sentence case, and no shouting.** All-capital words are read out letter by letter by some screen
+readers, so emphasis is `font-semibold`, not `TEXT LIKE THIS`. Acronyms are fine and the audit
+keeps a list of the real ones — `FPL`, `NDBN`, `CSV`, `GTIN`. Adding a genuine one to `ACRONYMS`
+is the right fix; rewording around it is not.
+
+**Buttons take a verb**, and the verb is what will happen: "Save", "Add another item", "Remove
+this item". Not "OK", not "Submit".
+
+### What the audit taught, twice
+
+`copy-audit.rb` reads **copy**, not source, and it knows a **link** from a **heading**. Both cost
+a rewrite, and both were caught by its probe table rather than by review:
+
+- Grepping the repository cannot tell a sentence from an identifier. The first `he/she` pattern
+  matched `render "organizations/header"` — "organization[s/he]ader" contains it.
+- WCAG 2.4.4 is about link labels and nothing else. Run against all copy, the vague-text check
+  reported all sixteen cards titled "Details", which are headings and entirely correct.
+
+A third: in a Ruby `/x` regex, literal spaces are stripped, so the first `VAGUE_LINK` was quietly
+looking for `clickhere`. Every multi-word branch now uses `\s+`, and every branch has a probe.
+
 ## Responsive
 
 Tailwind's breakpoints, unchanged: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536. The
