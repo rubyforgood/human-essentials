@@ -799,17 +799,30 @@ the wrapper mappings explicitly.
   a filled background, or a mark like the required asterisk.
 - `required: true` sets the HTML5 `required` attribute regardless of `browser_validations`.
   Conditional validators are *not* inferred as required — mark them explicitly or not at all.
-- **Size an input to what goes in it, when what goes in it has a known length.** A field's width
-  is the clearest hint available about how much is expected, and a box three times longer than
-  its content invites hesitation about whether the right thing is being asked for. GOV.UK ships
-  fixed width classes (`govuk-input--width-10`, `--width-20`) for exactly this, and USWDS the
-  same; Baymard reports it from checkout testing. The line item scan field is **15rem** because
-  the longest barcode in common use is a 14-digit GTIN, which measures **138px** in Figtree at
-  14px — the field is 202px inside the group, about 21 characters. It was `max-w-md`, 410px of
-  field for 138px of content, which was a guess and not a measurement.
+<a id="field-width"></a>
+- **A field takes the width of its grid column. Narrow it only where there is a column of fields
+  to narrow it inside.** Two rules from industry collide here and both are right about different
+  situations. Carbon, Material, Polaris and Fluent fill the cell: the grid is the discipline, and
+  a right edge lands on a line by construction. GOV.UK and USWDS ship fixed width classes
+  (`govuk-input--width-10`, `--width-20`) for short values of known length, on the reasoning that
+  width tells you how much is wanted, and accept a ragged right edge as the cost.
 
-  This does not apply to free text. A name, an address line, an item or a comment has no known
-  length and takes the column it is in.
+  **What decides it is whether the field has neighbours.** GOV.UK's narrow inputs sit in a column
+  of stacked fields; the field above and the field below share the left edge, and that repetition
+  is what makes a short width read as deliberate rather than unfinished. A control *alone* in its
+  band has no such rhythm, so a short width reads as an accident.
+
+  The line item scan bar is the worked example. It was a fixed `15rem`, sized to the 14-digit
+  GTIN that is the longest barcode in common use — **138px** in Figtree at 14px. It aligned with
+  nothing, and a fixed width cannot align to a fluid grid at more than one viewport: it was 106px
+  short of the column at 1440 and **33px wider than it at 1024**, crossing a boundary every other
+  control respects. It is on the same `gap-x-5 sm:grid-cols-2 lg:grid-cols-3` grid as the cards
+  above it now and takes column one, so it lands on the storage location select's edges at every
+  width. The content measurement did not go to waste — it is the check that the column is never
+  *too small*: at 1024, the narrowest the grid gets, the field is 169px for 138px of barcode.
+
+  Free text — a name, an address line, an item, a comment — has no known length and simply takes
+  its column.
 
 ### Line item rows
 
@@ -845,7 +858,9 @@ Four rules, all of which the hand-assembled version broke:
 
 The scan field and its button are **joined** — one rounded rectangle sharing a border — rather
 than two controls with a gap between them. That is what keeps them the same height by
-construction; as separate boxes they had drifted to 38px and 42px.
+construction; as separate boxes they had drifted to 38px and 42px. The pair sits in **column one
+of the same grid the cards above use**, not at a width of its own — see
+[field width](#field-width).
 
 **Below `sm` the row stacks** and the heading row disappears with it: item and the remove button
 on the first line, quantity beneath. Four columns at 320px leaves the item picker **72px**, which
