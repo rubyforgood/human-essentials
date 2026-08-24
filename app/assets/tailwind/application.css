@@ -548,3 +548,68 @@ trix-toolbar .trix-button:focus-visible {
   padding-left: 0.75rem;
   padding-right: 1.75rem;
 }
+
+/*
+ * select2's *box*, which the arrow pass above left alone -- and which was the larger half of the
+ * problem. The vendored stylesheet draws a 28px-tall, 4px-radius, 16px-text control in a #aaa
+ * border; every other control in the app is 38px, 8px, 14px in slate-300. Beside one on the same
+ * row the widget is 10px short and visibly rounder, which is what made the donation form's item
+ * picker look like it came from a different application. Six selects across five views.
+ *
+ * 2.375rem rather than a spacing step: the app's control height is py-2 + a 14px line box + two
+ * 1px borders, and there is no Tailwind size that lands on it. The number is the same one the
+ * icon buttons on a line item row use.
+ *
+ * Unlayered, for the same reason as the arrow rules above.
+ */
+.select2-container--default .select2-selection--single {
+  height: 2.375rem;
+  border-radius: var(--radius-lg);
+  border-color: var(--color-slate-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  /* 36px, the box less its two borders, so the value is centred without a flex context --
+     select2 positions the arrow absolutely against this element and flex moves it. */
+  line-height: 2.25rem;
+  font-size: var(--text-sm);
+  color: var(--color-slate-900);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: var(--color-slate-400);
+}
+
+/* The arrow box is `top: 1px; height: 26px` in the vendored file, which centred a glyph in a
+   28px control and left it 5px high in a 38px one. */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: calc(100% - 2px);
+}
+
+/*
+ * The multi-select, which four of the six select2 selects are -- product drives' tags, a
+ * partner's requestable items, and both of the organization pages'. Same 4px radius, #aaa border
+ * and 16px text as the single. `min-height` rather than `height`, because a multi-select is
+ * supposed to grow as chips are added to it; it starts on the app's control height instead of
+ * 32px, so an empty one sits level with the inputs around it.
+ */
+.select2-container--default .select2-selection--multiple {
+  min-height: 2.375rem;
+  border-radius: var(--radius-lg);
+  border-color: var(--color-slate-300);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--text-sm);
+  color: var(--color-slate-900);
+}
+
+/* Focus, which select2 does not style at all: the same ring every other control gets, so
+   tabbing through a form does not lose the outline for one field. */
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default.select2-container--open .select2-selection--multiple {
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-brand-500) 30%, transparent);
+  outline: none;
+}
