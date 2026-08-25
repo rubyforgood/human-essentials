@@ -143,3 +143,52 @@ RSpec.describe "Row action menus", type: :system, js: true do
     end
   end
 end
+
+RSpec.describe "Scrolling tables say so", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
+  before { sign_in user }
+
+  # A wide table may scroll -- Reflow exempts data tables -- but it has to admit it. Before this,
+  # /distributions hid 486px of columns behind an overlay scrollbar taking 0px of height, with no
+  # visual signal at all. See design.md.
+  it "marks the edge that has content behind it, and only that edge" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page.evaluate_script("document.querySelector('.table-scroll').scrollWidth >" \
+                                " document.querySelector('.table-scroll').clientWidth")).to be true
+    # Matched with `have_css` rather than read off the node, so Capybara waits for the scroll
+    # listener instead of racing it.
+    expect(page).to have_css(".table-scroll[data-overflow='end']")
+
+    page.execute_script(
+      "document.querySelector('.table-scroll').scrollLeft = " \
+      "document.querySelector('.table-scroll').scrollWidth"
+    )
+    expect(page).to have_css(".table-scroll[data-overflow='start']")
+  end
+
+  it "leaves a table that fits with no fade at all" do
+    create(:vendor, organization: organization, business_name: "Costco")
+    visit vendors_path
+
+    # `evaluate_script` evaluates an expression, so no `const` -- it is a syntax error there.
+    fits = page.evaluate_script("document.querySelector('.table-scroll').scrollWidth <=" \
+                                " document.querySelector('.table-scroll').clientWidth + 1")
+    expect(fits).to be true
+    expect(page).to have_css(".table-scroll[data-overflow='']")
+  end
+
+  # The fade sits over the rightmost column, which on these tables holds the actions menu.
+  it "never intercepts a click" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    pointer_events = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::after').pointerEvents"
+    )
+    expect(pointer_events).to eq("none")
+  end
+end

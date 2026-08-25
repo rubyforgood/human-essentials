@@ -1403,6 +1403,44 @@ by tabbing through eleven buttons. A one-off disclosure does not need one.
 Three copies of this markup existed before it, and they had drifted: only one wrapped its
 trigger in a heading, and only one put its actions outside the button.
 
+<a id="a-scrolling-table-says-so"></a>
+**A scrolling table says so.** A wide table is allowed to scroll — [Reflow](#responsive) exempts
+data tables — but it has to admit it. Measured on `/distributions` before this existed: **486px of
+columns off screen**, the scrollbar an overlay one taking **0px** of height, and no fade, shadow or
+hint of any kind. The only signifier was `aria-label="Table, scrollable"`.
+
+That gap is instructive about the audits. The region was built for the keyboard and the screen
+reader and serves both — a focusable `role="region"` with a name — and **that is exactly what the
+audits check**. An overlay scrollbar is invisible to a computed-style test, so nothing flagged the
+one group left out: people looking at it with a mouse.
+
+Two signals, and only one of them is load-bearing:
+
+- **A fade at whichever edge has content behind it.** `table_scroll_controller` puts `start`, `end`,
+  both or neither in `data-overflow`; the CSS draws what it names. Carbon, Material, Ant Design,
+  GitHub and Notion all use this. **Directional on purpose**: a fade always on both edges is
+  decoration, one only where content is hidden is information — a table that fits gets none.
+- **A styled scrollbar**, which is a bonus and not the signal. `::-webkit-scrollbar` makes Chrome
+  and Safari draw a classic one that takes real space, but Firefox ignores it and `scrollbar-width`
+  cannot force a scrollbar to reserve space. It could not be verified in headless Chromium at all,
+  even with `--disable-features=OverlayScrollbar`.
+
+Three things about how it is built:
+
+- **The fade is on the *parent*, via `:has()`**, because a pseudo-element on the scroller scrolls
+  away with the content — the usual way this gets built wrong. Every `.table-scroll` sits directly
+  inside a card's body div, so the parent is a reliable anchor and none of the **66** regions needed
+  a wrapper adding by hand.
+- **`pointer-events: none`, always.** It is decoration over the rightmost column, which on these
+  tables is the actions menu. Hit-tested: the trigger and the pinned cell's link are both reachable
+  through it.
+- **One controller on the shell, not 66 attributes in views.** `scroll` does not bubble but it does
+  capture, so a single listener on the root hears every region, and a table arriving in a Turbo
+  frame is picked up without the view knowing the controller exists.
+
+A background-gradient version needs no JavaScript — the `background-attachment: local` trick — and
+does not work here: the table's rows are opaque white and paint straight over it.
+
 <a id="table-rows-are-one-line"></a>
 **A table row is one line.** `.data-table td` is `nowrap`. A wide table can have short rows or fit
 the screen, not both, and every system that ships data tables picks the short row — Carbon,
