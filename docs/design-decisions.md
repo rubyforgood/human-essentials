@@ -3604,3 +3604,63 @@ the bubble stayed on screen forever once the pointer left it, because only the c
 
 **Touch is the honest gap.** There is no hover on a phone and a tap target the size of a table cell
 fights the row. The detail page remains the answer there, which is what it already was.
+
+
+---
+
+## 2026-08-25 · A table row is one line, with three classes that make that survivable
+
+**Area.** `.data-table td`, `.wrap`, `.name`, `.pin-col`, `clipped_text_controller`, `design.md`.
+
+**Decision.** Option C of [`table-row-height-options.html`](mockups/table-row-height-options.html)
+plus C2 and C3 of [`long-names-in-tables.html`](mockups/long-names-in-tables.html): cells do not
+wrap, a name column is capped at 18rem, the identifying column is pinned, and anything clipped is
+revealed on hover and focus.
+
+**Why nowrap.** A wide table can have short rows or fit the screen, not both. Carbon, Material,
+Stripe and Linear all pick the short row, because a table is read *down* a column and a ragged row
+height breaks that, while a sideways scroll is a deliberate act you take once — and WCAG 1.4.10
+Reflow exempts data tables from the no-sideways-scroll rule for the same reason. Measured:
+`/distributions` **1,339px tall with three row heights → 943px with one**, `/purchases` 1,111 → 783.
+Four tables were already single-line and did not move.
+
+**Why nowrap alone was not enough, which the user found before I did.** It hands the layout to
+whoever typed the longest value. Measured on `/distributions`: one 72-character partner name took
+that column from 263px to **493px** and dropped the columns visible without scrolling from **8 to
+6** — the first to go being Total value. There was no limit of any kind. `.name` caps it at 18rem,
+and **the number is measured**: the longest values in the database are a 32-character partner and a
+36-character item, about 263px, so the cap is inert on everything that exists today and engages
+only on outliers. A cap that fired constantly would be a different, worse design. It is a *width*,
+not a character count, because in proportional type "Illinois" and "Warehouse" are both nine
+characters and 12px apart.
+
+**Pinning answers the half a cap cannot.** Capping stops one row ruining the table; pinning stops
+the sideways scroll costing you the row's identity. Without it the partner cell sits at **−542px**
+once `/distributions` is scrolled right. `background-color: inherit` rather than white, so the cell
+keeps whatever the row is doing — hover, the new-record highlight, zebra striping — instead of
+drawing a white stripe through it. Verified under hover: row and pinned cell both
+`oklch(0.984 0.003 247.858)`.
+
+**A claim of mine that was wrong.** Recommending the cap, I said the reveal was "already built for
+any clipped cell". It was not — `clipped_text_controller` queried `td.notes`, so a capped name
+would have clipped with no way to read it. It now keys on **any** cell where
+`scrollWidth > clientWidth`, which *is* the property: a wrapping cell grows downwards and an
+uncapped `nowrap` cell grows sideways, so a cell only overflows when something is clipping it.
+Keying on a class list would have failed again at the third kind of column. Reads are batched
+before writes, because `/adjustments` is 42 rows and interleaving them re-lays-out per cell.
+
+**The escape hatch is not hypothetical.** `/item_categories` renders a `<ul>` of item links in a
+cell; a list on one line is unusable, and it keeps all twelve links with `.wrap`.
+
+**Alternatives rejected**, all recorded in the second mockup: priority-based column hiding (needs a
+priority per column and hides data silently, poor on a page people reconcile numbers from),
+user-chosen columns (storage, defaults and a settings UI, out of proportion), and a card layout
+below `md` (solves the narrow case, does nothing for the desktop case being asked about). **Fewer
+columns is still the better answer for `/distributions` specifically** and remains open: twelve
+columns, two adjacent dates, a shipping cost empty on every seeded row. Only dropping a column
+makes that table narrower *and* shorter.
+
+**A selector mistake worth recording.** The mockup's sticky panel silently did nothing:
+`td.name:first-of-type` counts element *type*, so it means "a `td` that is `.name` and the first
+`td`" — and the first `td` is the ID cell. It matched nothing and the panel behaved exactly like
+the one above it while claiming to demonstrate pinning. The shipped version uses an explicit class.

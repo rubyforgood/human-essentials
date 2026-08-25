@@ -270,6 +270,32 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /*
+   * A table row is one line. A wide table can have short rows or fit the screen, not both, and
+   * every system that ships data tables picks the short row: Carbon, Material, Stripe and Linear
+   * all scroll sideways instead. A table is read *down* a column, and a ragged row height breaks
+   * that; a horizontal scroll is a deliberate act you take once. WCAG 1.4.10 Reflow exempts data
+   * tables from the no-sideways-scroll rule for exactly this reason, and every table here already
+   * sits in a focusable `.table-scroll` region.
+   *
+   * Measured: `/distributions` went 1,339px tall with three row heights to 943px with one, and
+   * `/purchases` 1,111 to 783. Four tables were already single-line and did not move.
+   *
+   * `td` only. Measured, adding `th` changes nothing -- these columns are sized by their content,
+   * not their headings -- and leaving a heading free to wrap stops a long one widening a column
+   * by itself.
+   */
+  .data-table td {
+    white-space: nowrap;
+  }
+
+  /* The escape hatch, and it is not hypothetical: `/item_categories` holds a `<ul>` of item links
+     in a cell, and any cell holding a paragraph rather than a value needs the same. Without it the
+     next person meets the rule as an obstacle and reaches for an inline style. */
+  .data-table td.wrap {
+    white-space: normal;
+  }
+
   .data-table .date {
     white-space: nowrap;
   }
@@ -295,6 +321,48 @@
    * it in full. No `title` tooltip -- not shown on keyboard focus, absent on touch, and announced
    * on top of the text it duplicates. See design.md.
    */
+  /*
+   * A name, once cells no longer wrap. `nowrap` alone hands the layout to whoever typed the longest
+   * value: measured on `/distributions`, one 72-character partner name took that column from 263px
+   * to **493px** and dropped the columns visible without scrolling from 8 to 6 -- the first to go
+   * being Total value. The cap takes it back to 288px.
+   *
+   * 18rem is measured rather than chosen. The longest values in the database are a 32-character
+   * partner and a 36-character item, about 263px with padding, so the cap is **inert on every value
+   * that exists today** and engages only on the outliers that would otherwise wreck the layout. A
+   * cap that fired constantly would be a different, worse design.
+   *
+   * A width, not a character count: in proportional type "Illinois" and "Warehouse" are both nine
+   * characters and 12px apart.
+   */
+  .data-table .name {
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /*
+   * The column that says which row you are on, pinned so a sideways scroll does not cost you it.
+   * Without this the partner cell sits at -542px once `/distributions` is scrolled right. Excel,
+   * AG Grid and Carbon all pin the identifying column.
+   *
+   * `background-color: inherit` so the cell keeps whatever the row is doing -- hover, the highlight
+   * on a just-created record, zebra striping on the itemized reports. An opaque colour of its own
+   * would show a white stripe through a hovered row.
+   */
+  .data-table .pin-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: inherit;
+    box-shadow: 1px 0 0 var(--color-slate-200);
+  }
+
+  .data-table tbody tr,
+  .data-table thead tr {
+    background-color: white;
+  }
+
   .data-table .notes {
     max-width: 16rem;
     overflow: hidden;

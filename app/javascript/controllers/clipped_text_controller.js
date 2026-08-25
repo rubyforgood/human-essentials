@@ -3,10 +3,10 @@ import { Controller } from "@hotwired/stimulus";
 /*
  * Reveals the full text of a table cell that `.notes` has clipped.
  *
- * `.data-table .notes` caps a free-text column at 16rem and clips it, which is what keeps a table
- * of comments scannable -- see design.md, Long text in a table. This gives the clipped text back
- * on demand, which is the half of the pattern Carbon, Ant Design, AG Grid and Salesforce all ship
- * alongside the truncation.
+ * `.data-table` caps and clips two kinds of column -- `.notes` for free text at 16rem and `.name`
+ * for a name at 18rem -- which is what keeps a wide table scannable. See design.md, Long text in a
+ * table. This gives the clipped text back on demand, the half of the pattern Carbon, Ant Design,
+ * AG Grid and Salesforce all ship alongside the truncation.
  *
  * Three decisions worth knowing:
  *
@@ -65,11 +65,22 @@ export default class extends Controller {
 
   // Re-run on resize and after a frame swap: a cell clipped at one width is not at another, and
   // the filter bars replace whole tables without a page load.
+  //
+  // Every `td`, not a list of column classes. `scrollWidth > clientWidth` *is* the property -- a
+  // cell only overflows when something is clipping it, because a wrapping cell grows downwards and
+  // a `nowrap` cell with no cap grows sideways. Keying on `.notes` meant that capping a second kind
+  // of column silently produced text nobody could read, and would have again for the third.
+  //
+  // Read every measurement first, then write. Interleaving them makes the browser re-layout once
+  // per cell, and /adjustments has 42 rows.
   scan() {
     this.hide();
-    this.element.querySelectorAll("td.notes").forEach((cell) => {
-      const clipped = cell.scrollWidth > cell.clientWidth && cell.textContent.trim() !== "";
-      if (clipped) {
+    const cells = [...this.element.querySelectorAll(".data-table td")];
+    const clipped = cells.map(
+      (cell) => cell.scrollWidth > cell.clientWidth && cell.textContent.trim() !== ""
+    );
+    cells.forEach((cell, i) => {
+      if (clipped[i]) {
         cell.dataset.clipped = "true";
         cell.tabIndex = 0;
       } else {
@@ -80,7 +91,7 @@ export default class extends Controller {
   }
 
   cellFor(target) {
-    return target instanceof Element ? target.closest("td.notes[data-clipped]") : null;
+    return target instanceof Element ? target.closest("td[data-clipped]") : null;
   }
 
   onOver(event) {

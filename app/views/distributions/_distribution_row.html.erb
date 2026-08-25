@@ -1,12 +1,12 @@
 <% has_inactive_item = @distributions_with_inactive_items.include?(distribution_row.id) %>
 <tr class="<%= "bg-amber-50" if distribution_row.id == @highlight_id %> <%= "highlight" if distribution_row.id == @highlight_id %>">
-  <td class="font-medium text-slate-900">
+  <td class="pin-col font-medium text-slate-900">
     <%= link_to distribution_row.id, distribution_path(distribution_row), class: "text-brand-700 hover:text-brand-800" %>
   </td>
-  <td><%= distribution_row.partner.name %></td>
+  <td class="name"><%= distribution_row.partner.name %></td>
   <td class="date"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
-  <td><%= distribution_row.storage_location.name %></td>
+  <td class="name"><%= distribution_row.storage_location.name %></td>
   <td class="quantity"><%= number_with_delimiter(@distribution_totals[distribution_row.id].quantity) %></td>
   <td class="numeric"><%= dollar_value(@distribution_totals[distribution_row.id].value) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
