@@ -16,33 +16,31 @@
     <td class="notes"><%= item_row.request_units.pluck(:name).join(", ") %></td>
   <% end %>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5 whitespace-nowrap">
-      <%= essentials_link_button "View", item_path(item_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Edit", edit_item_path(item_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-      <% if item_row.active? %>
-        <% if item_row.can_delete?(inventory, kits) %>
-          <%= essentials_action_button "Delete", item_path(item_row), method: :delete,
-                variant: :ghost_danger, size: :sm, icon: "bi-trash",
-                confirm: confirm_delete_msg(item_row.name) %>
-        <% elsif item_row.can_deactivate_or_delete?(inventory, kits) %>
-          <%= essentials_action_button "Deactivate", deactivate_item_path(item_row), method: :delete,
-                variant: :ghost, size: :sm, icon: "bi-slash-circle",
-                confirm: confirm_deactivate_msg(item_row.name) %>
-        <% else %>
-          <%# An item still held in inventory or used by a kit cannot be deactivated. The
-              control stays a real disabled <button> so the state reaches assistive tech, and
-              the reason is sr-only text rather than a hover-only title. %>
-          <%= button_to deactivate_item_path(item_row), method: :delete, disabled: true,
-                form_class: "inline-block",
-                class: essentials_button_classes(variant: :ghost, size: :sm) do %>
-            <i class="bi-slash-circle" aria-hidden="true"></i>Deactivate<span class="sr-only">&nbsp;— unavailable while this item is still in inventory or used by a kit</span>
-          <% end %>
-        <% end %>
-      <% else %>
-        <%= essentials_action_button "Restore", restore_item_path(item_row), method: :patch,
-              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: confirm_restore_msg(item_row.name) %>
-      <% end %>
-    </div>
+    <%
+      row_items =
+        if !item_row.active?
+          [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
+           {label: "Restore", path: restore_item_path(item_row), icon: "bi-arrow-counterclockwise",
+            method: :patch, confirm: confirm_restore_msg(item_row.name)}]
+        elsif item_row.can_delete?(inventory, kits)
+          [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
+           {label: "Delete", path: item_path(item_row), icon: "bi-trash", method: :delete,
+            tone: :danger, confirm: confirm_delete_msg(item_row.name)}]
+        elsif item_row.can_deactivate_or_delete?(inventory, kits)
+          [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
+           {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
+            method: :delete, confirm: confirm_deactivate_msg(item_row.name)}]
+        else
+          # An item still held in inventory or used by a kit cannot be deactivated. The action
+          # stays in the menu, disabled, with the reason as sr-only text rather than a hover-only
+          # title -- so the state and the why both reach assistive tech.
+          [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
+           {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
+            method: :delete, disabled: true,
+            reason: "unavailable while this item is still in inventory or used by a kit"}]
+        end
+    %>
+    <%# No visible View: the item's name in this row already links to it. %>
+    <%= render "shared/essentials/row_actions", label: item_row.name, items: row_items %>
   </td>
 </tr>

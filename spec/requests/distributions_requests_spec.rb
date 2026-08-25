@@ -117,7 +117,10 @@ RSpec.describe "Distributions", type: :request do
           reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] button")
           expect(edit).to be_nil
           expect(reclaim).to be_nil
-          expect(response.body).to match(/Has inactive items/)
+          # The explanation moved to a status pill in the Status column: as a sentence under the
+          # actions it was 299px on one line once table cells stopped wrapping, and it held the
+          # actions column at 331px on every row.
+          expect(response.body).to match(/Inactive items/)
         end
       end
 

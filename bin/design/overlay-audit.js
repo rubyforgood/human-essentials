@@ -113,6 +113,8 @@ async function checkPopovers(page, path, findings) {
         onScreen: r.left >= -1 && r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1,
         hidden: panel.hidden,
         named: Boolean(panel.getAttribute("role")),
+        role: panel.getAttribute("role"),
+        items: panel.querySelectorAll("[role=menuitem]").length,
         shadow: getComputedStyle(panel).boxShadow
       };
     });
@@ -123,6 +125,18 @@ async function checkPopovers(page, path, findings) {
     if (!state.onScreen) findings.push(`${where}: extends past the viewport`);
     if (!state.named) findings.push(`${where}: panel has no role`);
     if (!state.shadow.includes("20px 25px")) findings.push(`${where}: not on the popover surface`);
+
+    // A panel that calls itself a `menu` has to behave like one: the ARIA menu pattern requires
+    // arrow-key movement between items. The account menu claimed `role="menu"` from the day it was
+    // built and never implemented it, and nothing noticed until row action menus multiplied the
+    // claim by 62 -- so the claim is checked here rather than taken on trust.
+    if (state.role === "menu" && state.items > 1) {
+      const before = await page.evaluate(() => document.activeElement?.textContent?.trim());
+      await page.keyboard.press("ArrowDown");
+      await page.waitForTimeout(120);
+      const after = await page.evaluate(() => document.activeElement?.textContent?.trim());
+      if (before === after) findings.push(`${where}: role="menu" but ArrowDown does not move focus`);
+    }
 
     await page.keyboard.press("Escape");
     await page.waitForTimeout(200);

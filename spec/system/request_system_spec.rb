@@ -266,7 +266,7 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       it 'should set the request as canceled and contain the reason' do
-        click_on 'Cancel'
+        click_row_action "Cancel"
         fill_in 'Cancellation reason *', with: reason
         click_on 'Yes, cancel this request'
 
@@ -276,7 +276,7 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       it 'should show the partners name, requesters email, request date, comments' do
-        click_on 'Cancel'
+        click_row_action "Cancel"
 
         expect(page).to have_content request.partner.name
         expect(page).to have_content request.partner.email

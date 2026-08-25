@@ -8,25 +8,28 @@
   <td><%= vendor_row&.email %></td>
   <td class="quantity"><%= number_with_delimiter(vendor_row&.volume) %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", vendor_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Edit", edit_vendor_path(vendor_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-      <% if vendor_row.active? %>
-        <% if vendor_row&.purchases&.none? %>
-          <%= essentials_action_button "Delete", vendor_path(vendor_row), method: :delete,
-                variant: :ghost_danger, size: :sm, icon: "bi-trash",
-
-                confirm: confirm_delete_msg(vendor_row.business_name) %>
-        <% else %>
-          <%= essentials_action_button "Deactivate", deactivate_vendor_path(vendor_row), method: :put,
-                variant: :ghost, size: :sm, icon: "bi-slash-circle",
-                confirm: confirm_deactivate_msg(vendor_row.business_name) %>
-        <% end %>
-      <% else %>
-        <%= essentials_action_button "Reactivate", reactivate_vendor_path(vendor_row), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: confirm_reactivate_msg(vendor_row.business_name) %>
-      <% end %>
-    </div>
+    <%
+      row_items =
+        if vendor_row.active?
+          if vendor_row&.purchases&.none?
+            [{label: "Edit", path: edit_vendor_path(vendor_row), icon: "bi-pencil"},
+             {label: "Delete", path: vendor_path(vendor_row), icon: "bi-trash", method: :delete,
+              tone: :danger, confirm: confirm_delete_msg(vendor_row.business_name)}]
+          else
+            [{label: "Edit", path: edit_vendor_path(vendor_row), icon: "bi-pencil"},
+             {label: "Deactivate", path: deactivate_vendor_path(vendor_row), icon: "bi-slash-circle",
+              method: :put, confirm: confirm_deactivate_msg(vendor_row.business_name)}]
+          end
+        else
+          [{label: "Edit", path: edit_vendor_path(vendor_row), icon: "bi-pencil"},
+           {label: "Reactivate", path: reactivate_vendor_path(vendor_row), icon: "bi-arrow-counterclockwise",
+            method: :put, confirm: confirm_reactivate_msg(vendor_row.business_name)}]
+        end
+    %>
+    <%# A visible View: nothing else in this row links to the vendor. %>
+    <%= render "shared/essentials/row_actions",
+          label: vendor_row.business_name.presence || "this vendor",
+          primary: essentials_link_button("View", vendor_row, variant: :ghost, size: :sm, icon: "bi-eye"),
+          items: row_items %>
   </td>
 </tr>
