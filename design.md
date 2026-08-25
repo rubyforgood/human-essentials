@@ -594,6 +594,23 @@ it. Both menus render their items through `shared/essentials/menu_items`, so wha
 its roles, its tones, and the difference between a disabled link and a disabled form control — has
 one definition rather than two that drift.
 
+**One item is not a menu**, and the component knows it: given a single item it renders a plain
+button instead. Menu contents are usually conditional — the picklist on `/requests` only exists
+while something is unfulfilled — so an organisation with requests but none outstanding would
+otherwise get a menu holding one entry, which is strictly worse than the button it replaced: a click
+to reach one thing, with its label hidden behind a general word.
+
+It collapses to the **menu's** label, not the item's, and that is only safe because a menu is named
+after its contents — so its name fits any one of them. It is also the verb: "Export" says what will
+happen where "Requests as CSV" is a noun phrase. GitHub's Download menu does the same.
+
+**How many items before it stops being the right control.** Two to about four closely related
+outputs belong in one menu, each item naming what it produces — the content and the format, as
+"Requests as CSV" and "Unfulfilled picklists, PDF (12)" do. Past that, or for anything that is not a
+straight download, it belongs in the [reports hub](#reports) rather than a page header: `/reports`
+already carries Distributions, Donations, Purchases, Requests, Compliance and Activity. A page
+header menu is for getting *this page's* data out, not for browsing a catalogue of reports.
+
 It is `popover-fixed-value`, so the panel is placed against the viewport and clamped to it. At 320px
 a page header's actions wrap, which puts the trigger near the left edge, and a panel right-aligned
 to a trigger there starts at a negative x. The overlay audit caught that at 320×640.

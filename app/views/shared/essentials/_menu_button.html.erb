@@ -27,7 +27,29 @@
   size ||= :md
   icon ||= nil
   align ||= :end
+  items = items.compact
 %>
+<%#
+  One item is not a menu. Both of these are conditional on the data -- the picklist only exists
+  while something is unfulfilled -- so an organisation with requests but none outstanding got a
+  menu containing a single entry, which is strictly worse than the button it replaced: a click to
+  reach one thing, with its label hidden behind a general word.
+
+  It collapses to the *menu's* label rather than the item's, because a menu here is named after its
+  contents -- see design.md -- so its name is a fair name for any one of them. It is also the verb:
+  "Export" says what will happen, where "Requests as CSV" is a noun phrase. Same as GitHub's
+  Download menu, which is a plain "Download" button when there is only one thing to download.
+%>
+<% if items.one? %>
+  <% only = items.first %>
+  <% if only[:method] %>
+    <%= essentials_action_button label, only[:path], method: only[:method], variant: variant,
+          size: size, icon: icon || only[:icon], confirm: only[:confirm] %>
+  <% else %>
+    <%= essentials_link_button label, only[:path], variant: variant, size: size,
+          icon: icon || only[:icon], **(only[:link_options] || {}) %>
+  <% end %>
+<% else %>
 <%# `popover-fixed-value`: the panel is placed against the viewport and clamped to it. At 320px the
     header's actions wrap, which puts this trigger near the left edge -- and a panel right-aligned
     to a trigger there starts at a negative x. The overlay audit caught it at 320x640. %>
@@ -55,3 +77,4 @@
     <%= render "shared/essentials/menu_items", items: items %>
   </div>
 </div>
+<% end %>
