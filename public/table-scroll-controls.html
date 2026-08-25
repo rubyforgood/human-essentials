@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaching the columns that are off screen</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  [data-panel] .demo { max-width: 640px; }
+  [data-panel] table { min-width: 900px; }
+
+  /* ---------------------------------------------------------------------------------------------
+     SHIPPED TODAY, for comparison. A 40px fade at the container's left edge -- which is where the
+     pinned column is.
+  --------------------------------------------------------------------------------------------- */
+  .shipwrap { position: relative; }
+  .shipwrap::before, .shipwrap::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 2.5rem;
+    pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 3;
+  }
+  .shipwrap::before { left: 0;  background: linear-gradient(to right, rgb(255 255 255 / .95), transparent); }
+  .shipwrap::after  { right: 0; background: linear-gradient(to left,  rgb(255 255 255 / .95), transparent); }
+  .shipwrap[data-overflow~="start"]::before { opacity: 1; }
+  .shipwrap[data-overflow~="end"]::after    { opacity: 1; }
+
+  /* ---------------------------------------------------------------------------------------------
+     PROPOSED, IN EVERY OPTION -- the correction.
+
+     The scroll boundary is the pinned column's trailing edge, not the container's left edge. So
+     there is no left fade at all: the pinned column itself casts a shadow to the right, which is
+     what Carbon, Ant Design, AG Grid and Airtable all do. Where nothing is pinned, the rule
+     matches nothing and only the end fade applies.
+  --------------------------------------------------------------------------------------------- */
+  .fixwrap { position: relative; }
+  /* The app's shipped rule is `div:has(> .table-scroll)::before` and this wrapper matches it, so
+     the left fade has to be switched off explicitly or the corrected panel would still have one. */
+  .fixwrap::before { content: none; }
+  .fixwrap::after {
+    content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 2.5rem;
+    background: linear-gradient(to left, rgb(255 255 255 / .95), transparent);
+    pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 3;
+  }
+  .fixwrap[data-overflow~="end"]::after { opacity: 1; }
+  /* The pinned column's shadow deepens only once something has passed under it. */
+  .fixwrap[data-overflow~="start"] .pin-col {
+    box-shadow: 6px 0 8px -6px rgb(15 23 42 / .28), 1px 0 0 var(--color-slate-200);
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     OPTION B -- a scroll control that sticks to the bottom of the viewport while the table is in
+     view. Drawn from two divs rather than left to the platform, because a native scrollbar is an
+     overlay on macOS and in this container: it measures 0px and appears only mid-gesture.
+  --------------------------------------------------------------------------------------------- */
+  .railwrap { position: relative; }
+  .rail {
+    height: 1.25rem; display: flex; align-items: center;
+    padding: 0 .5rem; background: rgb(255 255 255 / .92);
+    border-top: 1px solid var(--color-slate-200);
+  }
+  .rail-track {
+    position: relative; flex: 1; height: .5rem;
+    background: var(--color-slate-100); border-radius: 9999px; cursor: pointer;
+  }
+  .rail-thumb {
+    position: absolute; top: 0; height: .5rem; min-width: 1.5rem;
+    background: var(--color-slate-400); border-radius: 9999px;
+  }
+  .rail-track:hover .rail-thumb { background: var(--color-slate-500); }
+  .rail-thumb:focus-visible {
+    outline: 2px solid var(--color-brand-600); outline-offset: 2px;
+  }
+  /* In the app this is `position: sticky; bottom: 0` so it rides the fold. The demo shows it
+     parked under the table, which is where it settles once you reach the table's end. */
+
+  /* ---------------------------------------------------------------------------------------------
+     OPTION C -- a bounded viewport. The table scrolls inside a box shorter than the page, so both
+     scrollbars are always on screen. The spreadsheet model: Sheets, Excel, Airtable, AG Grid,
+     GitHub Projects.
+  --------------------------------------------------------------------------------------------- */
+  .bounded { max-height: 15rem; overflow: auto; }
+  .bounded thead th { position: sticky; top: 0; z-index: 4; background: var(--color-slate-50); }
+
+  /* ---------------------------------------------------------------------------------------------
+     OPTION D -- a second scroller above the header, so the control is above the fold by
+     construction. DataTables ships this; so does pgAdmin.
+  --------------------------------------------------------------------------------------------- */
+  .proxy { overflow-x: auto; overflow-y: hidden; height: .75rem; }
+  .proxy > div { height: 1px; }
+
+  /* ---------------------------------------------------------------------------------------------
+     OPTION E -- paddle buttons in the card header.
+  --------------------------------------------------------------------------------------------- */
+  .paddle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.75rem; height: 1.75rem; border-radius: .5rem;
+    border: 1px solid var(--color-slate-300); background: #fff;
+    color: var(--color-slate-600); font-size: .75rem; line-height: 1;
+  }
+  .paddle:hover:not(:disabled) { background: var(--color-slate-50); color: var(--color-slate-900); }
+  .paddle:disabled { color: var(--color-slate-300); border-color: var(--color-slate-200); }
+
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .3rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The fade says there is more. Nothing lets you go and get it.</h1>
+    <p class="max-w-3xl text-slate-600">
+      Three separate defects, all measured on the running app at 1440&times;900. The first is a
+      mistake in what shipped; the other two are the reason a fade on its own was never enough.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">1. The fade covers the pinned column &mdash; you are right, and it is wrong</h2>
+    <p class="max-w-3xl text-slate-600">
+      When you scroll right, the shipped CSS draws a 40px white gradient at
+      <code class="rounded bg-slate-200 px-1 text-xs">left: 0</code>. That is exactly where the
+      pinned column sits. So it dims a column that is <em>not moving</em>, and it obscures the one
+      column pinning exists to keep readable.
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Table</th><th>Pinned column</th><th>Covered by the fade</th></tr></thead>
+      <tbody>
+        <tr><td><code>/distributions</code></td><td>ID, 56px</td><td><span class="pill pill-bad">40px &mdash; 71% of it</span></td></tr>
+        <tr><td><code>/requests</code></td><td>Partner, 109px</td><td><span class="pill pill-bad">40px &mdash; 37%</span></td></tr>
+        <tr><td><code>/donations</code></td><td>Source, 118px</td><td><span class="pill pill-bad">40px &mdash; 34%</span></td></tr>
+        <tr><td><code>/purchases</code></td><td>Vendor, 230px</td><td><span class="pill pill-bad">40px &mdash; 17%</span></td></tr>
+        <tr><td><code>/partners</code></td><td>Name, 264px</td><td><span class="pill pill-bad">40px &mdash; 15%</span></td></tr>
+        <tr><td><code>/storage_locations</code></td><td>Name, 202px</td><td><span class="pill pill-bad">40px &mdash; 20%</span></td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>It is not only ugly &mdash; it is a contrast failure.</strong> Measured on the
+      running app by sampling the painted pixels of the ID cell at 4&times; on
+      <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>:</p>
+      <table class="facts">
+        <tbody>
+          <tr><td>At rest</td><td>darkest ink 69</td><td><span class="pill pill-good">9.59:1</span></td></tr>
+          <tr><td>Scrolled right, under the fade</td><td>darkest ink 144</td><td><span class="pill pill-bad">3.19:1 &mdash; fails 1.4.3</span></td></tr>
+        </tbody>
+      </table>
+      <p>WCAG 1.4.3 wants 4.5:1 for normal text. And that is the <em>darkest</em> pixel of the
+      glyph; a column-by-column profile shows <strong>19 of the 26 inked columns</strong> lifted,
+      the worst from 63 to 164.</p>
+      <p><strong>axe reported no violations on all 156 pages.</strong> It computes contrast from
+      declared colours, so it cannot see a gradient painted on top by a pseudo-element. One more
+      audit checking a proxy rather than the thing.</p>
+    </div>
+    <p class="max-w-3xl text-sm text-slate-600">
+      Six of the seven tables that overflow have a sticky pinned column. Only <code>/items</code>
+      does not.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">2. What triggers the scrollbar: a gesture you have already started</h2>
+    <p class="max-w-3xl text-slate-600">
+      It is an <strong>overlay</strong> scrollbar. It reserves
+      <code class="rounded bg-slate-200 px-1 text-xs">0px</code> of height &mdash; measured on all
+      twelve regions &mdash; and the platform paints it only <em>while</em> a scroll is in progress,
+      then fades it out. So it can never tell you that scrolling is possible; it can only confirm
+      it once you have guessed.
+    </p>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>And the styling I shipped to fix that cannot work as written.</strong> Chrome
+      ignores <code class="rounded bg-slate-200 px-1 text-xs">::-webkit-scrollbar</code> entirely
+      on any element that also sets the standard
+      <code class="rounded bg-slate-200 px-1 text-xs">scrollbar-width</code> or
+      <code class="rounded bg-slate-200 px-1 text-xs">scrollbar-color</code> &mdash; and
+      <code class="rounded bg-slate-200 px-1 text-xs">.table-scroll</code> sets both.</p>
+      <p>I could not prove that here either way: <strong>no</strong> combination of
+      <code class="rounded bg-slate-200 px-1 text-xs">--disable-features=OverlayScrollbar,
+      FluentOverlayScrollbar,FluentScrollbar</code> makes headless Chromium 141 reserve a single
+      pixel, with or without the pseudo-element. Which is the argument for not depending on it:
+      <strong>a control that renders differently on every platform cannot be the answer to
+      &ldquo;I don't see it&rdquo;.</strong></p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">3. The control is below the fold</h2>
+    <p class="max-w-3xl text-slate-600">
+      Your third point, and the one that decides this. Even a perfectly visible scrollbar sits at
+      the <em>bottom of the table</em> &mdash; and the table is taller than the window.
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Table</th><th>Hidden columns</th><th>Rows</th><th>Bottom edge</th><th>Scrollbar at rest</th></tr></thead>
+      <tbody>
+        <tr><td><code>/distributions</code></td><td>486px</td><td>14</td><td>1196px</td><td><span class="pill pill-bad">296px below the fold</span></td></tr>
+        <tr><td><code>/purchases</code></td><td>275px</td><td>14</td><td>1196px</td><td><span class="pill pill-bad">296px below</span></td></tr>
+        <tr><td><code>/items</code></td><td>100px</td><td>15</td><td>1106px</td><td><span class="pill pill-bad">206px below</span></td></tr>
+        <tr><td><code>/requests</code></td><td>299px</td><td>15</td><td>1096px</td><td><span class="pill pill-bad">196px below</span></td></tr>
+        <tr><td><code>/donations</code></td><td>112px</td><td>10</td><td>984px</td><td><span class="pill pill-bad">84px below</span></td></tr>
+        <tr><td><code>/partners</code></td><td>72px</td><td>6</td><td>625px</td><td><span class="pill pill-good">on screen</span></td></tr>
+        <tr><td><code>/storage_locations</code></td><td>110px</td><td>2</td><td>420px</td><td><span class="pill pill-good">on screen</span></td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      <strong>Five of the seven.</strong> You see the fade at the top of the table, learn there is
+      more to the right, and then have to scroll the page down past every row to reach the thing
+      that moves it &mdash; by which point the sticky header is the only context left.
+      Shift+wheel and a two-finger swipe both work today and neither is discoverable.
+    </p>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-4">
+    <h2 class="text-2xl font-semibold">The correction, which belongs in every option</h2>
+    <p class="max-w-3xl text-slate-600">
+      No left fade. The pinned column casts a shadow to its right instead, and it deepens only once
+      content has actually passed underneath. This is what Carbon, Ant Design, AG Grid and Airtable
+      all do: the shadow marks the boundary between what is frozen and what is moving.
+    </p>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-rose-200 bg-white p-4 space-y-2" data-panel>
+        <p class="text-sm font-semibold text-rose-800">Shipped today &mdash; scroll it right</p>
+        <div class="shipwrap demo-wrap">
+          <div class="table-scroll demo" tabindex="0" role="region" aria-label="Table, scrollable">
+            <table class="data-table">
+              <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+              <tbody>
+                <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+                <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+                <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600">The ID column greys out as you scroll, and it never moved.</p>
+      </div>
+
+      <div class="rounded-2xl border border-emerald-200 bg-white p-4 space-y-2" data-panel>
+        <p class="text-sm font-semibold text-emerald-800">Corrected &mdash; scroll it right</p>
+        <div class="fixwrap demo-wrap">
+          <div class="table-scroll demo" tabindex="0" role="region" aria-label="Table, scrollable">
+            <table class="data-table">
+              <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+              <tbody>
+                <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+                <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+                <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600">The ID stays legible; the shadow says content is passing under it.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">Four ways to make the columns reachable</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; The corrected fade, and nothing else</h3>
+    <p class="max-w-3xl text-slate-600">
+      Fix the pinned column, leave the rest. Shift+wheel, a trackpad swipe, the arrow keys once the
+      region has focus.
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> nothing new to learn, no chrome, no JavaScript beyond what is there.</li>
+      <li><strong>Against:</strong> it does not answer your complaint. It tells you there is more and leaves you to work out how &mdash; and a mouse user with a wheel and no horizontal tilt has one option, which is to scroll the whole page down to find the scrollbar.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      B &mdash; A scroll control that rides the fold
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      A slim track pinned to the bottom of the <em>viewport</em> for as long as any part of the
+      table is on screen, so the control is always within reach of the rows you are reading. Drawn
+      from two divs rather than left to the platform, because that is the only way it looks the
+      same everywhere.
+    </p>
+    <p class="max-w-3xl text-sm text-slate-600">
+      <strong>Where this is used:</strong> Ant Design ships it as a first-class table prop
+      (<code class="rounded bg-slate-200 px-1 text-xs">&lt;Table sticky /&gt;</code>); Confluence
+      and Jira both float a horizontal scrollbar on wide tables; DataTables has had a plugin for it
+      for a decade. It exists precisely for a table that sits in page flow and is taller than the
+      window &mdash; which is every table here.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2" data-panel>
+      <div class="fixwrap railwrap">
+        <div class="table-scroll demo" tabindex="0" role="region" aria-label="Table, scrollable" data-rail-scroller>
+          <table class="data-table">
+            <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+            <tbody>
+              <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+              <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rail demo">
+          <div class="rail-track" data-rail-track>
+            <div class="rail-thumb" data-rail-thumb tabindex="0" role="scrollbar"
+                 aria-orientation="horizontal" aria-label="Scroll table columns"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-slate-600">
+        Drag the thumb, click the track, or focus it and use the arrow keys. In the app the strip is
+        <code class="rounded bg-slate-200 px-1 text-xs">sticky; bottom: 0</code> so it follows you
+        up the page; here it sits where it lands at the table's end.
+      </p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> answers all three complaints at once. Visible at rest, on every platform, without scrolling to the bottom. It is a real target you can drag, and it needs no gesture knowledge.</li>
+      <li><strong>For:</strong> it is a genuine control, so it can carry <code class="rounded bg-slate-200 px-1 text-xs">role="scrollbar"</code> and the arrow keys &mdash; the fade cannot be operated by anyone.</li>
+      <li><strong>Against:</strong> it is a scrollbar we draw, so it is ours to maintain: drag, click-to-page, touch, and the ARIA. Roughly 80 lines of Stimulus.</li>
+      <li><strong>Against:</strong> one more horizontal band on the page. Cheap at 20px, but not free.</li>
+      <li><strong>Against:</strong> a sticky element at the bottom of the viewport has to yield to anything else that lives there. Nothing does today.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Bound the table's height, spreadsheet style</h3>
+    <p class="max-w-3xl text-slate-600">
+      Give the region a maximum height. The table then scrolls inside its own box, so both
+      scrollbars are permanently on screen and the header stays put. This is what Sheets, Excel,
+      Airtable, AG Grid, Metabase and GitHub Projects all do.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2" data-panel>
+      <div class="fixwrap">
+        <div class="table-scroll bounded demo" tabindex="0" role="region" aria-label="Table, scrollable">
+          <table class="data-table">
+            <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+            <tbody>
+              <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+              <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1424</td><td>Eastlake Mutual Aid</td><td>Complete</td><td>4</td><td>$412</td><td>Delivery</td></tr>
+              <tr><td class="pin-col">1425</td><td>Hilltop Neighbours</td><td>Scheduled</td><td>17</td><td>$1,780</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1426</td><td>Beacon Hill Pantry</td><td>Complete</td><td>9</td><td>$934</td><td>Delivery</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-600">
+        Note what this costs: the page scrolls, and so does the box inside it. Your wheel does one
+        or the other depending on where the pointer is.
+      </p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the most familiar answer of all &mdash; it is how every spreadsheet works. The scrollbar is on screen by construction, with no sticky trickery.</li>
+      <li><strong>For:</strong> the header never leaves.</li>
+      <li><strong>Against:</strong> nested scrolling. Two scroll contexts on one page is the single most complained-about pattern in data UIs, and the wheel becomes position-dependent.</li>
+      <li><strong>Against:</strong> it needs a height, and no height is right for both a 2-row and a 42-row table. <code class="rounded bg-slate-200 px-1 text-xs">/transfers</code> has one row.</li>
+      <li><strong>Against:</strong> the app already paginates. Vertical scrolling inside a box that holds one page of rows is solving a problem we solved differently.</li>
+      <li><strong>Against:</strong> it is a change to how every index page feels, for a horizontal problem.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">D &mdash; A second scroller above the header</h3>
+    <p class="max-w-3xl text-slate-600">
+      A slim proxy scroller sitting above the table, synced to it. Above the fold by construction,
+      because the top of the table is what you are looking at when you arrive.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2" data-panel>
+      <div class="fixwrap">
+        <div class="proxy demo" data-proxy aria-hidden="true"><div data-proxy-spacer></div></div>
+        <div class="table-scroll demo" tabindex="0" role="region" aria-label="Table, scrollable" data-proxy-scroller>
+          <table class="data-table">
+            <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+            <tbody>
+              <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+              <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-600">
+        Which is a live demonstration of the problem: <strong>on this platform that strip above the
+        table is empty</strong>, because the native scrollbar it relies on is an overlay. That is
+        the whole of option D on any Mac.
+      </p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> about fifteen lines of code, and it puts the control where the eye already is.</li>
+      <li><strong>Against:</strong> it depends on the platform drawing a native scrollbar, which is the thing that is broken. It fails exactly where it is needed.</li>
+      <li><strong>Against:</strong> a scrollbar above the content it scrolls is unusual enough that people miss it.</li>
+      <li><strong>Against:</strong> it duplicates the scrollbar rather than replacing it, so on platforms where both show there are two.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">E &mdash; Paddle buttons in the card header</h3>
+    <p class="max-w-3xl text-slate-600">
+      Two buttons that move the table one column at a time, in the card header where the filters are.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2" data-panel>
+      <div class="flex items-center justify-between gap-2 pb-2">
+        <p class="text-sm font-semibold text-slate-900">Distributions</p>
+        <div class="flex items-center gap-1">
+          <button type="button" class="paddle" data-paddle="-1" aria-label="Scroll columns left" disabled>&#8592;</button>
+          <button type="button" class="paddle" data-paddle="1" aria-label="Scroll columns right">&#8594;</button>
+        </div>
+      </div>
+      <div class="fixwrap">
+        <div class="table-scroll demo" tabindex="0" role="region" aria-label="Table, scrollable" data-paddle-scroller>
+          <table class="data-table">
+            <thead><tr><th class="pin-col">ID</th><th>Partner</th><th>Status</th><th>Items</th><th>Value</th><th>Delivery</th></tr></thead>
+            <tbody>
+              <tr><td class="pin-col">1421</td><td>Silver Spring Cares</td><td>Scheduled</td><td>12</td><td>$1,204</td><td>Pick up</td></tr>
+              <tr><td class="pin-col">1422</td><td>Rainier Family Center</td><td>Complete</td><td>8</td><td>$860</td><td>Delivery</td></tr>
+              <tr><td class="pin-col">1423</td><td>Northside Outreach</td><td>Scheduled</td><td>21</td><td>$2,118</td><td>Pick up</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> unmistakable, above the fold, and two ordinary buttons &mdash; nothing new for a screen reader or the keyboard.</li>
+      <li><strong>For:</strong> renders identically everywhere, since it is not a scrollbar at all.</li>
+      <li><strong>Against:</strong> paddles are standard for <em>tab strips</em> and carousels, not for data tables. I could not point at a data grid in wide use that ships them, and inventing a control is worse than adopting one.</li>
+      <li><strong>Against:</strong> no position feedback. A scrollbar shows how much is left; two arrows do not.</li>
+      <li><strong>Against:</strong> clicking repeatedly to cross 486px is worse than one drag.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>The correction, plus option B.</strong></p>
+      <p>The correction is not optional in any case: a fade over a frozen column is simply a bug,
+      on six of the seven tables that scroll.</p>
+      <p>Then B, because it is the only one of the four that answers all three of your points.
+      The fade told you there was more and gave you nothing to act on; B is an actual control, at
+      the bottom of the window rather than the bottom of the table, drawn by us so that
+      &ldquo;I don't see it&rdquo; cannot be a platform setting. It is also the option with real
+      precedent for a table in page flow &mdash; Ant Design, Confluence, Jira &mdash; whereas C is
+      precedent for a table that <em>replaces</em> the page.</p>
+      <p><strong>Keep the fade.</strong> It answers a different question: the rail says
+      <em>you can move</em>, the fade says <em>there is something there</em>. Every grid that has
+      one has both.</p>
+      <p><strong>And fix the suppression regardless.</strong> Dropping
+      <code class="rounded bg-slate-200 px-1 text-xs">scrollbar-width</code> lets the
+      <code class="rounded bg-slate-200 px-1 text-xs">::-webkit-scrollbar</code> rules apply on
+      Chrome and Safari, which is strictly better than what is shipped &mdash; but I cannot verify
+      it here, so it stays a bonus and B stays the answer.</p>
+    </div>
+    <p class="max-w-3xl text-sm text-slate-600">
+      <strong>Not an alternative:</strong> cutting columns
+      (<code class="rounded bg-slate-200 px-1 text-xs">distributions-columns.html</code>). Worth
+      doing, and measured there: it never makes the table fit on its own.
+    </p>
+  </section>
+</div>
+
+<script>
+  // Marks `data-overflow` and keeps `--pin` equal to the pinned column's width. In the app this is
+  // `table_scroll_controller`; here it is inline so the panels are self-contained.
+  function mark(sc) {
+    const wrap = sc.closest(".shipwrap, .fixwrap");
+    if (!wrap) return;
+    const edges = [];
+    if (sc.scrollLeft > 1) edges.push("start");
+    if (sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 1) edges.push("end");
+    wrap.dataset.overflow = edges.join(" ");
+  }
+  const all = () => document.querySelectorAll(".table-scroll");
+  addEventListener("scroll", (e) => {
+    if (e.target instanceof Element && e.target.classList.contains("table-scroll")) mark(e.target);
+  }, true);
+  addEventListener("resize", () => all().forEach(mark));
+  all().forEach(mark);
+
+  // Option B -- the drawn rail.
+  document.querySelectorAll(".railwrap").forEach((wrap) => {
+    const sc = wrap.querySelector("[data-rail-scroller]");
+    const track = wrap.querySelector("[data-rail-track]");
+    const thumb = wrap.querySelector("[data-rail-thumb]");
+    const sync = () => {
+      const ratio = sc.clientWidth / sc.scrollWidth;
+      const tw = track.clientWidth;
+      const w = Math.max(24, Math.round(tw * ratio));
+      thumb.style.width = w + "px";
+      const max = sc.scrollWidth - sc.clientWidth;
+      const pct = max > 0 ? sc.scrollLeft / max : 0;
+      thumb.style.left = Math.round((tw - w) * pct) + "px";
+      thumb.setAttribute("aria-valuenow", Math.round(pct * 100));
+    };
+    sc.addEventListener("scroll", sync);
+    addEventListener("resize", sync);
+    let dragFrom = null;
+    thumb.addEventListener("pointerdown", (e) => {
+      dragFrom = { x: e.clientX, left: sc.scrollLeft };
+      thumb.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    thumb.addEventListener("pointermove", (e) => {
+      if (!dragFrom) return;
+      const max = sc.scrollWidth - sc.clientWidth;
+      const usable = track.clientWidth - thumb.clientWidth;
+      sc.scrollLeft = dragFrom.left + ((e.clientX - dragFrom.x) / usable) * max;
+    });
+    thumb.addEventListener("pointerup", () => { dragFrom = null; });
+    track.addEventListener("pointerdown", (e) => {
+      if (e.target === thumb) return;
+      const rect = track.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      sc.scrollLeft = pct * (sc.scrollWidth - sc.clientWidth);
+    });
+    thumb.addEventListener("keydown", (e) => {
+      const step = sc.clientWidth * 0.25;
+      const moves = { ArrowRight: step, ArrowLeft: -step, Home: -1e7, End: 1e7,
+                      PageDown: sc.clientWidth, PageUp: -sc.clientWidth };
+      if (!(e.key in moves)) return;
+      sc.scrollLeft += moves[e.key];
+      e.preventDefault();
+    });
+    sync();
+  });
+
+  // Option D -- the proxy scroller above the table.
+  document.querySelectorAll("[data-proxy]").forEach((proxy) => {
+    const sc = proxy.parentElement.querySelector("[data-proxy-scroller]");
+    proxy.querySelector("[data-proxy-spacer]").style.width = sc.scrollWidth + "px";
+    let lock = false;
+    proxy.addEventListener("scroll", () => { if (!lock) { lock = true; sc.scrollLeft = proxy.scrollLeft; lock = false; } });
+    sc.addEventListener("scroll", () => { if (!lock) { lock = true; proxy.scrollLeft = sc.scrollLeft; lock = false; } });
+  });
+
+  // Option E -- paddles.
+  document.querySelectorAll("[data-paddle-scroller]").forEach((sc) => {
+    const panel = sc.closest("[data-panel]");
+    const buttons = panel.querySelectorAll("[data-paddle]");
+    const step = () => {
+      const cell = sc.querySelector("tbody td:not(.pin-col)");
+      return cell ? cell.getBoundingClientRect().width : 160;
+    };
+    buttons.forEach((b) => b.addEventListener("click", () => {
+      sc.scrollBy({ left: Number(b.dataset.paddle) * step(), behavior: "smooth" });
+    }));
+    const refresh = () => {
+      const max = sc.scrollWidth - sc.clientWidth;
+      panel.querySelector('[data-paddle="-1"]').disabled = sc.scrollLeft <= 1;
+      panel.querySelector('[data-paddle="1"]').disabled = sc.scrollLeft >= max - 1;
+    };
+    sc.addEventListener("scroll", refresh);
+    refresh();
+  });
+</script>
+</body>
+</html>

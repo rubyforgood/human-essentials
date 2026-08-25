@@ -1425,6 +1425,32 @@ Two signals, and only one of them is load-bearing:
   cannot force a scrollbar to reserve space. It could not be verified in headless Chromium at all,
   even with `--disable-features=OverlayScrollbar`.
 
+<a id="never-fade-a-frozen-column"></a>
+**Never fade a frozen column.** The first version of the fade drew it at the container's left edge,
+which is where `.pin-col` sits. That is wrong twice over: it dims a column that is *not moving*, and
+it obscures the one column pinning exists to keep readable. Sampling the painted pixels of the ID
+cell on `/distributions` at 4×, the fade lifted the darkest ink from **69 to 144** — **9.59:1 down
+to 3.19:1** against white, which fails [1.4.3](#contrast). A column-by-column profile put **19 of
+the 26 inked columns** under it. **Six of the seven tables that overflow have a frozen column**;
+only `/items` does not.
+
+So the start of the scroll is marked two different ways, and the controller writes `data-pinned` on
+the region to say which applies:
+
+| Region | Start of scroll |
+| --- | --- |
+| `[data-pinned]` — a frozen first column | **No fade.** The column casts a shadow to its right, and only once content has passed underneath. |
+| Not pinned | The fade at the edge, as before. |
+
+The shadow is what Carbon, Ant Design, AG Grid and Airtable all use: it marks the boundary between
+what is frozen and what is moving. The controller has to supply `data-pinned` because CSS cannot
+work it out — **`:has()` may not be nested**, so "a div whose `.table-scroll` child contains a
+`.pin-col`" is unwriteable.
+
+**axe reported no violations across all 156 pages while this was live.** It computes contrast from
+declared colours, so a gradient painted on top by a pseudo-element is invisible to it. Painted
+pixels are the only way to check a contrast question involving an overlay.
+
 Three things about how it is built:
 
 - **The fade is on the *parent*, via `:has()`**, because a pseudo-element on the scroller scrolls
