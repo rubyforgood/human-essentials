@@ -581,6 +581,131 @@
     background-color: var(--color-slate-600);
   }
 
+  /*
+   * A table too narrow to be a table becomes a list of labelled fields.
+   *
+   * Measured before this: all fifteen tables scrolled sideways at 320px and at 375; the worst hid
+   * 80% of its width. `data-stack` is put on the table by `table_stack_controller` and carries the
+   * number of field columns -- "1" very narrow, "2" when there is room. See design.md.
+   *
+   * Driven by an attribute rather than a `@container` query for one reason:
+   * `container-type: inline-size` computes to `contain: layout`, which makes the element a containing
+   * block for fixed descendants, and the row action menus are fixed precisely to escape this card.
+   */
+  .cell-label {
+    display: none;
+  }
+
+  .data-table[data-stack] {
+    display: block;
+  }
+
+  .data-table[data-stack] caption {
+    display: block;
+    text-align: start;
+  }
+
+  /* The heading row has nothing to head once the columns are gone. */
+  .data-table[data-stack] thead {
+    display: none;
+  }
+
+  .data-table[data-stack] tbody {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 3);
+  }
+
+  /* Each record becomes a card. */
+  .data-table[data-stack] tbody tr {
+    display: grid;
+    gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+    padding: calc(var(--spacing) * 3);
+    border: 1px solid var(--color-slate-200);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-white);
+  }
+
+  .data-table[data-stack="1"] tbody tr {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .data-table[data-stack="2"] tbody tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /*
+   * A cell becomes a field. Every column rule has to be undone here: `nowrap`, the `.name` and
+   * `.notes` width caps and their ellipsis all exist to keep *columns* in order, and there are no
+   * columns any more. A capped, clipped field in a stack would hide text for no reason at all.
+   */
+  .data-table[data-stack] tbody td,
+  .data-table[data-stack] tbody th {
+    display: block;
+    padding: 0;
+    border: 0;
+    max-width: none;
+    min-width: 0;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .data-table[data-stack] tbody .cell-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-slate-500);
+  }
+
+  /*
+   * The identifying column is the card's title: no label, a size up, and the full width.
+   *
+   * No `font-weight` here. The views put `font-medium` on that cell, and a utility beats a rule in
+   * `@layer components` whatever its specificity -- so a `font-weight: 600` would have sat in the
+   * stylesheet doing nothing. The title is already distinguished by 16px against 14 and slate-900
+   * against slate-600.
+   */
+  .data-table[data-stack] tbody .pin-col {
+    position: static;
+    box-shadow: none;
+    font-size: var(--text-base);
+  }
+
+  .data-table[data-stack="2"] tbody .pin-col {
+    grid-column: 1 / -1;
+  }
+
+  /* An empty cell would otherwise leave a labelled gap. */
+  .data-table[data-stack] tbody td:empty {
+    display: none;
+  }
+
+  /* The row's actions sit on the title line rather than at the foot of the card. */
+  .data-table[data-stack] tbody .cell-actions {
+    grid-row: 1;
+    grid-column: -2 / -1;
+    justify-self: end;
+    text-align: end;
+  }
+
+  .data-table[data-stack="2"] tbody .pin-col {
+    grid-column: 1 / -2;
+  }
+
+  /* A stacked table does not scroll, so nothing about scrolling should be drawn around it. */
+  div:has(> .table-scroll [data-stack])::before,
+  div:has(> .table-scroll [data-stack])::after {
+    content: none;
+  }
+
+  .table-scroll:has([data-stack]) {
+    overflow-x: visible;
+  }
+
   /* Someone who has asked for less motion gets the fade, just not the cross-fade. */
   @media (prefers-reduced-motion: reduce) {
     div:has(> .table-scroll)::before,

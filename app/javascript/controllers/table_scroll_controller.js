@@ -40,6 +40,9 @@ export default class extends Controller {
     window.addEventListener("scroll", this.onViewportChange, { passive: true });
     window.addEventListener("resize", this.onViewportChange);
     document.addEventListener("turbo:frame-load", this.markAll);
+    // `table-stack` fires this when a table starts or stops being a table: what overflows changes
+    // with it, and this controller cannot see that for itself.
+    window.addEventListener("table:stack-change", this.markAll);
 
     this.markAll();
   }
@@ -49,6 +52,7 @@ export default class extends Controller {
     window.removeEventListener("scroll", this.onViewportChange);
     window.removeEventListener("resize", this.onViewportChange);
     document.removeEventListener("turbo:frame-load", this.markAll);
+    window.removeEventListener("table:stack-change", this.markAll);
 
     this.rails.forEach(({ rail }) => rail.remove());
     this.rails.clear();

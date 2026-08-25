@@ -3906,3 +3906,62 @@ lives at the bottom of the viewport. Nothing does today." Measured across 13 rou
 the off-canvas sidebar (`inset-y-0`, translated out, no conflict) and **rack-mini-profiler's badge**,
 `position: fixed; bottom: 0; z-index: 9999`, on five routes. It is development-only and sits above
 the rail rather than under it, so nothing breaks — but the claim was stated without being checked.
+
+
+---
+
+## 2026-08-25 · A narrow table stops being a table
+
+**Area.** `table_stack_controller`, `.data-table[data-stack]`, `design.md`, `docs/onboarding.md`.
+
+**Decision.** Below **640px of card width** a data table becomes a list of labelled fields — one
+field column below 416px, two above it. Option A of `docs/mockups/table-stacking.html`.
+
+**The defect, measured.** **All fifteen tables scrolled sideways at 320px, and at 375**; thirteen at
+640. The worst hid **80% of its width**: `/distributions` needs 1,638px and had 320. On `/purchases`
+you could see a fifth of the table.
+
+**This reverses a written convention, deliberately.** `design.md` said tables scroll, on the strength
+of WCAG 1.4.10 Reflow exempting data tables. **That exemption is permission, not advice** — it says a
+data table is *allowed* to scroll, not that four fifths of one should be off screen. The system was
+also already contradicting itself: the line item row stacks below `sm` with a label per cell, and the
+reason recorded for it — "four columns at 320px leaves the item picker 72px, which is not a control
+anyone can use" — applies word for word to nine columns of purchase data at 286px.
+
+**The threshold is the card's width, not the viewport's.** Measured on `/purchases`: at a **1023px**
+viewport the card is **973px**; at **1024px** it is **702px**, because that is where the sidebar
+appears. A viewport breakpoint at `lg` would have returned the table to table form exactly where it
+had least room. 640 was then chosen over 704 so the result is also monotonic in the viewport — at 704
+a 1024px viewport would stack while 768 stayed a table.
+
+**But not via a `@container` query, which was the obvious tool.** `container-type: inline-size`
+computes to `contain: layout`, which makes the element a containing block for **fixed** descendants.
+The row action menus are `position: fixed` precisely so they can escape this card, so every one of
+them would have been positioned against the wrong box. The controller sets an attribute instead.
+
+**Two things this pattern is usually built without.**
+
+- **Labels from `<thead>` by column index, into a real element.** The usual build is `data-label` on
+  every cell read by `::before`. That is **299 headings across 71 views** to write and keep in step,
+  and generated content is not reliably announced.
+- **The table's semantics restored explicitly.** A browser stops exposing rows and cells as a table
+  the moment `display` is not `table`, and `thead` is `display: none` here — a screen reader would
+  have been left with unlabelled text in no structure. The roles go on always, because a role cannot
+  be applied conditionally.
+
+**Two defects found while building, both by things that were already passing.**
+
+- `table_scroll_controller` drew a **rail for a stacked table**, because on first paint it runs
+  before this one and cannot see that the table is about to stop overflowing. It now listens for a
+  `table:stack-change` event.
+- A `font-weight: 600` on the card's title **did nothing**: the views put `font-medium` on that cell,
+  and a utility beats a rule in `@layer components` whatever its specificity. Removed rather than
+  forced — a rule that silently does not apply is the same class of problem as a mockup that lies.
+
+**The cost, stated plainly.** `/purchases` at 320px goes from 1,448px tall to **7,614px**. That is
+the trade being made: down a page you can read rather than sideways through one you cannot.
+
+**Alternative kept on the table.** Option B — the leading fields with the rest behind a per-row
+disclosure — measured **37% shorter** (245px per record against 388). It was recommended in the
+preview and not built, because it needs a judgement per table about which fields lead, and the
+request described A. The machinery is shared, so B is an increment on this rather than a rewrite.

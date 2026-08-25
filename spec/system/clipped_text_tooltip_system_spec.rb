@@ -290,6 +290,75 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     expect(height).to be >= 24
   end
 
+  # Every table in the app scrolled sideways at 320px and at 375 before this: 15 of 15, the worst
+  # hiding 80% of its width. A table too narrow to be a table becomes a list of labelled fields.
+  context "when the container is too narrow to be a table" do
+    before { create_list(:purchase, 2, organization: organization) }
+
+    it "stacks into labelled fields with nothing off screen" do
+      page.driver.resize(360, 800)
+      visit purchases_path
+
+      expect(page).to have_css("table.data-table[data-stack='1']")
+
+      # The heading row is gone, so each field carries its own label instead. Matched in capitals
+      # because Capybara compares rendered text and the label is uppercased by CSS -- the DOM text,
+      # which is what a screen reader reads, is still sentence case.
+      expect(page).to have_css(".cell-label", text: "STORAGE LOCATION")
+      expect(page).to have_css(".cell-label", text: "AMOUNT SPENT")
+
+      sideways = page.evaluate_script(
+        "document.documentElement.scrollWidth > window.innerWidth + 1"
+      )
+      expect(sideways).to be false
+    end
+
+    # Changing `display` on a table drops rows and cells out of the accessibility tree, and the
+    # header row is `display: none` here, so a screen reader would be left with bare text.
+    it "keeps the table's semantics when it stops looking like a table" do
+      page.driver.resize(360, 800)
+      visit purchases_path
+
+      expect(page).to have_css("table.data-table[data-stack]")
+      expect(page).to have_css("table[role='table']")
+      expect(page).to have_css("tbody[role='rowgroup']")
+      expect(page).to have_css("tbody tr[role='row']")
+      expect(page).to have_css("tbody td[role='cell']")
+    end
+
+    # A stacked table does not scroll, so the region must stop saying that it does.
+    it "stops claiming to be a scrollable region" do
+      page.driver.resize(360, 800)
+      visit purchases_path
+
+      expect(page).to have_css("table.data-table[data-stack]")
+      expect(page).to have_no_css(".table-scroll[tabindex]")
+      expect(page).to have_no_css(".table-rail")
+    end
+
+    it "goes back to being a table when there is room, and hides the labels again" do
+      page.driver.resize(1200, 800)
+      visit purchases_path
+
+      expect(page).to have_css("table.data-table:not([data-stack])")
+      expect(page).to have_css(".table-scroll[tabindex='0']")
+
+      hidden = page.evaluate_script(
+        "getComputedStyle(document.querySelector('.cell-label')).display"
+      )
+      expect(hidden).to eq("none")
+    end
+
+    # 640px of window leaves about 590px of card, which is inside the two-column band. A 700px
+    # window leaves roughly 650 and is over the threshold, so the table stays a table.
+    it "gives the fields two columns when the card is wide enough for two" do
+      page.driver.resize(640, 800)
+      visit purchases_path
+
+      expect(page).to have_css("table.data-table[data-stack='2']")
+    end
+  end
+
   # Where nothing is frozen there is nothing to protect, so the fade belongs at the edge after all.
   it "keeps the start fade on a table with no frozen column" do
     create(:item, organization: organization, name: "Toddler nappies")
