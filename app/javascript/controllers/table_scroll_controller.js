@@ -53,5 +53,16 @@ export default class extends Controller {
 
     const next = edges.join(" ");
     if (region.dataset.overflow !== next) region.dataset.overflow = next;
+
+    /*
+     * Whether the first column is frozen decides what the start of the scroll should look like, so
+     * the CSS needs to know. It cannot work this out for itself: `:has()` may not be nested, so
+     * there is no way to write "a div whose `.table-scroll` child contains a `.pin-col`".
+     *
+     * Six of the seven tables that overflow have one.
+     */
+    if (region.querySelector(".pin-col") && region.dataset.pinned === undefined) {
+      region.dataset.pinned = "";
+    }
   }
 }

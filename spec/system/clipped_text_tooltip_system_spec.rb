@@ -191,4 +191,66 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     )
     expect(pointer_events).to eq("none")
   end
+
+  # The first version of this faded the *frozen* column, which does not move. Sampling the painted
+  # pixels of the ID cell put it at 3.19:1 against white -- a 1.4.3 failure on the one column that
+  # pinning exists to keep readable. Six of the seven tables that overflow have a frozen column.
+  it "never fades a frozen column, and marks the region so the CSS can tell" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-scroll[data-pinned]")
+
+    page.execute_script(
+      "document.querySelector('.table-scroll').scrollLeft = " \
+      "document.querySelector('.table-scroll').scrollWidth"
+    )
+    expect(page).to have_css(".table-scroll[data-overflow~='start']")
+
+    start_fade = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').opacity"
+    )
+    expect(start_fade).to eq("0")
+  end
+
+  # Instead it casts a shadow, and only once something has passed underneath.
+  it "deepens the frozen column's shadow once content is behind it" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    at_rest = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll tbody .pin-col')).boxShadow"
+    )
+    expect(at_rest).not_to include("6px")
+
+    page.execute_script(
+      "document.querySelector('.table-scroll').scrollLeft = " \
+      "document.querySelector('.table-scroll').scrollWidth"
+    )
+    expect(page).to have_css(".table-scroll[data-overflow~='start']")
+
+    scrolled = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll tbody .pin-col')).boxShadow"
+    )
+    expect(scrolled).to include("6px")
+  end
+
+  # Where nothing is frozen there is nothing to protect, so the fade belongs at the edge after all.
+  it "keeps the start fade on a table with no frozen column" do
+    create(:item, organization: organization, name: "Toddler nappies")
+    visit items_path
+
+    expect(page).to have_css(".table-scroll:not([data-pinned])")
+
+    page.execute_script(
+      "document.querySelector('.table-scroll').scrollLeft = " \
+      "document.querySelector('.table-scroll').scrollWidth"
+    )
+
+    expect(page).to have_css(".table-scroll[data-overflow~='start']")
+    start_fade = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').opacity"
+    )
+    expect(start_fade).to eq("1")
+  end
 end

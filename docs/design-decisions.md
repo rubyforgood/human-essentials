@@ -3793,3 +3793,52 @@ which report `data-overflow=""`.
 - **A permanent fade on both edges.** Decoration that says nothing about where the content is.
 - **A text hint** such as "scroll to see more columns". It takes vertical space on every table
   forever to say something a 40px gradient says continuously and only when true.
+
+
+---
+
+## 2026-08-25 · Never fade a frozen column
+
+**Area.** `table_scroll_controller`, `.pin-col`, `design.md`.
+
+**Decision.** The start-of-scroll signal depends on whether the first column is frozen. Where it is,
+there is **no fade** and the column casts a shadow to its right instead, appearing only once content
+has passed underneath. Where nothing is frozen, the fade at the edge stays.
+
+**Why: the fade I shipped yesterday was a contrast failure.** It was drawn at the container's
+`left: 0`, which is exactly where `.pin-col` sits. Sampling the painted pixels of the ID cell on
+`/distributions` at 4×, the fade lifted the darkest ink from **69 to 144** — **9.59:1 down to
+3.19:1** against white. WCAG 1.4.3 wants 4.5:1. A column-by-column profile put **19 of the 26 inked
+columns** under it, the worst going 63 → 164. And that is the *darkest* pixel of each glyph, so the
+rest of the stroke is worse.
+
+It is also wrong on its own terms, before any measurement: a frozen column does not move, so fading
+it as a scroll signal says something untrue about it, and it obscures the one column pinning exists
+to keep readable. **Six of the seven tables that overflow have a frozen column**; only `/items`
+does not.
+
+**Why no audit caught it, again.** axe reported **0 violations across 156 pages** while this was
+live, because it computes contrast from *declared colours* — a gradient painted on top by a
+pseudo-element does not appear in any element's computed style. This is the same failure mode as the
+overlay scrollbar the day before, and the same lesson for the third time this month: a check that
+reads a proxy reports what the proxy says. **A contrast question involving an overlay can only be
+answered from painted pixels.**
+
+**Why the controller has to supply `data-pinned`.** CSS cannot work this out. The existing fade is
+`div:has(> .table-scroll)`, and asking "…whose `.table-scroll` child contains a `.pin-col`" needs a
+nested `:has()`, which **Selectors 4 forbids**. So `mark()` sets `data-pinned` on the region and the
+CSS keys off it. Cheap — one `querySelector` per region, and it is set once.
+
+**Alternatives rejected.**
+
+- **Offsetting the fade past the frozen column** with a `--pin` custom property set from the measured
+  column width. It works, and it is more machinery than the question deserves: a shadow is what
+  Carbon, Ant Design, AG Grid and Airtable all use, and the boundary is the thing worth marking.
+- **Making the fade weaker.** Any opacity over text costs contrast, and the column is the one that
+  must stay readable. There is no value that is both visible and safe.
+- **Dropping the frozen column.** It is doing its job; the fade was the mistake.
+
+**Left open.** The fade tells you there is more and gives you nothing to act on: the scrollbar is an
+overlay taking **0px**, and on **five of the seven** overflowing tables it is *below the fold* —
+296px below on `/distributions`. `docs/mockups/table-scroll-controls.html` puts four options for an
+actual control, with a recommendation, and is awaiting a decision.

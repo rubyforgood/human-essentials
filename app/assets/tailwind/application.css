@@ -462,9 +462,33 @@
     background: linear-gradient(to left, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
   }
 
-  div:has(> .table-scroll[data-overflow~="start"])::before,
   div:has(> .table-scroll[data-overflow~="end"])::after {
     opacity: 1;
+  }
+
+  /*
+   * The start fade only where the first column is *not* frozen.
+   *
+   * A frozen column does not move, so a fade over it says the wrong thing -- and it is worse than
+   * wrong: sampling the painted pixels of the ID cell on `/distributions` at 4x, the fade lifted
+   * the darkest ink from 69 to 144, which is 9.59:1 down to **3.19:1** against white. That fails
+   * WCAG 1.4.3, on the one column pinning exists to keep readable. A column-by-column profile put
+   * 19 of the 26 inked columns under it. axe saw none of this: it computes contrast from declared
+   * colours and cannot see a gradient painted on top by a pseudo-element.
+   */
+  div:has(> .table-scroll[data-overflow~="start"]:not([data-pinned]))::before {
+    opacity: 1;
+  }
+
+  /*
+   * Where it *is* frozen, the column casts a shadow to its right instead, and only once something
+   * has passed underneath. That is the boundary between what is frozen and what is moving, which is
+   * how Carbon, Ant Design, AG Grid and Airtable all mark it.
+   */
+  .table-scroll[data-overflow~="start"][data-pinned] .data-table .pin-col {
+    box-shadow:
+      6px 0 8px -6px color-mix(in oklch, var(--color-slate-900) 28%, transparent),
+      1px 0 0 var(--color-slate-200);
   }
 
   /* Someone who has asked for less motion gets the fade, just not the cross-fade. */
