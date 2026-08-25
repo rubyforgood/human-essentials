@@ -4024,3 +4024,65 @@ nothing in it could have anticipated.
   card that already has a 1px border reads as *the edge of the card*.
 - **`border-collapse: separate`** to make cell shadows paint. It changes border rendering for every
   table in the app to fix one signal.
+
+
+---
+
+## 2026-08-25 · Four buttons become two, and every button gets a border
+
+**Area.** `/requests`, `shared/essentials/menu_button`, `shared/essentials/menu_items`,
+`BUTTON_VARIANTS`, `bin/design/button-audit.js`.
+
+**Decision.** Option B of `docs/mockups/page-header-actions.html`: the CSV export and the picklist
+PDF collapse into one **Export** menu, and the product totals move onto the card whose rows they
+total. The page header goes from four actions to two.
+
+**The rule already existed and nothing enforced it.** design.md has said "at most three actions,
+exactly one of them primary, primary last" for weeks, and even anticipated the check — "the actions
+container carries `data-page-header='actions'` so a spec can count what is in it". Nothing counted.
+`bin/design/button-audit.js` counts now, over **27 page headers across three roles**, and found
+`/requests` was the **only** page in the app that broke it. No page had two primaries, none put the
+primary anywhere but last.
+
+It has to run in a browser rather than over the source: half these actions are conditional on a role
+or on a count being above zero, so `/requests` shows one action to an ORG_USER and two to an
+ORG_ADMIN.
+
+**The cost of the fourth, measured.** 707px of buttons wrapping to two rows at *every* width
+including 1440, and a 242px header at 320px with each button on its own line. Now: **56px from 1440
+down to 768**, and 150px at 320.
+
+**Name the menu after its contents.** design.md's own remedy said "More actions", and that names
+nothing. "Export" says what is inside. The rule is updated to say so.
+
+**A summary of a table is not a page action.** This is the diagnosis design.md predicts for a fourth
+button — "usually a section of the page wanting an action of its own". "Calculate product totals"
+does not act on the page; it summarises the rows below it. It is on that card now.
+
+**On the feature itself.** It works, and it does follow the filters — narrowing to one partner took
+it from 46 items and 23,035 units to a smaller set, confirmed against the row count. My first test
+of this said it was stale, and that test was broken: the modal renders *inside* the Turbo frame the
+filters update. Three things were wrong and none was the maths:
+
+- **No total.** 46 per-item figures and no sum — the one number the button's name promised. It has a
+  `<tfoot>` now. There is a precedent against `<tfoot>` totals from the reports work, but it was
+  about *duplication* with a summary band above the same table, and nothing duplicates this.
+- **The wrong verb.** design.md: a button's verb is what will happen. Nothing is calculated on press.
+  It is "Show product totals".
+- **The wrong place**, as above.
+
+**The find along the way: every primary button was 2px short.** design.md fixes the control height at
+38px. `border` is 1px top and bottom, and only `:secondary` had one — so `:primary` and `:ghost` came
+out 36px. Measured across 17 pages: **25 secondary at 38px, 16 primary and 4 ghost at 36px**. It had
+been invisible because headers carried enough buttons to wrap; two buttons on one row showed it
+immediately. Every variant carries a transparent border now, and the audit checks height.
+
+**Alternatives rejected.**
+
+- **A "More actions" menu**, which is what design.md literally said. It fixes the count and not the
+  cause, and leaves the totals summary in the page header.
+- **Moving only the totals**, leaving three buttons. Compliant, and it keeps two buttons for what is
+  one idea: getting the data out.
+- **Putting the totals control in the pagination footer** beside "Showing 1–15 of 119 requests",
+  which is thematically right — both speak about the filtered set. The footer is a shared partial
+  with no slot for it, and adding one for a single caller is not worth it.

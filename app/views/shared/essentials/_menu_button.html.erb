@@ -1,0 +1,57 @@
+<%#
+  A labelled menu button: one trigger that names what is inside it, and a panel of related actions.
+
+    render "shared/essentials/menu_button",
+      label: "Export", icon: "bi-download", items: [
+        {label: "Requests as CSV", path: requests_path(format: :csv), icon: "bi-filetype-csv"},
+        {label: "Unfulfilled picklists, PDF", path: …, icon: "bi-printer"}
+      ]
+
+  Locals:
+    label    required; the visible label, and the accessible name of the trigger
+    items    required; see `menu_items`
+    icon     optional; a Bootstrap Icons class for the trigger
+    variant  optional; defaults to :secondary
+    size     optional; defaults to :md, so it lines up with the other page header actions
+    align    optional; :end (default) or :start, for which edge the panel hangs from
+
+  This is the page-level counterpart to `row_actions`, which is a kebab because a table row has no
+  space for a word. A page header does, and a named menu beats an unnamed one: "Export" says what is
+  inside, "More actions" only says that something is. See design.md.
+
+  Counts as **one** action against the page header's limit of three -- design.md's own remedy for a
+  fourth button is to collapse the least-used behind a menu.
+%>
+<%
+  variant ||= :secondary
+  size ||= :md
+  icon ||= nil
+  align ||= :end
+%>
+<%# `popover-fixed-value`: the panel is placed against the viewport and clamped to it. At 320px the
+    header's actions wrap, which puts this trigger near the left edge -- and a panel right-aligned
+    to a trigger there starts at a negative x. The overlay audit caught it at 320x640. %>
+<div class="relative" data-controller="popover" data-popover-fixed-value="true">
+  <button type="button"
+          class="<%= essentials_button_classes(variant: variant, size: size) %>"
+          aria-haspopup="true"
+          aria-expanded="false"
+          data-popover-target="trigger"
+          data-action="click->popover#toggle">
+    <% if icon %><i class="<%= icon %>" aria-hidden="true"></i><% end %>
+    <%= label %>
+    <%# Decorative: the chevron says "this opens", which `aria-haspopup` already tells a screen
+        reader, so repeating it in the name would be noise. %>
+    <i class="bi-chevron-down text-xs" aria-hidden="true"></i>
+  </button>
+
+  <%# `role="menu"` with `role="menuitem"` children, and `popover_controller` implements the
+      arrow-key movement that role promises. The overlay audit requires a panel to declare what it
+      is. %>
+  <div class="absolute <%= align == :start ? "left-0" : "right-0" %> z-30 mt-1 w-64 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
+       hidden
+       role="menu"
+       data-popover-target="panel">
+    <%= render "shared/essentials/menu_items", items: items %>
+  </div>
+</div>

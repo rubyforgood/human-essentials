@@ -6,20 +6,23 @@
         title: "Requests",
         subtitle: "Essentials requested by partner agencies.",
         actions: capture {
-          if info.unfulfilled_requests_count > 0
-            concat essentials_link_button("Print unfulfilled picklists (#{info.unfulfilled_requests_count})",
-                     print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params)),
-                     variant: :secondary, icon: "bi-printer")
-          end
+          # Two outputs behind one named menu. They were separate buttons, which with the totals
+          # summary and the primary made four -- one past what design.md allows, and the only page
+          # in the app that broke the rule. "Export" says what is inside; "More actions" would not.
+          export_items = []
           if info.requests.any?
-            concat essentials_link_button("Export", requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            export_items << {label: "Requests as CSV", icon: "bi-filetype-csv",
+                             path: requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                             link_options: {data: {filter_export: true}}}
           end
-          # A page action, not a filter. It lived in the filter bar, where it was laid out as a
-          # filter cell -- and once the bar collapsed it was hidden behind the Filters button.
-          concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
-            concat tag.i(nil, class: "bi-calculator", aria: {hidden: true})
-            concat " Calculate product totals"
-          end)
+          if info.unfulfilled_requests_count > 0
+            export_items << {label: "Unfulfilled picklists, PDF (#{info.unfulfilled_requests_count})",
+                             icon: "bi-printer",
+                             path: print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params))}
+          end
+          if export_items.any?
+            concat render("shared/essentials/menu_button", label: "Export", icon: "bi-download", items: export_items)
+          end
           if current_user.has_role?(Role::ORG_ADMIN, current_organization)
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "new-request"}) do
               concat tag.i(nil, class: "bi-plus-lg", aria: {hidden: true})
@@ -39,7 +42,17 @@
   <% end %>
   <%= turbo_frame_tag "requests-results", target: "_top", data: {turbo_action: "advance"} do %>
 
+    <%# The totals are a summary of *these rows*, so the control sits on their card rather than in
+        the page header, where it was the fourth action. `:secondary, size: :sm` is what a card
+        action is everywhere else in the app.
+        No card title: the page `h1` is already "Requests", and a card repeating it says nothing. %>
     <%= render "shared/essentials/card", padded: false,
+          actions: (info.requests.any? ? capture {
+            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary, size: :sm), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
+              concat tag.i(nil, class: "bi-calculator", aria: {hidden: true})
+              concat " Show product totals"
+            end)
+          } : nil),
           footer: essentials_pagination_footer(info.paginated_requests) do %>
       <% if info.paginated_requests.blank? %>
         <%= render "shared/essentials/empty_state",

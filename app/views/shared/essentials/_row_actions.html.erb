@@ -22,6 +22,9 @@
   `primary` is omitted where the row's first cell already links to the record: a visible "View"
   beside a linked ID is two controls with one destination.
 
+  The items themselves are `shared/essentials/menu_items`, shared with `menu_button`, so what a
+  menu item is has one definition rather than two that drift.
+
   The disclosure pattern, not the ARIA menu pattern: a popover of links moved through with Tab.
   `popover_controller` already gives Escape, focus back to the trigger, `aria-expanded` and
   click-outside; it does not do arrow-key movement, and promising `role="menu"` without that is
@@ -54,43 +57,7 @@
          hidden
          role="menu"
          data-popover-target="panel">
-      <% items.compact.each do |item| %>
-        <%
-          tone_classes = (item[:tone] == :danger) ?
-            "text-slate-700 hover:bg-rose-50 hover:text-rose-700" :
-            "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-          item_classes = "flex w-full items-center gap-2 px-3 py-2 text-left text-sm #{tone_classes} " \
-                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        %>
-        <% if item[:disabled] && item[:method] %>
-          <%# An unavailable *form* action is a genuinely `disabled` <button>, and an unavailable
-              *link* action is a non-interactive <span> with `aria-disabled` -- design.md draws that
-              line and it matters: `disabled` is only a thing a form control can be. The reason is
-              sr-only text, not a title, so it reaches a screen reader without needing hover. %>
-          <%# `form: {role: "none"}` on the wrapper: `role="menu"` must own its `menuitem`s, and a
-              <form> in between is a third thing in the tree that is neither. `none` makes it
-              transparent, which is the same trick an <li> wrapper needs in a menu. %>
-          <%= button_to item[:path], method: item[:method], disabled: true,
-                form_class: "block", form: {role: "none"}, role: "menuitem",
-                class: "#{item_classes} opacity-60" do %>
-            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
-            <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
-          <% end %>
-        <% elsif item[:disabled] %>
-          <span class="<%= item_classes %> opacity-60" role="menuitem" aria-disabled="true">
-            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
-            <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
-          </span>
-        <% elsif item[:method] %>
-          <%= essentials_action_button item[:label], item[:path], method: item[:method],
-                variant: :ghost, size: :sm, icon: item[:icon], confirm: item[:confirm],
-                class: item_classes, role: "menuitem", form: {role: "none"} %>
-        <% else %>
-          <%= link_to item[:path], class: item_classes, role: "menuitem", **(item[:link_options] || {}) do %>
-            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
-          <% end %>
-        <% end %>
-      <% end %>
+      <%= render "shared/essentials/menu_items", items: items %>
     </div>
   </div>
 </div>

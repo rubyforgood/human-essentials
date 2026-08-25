@@ -368,6 +368,12 @@ Two things that bite:
   had been given the text-input constant and kept the native arrow because of it.
 
 <a id="control-height"></a>
+**Every button variant carries a border**, transparent where it is not meant to be seen. `border`
+is 1px top and bottom, so without it a `:primary` is 36px next to a 38px `:secondary`. Measured
+across 17 pages before the fix: 25 secondary at 38px, **16 primary and 4 ghost at 36px**. It was
+invisible while headers carried enough buttons to wrap; two buttons on one row showed it at once.
+`button-audit` checks the height now.
+
 **The control height is 38px**, and it is not a Tailwind step. It falls out of `py-2` plus a
 14px line box plus two 1px borders, so anything that has to sit level with an input — an icon
 button beside it, a third-party widget, a grid column holding one — is `2.375rem` and not a
@@ -555,16 +561,48 @@ sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be
 to the subtitle's baseline.
 
 **At most three actions, exactly one of them primary, primary last.** Everything else is
-`:secondary` or `:ghost`. Past three, the least-used collapse behind a "More actions" menu.
-Six index pages here already carry exactly three — two secondary and one primary — so this
-writes down what the app already does rather than changing it.
+`:secondary` or `:ghost`. Past three, the least-used collapse behind a menu — and **name the
+menu after what is in it**. `/requests` had four, the only page in the app that did; its two
+outputs became one `Export` menu. "Export" says what is inside, "More actions" only says that
+something is.
 
 The actions container carries `data-page-header="actions"` so a spec can count what is in it
-without walking ancestors.
+without walking ancestors — and **`bin/design/button-audit.js` does**, across 27 page headers and
+three roles. It has to run in a browser: half these actions are conditional on a role or on a count
+being above zero, so `/requests` shows one action to an ORG_USER and two to an ORG_ADMIN. The rule
+had been written here for weeks with nothing enforcing it, which is how the fourth button arrived.
 
 **A page has one place for its main action.** If a fourth button appears, that is the signal
 that something else is wrong — usually a section of the page wanting an action of its own. Do
 not tuck it above a table; see the tabs rule below.
+
+<a id="menu-button"></a>
+**A menu of related actions is `shared/essentials/menu_button`.** A labelled trigger with a chevron,
+`:secondary` at the normal control height, and a `role="menu"` panel — the page-level counterpart to
+[`row_actions`](#row-actions), which is a kebab because a table row has no room for a word. A page
+header has room, so it uses one.
+
+```erb
+<%= render "shared/essentials/menu_button", label: "Export", icon: "bi-download", items: [
+      {label: "Requests as CSV", path: requests_path(format: :csv), icon: "bi-filetype-csv"},
+      {label: "Unfulfilled picklists, PDF (12)", path: …, icon: "bi-printer"}
+    ] %>
+```
+
+It **counts as one action** against the limit of three, which is the whole point of collapsing into
+it. Both menus render their items through `shared/essentials/menu_items`, so what a menu item is —
+its roles, its tones, and the difference between a disabled link and a disabled form control — has
+one definition rather than two that drift.
+
+It is `popover-fixed-value`, so the panel is placed against the viewport and clamped to it. At 320px
+a page header's actions wrap, which puts the trigger near the left edge, and a panel right-aligned
+to a trigger there starts at a negative x. The overlay audit caught that at 320×640.
+
+**A summary of a table is not a page action.** "Show product totals" on `/requests` was the fourth
+button in the page header, and it does not act on the page — it summarises the rows in the card
+below it. It sits on that card now, as `:secondary, size: :sm`, which is what a card action is
+everywhere else. No card title with it: the page `h1` is already "Requests", and a card repeating it
+says nothing.
 
 ### Tabs
 

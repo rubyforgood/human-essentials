@@ -45,7 +45,9 @@ RSpec.describe 'Requests', type: :request do
 
         get requests_path
 
-        expect(response.body).to include('Print unfulfilled picklists (2)')
+        # Inside the Export menu now: two outputs behind one named trigger, so the page header
+        # keeps to the three actions design.md allows.
+        expect(response.body).to include('Unfulfilled picklists, PDF (2)')
         # Status is a design system pill, and it no longer relies on colour alone -- the
         # cancelled state carries an icon and the word.
         statuses = Nokogiri::HTML(response.body).css("table tbody td span").map { |s| s.text.strip }
@@ -85,7 +87,7 @@ RSpec.describe 'Requests', type: :request do
 
           get requests_path({ filters: { by_status: :started} })
 
-          expect(response.body).to include("Print unfulfilled picklists (1)")
+          expect(response.body).to include("Unfulfilled picklists, PDF (1)")
           expect(response.body).to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
           expect(response.body).not_to include("Cancelled request - a comment")
