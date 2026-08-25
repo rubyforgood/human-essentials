@@ -48,6 +48,25 @@ RSpec.describe "Clipped table text", type: :system, js: true do
     end
   end
 
+  # The controller keys on any overflowing cell, not on `.notes`. It was scoped to that class at
+  # first, which meant capping a second kind of column produced text nobody could read.
+  context "when a name is too long for its capped column" do
+    let(:long_name) { "Greater Metropolitan Area Family Support and Diaper Assistance Coalition" }
+
+    before do
+      create(:vendor, organization: organization, business_name: long_name)
+      visit vendors_path
+    end
+
+    it "clips the name and reveals it on hover" do
+      cell = find("td.name[data-clipped]", match: :first)
+      expect(cell[:tabindex]).to eq("0")
+
+      cell.hover
+      expect(page).to have_css(".tip-bubble", text: "Diaper Assistance Coalition")
+    end
+  end
+
   context "when a comment fits" do
     before do
       create(:purchase, organization: organization, comment: "Short.")

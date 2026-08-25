@@ -1,7 +1,7 @@
 <% over_quota = request_row.partner.quota.present? && request_row.total_items.to_i >= request_row.partner.quota %>
 <tr>
-  <td class="date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
-  <td class="font-medium text-slate-900"><%= request_row.partner.name %></td>
+  <td class="pin-col date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td class="name font-medium text-slate-900"><%= request_row.partner.name %></td>
   <td>
     <% partner_user = @requests_info.partner_users.find { |pu| pu.id == request_row.partner_user_id } %>
     <%= partner_user&.formatted_email %>

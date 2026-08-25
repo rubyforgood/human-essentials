@@ -1,9 +1,9 @@
 <tr>
-  <td class="font-medium text-slate-900">
+  <td class="pin-col name font-medium text-slate-900">
     <%= link_to vendor_row.business_name.presence || "Unnamed vendor", vendor_row, class: "text-brand-700 hover:text-brand-800" %>
     <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless vendor_row.active? %>
   </td>
-  <td><%= vendor_row&.contact_name %></td>
+  <td class="name"><%= vendor_row&.contact_name %></td>
   <td><%= vendor_row&.phone %></td>
   <td><%= vendor_row&.email %></td>
   <td class="quantity"><%= number_with_delimiter(vendor_row&.volume) %></td>

@@ -1371,6 +1371,43 @@ by tabbing through eleven buttons. A one-off disclosure does not need one.
 Three copies of this markup existed before it, and they had drifted: only one wrapped its
 trigger in a heading, and only one put its actions outside the button.
 
+<a id="table-rows-are-one-line"></a>
+**A table row is one line.** `.data-table td` is `nowrap`. A wide table can have short rows or fit
+the screen, not both, and every system that ships data tables picks the short row — Carbon,
+Material, Stripe and Linear all scroll sideways instead. A table is read *down* a column, and a
+ragged row height breaks that; a sideways scroll is a deliberate act you take once. **WCAG 1.4.10
+Reflow exempts data tables** from the no-sideways-scroll rule for this reason, and every table here
+already sits in a focusable `.table-scroll` region. Measured: `/distributions` went **1,339px tall
+with three row heights to 943px with one**, `/purchases` 1,111 to 783.
+
+`td` only — measured, adding `th` changes nothing, because these columns are sized by their content
+rather than their headings, and leaving a heading free to wrap stops a long one widening a column
+by itself.
+
+Three classes go with it, and each exists because the rule alone is not enough:
+
+- **`.wrap`** — the escape hatch, for a cell holding a *list* or a paragraph rather than a value.
+  `/item_categories` renders a `<ul>` of item links in a cell, and a list on one line is unusable.
+  Without the hatch the next person meets the rule as an obstacle and reaches for an inline style.
+- **`.name`** — a **18rem** cap on a column holding a name. `nowrap` alone hands the layout to
+  whoever typed the longest value: one 72-character partner name took that column from 263px to
+  **493px** and dropped the columns visible without scrolling from **8 to 6**, the first to go being
+  Total value. The cap is **measured, not chosen** — the longest values in the database are a
+  32-character partner and a 36-character item, about 263px, so it is inert on everything that
+  exists today and engages only on outliers. It is a *width*, not a character count: in
+  proportional type "Illinois" and "Warehouse" are both nine characters and 12px apart.
+- **`.pin-col`** — the column that says which row you are on, pinned with `position: sticky` so a
+  sideways scroll does not cost you it. Without it the partner cell sits at **−542px** once
+  `/distributions` is scrolled right. Excel, AG Grid and Carbon all pin the identifying column.
+  `background-color: inherit`, so the cell keeps whatever the row is doing — hover, the highlight on
+  a just-created record, zebra striping — instead of showing a white stripe through it.
+
+Anything clipped by `.name` or `.notes` is revealed by `clipped_text_controller` on hover and
+focus, so capping costs the reader nothing. That controller keys on **any** cell that overflows,
+not on a list of column classes: `scrollWidth > clientWidth` *is* the property, since a wrapping
+cell grows downwards and an uncapped `nowrap` cell grows sideways. It was scoped to `.notes` at
+first, which meant capping a second kind of column silently produced text nobody could read.
+
 <a id="long-text-in-a-table"></a>
 **Free text in a column gets `.notes`.** A comment, a note, a reason, an address — anything a
 person types with no length limit. The cell sets the row height to whatever was typed, and a

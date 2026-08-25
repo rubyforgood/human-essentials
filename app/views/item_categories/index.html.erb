@@ -43,7 +43,8 @@
                   <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
                 </td>
                 <td class="notes text-slate-600"><%= item_category.description %></td>
-                <td>
+                <%# `wrap`: this cell is a list, not a value, and a list on one line is unusable. %>
+                <td class="wrap">
                   <ul class="space-y-0.5">
                     <% item_category.items.each do |item| %>
                       <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
