@@ -4086,3 +4086,48 @@ immediately. Every variant carries a transparent border now, and the audit check
 - **Putting the totals control in the pagination footer** beside "Showing 1–15 of 119 requests",
   which is thematically right — both speak about the filtered set. The footer is a shared partial
   with no slot for it, and adding one for a single caller is not worth it.
+
+
+---
+
+## 2026-08-25 · One item is not a menu
+
+**Area.** `shared/essentials/menu_button`, `design.md`.
+
+**Reported.** "If there were 3 different kinds of reports, how does the user pick? I don't see it
+under Export — it's only one export."
+
+**The defect is real and I introduced it yesterday.** Both items in that menu are conditional on the
+data: the CSV needs any requests at all, and the picklist only exists while something is
+*unfulfilled*. Those conditions are independent, so an organisation with requests but none
+outstanding gets a menu containing **one entry**. Proved it rather than reasoned about it — the seed
+data is 119 pending requests, which can never produce the case, so it took a spec creating a single
+fulfilled request: `MENU ITEMS: ["Requests as CSV"]`.
+
+A menu of one is strictly worse than the button it replaced: a click to reach one thing, with its
+label hidden behind a general word. It is the same class of mistake as collapsing a single row
+action into a kebab.
+
+**Decision.** The component collapses: given one item it renders a plain button. In the component,
+not the caller, so every future caller gets it right — the caller cannot know how many of its
+conditional items will survive.
+
+**It collapses to the menu's label, not the item's.** "Export", not "Requests as CSV". Safe only
+because a menu here is [named after its contents](#menu-button), so its name fits any one of them,
+and it is the one that is a verb — design.md requires a button's label to say what will happen.
+GitHub's Download menu behaves the same way.
+
+**On the question behind the report: how does someone pick between three reports?** Two to about
+four closely-related outputs belong in one menu, each item naming the content *and* the format.
+Past that, or for anything that is not a straight download, it belongs in the reports hub rather
+than a page header — `/reports` already carries Distributions, Donations, Purchases, Requests,
+Compliance and Activity. A page-header menu is for getting *this page's* data out; it is not a
+catalogue.
+
+The trigger says there is a choice with `aria-haspopup="true"` for a screen reader and a 12px
+chevron for everyone else. If a third output ever joins these two, the menu is already the right
+control and only needs the item.
+
+**Alternative rejected.** Rendering the menu regardless and letting it hold one item, on the grounds
+that the control should be stable as data changes. Stability is worth less than not making someone
+open a menu to find a single link.

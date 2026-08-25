@@ -53,6 +53,24 @@ RSpec.describe "Requests", type: :system, js: true do
       expect(items.last).to start_with("Unfulfilled picklists, PDF")
     end
 
+    # One item is not a menu. Both exports are conditional on the data -- the picklist only exists
+    # while something is unfulfilled -- so an organisation with requests but none outstanding got a
+    # menu holding a single entry, which is worse than the button it replaced.
+    context "when there is only one thing to export" do
+      let(:lone_organization) { create(:organization) }
+      let(:lone_user) { create(:user, organization: lone_organization) }
+
+      it "renders a plain button rather than a menu of one" do
+        sign_in lone_user
+        create(:request, :fulfilled, organization: lone_organization)
+
+        visit requests_path
+
+        expect(page).to have_no_css("[data-page-header='actions'] button[aria-haspopup='true']")
+        expect(page).to have_link("Export")
+      end
+    end
+
     # The totals summarise the rows in the card, so the control belongs to the card, not the page.
     it "puts the product totals on the card whose rows it totals" do
       visit subject
