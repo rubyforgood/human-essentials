@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four buttons in a page header</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .hdr { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: .75rem; }
+  .hdr-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .frame { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem;
+           background: var(--color-slate-50); resize: horizontal; overflow: auto; min-width: 300px; max-width: 100%; }
+  .menu-btn::after { content: " \25BE"; }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .3rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Four buttons, and one of them is in the wrong place</h1>
+    <p class="max-w-3xl text-slate-600">
+      <code class="rounded bg-slate-200 px-1 text-xs">/requests</code> is the only page in the app
+      that breaks this rule &mdash; the audit checked <strong>27 page headers across three
+      roles</strong> and found one.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The rule already exists, and it matches the industry</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>design.md:</strong> <em>&ldquo;At most three actions, exactly one of them primary,
+      primary last. Past three, the least-used collapse behind a &lsquo;More actions&rsquo; menu.
+      A page has one place for its main action. If a fourth button appears, that is the signal that
+      something else is wrong &mdash; usually a section of the page wanting an action of its
+      own.&rdquo;</em></p>
+      <p><strong>That is the industry position too.</strong> Shopify Polaris, Atlassian, Salesforce
+      Lightning and GitHub Primer all give a page one primary action and overflow the rest into a
+      menu after two or three. The reason is not tidiness: a page with four equal-looking buttons
+      has no main action, because <em>everything</em> emphasised is nothing emphasised.</p>
+      <p><strong>The rule was written and never enforced.</strong> design.md even anticipated the
+      check &mdash; <em>&ldquo;the actions container carries `data-page-header="actions"` so a spec
+      can count what is in it&rdquo;</em> &mdash; and nothing ever counted. That is why a fourth
+      button could arrive unnoticed. <code class="rounded bg-slate-200 px-1 text-xs">bin/design/button-audit.js</code>
+      counts now.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What the fourth button costs</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Viewport</th><th>Header height</th><th>Rows of buttons</th></tr></thead>
+      <tbody>
+        <tr><td>1440</td><td>56px</td><td><span class="pill pill-bad">already 2</span></td></tr>
+        <tr><td>1280</td><td>106px</td><td>2</td></tr>
+        <tr><td>1024 &ndash; 640</td><td>150px</td><td>2</td></tr>
+        <tr><td>375</td><td>196px</td><td>3</td></tr>
+        <tr><td>320</td><td><span class="pill pill-bad">242px</span></td><td>4 &mdash; one per line</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      707px of buttons. They wrap to a second row <strong>at every width</strong>, including the
+      widest, and at 320px the header is 242px tall before a single request is visible.
+    </p>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What &ldquo;Calculate product totals&rdquo; actually does</h2>
+    <p class="max-w-3xl text-slate-600">
+      It opens a modal listing <strong>the total quantity requested for each item</strong>, across
+      every request matching the current filters. It works, and it does follow the filters &mdash;
+      narrowing to one partner took it from 46 items and 23,035 units to a smaller set, and I
+      confirmed that against the row count. So the calculation is real.
+    </p>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p class="font-semibold">Three things are wrong with it, and none of them is the maths.</p>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li><strong>There is no total.</strong> The modal lists 46 per-item figures and never adds
+        them up. The button promises a total and the panel gives a breakdown &mdash; the sum,
+        <strong>23,035 units</strong>, is the one number it does not show.</li>
+        <li><strong>The verb is wrong.</strong> design.md: <em>buttons take a verb, and the verb is
+        what will happen.</em> Nothing is calculated when you press it; the figures already exist.
+        It <em>shows</em> them.</li>
+        <li><strong>It is in the wrong place.</strong> It is not an action on the page, it is a
+        summary <em>of the table below it</em> &mdash; which is exactly the &ldquo;section of the
+        page wanting an action of its own&rdquo; the rule predicts when a fourth button turns up.</li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">Options</h2>
+  <p class="max-w-3xl text-slate-600">Each frame is resizable &mdash; drag the corner to see it wrap.</p>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">Now &mdash; four <span class="pill pill-bad">breaks the rule</span></h3>
+    <div class="frame">
+      <div class="hdr">
+        <div class="min-w-0">
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+          <p class="mt-1 text-sm text-slate-600">Essentials requested by partner agencies.</p>
+        </div>
+        <div class="hdr-actions">
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-printer"></i> Print unfulfilled picklists (119)</span>
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-download"></i> Export</span>
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-calculator"></i> Calculate product totals</span>
+          <span class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white"><i class="bi-plus-lg"></i> New quantity request</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Move the totals to the table it summarises <span class="pill pill-info">smallest change</span></h3>
+    <p class="max-w-3xl text-slate-600">Three in the header, and the summary sits on the card whose rows it totals.</p>
+    <div class="frame space-y-3">
+      <div class="hdr">
+        <div class="min-w-0">
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+          <p class="mt-1 text-sm text-slate-600">Essentials requested by partner agencies.</p>
+        </div>
+        <div class="hdr-actions">
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-printer"></i> Print unfulfilled picklists (119)</span>
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-download"></i> Export</span>
+          <span class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white"><i class="bi-plus-lg"></i> New quantity request</span>
+        </div>
+      </div>
+      <div class="card-surface overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+          <h3 class="text-base font-semibold text-slate-900">Requests</h3>
+          <span class="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm font-semibold text-slate-600"><i class="bi-calculator"></i> Show product totals</span>
+        </div>
+        <div class="px-5 py-4 text-sm text-slate-500">the requests table</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      B &mdash; That, and one menu for the two outputs
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      The CSV and the picklist PDF are the same kind of thing &mdash; take this away with you &mdash;
+      so they become one menu. The header is then two things: get the data out, and make a request.
+    </p>
+    <div class="frame space-y-3">
+      <div class="hdr">
+        <div class="min-w-0">
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+          <p class="mt-1 text-sm text-slate-600">Essentials requested by partner agencies.</p>
+        </div>
+        <div class="hdr-actions">
+          <span class="menu-btn inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-download"></i> Export</span>
+          <span class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white"><i class="bi-plus-lg"></i> New quantity request</span>
+        </div>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-2 text-sm text-slate-700 max-w-xs">
+        <p class="px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Export menu</p>
+        <p class="px-2 py-1.5">Requests as CSV</p>
+        <p class="px-2 py-1.5">Unfulfilled picklists, PDF (119)</p>
+      </div>
+      <div class="card-surface overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+          <h3 class="text-base font-semibold text-slate-900">Requests</h3>
+          <span class="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm font-semibold text-slate-600"><i class="bi-calculator"></i> Show product totals</span>
+        </div>
+        <div class="px-5 py-4 text-sm text-slate-500">the requests table</div>
+      </div>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> two buttons, one row at every width, and the primary is unmistakable.</li>
+      <li><strong>For:</strong> it groups by kind rather than by how much room is left &mdash; outputs together, the summary with its table, the main action alone.</li>
+      <li><strong>Against:</strong> the picklist goes from one click to two. It is the least-used of the four, and it is still one press from the page.</li>
+      <li><strong>Against:</strong> a menu needs the popover controller and its keyboard handling &mdash; already built for row actions, so this is reuse rather than new work.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; A &ldquo;More actions&rdquo; menu, as the rule literally says</h3>
+    <p class="max-w-3xl text-slate-600">Collapse the two least-used behind one trigger and change nothing else.</p>
+    <div class="frame">
+      <div class="hdr">
+        <div class="min-w-0">
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+          <p class="mt-1 text-sm text-slate-600">Essentials requested by partner agencies.</p>
+        </div>
+        <div class="hdr-actions">
+          <span class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"><i class="bi-download"></i> Export</span>
+          <span class="menu-btn inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700">More actions</span>
+          <span class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white"><i class="bi-plus-lg"></i> New quantity request</span>
+        </div>
+      </div>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> exactly what design.md prescribes, so no new argument is needed.</li>
+      <li><strong>Against:</strong> &ldquo;More actions&rdquo; names nothing. A menu called Export tells you what is inside it; this one tells you there is something inside it.</li>
+      <li><strong>Against:</strong> it leaves the totals summary in the page header, which is the actual mistake. It fixes the count and not the cause.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">And the modal itself</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>Give it the total.</strong> A <code class="rounded bg-slate-200 px-1 text-xs">&lt;tfoot&gt;</code>
+      row with the sum &mdash; 23,035 units across 46 items on the unfiltered set. That is the number
+      the button's name promises.</p>
+      <p>There is a precedent against <code class="rounded bg-slate-200 px-1 text-xs">&lt;tfoot&gt;</code>
+      totals here, from the reports work: they were dropped on <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>
+      because a summary band above the table was already saying the same thing, and <em>&ldquo;the
+      band and the footer saying overlapping things is worse than either alone&rdquo;</em>. Nothing
+      duplicates this one &mdash; the modal is the only place these figures appear &mdash; so the
+      argument does not carry across.</p>
+      <p><strong>And rename it &ldquo;Show product totals&rdquo;</strong>, since nothing is
+      calculated on press and the convention is that a button's verb is what will happen.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The rest of the app</h2>
+    <p class="max-w-3xl text-slate-600">
+      <code class="rounded bg-slate-200 px-1 text-xs">bin/design/button-audit.js</code>, run over
+      <strong>27 page headers across three roles</strong>:
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <tbody>
+        <tr><td>More than three actions</td><td><span class="pill pill-bad">1</span> &mdash; <code>/requests</code></td></tr>
+        <tr><td>More than one primary</td><td><span class="pill pill-good">0</span></td></tr>
+        <tr><td>Primary not last</td><td><span class="pill pill-good">0</span></td></tr>
+        <tr><td>A variant the helper never emits</td><td><span class="pill pill-good">0</span></td></tr>
+        <tr><td>Headers carrying no action at all</td><td>22 &mdash; not a defect, just pages with nothing to do</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      So button consistency across the app is otherwise intact. The value of the audit is that it
+      stays intact &mdash; the rule has been in design.md for weeks with nothing checking it.
+    </p>
+  </section>
+</div>
+</body>
+</html>
