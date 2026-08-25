@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long names in a nowrap table</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .nw td { white-space: nowrap; }
+  /* PROPOSED: a width cap on name-like columns, exactly as `.notes` already caps free text. */
+  .cap td.name { max-width: 18rem; overflow: hidden; text-overflow: ellipsis; }
+  /* PROPOSED: pin the identifying column so horizontal scroll keeps its context. */
+  /* An explicit class, not `td.name:first-of-type` -- `:first-of-type` counts element type, so
+     that selector means "a td that is .name AND the first td", and the first td is the ID cell.
+     It matched nothing, and the panel silently behaved like the one above it. */
+  .pin tbody td.pin-col, .pin thead th.pin-col {
+    position: sticky; left: 0; z-index: 2;
+    background-color: white; box-shadow: 1px 0 0 var(--color-slate-200);
+  }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+  [data-panel] .table-scroll { max-width: 700px; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">What a long name does to a nowrap table</h1>
+    <p class="max-w-3xl text-slate-600">
+      Three questions, and the third one finds a real hole in what I recommended. Each table below
+      contains the same 72-character partner name. Scroll the third one sideways.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Answering the three directly</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p>
+        <strong>Is there a limit on characters? No &mdash; and that is the bug.</strong> Under plain
+        <code class="rounded bg-slate-200 px-1 text-xs">nowrap</code> a column is as wide as its
+        longest value, with nothing bounding it.
+      </p>
+      <p>
+        <strong>Does it push the pertinent out of view? Yes, measured.</strong> On the real
+        <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code> at 1440: with normal
+        names the Partner column is <strong>263px</strong> and <strong>8 of 12</strong> columns are
+        visible. Paste in one 72-character name and it becomes <strong>493px</strong> with
+        <strong>6 of 12</strong> visible &mdash; <em>one</em> long name costs two columns, and the
+        first to go is <strong>Total value</strong>.
+      </p>
+      <p>
+        <strong>How should the limit be expressed? In width, not characters.</strong> A character
+        count is the wrong unit in proportional type: "Illinois" and "Warehouse" are both nine
+        characters and 12px apart. A <code class="rounded bg-slate-200 px-1 text-xs">max-width</code>
+        caps what actually matters, which is how much room the column takes.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Three variants, same data</h2>
+    <div class="space-y-2"><h3 class="text-base font-semibold">C1 - nowrap alone (what I recommended)</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table nw"><caption class="sr-only">Distributions</caption><thead><tr><th>ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="font-medium text-slate-900">24</td><td class="name">Greater Metropolitan Area Family Support and Diaper Assistance Coalition</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">23</td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">22</td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">21</td><td class="name">Second Street Community Outreach</td><td class="date">08/09/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">460</td><td class="numeric">$291.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-bad">the flaw you spotted</span> One 72-character partner name sets the column width, and everything to its right is pushed out of view. There is no limit.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">C2 - nowrap + a width cap on name columns</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table nw cap"><caption class="sr-only">Distributions</caption><thead><tr><th>ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="font-medium text-slate-900">24</td><td class="name">Greater Metropolitan Area Family Support and Diaper Assistance Coalition</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">23</td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">22</td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">21</td><td class="name">Second Street Community Outreach</td><td class="date">08/09/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">460</td><td class="numeric">$291.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> The long name clips with an ellipsis, exactly as <code class="rounded bg-slate-200 px-1 text-xs">.notes</code> already caps comments. The cap is inert at normal lengths.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">C3 - C2 + the identifying column pinned</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table nw cap pin" data-pinned><caption class="sr-only">Distributions</caption><thead><tr><th>ID</th><th class="name pin-col">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="font-medium text-slate-900">24</td><td class="name pin-col">Greater Metropolitan Area Family Support and Diaper Assistance Coalition</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">23</td><td class="name pin-col">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">22</td><td class="name pin-col">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr><tr><td class="font-medium text-slate-900">21</td><td class="name pin-col">Second Street Community Outreach</td><td class="date">08/09/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">460</td><td class="numeric">$291.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended with C2</span> Scroll this one sideways: the partner name stays put, so you never lose track of which row you are reading.</p></div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Measured on the real page</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Effect of each variant on /distributions at 1440px</caption>
+        <thead><tr><th>Variant</th><th class="numeric">Partner column</th><th class="numeric">Table width</th>
+          <th class="numeric">Columns visible</th><th>Partner after scrolling right</th></tr></thead>
+        <tbody class="tick">
+          <tr><td>nowrap, normal names</td><td class="numeric">263px</td><td class="numeric">1,716</td><td class="numeric">8 of 12</td><td>gone</td></tr>
+          <tr><td>nowrap, one 72-char name</td><td class="numeric">493px</td><td class="numeric">1,989</td><td class="numeric">6 of 12</td><td>gone</td></tr>
+          <tr><td>+ cap at 18rem</td><td class="numeric">288px</td><td class="numeric">1,741</td><td class="numeric">7 of 12</td><td>gone</td></tr>
+          <tr><td>+ cap + pinned column</td><td class="numeric">288px</td><td class="numeric">1,741</td><td class="numeric">7 of 12</td><td><strong>pinned at 0</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-slate-600">
+      Without pinning, the Partner cell sits at <strong>&minus;542px</strong> once the table is
+      scrolled right &mdash; entirely off the region. With it, <strong>0px</strong>.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Other ways to do this</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-2">
+      <p><strong>Fewer columns.</strong> Makes the table shorter <em>and</em> narrower, which nothing
+        else here does. The strongest answer for
+        <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code> specifically &mdash;
+        twelve columns, two adjacent dates, a shipping cost empty on every seeded row.</p>
+      <p><strong>Hide columns by priority at narrow widths.</strong> Carbon and Foundation both do
+        this. It needs a priority per column on every table, and it hides data without saying so,
+        which on a page people reconcile numbers from is a poor trade.</p>
+      <p><strong>Let the user choose columns.</strong> What AG Grid and Airtable do. A real feature
+        with storage, defaults and a settings UI &mdash; out of proportion to the problem.</p>
+      <p><strong>A card layout below <code class="rounded bg-slate-200 px-1 text-xs">md</code>.</strong>
+        Stripe and Shopify both drop to stacked cards on phones. It solves the narrow case properly
+        and does nothing for the desktop case, which is the one being asked about.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>C2 and C3 together, and C2 is not optional.</strong> Plain
+        <code class="rounded bg-slate-200 px-1 text-xs">nowrap</code> hands the layout to whoever
+        typed the longest name; the cap takes it back. It is the same mechanism as
+        <code class="rounded bg-slate-200 px-1 text-xs">.notes</code>, one class further &mdash; and
+        the reveal is already built: <code class="rounded bg-slate-200 px-1 text-xs">clipped_text_controller</code>
+        shows the full value on hover and focus for any clipped cell, so a capped name costs the
+        reader nothing.
+      </p>
+      <p>
+        <strong>18rem, measured, not chosen.</strong> The longest real values are 32 characters for a
+        partner, 36 for an item &mdash; about 263px including padding. 18rem is 288px, so the cap is
+        <em>inert on every value in the database today</em> and only engages on the outliers that
+        would otherwise wreck the layout. A cap that fires constantly would be a different, worse
+        design.
+      </p>
+      <p>
+        <strong>C3 answers the half a cap cannot.</strong> Capping stops one row ruining the table;
+        pinning stops the horizontal scroll costing you the row's identity. Excel, AG Grid and Carbon
+        all pin the identifying column, and it is four lines of CSS.
+      </p>
+      <p class="text-slate-600">
+        <strong>Then fewer columns on <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code></strong>,
+        as a separate per-table decision. C2 and C3 make every table behave predictably; only
+        dropping a column makes that one table small.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  document.querySelectorAll("[data-panel]").forEach(function (panel) {
+    var t = panel.querySelector("table"), region = panel.querySelector(".table-scroll");
+    var cells = Array.prototype.slice.call(t.querySelectorAll("tbody tr:first-child td"));
+    var cum = 0, visible = 0;
+    cells.forEach(function (c) { cum += c.getBoundingClientRect().width; if (cum <= region.clientWidth) visible++; });
+    var partner = t.querySelector("tbody td.name");
+    var note = panel.parentElement.querySelector("p");
+    var tag = document.createElement("strong");
+    tag.className = "tick";
+    tag.textContent = "name column " + Math.round(partner.getBoundingClientRect().width) +
+      "px \u00b7 table " + Math.round(t.getBoundingClientRect().width) + "px \u00b7 " +
+      visible + " of " + cells.length + " columns visible \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>
