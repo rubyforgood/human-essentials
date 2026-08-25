@@ -95,8 +95,20 @@ export default class extends Controller {
      *
      * Six of the seven tables that overflow have one.
      */
-    if (region.querySelector(".pin-col") && region.dataset.pinned === undefined) {
-      region.dataset.pinned = "";
+    const pinned = region.querySelector("thead .pin-col");
+    if (pinned) {
+      if (region.dataset.pinned === undefined) region.dataset.pinned = "";
+      /*
+       * Where the start-of-scroll shadow begins. It cannot be drawn on the frozen cell itself: the
+       * table is `border-collapse: collapse`, under which a box-shadow on a `td` is never painted --
+       * a solid red 40px shadow showed 0% of its pixels there and 50.9% on a control div. So the
+       * wrapper draws it and this says where the frozen column ends.
+       */
+      const width = Math.round(pinned.getBoundingClientRect().width);
+      const wrapper = region.parentElement;
+      if (wrapper && wrapper.style.getPropertyValue("--pin-width") !== `${width}px`) {
+        wrapper.style.setProperty("--pin-width", `${width}px`);
+      }
     }
 
     this.layoutRail(region);

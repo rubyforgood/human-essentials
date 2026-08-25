@@ -350,12 +350,18 @@
    * on a just-created record, zebra striping on the itemized reports. An opaque colour of its own
    * would show a white stripe through a hovered row.
    */
+  /*
+   * `border-right`, not `box-shadow`. This table is `border-collapse: collapse`, under which a
+   * box-shadow on a `td` is **never painted** -- verified with a solid red 40px shadow, which showed
+   * 0% of its pixels on the cell and 50.9% on a control div. The divider here was a box-shadow for
+   * months and drew nothing.
+   */
   .data-table .pin-col {
     position: sticky;
     left: 0;
     z-index: 2;
     background-color: inherit;
-    box-shadow: 1px 0 0 var(--color-slate-200);
+    border-right: 1px solid var(--color-slate-200);
   }
 
   .data-table tbody tr,
@@ -444,7 +450,8 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: calc(var(--spacing) * 16);
+    /* Wider than the shadow reaches, so nothing is clipped; the shadow itself spans about 7px. */
+    width: calc(var(--spacing) * 10);
     opacity: 0;
     transition: opacity 150ms;
     /* Decoration only: it must never eat a click meant for the row underneath. */
@@ -453,22 +460,31 @@
   }
 
   /*
-   * A shadow, not a white scrim. The first version faded to white -- which is the standard trick for
-   * text running out of a box, and does nothing whatever on a table whose rows are already white.
-   * Measured on `/distributions`, screenshotting the 68px strip with the fade on and off and
-   * diffing the painted pixels: the white version moved the background by a mean of **0.28 of 255**,
-   * or 0.1%, while erasing **26% of the text** it lay over. It was invisible, and its only real
-   * effect was damage. This shadow measures **8.35** on the same test with **0%** of the text
-   * touched.
+   * A shadow, not a white scrim, and a faint one.
+   *
+   * The first version faded to white -- the standard trick for text running out of a box, and it
+   * does nothing whatever on a table whose rows are already white. Isolated by shooting the strip
+   * with it on and off and diffing the painted pixels, it moved the background by a **maximum of
+   * about 1 of 255** while erasing **26% of the text** it lay over.
+   *
+   * The shadow that replaced it went too far the other way: 40% of slate-900 over 64px changed the
+   * background by up to **62 of 255** and tinted **28.5% of the visible table**, which reads as a
+   * vignette rather than a boundary.
+   *
+   * This is Ant Design's production value for the same signal -- `rgba(5,5,5,0.06)`, 10px offset,
+   * 8px blur, -8px spread -- from the most-used table component on the web. Measured: max change
+   * **10 of 255** over **7px**, touching **6.6%** of the table. Present when you look for it, absent
+   * when you are not. See design.md.
    */
   div:has(> .table-scroll)::before {
-    left: 0;
-    box-shadow: inset 20px 0 20px -16px color-mix(in oklch, var(--color-slate-900) 40%, transparent);
+    /* 0 where nothing is frozen; the column's width where something is. */
+    left: var(--pin-width, 0px);
+    box-shadow: inset 10px 0 8px -8px rgb(5 5 5 / 0.06);
   }
 
   div:has(> .table-scroll)::after {
     right: 0;
-    box-shadow: inset -20px 0 20px -16px color-mix(in oklch, var(--color-slate-900) 40%, transparent);
+    box-shadow: inset -10px 0 8px -8px rgb(5 5 5 / 0.06);
   }
 
   div:has(> .table-scroll[data-overflow~="end"])::after {
@@ -476,29 +492,24 @@
   }
 
   /*
-   * The start fade only where the first column is *not* frozen.
+   * The start shadow, moved clear of a frozen column rather than drawn over it.
    *
-   * A frozen column does not move, so a fade over it says the wrong thing -- and it is worse than
-   * wrong: sampling the painted pixels of the ID cell on `/distributions` at 4x, the fade lifted
-   * the darkest ink from 69 to 144, which is 9.59:1 down to **3.19:1** against white. That fails
-   * WCAG 1.4.3, on the one column pinning exists to keep readable. A column-by-column profile put
-   * 19 of the 26 inked columns under it. axe saw none of this: it computes contrast from declared
-   * colours and cannot see a gradient painted on top by a pseudo-element.
+   * Over it was a WCAG 1.4.3 failure: sampling the painted pixels of the ID cell on
+   * `/distributions` at 4x, the white fade lifted the darkest ink from 69 to 144 -- 9.59:1 down to
+   * **3.19:1** against white, on the one column pinning exists to keep readable. axe saw none of it,
+   * because it computes contrast from declared colours and cannot see a gradient painted on top.
+   *
+   * The first fix put a shadow on the frozen cell instead, which **never painted** -- see the
+   * `border-collapse` note above. So the signal sits on the wrapper and starts where the frozen
+   * column ends: `--pin-width` is measured and set by `table_scroll_controller`, and is 0 where
+   * nothing is frozen. That is Ant Design's arrangement, and the reason they use a pseudo-element
+   * for it too.
    */
-  div:has(> .table-scroll[data-overflow~="start"]:not([data-pinned]))::before {
+  div:has(> .table-scroll[data-overflow~="start"])::before {
     opacity: 1;
   }
 
-  /*
-   * Where it *is* frozen, the column casts a shadow to its right instead, and only once something
-   * has passed underneath. That is the boundary between what is frozen and what is moving, which is
-   * how Carbon, Ant Design, AG Grid and Airtable all mark it.
-   */
-  .table-scroll[data-overflow~="start"][data-pinned] .data-table .pin-col {
-    box-shadow:
-      6px 0 8px -6px color-mix(in oklch, var(--color-slate-900) 28%, transparent),
-      1px 0 0 var(--color-slate-200);
-  }
+
 
   /*
    * The rail: a horizontal scroll control that rides the fold.

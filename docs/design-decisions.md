@@ -3965,3 +3965,62 @@ the trade being made: down a page you can read rather than sideways through one 
 disclosure — measured **37% shorter** (245px per record against 388). It was recommended in the
 preview and not built, because it needs a judgement per table about which fields lead, and the
 request described A. The machinery is shared, so B is an increment on this rather than a rewrite.
+
+
+---
+
+## 2026-08-25 · The edge signal drops to 6%, and a shadow that never painted
+
+**Area.** The `.table-scroll` edge shadow, `.pin-col`, `table_scroll_controller`, `design.md`.
+
+**Reported.** The grey overlay looks odd and quaint. It did, and the numbers agree: isolated by
+shooting the strip with the treatment and without it, what shipped changed the background by up to
+**62 of 255** and tinted **28.5% of the visible table**. Ant Design's production value for the same
+signal is **6% over 10px** — max change **10**, touching **6.6%**. What shipped was six times heavier
+than the most-used table component on the web.
+
+**Decision.** Ant Design's value, `rgb(5 5 5 / 0.06)` with a 10px offset and 8px blur, on **both** the
+container edge and the frozen-column boundary. One number for one meaning: they had been 40% and 28%,
+which is two conventions where there should be one.
+
+**Why it got so heavy: a bad metric.** To decide whether an edge signal was visible at all, I
+averaged luminance change over a 68px strip. That measure **rewards a broad smear and punishes a
+crisp line** — a 1px rule changes almost no area, scored 1.83, and I wrote it off as *imperceptible*.
+By sharpest local step it is **43.4**, among the most visible options available. The eye finds edges
+by local contrast, not by area average. The heaviest option won because the metric was biased toward
+heaviness.
+
+**And the ground had moved.** When the shadow was chosen there was no rail, so the edge was carrying
+the whole job of saying the table scrolls. With a real control present the edge only has to say
+*content is cut here rather than ended here*.
+
+**The larger find: a `box-shadow` on a `td` is never painted here.** `.data-table` is
+`border-collapse: collapse`, under which Chrome does not draw a cell's box-shadow. Verified with a
+solid red 40px shadow — **0%** of its pixels on the cell, **50.9%** on a control `div`.
+
+That means the frozen column's shadow **never appeared**, in any version: not the 28% shipped
+yesterday, not the 6% shipped an hour before this, and not the `1px 0 0` hairline that had been the
+column's divider since it was written. **The spec passed throughout**, because it asserted on
+`getComputedStyle().boxShadow`, which reports the declared value whether or not a pixel changes —
+precisely the failure mode written into `process.doc`. It was found only because extending the 6%
+value to that shadow measured **zero change**, which was too clean a number to accept.
+
+The fix is Ant Design's own arrangement, and now it is clear why they build it that way:
+
+- the divider is a **`border-right`**, which paints under `border-collapse`;
+- the boundary shadow moves to the **wrapper**, offset by a `--pin-width` the controller measures.
+
+**This revives an option I rejected two days ago.** Offsetting the start shadow by the frozen
+column's width was considered and dismissed as "more machinery than the question deserves" in favour
+of a shadow on the cell. The shadow on the cell could not work, so the machinery is now the cheap
+option. Recorded because the earlier reasoning still reads as sound and was wrong for a reason
+nothing in it could have anticipated.
+
+**Alternatives rejected.**
+
+- **Nothing at all**, relying on the rail. Defensible, and the rail sits at the bottom of the table
+  while the eye is in the middle of it.
+- **A hairline rule at the edge.** Best on sharpness, wrong in meaning: a 1px line at the edge of a
+  card that already has a 1px border reads as *the edge of the card*.
+- **`border-collapse: separate`** to make cell shadows paint. It changes border rendering for every
+  table in the app to fix one signal.
