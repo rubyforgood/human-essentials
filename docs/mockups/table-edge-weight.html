@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The edge of a scrolling table</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* Every panel is a real .table-scroll at a width that forces overflow, so what you see is what
+     the app draws. The app's own rule is switched off and each panel supplies its own. */
+  .edge { position: relative; max-width: 640px; }
+  .edge .table-scroll { overflow-x: auto; }
+  .edge::after {
+    content: ""; position: absolute; top: 0; bottom: 0; right: 0;
+    pointer-events: none; z-index: 3;
+  }
+
+  /* The app's own `div:has(> .table-scroll)::after` matches these panels and outranks a single
+     class -- `:has()` takes its argument's specificity, so it is (0,1,1) against (0,1,0). Switched
+     off here, and every panel below is written `.edge.x` to clear it. */
+  div:has(> .table-scroll)::before,
+  div:has(> .table-scroll)::after {
+    box-shadow: none;
+    background: none;
+    opacity: 1;
+  }
+
+  /* SHIPPED TODAY -- 40% of slate-900 over 64px. */
+  .edge.now::after {
+    width: 4rem;
+    box-shadow: inset -20px 0 20px -16px color-mix(in oklch, var(--color-slate-900) 40%, transparent);
+  }
+
+  /* A -- nothing at all. The rail is the signal. */
+  .edge.none::after { display: none; }
+
+  /* B -- Ant Design's actual production value: 6% of near-black over 10px. */
+  .edge.ant::after {
+    width: 2.5rem;
+    box-shadow: inset -10px 0 8px -8px rgb(5 5 5 / 0.06);
+  }
+
+  /* C -- a hairline rule where the content is cut. */
+  .edge.rule::after {
+    width: 1px;
+    background: var(--color-slate-300);
+  }
+
+  /* D -- between B and what is shipped: 12% over 24px. */
+  .edge.light::after {
+    width: 2rem;
+    box-shadow: inset -12px 0 10px -10px rgb(15 23 42 / 0.12);
+  }
+
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .facts td, .facts th { padding: .3rem .6rem; text-align: left; font-size: .8125rem; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The grey smear at the edge of the table</h1>
+    <p class="max-w-3xl text-slate-600">
+      You are right, and the reason is measurable: what is shipped drops the row background from
+      <strong>250 to 191</strong> at the table's edge, tinting <strong>28.5% of the table you can
+      see</strong>. <strong>That is six times Ant Design's value</strong> for the same signal, and
+      heavier than anything current ships.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Why I picked something that heavy</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A bad metric.</strong> To decide whether an edge signal was visible at all, I
+      averaged the luminance change over a 68px strip. That measure rewards a <em>broad smear</em> and
+      punishes a <em>crisp line</em>: a 1px rule changes almost no area, so it scored 1.83 and I
+      wrote it off as imperceptible. It is perfectly visible &mdash; the eye finds edges by local
+      contrast, not by area average.</p>
+      <p>Measuring the same candidates by <strong>peak drop</strong> and <strong>sharpest local
+      step</strong> instead:</p>
+      <table class="facts w-full rounded-xl border border-amber-200 bg-white">
+        <thead><tr><th>Signal</th><th>Peak drop</th><th>Sharpest step</th><th>Width affected</th><th>Old verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Shipped today, 40%</td><td><span class="pill pill-bad">58.3</span></td><td>4.0</td><td>23px</td><td>&ldquo;visible&rdquo;</td></tr>
+          <tr><td>Ant Design, 6%</td><td>9.3</td><td>1.5</td><td>6px</td><td>&mdash;</td></tr>
+          <tr><td>Light, 12%</td><td>17.3</td><td>2.4</td><td>9px</td><td>&mdash;</td></tr>
+          <tr><td>Hairline rule</td><td>38.1</td><td><span class="pill pill-good">38.1</span></td><td>1px</td><td><span class="pill pill-bad">&ldquo;imperceptible&rdquo; &mdash; wrong</span></td></tr>
+        </tbody>
+      </table>
+      <p><strong>And the ground has moved since.</strong> When I chose it there was no rail: the edge
+      signal was carrying the whole job of saying the table scrolls. There is a real scroll control
+      now, so the edge no longer has to shout &mdash; it only has to hint.</p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">The options, drawn with the app's own table</h2>
+  <p class="max-w-3xl text-slate-600">Each panel is a real overflowing <code class="rounded bg-slate-200 px-1 text-xs">.table-scroll</code>. Scroll one sideways if you like.</p>
+
+
+  <section class="space-y-2">
+    <h3 class="text-lg font-semibold">What is shipped now <span class="pill pill-bad">too heavy</span></h3>
+    <p class="max-w-3xl text-sm text-slate-600">40% of slate-900 spread over 64px.</p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+      <div class="edge now">
+        <div class="table-scroll" data-overflow="end">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th scope="col" class="pin-col name">Purchases from</th>
+              <th scope="col" class="name">Storage location</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="date">Purchased date</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="date">Purchased date</th>
+            </tr>
+</thead>
+            <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Ace Wholesale Supply</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">1,204</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="numeric">$1,540.00</td>
+            <td class="date">2026-08-14</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="date">2026-08-14</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Northgate Distributors</td>
+            <td class="name">Overflow annexe</td>
+            <td class="quantity">860</td>
+            <td class="numeric">$742.50</td>
+            <td class="numeric">$980.00</td>
+            <td class="date">2026-08-11</td>
+            <td class="numeric">$742.50</td>
+            <td class="date">2026-08-11</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Cedar Point Trading</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">417</td>
+            <td class="numeric">$389.00</td>
+            <td class="numeric">$505.00</td>
+            <td class="date">2026-08-09</td>
+            <td class="numeric">$389.00</td>
+            <td class="date">2026-08-09</td>
+          </tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500">Isolated by shooting the panel with and without it: max change <strong>62.1</strong> of 255, and it tints <strong>28.5% of the visible table</strong> across 64px. That is why it reads as a vignette.</p>
+    </div>
+  </section>
+
+
+  <section class="space-y-2">
+    <h3 class="text-lg font-semibold">B &mdash; Ant Design's value <span class="pill pill-good">recommended</span></h3>
+    <p class="max-w-3xl text-sm text-slate-600">6% of near-black over 10px &mdash; the exact production value from the most-used table component on the web.</p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+      <div class="edge ant">
+        <div class="table-scroll" data-overflow="end">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th scope="col" class="pin-col name">Purchases from</th>
+              <th scope="col" class="name">Storage location</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="date">Purchased date</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="date">Purchased date</th>
+            </tr>
+</thead>
+            <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Ace Wholesale Supply</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">1,204</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="numeric">$1,540.00</td>
+            <td class="date">2026-08-14</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="date">2026-08-14</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Northgate Distributors</td>
+            <td class="name">Overflow annexe</td>
+            <td class="quantity">860</td>
+            <td class="numeric">$742.50</td>
+            <td class="numeric">$980.00</td>
+            <td class="date">2026-08-11</td>
+            <td class="numeric">$742.50</td>
+            <td class="date">2026-08-11</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Cedar Point Trading</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">417</td>
+            <td class="numeric">$389.00</td>
+            <td class="numeric">$505.00</td>
+            <td class="date">2026-08-09</td>
+            <td class="numeric">$389.00</td>
+            <td class="date">2026-08-09</td>
+          </tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500">Max change <strong>10.0</strong>, touching <strong>6.6%</strong> of the table across 7px. Present when you look for it, absent when you are not.</p>
+    </div>
+  </section>
+
+
+  <section class="space-y-2">
+    <h3 class="text-lg font-semibold">A &mdash; Nothing at all </h3>
+    <p class="max-w-3xl text-sm text-slate-600">No edge treatment. The rail at the bottom says the table scrolls; the thumb being shorter than the track says how much is left.</p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+      <div class="edge none">
+        <div class="table-scroll" data-overflow="end">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th scope="col" class="pin-col name">Purchases from</th>
+              <th scope="col" class="name">Storage location</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="date">Purchased date</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="date">Purchased date</th>
+            </tr>
+</thead>
+            <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Ace Wholesale Supply</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">1,204</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="numeric">$1,540.00</td>
+            <td class="date">2026-08-14</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="date">2026-08-14</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Northgate Distributors</td>
+            <td class="name">Overflow annexe</td>
+            <td class="quantity">860</td>
+            <td class="numeric">$742.50</td>
+            <td class="numeric">$980.00</td>
+            <td class="date">2026-08-11</td>
+            <td class="numeric">$742.50</td>
+            <td class="date">2026-08-11</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Cedar Point Trading</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">417</td>
+            <td class="numeric">$389.00</td>
+            <td class="numeric">$505.00</td>
+            <td class="date">2026-08-09</td>
+            <td class="numeric">$389.00</td>
+            <td class="date">2026-08-09</td>
+          </tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500">Max change <strong>0</strong>. Nothing to dislike, and nothing to notice.</p>
+    </div>
+  </section>
+
+
+  <section class="space-y-2">
+    <h3 class="text-lg font-semibold">D &mdash; Between the two </h3>
+    <p class="max-w-3xl text-sm text-slate-600">12% over 24px.</p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+      <div class="edge light">
+        <div class="table-scroll" data-overflow="end">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th scope="col" class="pin-col name">Purchases from</th>
+              <th scope="col" class="name">Storage location</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="date">Purchased date</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="date">Purchased date</th>
+            </tr>
+</thead>
+            <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Ace Wholesale Supply</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">1,204</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="numeric">$1,540.00</td>
+            <td class="date">2026-08-14</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="date">2026-08-14</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Northgate Distributors</td>
+            <td class="name">Overflow annexe</td>
+            <td class="quantity">860</td>
+            <td class="numeric">$742.50</td>
+            <td class="numeric">$980.00</td>
+            <td class="date">2026-08-11</td>
+            <td class="numeric">$742.50</td>
+            <td class="date">2026-08-11</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Cedar Point Trading</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">417</td>
+            <td class="numeric">$389.00</td>
+            <td class="numeric">$505.00</td>
+            <td class="date">2026-08-09</td>
+            <td class="numeric">$389.00</td>
+            <td class="date">2026-08-09</td>
+          </tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500">Max change <strong>18.9</strong>, touching 10.6% across 10px. Still a soft grey band, just a narrower one.</p>
+    </div>
+  </section>
+
+
+  <section class="space-y-2">
+    <h3 class="text-lg font-semibold">C &mdash; A hairline rule </h3>
+    <p class="max-w-3xl text-sm text-slate-600">A single 1px slate-300 line where the content is cut.</p>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+      <div class="edge rule">
+        <div class="table-scroll" data-overflow="end">
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th scope="col" class="pin-col name">Purchases from</th>
+              <th scope="col" class="name">Storage location</th>
+              <th scope="col" class="quantity">Quantity</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="numeric">Fair market value</th>
+              <th scope="col" class="date">Purchased date</th>
+              <th scope="col" class="numeric">Amount spent</th>
+              <th scope="col" class="date">Purchased date</th>
+            </tr>
+</thead>
+            <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Ace Wholesale Supply</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">1,204</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="numeric">$1,540.00</td>
+            <td class="date">2026-08-14</td>
+            <td class="numeric">$1,204.00</td>
+            <td class="date">2026-08-14</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Northgate Distributors</td>
+            <td class="name">Overflow annexe</td>
+            <td class="quantity">860</td>
+            <td class="numeric">$742.50</td>
+            <td class="numeric">$980.00</td>
+            <td class="date">2026-08-11</td>
+            <td class="numeric">$742.50</td>
+            <td class="date">2026-08-11</td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900">Cedar Point Trading</td>
+            <td class="name">Main warehouse</td>
+            <td class="quantity">417</td>
+            <td class="numeric">$389.00</td>
+            <td class="numeric">$505.00</td>
+            <td class="date">2026-08-09</td>
+            <td class="numeric">$389.00</td>
+            <td class="date">2026-08-09</td>
+          </tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500">Max change <strong>43.4</strong> but over <strong>1.3%</strong> of the table &mdash; one pixel wide. Crisp rather than smudged.</p>
+    </div>
+  </section>
+
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>B &mdash; Ant Design's value, 6% over 10px.</strong></p>
+      <p>It is the reference value for exactly this signal in the table component more people use
+      than any other, it is a sixth of what is shipped, and it stops the edge reading as a vignette
+      while still marking the boundary. The rail does the work of saying <em>you can scroll</em>; this
+      only has to say <em>the content is cut here rather than ending here</em>.</p>
+      <p><strong>A is the other defensible answer</strong> and I would not argue hard against it:
+      with a rail present the edge shading is arguably redundant, and &ldquo;nothing&rdquo; can never
+      look dated. The case for keeping something is that the rail sits at the bottom of the table
+      while your eye is in the middle of it.</p>
+      <p><strong>C is a trap.</strong> It measures best on sharpness, but a 1px vertical line at the
+      edge of a card that already has a 1px border reads as <em>the edge of the card</em> &mdash; it
+      says &ldquo;this is the boundary&rdquo;, which is the opposite of &ldquo;there is more past
+      here&rdquo;. Right numbers, wrong meaning.</p>
+      <p><strong>D is a compromise with nothing to recommend it</strong> over B beyond being closer to
+      what is already there.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">One more to decide while we are here</h2>
+    <p class="max-w-3xl text-slate-600">
+      The frozen column casts its own shadow when content passes under it, currently
+      <strong>28%</strong> of slate-900 &mdash; also far above Ant Design's
+      <strong>6%</strong> for the same thing. It is a tighter shadow than the edge one, so it reads
+      less heavily, but if the edge drops to 6% this should come with it. Ant uses the same value for
+      both, and one number for one meaning is the better rule.
+    </p>
+  </section>
+</div>
+</body>
+</html>
