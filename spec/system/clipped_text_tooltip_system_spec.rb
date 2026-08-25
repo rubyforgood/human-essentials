@@ -65,6 +65,24 @@ RSpec.describe "Clipped table text", type: :system, js: true do
       cell.hover
       expect(page).to have_css(".tip-bubble", text: "Diaper Assistance Coalition")
     end
+
+    # The focus ring was keyed on `td.notes[data-clipped]` while the controller marked any cell, so
+    # a capped name was focusable with the browser's 1px default instead of the brand ring.
+    it "gets the app's focus ring, not the browser's default" do
+      page.execute_script("document.querySelector('td.name[data-clipped]').focus()")
+      ring = page.evaluate_script(
+        "getComputedStyle(document.querySelector('td.name[data-clipped]')).outlineWidth"
+      )
+      expect(ring).to eq("2px")
+    end
+
+    # `cursor: help` put a question mark over a partner's name. The ellipsis is the affordance.
+    it "does not change the cursor" do
+      cursor = page.evaluate_script(
+        "getComputedStyle(document.querySelector('td.name[data-clipped]')).cursor"
+      )
+      expect(cursor).to eq("auto")
+    end
   end
 
   context "when a comment fits" do

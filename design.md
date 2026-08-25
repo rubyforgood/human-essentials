@@ -1403,7 +1403,16 @@ Three classes go with it, and each exists because the rule alone is not enough:
   a just-created record, zebra striping — instead of showing a white stripe through it.
 
 Anything clipped by `.name` or `.notes` is revealed by `clipped_text_controller` on hover and
-focus, so capping costs the reader nothing. That controller keys on **any** cell that overflows,
+focus, so capping costs the reader nothing. **The ellipsis is the affordance — the cursor does not
+change.** `cursor: help` was tried and removed: `help` means "there is an explanation of this", and
+a name whose end is cut off is not a thing needing explanation but a thing needing reading. It put
+a question mark under the pointer over a partner's name. Carbon, Ant Design and AG Grid all leave
+the cursor alone on truncated text.
+
+A clipped cell takes focus, so it gets the app's ring — keyed on `td[data-clipped]`, **not** on a
+column class. While that selector said `.notes`, a capped `.name` cell was focusable with the
+browser's default `1px` black outline instead of the brand ring, which is the same failure as
+scoping the controller by class and is worth checking for together. That controller keys on **any** cell that overflows,
 not on a list of column classes: `scrollWidth > clientWidth` *is* the property, since a wrapping
 cell grows downwards and an uncapped `nowrap` cell grows sideways. It was scoped to `.notes` at
 first, which meant capping a second kind of column silently produced text nobody could read.

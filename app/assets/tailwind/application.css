@@ -407,12 +407,19 @@
     box-shadow: var(--shadow-lg);
   }
 
-  /* A clipped cell takes focus, so it needs a ring like anything else that does. */
-  .data-table td.notes[data-clipped] {
-    cursor: help;
-  }
-
-  .data-table td.notes[data-clipped]:focus-visible {
+  /*
+   * A clipped cell takes focus, so it needs the app's ring like anything else that does. Keyed on
+   * `td[data-clipped]`, not `td.notes[data-clipped]`: the controller marks any overflowing cell,
+   * and while this said `.notes` a capped `.name` cell was focusable with the *browser's* default
+   * 1px black outline instead. Measured before the fix -- `1px rgb(16, 16, 16)` against the brand
+   * ring's `2px rgb(79, 70, 229)`.
+   *
+   * No `cursor: help`. It was here and it is what put a question mark under the pointer: `help`
+   * means "there is an explanation of this", and a partner name whose end is cut off is not a
+   * thing needing explanation -- it is a thing needing reading. The ellipsis is the affordance,
+   * which is why Carbon, Ant Design and AG Grid all leave the cursor alone on truncated text.
+   */
+  .data-table td[data-clipped]:focus-visible {
     outline: 2px solid var(--color-brand-600);
     outline-offset: -2px;
   }
