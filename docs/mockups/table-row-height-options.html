@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One row height, or one screen width?</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .nw td { white-space: nowrap; }
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+  [data-panel] .table-scroll { max-width: 640px; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">One row height, or one screen width?</h1>
+    <p class="max-w-3xl text-slate-600">
+      A wide table can have short rows or fit the screen, not both. The demo tables are squeezed to
+      640px so the effect shows at a comfortable reading width; the figures below them were measured
+      on the real pages at 1440.
+    </p>
+  </header>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">The two behaviours</h2>
+    <div class="space-y-2"><h3 class="text-base font-semibold">Option A - Cells wrap (today)</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table "><caption class="sr-only">Distributions</caption><thead><tr><th>ID</th><th>Partner</th><th class="date">Date</th><th>Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="font-medium text-slate-900">24</td><td>Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td>Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">23</td><td>Eagleton Community Outreach</td><td class="date">08/14/2026</td><td>Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">22</td><td>Snerling Family Services</td><td class="date">08/12/2026</td><td>Bulk Storage Location</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">20</td><td>Ace Relief</td><td class="date">08/01/2026</td><td>Warehouse B</td><td class="quantity">5</td><td class="numeric">$9.00</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">21</td><td>Pawnee Pregnancy Center</td><td class="date">08/09/2026</td><td>Warehouse B</td><td class="quantity">460</td><td class="numeric">$291.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-info">today</span> The table fits its region, and every column too narrow for its content makes the row taller. Rows come out different heights depending on what is in them.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">Option B / C - Cells do not wrap</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table nw"><caption class="sr-only">Distributions</caption><thead><tr><th>ID</th><th>Partner</th><th class="date">Date</th><th>Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="font-medium text-slate-900">24</td><td>Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td>Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">23</td><td>Eagleton Community Outreach</td><td class="date">08/14/2026</td><td>Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">22</td><td>Snerling Family Services</td><td class="date">08/12/2026</td><td>Bulk Storage Location</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">20</td><td>Ace Relief</td><td class="date">08/01/2026</td><td>Warehouse B</td><td class="quantity">5</td><td class="numeric">$9.00</td><td>Pick up</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr><tr><td class="font-medium text-slate-900">21</td><td>Pawnee Pregnancy Center</td><td class="date">08/09/2026</td><td>Warehouse B</td><td class="quantity">460</td><td class="numeric">$291.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="text-sm font-medium text-brand-700">View</a><a href="#" class="text-sm font-medium text-brand-700">Print</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> One row height. The table takes the width it needs and scrolls inside its region -- drag it sideways.</p></div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">What it costs and buys, measured</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Measured effect of nowrap on each index table</caption>
+        <thead><tr>
+          <th>Table</th><th class="numeric">Cols</th><th>Row heights now</th>
+          <th class="numeric">Table height</th><th>With nowrap</th>
+          <th class="numeric">Height</th><th class="numeric">Shorter by</th>
+          <th class="numeric">Wider by</th>
+        </tr></thead>
+        <tbody class="tick"><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/distributions</code></td><td class="numeric">12</td><td>85 / 89 / 105</td><td class="numeric">1,339</td><td>53 / 73</td><td class="numeric">943</td><td class="numeric">&minus;30%</td><td class="numeric">+241</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/purchases</code></td><td class="numeric">9</td><td>65 / 85</td><td class="numeric">1,111</td><td>53</td><td class="numeric">783</td><td class="numeric">&minus;30%</td><td class="numeric">+191</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/items</code></td><td class="numeric">8</td><td>65 / 85</td><td class="numeric">1,096</td><td>53</td><td class="numeric">836</td><td class="numeric">&minus;24%</td><td class="numeric">+154</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/requests</code></td><td class="numeric">8</td><td>65</td><td class="numeric">1,016</td><td>53 / 61</td><td class="numeric">868</td><td class="numeric">&minus;15%</td><td class="numeric">+183</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/donations</code></td><td class="numeric">9</td><td>65</td><td class="numeric">691</td><td>53</td><td class="numeric">571</td><td class="numeric">&minus;17%</td><td class="numeric">+112</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/partners</code></td><td class="numeric">6</td><td>65</td><td class="numeric">431</td><td>49 / 53</td><td class="numeric">355</td><td class="numeric">&minus;18%</td><td class="numeric">+72</td></tr><tr><td><code class="rounded bg-slate-200 px-1 text-xs">/storage_locations</code></td><td class="numeric">7</td><td>65</td><td class="numeric">216</td><td>53</td><td class="numeric">192</td><td class="numeric">&minus;11%</td><td class="numeric">+110</td></tr></tbody>
+      </table>
+    </div>
+    <p class="text-sm text-slate-600">
+      <strong>Four tables are unaffected</strong> &mdash; <code class='rounded bg-slate-200 px-1 text-xs'>/adjustments</code>, <code class='rounded bg-slate-200 px-1 text-xs'>/transfers</code>, <code class='rounded bg-slate-200 px-1 text-xs'>/vendors</code> and <code class='rounded bg-slate-200 px-1 text-xs'>/product_drives</code> already fit on one
+      line. <strong><code class="rounded bg-slate-200 px-1 text-xs">/item_categories</code> is
+      unaffected too, and that is the interesting one</strong>: its 205&ndash;439px rows come from a
+      <code class="rounded bg-slate-200 px-1 text-xs">&lt;ul&gt;</code> of item links, which
+      <code class="rounded bg-slate-200 px-1 text-xs">nowrap</code> cannot help. It is the proof
+      that a blanket rule needs an escape hatch.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What the systems do</h2>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+      <p>
+        <strong>Carbon, Material, Stripe and Linear all choose the short row and scroll sideways.</strong>
+        A table is read <em>down</em> a column &mdash; comparing values is the job &mdash; and a
+        ragged row height breaks that, while horizontal scroll is a deliberate act you take once.
+        <strong>WCAG 1.4.10 Reflow explicitly exempts data tables</strong> from the
+        no-horizontal-scroll requirement for the same reason, and this app already puts every table
+        in a focusable <code class="rounded bg-slate-200 px-1 text-xs">.table-scroll</code> region.
+      </p>
+      <p class="mt-2">
+        The dissent is worth stating: <strong>Polaris</strong> and GOV.UK prefer fewer columns to
+        more scrolling, on the grounds that a column you have to scroll to is one most people never
+        see. That is an argument for option D below, not against B.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>Option C: <code class="rounded bg-slate-200 px-1 text-xs">.data-table td { white-space: nowrap }</code>
+        with a <code class="rounded bg-slate-200 px-1 text-xs">.wrap</code> escape hatch.</strong>
+        Cells only &mdash; measured, adding <code class="rounded bg-slate-200 px-1 text-xs">th</code>
+        changes nothing, because these columns are sized by their content rather than their headings,
+        and leaving headers free to wrap stops a long future heading widening a column by itself.
+      </p>
+      <p>
+        <strong>The escape hatch is not hypothetical.</strong>
+        <code class="rounded bg-slate-200 px-1 text-xs">/item_categories</code> holds a list of links
+        in a cell and has to wrap, as would any cell holding a paragraph rather than a value. Without
+        <code class="rounded bg-slate-200 px-1 text-xs">.wrap</code> the next person meets the rule
+        as an obstacle and reaches for an inline style.
+      </p>
+      <p>
+        <strong>Three tables that fit today would start scrolling</strong> &mdash;
+        <code class="rounded bg-slate-200 px-1 text-xs">/donations</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">/storage_locations</code> and
+        <code class="rounded bg-slate-200 px-1 text-xs">/partners</code>, by 72&ndash;112px. That is
+        the honest cost, and the reason to say yes deliberately rather than by default: they gain
+        11&ndash;18% in height and lose being readable without moving.
+      </p>
+      <p class="text-slate-600">
+        <strong>D is the better long answer for <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>
+        and should follow.</strong> Twelve columns is a lot, two of them are adjacent dates, and
+        shipping cost is empty on every row in the seed data. Dropping a column makes the table
+        shorter <em>and</em> narrower, which nowrap cannot. But that is a decision per table about
+        what the page is for; B/C is the rule that applies to all of them.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  document.querySelectorAll("[data-panel]").forEach(function (panel) {
+    var rows = Array.prototype.slice.call(panel.querySelectorAll("tbody tr"));
+    var hs = rows.map(function (r) { return Math.round(r.getBoundingClientRect().height); });
+    var uniq = hs.filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (a, b) { return a - b; });
+    var t = panel.querySelector("table");
+    var note = panel.parentElement.querySelector("p");
+    var tag = document.createElement("strong");
+    tag.className = "tick";
+    tag.textContent = "rows " + uniq.join(" / ") + "px \u00b7 table " +
+      Math.round(t.getBoundingClientRect().width) + "px wide, " +
+      Math.round(t.getBoundingClientRect().height) + "px tall \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>
