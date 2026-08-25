@@ -74,10 +74,22 @@ async function auditPage(page, path) {
         return r.width > 0 && r.height > 0;
       });
 
+      // design.md fixes the control height at 38px. A variant without a border used to come out
+      // 36, so a primary next to a secondary was 2px short -- invisible until a header had few
+      // enough buttons to sit on one row.
+      const offHeight = [...document.querySelectorAll("a, button")]
+        .filter((el) => {
+          const c = el.className.toString();
+          return c.includes("inline-flex") && c.includes("rounded-lg") && c.includes("px-3.5");
+        })
+        .map((el) => Math.round(el.getBoundingClientRect().height))
+        .filter((h) => h > 2 && h !== 38);
+
       return {
         header: true,
         count: actions.length,
         variants: actions.map(variantOf),
+        offHeight,
         labels: actions.map((el) => el.textContent.trim().replace(/\s+/g, " ").slice(0, 44))
       };
     }))
@@ -108,6 +120,7 @@ async function auditPage(page, path) {
     (r) => r.variants.includes("primary") && r.variants[r.variants.length - 1] !== "primary"
   );
   const unknown = seen.filter((r) => r.variants.includes("unknown"));
+  const wrongHeight = results.filter((r) => r.offHeight && r.offHeight.length);
 
   const report = (title, rows, describe) => {
     console.log(`\n${title}: ${rows.length}`);
@@ -123,8 +136,10 @@ async function auditPage(page, path) {
   report("more than one primary", manyPrimary, (r) => r.labels.join(" | "));
   report("primary is not last", primaryNotLast, (r) => `${r.variants.join(",")} -- ${r.labels.join(" | ")}`);
   report("a variant the helper never emits", unknown, (r) => r.labels.join(" | "));
+  report("not the 38px control height", wrongHeight, (r) => `${r.offHeight.join(", ")}px`);
 
-  const bad = tooMany.length + manyPrimary.length + primaryNotLast.length + unknown.length;
+  const bad = tooMany.length + manyPrimary.length + primaryNotLast.length + unknown.length +
+    wrongHeight.length;
   console.log(`\n${bad} finding(s)`);
   process.exit(0);
 })();

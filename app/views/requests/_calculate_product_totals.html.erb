@@ -25,6 +25,18 @@
             </tr>
           <% end %>
         </tbody>
+        <%# The button's name promises a total and the breakdown never gave one -- 46 per-item
+            figures and no sum. `<tfoot>` totals were dropped from /distributions in the reports
+            work, but for a reason that does not carry here: there they duplicated a summary band
+            above the same table, and nothing duplicates this. %>
+        <tfoot>
+          <tr>
+            <th scope="row" class="font-semibold text-slate-900">Total</th>
+            <td class="quantity font-semibold text-slate-900">
+              <%= number_with_delimiter(totals.sum { |_, quantity| quantity }) %>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   <% end %>

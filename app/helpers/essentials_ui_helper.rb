@@ -14,11 +14,16 @@ module EssentialsUiHelper
                 "transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 " \
                 "disabled:cursor-not-allowed disabled:opacity-60"
 
+  # Every variant carries a border, transparent where it is not meant to be seen. design.md fixes
+  # the control height at 38px, and `border` is 1px top and bottom: without this a `:primary` is
+  # 36px and a `:secondary` beside it is 38, which is exactly what /requests showed once its four
+  # buttons became two. Measured across 17 pages before the fix: 25 secondary at 38px, 16 primary
+  # and 4 ghost at 36px.
   BUTTON_VARIANTS = {
-    primary: "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600",
+    primary: "border border-transparent bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600",
     secondary: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:outline-brand-600",
-    danger: "bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600",
-    ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600",
+    danger: "border border-transparent bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600",
+    ghost: "border border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-brand-600",
     # A destructive action with no fill. Not `ghost` plus `extra: "text-rose-700"` -- that puts two
     # colour utilities in one class attribute, and the cascade picks the winner rather than the
     # attribute order, so the rose lost to the ghost's own slate everywhere it was tried.
@@ -31,7 +36,7 @@ module EssentialsUiHelper
     # the trash glyph say it is destructive; the colour does not have to say it a third time, and
     # saying it on every row makes the one you are pointing at no louder than the rest. Same
     # argument that took the inline error message grey.
-    ghost_danger: "text-slate-600 hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-rose-600"
+    ghost_danger: "border border-transparent text-slate-600 hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-rose-600"
   }.freeze
 
   BUTTON_SIZES = {

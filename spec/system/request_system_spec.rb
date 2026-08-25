@@ -35,9 +35,49 @@ RSpec.describe "Requests", type: :system, js: true do
       expect(page).to have_xpath("//h1", text: "Requests")
     end
 
+    # design.md allows a page header three actions with one primary. /requests carried four and was
+    # the only page in the app that did; the two outputs are one Export menu now. This user is not
+    # an org admin, so "New quantity request" is not theirs to see and the header carries just the
+    # one action.
+    it "collapses both outputs into a single named menu" do
+      visit subject
+
+      expect(page.all("[data-page-header='actions'] > *").length).to eq(1)
+      expect(page).to have_css("[data-page-header='actions'] button[aria-haspopup='true']", text: "Export")
+
+      click_on "Export"
+
+      expect(page).to have_css("[data-page-header='actions'] [role='menu'] [role='menuitem']", count: 2)
+      items = page.all("[data-page-header='actions'] [role='menuitem']").map(&:text)
+      expect(items.first).to eq("Requests as CSV")
+      expect(items.last).to start_with("Unfulfilled picklists, PDF")
+    end
+
+    # The totals summarise the rows in the card, so the control belongs to the card, not the page.
+    it "puts the product totals on the card whose rows it totals" do
+      visit subject
+
+      expect(page).to have_no_css("[data-page-header='actions']", text: "product totals")
+      expect(page).to have_button("Show product totals")
+    end
+
+    # The button's name promised a total and the panel listed 46 figures without ever adding them.
+    it "shows a grand total in the product totals panel" do
+      visit subject
+      click_on "Show product totals"
+
+      expect(page).to have_css("#calculate-totals tfoot", text: "Total")
+      rows = page.all("#calculate-totals tbody tr").map { |r| r.all("td").last.text.delete(",").to_i }
+      footer = page.find("#calculate-totals tfoot td").text.delete(",").to_i
+      expect(footer).to eq(rows.sum)
+      expect(footer).to be > 0
+    end
+
     it "can be exported in CSV" do
       visit subject
+      # "Export" opens a menu holding both outputs -- the CSV and the picklist PDF.
       click_on "Export"
+      click_on "Requests as CSV"
 
       wait_for_download
       expect(downloads.length).to eq(1)
@@ -111,7 +151,8 @@ RSpec.describe "Requests", type: :system, js: true do
           select(item2.name, from: "filters[by_request_item_id]")
           wait_for_filters
           expect(page).to have_css("table tbody tr", count: 1)
-          click_on 'Export'
+          click_on "Export"
+          click_on "Requests as CSV"
 
           wait_for_download
           expect(downloads.length).to eq(1)

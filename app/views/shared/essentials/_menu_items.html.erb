@@ -1,0 +1,46 @@
+<%#
+  The items inside a menu panel, shared by `row_actions` and `menu_button` so that what a menu item
+  *is* -- its roles, its tones, and the difference between a disabled link and a disabled form
+  control -- has one definition rather than two that drift.
+
+  Locals:
+    items  required; each {label:, path:, icon:, method:, confirm:, tone:, disabled:, reason:,
+           link_options:}
+%>
+<% items.compact.each do |item| %>
+  <%
+    tone_classes = (item[:tone] == :danger) ?
+      "text-slate-700 hover:bg-rose-50 hover:text-rose-700" :
+      "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+    item_classes = "flex w-full items-center gap-2 px-3 py-2 text-left text-sm #{tone_classes} " \
+                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+  %>
+  <% if item[:disabled] && item[:method] %>
+    <%# An unavailable *form* action is a genuinely `disabled` <button>, and an unavailable *link*
+        action is a non-interactive <span> with `aria-disabled` -- design.md draws that line and it
+        matters: `disabled` is only a thing a form control can be. The reason is sr-only text, not a
+        title, so it reaches a screen reader without needing hover. %>
+    <%# `form: {role: "none"}` on the wrapper: `role="menu"` must own its `menuitem`s, and a <form>
+        in between is a third thing in the tree that is neither. `none` makes it transparent, which
+        is the same trick an <li> wrapper needs in a menu. %>
+    <%= button_to item[:path], method: item[:method], disabled: true,
+          form_class: "block", form: {role: "none"}, role: "menuitem",
+          class: "#{item_classes} opacity-60" do %>
+      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+      <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
+    <% end %>
+  <% elsif item[:disabled] %>
+    <span class="<%= item_classes %> opacity-60" role="menuitem" aria-disabled="true">
+      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+      <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
+    </span>
+  <% elsif item[:method] %>
+    <%= essentials_action_button item[:label], item[:path], method: item[:method],
+          variant: :ghost, size: :sm, icon: item[:icon], confirm: item[:confirm],
+          class: item_classes, role: "menuitem", form: {role: "none"} %>
+  <% else %>
+    <%= link_to item[:path], class: item_classes, role: "menuitem", **(item[:link_options] || {}) do %>
+      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+    <% end %>
+  <% end %>
+<% end %>

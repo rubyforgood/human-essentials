@@ -441,6 +441,12 @@ hide everything already booked in.
 
 ### How many rows am I looking at?
 
+**Getting requests out of the app is one button now.** The requests page used to carry four buttons
+across the top; the CSV export and the unfulfilled picklists PDF are both behind a single **Export**
+menu, and the totals summary moved down onto the table it summarises, where it is called **Show
+product totals**. That panel now ends with a **Total** row — it used to list every item's quantity
+and never add them up.
+
 **On a narrow screen a table becomes a list of cards.** Below about 640px of card width — a phone,
 a split window, a browser zoomed a long way in — the columns are dropped and each row becomes a card
 with every value labelled: one column of them on a phone, two when there is a little more room. The
