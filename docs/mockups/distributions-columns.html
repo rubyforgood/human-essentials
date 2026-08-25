@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fewer columns on /distributions</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Fewer columns on <code class="rounded bg-slate-200 px-1 text-2xl">/distributions</code></h1>
+    <p class="max-w-3xl text-slate-600">
+      Twelve columns in a 1,118px region. Every figure below was measured on the page, and two
+      assumptions I had written down earlier turned out to be wrong.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Two things I had recorded that were not true</h2>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p>
+        <strong>&ldquo;Shipping cost is empty on every row.&rdquo;</strong> It is present on
+        <strong>50%</strong> of them. I had looked at one visible row and generalised.
+      </p>
+      <p>
+        <strong>&ldquo;Two of them are adjacent dates&rdquo;</strong>, implying redundancy. The
+        created date and the issued date differ on <strong>all 24 rows</strong>. They are two
+        different facts and dropping one loses information.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Every column, with the evidence</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Distribution table columns and whether each earns its place</caption>
+        <thead><tr><th>Column</th><th class="numeric">Width</th><th>A filter axis?</th>
+          <th>On the detail page?</th><th>Density</th><th>Verdict</th><th>Why</th></tr></thead>
+        <tbody class="tick"><tr class=""><td class="font-medium text-slate-900">ID</td><td class="numeric">56px</td><td>no</td><td>yes</td><td>100%</td><td>keep</td><td class="wrap text-slate-600">The link into the record. 56px.</td></tr><tr class=""><td class="font-medium text-slate-900">Partner</td><td class="numeric">263px</td><td><strong>yes</strong></td><td>in the heading</td><td>100%</td><td>keep</td><td class="wrap text-slate-600">Identity, and a filter axis.</td></tr><tr class="bg-amber-50"><td class="font-medium text-slate-900">Initial allocation</td><td class="numeric">119px</td><td>no</td><td><strong>no</strong></td><td>100%</td><td>last resort</td><td class="wrap text-slate-600">created_at. Differs from the issued date on all 24 rows, so not redundant &mdash; and it is <em>nowhere else in the app</em>.</td></tr><tr class=""><td class="font-medium text-slate-900">Date of distribution</td><td class="numeric">140px</td><td>date range</td><td>no</td><td>100%</td><td>keep</td><td class="wrap text-slate-600">issued_at. What the page is about.</td></tr><tr class=""><td class="font-medium text-slate-900">Source inventory</td><td class="numeric">202px</td><td><strong>yes</strong></td><td>yes</td><td>100%</td><td>keep</td><td class="wrap text-slate-600">A filter axis, so people scan by it.</td></tr><tr class=""><td class="font-medium text-slate-900">Total items</td><td class="numeric">93px</td><td>no</td><td>on the items card</td><td>100%</td><td>keep</td><td class="wrap text-slate-600">The quantity is the point of the page.</td></tr><tr class=""><td class="font-medium text-slate-900">Total value</td><td class="numeric">100px</td><td>no</td><td><strong>no</strong></td><td>100%</td><td>keep</td><td class="wrap text-slate-600">Money, and not on the detail page.</td></tr><tr class="bg-rose-50"><td class="font-medium text-slate-900">Delivery method</td><td class="numeric">124px</td><td>no</td><td><strong>yes</strong></td><td>3 values</td><td><strong>drop</strong></td><td class="wrap text-slate-600">One click away, and not a filter axis.</td></tr><tr class="bg-rose-50"><td class="font-medium text-slate-900">Shipping cost</td><td class="numeric">108px</td><td>no</td><td><strong>yes</strong></td><td>50% empty</td><td><strong>drop</strong></td><td class="wrap text-slate-600">One click away. Think hardest about this one &mdash; it is money.</td></tr><tr class="bg-rose-50"><td class="font-medium text-slate-900">Comments</td><td class="numeric">123px</td><td>no</td><td><strong>yes</strong></td><td>100%</td><td><strong>drop</strong></td><td class="wrap text-slate-600">One click away, and already clipped to one line.</td></tr><tr class=""><td class="font-medium text-slate-900">Status</td><td class="numeric">100px</td><td><strong>yes</strong></td><td>yes</td><td>1 value in seed</td><td>keep</td><td class="wrap text-slate-600">A filter axis. One value in seed data is a seed artefact, not a signal.</td></tr><tr class="bg-amber-50"><td class="font-medium text-slate-900">Actions</td><td class="numeric">331px</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><strong>shrink</strong></td><td class="wrap text-slate-600">331px for five buttons &mdash; the second-widest column in the table.</td></tr></tbody>
+      </table>
+    </div>
+    <p class="text-sm text-slate-600">
+      <strong>The test is whether the value is one click away.</strong> Delivery method, shipping
+      cost and comments are all on the detail page, and none of them is a filter axis &mdash; so
+      dropping them costs a click, not the data. Initial allocation is the opposite: it appears
+      <em>nowhere else in the app</em>, so it can only go after it is added to the detail page.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">What it takes to actually fit</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Cumulative effect of each change on table width</caption>
+        <thead><tr><th>Change</th><th class="numeric">Table width</th><th>Against a 1,118px region</th></tr></thead>
+        <tbody class="tick"><tr><td class="wrap">Today</td><td class="numeric">1,759px</td><td>still scrolls</td></tr><tr><td class="wrap">Actions as one action + a menu</td><td class="numeric">1,508px</td><td>still scrolls</td></tr><tr><td class="wrap">&hellip; and drop the three that are one click away</td><td class="numeric">1,153px</td><td>still scrolls</td></tr><tr><td class="wrap">&hellip; and drop Initial allocation too</td><td class="numeric">1,118px</td><td><strong class="text-emerald-700">fits</strong></td></tr></tbody>
+      </table>
+    </div>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Dropping columns alone never makes it fit &mdash; and the biggest single win is not a data column.</p>
+      <p class="mt-1">
+        <strong>Actions is 331px</strong>, the second-widest column in the table, holding up to five
+        labelled buttons. One action plus an overflow menu takes it to about 80px: <strong>a 251px
+        saving that costs no data at all</strong>. Dropping the three safe data columns saves 355px.
+        Both together land at 1,153px &mdash; 35px over, which is a scrollbar nobody will notice.
+        Fitting exactly needs a fourth column gone.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The cons of removing columns</h2>
+    <div class="card-surface p-5 text-sm text-slate-700">
+      <ul class="list-disc space-y-2 ps-5"><li><strong>Scanning across rows is what a table is for.</strong> A column lets you compare fourteen rows at a glance; the detail page shows one. &ldquo;Which of these went by courier?&rdquo; goes from one look to fourteen page loads. This is the whole cost and everything else is a detail of it.</li><li><strong>Ctrl-F stops finding it.</strong> People search the page for a value far more than we expect. A dropped column is invisible to that, silently.</li><li><strong>The export and the table start disagreeing.</strong> The CSV keeps its columns. Once the table has fewer, two views of the same records differ, and people stop trusting whichever is smaller.</li><li><strong>It is a bet placed with the wrong evidence.</strong> We have <em>seed</em> data, not usage data. Shipping cost is 50% empty here; at a bank that ships everything it is 100% full and the most-read column on the page.</li><li><strong>Nobody files a complaint about a missing column.</strong> They just do the job more slowly, or export to a spreadsheet and do it there. The cost is real and silent, which is the worst combination for a decision you want to revisit.</li><li><strong>This page is a reconciliation surface.</strong> People tally money off it. Removing a money column &mdash; shipping cost, total value &mdash; is a different order of risk from removing delivery method.</li></ul>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>1. Shrink Actions first, and possibly only that.</strong> 251px for no data loss is
+        the best trade on the page, and it is the change with no downside to weigh: <em>View</em>
+        stays visible and the rest &mdash; View request, Print, Edit, Reclaim &mdash; go behind a
+        menu. It also fixes the same problem on <code class="rounded bg-slate-200 px-1 text-xs">/items</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">/vendors</code> and
+        <code class="rounded bg-slate-200 px-1 text-xs">/requests</code>, which carry three to five
+        actions each. That needs its own preview, because an overflow menu is a component this app
+        does not have.
+      </p>
+      <p>
+        <strong>2. Then drop Delivery method and Comments.</strong> Both on the detail page, neither
+        a filter axis, and comments is already clipped to one line so the column shows almost
+        nothing. 247px.
+      </p>
+      <p>
+        <strong>3. Keep Shipping cost, against my own arithmetic.</strong> It is the third
+        &ldquo;safe&rdquo; column by the one-click test and I would still keep it, because it is
+        money on a page people reconcile from, and because 50%-empty in <em>seed</em> data tells us
+        nothing about a bank that ships everything. If it goes, it should go after asking a bank, not
+        after measuring a fixture.
+      </p>
+      <p class="text-slate-600">
+        <strong>Not recommended: dropping Initial allocation to hit 1,118px exactly.</strong> Chasing
+        the round number would remove the only place a distribution's created date appears. Adding it
+        to the detail page first would make it droppable &mdash; but a 35px overflow is not worth a
+        migration of information.
+      </p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

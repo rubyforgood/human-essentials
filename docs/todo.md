@@ -106,14 +106,24 @@ than invented.
 
 ## The distributions table has more columns than it has room for
 
-The actions column is fixed — see the change log — and the rows are 85–105px instead of 155–171px.
-What is left is ordinary text being crushed: **"Pawnee Pregnancy Center" wraps to three lines in a
-105px Partner column**, and "Bulk Storage Location" to two in 128px. Twelve columns in a 1,118px
-region.
+Analysed in `docs/mockups/distributions-columns.html` with per-column evidence. **Two claims
+previously recorded here were wrong** and are corrected there: shipping cost is present on **50%**
+of rows, not empty on all of them, and the created and issued dates **differ on all 24 rows**, so
+they are two facts rather than a duplicate.
 
-Fixing it is a decision about *which columns the table carries*, not a styling change, so it is
-not folded in with the actions fix. Two dates sit next to each other — "Initial allocation" and
-"Date of distribution" — and shipping cost is empty on every row in the seed data. The alternative
-is to let every cell in a scrolling table be `whitespace-nowrap`, which is what Carbon and Material
-do: fixed row height, scroll sideways. That would be a change to every table in the app and wants
-a preview.
+The measured shape of the problem:
+
+| Change | Table width | Against the 1,118px region |
+| --- | --- | --- |
+| Today | 1,759px | scrolls |
+| Actions as one action + a menu | 1,508px | scrolls |
+| … and drop the three that are one click away | 1,153px | scrolls (35px over) |
+| … and drop Initial allocation too | 1,118px | fits exactly |
+
+**Dropping columns alone never makes it fit, and the biggest single win is not a data column at
+all**: Actions is **331px**, the second-widest column in the table, holding up to five labelled
+buttons. One action plus an overflow menu is ~80px — a 251px saving that costs no data. That is the
+recommendation, and it needs its own preview because an overflow menu is a component this app does
+not have. It would also fix `/items`, `/vendors` and `/requests`, which carry three to five actions
+each.
+
