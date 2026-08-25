@@ -1513,14 +1513,72 @@ Three things about how it is built:
 A background-gradient version needs no JavaScript — the `background-attachment: local` trick — and
 does not work here: the table's rows are opaque white and paint straight over it.
 
+<a id="a-narrow-table-stops-being-a-table"></a>
+**A narrow table stops being a table.** Below **640px of card** a `.data-table` becomes a list of
+labelled fields: one field column below 416px, two above it. `table_stack_controller` puts the count
+in `data-stack` and the CSS does the rest.
+
+The Reflow exemption above is *permission, not advice.* Measured before this existed: **all fifteen
+tables scrolled sideways at 320px and at 375**, thirteen at 640. The worst hid **80% of its width** —
+`/distributions` needs 1,638px and had 320; on `/purchases` you could see a fifth of the table. The
+design system was also contradicting itself, since the [line item row](#line-item-rows) already
+stacked below `sm` with a label per cell, for the recorded reason that "four columns at 320px leaves
+the item picker 72px, which is not a control anyone can use".
+
+| Card width | Layout |
+| --- | --- |
+| below 416px | Stacked, **one** field column |
+| 416–640px | Stacked, **two** field columns |
+| 640px and up | A table, scrolling sideways if it must |
+
+**The threshold is the card's width, not the viewport's.** Measured on `/purchases`: at a **1023px**
+viewport the card is **973px**; at **1024px** it is **702px**, because that is where the sidebar
+appears. A viewport breakpoint at `lg` would return the table to table form exactly where it has
+least room. 640 was chosen so the behaviour is also monotonic in the viewport — a threshold of 704
+would have stacked a 1024px viewport while leaving 768 a table.
+
+Four things this needs, and the last two are the ones this pattern is usually built without:
+
+- **The identifying column is the card's title.** `.pin-col` loses its label, its stickiness and its
+  shadow, and goes up to 16px. It carries no `font-weight`: the views put `font-medium` on that cell,
+  and a utility beats a rule in `@layer components` whatever its specificity, so a `font-weight`
+  there would sit in the stylesheet doing nothing.
+- **The row's actions sit on the title line.** The actions cell has no heading to borrow — it is an
+  `sr-only` span — so the controller finds it and marks it `.cell-actions` rather than guessing by
+  position.
+- **The labels come from `<thead>`, by column index, into a real element.** Not `data-label` and
+  `::before`: hand-written attributes would mean **299 headings across 71 views** kept in step
+  forever, and generated content is not reliably announced. `.cell-label` is `display: none` until
+  the table stacks.
+- **The table's semantics are restored explicitly.** A browser stops exposing rows and cells as a
+  table the moment `display` is not `table`, and `thead` is `display: none` here, so a screen reader
+  would be left with unlabelled text in no structure. `role="table"`, `rowgroup`, `row`,
+  `columnheader` and `cell` are set on every table, always — redundant while it is a table and
+  load-bearing while it is not, and there is no way to apply a role conditionally.
+
+**It is driven by an attribute, not a `@container` query**, which would have been tidier.
+`container-type: inline-size` computes to `contain: layout`, which makes the element a containing
+block for **fixed** descendants — and the [row action menus](#row-actions) are fixed precisely to
+escape this card. Every one of them would have been positioned against the wrong box.
+
+**And it is a long page.** `/purchases` at 320px goes from 1,448px to **7,614px**. That is the
+trade: down a page you can read, rather than sideways through one you cannot. If it becomes too much,
+the alternative already measured is folding the trailing fields behind a per-row disclosure, which
+was 37% shorter — see `docs/mockups/table-stacking.html`.
+
 <a id="table-rows-are-one-line"></a>
-**A table row is one line.** `.data-table td` is `nowrap`. A wide table can have short rows or fit
-the screen, not both, and every system that ships data tables picks the short row — Carbon,
-Material, Stripe and Linear all scroll sideways instead. A table is read *down* a column, and a
-ragged row height breaks that; a sideways scroll is a deliberate act you take once. **WCAG 1.4.10
-Reflow exempts data tables** from the no-sideways-scroll rule for this reason, and every table here
-already sits in a focusable `.table-scroll` region. Measured: `/distributions` went **1,339px tall
-with three row heights to 943px with one**, `/purchases` 1,111 to 783.
+**A table row is one line — while it is still a table.** `.data-table td` is `nowrap`. A wide table
+can have short rows or fit the screen, not both, and every system that ships data tables picks the
+short row — Carbon, Material, Stripe and Linear all scroll sideways instead. A table is read *down* a
+column, and a ragged row height breaks that; a sideways scroll is a deliberate act you take once.
+**WCAG 1.4.10 Reflow exempts data tables** from the no-sideways-scroll rule for this reason, and a
+table sits in a focusable `.table-scroll` region. Measured: `/distributions` went **1,339px tall with
+three row heights to 943px with one**, `/purchases` 1,111 to 783.
+
+None of that holds once the container is too narrow to hold columns at all — see
+[a narrow table stops being a table](#a-narrow-table-stops-being-a-table). Below 640px of card the
+`nowrap`, the width caps and the ellipsis are all switched off, because every one of them exists to
+keep *columns* in order and there are no columns left.
 
 `td` only — measured, adding `th` changes nothing, because these columns are sized by their content
 rather than their headings, and leaving a heading free to wrap stops a long one widening a column

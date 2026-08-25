@@ -441,6 +441,14 @@ hide everything already booked in.
 
 ### How many rows am I looking at?
 
+**On a narrow screen a table becomes a list of cards.** Below about 640px of card width — a phone,
+a split window, a browser zoomed a long way in — the columns are dropped and each row becomes a card
+with every value labelled: one column of them on a phone, two when there is a little more room. The
+name that identifies the row is the card's heading and its action sits beside it. Nothing is hidden,
+and the page gets much longer: it is a swap of scrolling down for scrolling sideways, because before
+this you could see about a fifth of a table on a phone. Widen the window past that and the table
+comes back.
+
 Every table with anything in it carries a line along the bottom of its card saying **Showing
 31–45 of 272 requests** — the rows in front of you, and how many your filters matched
 altogether. That total is the answer to "did that filter do anything?", so it is worth a glance
