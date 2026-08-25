@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Row action overflow menus</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+  [data-panel] .table-scroll { overflow: visible; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Collapsing row actions into a menu</h1>
+    <p class="max-w-3xl text-slate-600">
+      The kebab menus below work &mdash; open one, Tab through it, press Escape. The actions column
+      is <strong>331px</strong> today, the second-widest column on
+      <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>.
+    </p>
+  </header>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">Is it industry standard? Yes, and it is a named pattern</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Where row overflow menus are used</caption>
+        <thead><tr><th>Product or system</th><th>How</th></tr></thead>
+        <tbody><tr><td class="wrap font-medium text-slate-900">Carbon (IBM)</td><td class="wrap text-slate-600">Ships an <code>OverflowMenu</code> documented specifically for data table rows, and says to collapse actions once there are more than will fit.</td></tr><tr><td class="wrap font-medium text-slate-900">Salesforce Lightning</td><td class="wrap text-slate-600">&ldquo;Row-level actions&rdquo; is a named pattern: a button-icon with a dropdown at the end of every row.</td></tr><tr><td class="wrap font-medium text-slate-900">Shopify Polaris</td><td class="wrap text-slate-600"><code>IndexTable</code> row actions render as an <code>ActionList</code> inside a <code>Popover</code>.</td></tr><tr><td class="wrap font-medium text-slate-900">Material Design</td><td class="wrap text-slate-600">Icon button plus menu for row actions.</td></tr><tr><td class="wrap font-medium text-slate-900">Atlassian</td><td class="wrap text-slate-600">A &ldquo;more actions&rdquo; dropdown per row.</td></tr><tr><td class="wrap font-medium text-slate-900">GitHub, Google Drive, Gmail, Notion, Linear, Stripe</td><td class="wrap text-slate-600">All ship a kebab at the end of the row. Several reveal it on hover &mdash; which is the one part not to copy.</td></tr></tbody>
+      </table>
+    </div>
+    <p class="text-sm text-slate-600">
+      The consistent rule across all of them: <strong>show the one action people take most, collapse
+      the rest.</strong> The consistent mistake to avoid: several of the consumer apps only reveal
+      the menu on <em>hover</em>, which does not exist on touch and gives a keyboard user nothing
+      &mdash; the same reason hover-reveal was rejected for the remove control.
+    </p>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Three shapes</h2>
+    <p class="max-w-3xl text-sm text-slate-600">
+      The figure on each panel is measured from <em>this</em> demo, which has six columns rather than
+      twelve and so gives the actions more room. The table after them has the numbers from the real
+      page.
+    </p>
+    <div class="space-y-2"><h3 class="text-base font-semibold">A - Today: five labelled buttons</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-file-text"></i> View request</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-printer"></i> Print</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-pencil"></i> Edit</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise"></i> Reclaim</a></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-file-text"></i> View request</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-printer"></i> Print</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-pencil"></i> Edit</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise"></i> Reclaim</a></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-file-text"></i> View request</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-printer"></i> Print</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-pencil"></i> Edit</a><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise"></i> Reclaim</a></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-info">today</span> Every action visible, and the column is wider than Total items, Total value and Status put together.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">B - One visible + kebab</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><a href="#" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="bi-eye"></i> View</a><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600">The usual shape. But look at the ID column: it already links to the record, so <em>View</em> is a second link to the same page.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">C - Kebab only</h3><div class="card-surface overflow-hidden" data-panel><div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Scheduled</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Complete</td><td class="text-right"><div class="flex justify-end gap-1.5 whitespace-nowrap"><div class="relative inline-block" data-menu><button type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for 24" class="inline-flex size-[2.375rem] items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"><i class="bi-three-dots-vertical" aria-hidden="true"></i></button><ul role="menu" hidden class="absolute right-0 z-30 mt-1 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-file-text" aria-hidden="true"></i> View request</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-printer" aria-hidden="true"></i> Print</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"><i class="bi-pencil" aria-hidden="true"></i> Edit</a></li><li><a href="#" role="menuitem" class="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-700"><i class="bi-arrow-counterclockwise" aria-hidden="true"></i> Reclaim</a></li></ul></div></div></td></tr></tbody></table></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended here</span> 70px. Nothing is lost, because the row already links to the record from its ID.</p></div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">What each shape costs</h2>
+    <div class="card-surface overflow-hidden">
+      <table class="data-table w-full text-sm">
+        <caption class="sr-only">Measured actions column and table width per shape</caption>
+        <thead><tr><th>Shape</th><th class="numeric">Actions column</th><th class="numeric">Table width</th></tr></thead>
+        <tbody class="tick"><tr><td class="wrap">Today &mdash; five labelled buttons</td><td class="numeric">331px</td><td class="numeric">1,759px</td></tr><tr><td class="wrap">Two visible + kebab</td><td class="numeric">212px</td><td class="numeric">1,640px</td></tr><tr><td class="wrap">One visible + kebab</td><td class="numeric">142px</td><td class="numeric">1,570px</td></tr><tr><td class="wrap">Kebab only</td><td class="numeric">70px</td><td class="numeric">1,498px</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>B as the general rule, C on the four tables whose rows already link to the record.</strong>
+        Show the action people take most and collapse the rest &mdash; except that on
+        <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">/items</code> and
+        <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code> the most-taken action is
+        <em>View</em>, and the row's first cell is already a link to exactly that page. Keeping a
+        <em>View</em> button beside it is the same duplication the tab-actions pass removed: two
+        controls, one destination. <code class="rounded bg-slate-200 px-1 text-xs">/vendors</code>
+        and <code class="rounded bg-slate-200 px-1 text-xs">/requests</code> have no row link, so
+        they keep a visible primary and get B.
+      </p>
+      <p>
+        <strong>Always visible, never hover-revealed.</strong> There is no hover on a phone, and a
+        control that appears on approach is unreachable by keyboard until it exists.
+      </p>
+      <p>
+        <strong>It reuses the popover controller</strong>, which already handles Escape, returning
+        focus to the trigger, <code class="rounded bg-slate-200 px-1 text-xs">aria-expanded</code>
+        and click-outside. What it does not do is arrow-key movement between items &mdash; that is the
+        ARIA <em>menu</em> pattern. This is the <em>disclosure</em> pattern instead: a popover of
+        links, moved through with Tab, which is what GitHub ships and is a smaller promise to keep.
+        The trigger still needs <code class="rounded bg-slate-200 px-1 text-xs">aria-haspopup</code>
+        and a label naming the row, or a screen reader hears &ldquo;button&rdquo; fourteen times.
+      </p>
+      <p class="text-slate-600">
+        <strong>The honest cost:</strong> every action except the first becomes two clicks instead of
+        one, and which action that is differs by who is using the page. A warehouse user printing
+        picklists all afternoon will feel <em>Print</em> moving behind a menu. That is the trade, and
+        it is why <em>Print</em> rather than <em>View</em> may be the one to leave out on
+        <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code> &mdash; worth asking a
+        bank rather than guessing from a fixture.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  // Demo only. A shipped version uses the app's popover controller, which already does Escape,
+  // focus return, aria-expanded and click-outside.
+  document.querySelectorAll("[data-menu]").forEach(function (wrap) {
+    var btn = wrap.querySelector("button"), list = wrap.querySelector("[role=menu]");
+    btn.addEventListener("click", function () {
+      var open = btn.getAttribute("aria-expanded") === "true";
+      document.querySelectorAll("[data-menu] [role=menu]").forEach(function (m) { m.hidden = true; });
+      document.querySelectorAll("[data-menu] button").forEach(function (b) { b.setAttribute("aria-expanded", "false"); });
+      if (!open) { list.hidden = false; btn.setAttribute("aria-expanded", "true"); list.querySelector("a").focus(); }
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    document.querySelectorAll("[data-menu]").forEach(function (w) {
+      var l = w.querySelector("[role=menu]"), b = w.querySelector("button");
+      if (!l.hidden) { l.hidden = true; b.setAttribute("aria-expanded", "false"); b.focus(); }
+    });
+  });
+  document.querySelectorAll("[data-panel]").forEach(function (panel) {
+    var cell = panel.querySelector("tbody td:last-child");
+    var note = panel.parentElement.querySelector("p");
+    var tag = document.createElement("strong");
+    tag.textContent = "actions column " + Math.round(cell.getBoundingClientRect().width) + "px \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>
