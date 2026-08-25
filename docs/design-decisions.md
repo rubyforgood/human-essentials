@@ -3842,3 +3842,67 @@ CSS keys off it. Cheap — one `querySelector` per region, and it is set once.
 overlay taking **0px**, and on **five of the seven** overflowing tables it is *below the fold* —
 296px below on `/distributions`. `docs/mockups/table-scroll-controls.html` puts four options for an
 actual control, with a recommendation, and is awaiting a decision.
+
+
+---
+
+## 2026-08-25 · The fade was invisible, so the table got a rail
+
+**Area.** `table_scroll_controller`, `.table-rail`, the edge shadow, `design.md`.
+
+**Reported.** "It is still unclear how the fade is triggered. I don't see it and cannot replicate
+it." Both halves of that turned out to be findings.
+
+**The trigger was never the problem.** The end signal is on from first paint — on a fresh load of
+`/distributions` with nothing scrolled, `data-overflow` is already `"end"` and the controller is
+mounted. It is state-driven, not scroll-triggered.
+
+**The fade was invisible because it was white on a white table.** I had been verifying its computed
+`opacity`, which is a *proxy* — the third time this month. Screenshotting the 68px strip with it on
+and off and diffing painted pixels: it moved the background by a mean of **0.28 of 255**, or 0.1%,
+while **erasing 26% of the text** it lay over. Its only measurable effect was damage.
+
+A white scrim is the standard treatment for text running out of a box, and I applied it to a table
+whose rows are already white. **A scrim only works against content darker than the scrim.** Measured
+alternatives: a hard 3px rule 1.83 (also imperceptible), an inset shadow 8.35, a grey gradient 9.59.
+Chose the **inset shadow** — 0% text erased, and it matches the shadow the frozen column already
+casts. Shipped it measures 7.95 on `/distributions` and 8.12 on `/items`.
+
+**And an edge signal is not enough anyway, which is why option B was right.** It can say *there is
+more*; it cannot say *you can move*. The platform will not say it either — the scrollbar is an
+overlay taking **0px**, and on **five of the seven** overflowing tables it is below the fold, 296px
+below on `/distributions`. So the table now has a rail: a drawn horizontal scroll control that rides
+the fold, as Ant Design (`<Table sticky />`), Confluence and Jira all do.
+
+**Four decisions inside the rail.**
+
+- **`fixed`, not `sticky`.** `section.card-surface` is `overflow: hidden`, which makes it the sticky
+  container. A probe rail inside it did not track the viewport — measured, not assumed.
+- **It settles *below* the table, not over it.** The first version sat at `bottom - height`, over the
+  last row, and being a control it took the pointer: the hover on the bottom row's comment cell went
+  to the rail and the clipped-text tooltip never opened. **Three specs that had been passing caught
+  it.** The card reserves a strip instead. It does still float over a row while the table runs past
+  the fold — the row already cut in half by the bottom of the window — which is what Ant Design's and
+  Confluence's do too.
+- **`aria-hidden`, exactly as a native scrollbar is.** The region is already a focusable named
+  `role="region"` that the arrow keys scroll. A focusable rail would add a second tab stop per table
+  duplicating a path that already works and is already announced. **This reverses what the preview
+  panel promised** — it advertised `role="scrollbar"` and arrow keys as a point in B's favour. On
+  reflection that was a worse design: it is a pointer affordance, and the keyboard was never the gap.
+- **Injected by the controller, not written into 66 views**, consistent with the earlier decision to
+  mount one controller on the shell. It is removed again when a table fits.
+
+**Alternatives rejected.**
+
+- **Bounded height, the spreadsheet model** (C). Nested scrolling on a page that already scrolls, and
+  no single height suits both `/transfers` at one row and `/adjustments` at 42.
+- **A proxy scroller above the header** (D). It depends on the platform drawing a native scrollbar,
+  which is the broken thing. Its own preview panel rendered empty, which made the argument.
+- **Paddle buttons** (E). No data grid in wide use ships them; they are a tab-strip control, and they
+  give no position feedback.
+
+**A claim of mine to correct.** The preview said a sticky rail "has to yield to anything else that
+lives at the bottom of the viewport. Nothing does today." Measured across 13 routes, two things do:
+the off-canvas sidebar (`inset-y-0`, translated out, no conflict) and **rack-mini-profiler's badge**,
+`position: fixed; bottom: 0; z-index: 9999`, on five routes. It is development-only and sits above
+the rail rather than under it, so nothing breaks — but the claim was stated without being checked.
