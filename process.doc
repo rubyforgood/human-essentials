@@ -1,0 +1,190 @@
+# Process
+
+How design work gets done on this repo. Written from what actually happened over the design-system
+branch, not from an ideal.
+
+---
+
+## The map
+
+```
+                    ┌─────────────────────────────────────────────────┐
+                    │  YOU: a defect, a question, or "is this right?" │
+                    └───────────────────────┬─────────────────────────┘
+                                            ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  1. READ THE SYSTEM FIRST     design.md is normative. Is there already a rule?       │
+ │                               Usually there is, buried under another heading.        │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  2. MEASURE, DO NOT ESTIMATE  Open the real page in a real browser. Get numbers.     │
+ │                               Measure the PROPERTY, never a proxy for it.            │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  3. AUDIT APP-WIDE            One report is a sample. Find every instance.           │
+ │                               "the purchases table" was 15 tables.                   │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  4. PREVIEW                   A mockup in docs/mockups/. Options, each with its      │
+ │                               measured cost, a recommendation, and its cons.         │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+                ╔═══════════════════════╗
+                ║  YOU CHOOSE           ║  ◀── the only mandatory stop
+                ╚═══════════┬═══════════╝
+                            ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  5. BUILD ONCE, CENTRALLY     One controller on the shell beats the same attribute   │
+ │                               hand-written into 66 regions.                                 │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  6. VERIFY BY MEASUREMENT     Prove it with the instrument that found the defect.    │
+ │        ◀──── disagrees ────   If it disagrees, say so and go back. This happens.     │
+ └────────┴──────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  7. SPECS + FULL SUITE        System specs for anything a browser renders.           │
+ │                               Then every audit, then the whole suite.                │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  8. DOCUMENT IN THE SAME COMMIT  design.md, changelog, decisions, onboarding,        │
+ │                                  domain-model, migration-map, mockup outcome.        │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  9. COMMIT, FILL THE HASH, PUSH  Every checkpoint. The workspace has been reset to   │
+ │                                  main underneath the work four times.                │
+ └──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**In one line:** *read the system → measure → audit everything → preview → you choose → build once →
+prove it → document → push.*
+
+---
+
+## How I get pointed at the design system
+
+Nothing here depends on me remembering it. It is written into the repo:
+
+| Where | What it does |
+| --- | --- |
+| `CLAUDE.md` at the repo root | Loaded automatically at the start of every session. Declares **`design.md` is normative — read it before building or changing a screen.** |
+| `design.md` | The spec. Every convention, with the measurement that justified it. |
+| `app/views/shared/essentials/` and `EssentialsUiHelper` | The components. `CLAUDE.md` says build from these, **not from utility strings**. |
+| `docs/migration-map.md` | What is dead. `btn`, `card-body`, `form-group`, `col-md-*`, `fa-*` are defined nowhere and render as nothing. |
+| `docs/design-decisions.md` | Why a pattern beat the obvious alternative. Read before re-litigating one. |
+| `docs/mockups/` | 24 previews on record, each with the question it answered and what was chosen. |
+
+`CLAUDE.md` also sets the cadence — *work, document, commit, push, at every checkpoint* — and says to
+do it **without being asked**. The one thing that still needs asking is a design decision.
+
+---
+
+## The steps
+
+### 1. Read the system first
+Grep `design.md` before touching anything. Most defects reported on this branch were **violations of
+a rule already written down**, usually filed under a different heading. Two were rules I had broken
+myself after writing them.
+
+### 2. Measure, do not estimate
+Open the running app and take numbers. Every figure in these documents was measured in the session it
+was written.
+
+**The rule that matters most: measure the property, not a proxy for it.** Every serious miss on this
+branch was a proxy.
+
+| Proxy that lied | What it missed | The honest instrument |
+| --- | --- | --- |
+| computed `opacity: 1` | a white fade on a white table — invisible | diff the painted pixels |
+| `offsetHeight − clientHeight` | an overlay scrollbar reserves nothing and draws nothing | ask what a person can see |
+| axe's declared colours | a gradient painted on top by a pseudo-element | sample the glyph's pixels |
+| source text | rendered copy, after `text-transform` | read the DOM as shown |
+| a class list | which CSS layer actually wins | computed style |
+| `scrollWidth > clientWidth` | page-level overflow | the document's own box |
+
+### 3. Audit app-wide
+Never fix only the instance reported. `/purchases` was 15 tables; one inert override was 27 more
+views; one tooltip scoped to `.notes` was every clipped cell. The instruments are in `bin/design/`:
+`wcag-audit`, `responsive-audit`, `keyboard-audit`, `overlay-audit`, `table-audit`, `page-audit`,
+`copy-audit`, `undefined-classes`, `route-sweep`.
+
+### 4. Preview before building a screen
+A self-contained HTML mockup in `docs/mockups/`, served by the app. It must carry **the measured
+defect**, **two to four real options**, **the cost of each in numbers**, **a recommendation with
+reasons**, and **the cons of that recommendation**. Say what you are choosing not to do.
+
+Three traps, each of which has produced a mockup that lied:
+- Re-copy `mockup.css` after every Tailwind rebuild — it is a snapshot, not a link.
+- A mockup can only use utilities the app already uses. Anything new goes in its own `<style>` block.
+- The app's own stylesheet still applies. Switch off any rule you are proposing to replace.
+
+### 5. Build once, centrally
+Prefer one Stimulus controller on the shell to the same attribute hand-written into 66
+regions across 62 views. It survives Turbo, it
+cannot drift, and there is one place to fix.
+
+### 6. Verify by measurement
+Re-run the instrument that found the defect. **When it disagrees with me, it wins.** Several claims
+were corrected mid-flight this way, including two of my own contrast figures and three audits that
+were checking the wrong thing.
+
+Watch for the three quiet failures: a **rule that does not apply** because a utility beat it, a
+**spec that passes for the wrong reason**, and a **mockup that lies**.
+
+### 7. Specs and the full suite
+System specs for anything a browser renders — request specs do not run JavaScript, and three classes
+of defect on this branch were invisible to everything but the browser suite. Then, every time:
+
+```
+bundle exec rubocop && bundle exec erb_lint --lint-all
+ruby bin/design/page-audit.rb && python3 bin/design/undefined-classes.py
+pw bin/design/wcag-audit.js         # axe, 156 pages
+pw bin/design/responsive-audit.js   # 1,573 page/width combinations
+pw bin/design/keyboard-audit.js
+pw bin/design/overlay-audit.js
+pw bin/design/table-audit.js
+bundle exec rspec                   # the whole suite, about 9 minutes
+```
+
+### 8. Document in the same commit
+Not afterwards. A stale document is worse than none, because the next person trusts it.
+
+| Document | When |
+| --- | --- |
+| `design.md` | A component, token, layout or convention changed. |
+| `docs/changelog.md` | **Always.** One row: the commit, and what changed, in a sentence that still means something in a year. |
+| `docs/design-decisions.md` | A judgement call worth explaining, with the alternatives rejected. |
+| `docs/domain-model.md` | A model, association, enum or role changed. Verify with `rails runner`. |
+| `docs/migration-map.md` | Something migrated, retired, or found as a leftover. |
+| `docs/onboarding.md` | Setup, testing conventions, **or anything a user sees**. Its user half goes stale quietly. |
+| `docs/architecture/decisions/` | A structural decision. Add or supersede; never rewrite what a past one said. |
+| `docs/mockups/README.md` | The outcome of the preview: what was chosen, and what building it found. |
+
+### 9. Commit, fill the hash, push
+The changelog row needs the hash of its own commit, so: commit → read the hash → write it in →
+commit that → push. **Push at every checkpoint.** This workspace has been reset to `main` underneath
+the work four times; nothing was lost only because everything was already pushed.
+
+---
+
+## What the process is for
+
+Three things it produces that ad-hoc work does not:
+
+1. **A defect is fixed everywhere it exists**, because step 3 is not optional.
+2. **The reasoning outlives the reasoner.** The number that justified a rule sits next to the rule, so
+   the next person can tell whether it still holds.
+3. **Claims are falsifiable.** Everything asserted was measured, and when it turned out to be wrong it
+   was corrected in the open.
+
+The failure mode it exists to prevent: **a check that reads a proxy reports what the proxy says.**
+Every browser audit here has, at least once, reported clean while the defect you reported was
+live: axe across 156 pages while the pinned column sat at 3.19:1, the keyboard and responsive
+audits while a scrollbar drew nothing at all, and responsive again while all fifteen tables showed
+a fifth of themselves at 320px.
