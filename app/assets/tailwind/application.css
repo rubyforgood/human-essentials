@@ -386,6 +386,93 @@
   /* Horizontal scroll container for a table inside a card. */
   .table-scroll {
     overflow-x: auto;
+
+    /*
+     * A scrollbar that is there before you touch it. The platform default on macOS is an overlay
+     * that appears mid-gesture, which is no use to someone deciding whether there is more to see;
+     * styling the pseudo-element makes Chrome and Safari draw a classic one that takes real space.
+     *
+     * Firefox ignores `::-webkit-scrollbar` and `scrollbar-width` cannot force a scrollbar to
+     * reserve space, so this is an improvement where the platform honours it and not the signal
+     * itself. The fade below is the signal, because it depends on nothing.
+     */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-300) var(--color-slate-100);
+  }
+
+  .table-scroll::-webkit-scrollbar {
+    height: calc(var(--spacing) * 2.5);
+  }
+
+  .table-scroll::-webkit-scrollbar-track {
+    background-color: var(--color-slate-100);
+    border-radius: var(--radius-full);
+  }
+
+  .table-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--color-slate-300);
+    border-radius: var(--radius-full);
+  }
+
+  .table-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-slate-400);
+  }
+
+  /*
+   * The fade that says there is more this way. `table_scroll_controller` puts `start`, `end`, both
+   * or neither in `data-overflow`, and this draws whichever it names.
+   *
+   * On the *parent*, via `:has()`, because a pseudo-element on the scroller scrolls away with the
+   * content -- which is the usual way this gets built wrong. Every `.table-scroll` in the app sits
+   * directly inside the card's body div, so the parent is a reliable anchor and 66 views did not
+   * need a wrapper adding by hand.
+   *
+   * A background gradient on the scroller would have needed no JavaScript at all -- the classic
+   * `background-attachment: local` trick -- but the table's rows are opaque white and would paint
+   * straight over it.
+   *
+   * `:has()` is Chrome 105, Safari 15.4, Firefox 121. Where it is missing there is no fade, which
+   * is exactly what there was before.
+   */
+  div:has(> .table-scroll) {
+    position: relative;
+  }
+
+  div:has(> .table-scroll)::before,
+  div:has(> .table-scroll)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--spacing) * 10);
+    opacity: 0;
+    transition: opacity 150ms;
+    /* Decoration only: it must never eat a click meant for the row underneath. */
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  div:has(> .table-scroll)::before {
+    left: 0;
+    background: linear-gradient(to right, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
+  }
+
+  div:has(> .table-scroll)::after {
+    right: 0;
+    background: linear-gradient(to left, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
+  }
+
+  div:has(> .table-scroll[data-overflow~="start"])::before,
+  div:has(> .table-scroll[data-overflow~="end"])::after {
+    opacity: 1;
+  }
+
+  /* Someone who has asked for less motion gets the fade, just not the cross-fade. */
+  @media (prefers-reduced-motion: reduce) {
+    div:has(> .table-scroll)::before,
+    div:has(> .table-scroll)::after {
+      transition: none;
+    }
   }
 
   /*

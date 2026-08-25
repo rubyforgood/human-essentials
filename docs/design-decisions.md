@@ -3735,3 +3735,61 @@ untested. Recorded rather than glossed.
   differs by user.
 - **`role="group"` or no role**, to avoid promising arrow keys. It would have left the account menu's
   existing false promise in place, which is the actual defect.
+
+
+---
+
+## 2026-08-25 · A scrolling table has to admit it scrolls
+
+**Area.** `table_scroll_controller`, `.table-scroll`, `design.md`.
+
+**Decision.** Option D of
+[`table-scroll-affordance.html`](mockups/table-scroll-affordance.html): a directional fade at
+whichever edge has content behind it, plus scrollbar styling where the platform honours it.
+
+**The defect, measured.** `/distributions` hid **486px of columns**, the scrollbar was an overlay
+one taking **0px** of height, and there was no fade, shadow or hint of any kind. The only signifier
+was `aria-label="Table, scrollable"`.
+
+**Why no audit caught it, which is the part worth keeping.** The region was built for the keyboard
+and the screen reader and serves both — a focusable `role="region"` with a name — and that is
+exactly what `keyboard-audit` and `axe` check. An overlay scrollbar is *invisible to a
+computed-style test*: `offsetHeight - clientHeight` is 0 whether the platform draws an overlay or
+nothing at all. So every audit reported clean while the one group left out was people looking at the
+page with a mouse. The lesson is the same one three audits have taught already — a check that reads
+a proxy reports what the proxy says.
+
+**The fade is the signal; the scrollbar is a bonus.** `::-webkit-scrollbar` makes Chrome and Safari
+draw a scrollbar that reserves space, but Firefox ignores the pseudo-element and `scrollbar-width`
+cannot force a scrollbar to take space at all. **It could not be verified in headless Chromium
+even with `--disable-features=OverlayScrollbar`**, so the preview labelled that panel unverifiable
+rather than implying it worked, and the CSS comment says the same. The fade depends on nothing and
+is what actually answers the complaint.
+
+**Directional, not permanent.** A fade always on both edges is decoration; one only where content is
+hidden is information. A table that fits gets none — verified on `/adjustments` and `/vendors`,
+which report `data-overflow=""`.
+
+**Three implementation notes.**
+
+- **The fade is on the *parent*, via `:has()`.** A pseudo-element on the scroller scrolls away with
+  the content, which is the usual way this is built wrong. Every one of the **66** `.table-scroll`
+  regions sits directly inside a card's body div, so the parent is a reliable anchor and none of
+  them needed a wrapper adding by hand. Where `:has()` is unsupported there is no fade, which is
+  what there was before.
+- **One controller on the shell, not 66 attributes in views.** `scroll` does not bubble but it does
+  capture, so a single listener on the root hears every region, and a table arriving in a Turbo
+  frame is picked up without the view knowing the controller exists — verified by clearing the
+  attribute and dispatching `turbo:frame-load`.
+- **`pointer-events: none`, always.** The fade sits over the rightmost column, which on these
+  tables is the actions menu. Hit-tested: both the menu trigger and the pinned cell's link are
+  reachable through it. One scare on the way was a hit test returning null for the trigger — it was
+  at x=1849 in a 1440 viewport, off screen because the table scrolls, not blocked by the fade.
+
+**Alternatives rejected.**
+
+- **A background-gradient fade** with `background-attachment: local`, which needs no JavaScript at
+  all. The table's rows are opaque white and paint straight over it.
+- **A permanent fade on both edges.** Decoration that says nothing about where the content is.
+- **A text hint** such as "scroll to see more columns". It takes vertical space on every table
+  forever to say something a 40px gradient says continuously and only when true.
