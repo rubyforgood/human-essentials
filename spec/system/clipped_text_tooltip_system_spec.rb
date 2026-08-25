@@ -195,7 +195,13 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
   # The first version of this faded the *frozen* column, which does not move. Sampling the painted
   # pixels of the ID cell put it at 3.19:1 against white -- a 1.4.3 failure on the one column that
   # pinning exists to keep readable. Six of the seven tables that overflow have a frozen column.
-  it "never fades a frozen column, and marks the region so the CSS can tell" do
+  #
+  # The second version put a shadow on the frozen cell instead, and that never painted at all: the
+  # table is `border-collapse: collapse`, under which a box-shadow on a `td` is simply not drawn.
+  # The spec for it passed anyway, because it read `getComputedStyle`, which reports the value
+  # whether or not a pixel changes. So this asserts the arrangement that replaced it -- the shadow
+  # is on the wrapper, and starts where the frozen column ends.
+  it "starts the shadow where the frozen column ends, not on top of it" do
     create_list(:distribution, 2, organization: organization)
     visit distributions_path
 
@@ -207,32 +213,31 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     )
     expect(page).to have_css(".table-scroll[data-overflow~='start']")
 
-    start_fade = page.evaluate_script(
-      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').opacity"
+    offset = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').left"
     )
-    expect(start_fade).to eq("0")
+    pin_width = page.evaluate_script(
+      "Math.round(document.querySelector('.table-scroll thead .pin-col').getBoundingClientRect().width)"
+    )
+    expect(offset).to eq("#{pin_width}px")
+    expect(pin_width).to be > 0
   end
 
-  # Instead it casts a shadow, and only once something has passed underneath.
-  it "deepens the frozen column's shadow once content is behind it" do
+  # A box-shadow on a `td` is never painted under `border-collapse: collapse`, so the divider that
+  # separates the frozen column from what scrolls under it has to be a real border.
+  it "draws the frozen column's divider with a border, which paints" do
     create_list(:distribution, 2, organization: organization)
     visit distributions_path
 
-    at_rest = page.evaluate_script(
+    border = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll tbody .pin-col')).borderRightWidth"
+    )
+    expect(border).to eq("1px")
+
+    shadow = page.evaluate_script(
       "getComputedStyle(document.querySelector('.table-scroll tbody .pin-col')).boxShadow"
     )
-    expect(at_rest).not_to include("6px")
-
-    page.execute_script(
-      "document.querySelector('.table-scroll').scrollLeft = " \
-      "document.querySelector('.table-scroll').scrollWidth"
-    )
-    expect(page).to have_css(".table-scroll[data-overflow~='start']")
-
-    scrolled = page.evaluate_script(
-      "getComputedStyle(document.querySelector('.table-scroll tbody .pin-col')).boxShadow"
-    )
-    expect(scrolled).to include("6px")
+    expect(shadow).to eq("none")
   end
 
   # The edge signal only ever says "there is more". The rail is the part you can act on: the
@@ -372,9 +377,15 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     )
 
     expect(page).to have_css(".table-scroll[data-overflow~='start']")
-    start_fade = page.evaluate_script(
+    start_shadow = page.evaluate_script(
       "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').opacity"
     )
-    expect(start_fade).to eq("1")
+    expect(start_shadow).to eq("1")
+
+    # Nothing frozen, so it starts at the container's own edge.
+    offset = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-scroll').parentElement, '::before').left"
+    )
+    expect(offset).to eq("0px")
   end
 end

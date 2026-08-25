@@ -1428,20 +1428,27 @@ the rail is the part you can act on.** Neither substitutes for the other.
 is the standard trick for text running out of a box and does nothing whatever here. Screenshotting
 the 68px strip on `/distributions` with it on and off and diffing the painted pixels:
 
-| Edge signal | Background moved (of 255) | Text erased | |
-| --- | --- | --- | --- |
-| White fade | **0.28** — 0.1% | **26%** | imperceptible |
-| Hard 3px rule | 1.83 | 11% | imperceptible |
-| Inset shadow, 40% | **8.35** | **0%** | visible |
-| Grey gradient | 9.59 | 0% | visible |
+| Edge signal | Max change (of 255) | Area of table tinted | Text erased | |
+| --- | --- | --- | --- | --- |
+| White fade | ~1 | — | **26%** | imperceptible, and damaging |
+| **Ant Design's 6% over 10px** | **10.0** | **6.6%** | 0% | **what is built** |
+| Light, 12% | 18.9 | 10.6% | 0% | visible |
+| Hairline rule | 43.4 | 1.3% | 0% | visible, but says "edge of card" |
+| Inset shadow, 40% | 62.1 | **28.5%** | 0% | a vignette |
 
 The white version was invisible, and its only measurable effect was **erasing a quarter of the text
-it lay over**. It is `inset -20px 0 20px -16px` at 40% slate-900 now, measured at **7.95** on
-`/distributions` and **8.12** on `/items` with the text untouched.
+it lay over**. Its replacement went too far the other way — 40% over 64px tinted **28.5% of the
+visible table** and read as a vignette. It is **Ant Design's production value** now,
+`inset -10px 0 8px -8px rgb(5 5 5 / 0.06)`, from the most-used table component on the web.
 
-The lesson generalises: **a scrim only works against content darker than the scrim.** Fading to
-white is right for dark text running out of a container and wrong for a white table, and the way to
-tell the difference is to diff the pixels, not to reason about it.
+Two lessons, and the second cost more than the first:
+
+- **A scrim only works against content darker than the scrim.** Fading to white is right for dark
+  text running out of a container and wrong for a white table.
+- **Do not judge a visual signal by its area mean.** The first pass ranked these by average
+  luminance change over a 68px strip, which rewards a broad smear and punishes a crisp line — it
+  scored the hairline 1.83 and called it *imperceptible*, when by sharpest local step it is **43.4**,
+  among the most visible options there is. That bad metric is why the heaviest option won.
 
 <a id="the-rail"></a>
 **The rail.** An edge shadow cannot say *you can move*, and the platform will not say it either:
@@ -1483,15 +1490,28 @@ only `/items` does not.
 So the start of the scroll is marked two different ways, and the controller writes `data-pinned` on
 the region to say which applies:
 
-| Region | Start of scroll |
-| --- | --- |
-| `[data-pinned]` — a frozen first column | **No fade.** The column casts a shadow to its right, and only once content has passed underneath. |
-| Not pinned | The fade at the edge, as before. |
+So the start-of-scroll shadow **begins where the frozen column ends** rather than on top of it. The
+controller measures that column and sets `--pin-width` on the wrapper; it is `0` where nothing is
+frozen, and the same rule serves both cases.
 
-The shadow is what Carbon, Ant Design, AG Grid and Airtable all use: it marks the boundary between
-what is frozen and what is moving. The controller has to supply `data-pinned` because CSS cannot
-work it out — **`:has()` may not be nested**, so "a div whose `.table-scroll` child contains a
-`.pin-col`" is unwriteable.
+<a id="a-box-shadow-on-a-td-never-paints"></a>
+**A `box-shadow` on a `td` is never painted here, so do not reach for one.** `.data-table` is
+`border-collapse: collapse`, and under it Chrome does not draw a cell's box-shadow at all. Verified
+with a solid red 40px shadow: **0%** of its pixels appeared on the cell, against **50.9%** on a
+control `div`.
+
+This is worth knowing because it is silent. The first fix for the fade-over-frozen-column defect put
+a shadow on `.pin-col`, and **it drew nothing for as long as it shipped** — as did the
+`1px 0 0` hairline that had been the column's divider since it was written. The spec covering it
+passed throughout, because it read `getComputedStyle().boxShadow`, which reports the declared value
+whether or not a single pixel changes. So:
+
+- the frozen column's divider is a **`border-right`**, which paints under `border-collapse`;
+- the boundary shadow lives on the **wrapper**, offset by `--pin-width` — which is Ant Design's
+  arrangement, and the reason they use a pseudo-element for it too.
+
+The controller still supplies `data-pinned` because CSS cannot work it out — **`:has()` may not be
+nested**, so "a div whose `.table-scroll` child contains a `.pin-col`" is unwriteable.
 
 **axe reported no violations across all 156 pages while this was live.** It computes contrast from
 declared colours, so a gradient painted on top by a pseudo-element is invisible to it. Painted
