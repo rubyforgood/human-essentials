@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signalling that a table scrolls</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  [data-panel] .table-scroll { max-width: 700px; }
+
+  /* PROPOSED A: a scrollbar that is always there and takes real space, instead of an overlay one
+     that only appears mid-gesture. Styled rather than left to the platform so it reads as part of
+     the table. */
+  .sb::-webkit-scrollbar { height: 10px; }
+  .sb::-webkit-scrollbar-track { background: var(--color-slate-100); border-radius: 9999px; }
+  .sb::-webkit-scrollbar-thumb { background: var(--color-slate-300); border-radius: 9999px; }
+  .sb::-webkit-scrollbar-thumb:hover { background: var(--color-slate-400); }
+  .sb { scrollbar-width: thin; scrollbar-color: var(--color-slate-300) var(--color-slate-100); }
+
+  /* PROPOSED B: a fade at whichever edge has more content behind it. Drawn on a wrapper, because
+     a pseudo-element inside the scroller would scroll away with the content. */
+  .fadewrap { position: relative; }
+  .fadewrap::before, .fadewrap::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 2.5rem;
+    pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 3;
+  }
+  .fadewrap::before { left: 0;  background: linear-gradient(to right, rgb(255 255 255 / .95), transparent); }
+  .fadewrap::after  { right: 0; background: linear-gradient(to left,  rgb(255 255 255 / .95), transparent); }
+  .fadewrap[data-overflow~="start"]::before { opacity: 1; }
+  .fadewrap[data-overflow~="end"]::after    { opacity: 1; }
+
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .tick { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Nothing says these tables scroll</h1>
+    <p class="max-w-3xl text-slate-600">
+      Measured on <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>:
+      <strong>486px of columns</strong> are off screen, the scrollbar takes <strong>0px</strong> of
+      height because it is an overlay one, and there is no fade, shadow or hint of any kind. The only
+      signifier in the markup is <code class="rounded bg-slate-200 px-1 text-xs">aria-label="Table,
+      scrollable"</code>, which a sighted mouse user never hears.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Why it went unnoticed</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
+      <p>
+        The region was built for the keyboard and the screen reader, and both are served: it is a
+        focusable <code class="rounded bg-slate-200 px-1 text-xs">role="region"</code> with a name,
+        so it is reachable by Tab and announced as scrollable. <strong>The audits check exactly
+        that</strong> &mdash; and an overlay scrollbar is invisible to a computed-style check, so
+        nothing flagged the one group of users left out: people looking at it with a mouse.
+      </p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">Four options</h2>
+    <div class="space-y-2"><h3 class="text-base font-semibold">A - Today</h3><div class="card-surface overflow-hidden" data-panel><div class=""><div class="table-scroll " tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr></tbody></table></div></div></div><p class="text-sm text-slate-600"><span class="pill pill-info">today</span> Scrollable, with nothing at all to say so. The scrollbar is an overlay one: it appears while you drag and is invisible before you know to try.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">B - A scrollbar that is always there</h3><div class="card-surface overflow-hidden" data-panel><div class=""><div class="table-scroll sb" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr></tbody></table></div></div></div><p class="text-sm text-slate-600"><span class="pill pill-bad">cannot be verified here</span> Styling <code class="rounded bg-slate-200 px-1 text-xs">::-webkit-scrollbar</code> normally forces a classic scrollbar that takes real space. In this headless Chromium it takes <strong>0px</strong> even with <code class="rounded bg-slate-200 px-1 text-xs">--disable-features=OverlayScrollbar</code>, and Firefox ignores the pseudo-element entirely. It may well appear in your browser; it is not something to rely on.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">C - A fade at the overflowing edge</h3><div class="card-surface overflow-hidden" data-panel><div class="fadewrap"><div class="table-scroll " tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr></tbody></table></div></div></div><p class="text-sm text-slate-600">Drag it sideways: the fade swaps to the left edge. What Carbon, Material, Ant Design, GitHub and Notion all use. Says "more this way" before you touch anything.</p></div>
+<div class="space-y-2"><h3 class="text-base font-semibold">D - Both</h3><div class="card-surface overflow-hidden" data-panel><div class="fadewrap"><div class="table-scroll sb" tabindex="0" role="region" aria-label="Table, scrollable"><table class="data-table"><caption class="sr-only">Distributions</caption><thead><tr><th class="pin-col">ID</th><th class="name">Partner</th><th class="date">Date</th><th class="name">Source inventory</th><th class="quantity">Total items</th><th class="numeric">Total value</th><th>Delivery method</th><th>Status</th><th class="text-right">Actions</th></tr></thead><tbody><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">24</a></td><td class="name">Pawnee Pregnancy Center</td><td class="date">08/17/2026</td><td class="name">Bulk Storage Location</td><td class="quantity">1,240</td><td class="numeric">$842.00</td><td>Delivery</td><td>Scheduled</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">23</a></td><td class="name">Eagleton Community Outreach</td><td class="date">08/14/2026</td><td class="name">Pawnee Main Warehouse</td><td class="quantity">310</td><td class="numeric">$118.40</td><td>Pick up</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr><tr><td class="pin-col font-medium text-slate-900"><a href="#" class="text-brand-700">22</a></td><td class="name">Ace Relief</td><td class="date">08/12/2026</td><td class="name">Warehouse B</td><td class="quantity">980</td><td class="numeric">$603.15</td><td>Shipped</td><td>Complete</td><td class="text-right"><button type="button" aria-label="More actions" class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500"><i class="bi-three-dots-vertical"></i></button></td></tr></tbody></table></div></div></div><p class="text-sm text-slate-600"><span class="pill pill-good">recommended</span> The fade carries the signal; the scrollbar is a bonus wherever the platform draws it.</p></div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="card-surface p-5 text-sm text-slate-700 space-y-3">
+      <p>
+        <strong>D, both &mdash; but the fade is the part that has to work.</strong> They answer
+        different questions: the fade says <em>there is more that way</em> before you interact with
+        anything, and the scrollbar says <em>how much</em> and can be dragged.
+      </p>
+      <p>
+        <strong>The scrollbar half is platform-dependent and I could not verify it.</strong>
+        <code class="rounded bg-slate-200 px-1 text-xs">::-webkit-scrollbar</code> takes 0px in this
+        headless Chromium even with overlay scrollbars disabled, and Firefox ignores it and offers no
+        way to force a scrollbar to reserve space. So it goes in as an improvement where the platform
+        honours it &mdash; not as the answer to "nothing says this scrolls". The fade is the answer,
+        because it works everywhere and depends on nothing.
+      </p>
+      <p>
+        <strong>The fade has to be on a wrapper, not the scroller.</strong> A pseudo-element inside
+        the scrolling box scrolls away with the content, which is the usual way this is got wrong.
+      </p>
+      <p>
+        <strong>Directional, not permanent.</strong> A fade that is always on both edges is
+        decoration; one that appears only where content is hidden is information. That needs a
+        scroll listener, which is a small Stimulus controller setting
+        <code class="rounded bg-slate-200 px-1 text-xs">data-overflow</code> to
+        <code class="rounded bg-slate-200 px-1 text-xs">start</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">end</code>, both or neither.
+      </p>
+      <p class="text-slate-600">
+        <strong>The fade is decoration and must stay that way</strong> &mdash;
+        <code class="rounded bg-slate-200 px-1 text-xs">pointer-events: none</code>, no text, and
+        the region keeps its existing name. It is a second signal for people who were already served
+        by the first, not a replacement for it.
+      </p>
+    </div>
+  </section>
+
+</div>
+<script>
+  // Demo of the proposed behaviour. A shipped version is a Stimulus controller.
+  document.querySelectorAll(".fadewrap").forEach(function (wrap) {
+    var sc = wrap.querySelector(".table-scroll");
+    function update() {
+      var state = [];
+      if (sc.scrollLeft > 1) state.push("start");
+      if (sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 1) state.push("end");
+      wrap.setAttribute("data-overflow", state.join(" "));
+    }
+    sc.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    update();
+  });
+  document.querySelectorAll("[data-panel]").forEach(function (panel) {
+    var sc = panel.querySelector(".table-scroll");
+    var note = panel.parentElement.querySelector("p");
+    var tag = document.createElement("strong");
+    tag.className = "tick";
+    tag.textContent = (sc.scrollWidth - sc.clientWidth) + "px hidden \u00b7 scrollbar takes " +
+      (sc.offsetHeight - sc.clientHeight) + "px \u2014 ";
+    note.prepend(tag);
+  });
+</script>
+</body>
+</html>
