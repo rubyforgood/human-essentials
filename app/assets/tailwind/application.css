@@ -444,7 +444,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: calc(var(--spacing) * 10);
+    width: calc(var(--spacing) * 16);
     opacity: 0;
     transition: opacity 150ms;
     /* Decoration only: it must never eat a click meant for the row underneath. */
@@ -452,14 +452,23 @@
     z-index: 3;
   }
 
+  /*
+   * A shadow, not a white scrim. The first version faded to white -- which is the standard trick for
+   * text running out of a box, and does nothing whatever on a table whose rows are already white.
+   * Measured on `/distributions`, screenshotting the 68px strip with the fade on and off and
+   * diffing the painted pixels: the white version moved the background by a mean of **0.28 of 255**,
+   * or 0.1%, while erasing **26% of the text** it lay over. It was invisible, and its only real
+   * effect was damage. This shadow measures **8.35** on the same test with **0%** of the text
+   * touched.
+   */
   div:has(> .table-scroll)::before {
     left: 0;
-    background: linear-gradient(to right, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
+    box-shadow: inset 20px 0 20px -16px color-mix(in oklch, var(--color-slate-900) 40%, transparent);
   }
 
   div:has(> .table-scroll)::after {
     right: 0;
-    background: linear-gradient(to left, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
+    box-shadow: inset -20px 0 20px -16px color-mix(in oklch, var(--color-slate-900) 40%, transparent);
   }
 
   div:has(> .table-scroll[data-overflow~="end"])::after {
@@ -489,6 +498,87 @@
     box-shadow:
       6px 0 8px -6px color-mix(in oklch, var(--color-slate-900) 28%, transparent),
       1px 0 0 var(--color-slate-200);
+  }
+
+  /*
+   * The rail: a horizontal scroll control that rides the fold.
+   *
+   * The platform will not draw one that helps. Its scrollbar is an overlay -- measured at **0px** of
+   * reserved height on all twelve regions -- painted only *while* a gesture is under way, so it can
+   * never say that scrolling is possible, only confirm it once you have guessed. And even a visible
+   * one sits at the bottom of the *table*, which on **five of the seven** overflowing tables is
+   * below the fold: 296px below on `/distributions`. Ant Design ships this as `<Table sticky />`;
+   * Confluence and Jira both float one.
+   *
+   * `position: fixed`, placed by `table_scroll_controller`, and appended to the body. It cannot be
+   * `sticky`: `section.card-surface` is `overflow: hidden`, which makes it the sticky container, and
+   * a probe rail inside it did not track the viewport. Same reason `popover` grew a `fixed` value.
+   */
+  .table-rail {
+    position: fixed;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    /* 24px of track plus the hairline: the track is the target, and 2.5.8 asks for 24. */
+    height: calc(var(--spacing) * 6 + 1px);
+    padding-inline: calc(var(--spacing) * 2);
+    background-color: color-mix(in oklch, var(--color-white) 92%, transparent);
+    border-top: 1px solid var(--color-slate-200);
+    /* Hidden until the controller has both measured the table and found it on screen. */
+    visibility: hidden;
+  }
+
+  /*
+   * The strip the rail settles into once the table's end is on screen. Without it the rail overlaid
+   * the last row and, being a control, took the pointer with it -- the hover on the bottom row's
+   * comment cell went to the rail and the tooltip never opened.
+   */
+  [data-railed] {
+    padding-bottom: calc(var(--spacing) * 6 + 1px);
+  }
+
+  .table-rail[data-visible] {
+    visibility: visible;
+  }
+
+  /*
+   * The track is the full height of the rail so the target is 24px tall, which is what 2.5.8 asks
+   * for; the bar you can see is 6px of it.
+   */
+  .table-rail-track {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .table-rail-track::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: calc(var(--spacing) * 1.5);
+    translate: 0 -50%;
+    border-radius: var(--radius-full);
+    background-color: var(--color-slate-100);
+  }
+
+  .table-rail-thumb {
+    position: absolute;
+    top: 50%;
+    height: calc(var(--spacing) * 1.5);
+    min-width: calc(var(--spacing) * 6);
+    translate: 0 -50%;
+    border-radius: var(--radius-full);
+    background-color: var(--color-slate-400);
+  }
+
+  .table-rail-track:hover .table-rail-thumb {
+    background-color: var(--color-slate-500);
+  }
+
+  .table-rail[data-dragging] .table-rail-thumb {
+    background-color: var(--color-slate-600);
   }
 
   /* Someone who has asked for less motion gets the fade, just not the cross-fade. */

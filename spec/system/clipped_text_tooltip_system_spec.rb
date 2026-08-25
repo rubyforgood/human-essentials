@@ -235,6 +235,61 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     expect(scrolled).to include("6px")
   end
 
+  # The edge signal only ever says "there is more". The rail is the part you can act on: the
+  # platform's scrollbar is an overlay taking 0px, and on five of the seven overflowing tables it is
+  # below the fold anyway -- 296px below on /distributions.
+  it "draws a rail for a table that overflows, and none for one that fits" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+
+    # Hidden from assistive technology exactly as a native scrollbar is: the region is already a
+    # focusable named role="region" that the arrow keys scroll, so a second tab stop would duplicate
+    # a path that already works.
+    expect(page).to have_css(".table-rail[aria-hidden='true']")
+
+    create(:vendor, organization: organization, business_name: "Costco")
+    visit vendors_path
+    expect(page).to have_no_css(".table-rail")
+  end
+
+  it "scrolls the table when the rail is dragged" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+    expect(page).to have_css(".table-scroll[data-overflow='end']")
+
+    # Driven through the driver's mouse rather than `drag_to`: the rail listens for pointer events,
+    # which is what a browser sends first for mouse, touch and pen alike, and Capybara's drag helper
+    # does not reach them.
+    box = page.evaluate_script(
+      "(function () { var r = document.querySelector('.table-rail-thumb').getBoundingClientRect();" \
+      " return [r.left + r.width / 2, r.top + r.height / 2]; })()"
+    )
+    page.driver.browser.mouse.move(x: box[0], y: box[1])
+    page.driver.browser.mouse.down
+    page.driver.browser.mouse.move(x: box[0] + 200, y: box[1])
+    page.driver.browser.mouse.up
+
+    # The table has moved, so the far edge is no longer the only one with content behind it.
+    expect(page).to have_css(".table-scroll[data-overflow~='start']")
+    expect(page.evaluate_script("document.querySelector('.table-scroll').scrollLeft")).to be > 0
+  end
+
+  # The track is the target, and 2.5.8 asks for 24px.
+  it "gives the rail a target big enough to hit" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+    height = page.evaluate_script(
+      "document.querySelector('.table-rail-track').getBoundingClientRect().height"
+    )
+    expect(height).to be >= 24
+  end
+
   # Where nothing is frozen there is nothing to protect, so the fade belongs at the edge after all.
   it "keeps the start fade on a table with no frozen column" do
     create(:item, organization: organization, name: "Toddler nappies")

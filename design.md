@@ -1414,16 +1414,62 @@ reader and serves both — a focusable `role="region"` with a name — and **tha
 audits check**. An overlay scrollbar is invisible to a computed-style test, so nothing flagged the
 one group left out: people looking at it with a mouse.
 
-Two signals, and only one of them is load-bearing:
+Two things are needed, and they answer different questions. **The edge signal says there is more;
+the rail is the part you can act on.** Neither substitutes for the other.
 
-- **A fade at whichever edge has content behind it.** `table_scroll_controller` puts `start`, `end`,
-  both or neither in `data-overflow`; the CSS draws what it names. Carbon, Material, Ant Design,
-  GitHub and Notion all use this. **Directional on purpose**: a fade always on both edges is
-  decoration, one only where content is hidden is information — a table that fits gets none.
-- **A styled scrollbar**, which is a bonus and not the signal. `::-webkit-scrollbar` makes Chrome
-  and Safari draw a classic one that takes real space, but Firefox ignores it and `scrollbar-width`
-  cannot force a scrollbar to reserve space. It could not be verified in headless Chromium at all,
-  even with `--disable-features=OverlayScrollbar`.
+- **A shadow at whichever edge has content behind it.** `table_scroll_controller` puts `start`,
+  `end`, both or neither in `data-overflow`; the CSS draws what it names. **Directional on purpose**:
+  a signal on both edges always is decoration, one only where content is hidden is information — a
+  table that fits gets none.
+- **A rail**: a real horizontal scroll control, described below.
+
+<a id="a-white-fade-is-not-a-signal"></a>
+**Do not fade to white on a white table.** The edge signal was a white gradient to begin with, which
+is the standard trick for text running out of a box and does nothing whatever here. Screenshotting
+the 68px strip on `/distributions` with it on and off and diffing the painted pixels:
+
+| Edge signal | Background moved (of 255) | Text erased | |
+| --- | --- | --- | --- |
+| White fade | **0.28** — 0.1% | **26%** | imperceptible |
+| Hard 3px rule | 1.83 | 11% | imperceptible |
+| Inset shadow, 40% | **8.35** | **0%** | visible |
+| Grey gradient | 9.59 | 0% | visible |
+
+The white version was invisible, and its only measurable effect was **erasing a quarter of the text
+it lay over**. It is `inset -20px 0 20px -16px` at 40% slate-900 now, measured at **7.95** on
+`/distributions` and **8.12** on `/items` with the text untouched.
+
+The lesson generalises: **a scrim only works against content darker than the scrim.** Fading to
+white is right for dark text running out of a container and wrong for a white table, and the way to
+tell the difference is to diff the pixels, not to reason about it.
+
+<a id="the-rail"></a>
+**The rail.** An edge shadow cannot say *you can move*, and the platform will not say it either:
+its scrollbar is an **overlay taking 0px** — painted only *while* a gesture is under way, so it can
+only ever confirm scrolling after you have guessed at it — and even a visible one sits at the bottom
+of the *table*, which on **five of the seven** overflowing tables is below the fold: 296px below on
+`/distributions`. Ant Design ships this as `<Table sticky />`; Confluence and Jira both float one.
+
+- **`position: fixed`, not `sticky`.** `section.card-surface` is `overflow: hidden`, which makes it
+  the sticky container — a probe rail inside it did not track the viewport. Same reason `popover`
+  grew a `fixed` value.
+- **It rides the fold, then settles *below* the table.** Not over it: at `bottom - height` the rail
+  overlaid the last row and, being a control, took the pointer with it — the hover on the bottom
+  row's comment cell went to the rail and the tooltip never opened. Three passing specs caught that.
+  The card reserves a strip (`[data-railed]`) so at rest it covers nothing.
+- **`aria-hidden`, exactly as a native scrollbar is.** The region is already a focusable named
+  `role="region"` that the arrow keys scroll, so a focusable rail would be a second tab stop per
+  table duplicating a path that already works and is already announced. This is the pointer
+  affordance that was missing, and nothing else.
+- **The track is the target, 24px tall** for [2.5.8](#target-size); the bar you see is 6px of it.
+- **Injected by the controller, not written into 66 views**, and removed again when a table fits or
+  goes away.
+
+A styled native scrollbar is a **bonus and not a signal**: `::-webkit-scrollbar` makes Chrome and
+Safari draw one that takes real space, Firefox ignores it, and Chrome ignores the pseudo-element
+entirely on any element that also sets `scrollbar-width`. **No** combination of
+`--disable-features=OverlayScrollbar,FluentOverlayScrollbar,FluentScrollbar` makes headless Chromium
+141 reserve a single pixel, so it cannot be verified here at all.
 
 <a id="never-fade-a-frozen-column"></a>
 **Never fade a frozen column.** The first version of the fade drew it at the container's left edge,
