@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A table too narrow to be a table</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  /* ---------------------------------------------------------------------------------------------
+     PROPOSED, shared by every option.
+
+     The switch is a CONTAINER query, not a viewport one. Measured on /purchases: at a 1023px
+     viewport the table's region is 973px wide; at 1024px it is 702px, because that is where the
+     sidebar appears. A viewport breakpoint at `lg` would put the table back into table form at
+     exactly the moment its container lost 271px. `@container` is Chrome 105 / Safari 16 /
+     Firefox 110 -- the same generation as the `:has()` this app already depends on.
+
+     Each demo panel below is resizable: drag its bottom-right corner to watch the switch.
+  --------------------------------------------------------------------------------------------- */
+  .demo-wrap {
+    container-type: inline-size;
+    resize: horizontal;
+    overflow: auto;
+    min-width: 260px;
+    max-width: 100%;
+    border: 1px dashed var(--color-slate-300);
+    border-radius: .75rem;
+    padding: .5rem;
+    background: var(--color-slate-50);
+  }
+
+  /* The stacked form. `td` becomes a labelled field; `tr` becomes the card. */
+  @container (width < 44rem) {
+    .stackable { display: block; }
+    .stackable caption { display: block; text-align: left; }
+    .stackable thead { display: none; }
+    .stackable tbody { display: grid; gap: .75rem; }
+    .stackable tr {
+      display: grid;
+      gap: .5rem 1rem;
+      padding: .75rem;
+      border: 1px solid var(--color-slate-200);
+      border-radius: .75rem;
+      background: #fff;
+    }
+    .stackable td {
+      display: block;
+      padding: 0;
+      border: 0;
+      white-space: normal;      /* the nowrap rule is for columns, and there are none here */
+      max-width: none;          /* .name / .notes caps are column caps; drop them too */
+      overflow: visible;
+      text-overflow: clip;
+      min-width: 0;
+    }
+    .stackable td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: .6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--color-slate-500);
+    }
+    /* The identifying cell is the card's heading, so it loses its label and gains weight. */
+    .stackable td.pin-col {
+      position: static;
+      box-shadow: none;
+      font-size: .9375rem;
+      font-weight: 600;
+    }
+    .stackable td.pin-col::before { content: none; }
+    /* The actions cell has no heading to borrow, and sits with the title. */
+    .stackable td.cell-actions { text-align: left; }
+    .stackable td.cell-actions::before { content: none; }
+  }
+
+  /* Single column of fields when even the card is narrow; two when there is room. */
+  @container (width < 26rem) {
+    .stackable tr { grid-template-columns: minmax(0, 1fr); }
+  }
+  @container (26rem <= width < 44rem) {
+    .stackable tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stackable td.pin-col { grid-column: 1 / -1; }
+  }
+
+  /* OPTION C only: title and actions share the top line. */
+  @container (width < 44rem) {
+    .opt-c tr { grid-template-areas: none; }
+    .opt-c td.pin-col { grid-column: 1 / -2; }
+    .opt-c td.cell-actions { grid-column: -2 / -1; grid-row: 1; text-align: right; justify-self: end; }
+  }
+
+  /* OPTION B only: everything after the fourth field is folded away. */
+  @container (width < 44rem) {
+    .opt-b tr { position: relative; }
+    .opt-b td.fold { display: none; }
+    .opt-b tr[data-open] td.fold { display: block; }
+    .opt-b .more { grid-column: 1 / -1; }
+  }
+  .more-btn {
+    display: inline-flex; align-items: center; gap: .25rem;
+    min-height: 24px; padding: .125rem .375rem; margin: 0 -.375rem;
+    border-radius: .375rem;
+    font-size: .75rem; font-weight: 600; color: var(--color-brand-700);
+  }
+  .more-btn:hover { background: var(--color-brand-50); }
+  .more { display: none; }
+  @container (width < 44rem) { .opt-b .more { display: block; } }
+
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .3rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">At 320px you can see a fifth of the table</h1>
+    <p class="max-w-3xl text-slate-600">
+      Measured across every index page in the app: <strong>all fifteen tables scroll sideways at
+      320px</strong>, and the worst of them hides <strong>80% of its width</strong>.
+      <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code> needs 1,393px and gets 286.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">How much is off screen, by width</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Table</th><th>Cols</th><th>320</th><th>375</th><th>640</th><th>768</th><th>1024</th><th>1440</th></tr></thead>
+      <tbody>
+        <tr><td><code>/distributions</code></td><td>12</td><td><span class="pill pill-bad">1318</span></td><td>1263</td><td>1014</td><td>886</td><td>902</td><td>486</td></tr>
+        <tr><td><code>/requests</code></td><td>8</td><td><span class="pill pill-bad">1131</span></td><td>1076</td><td>827</td><td>699</td><td>715</td><td>299</td></tr>
+        <tr><td><code>/purchases</code></td><td>9</td><td><span class="pill pill-bad">1107</span></td><td>1052</td><td>803</td><td>675</td><td>691</td><td>275</td></tr>
+        <tr><td><code>/donations</code></td><td>9</td><td>944</td><td>889</td><td>640</td><td>512</td><td>528</td><td>112</td></tr>
+        <tr><td><code>/storage_locations</code></td><td>7</td><td>942</td><td>887</td><td>638</td><td>510</td><td>526</td><td>110</td></tr>
+        <tr><td><code>/items</code></td><td>8</td><td>932</td><td>877</td><td>628</td><td>500</td><td>516</td><td>100</td></tr>
+        <tr><td><code>/partners</code></td><td>6</td><td>904</td><td>849</td><td>600</td><td>472</td><td>488</td><td>72</td></tr>
+        <tr><td><code>/product_drives</code></td><td>9</td><td>764</td><td>709</td><td>460</td><td>332</td><td>348</td><td>0</td></tr>
+        <tr><td><code>/transfers</code></td><td>6</td><td>703</td><td>648</td><td>399</td><td>271</td><td>287</td><td>0</td></tr>
+        <tr><td><code>/kits</code></td><td>4</td><td>686</td><td>631</td><td>382</td><td>254</td><td>270</td><td>0</td></tr>
+        <tr><td><code>/donation_sites</code></td><td>6</td><td>675</td><td>620</td><td>371</td><td>243</td><td>259</td><td>0</td></tr>
+        <tr><td><code>/vendors</code></td><td>6</td><td>635</td><td>580</td><td>331</td><td>203</td><td>219</td><td>0</td></tr>
+        <tr><td><code>/barcode_items</code></td><td>4</td><td>398</td><td>343</td><td>94</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><code>/adjustments</code></td><td>5</td><td>355</td><td>300</td><td>51</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><code>/item_categories</code></td><td>4</td><td>247</td><td>192</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">Pixels of column hidden. <strong>Fifteen of fifteen
+    scroll at 320 and at 375; thirteen at 640; eight at 768; eight at 1024; six at 1440.</strong></p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What the design system says today, and why you are still right</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>The written convention is that tables scroll.</strong>
+      <em>&ldquo;A table row is one line&hellip; a sideways scroll is a deliberate act you take once.
+      WCAG 1.4.10 Reflow exempts data tables from the no-sideways-scroll rule for this
+      reason.&rdquo;</em> It cites Carbon, Material, Stripe and Linear, all of which do scroll.</p>
+      <p><strong>But the Reflow exemption is permission, not advice</strong> &mdash; it says a data
+      table is <em>allowed</em> to scroll, not that 80% of one should be off screen.</p>
+      <p><strong>And the system already contradicts itself.</strong> The line item row in a donation
+      stacks below <code class="rounded bg-slate-200 px-1 text-xs">sm</code>, drops its heading row,
+      and gives every cell its own label &mdash; and the reason recorded for it was that
+      <em>&ldquo;four columns at 320px leaves the item picker 72px, which is not a control anyone can
+      use.&rdquo;</em> Nine columns of purchase data at 286px is the same argument. So the pattern is
+      already in the system; it just was not applied to the tables.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The switch has to be a container query</h2>
+    <p class="max-w-3xl text-slate-600">Measured on <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code>:</p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Viewport</th><th>Region width</th><th>Sidebar</th><th>Hidden</th></tr></thead>
+      <tbody>
+        <tr><td>768</td><td>718</td><td>&mdash;</td><td>675</td></tr>
+        <tr><td><strong>1023</strong></td><td><strong>973</strong></td><td>&mdash;</td><td>420</td></tr>
+        <tr><td><strong>1024</strong></td><td><strong>702</strong></td><td>appears</td><td>691</td></tr>
+        <tr><td>1440</td><td>1118</td><td>yes</td><td>275</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      The container <strong>loses 271px going from 1023 to 1024</strong>. A viewport breakpoint at
+      <code class="rounded bg-slate-200 px-1 text-xs">lg</code> would return the table to table form
+      exactly where it has least room. <code class="rounded bg-slate-200 px-1 text-xs">@container</code>
+      asks the only question that matters: how wide is the space this table is in.
+    </p>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">Three ways to stack it</h2>
+  <p class="max-w-3xl text-slate-600">Every panel is resizable &mdash; <strong>drag the bottom-right
+  corner</strong> to take it below 44rem, then below 26rem.</p>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Every field, labelled</h3>
+    <p class="max-w-3xl text-slate-600">
+      All nine columns become labelled fields: one column of them when the space is very narrow, two
+      when there is room. Nothing is hidden and nothing is decided for the reader.
+    </p>
+    <div class="demo-wrap" style="width: 100%">
+      <table class="data-table stackable">
+        <caption>Purchases, most recent first</caption>
+        <thead><tr>
+          <th scope="col" class="pin-col name">Purchases from</th><th scope="col" class="name">Storage location</th>
+          <th scope="col" class="notes">Comments</th><th scope="col" class="quantity">Quantity of items</th>
+          <th scope="col" class="quantity">Variety of items</th><th scope="col" class="numeric">Amount spent</th>
+          <th scope="col" class="numeric">Fair market value</th><th scope="col" class="date">Purchased date</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Ace Wholesale Supply</a></td>
+            <td class="name" data-label="Storage location">Main warehouse</td>
+            <td class="notes text-slate-600" data-label="Comments">Invoice sent to finance for reconciliation</td>
+            <td class="quantity" data-label="Quantity of items">1,204</td>
+            <td class="quantity" data-label="Variety of items">8</td>
+            <td class="numeric" data-label="Amount spent">$1,204.00</td>
+            <td class="numeric" data-label="Fair market value">$1,540.00</td>
+            <td class="date" data-label="Purchased date">2026-08-14</td>
+            <td class="cell-actions text-right"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Northgate Distributors</a></td>
+            <td class="name" data-label="Storage location">Overflow annexe</td>
+            <td class="notes text-slate-600" data-label="Comments">Short-dated stock, priced accordingly</td>
+            <td class="quantity" data-label="Quantity of items">860</td>
+            <td class="quantity" data-label="Variety of items">4</td>
+            <td class="numeric" data-label="Amount spent">$742.50</td>
+            <td class="numeric" data-label="Fair market value">$980.00</td>
+            <td class="date" data-label="Purchased date">2026-08-11</td>
+            <td class="cell-actions text-right"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> no editorial judgement, no hidden data, and it is the literal reading of the pattern the system already uses for line item rows.</li>
+      <li><strong>For:</strong> one rule set for all fifteen tables. Nothing to decide per table.</li>
+      <li><strong>Against:</strong> tall. Nine fields &times; fourteen rows is 126 labelled values on one page.</li>
+      <li><strong>Against:</strong> a label for every value repeats the heading fourteen times, which is exactly what a table exists to avoid.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      B &mdash; The first few fields, and the rest behind a disclosure
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      The identifying field and the three that answer &ldquo;which one is this and what happened&rdquo;
+      stay; the rest fold away per row. This is what Shopify Polaris, Filament and most mobile admin
+      UIs do: a record summary, expandable.
+    </p>
+    <div class="demo-wrap opt-b" style="width: 100%">
+      <table class="data-table stackable">
+        <caption>Purchases, most recent first</caption>
+        <thead><tr>
+          <th scope="col" class="pin-col name">Purchases from</th><th scope="col" class="name">Storage location</th>
+          <th scope="col" class="notes">Comments</th><th scope="col" class="quantity">Quantity of items</th>
+          <th scope="col" class="quantity">Variety of items</th><th scope="col" class="numeric">Amount spent</th>
+          <th scope="col" class="numeric">Fair market value</th><th scope="col" class="date">Purchased date</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Ace Wholesale Supply</a></td>
+            <td class="numeric" data-label="Amount spent">$1,204.00</td>
+            <td class="date" data-label="Purchased date">2026-08-14</td>
+            <td class="name" data-label="Storage location">Main warehouse</td>
+            <td class="notes fold text-slate-600" data-label="Comments">Invoice sent to finance for reconciliation</td>
+            <td class="quantity fold" data-label="Quantity of items">1,204</td>
+            <td class="quantity fold" data-label="Variety of items">8</td>
+            <td class="numeric fold" data-label="Fair market value">$1,540.00</td>
+            <td class="more"><button type="button" class="more-btn" data-more>Four more fields</button></td>
+            <td class="cell-actions text-right"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Northgate Distributors</a></td>
+            <td class="numeric" data-label="Amount spent">$742.50</td>
+            <td class="date" data-label="Purchased date">2026-08-11</td>
+            <td class="name" data-label="Storage location">Overflow annexe</td>
+            <td class="notes fold text-slate-600" data-label="Comments">Short-dated stock, priced accordingly</td>
+            <td class="quantity fold" data-label="Quantity of items">860</td>
+            <td class="quantity fold" data-label="Variety of items">4</td>
+            <td class="numeric fold" data-label="Fair market value">$980.00</td>
+            <td class="more"><button type="button" class="more-btn" data-more>Four more fields</button></td>
+            <td class="cell-actions text-right"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> a scannable list. Four fields per record instead of nine, so the page is roughly half as tall and you can still compare records by eye.</li>
+      <li><strong>For:</strong> nothing is lost &mdash; the fold is a disclosure, not a cut.</li>
+      <li><strong>Against:</strong> it needs a judgement per table about which fields lead. Fifteen decisions, and they will be argued about.</li>
+      <li><strong>Against:</strong> the column order in the table and the field order in the card stop matching, unless the table is reordered to agree.</li>
+      <li><strong>Against:</strong> a disclosure per row is a lot of controls on a page &mdash; fourteen more buttons on <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code>.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Every field, with the action on the title line</h3>
+    <p class="max-w-3xl text-slate-600">
+      Option A, except the row's action sits beside the record's name rather than at the foot of the
+      card &mdash; so the card reads like a list item with a control, which is the more usual shape.
+    </p>
+    <div class="demo-wrap opt-c" style="width: 100%">
+      <table class="data-table stackable">
+        <caption>Purchases, most recent first</caption>
+        <thead><tr>
+          <th scope="col" class="pin-col name">Purchases from</th><th scope="col" class="name">Storage location</th>
+          <th scope="col" class="notes">Comments</th><th scope="col" class="quantity">Quantity of items</th>
+          <th scope="col" class="numeric">Amount spent</th><th scope="col" class="date">Purchased date</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Ace Wholesale Supply</a></td>
+            <td class="name" data-label="Storage location">Main warehouse</td>
+            <td class="notes text-slate-600" data-label="Comments">Invoice sent to finance for reconciliation</td>
+            <td class="quantity" data-label="Quantity of items">1,204</td>
+            <td class="numeric" data-label="Amount spent">$1,204.00</td>
+            <td class="date" data-label="Purchased date">2026-08-14</td>
+            <td class="cell-actions"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+          <tr>
+            <td class="pin-col name font-medium text-slate-900" data-label="Purchases from"><a href="#" class="text-brand-700">Northgate Distributors</a></td>
+            <td class="name" data-label="Storage location">Overflow annexe</td>
+            <td class="notes text-slate-600" data-label="Comments">Short-dated stock, priced accordingly</td>
+            <td class="quantity" data-label="Quantity of items">860</td>
+            <td class="numeric" data-label="Amount spent">$742.50</td>
+            <td class="date" data-label="Purchased date">2026-08-11</td>
+            <td class="cell-actions"><a href="#" class="text-brand-700 text-sm font-medium">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the shape people expect from a list of records on a narrow screen.</li>
+      <li><strong>For:</strong> no per-table judgement, like A.</li>
+      <li><strong>Against:</strong> as tall as A.</li>
+      <li><strong>Against:</strong> the actions cell has to be found by class rather than position, so every table needs a marker on that cell. 34 of the 299 headings are already the <code class="rounded bg-slate-200 px-1 text-xs">sr-only</code> actions kind, so they are findable &mdash; but it is a change to every table.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What it costs in height</h2>
+    <p class="max-w-3xl text-slate-600">
+      Measured off the panels above, per record, and multiplied by the fourteen rows
+      <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code> actually shows:
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Layout</th><th>Per record</th><th>Fourteen records</th><th>Against today</th></tr></thead>
+      <tbody>
+        <tr><td>Table, as it is now</td><td>49px</td><td>686px</td><td><span class="pill pill-bad">but 80% is off screen</span></td></tr>
+        <tr><td>A or C, two field columns</td><td>225px</td><td>3,150px</td><td>4.6&times;</td></tr>
+        <tr><td>A or C, one field column</td><td>388px</td><td><strong>5,432px</strong></td><td><span class="pill pill-bad">7.9&times;</span></td></tr>
+        <tr><td>B folded, two field columns</td><td>201px</td><td>2,814px</td><td>4.1&times;</td></tr>
+        <tr><td>B folded, one field column</td><td>245px</td><td><strong>3,430px</strong></td><td><span class="pill pill-info">5.0&times;</span></td></tr>
+        <tr><td>B, one row expanded</td><td>420px</td><td>&mdash;</td><td>per row, on demand</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      <strong>B is 37% shorter than A at the narrowest width</strong> &mdash; 245px against 388 &mdash;
+      and that is the whole argument between them. Neither is short: a stacked table is a long page,
+      and the question is only whether you would rather scroll down a page you can read or sideways
+      through one you cannot.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Two things any of these needs</h2>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 space-y-3">
+      <div>
+        <p class="font-semibold">1. The labels have to come from somewhere, and it should not be 299 hand-written attributes.</p>
+        <p>Every demo above uses <code class="rounded bg-slate-200 px-1 text-xs">data-label</code> on
+        the cell, which the CSS reads with <code class="rounded bg-slate-200 px-1 text-xs">attr()</code>.
+        Writing those by hand means touching <strong>299 headings across 71 views</strong> and keeping
+        them in step forever. A controller can copy them out of
+        <code class="rounded bg-slate-200 px-1 text-xs">&lt;thead&gt;</code> by column index instead
+        &mdash; one place, always in step, and it works for a table that arrives in a Turbo frame.
+        Without JavaScript the table simply stays a scrolling table, which is what it is today.</p>
+      </div>
+      <div>
+        <p class="font-semibold">2. Changing <code class="rounded bg-slate-200 px-1 text-xs">display</code> on a table removes its semantics.</p>
+        <p>A browser stops exposing rows and cells as a table once
+        <code class="rounded bg-slate-200 px-1 text-xs">display</code> is not
+        <code class="rounded bg-slate-200 px-1 text-xs">table</code>. The fix is explicit ARIA
+        &mdash; <code class="rounded bg-slate-200 px-1 text-xs">role="table"</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">role="row"</code>,
+        <code class="rounded bg-slate-200 px-1 text-xs">role="cell"</code> &mdash; added by the same
+        controller, so the tree says the same thing at both layouts. <strong>This is the part most
+        implementations of this pattern get wrong</strong>, and it is invisible unless you look at
+        the accessibility tree rather than the page.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>B, with the container query and the controller-supplied labels and roles.</strong></p>
+      <p>A and C are honest and simple, and they produce a very long page: nine fields on fourteen
+      records is 126 labelled values, and a label repeated fourteen times is the thing a table exists
+      to avoid. B keeps the list scannable, which is the point of an index page &mdash; you are there
+      to find one record, not to read them all.</p>
+      <p><strong>The cost of B is fifteen judgements</strong> about which fields lead, and I would
+      rather make those explicitly than pretend all nine matter equally at 320px. For
+      <code class="rounded bg-slate-200 px-1 text-xs">/purchases</code>: who it was from, what it
+      cost, when, and where it went.</p>
+      <p>If you would rather not have fifteen arguments, <strong>A is the safe answer</strong> and
+      needs no per-table decisions at all &mdash; say so and I will build that instead.</p>
+    </div>
+  </section>
+</div>
+<script>
+  document.querySelectorAll("[data-more]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const row = b.closest("tr");
+      const open = row.dataset.open !== undefined;
+      if (open) { delete row.dataset.open; b.textContent = "Four more fields"; }
+      else { row.dataset.open = ""; b.textContent = "Fewer fields"; }
+    });
+  });
+</script>
+</body>
+</html>
