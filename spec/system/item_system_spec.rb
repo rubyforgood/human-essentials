@@ -90,7 +90,7 @@ RSpec.describe "Item management", type: :system do
 
         within "tr[data-item-id='#{item.id}']" do
           accept_confirm do
-            click_on "Restore", match: :first
+            click_row_action "Restore"
           end
         end
         page.find("[data-flash-tone='info']")
@@ -186,7 +186,10 @@ RSpec.describe "Item management", type: :system do
           # Saving a category now lands on the categories tab, which is where it belongs.
           # The items are one tab over.
           click_on 'Item list'
-          find("tr[data-item-id=\"#{item.id}\"]").find('a', text: 'Edit').click
+          # Edit is behind the row's overflow menu -- see design.md, Row actions.
+          within "tr[data-item-id='#{item.id}']" do
+            click_row_action "Edit"
+          end
           select new_item_category, from: 'Category'
           click_on 'Save'
         end

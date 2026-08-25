@@ -12,28 +12,35 @@
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td class="numeric"><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td class="notes text-slate-600"><%= distribution_row.comment %></td>
-  <td><%= distribution_row.state&.humanize %></td>
+  <td>
+    <%# "Has inactive items" is a *status*, and it used to sit under the action buttons as a
+        49-character sentence. Once cells stopped wrapping that was 299px on one line, holding the
+        actions column at 331px on every row. A pill, in the column where status lives. %>
+    <span class="inline-flex items-center gap-1.5">
+      <%= distribution_row.state&.humanize %>
+      <% if has_inactive_item %>
+        <%= essentials_status_pill("Inactive items", tone: :warning, icon: "bi-exclamation-triangle") %>
+      <% end %>
+    </span>
+  </td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5 whitespace-nowrap">
-      <%= essentials_link_button "View", distribution_path(distribution_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <% if distribution_row.request %>
-        <%= essentials_link_button "View request", request_path(distribution_row.request), variant: :ghost, size: :sm, icon: "bi-file-text" %>
-      <% end %>
-      <%= essentials_link_button "Print", print_distribution_path(distribution_row, format: :pdf), variant: :ghost, size: :sm, icon: "bi-printer" %>
-      <% unless has_inactive_item %>
-        <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-          <%= essentials_link_button "Edit", edit_distribution_path(distribution_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-        <% end %>
-        <%= essentials_action_button "Reclaim", distribution_path(distribution_row), method: :delete,
-              variant: :ghost_danger, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: "Are you sure you want to reclaim this distribution to #{distribution_row.partner.name}?" %>
-      <% end %>
-    </div>
-    <% if has_inactive_item %>
-      <p class="mt-1 text-xs text-amber-700">
-        <i class="bi-exclamation-triangle" aria-hidden="true"></i>
-        Has inactive items — cannot be edited or reclaimed
-      </p>
-    <% end %>
+    <%#
+      No visible "View": the ID cell above is already a link to this distribution, so a View button
+      beside it is two controls with one destination. See design.md, Row actions.
+    %>
+    <%
+      editable = (!distribution_row.complete? && !distribution_row.future?) ||
+        current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+      row_items = [
+        ({label: "View request", path: request_path(distribution_row.request), icon: "bi-file-text"} if distribution_row.request),
+        {label: "Print", path: print_distribution_path(distribution_row, format: :pdf), icon: "bi-printer"},
+        ({label: "Edit", path: edit_distribution_path(distribution_row), icon: "bi-pencil"} if !has_inactive_item && editable),
+        ({label: "Reclaim", path: distribution_path(distribution_row), icon: "bi-arrow-counterclockwise",
+          method: :delete, tone: :danger,
+          confirm: "Are you sure you want to reclaim this distribution to #{distribution_row.partner.name}?"} unless has_inactive_item)
+      ]
+    %>
+    <%= render "shared/essentials/row_actions",
+          label: "distribution #{distribution_row.id}", items: row_items %>
   </td>
 </tr>

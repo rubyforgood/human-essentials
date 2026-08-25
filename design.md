@@ -287,6 +287,38 @@ confirmation is what protects the user, not the colour.
 `:primary` belongs in the page header, once. If a row action looks like the page's main action,
 the page has as many main actions as it has rows.
 
+**Three or more row actions collapse into a menu.** `shared/essentials/row_actions`. Five labelled
+buttons made the actions column **331px** on `/distributions` — wider than Total items, Total value
+and Status together, and the second-widest column in the table. Collapsed it is **60px**. This is a
+named pattern rather than a convention: Carbon ships an `OverflowMenu` documented for table rows,
+Salesforce Lightning calls it *row-level actions*, Polaris renders them as an `ActionList` in a
+`Popover`, and GitHub, Drive, Gmail, Notion, Linear and Stripe all end a row with a kebab.
+
+- **A visible primary only where the row does not already link to its record.** `/vendors` and
+  `/requests` keep a **View**; `/distributions`, `/items` and `/purchases` do not, because their
+  first cell is already a link to exactly that page — a View button beside it is two controls with
+  one destination, which is what the tab-actions pass removed.
+- **Always visible, never hover-revealed.** Several of the consumer apps reveal the kebab on hover.
+  There is no hover on a phone, and a keyboard user cannot reach a control that does not exist yet.
+- **The disclosure pattern, not the ARIA menu pattern.** A popover of links moved through with Tab.
+  `popover_controller` gives Escape, focus back to the trigger, `aria-expanded` and click-outside;
+  it does not do arrow-key movement, and promising `role="menu"` without that is worse than not
+  promising it. The trigger takes `aria-haspopup` and a label naming the row — *"More actions for
+  distribution 24"* — or a screen reader hears "button" once per row.
+- **`data-popover-fixed-value="true"`.** The menu lives inside `.table-scroll`, whose
+  `overflow-x: auto` forces `overflow-y` to compute to `auto` as well, so an absolutely positioned
+  panel is clipped on **both** axes and the last row's menu was cut off by the bottom of the table.
+  Fixed positioning is opt-in, because the account menu and date picker have no clipping ancestor
+  and moving with the page is the better default.
+- **`size-7`, not the 38px control height.** A row action is `sm` everywhere else; a 38px trigger
+  made every distribution row 10px taller. 28px still clears WCAG 2.5.8's 24×24 floor.
+- **An unavailable action stays in the menu**, disabled, with the reason as sr-only text. A form
+  action gets a genuinely `disabled` `<button>` and a link action a `<span aria-disabled>` — see
+  [Interaction](#interaction), and note that only a form control can be `disabled`.
+- **The honest cost:** every action but the first becomes two clicks, and which one deserves to stay
+  visible differs by who uses the page. A warehouse user printing picklists all afternoon will feel
+  *Print* moving behind a menu.
+
 **A row's actions are one unit and do not wrap.** `flex justify-end gap-1.5 whitespace-nowrap`,
 never `flex-wrap`. Five row partials wrapped, and on a wide table the actions column gets squeezed
 until the buttons stack one per line: `/distributions` had **155–171px** rows with its two visible

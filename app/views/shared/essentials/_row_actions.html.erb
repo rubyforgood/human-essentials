@@ -1,0 +1,96 @@
+<%#
+  A row's actions, collapsed into a menu.
+
+    render "shared/essentials/row_actions", label: "distribution #{d.id}", items: [
+      {label: "Print", path: print_distribution_path(d), icon: "bi-printer"},
+      {label: "Edit",  path: edit_distribution_path(d),  icon: "bi-pencil"},
+      {label: "Reclaim", path: distribution_path(d), icon: "bi-arrow-counterclockwise",
+       method: :delete, tone: :danger, confirm: "Are you sure?"}
+    ]
+
+  Locals:
+    label    required; names the row, so a screen reader hears "More actions for distribution 24"
+             rather than "button" once per row
+    items    required; each {label:, path:, icon:, method:, confirm:, tone:, disabled:, reason:}
+    primary  optional; rendered as a visible button beside the trigger
+
+  Five labelled buttons made the actions column 331px on /distributions -- the second-widest
+  column in the table, wider than Total items, Total value and Status together. Collapsed it is
+  70px. Carbon ships this as `OverflowMenu`, Salesforce calls it row-level actions, and GitHub,
+  Drive, Gmail, Notion, Linear and Stripe all end a row with a kebab. See design.md.
+
+  `primary` is omitted where the row's first cell already links to the record: a visible "View"
+  beside a linked ID is two controls with one destination.
+
+  The disclosure pattern, not the ARIA menu pattern: a popover of links moved through with Tab.
+  `popover_controller` already gives Escape, focus back to the trigger, `aria-expanded` and
+  click-outside; it does not do arrow-key movement, and promising `role="menu"` without that is
+  worse than not promising it.
+%>
+<div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
+  <%= primary if defined?(primary) && primary %>
+
+  <%# `popover-fixed-value`: this menu is inside `.table-scroll`, which clips on both axes, so the
+      panel is placed against the viewport instead. Without it the last row's menu is cut off by
+      the bottom of the table. %>
+  <div class="relative" data-controller="popover" data-popover-fixed-value="true">
+    <button type="button"
+            <%# `size-7`, not the 38px control height: a row action is `sm` sized everywhere else in the
+        app, and a 38px trigger made every distribution row 10px taller. 28px still clears
+        WCAG 2.5.8's 24x24 floor. %>
+            class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="More actions for <%= label %>"
+            data-popover-target="trigger"
+            data-action="click->popover#toggle">
+      <i class="bi-three-dots-vertical" aria-hidden="true"></i>
+    </button>
+
+    <%# `role="menu"` with `role="menuitem"` children, and the popover controller now implements the
+        arrow-key movement that role promises -- see popover_controller. The overlay audit requires
+        a popover panel to declare what it is. %>
+    <div class="absolute right-0 z-30 w-56 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
+         hidden
+         role="menu"
+         data-popover-target="panel">
+      <% items.compact.each do |item| %>
+        <%
+          tone_classes = (item[:tone] == :danger) ?
+            "text-slate-700 hover:bg-rose-50 hover:text-rose-700" :
+            "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+          item_classes = "flex w-full items-center gap-2 px-3 py-2 text-left text-sm #{tone_classes} " \
+                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        %>
+        <% if item[:disabled] && item[:method] %>
+          <%# An unavailable *form* action is a genuinely `disabled` <button>, and an unavailable
+              *link* action is a non-interactive <span> with `aria-disabled` -- design.md draws that
+              line and it matters: `disabled` is only a thing a form control can be. The reason is
+              sr-only text, not a title, so it reaches a screen reader without needing hover. %>
+          <%# `form: {role: "none"}` on the wrapper: `role="menu"` must own its `menuitem`s, and a
+              <form> in between is a third thing in the tree that is neither. `none` makes it
+              transparent, which is the same trick an <li> wrapper needs in a menu. %>
+          <%= button_to item[:path], method: item[:method], disabled: true,
+                form_class: "block", form: {role: "none"}, role: "menuitem",
+                class: "#{item_classes} opacity-60" do %>
+            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+            <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
+          <% end %>
+        <% elsif item[:disabled] %>
+          <span class="<%= item_classes %> opacity-60" role="menuitem" aria-disabled="true">
+            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+            <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
+          </span>
+        <% elsif item[:method] %>
+          <%= essentials_action_button item[:label], item[:path], method: item[:method],
+                variant: :ghost, size: :sm, icon: item[:icon], confirm: item[:confirm],
+                class: item_classes, role: "menuitem", form: {role: "none"} %>
+        <% else %>
+          <%= link_to item[:path], class: item_classes, role: "menuitem", **(item[:link_options] || {}) do %>
+            <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

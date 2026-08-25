@@ -20,13 +20,17 @@
   </td>
   <td><%= render partial: "status", locals: {status: request_row.status} %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", request_path(request_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <% unless request_row.status_cancelled? || request_row.status_fulfilled? %>
-        <%= essentials_link_button "Cancel", new_request_cancelation_path(request_id: request_row.id),
-              variant: :ghost_danger, size: :sm, icon: "bi-x-circle" %>
-      <% end %>
-      <%= essentials_link_button "Print", print_picklist_request_path(request_row), variant: :ghost, size: :sm, icon: "bi-printer" %>
-    </div>
+    <%
+      row_items = [
+        {label: "Print", path: print_picklist_request_path(request_row), icon: "bi-printer"},
+        ({label: "Cancel", path: new_request_cancelation_path(request_id: request_row.id),
+          icon: "bi-x-circle", tone: :danger} unless request_row.status_cancelled? || request_row.status_fulfilled?)
+      ]
+    %>
+    <%# A visible View: nothing else in this row links to the request. %>
+    <%= render "shared/essentials/row_actions",
+          label: "the request from #{request_row.partner.name}",
+          primary: essentials_link_button("View", request_path(request_row), variant: :ghost, size: :sm, icon: "bi-eye"),
+          items: row_items %>
   </td>
 </tr>

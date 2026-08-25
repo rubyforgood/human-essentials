@@ -358,7 +358,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "the user can make changes" do
-      click_on "Edit", match: :first
+      click_row_action "Edit"
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
       click_button "Yes, it's correct"
@@ -370,7 +370,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "the user can view related request" do
-      click_on "View request"
+      click_row_action "View request"
 
       expect(page).to have_content "Request from #{distribution.request.partner.name}"
     end
@@ -381,7 +381,7 @@ RSpec.feature "Distributions", type: :system do
       allow(job).to receive(:deliver_later)
 
       visit distributions_path
-      click_on "Edit", match: :first
+      click_row_action "Edit"
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
       click_button "Yes, it's correct"
@@ -390,7 +390,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "allows the user can change the issued_at date" do
-      click_on "Edit", match: :first
+      click_row_action "Edit"
       expect do
         fill_in "Distribution date", with: Time.zone.parse("2001-10-01 10:00")
 
@@ -401,7 +401,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "disallows the user from changing the quantity above the inventory quantity" do
-      click_on "Edit", match: :first
+      click_row_action "Edit"
       expect do
         fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
         click_on "Save", match: :first
@@ -415,7 +415,7 @@ RSpec.feature "Distributions", type: :system do
     it "the user can reclaim it" do
       expect do
         accept_confirm do
-          click_on "Reclaim"
+          click_row_action "Reclaim"
         end
         expect(page).to have_content "reclaimed"
       end.to change { Distribution.count }.by(-1)
@@ -423,7 +423,7 @@ RSpec.feature "Distributions", type: :system do
 
     context "when delivery method is not shipped" do
       it "should not display shipping_cost field" do
-        click_on "Edit", match: :first
+        click_row_action "Edit"
 
         # if element not found it will throw exception
         expect { page.find_by_id("shipping_cost_div", wait: 2) }.to raise_error(Capybara::ElementNotFound)
@@ -434,7 +434,7 @@ RSpec.feature "Distributions", type: :system do
       let(:delivery_method) { "shipped" }
 
       it "should update distribution and display shipping_cost field" do
-        click_on "Edit", match: :first
+        click_row_action "Edit"
 
         # to check if shipping_cost field exist
         expect(page.find_by_id("shipping_cost_div")).not_to be_nil
@@ -453,7 +453,7 @@ RSpec.feature "Distributions", type: :system do
         item.destroy
         expect do
           accept_confirm do
-            click_on "Reclaim"
+            click_row_action "Reclaim"
           end
           page.find "[data-flash]"
         end.to change { Distribution.count }.by(-1)
@@ -493,7 +493,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "can click on Edit button and a warning appears " do
         visit distributions_path
-        click_on "Edit", match: :first
+        click_row_action "Edit"
         expect(page).to have_content "The current date is past the date this distribution was scheduled for."
       end
 

@@ -98,3 +98,48 @@ RSpec.describe "Clipped table text", type: :system, js: true do
     end
   end
 end
+
+RSpec.describe "Row action menus", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
+  before { sign_in user }
+
+  # Five labelled buttons made the actions column 331px on /distributions -- see design.md.
+  context "on a table with several row actions" do
+    before do
+      create(:vendor, organization: organization, business_name: "Costco")
+      visit vendors_path
+    end
+
+    it "names the trigger after its row, so a screen reader does not hear 'button' once per row" do
+      trigger = find("tbody tr [data-popover-target=trigger]", match: :first)
+      expect(trigger["aria-label"]).to include("Costco")
+      expect(trigger["aria-haspopup"]).to eq("true")
+      expect(trigger["aria-expanded"]).to eq("false")
+    end
+
+    it "opens with focus on the first item" do
+      panel = open_row_menu(row: "Costco")
+      items = panel.all("[role=menuitem]")
+      expect(items.size).to be >= 2
+      expect(page.evaluate_script("document.activeElement.textContent.trim()")).to eq(items.first.text)
+    end
+
+    # Arrow-key movement and Escape-with-refocus are checked by `bin/design/overlay-audit.js`,
+    # across all 90 popovers in the app rather than one. Cuprite would not deliver a key to the
+    # focused node here -- neither `page.send_keys` nor `Element#send_keys` reached it, and the
+    # first version of this spec passed for the wrong reason because focus had landed on a filter
+    # input and "not the first item" was trivially true.
+
+    # `.table-scroll` clips on both axes, so an absolutely positioned panel was cut off on the
+    # last row. The panel is placed against the viewport instead.
+    it "escapes the table's scroll region" do
+      open_row_menu(row: "Costco")
+      position = page.evaluate_script(
+        "getComputedStyle(document.querySelector('tbody tr [data-popover-target=panel]')).position"
+      )
+      expect(position).to eq("fixed")
+    end
+  end
+end

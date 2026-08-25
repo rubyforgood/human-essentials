@@ -3664,3 +3664,74 @@ makes that table narrower *and* shorter.
 `td.name:first-of-type` counts element *type*, so it means "a `td` that is `.name` and the first
 `td`" — and the first `td` is the ID cell. It matched nothing and the panel behaved exactly like
 the one above it while claiming to demonstrate pinning. The shipped version uses an explicit class.
+
+
+---
+
+## 2026-08-25 · Row actions collapse into a menu, and `role="menu"` becomes true
+
+**Area.** `shared/essentials/_row_actions`, `popover_controller`, `overlay-audit.js`, four row
+partials, `design.md`.
+
+**Decision.** Option C of [`row-action-menus.html`](mockups/row-action-menus.html): three or more
+row actions collapse behind a kebab, with a visible primary **only** where the row does not already
+link to its record.
+
+**Measured.** The actions column on `/distributions` was **331px** — the second-widest column in
+the table, wider than Total items, Total value and Status together. It is **60px**. `/items` the
+same; `/vendors` keeps a View and is 160px, and its table now **fits its region** for the first
+time. Row heights are a single value everywhere.
+
+**Why no visible View on three of them.** `/distributions`, `/items` and `/purchases` link to the
+record from the row's first cell. A View button beside that is two controls with one destination,
+which is the duplication the tab-actions pass removed. `/vendors` and `/requests` have no row link
+and keep one.
+
+**Two things found while building it, both pre-existing.**
+
+The first is the more serious. The overlay audit requires a popover panel to declare a role, and
+the account menu has declared **`role="menu"` since the day it was built while
+`popover_controller` had no arrow-key handling at all** — the ARIA menu pattern requires it. A
+promise in an attribute that nothing kept, and nothing noticed until row action menus multiplied it
+by **62 findings**. The choice was to copy the false promise, dodge it with a vaguer role, or make
+it true. The controller implements `ArrowDown`, `ArrowUp`, `Home` and `End` now, **gated on
+`role="menu"`** — because the date range panel is `role="dialog"` and holds date inputs, where an
+arrow key belongs to the input and hijacking it would break adjusting a date from the keyboard.
+Verified: Edit → Deactivate → wraps, End and Home to the ends, and the date panel untouched.
+
+The second: `.table-scroll` sets `overflow-x: auto`, which forces `overflow-y` to compute to `auto`
+as well, so an absolutely positioned panel is clipped on **both** axes and the last row's menu was
+cut off by the bottom of the table. `data-popover-fixed-value` places the panel against the
+viewport instead. Opt-in, because the account menu and date picker have no clipping ancestor and
+moving with the page is the better default. Hit-tested at the first and last row of three tables.
+
+**A `<form>` cannot sit between `role="menu"` and its items.** `button_to` wraps its button in one,
+so the wrapper takes `role="none"` — the same trick an `<li>` needs in a menu. Without it the menu
+owned a form rather than menuitems, and the spec counted one item where there were two.
+
+**An unavailable action stays in the menu, disabled.** `design.md` already drew the line: a form
+action gets a genuinely `disabled` `<button>`, a link action a `<span aria-disabled>`. I had made
+items' unavailable Deactivate a span, which broke a request spec that asserts the disabled
+attribute — and the spec was right, because only a form control can be `disabled`.
+
+**Where the keyboard check lives, and why not in RSpec.** Cuprite would not deliver a key to the
+focused node: neither `page.send_keys` nor `Element#send_keys` reached it, and the first version of
+that spec **passed for the wrong reason** — focus had landed on a filter input, so "not the first
+item" was trivially true. Arrow movement and Escape-with-refocus are checked in
+`overlay-audit.js`, which drives a real browser across all 90 popovers rather than one. The RSpec
+specs keep what they can test honestly: the trigger's name and ARIA, the item count, initial focus,
+and that the panel is `fixed`.
+
+**What is not proven.** The role check is proven in both directions — 62 findings before, 0 after.
+The new arrow-key check is proven only positively: arrows work and the audit is clean. Breaking the
+handler to watch the check fire made the audit's own navigation time out, so that direction is
+untested. Recorded rather than glossed.
+
+**Alternatives rejected.**
+
+- **Hover-revealed kebab**, as Gmail, Linear and GitHub ship. No hover on touch, and a keyboard user
+  cannot reach a control that does not exist yet.
+- **Two visible actions plus a kebab.** 212px against 60px, for a second action whose identity
+  differs by user.
+- **`role="group"` or no role**, to avoid promising arrow keys. It would have left the account menu's
+  existing false promise in place, which is the actual defect.
