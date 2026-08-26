@@ -41,7 +41,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
       # Request Received
       expect(page).to have_content('Request received')
-      expect(page).to have_content("We have sent instructions for the next steps to #{created_account_request.email}")
+      expect(page).to have_content("Instructions for the next steps have been sent to #{created_account_request.email}")
 
       # Access link within email they would have received
       visit confirmation_account_requests_path(token: created_account_request.identity_token)
@@ -53,7 +53,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       expect(created_account_request.reload.confirmed_at).not_to eq(nil)
 
       expect(page).to have_content('Confirmed')
-      expect(page).to have_content('We will be processing your request now.')
+      expect(page).to have_content('Your request is being processed.')
 
       # Access link within email sent to admin user to process the request.
       sign_in(super_admin)

@@ -1182,6 +1182,30 @@ Three cases, because the eight outliers were not one problem:
 | Something that needs distinguishing | **Keep "your".** | "Our impact" → **Your impact**, against the bank's figures |
 | The product or its maintainers | **Name the party, or drop it.** | "…and how to reach us" → **…and how to get in touch** |
 
+<a id="interface-has-no-speaker"></a>
+**An interface has no speaker; a letter does.** That is the line, and it is where the rule stops.
+
+In the app, "we" is almost always filler in front of the actual news — "We're contacting you to
+notify you that your password has been changed" is "Your password has been changed" with eleven
+words of throat-clearing. Twenty-five such strings went, across the interface *and* the transactional
+mailers, and every one of them got shorter.
+
+Three places keep it, and each for a different reason:
+
+| Kept | Why |
+| --- | --- |
+| **The onboarding welcome email** (14 lines) | Genuine correspondence with a voice — "We're delighted to hear from you", "We're supported by the non-profit Code for GoodOps". Stripping it produces a colder, worse email, and this is the one message that is a letter rather than a notification. |
+| **The privacy policy** (13 lines) | A legal document, where "we" is the party making the commitment. Rewriting it into the passive changes what it says. |
+| **The marketing page** (3 lines) | Brand voice on a public page, plus a **customer quotation**, which is someone else's words and not ours to edit. |
+
+The mailers that lost their "we" were the ones announcing something — a change, a cancellation, a
+rejection. What is left is the one that is genuinely a letter. If a fourth category appears, the test
+is whether a reader would expect a sender: a notification has none, a welcome does.
+
+**One grammar defect fell out of this.** The cancellation notification said "a essentials request"
+in both its HTML and text parts, and had done since it was written; rewriting the sentence to drop
+"We are emailing you to notify you that" removed it. Copy nobody reads aloud is copy nobody proofs.
+
 **A title is a phrase, not a question.** "Need help?" was the only page title in the app that was a
 question, and the same feature was already called **Help** on the bank side — two names for one
 thing, on both the page and the topbar link. A question is right in a *prompt*: the "Still need
