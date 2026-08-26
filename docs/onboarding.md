@@ -454,6 +454,14 @@ forward, and this app is normally viewed through one. If you are behind a forwar
 TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
 "Your session expired".
 
+**The calendar has a Month and a Week now.** Week is the useful one when a day is busy — the month
+grid hides everything past the first event behind "+5 more", and the week shows the whole day. Your
+choice goes in the address bar, so you can send someone a link to the week you are looking at, and
+Back returns to where you were. On a phone it opens on the week as a list.
+
+There is deliberately no Day view: across a year, a day held **1.9 distributions on average**, and
+just one on 13 days out of 22.
+
 **To try the calendar with something on it**, run `bin/rails db:seed:calendar`. The ordinary seeds
 scatter twenty distributions over a couple of years, which leaves that page thin exactly where you
 want to look at it: the month you land on is sparse, the next one is often empty, no day holds

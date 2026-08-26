@@ -4391,11 +4391,10 @@ the Copy calendar URL button really does serve `text/calendar` before writing it
 
 ---
 
-## 2026-08-26 · Which calendar views earn their place — open
+## 2026-08-26 · Which calendar views earn their place
 
-**Area.** `distributions/schedule`, `calendar_controller`. **Awaiting a decision**;
-`docs/mockups/calendar-views.html` has the preview. Recorded now because the measurements behind it
-are the reusable part, whichever way it goes.
+**Area.** `distributions/schedule`, `calendar_controller`, `db/seeds/calendar_seeder.rb`.
+**Built** as recommended; `docs/mockups/calendar-views.html` has the preview.
 
 **The starting position.** There is no view switching on the page at all, and never was:
 FullCalendar's default toolbar carries `title` and `today prev,next` and no view buttons unless you
@@ -4430,3 +4429,38 @@ it could live — nowhere, `localStorage`, the URL — the page tabs rule alread
 *"it is also how a tab becomes something you can link to, bookmark and go back from."* A view is a tab
 by another name. It is also the only option that answers "why does mine look different from yours",
 which `localStorage` creates and cannot explain.
+
+
+---
+
+## 2026-08-26 · Seeding the past writes data that cannot be removed
+
+**Area.** `db/seeds/calendar_seeder.rb`, `db:seed:calendar`.
+
+**What happened.** `db:seed:calendar` created four backdated, completed distributions so that Prev
+landed on a populated month and the data was not uniformly "scheduled". Then removing them failed:
+`Distribution#check_no_intervening_snapshot` raises *"Distributions entered before … cannot be
+deleted"* for anything a `SnapshotEvent` has already folded into inventory, which is every past-dated
+record once a snapshot passes it.
+
+So the task printed a removal line that did not work, which is worse than not offering one.
+
+**Decision.** The past group is **opt-in** — `PAST=1` — and the task now says plainly that those
+records are permanent. Reversible by default; a seeding task that cannot undo itself should say so
+*before* it runs.
+
+**Two mistakes of mine on the way, both the same shape.**
+
+- **I trimmed a double-run by `created_at`**, which the seeder deliberately backdates to three days
+  before the distribution date. Ordering by it deleted the latest-*dated* records — September and
+  October — rather than the second run's. The calendar then showed an empty week and I spent a while
+  looking for a bug in the week view. `created_at` is a proxy for insertion order and this seeder
+  makes it a bad one.
+- **I ran the cleanup and the re-seed in one command** and did not check that the cleanup had
+  succeeded. It had raised on the past-dated records, so the re-seed added a second set on top. The
+  database has **12 permanent July records** as a result. They are harmless — they are what now gives
+  Prev a populated month and the only `complete` rows in the set — but they are there because of a
+  mistake, not a plan, and they cannot be removed.
+
+**The generalisable part:** in an event-sourced app, seeded data in the past is not test data, it is
+history. Write test data forward.

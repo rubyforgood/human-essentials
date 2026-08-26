@@ -28,6 +28,25 @@
           data-calendar-target="title" aria-live="polite"></h2>
 
       <div class="flex flex-wrap items-center gap-2">
+        <%#
+          Month and Week, and no Day: over a year, 22 days had any distribution at all, mean 1.9,
+          and 13 of those held exactly one. `aria-pressed` rather than a radio group, because these
+          are two buttons that toggle a state rather than a value being submitted.
+        %>
+        <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
+             role="group" aria-label="Calendar view">
+          <% [["month", "Month"], ["week", "Week"]].each_with_index do |(value, label), index| %>
+            <%= button_tag label, type: "button",
+                  class: "px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors " \
+                         "hover:bg-slate-50 aria-pressed:bg-slate-100 aria-pressed:text-slate-900 " \
+                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 " \
+                         "#{"border-l border-slate-300" if index.positive?}",
+                  "aria-pressed": "false",
+                  data: {calendar_view: value, action: "calendar#switchView",
+                         calendar_target: "viewButton"} %>
+          <% end %>
+        </div>
+
         <%= button_tag "Today", type: "button",
               class: essentials_button_classes(variant: :secondary, size: :sm),
               data: {action: "calendar#today"} %>
