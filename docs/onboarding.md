@@ -477,6 +477,11 @@ shows a list of the week rather than a month grid you cannot read. That list vie
 in the code all along and never worked — the option was spelled for an older version of the calendar
 library, so it was quietly ignored.
 
+**You can import a CSV at any time now, not only into an empty list.** On vendors, donation sites,
+storage locations and product drive participants, the Import button used to disappear as soon as
+there was a single row — it swapped places with Export. Both are there now, on all five pages that
+take a CSV.
+
 **The app says "you", not "my".** "Edit my profile" is **Edit profile**, "My account" is **Account**,
 and the partner dashboard's "Our impact" is **Your impact**. Where a possessive told you nothing — you
 have exactly one profile — it is simply gone. And **"Need help?" is now "Help"** on both the page and

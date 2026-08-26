@@ -5,13 +5,17 @@
         title: "Storage locations",
         subtitle: "The places you keep inventory. Every donation, purchase and transfer names one.",
         actions: capture {
-          if @storage_locations.any?
-            concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
-          else
+          # Import is not only for seeding an empty list: a bank takes on a batch of these at
+          # any point. It used to be the `else` of the Export branch, so the moment there was one
+          # row the importer became unreachable -- on four pages out of five. `/partners` had it
+          # right and the others match it now: Import always, Export once there is something to
+          # export. A Ruby comment, not an ERB one: this is inside `capture { }`.
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import storage locations"
             end)
+          if @storage_locations.any?
+            concat essentials_link_button("Export", storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New storage location", new_storage_location_path, variant: :primary, icon: "bi-plus-lg")
         } %>

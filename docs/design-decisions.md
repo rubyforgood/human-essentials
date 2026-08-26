@@ -4561,3 +4561,33 @@ once in twenty: it called `page.go_back` straight after asserting the rendered c
 assertions raced the popstate handler. It waits for the history entry first now — ten consecutive
 runs clean, and the full suite green. Worth recording because the failure was invisible in isolation
 and only appeared in a full run, which is exactly the shape of thing that gets re-run and forgotten.
+
+
+---
+
+## 2026-08-26 · Import is not only for an empty list
+
+**Area.** The five CSV index pages, `design.md`.
+
+**Decision.** `Import X` renders unconditionally; `Export` stays gated on the list having rows. All
+five pages now read `Import X`, `Export`, `New X`, primary last — three actions, which is the limit
+and not over it.
+
+**What was wrong.** On vendors, donation sites, storage locations and product drive participants,
+Import was the `else` of the Export branch: `if any? → Export, else → Import`. So the moment a bank
+had a single row the importer disappeared — and taking on a batch of vendors is not something that
+only happens to an empty list. `/partners` was the one page that had it right, which is what made
+this look like a styling inconsistency rather than a missing feature.
+
+It surfaced from the modal audit, which could not open the CSV modal from
+`/product_drive_participants` at all. The reason turned out not to be the modal.
+
+**Export stays conditional**, deliberately: an empty CSV is not a useful file, and the import modal
+already offers a template, so there is nothing an empty export would give anyone.
+
+**A mistake worth recording, because a linter did not catch it.** The comment explaining this went
+in as an ERB comment — `<%# … %>` — inside a `capture { }` block, which is Ruby rather than template
+markup. All four pages then rendered with **no actions container at all**. `erb_lint` passed on the
+broken version; what caught it was loading the page and counting the buttons. A comment in the wrong
+syntax is invisible to a linter checking the template, because the problem is that the code is not
+template.
