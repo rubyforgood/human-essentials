@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which person does the app speak in?</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; white-space:nowrap; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The app speaks in second person, except eight times</h1>
+    <p class="max-w-3xl text-slate-600">
+      Counted across every user-facing title, subtitle, label, hint and empty state in the views:
+      <strong>49 strings use "you" or "your"</strong>, <strong>8 use "my", "our" or "us"</strong>, and
+      one uses both at once. <strong>Third person does not appear at all</strong> &mdash; and that is
+      correct, not an omission: third person ("the user should…") is documentation voice, not
+      interface voice.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">So the question is second person versus first, and the industry is one-sided</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Source</th><th>Says</th></tr></thead>
+      <tbody>
+        <tr><td>GOV.UK style guide</td><td>"Use 'you' to address the user." Second person, and do not mix.</td></tr>
+        <tr><td>Shopify Polaris</td><td>Second person throughout, including possessives — "Your store", not "My store".</td></tr>
+        <tr><td>Mailchimp content style guide</td><td>Second person for the reader; first person plural only for Mailchimp itself.</td></tr>
+        <tr><td>Apple HIG</td><td>Prefers second person; warns specifically against mixing "my" and "your" in one interface.</td></tr>
+        <tr><td>Nielsen Norman Group</td><td>Tested both. "Your" is generally clearer; the finding that matters is that consistency beats either choice.</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-slate-600">
+      Nobody argues for third person, and the case for "my" is a stylistic one about the label reading
+      as the reader's own voice. <strong>The app has already made this choice 49 times.</strong>
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The eight are not all the same problem</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>String</th><th>Where</th><th>"my/our/us" means</th></tr></thead>
+      <tbody>
+        <tr><td>Edit my profile</td><td>partner sidebar, and the page</td><td rowspan="5" class="align-middle"><strong>the reader's own thing.</strong> The straightforward case: everything else addresses them as "you".</td></tr>
+        <tr><td>Back to my profile</td><td>two profile pages</td></tr>
+        <tr><td>Edit my organization</td><td>profile form</td></tr>
+        <tr><td>Edit my profile</td><td>profiles/edit</td></tr>
+        <tr><td>My account</td><td>registrations/edit</td></tr>
+        <tr><td>Our impact</td><td>partner dashboard</td><td><strong>the reader's own agency.</strong> The card counts families that partner served.</td></tr>
+        <tr><td>…and how to reach us.</td><td>bank help page</td><td><strong>the Human Essentials team.</strong> A different speaker entirely, and a legitimate use of "we".</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">Three conventions to choose between</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Second person everywhere, possessives included</h3>
+    <div class="demo space-y-1">
+      <p class="text-sm text-slate-700">Edit <strong>your</strong> profile &nbsp;·&nbsp; <strong>Your</strong> account &nbsp;·&nbsp; Back to <strong>your</strong> profile &nbsp;·&nbsp; <strong>Your</strong> impact</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> one rule, no exceptions to remember, and it matches the 49 strings already there.</li>
+      <li><strong>Against:</strong> "Your account" in a menu is slightly stiffer than "My account", which is a well-worn convention in its own right.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      B &mdash; Second person, and drop the possessive where it adds nothing
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <div class="demo space-y-1">
+      <p class="text-sm text-slate-700">Edit profile &nbsp;·&nbsp; Account &nbsp;·&nbsp; Back to profile &nbsp;·&nbsp; <strong>Your</strong> impact</p>
+      <p class="mt-2 text-xs text-slate-600">"Your" survives only where it is doing work — distinguishing
+      this agency's numbers from the bank's.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> a partner has exactly one profile and one account, so the possessive carries no information. There is nothing else it could be.</li>
+      <li><strong>For:</strong> shorter labels in a sidebar, where width is the scarce thing.</li>
+      <li><strong>For:</strong> it keeps "your" for the case where it distinguishes something — "Your impact" against the bank's figures.</li>
+      <li><strong>Against:</strong> "adds nothing" is a judgement, so this is a rule with a soft edge, where A is mechanical.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Codify the split that exists by accident</h3>
+    <p class="max-w-3xl text-slate-600">"My" for the reader's own possessions, "you" for instructions.</p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> nothing changes.</li>
+      <li><strong>Against:</strong> the split is not actually observed &mdash; "Your account" style copy and "My account" style copy both appear, and one string manages both persons at once.</li>
+      <li><strong>Against:</strong> every guide above warns against exactly this, and it is the thing you noticed.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-4">
+    <h2 class="text-2xl font-semibold">The two strings you named</h2>
+
+    <div class="space-y-2">
+      <h3 class="text-lg font-semibold">"Need help?"</h3>
+      <p class="max-w-3xl text-slate-600">
+        Two problems, and the second is the one that decides it. It is the only page title in the app
+        that is a question &mdash; every other is a noun or verb phrase. And the <em>same feature</em>
+        is already called <strong>"Help"</strong> on the bank side, with the subtitle "Answers to
+        common questions, and how to reach us." Two names for one thing.
+      </p>
+      <div class="grid gap-3 sm:grid-cols-3">
+        <div class="demo"><p class="text-xs font-semibold text-slate-500">Recommended</p><p class="mt-1 font-semibold">Help</p><p class="mt-1 text-xs text-slate-600">Matches the bank side exactly. One name, one feature.</p></div>
+        <div class="demo"><p class="text-xs font-semibold text-slate-500">Alternative</p><p class="mt-1 font-semibold">Help and support</p><p class="mt-1 text-xs text-slate-600">Fine, but the page is an FAQ and a contact card — "support" promises a channel that is not there.</p></div>
+        <div class="demo"><p class="text-xs font-semibold text-slate-500">Rejected</p><p class="mt-1 font-semibold">Getting help</p><p class="mt-1 text-xs text-slate-600">A gerund where the app uses plain nouns.</p></div>
+      </div>
+      <p class="max-w-3xl text-sm text-slate-600">
+        The topbar link says "Need help?" too, and should follow. A question is right in a
+        <em>prompt</em> &mdash; the "Still need help?" card on that page is fine, because it is asking
+        something.
+      </p>
+    </div>
+
+    <div class="space-y-2">
+      <h3 class="text-lg font-semibold">"Say how many of each item you need."</h3>
+      <p class="max-w-3xl text-slate-600">
+        You are right, and it is not only the tone. <strong>It describes half the form.</strong> Each
+        row is <em>two</em> controls: a "Select an item" dropdown and a quantity. The sentence only
+        mentions the quantity, so it reads as though the items are already chosen for you.
+        "Say" is also doing the work of "enter" or "choose", which is why it lands oddly.
+      </p>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="demo">
+          <p class="text-xs font-semibold text-rose-800">Now</p>
+          <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900">New request by quantity</p>
+          <p class="mt-1 text-sm text-slate-600">Say how many of each item you need.</p>
+        </div>
+        <div class="demo">
+          <p class="text-xs font-semibold text-emerald-800">Recommended</p>
+          <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900">New request by quantity</p>
+          <p class="mt-1 text-sm text-slate-600">Choose the items you need, and how many of each.</p>
+        </div>
+      </div>
+      <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+        <thead><tr><th>Page</th><th>Now</th><th>Proposed</th></tr></thead>
+        <tbody>
+          <tr><td>New request by quantity</td><td class="text-slate-500">Say how many of each item you need.</td><td class="font-medium text-slate-900">Choose the items you need, and how many of each.</td></tr>
+          <tr><td>New request by number of individuals</td><td class="text-slate-500">Say how many people need each item.</td><td class="font-medium text-slate-900">Choose the items you need, and how many people need each.</td></tr>
+        </tbody>
+      </table>
+      <p class="max-w-3xl text-sm text-slate-600">
+        Both now describe the whole row, and both are second person. They also match the wording on
+        the card that leads here, which says "Specify a quantity for each product" &mdash; same idea,
+        and "item" rather than "product" because that is the app's own term.
+      </p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What B changes, in full</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Where</th><th>Now</th><th>Proposed</th></tr></thead>
+      <tbody>
+        <tr><td>partner sidebar</td><td class="text-slate-500">Edit my profile</td><td class="font-medium text-slate-900">Edit profile</td></tr>
+        <tr><td>profiles/edit</td><td class="text-slate-500">Edit my profile</td><td class="font-medium text-slate-900">Edit profile</td></tr>
+        <tr><td>profiles/edit</td><td class="text-slate-500">Back to my profile</td><td class="font-medium text-slate-900">Back to profile</td></tr>
+        <tr><td>profiles/step/edit</td><td class="text-slate-500">Edit my organization</td><td class="font-medium text-slate-900">Edit organization</td></tr>
+        <tr><td>profiles/step/edit</td><td class="text-slate-500">Back to my profile</td><td class="font-medium text-slate-900">Back to profile</td></tr>
+        <tr><td>registrations/edit</td><td class="text-slate-500">My account</td><td class="font-medium text-slate-900">Account</td></tr>
+        <tr><td>partner dashboard card</td><td class="text-slate-500">Our impact</td><td class="font-medium text-slate-900">Your impact</td></tr>
+        <tr><td>bank help page</td><td class="text-slate-500">…and how to reach us.</td><td class="font-medium text-slate-900">…and how to get in touch.</td></tr>
+        <tr><td>partner help page + topbar</td><td class="text-slate-500">Need help?</td><td class="font-medium text-slate-900">Help</td></tr>
+        <tr><td>partners/requests/new</td><td class="text-slate-500">Say how many of each item you need.</td><td class="font-medium text-slate-900">Choose the items you need, and how many of each.</td></tr>
+        <tr><td>partners/individuals_requests/new</td><td class="text-slate-500">Say how many people need each item.</td><td class="font-medium text-slate-900">Choose the items you need, and how many people need each.</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      Eleven strings. "…how to reach us" loses the "us" rather than gaining a "your", because the
+      speaker there is the Human Essentials team and naming a party the reader cannot see does not
+      help them &mdash; the contact card below it does.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The rule, for design.md</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>The app speaks to the reader as "you". Never "my", and never third person.</strong></p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong>Drop the possessive where it adds nothing.</strong> A partner has one profile and one account, so "Edit profile" says everything "Edit my profile" does, in less space.</li>
+        <li><strong>Keep "your" where it distinguishes.</strong> "Your impact" separates this agency's figures from the bank's.</li>
+        <li><strong>"We" is the product, and prefer naming it or dropping it.</strong> "How to get in touch", not "how to reach us".</li>
+        <li><strong>A title is a phrase, not a question.</strong> "Help", not "Need help?". A question is right in a prompt — the "Still need help?" card is asking something.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</body>
+</html>
