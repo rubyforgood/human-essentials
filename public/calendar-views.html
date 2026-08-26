@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which calendar views earn their place</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; white-space:nowrap; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem; background: var(--color-slate-50); }
+
+  /* The grid, in the tokens the calendar now uses. */
+  .cal { border: 1px solid var(--color-slate-200); border-radius: .75rem; overflow: hidden; width: 100%; border-collapse: collapse; }
+  .cal th { background: var(--color-slate-50); border-bottom: 1px solid var(--color-slate-200);
+            padding: .5rem; font-size: .75rem; font-weight: 600; color: var(--color-slate-500); text-align: left; }
+  .cal td { border: 1px solid var(--color-slate-200); vertical-align: top; padding: .3rem; height: 5rem; }
+  .daynum { font-size: .75rem; font-weight: 600; color: var(--color-slate-500); }
+  .ev { display: block; margin-top: .15rem; border-radius: .375rem; font-size: .75rem; padding: .1rem .35rem;
+        background: var(--color-brand-50); color: var(--color-brand-700); border: 1px solid var(--color-brand-100); font-weight: 500; }
+  .ev-mid { background: var(--color-slate-100); color: var(--color-slate-500); border-color: var(--color-slate-200); }
+
+  /* time grid */
+  .tg { display: grid; grid-template-columns: 3rem repeat(5, 1fr); border: 1px solid var(--color-slate-200);
+        border-radius: .75rem; overflow: hidden; }
+  .tg .hd { background: var(--color-slate-50); border-bottom: 1px solid var(--color-slate-200);
+            padding: .4rem; font-size: .75rem; font-weight: 600; color: var(--color-slate-500); }
+  .tg .hr { border-top: 1px solid var(--color-slate-200); border-right: 1px solid var(--color-slate-200);
+            height: 1.6rem; font-size: .625rem; color: var(--color-slate-400); padding: 0 .25rem; text-align: right; }
+  .tg .cell { border-top: 1px solid var(--color-slate-200); border-right: 1px solid var(--color-slate-200); height: 1.6rem; position: relative; }
+  .tg .blk { position: absolute; inset: 1px 2px auto 2px; border-radius: .25rem; font-size: .625rem;
+             padding: 0 .25rem; background: var(--color-brand-50); color: var(--color-brand-700);
+             border: 1px solid var(--color-brand-100); overflow: hidden; white-space: nowrap; }
+  .switch { display: inline-flex; border: 1px solid var(--color-slate-300); border-radius: .5rem; overflow: hidden; }
+  .switch button { padding: .25rem .6rem; font-size: .75rem; font-weight: 500; background: #fff; color: var(--color-slate-700); }
+  .switch button[aria-pressed="true"] { background: var(--color-slate-100); color: var(--color-slate-900); }
+  .switch button + button { border-left: 1px solid var(--color-slate-300); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">A week earns its place. A day does not.</h1>
+    <p class="max-w-3xl text-slate-600">
+      There is no view switching on this page at all &mdash; FullCalendar's default toolbar has none
+      unless you ask, and this app never did. Below 992px it swaps to a week list, which is the only
+      view choice being made and it is made for you.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What the data says about each view</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Over the last year</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Days with any distribution</td><td><strong>22</strong> — mean <strong>1.9</strong>, max 10</td></tr>
+        <tr><td>Days holding exactly one</td><td><strong>13 of 22</strong></td></tr>
+        <tr><td>Weeks with any</td><td><strong>12</strong> — mean <strong>3.5</strong>, max 16</td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A day view would be an hour axis for 1.9 events</strong>, and on 13 of 22 days for a
+      single one. Twenty-four rows of chrome to say "Silver Spring, 9am" &mdash; which the month cell
+      already says in one line. That is the clearest answer here: <strong>Day does not earn it</strong>.</p>
+      <p><strong>A week averages 3.5 and peaks at 16.</strong> Sixteen in a week is the case the month
+      grid handles worst &mdash; that is where "+5 more" appears and you lose the detail. A week is
+      also the horizon the page is <em>for</em>: what is going out, and what has to be packed before it.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">One thing that decides <em>which</em> week</h2>
+    <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>The times are real.</strong> The distribution form takes
+      <code class="rounded bg-slate-200 px-1 text-xs">as: :datetime, minute_step: 15</code>, labelled
+      "Distribution date and time". So a bank genuinely records that a pick-up is at 9:00.</p>
+      <p><strong>But a distribution has no end.</strong> The columns are
+      <code class="rounded bg-slate-200 px-1 text-xs">created_at, updated_at, issued_at</code> — there
+      is no duration to draw. On a time grid every event is a zero-length block.</p>
+      <p><strong>And half the rows in a fresh database have no time at all.</strong> 24 of 48 sit at
+      <strong>00:00</strong>, because <code class="rounded bg-slate-200 px-1 text-xs">db/seeds.rb</code>
+      sets a date and no time. On a time grid those stack at the very top of every day, which reads
+      as a bug rather than as missing data. (The 24 with real hours are the ones
+      <code class="rounded bg-slate-200 px-1 text-xs">db:seed:calendar</code> made.)</p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">The options</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      A &mdash; Month and Week, as day cells
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      <code class="rounded bg-slate-200 px-1 text-xs">dayGridWeek</code>: the same cells as the month,
+      seven of them, each with room for every event instead of "+5 more". Times are shown as text on
+      the chip, as they already are in the month.
+    </p>
+    <div class="demo space-y-3">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-base font-semibold">24&ndash;30 August 2026</span>
+        <div class="flex items-center gap-2">
+          <span class="switch"><button aria-pressed="false">Month</button><button aria-pressed="true">Week</button></span>
+        </div>
+      </div>
+      <table class="cal">
+        <thead><tr><th>Mon 24</th><th>Tue 25</th><th>Wed 26</th><th>Thu 27</th><th>Fri 28</th></tr></thead>
+        <tbody><tr>
+          <td></td>
+          <td><span class="ev">13:00 Rainier Family</span></td>
+          <td><span class="ev">09:00 Silver Spring</span></td>
+          <td></td>
+          <td>
+            <span class="ev">08:00 Northside</span><span class="ev">09:00 Hilltop</span>
+            <span class="ev">10:00 Beacon Hill</span><span class="ev">11:00 Eastlake</span>
+            <span class="ev">12:00 Cedar Point</span><span class="ev">13:00 Silver Spring</span>
+          </td>
+        </tr></tbody>
+      </table>
+      <p class="text-xs text-slate-600">The six-event Friday, whole. In the month grid that same day is
+      one chip and "+5 more".</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> solves the case the month is worst at, which is the busy day.</li>
+      <li><strong>For:</strong> no new plugin — <code class="rounded bg-slate-200 px-1 text-xs">dayGrid</code> is already loaded, so no importmap pin and nothing new to keep on a version.</li>
+      <li><strong>For:</strong> nothing it draws is a promise the data cannot keep — no axis implying durations that do not exist, and a 00:00 row just reads as a chip with a time you can ignore.</li>
+      <li><strong>Against:</strong> it does not show the <em>shape</em> of a day. Three pick-ups at 9am and three spread across it look identical.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">B &mdash; Month and Week, on an hour axis</h3>
+    <p class="max-w-3xl text-slate-600">
+      <code class="rounded bg-slate-200 px-1 text-xs">timeGridWeek</code>: the conventional calendar
+      week, events positioned by time of day.
+    </p>
+    <div class="demo space-y-3">
+      <div class="tg">
+        <div class="hd"></div><div class="hd">Mon 24</div><div class="hd">Tue 25</div><div class="hd">Wed 26</div><div class="hd">Thu 27</div><div class="hd">Fri 28</div>
+        <div class="hr">00:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"><span class="blk" style="background:var(--color-slate-100);color:var(--color-slate-500);border-color:var(--color-slate-200)">3 with no time</span></div>
+        <div class="hr">08:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Northside</span></div>
+        <div class="hr">09:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Silver Spring</span></div><div class="cell"></div><div class="cell"><span class="blk">Hilltop</span></div>
+        <div class="hr">10:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Beacon Hill</span></div>
+        <div class="hr">11:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Eastlake</span></div>
+        <div class="hr">12:00</div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Cedar Point</span></div>
+        <div class="hr">13:00</div>
+        <div class="cell"></div><div class="cell"><span class="blk">Rainier Family</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><span class="blk">Silver Spring</span></div>
+      </div>
+      <p class="text-xs text-slate-600">Note the 00:00 row, and how much of the grid is empty at a mean
+      of 3.5 events per week. The axis is truncated here; the real one runs to 24 rows.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> shows the shape of a day, which is the thing a warehouse actually schedules against.</li>
+      <li><strong>For:</strong> it is what "week view" means to anyone who has used a calendar.</li>
+      <li><strong>Against:</strong> a new plugin and a new importmap pin, on a library the app has already been caught trailing a major version of.</li>
+      <li><strong>Against:</strong> zero-length events on a time axis, because a distribution has no end. Every block is a hairline.</li>
+      <li><strong>Against, and it is the one that decides it:</strong> the 00:00 rows. Half of a fresh database piles at midnight, and a grid that puts them there is showing missing data as if it were a 12am appointment.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Month, Week and Day, the full set</h3>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the conventional set, and nobody has to ask where Day went.</li>
+      <li><strong>Against:</strong> 1.9 events a day, and one on 13 days out of 22. A whole view for a line and a half.</li>
+      <li><strong>Against:</strong> a third control to fit on a phone, where the page is already a list.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Does the switcher remember?</h2>
+    <p class="max-w-3xl text-slate-600">Three ways, and the app has already answered this once.</p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Where the choice lives</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><strong>Nowhere</strong> — always Month</td><td>Simplest. Costs a click every visit for anyone who lives in the week view.</td></tr>
+        <tr><td><strong>localStorage</strong></td><td>What Google and Outlook do. Invisible: two people looking at "the calendar" see different pages, and neither can send the other what they are looking at.</td></tr>
+        <tr><td><strong>The URL</strong> — <code>?view=week</code> <span class="pill pill-good">recommended</span></td><td>Linkable, bookmarkable, survives Back, and shareable in a message to a colleague.</td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>The URL, because design.md already made this call.</strong> On page tabs:
+      <em>"it is also how a tab becomes something you can link to, bookmark and go back from."</em>
+      The same argument applies without change &mdash; a view is a tab by another name.</p>
+      <p>It is also the only one of the three that answers "why is mine different from yours".</p>
+      <p><strong>And it costs nothing to also remember.</strong> Landing on <code class="rounded bg-slate-200 px-1 text-xs">/distributions/schedule</code>
+      with no parameter can use your last choice, while any URL that names a view wins. That gives
+      the convenience without making the page unshareable &mdash; but it is a second mechanism, so
+      only worth it if the click actually annoys you.</p>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A, with the view in the URL. No Day view.</strong></p>
+      <p>Week as day cells, because it fixes the month grid's worst case &mdash; the crowded day &mdash;
+      without drawing an hour axis this data cannot honestly fill. If banks start recording times on
+      everything and the midnight rows disappear, B becomes the better answer and the switch is a
+      one-line change to the view name.</p>
+      <p><strong>Day is rejected on the numbers</strong>, not on taste: 1.9 events a day, one on 13
+      days out of 22.</p>
+    </div>
+  </section>
+</div>
+</body>
+</html>
