@@ -4387,3 +4387,46 @@ action, and this is the shape the **pager** already uses for the same job.
 its own words. It says what you can do now, including the thing the page's only button is for:
 "See when each distribution is due out, or subscribe to this calendar from your own." Checked that
 the Copy calendar URL button really does serve `text/calendar` before writing it.
+
+
+---
+
+## 2026-08-26 · Which calendar views earn their place — open
+
+**Area.** `distributions/schedule`, `calendar_controller`. **Awaiting a decision**;
+`docs/mockups/calendar-views.html` has the preview. Recorded now because the measurements behind it
+are the reusable part, whichever way it goes.
+
+**The starting position.** There is no view switching on the page at all, and never was:
+FullCalendar's default toolbar carries `title` and `today prev,next` and no view buttons unless you
+ask for them. The one view decision being made is made *for* the reader — below 992px it swaps to a
+week list — and until the option names were corrected today, that swap never happened either.
+
+**Day is rejected on the numbers.** Over the last year: **22 days** had any distribution at all,
+mean **1.9**, and **13 of those 22 held exactly one**. A day view is twenty-four rows of hour axis to
+say "Silver Spring, 9am", which the month cell already says in one line.
+
+**Week earns it.** Mean **3.5** a week, peaking at **16**. Sixteen in a week is precisely the case the
+month grid handles worst, because that is where `+N more` swallows the detail — and a week is the
+horizon the page exists for: what is going out, and what has to be packed before it.
+
+**Which kind of week is the interesting question, and the data answers it.**
+
+- The times are **real**: the form takes `as: :datetime, minute_step: 15`, labelled "Distribution
+  date and time". A bank does record that a pick-up is at 9:00.
+- But a distribution has **no end**. The columns are `created_at`, `updated_at`, `issued_at`. On an
+  hour axis every event is a zero-length block.
+- And **24 of 48 rows sit at 00:00**, because `db/seeds.rb` sets a date with no time. A time grid
+  stacks those at the top of every day, which reads as a midnight appointment rather than as missing
+  data. (The 24 with real hours are `db:seed:calendar`'s.)
+
+So `dayGridWeek` over `timeGridWeek`: it fixes the crowded day without drawing an axis this data
+cannot honestly fill, and it needs no new plugin or importmap pin on a library the app has already
+been caught trailing a major version of. If banks start recording times on everything, `timeGridWeek`
+becomes the better answer and the change is a view name.
+
+**On remembering the choice: the URL, and design.md has already made this call.** Of the three places
+it could live — nowhere, `localStorage`, the URL — the page tabs rule already says why the URL wins:
+*"it is also how a tab becomes something you can link to, bookmark and go back from."* A view is a tab
+by another name. It is also the only option that answers "why does mine look different from yours",
+which `localStorage` creates and cannot explain.
