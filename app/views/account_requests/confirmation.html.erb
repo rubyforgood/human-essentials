@@ -4,7 +4,7 @@
 
 <%= render "shared/essentials/card" do %>
   <div class="space-y-2 text-sm text-slate-700">
-  <p>Confirm your request and we will start setting up your account.</p>
+  <p>Confirm your request to start setting up your account.</p>
   <div class="mt-4">
     <%= essentials_link_button "I'm ready, let's go",
           confirm_account_requests_path(token: @account_request.identity_token),

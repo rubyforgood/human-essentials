@@ -4283,3 +4283,54 @@ was doing no work.
 false positives. It also had a false negative on the most common phrasing of the failure it exists to
 catch, which is worse: an audit that misses the ordinary case gives false confidence, where one that
 over-reports gives work.
+
+
+---
+
+## 2026-08-26 · An interface has no speaker; a letter does
+
+**Area.** 26 strings across the interface and the mailers, `design.md`, `bin/design/page-audit.rb`.
+
+**Decision.** "We" goes wherever it is filler in front of the news, which is nearly everywhere in the
+app: "We're contacting you to notify you that your password has been changed" is "Your password has
+been changed" with eleven words of throat-clearing. Every one of the 26 got shorter.
+
+**Three places keep it, each for a different reason**, and the line is *whether a reader expects a
+sender*:
+
+- **The onboarding welcome email**, 14 lines. Genuine correspondence with a voice — "We're delighted
+  to hear from you", "We're supported by the non-profit Code for GoodOps". This is the one message
+  that is a letter rather than a notification, and stripping it produces something colder and worse.
+- **The privacy policy**, 13 lines. A legal document where "we" is the party making the commitment;
+  rewriting it into the passive changes what it says.
+- **The marketing page**, 3 lines — brand voice, plus a **customer quotation**, which is someone
+  else's words and not ours to edit.
+
+The mailers that lost their "we" were the ones *announcing* something: a change, a cancellation, a
+rejection, a password. GOV.UK and Mailchimp both use "we" in transactional email, and that is fine
+where the email is a letter — it is not fine as a preamble to a fact.
+
+**A grammar defect fell out of it.** The cancellation notification said "**a** essentials request" in
+both its HTML and text parts, and had since it was written. Rewriting the sentence to drop "We are
+emailing you to notify you that" removed it. Copy nobody reads aloud is copy nobody proofs.
+
+### The audit found more than the copy did
+
+**`page-audit` flagged my own new heading**, "Contact Human Essentials", as Title Case. It was a false
+positive with a real cause: the check had no notion of a **proper noun**, so any heading naming the
+product would trip it. It has a `PROPER_NOUNS` list now, the same idea as `copy-audit`'s `ACRONYMS`.
+
+Fixing that meant rewriting the scan, and the rewrite exposed how narrow the old one had been:
+
+- It only matched a capitalised run **starting immediately after the tag**, so
+  `Race/Ethnicity of Client Base` was invisible — the offending words were mid-heading.
+- It captured `[^<]+`, so a heading whose text sits inside `<strong>` was **unreachable entirely**.
+  Three of those existed in the partner profile forms.
+
+**Four genuine Title Case headings** came out of that, all in a section whose every sibling was
+already sentence case, and one of which contradicted its own edit-side card. The check now strips
+inner tags and looks anywhere in the heading, verified by planting a violation and watching it fail.
+
+**Alternative rejected.** Rewording "Contact Human Essentials" to dodge the false positive. It would
+have left the audit blind to the next heading that names the product, and the copy was not the thing
+that was wrong.

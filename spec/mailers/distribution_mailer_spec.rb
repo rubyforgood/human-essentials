@@ -100,7 +100,7 @@ RSpec.describe DistributionMailer, type: :mailer do
 
         expect(html).to match(distribution_changes[:removed][0][:name])
         expect(html).to match(distribution_changes[:updates][0][:name])
-        expect(html).to match("We've had to change some items on your distribution")
+        expect(html).to match("Some items on your distribution have changed")
       end
     end
 

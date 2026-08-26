@@ -2,7 +2,7 @@
 
 Hello there, <%= @partner.name %>:
 
-We are emailing you to notify you that a essentials request you've made to <%= @organization.name %> has been canceled. See below for details:
+An essentials request you made to <%= @organization.name %> has been canceled. The details:
 
 Request ID: <%= @request.id %>
 Reason Provided: <%= @request.discard_reason || 'N/A' %>
@@ -11,6 +11,6 @@ Items requested:
 * <%= rt[:quantity] %> x <%= rt[:name] %>
 <% end %>
 
-If you need any help, don’t hesitate to reach out to us at <%= @organization.email %> !
+If you need any help, contact <%= @organization.name %> at <%= @organization.email %> !
 
 Supported By HumanEssentials.app

@@ -19,6 +19,10 @@ AUTH = %w[users/sessions users/passwords users/confirmations users/unlocks
   users/invitations users/registrations account_requests].freeze
 
 # Classes nothing defines. `text-bold` is the one that bites: the author meant `font-bold`.
+# Capitalised runs that are names rather than Title Case. The audit cannot infer these, and a
+# heading naming the product is not a style violation.
+PROPER_NOUNS = ["Human Essentials", "Code for GoodOps", "Ruby for Good"].freeze
+
 UNDEFINED = %w[text-bold text-italic form-horizontal form-group control-label help-block
   collapsed-card card-body].freeze
 
@@ -169,7 +173,15 @@ kinds.each do |kind, pattern|
     # runs into the explanation after it. Only layout &nbsp; is a defect.
     nbsp = src.gsub(/<span class="sr-only">.*?<\/span>/m, "").scan("&nbsp;").size
     defects << "#{nbsp} &nbsp;" if nbsp.positive?
-    title_case = src.scan(/<h[1-3][^>]*>\s*([A-Z][a-z]+(?: [A-Z][a-z]+){1,})/).flatten.uniq
+    # A proper noun is not Title Case, and the check could not tell the difference: "Contact Human
+    # Essentials" was reported the moment that heading was written. Same idea as `copy-audit`'s
+    # ACRONYMS list -- the audit has to be told which capitalised runs are real names.
+    # Inner tags are stripped rather than terminating the capture: `<h3><strong>Race/Ethnicity of
+    # Client Base</strong></h3>` is a heading whose text the old scan could not reach at all.
+    heading_text = src.scan(%r{<h[1-3][^>]*>(.{2,120}?)</h[1-3]>}m).flatten
+      .map { |t| t.gsub(/<[^>]+>/, " ").gsub(/\s+/, " ").strip }
+      .map { |t| PROPER_NOUNS.reduce(t) { |acc, n| acc.gsub(n, "") } }
+    title_case = heading_text.filter_map { |t| t[/[A-Z][a-z]+(?: [A-Z][a-z]+){1,}/] }.uniq
     defects << "Title Case: #{title_case.first}" if title_case.any?
     if %w[show index form].include?(kind) && src.match?(/<h1[^>]*>/) &&
         !src.include?("shared/essentials/page_header") && !(auth && src.include?(DS_H1))
