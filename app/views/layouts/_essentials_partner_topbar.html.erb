@@ -14,7 +14,7 @@
 
     <div class="flex items-center gap-2">
       <%= link_to partners_help_path, class: "hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:block" do %>
-        <i class="bi-life-preserver mr-1" aria-hidden="true"></i>Need help?
+        <i class="bi-life-preserver mr-1" aria-hidden="true"></i>Help
       <% end %>
 
       <div class="relative" data-controller="popover">
@@ -41,9 +41,9 @@
             <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">Partner</span>
           </div>
 
-          <%= link_to "My co-workers", partners_users_path, role: "menuitem",
+          <%= link_to "Co-workers", partners_users_path, role: "menuitem",
                 class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
-          <%= link_to "My account", edit_partners_user_path(current_user), role: "menuitem",
+          <%= link_to "Account", edit_partners_user_path(current_user), role: "menuitem",
                 class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
 
           <% current_user.switchable_roles.each do |role| %>

@@ -449,7 +449,7 @@ module EssentialsUiHelper
   end
 
   def help_link_label
-    (help_link_path == help_path) ? "Need help?" : "User guide"
+    (help_link_path == help_path) ? "Help" : "User guide"
   end
 
   # Not a question mark. A circled "?" is the shape this app uses for "something needs your

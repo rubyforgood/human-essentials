@@ -138,7 +138,7 @@ class Purchase < ApplicationRecord
   def check_no_intervening_snapshot
     intervening = SnapshotEvent.intervening(self)
     if intervening
-      raise "We can't delete purchases entered before #{intervening.event_time.to_date}."
+      raise "Purchases entered before #{intervening.event_time.to_date} cannot be deleted."
     end
   end
 

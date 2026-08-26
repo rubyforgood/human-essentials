@@ -82,7 +82,7 @@ RSpec.describe Donation, type: :model do
       end
 
       expect { donation.destroy }
-        .to raise_error("We can't delete donations entered before #{1.day.ago.to_date}.")
+        .to raise_error("Donations entered before #{1.day.ago.to_date} cannot be deleted.")
     end
   end
 

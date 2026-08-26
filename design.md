@@ -1166,6 +1166,32 @@ is the right fix; rewording around it is not.
 **Buttons take a verb**, and the verb is what will happen: "Save", "Add another item", "Remove
 this item". Not "OK", not "Submit".
 
+<a id="person"></a>
+**The app speaks to the reader as "you".** Never "my", and never third person. Counted before this
+rule existed: **49 strings second person, 8 first, one using both at once**, and no third person at
+all — which was correct rather than an omission, since third person ("the user should…") is
+documentation voice. GOV.UK, Polaris, Mailchimp and Apple all say second person, and Apple warns
+specifically against mixing "my" and "your"; Nielsen Norman tested both and found consistency
+matters more than the choice. It is **52 second person and nothing else** now.
+
+Three cases, because the eight outliers were not one problem:
+
+| The word meant | Rule | Example |
+| --- | --- | --- |
+| The reader's own thing | **Drop the possessive** where it adds nothing. A partner has one profile and one account, so nothing else it could be. | "Edit my profile" → **Edit profile** |
+| Something that needs distinguishing | **Keep "your".** | "Our impact" → **Your impact**, against the bank's figures |
+| The product or its maintainers | **Name the party, or drop it.** | "…and how to reach us" → **…and how to get in touch** |
+
+**A title is a phrase, not a question.** "Need help?" was the only page title in the app that was a
+question, and the same feature was already called **Help** on the bank side — two names for one
+thing, on both the page and the topbar link. A question is right in a *prompt*: the "Still need
+help?" card on that page asks something and stays.
+
+**Describe the whole control, not the half you were thinking about.** "Say how many of each item you
+need" sat above a form whose every row is *two* controls — a "Select an item" dropdown and a quantity
+— so it read as though the items were already chosen. It is "Choose the items you need, and how many
+of each." Check the form markup before writing the sentence over it.
+
 <a id="subtitles"></a>
 **A subtitle says something the title cannot.** "Requests" over "Essentials requested by partner
 agencies" is a heading and its own dictionary definition: anyone who can read the title already has
@@ -1235,8 +1261,9 @@ reading a proxy.
 | **[Subtitles](#subtitles) say something the title cannot** | It is a definition of the heading. "Requests / Essentials requested by partner agencies". |
 | **[Buttons take a verb](#copy)**, and it is the verb that will happen | "Calculate product totals" when nothing is calculated on press. |
 | **Every claim is true of the code** | "…and what each of them is allowed to do" on a page whose table is Name and Email. |
-| **One voice** | First and second person in the same product: "your bank", "you serve", then "Edit **my** organization". |
+| **[One person](#person)** | Any "my" at all, or a "we" that could name its party instead. |
 | **A title is a phrase, not a question** | "Need help?" where every other page is a noun or verb phrase. |
+| **The sentence covers the whole control** | Copy above a two-control row that describes one of them. |
 
 **3. Verify a claim by reading the code that implements it, not by grepping for it.**
 

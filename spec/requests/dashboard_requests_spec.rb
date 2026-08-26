@@ -42,7 +42,9 @@ RSpec.describe "Dashboard", type: :request do
         # AdminLTE shell.
         expect(response.body).to include('User guide')
         expect(response.body).to include('https://rubyforgood.github.io/human-essentials/user_guide/bank/')
-        expect(response.body).not_to include('Need help?')
+        # An ORG_USER is sent to the external guide, so the in-app label must not appear. Matched on
+        # the icon's own class rather than the word "Help", which now occurs in other chrome.
+        expect(response.body).not_to include('bi-life-preserver')
       end
     end
 

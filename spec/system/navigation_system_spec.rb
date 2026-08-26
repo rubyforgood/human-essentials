@@ -20,7 +20,7 @@ RSpec.describe "Navigation", type: :system, js: true do
       it "shows the top-level destinations" do
         expect(sidebar).to have_link("Dashboard")
         expect(sidebar).to have_link("Reports")
-        expect(sidebar).to have_link("My organization")
+        expect(sidebar).to have_link("Organization")
       end
 
       it "groups the rest of the destinations" do
@@ -85,7 +85,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         sidebar.find("button", text: /inventory/i).click
         expect(sidebar).to have_link("Storage locations")
         expect(sidebar).to have_no_link("Inventory audit")
-        expect(sidebar).to have_no_link("My organization")
+        expect(sidebar).to have_no_link("Organization")
       end
     end
   end

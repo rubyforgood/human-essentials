@@ -68,7 +68,7 @@ RSpec.describe Distribution, type: :model do
       end
 
       expect { distribution.destroy }
-        .to raise_error("We can't delete distributions entered before #{1.day.ago.to_date}.")
+        .to raise_error("Distributions entered before #{1.day.ago.to_date} cannot be deleted.")
     end
 
     context "when delivery method is shipped" do

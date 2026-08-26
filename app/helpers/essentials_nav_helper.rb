@@ -45,7 +45,7 @@ module EssentialsNavHelper
   def essentials_nav_settings
     return nil unless can_administrate?
 
-    NavItem.new(label: "My organization", path: organization_path, active_on: %w[organizations], icon: "bi-building")
+    NavItem.new(label: "Organization", path: organization_path, active_on: %w[organizations], icon: "bi-building")
   end
 
   # The middle of the rail. Groups with no visible items render nothing -- no orphan label.
@@ -126,7 +126,7 @@ module EssentialsNavHelper
   def essentials_partner_nav_items
     items = [
       NavItem.new(label: "Dashboard", path: partner_user_root_path, active_on: %w[partners/dashboards], icon: "bi-speedometer2"),
-      NavItem.new(label: "My profile", path: partners_profile_path, active_on: %w[partners/profiles], icon: "bi-person-badge"),
+      NavItem.new(label: "Profile", path: partners_profile_path, active_on: %w[partners/profiles], icon: "bi-person-badge"),
       NavItem.new(label: "Essentials requests", path: partners_requests_path, active_on: %w[partners/requests partners/family_requests partners/individuals_requests], icon: "bi-clipboard-check"),
       NavItem.new(label: "Distributions", path: partners_distributions_path, active_on: %w[partners/distributions], icon: "bi-truck")
     ]

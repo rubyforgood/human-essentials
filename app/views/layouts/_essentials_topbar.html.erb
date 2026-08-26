@@ -53,10 +53,10 @@
                 class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
 
           <% if can_administrate? %>
-            <%= link_to "My organization", organization_path, role: "menuitem",
+            <%= link_to "Organization", organization_path, role: "menuitem",
                   class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
             <% if current_user.has_cached_role?(:partner) %>
-              <%= link_to "My co-workers", users_path, role: "menuitem",
+              <%= link_to "Co-workers", users_path, role: "menuitem",
                     class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
             <% end %>
           <% end %>

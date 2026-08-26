@@ -121,6 +121,17 @@ const roleFor = (controller) =>
   }
 
   console.log(`${visited} screens rendered and checked, across ${Object.keys(users).length} roles\n`);
+
+  /*
+   * A sweep that rendered nothing has not found nothing -- it has not looked. This printed
+   * "0 screens rendered and checked" followed by "no design findings" when the dev server had died
+   * mid-run, which is a clean bill of health from an audit that never made a request. Say so and
+   * exit non-zero instead.
+   */
+  if (visited === 0) {
+    console.error("route-sweep visited no screens. Is the dev server up? This is not a pass.");
+    process.exit(2);
+  }
   if (findings.length === 0) {
     console.log("no design findings");
   } else {

@@ -441,6 +441,11 @@ hide everything already booked in.
 
 ### How many rows am I looking at?
 
+**The app says "you", not "my".** "Edit my profile" is **Edit profile**, "My account" is **Account**,
+and the partner dashboard's "Our impact" is **Your impact**. Where a possessive told you nothing — you
+have exactly one profile — it is simply gone. And **"Need help?" is now "Help"** on both the page and
+the link, which is what the bank side always called it.
+
 **The line under each page title tells you what to do, not what the word means.** It used to gloss
 the heading — "Requests / Essentials requested by partner agencies" — which told you nothing you did
 not have from the title. It now points at the job: "Review what partners have asked for. Fulfill a

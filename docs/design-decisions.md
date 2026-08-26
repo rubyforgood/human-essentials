@@ -4226,3 +4226,60 @@ rather than defects, and they belong to whoever owns the product's tone:
 
 Neither is wrong enough to change unilaterally, and both are now in the review table in design.md so
 the next person meets the question rather than the inconsistency.
+
+
+---
+
+## 2026-08-26 · Second person, and a probe that found a hole instead of proving one
+
+**Area.** 14 strings, `design.md` (new **person** rule), `bin/design/copy-audit.rb`.
+
+**Decision.** Option B of `docs/mockups/copy-person.html`. The app addresses the reader as **"you"**,
+never "my", never third person. Where the possessive adds nothing it goes entirely — a partner has
+one profile and one account, so "Edit profile" says everything "Edit my profile" does in less sidebar
+width. "Your" survives where it distinguishes: "Our impact" became **"Your impact"**, against the
+bank's figures.
+
+**Measured before: 49 second person, 8 first, one string using both. After: 52 and nothing else.**
+Third person never appeared, which was correct rather than an omission.
+
+The eight were three different problems, and the taxonomy is the part worth keeping: **the reader's
+own thing** (drop the possessive), **something needing distinction** (keep "your"), and **the product
+or its maintainers** (name the party or drop it — "how to reach us" became "how to get in touch").
+
+**"Need help?"** was the only page title in the app that was a question, and the *same feature* was
+already called **Help** on the bank side — two names for one thing, across a page title, a page
+`<title>`, the partner topbar and `help_link_label`. All four say "Help".
+
+**"Say how many of each item you need" described half its form.** Every row of that form is *two*
+controls, a "Select an item" dropdown and a quantity, so the sentence read as though the items were
+already chosen. Checked against the markup rather than assumed. Both request forms now say "Choose
+the items you need, and how many…".
+
+### The audit part, which is the more useful half
+
+Proving `copy-audit.rb` had read a changed file — by planting `Please`, `below` and `insane` — fired
+**two** checks where three were planted. **The sensory check missed "the items below"**, a textbook
+1.3.3 failure, because its noun list did not contain `item` and its verb list did not contain
+`choose`. The habit of proving an audit ran found a hole in the audit instead. That is a better
+argument for the habit than anything written down.
+
+Broadening it then produced its own two lessons, both locked into the probe table:
+
+- **A false positive immediately.** "Items below their recommended on-hand quantity" is real dashboard
+  copy where "below" means *less than*. Spatial and comparative "below" are told apart by what
+  follows: a comparative one is followed by the thing compared against. Hence a negative lookahead.
+- **A silent regression inside the fix.** The lookahead's `a|an` alternative, without a trailing
+  `\b`, matched the first letter of "**a**bout" — so "the details below about your bank" on the
+  account request form was reclassified as comparative and stopped being reported. A real finding
+  disappeared *because of the fix for a false one*, and only reappeared because the probe table was
+  extended in both directions before the pattern was trusted.
+
+Two genuine findings survived and were fixed: the account request form's "Fill out the details below"
+lost the spatial reference, and my own line-item copy from earlier this session lost a "below" that
+was doing no work.
+
+**Alternative rejected.** Leaving the sensory check narrow, on the grounds that a short list has no
+false positives. It also had a false negative on the most common phrasing of the failure it exists to
+catch, which is worse: an audit that misses the ordinary case gives false confidence, where one that
+over-reports gives work.
