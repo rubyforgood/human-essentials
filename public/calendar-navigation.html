@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting to a month that is not next month</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; white-space:nowrap; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+  .switch { display:inline-flex; border:1px solid var(--color-slate-300); border-radius:.5rem; overflow:hidden; }
+  .switch button { padding:.35rem .7rem; font-size:.75rem; font-weight:500; background:#fff; color:var(--color-slate-700); }
+  .switch button[aria-pressed="true"] { background:var(--color-slate-100); color:var(--color-slate-900); }
+  .switch button + button { border-left:1px solid var(--color-slate-300); }
+  .ctl { height:2.375rem; border:1px solid var(--color-slate-300); border-radius:.5rem; padding:0 .6rem; font-size:.875rem; background:#fff; color:var(--color-slate-700); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Two problems, and the first one is mine</h1>
+    <p class="max-w-3xl text-slate-600">
+      The Week button really is broken, on a narrower window &mdash; and the reason is a decision I
+      made two turns ago. Reaching March next year currently takes <strong>seven clicks</strong>.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">1. Why Week does nothing</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Window width</th><th>View on load</th><th>Clicking "Week"</th></tr></thead>
+      <tbody>
+        <tr><td>1440, 1200, 1000</td><td>month grid</td><td><span class="pill pill-good">week grid</span></td></tr>
+        <tr><td><strong>991 and below</strong></td><td><strong>a list</strong>, with Week already pressed</td><td><span class="pill pill-bad">nothing at all</span></td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p>I mapped <strong>one label to two different views</strong>: "Week" means a week grid above
+      992px and a <em>list</em> below it. And below 992 the list is also the default &mdash; so Week
+      is already the current view, the switch returns early, and the button is inert. Month works, so
+      only Week looks broken.</p>
+      <p>992px is not an unusual width: a 1440 screen at 150% scaling is 960 CSS px, and any window
+      that is not maximised can land under it.</p>
+      <p><strong>The mistake was the mapping, not the threshold.</strong> A label should mean one
+      thing. The list is a different view, not a narrow rendering of a week.</p>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="demo">
+        <p class="text-xs font-semibold text-rose-800">Now, below 992px</p>
+        <div class="mt-2"><span class="switch"><button aria-pressed="false">Month</button><button aria-pressed="true">Week</button></span></div>
+        <p class="mt-2 text-xs text-slate-600">Week is pressed on arrival, shows a list, and clicking it does nothing.</p>
+      </div>
+      <div class="demo">
+        <p class="text-xs font-semibold text-emerald-800">Proposed</p>
+        <div class="mt-2"><span class="switch"><button aria-pressed="false">Month</button><button aria-pressed="false">Week</button><button aria-pressed="true">List</button></span></div>
+        <p class="mt-2 text-xs text-slate-600">Three views, each meaning one thing. List stays the default on a narrow window; Week always gives the week grid.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">2. Getting to a month that is not next month</h2>
+    <p class="max-w-3xl text-slate-600">
+      Prev and Next move one step. To reach <strong>March 2027</strong> from today is
+      <strong>seven clicks</strong>; to check last December, five. There is no other way.
+    </p>
+
+    <h3 class="text-lg font-semibold">What other calendars do</h3>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Product</th><th>How you jump</th></tr></thead>
+      <tbody>
+        <tr><td>Google Calendar</td><td>A mini month in the sidebar, always visible; click any date. Plus a year view.</td></tr>
+        <tr><td>Outlook</td><td>The same: a persistent mini calendar for navigation.</td></tr>
+        <tr><td>Apple Calendar</td><td>A Year view — click a month to enter it.</td></tr>
+        <tr><td>Notion, Linear</td><td>Click the month title; a small month/year picker opens.</td></tr>
+        <tr><td>Stripe, Metabase and other <em>data</em> tools</td><td>Not month navigation at all — a date <em>range</em> filter over a list.</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-slate-600">
+      The split at the bottom of that table matters. <strong>A personal calendar navigates; a data
+      tool filters.</strong> This page is a schedule of distributions, which puts it somewhere
+      between the two — but the app has already chosen a side elsewhere, and it has a component for
+      it.
+    </p>
+  </section>
+
+  <h2 class="text-2xl font-semibold">The options</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      A &mdash; A month and year picker beside the title
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      Two native <code class="rounded bg-slate-200 px-1 text-xs">&lt;select&gt;</code>s. Any month of
+      any year in two clicks, from a control the browser already knows how to open, and no dependency.
+    </p>
+    <div class="demo">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <select class="ctl" aria-label="Month">
+            <option>January</option><option>February</option><option selected>August</option><option>December</option>
+          </select>
+          <select class="ctl" aria-label="Year">
+            <option>2025</option><option selected>2026</option><option>2027</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="switch"><button aria-pressed="true">Month</button><button aria-pressed="false">Week</button><button aria-pressed="false">List</button></span>
+          <button class="ctl" style="font-weight:500">Today</button>
+          <button class="ctl" style="font-weight:500">&lsaquo; Prev</button>
+          <button class="ctl" style="font-weight:500">Next &rsaquo;</button>
+        </div>
+      </div>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> it is the app's own precedent. Litepicker was <em>deleted</em> in favour of native inputs — "No calendar widget and no third-party dependency" — and this is the same argument.</li>
+      <li><strong>For:</strong> a <code class="rounded bg-slate-200 px-1 text-xs">&lt;select&gt;</code> works in every browser, on every device, with a keyboard, and needs nothing written for it.</li>
+      <li><strong>For:</strong> the year list can be bounded by the data — there is no point offering 1990.</li>
+      <li><strong>Against:</strong> two controls where one would do, and it takes horizontal room in a toolbar that already has five things.</li>
+      <li><strong>Against:</strong> it replaces the title, so the heading has to move or go.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">B &mdash; A native month input</h3>
+    <p class="max-w-3xl text-slate-600">
+      One control: <code class="rounded bg-slate-200 px-1 text-xs">&lt;input type="month"&gt;</code>.
+    </p>
+    <div class="demo">
+      <input type="month" value="2026-08" class="ctl" aria-label="Month and year">
+      <p class="mt-2 text-xs text-slate-600">Live above — how it looks depends entirely on your browser.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> one control, one concept, and the same native argument as A.</li>
+      <li><strong>Against, and I could not test it here:</strong> only Chromium is installed in this environment, so I have <strong>no measurement</strong> for Firefox or Safari. By documentation, <code class="rounded bg-slate-200 px-1 text-xs">type="month"</code> is well supported in Chrome and Edge and <em>not</em> in desktop Firefox or Safari, where it degrades to a plain text box expecting "2026-08". That is a worse control than a select, silently, for some of your users.</li>
+      <li>Given that, A is the same idea without the gamble.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; A clickable title with a month grid</h3>
+    <p class="max-w-3xl text-slate-600">Click "August 2026", get a small panel of months and a year stepper. What Notion and Linear do.</p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> no extra chrome in the toolbar; the title earns its place.</li>
+      <li><strong>Against:</strong> a heading that is secretly a button is a thing you have to discover, and this app's own rule is that an icon-only or unlabelled control needs its name said out loud.</li>
+      <li><strong>Against:</strong> it is a popover to build, keyboard-handle and test — the work A avoids by using a control that already exists.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">D &mdash; A date range filter, like the other index pages</h3>
+    <p class="max-w-3xl text-slate-600">
+      The app already has <code class="rounded bg-slate-200 px-1 text-xs">shared/date_range_picker</code>:
+      presets on one side, two native date fields on the other. Every other index page has it. This
+      page has none.
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> it answers the second half of your question literally — a <em>range</em>, not a month.</li>
+      <li><strong>Against:</strong> a calendar grid shows a month or a week. Handing it "3 March to 19 August" gives it nothing to draw; it would have to change what the page <em>is</em>.</li>
+      <li><strong>Where a range does belong:</strong> <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>, which is the same data as a list and already has that filter. The calendar answers "what is happening around now"; the index answers "what happened between these dates".</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>Fix the views to Month / Week / List, and add A, the month and year selects.</strong></p>
+      <p>The view fix is not optional — a button that does nothing is a defect, and it is one I
+      introduced by giving "Week" two meanings.</p>
+      <p>A for the jump, because the app already decided this question when it deleted Litepicker:
+      native controls over a widget. Two selects reach any month of any year, work everywhere, and
+      cost nothing to maintain. B is the same idea in one control and I cannot promise it renders as
+      a picker for everyone, which is exactly the kind of claim this branch has been caught making
+      before.</p>
+      <p><strong>Not D, here.</strong> A range is a real need and this is the wrong page for it: the
+      grid cannot draw an arbitrary span. <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>
+      already answers it, and if that is what you are reaching for, the honest fix is a link from
+      this page to that one rather than a filter that the calendar cannot honour.</p>
+    </div>
+  </section>
+</div>
+</body>
+</html>
