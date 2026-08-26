@@ -11,7 +11,10 @@ namespace :db do
       org = ENV["ORG"] ? Organization.find_by!(name: ENV["ORG"]) : Organization.first
       raise "No organization to seed. Run db:seed first." if org.nil?
 
-      created = CalendarSeeder.new(org).call
+      # PAST=1 also seeds last month, completed. Those records cannot be removed again -- see the
+      # seeder -- so it is not the default.
+      include_past = ENV["PAST"].present?
+      created = CalendarSeeder.new(org, include_past: include_past).call
 
       puts "Seeded #{org.name}:"
       created[:by_month].sort.each { |month, count| puts "  #{month}  #{count}" }
@@ -20,7 +23,14 @@ namespace :db do
         puts "Skipped #{created[:failures].size}:"
         created[:failures].each { |reason| puts "  #{reason}" }
       end
-      puts %(Remove them again with: Distribution.where(comment: "#{CalendarSeeder::MARKER}").destroy_all)
+      puts
+      puts %(Remove them with: Distribution.where(comment: "#{CalendarSeeder::MARKER}").destroy_all)
+      if include_past
+        puts "  ...except the ones dated before today. A distribution a SnapshotEvent has already"
+        puts "  folded into inventory cannot be destroyed, so the PAST group is permanent."
+      else
+        puts %(Add last month too, completed and permanent, with: PAST=1 bin/rails db:seed:calendar)
+      end
     end
   end
 end

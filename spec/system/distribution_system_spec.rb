@@ -56,6 +56,69 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("[data-calendar-target='title']", text: before)
     end
 
+    # FullCalendar renders "+2 more" as an <a> with no href, carrying aria-expanded and an empty
+    # aria-controls -- neither allowed on an element with no role. axe reports it CRITICAL, and only
+    # once a day is crowded enough to overflow, which db:seed:calendar now makes happen.
+    it "names the overflow link as the button it already behaves like" do
+      # Six on one day; the month cell shows one and folds the rest behind "+N more".
+      6.times { |i| create(:distribution, organization: organization, issued_at: issued_at + 3.days + i.hours) }
+      visit schedule_distributions_path
+
+      expect(page).to have_css(".fc-daygrid-more-link")
+      link = page.first(".fc-daygrid-more-link")
+      expect(link[:role]).to eq("button")
+      expect(link[:"aria-controls"]).to be_nil
+    end
+
+    # Two views, and no Day: over a year, 22 days had any distribution at all, mean 1.9, and 13 of
+    # those held exactly one. A day view is an hour axis for a line and a half.
+    it "offers a month and a week, and nothing else" do
+      visit schedule_distributions_path
+
+      expect(page).to have_button("Month")
+      expect(page).to have_button("Week")
+      expect(page).to have_no_button("Day")
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
+    end
+
+    # The choice lives in the URL, not localStorage: design.md settled that for page tabs, and the
+    # argument is unchanged -- it is how a view becomes something you can link to and go back from.
+    it "puts the chosen view in the URL, and reads it back" do
+      visit schedule_distributions_path
+      click_on "Week"
+
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
+      expect(page).to have_current_path(/view=week/)
+      expect(page).to have_css(".fc-dayGridWeek-view")
+
+      # And a link straight to it opens there.
+      visit "#{schedule_distributions_path}?view=week"
+      expect(page).to have_css(".fc-dayGridWeek-view")
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
+    end
+
+    it "goes back to the previous view" do
+      visit schedule_distributions_path
+      click_on "Week"
+      expect(page).to have_css(".fc-dayGridWeek-view")
+
+      page.go_back
+
+      # pushState rather than replaceState, or Back would leave the URL behind and the view alone.
+      expect(page).to have_css(".fc-dayGridMonth-view")
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
+    end
+
+    # A month grid on a phone is unreadable, so the week is the default there -- as a list, which is
+    # what this page already fell back to before there was any choice about it.
+    it "defaults a narrow window to the week, as a list" do
+      page.driver.resize(375, 800)
+      visit schedule_distributions_path
+
+      expect(page).to have_css(".fc-listWeek-view")
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
+    end
+
     # `defaultView` and `eventLimit` are FullCalendar 4 spellings, and this app is on 6, so both
     # were being ignored: at 375px it rendered the month grid, never the list. Verified by running
     # this against the old code, which reported fc-dayGridMonth-view.

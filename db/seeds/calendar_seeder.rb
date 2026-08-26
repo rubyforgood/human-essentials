@@ -14,9 +14,14 @@ class CalendarSeeder
   # A distribution needs stock to draw down; below this there is no headroom and the service fails.
   MINIMUM_ON_HAND = 40
 
-  def initialize(organization, today: Time.zone.today)
+  # Backdated distributions are **permanent**: `Distribution#check_no_intervening_snapshot` refuses
+  # to destroy one that a SnapshotEvent has already folded into inventory, which is every past-dated
+  # record once a snapshot passes it. So the past group is opt-in -- a seeding task that cannot undo
+  # itself should say so before it runs, not after.
+  def initialize(organization, today: Time.zone.today, include_past: false)
     @organization = organization
     @today = today
+    @include_past = include_past
     @partners = organization.partners.to_a
     @by_month = Hash.new(0)
     @failures = []
@@ -46,11 +51,13 @@ class CalendarSeeder
     # The rest of this month, so the landing view is not two events in a corner.
     [1, 2, 5].each { |offset| entries << [@today + offset, [10, 13, 15].sample, false] }
 
-    # Last month, and completed -- both because Prev should land on something, and so the data has
-    # more than one state in it. A distribution dated before today that still says "scheduled" is
-    # a small lie the seeds tell everywhere else.
-    previous = @today.prev_month.beginning_of_month
-    [4, 11, 19, 25].each { |offset| entries << [previous + offset, [9, 14].sample, true] }
+    # Last month, completed, and only if asked for. It is the one group worth having and the one
+    # that cannot be taken back: it populates Prev and it is the only `complete` data in the set,
+    # but every record in it is undeletable the moment a snapshot passes it.
+    if @include_past
+      previous = @today.prev_month.beginning_of_month
+      [4, 11, 19, 25].each { |offset| entries << [previous + offset, [9, 14].sample, true] }
+    end
 
     # Next month and the one after, so Next and Next-again both land on populated months.
     following = @today.next_month.beginning_of_month

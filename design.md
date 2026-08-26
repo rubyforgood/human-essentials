@@ -399,6 +399,40 @@ three buttons are cheap to own outright, which means a library upgrade cannot si
 "‹ Prev" and "Next ›" rather than bare chevrons, because [icon-only](#icons) is for a repeating row
 action and this is the shape the pager already uses for the same job.
 
+<a id="calendar-views"></a>
+**Two views, Month and Week, and the choice lives in the URL.** There was no view switching at all
+before this — FullCalendar's default toolbar carries none unless asked, and the only view decision
+was made *for* the reader by window width.
+
+**No Day view, and that is a measurement.** Over a year: **22 days** had any distribution, mean
+**1.9**, and **13 of those 22 held exactly one**. A day view is twenty-four rows of hour axis to say
+what a month cell says in one line. Week earns its place on the same numbers — mean **3.5**, peak
+**16** — because a crowded week is exactly what the month grid handles worst, and it is the horizon
+the page exists for.
+
+**Week is `dayGridWeek`, not `timeGridWeek`**, which is the more interesting call:
+
+| | |
+| --- | --- |
+| The times are real | The form takes `as: :datetime, minute_step: 15` — a bank does record a 9:00 pick-up. |
+| But there is no end | `created_at`, `updated_at`, `issued_at`. On an hour axis every event is a zero-length block. |
+| And half a fresh database has no time | **24 of 48** rows sit at **00:00**, because `db/seeds.rb` writes a date and no time. A time grid stacks those at midnight and shows *missing data* as an appointment. |
+
+It also needs no new plugin or importmap pin, on a library this app has already been caught trailing
+a major version of. If banks start recording times on everything, `timeGridWeek` becomes the better
+answer and the change is a view name.
+
+**The view is a URL parameter, not `localStorage`.** [Page tabs](#tabs) already settled this: *"it is
+also how a tab becomes something you can link to, bookmark and go back from."* A view is a tab by
+another name, and the URL is the only option that can answer "why does mine look different from
+yours". `pushState` rather than `replaceState`, because Back has to actually return to the previous
+view — otherwise the rule delivers two thirds of its own sentence. The parameter is `month`/`week`,
+not the library's view names, so a shared link does not carry FullCalendar's vocabulary or break
+when it changes.
+
+**A narrow window defaults to the week, as a list** — which is what the page already fell back to
+before there was any choice about it. Month is still offered there; it is squeezed, not broken.
+
 Three things this taught that the select2 note does not cover:
 
 - **`!important` is required, and for select2 it is not.** FullCalendar injects its stylesheet into
@@ -408,6 +442,13 @@ Three things this taught that the select2 note does not cover:
   `brand-50` put the existing slate-500 day number at **4.0:1**, and axe caught it on the first run.
   The text colour was untouched; the background under it moved. Today's date is `brand-700` now,
   which is the pair the event chips already use.
+- **The "+N more" link is an anchor pretending to be a widget.** FullCalendar renders it as an `<a>`
+  with no `href`, carrying `aria-expanded` and an **empty `aria-controls`** — neither allowed on an
+  element with no role, and axe reports it CRITICAL. It only appears once a day is crowded enough to
+  overflow, which is why it went unseen until `db:seed:calendar` made one. `moreLinkDidMount` adds
+  `role="button"` and drops the dead attribute. The behaviour was already right: **measured, Enter
+  and Space both open the popover** — unlike `add_element_button`, where the same shape of markup
+  also swallowed Space.
 - **Check the library's version against its option names.** `defaultView` and `eventLimit` are
   FullCalendar **4** spellings on a **6** install, so both were silently ignored — the mobile list
   view had never once rendered. Verified by running the new spec against the old code, which
