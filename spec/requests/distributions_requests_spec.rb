@@ -1022,7 +1022,7 @@ RSpec.describe "Distributions", type: :request do
             event_time: Time.zone.now)
         end
         expect { subject }.not_to change { Distribution.count }
-        expect(flash[:error]).to eq("We can't delete distributions entered before #{1.day.ago.to_date}.")
+        expect(flash[:error]).to eq("Distributions entered before #{1.day.ago.to_date} cannot be deleted.")
       end
 
       context "when accessing a distribution from another organization" do

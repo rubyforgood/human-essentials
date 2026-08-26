@@ -564,7 +564,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe "#approve_partner" do
       let(:tooltip_message) do
-        "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button."
+        "Partner has not requested approval yet. Partners are able to request approval by going into 'Organization' and clicking 'Request Approval' button."
       end
       let!(:invited_partner) { create(:partner, name: "Amelia Ebonheart", status: :invited) }
       let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }

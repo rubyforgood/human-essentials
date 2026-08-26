@@ -131,7 +131,7 @@ RSpec.describe Purchase, type: :model do
       end
 
       expect { purchase.destroy }
-        .to raise_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
+        .to raise_error("Purchases entered before #{1.day.ago.to_date} cannot be deleted.")
     end
   end
 

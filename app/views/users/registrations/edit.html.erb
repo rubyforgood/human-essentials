@@ -1,7 +1,7 @@
 <% content_for :title, "Edit - Users" %>
 <div class="px-4 pt-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
-        title: "My account",
+        title: "Account",
         subtitle: "Your name, email and password.",
         back: {path: dashboard_path_from_current_role, label: "Back to dashboard"} %>
 </div>
@@ -28,7 +28,7 @@
       <%= f.input :name, label: "Name", required: true, autofocus: true %>
       <%= f.input :email, label: "Email" %>
       <%= f.input :current_password, label: "Current password",
-            hint: "We need your current password to confirm your changes." %>
+            hint: "Enter your current password to confirm your changes." %>
 
       <fieldset class="mt-6 border-t border-slate-200 pt-5">
         <legend class="text-base font-semibold text-slate-900">Change password</legend>

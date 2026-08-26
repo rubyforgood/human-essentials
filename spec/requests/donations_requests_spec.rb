@@ -362,7 +362,7 @@ RSpec.describe "Donations", type: :request do
             event_time: Time.zone.now)
         end
         expect { subject }.not_to change { Donation.count }
-        expect(flash[:error]).to eq("We can't delete donations entered before #{1.day.ago.to_date}.")
+        expect(flash[:error]).to eq("Donations entered before #{1.day.ago.to_date} cannot be deleted.")
       end
 
       include_examples "restricts access to organization users/admins"

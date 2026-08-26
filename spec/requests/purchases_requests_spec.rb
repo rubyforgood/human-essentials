@@ -491,7 +491,7 @@ RSpec.describe "Purchases", type: :request do
             event_time: Time.zone.now)
         end
         expect { delete purchase_path(id: purchase.id) }.not_to change(Purchase, :count)
-        expect(response).to have_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
+        expect(response).to have_error("Purchases entered before #{1.day.ago.to_date} cannot be deleted.")
       end
     end
   end

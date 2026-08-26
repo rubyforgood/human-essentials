@@ -57,16 +57,20 @@ RSpec.describe "Essentials app shell", type: :request do
   end
 
   context "role gating" do
+    # Matched on the link's own href, not the word. The nav label used to be "My organization", which
+    # was distinctive enough to grep for; it is "Organization" now, and that string occurs all over a
+    # dashboard, so a substring match would pass whatever the nav did. The trailing quote keeps this
+    # from matching /admin/organizations.
     it "hides organization settings from a non-admin" do
       get dashboard_path
-      expect(response.body).not_to include("My organization")
+      expect(response.body).not_to include('href="/organization"')
     end
 
     it "shows organization settings to an org admin" do
       sign_out(user)
       sign_in(admin)
       get dashboard_path
-      expect(response.body).to include("My organization")
+      expect(response.body).to include('href="/organization"')
     end
 
     it "hides the inventory audit link from a non-admin" do

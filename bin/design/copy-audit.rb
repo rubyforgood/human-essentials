@@ -149,8 +149,24 @@ VAGUE_LINK = /\A[\s"'(]*(?:click here|here|this link|read more|learn more|more i
 
 # WCAG 1.3.3 Sensory Characteristics: instructions must not depend on shape, size or position.
 # `\s+` everywhere rather than a literal space, for the reason above.
-SENSORY = /\b(?:link|button|field|form|table|box|section|menu)\s+(?:below|above)\b|
-           \b(?:see|shown|listed|click)\s+(?:below|above)\b|
+# The noun and verb lists were too short to be worth having. "Choose the items below" is exactly the
+# failure 1.3.3 describes and it slipped through, because `items` was not among the nouns and
+# `choose` was not among the verbs -- found by planting a violation to prove the audit read a file,
+# which is a better argument for that habit than any I could write. The third branch is the general
+# case: "the <anything> below" is spatial whatever the noun.
+# "below" is spatial in "choose the items below" and comparative in "items below their recommended
+# quantity", and only the first fails 1.3.3. The lookahead is what tells them apart: a comparative
+# "below" is followed by the thing being compared against, a spatial one is not.
+# The trailing \\b is load-bearing: without it the `a` alternative matches the first letter of
+# "about", so "the details below about your bank" -- a real 1.3.3 failure on the account request
+# form -- was silently reclassified as comparative and stopped being reported.
+COMPARATIVE = '(?!\\s+(?:the|their|its|his|her|your|our|an?|\\d|minimum|maximum|recommended|average|target|cost|zero)\\b)'
+
+SENSORY = /\b(?:link|button|field|form|table|box|section|menu|item|list|option|row|card|step|
+              question|answer|column|panel|tab|chart)s?\s+(?:below|above)\b#{COMPARATIVE}|
+           \b(?:see|shown|listed|click|choose|select|pick|enter|fill|use|check|review|complete)\s+
+              (?:below|above)\b#{COMPARATIVE}|
+           \bthe\s+\w+s?\s+(?:below|above)\b#{COMPARATIVE}|
            \bto\s+the\s+(?:left|right)\b|
            \bthe\s+(?:green|red|blue|round|square)\s+(?:button|link|box)\b/xi
 
@@ -194,10 +210,22 @@ CHECKS = {
 # they claimed to check, and each reported a clean zero while doing it. Every case below is one
 # these checks got wrong at some point, or one a careless pattern would get wrong.
 LINK = "link text (WCAG 2.4.4)"
+SENSE = "sensory instruction (WCAG 1.3.3)"
 SENS = "sensory instruction (WCAG 1.3.3)"
 V = "app/views/x.erb"
 
 PROBES = [
+  # The three that the old, shorter SENSORY pattern let through.
+  ["Choose the items below", V, SENSE, true, :copy],
+  ["Select below", V, SENSE, true, :copy],
+  ["the totals above", V, SENSE, true, :copy],
+  # Comparative, not spatial. This one was a false positive the moment the pattern was broadened,
+  # and it is real copy on the dashboard: "Items below their recommended on-hand quantity".
+  ["Items below their recommended on-hand quantity", V, SENSE, false, :copy],
+  ["Quantities above the target", V, SENSE, false, :copy],
+  # Spatial, and the word after "below" starts with the same letter as an alternative in the
+  # comparative lookahead. This probe exists because that exact case regressed once.
+  ["Fill out the details below about your bank", V, SENSE, true, :copy],
   ["click here", V, LINK, true, :link],
   ["Here", V, LINK, true, :link],
   ["Learn more", V, LINK, true, :link],

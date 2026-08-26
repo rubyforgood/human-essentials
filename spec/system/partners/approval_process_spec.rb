@@ -25,7 +25,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       end
 
       it "Double clicking submit for approval button does not result in the partner attemping to be approved twice" do
-        click_on 'My profile'
+        click_on 'Profile'
         assert page.has_content? 'Uninvited'
         all('a', text: 'Update information').last.click
 
@@ -50,7 +50,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
 
       context 'AND they fill out the form and submit it' do
         before do
-          click_on 'My profile'
+          click_on 'Profile'
           assert page.has_content? 'Uninvited'
           all('a', text: 'Update information').last.click
 
@@ -100,7 +100,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
       login_as(partner_user)
       visit partner_user_root_path
-      click_on 'My profile'
+      click_on 'Profile'
       all('button', text: 'Submit for approval').last.click
     end
 

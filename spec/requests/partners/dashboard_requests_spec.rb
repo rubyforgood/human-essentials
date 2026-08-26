@@ -77,9 +77,10 @@ RSpec.describe "/partners/dashboard", type: :request do
 
       get partners_dashboard_path
 
-      # Sentence case per the design system (ADR 0011).
+      # Sentence case per the design system (ADR 0011), and a phrase rather than a question -- the
+      # bank side already called this feature "Help", so both sides say one thing now.
       expect(response.body).not_to include("User guide")
-      expect(response.body).to include("Need help?")
+      expect(response.body).to include("Help")
     end
   end
 
