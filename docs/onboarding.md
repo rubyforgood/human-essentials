@@ -441,6 +441,19 @@ hide everything already booked in.
 
 ### How many rows am I looking at?
 
+**If the dev server keeps dying, it is the CSS watcher finishing, not the server crashing.**
+`bin/start` runs three processes under foreman, and foreman kills the whole group when *any* of
+them exits. The Tailwind CLI's `-w` needs a TTY; without one — under foreman, in a container, over
+ssh — it decides there is nothing to attach to, prints `Done in 1s` and exits **0**. Foreman then
+SIGTERMs the web server and the worker. Nothing in the log looks like an error, which is why this
+was mistaken for a memory problem more than once.
+
+`Procfile.dev` passes `[always]` now, which keeps the watcher attached without a TTY. It also binds
+the server to `0.0.0.0`: the Rails default is localhost only, which is unreachable through a port
+forward, and this app is normally viewed through one. If you are behind a forward or a
+TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
+"Your session expired".
+
 **The app says "you", not "my".** "Edit my profile" is **Edit profile**, "My account" is **Account**,
 and the partner dashboard's "Our impact" is **Your impact**. Where a possessive told you nothing — you
 have exactly one profile — it is simply gone. And **"Need help?" is now "Help"** on both the page and

@@ -1,3 +1,9 @@
-web: bundle exec rails s -p 3000
+# `-b 0.0.0.0`: the default binds to localhost only, which is unreachable through a port forward
+# or tunnel -- and this app is normally viewed through one (see TUNNEL in docs/onboarding.md).
+web: bundle exec rails s -b 0.0.0.0 -p 3000
 worker: bundle exec rails jobs:work
-css: bundle exec rails tailwindcss:watch
+# `[always]` is load-bearing. Without it the Tailwind CLI runs `-w` with no TTY, decides there is
+# nothing to attach to, prints "Done in 1s" and exits 0 -- and foreman kills the whole process
+# group when any member exits, taking the web server with it. That is the "the server keeps going
+# away" symptom: nothing crashed, the watcher just finished.
+css: bundle exec rails "tailwindcss:watch[always]"
