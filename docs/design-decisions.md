@@ -4433,34 +4433,41 @@ which `localStorage` creates and cannot explain.
 
 ---
 
-## 2026-08-26 · Seeding the past writes data that cannot be removed
+## 2026-08-26 · Seeding the past writes rows with no inventory behind them
 
-**Area.** `db/seeds/calendar_seeder.rb`, `db:seed:calendar`.
+**Area.** `db/seeds/calendar_seeder.rb`, `db:seed:calendar`, `db:seed:calendar:clear`.
 
-**What happened.** `db:seed:calendar` created four backdated, completed distributions so that Prev
-landed on a populated month and the data was not uniformly "scheduled". Then removing them failed:
-`Distribution#check_no_intervening_snapshot` raises *"Distributions entered before … cannot be
-deleted"* for anything a `SnapshotEvent` has already folded into inventory, which is every past-dated
-record once a snapshot passes it.
+**What is actually going on**, after getting it wrong twice. `Event` validates
+`no_intervening_snapshot` **on create**, so an inventory event for a distribution dated before the
+latest `SnapshotEvent` fails validation — and `DistributionEvent.publish` uses `create`, not
+`create!`, so the failure is **silent**. `DistributionCreateService` then reports success.
 
-So the task printed a removal line that did not work, which is worse than not offering one.
+The result is a distribution row that appears on the calendar, in the index and in every export, and
+never moved a single item of stock. Verified: the twelve backdated rows the seeder had made carried
+**0 events**, and deleting all twelve moved total inventory by **0**.
 
-**Decision.** The past group is **opt-in** — `PAST=1` — and the task now says plainly that those
-records are permanent. Reversible by default; a seeding task that cannot undo itself should say so
-*before* it runs.
+The same guard blocks the tidy-up from the other end — `Distribution#check_no_intervening_snapshot`
+refuses to destroy them. So the seeder was creating rows that were both a lie and unremovable.
 
-**Two mistakes of mine on the way, both the same shape.**
+**Decision.** The seeder writes **nothing before today**, and there is no `PAST=1`: that option was
+the wrong answer to a misdiagnosis. `db/seeds.rb` already leaves a few distributions in the previous
+month, so Prev is not empty.
 
-- **I trimmed a double-run by `created_at`**, which the seeder deliberately backdates to three days
-  before the distribution date. Ordering by it deleted the latest-*dated* records — September and
-  October — rather than the second run's. The calendar then showed an empty week and I spent a while
-  looking for a bug in the week view. `created_at` is a proxy for insertion order and this seeder
-  makes it a bad one.
-- **I ran the cleanup and the re-seed in one command** and did not check that the cleanup had
-  succeeded. It had raised on the past-dated records, so the re-seed added a second set on top. The
-  database has **12 permanent July records** as a result. They are harmless — they are what now gives
-  Prev a populated month and the only `complete` rows in the set — but they are there because of a
-  mistake, not a plan, and they cannot be removed.
+**And a worse one underneath: `destroy_all` on a distribution loses stock.** `Distribution` carries
+only `before_destroy :check_no_intervening_snapshot`. Nothing on the model publishes a
+`DistributionDestroyEvent` — only `DistributionDestroyService` does. So `destroy_all` deletes the row
+and leaves its `DistributionEvent` behind: inventory stays reduced for a distribution that no longer
+exists, and the event is orphaned. **The task had been printing that as its cleanup advice.**
 
-**The generalisable part:** in an event-sourced app, seeded data in the past is not test data, it is
-history. Write test data forward.
+Measured before the fix: destroying 20 seeded distributions holding 150 units moved inventory by
+**0**. There is a `db:seed:calendar:clear` task now, going through the service, and the round trip is
+lossless — **162,608 → 162,437 → 162,608**.
+
+**What it cost, plainly.** Running `destroy_all` repeatedly while working this out left **140
+orphaned `DistributionEvent` rows** in the development database, holding about **1,105 units**. The
+event log and the distribution rows no longer agree there. `bin/rails reset_demo` is the clean
+repair. The calendar page itself is unaffected, since it reads distributions rather than inventory.
+
+**The generalisable part:** in an event-sourced app the model is not the source of truth, and
+`destroy` is not how you remove things — use the service that publishes the compensating event. And
+be suspicious of a delete that moves no numbers.

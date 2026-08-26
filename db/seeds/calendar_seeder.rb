@@ -14,14 +14,20 @@ class CalendarSeeder
   # A distribution needs stock to draw down; below this there is no headroom and the service fails.
   MINIMUM_ON_HAND = 40
 
-  # Backdated distributions are **permanent**: `Distribution#check_no_intervening_snapshot` refuses
-  # to destroy one that a SnapshotEvent has already folded into inventory, which is every past-dated
-  # record once a snapshot passes it. So the past group is opt-in -- a seeding task that cannot undo
-  # itself should say so before it runs, not after.
-  def initialize(organization, today: Time.zone.today, include_past: false)
+  # Nothing here is dated before today, and that is not a stylistic choice.
+  #
+  # `Event` validates `no_intervening_snapshot` on create, so an inventory event for a distribution
+  # dated before the latest SnapshotEvent fails validation -- and `DistributionEvent.publish` uses
+  # `create`, not `create!`, so the failure is silent. `DistributionCreateService` then reports
+  # success. The result is a distribution row that appears on the calendar, in the index and in
+  # every export, and never moved a single item of stock.
+  #
+  # Seeding that would be seeding a lie. It also cannot be cleaned up the ordinary way, because
+  # `Distribution#check_no_intervening_snapshot` refuses to destroy it -- the same guard, from the
+  # other end.
+  def initialize(organization, today: Time.zone.today)
     @organization = organization
     @today = today
-    @include_past = include_past
     @partners = organization.partners.to_a
     @by_month = Hash.new(0)
     @failures = []
@@ -37,47 +43,42 @@ class CalendarSeeder
 
   private
 
-  # [date, hour, complete?]
+  # [date, hour]
   def plan
     entries = []
 
     # Something on today, so the tinted cell and its brand-700 date have an event beside them.
-    entries << [@today, 9, false]
+    entries << [@today, 9]
 
     # One crowded day, to force the "+N more" overflow `dayMaxEvents` draws. Six clears it on any
     # reasonable row height; three did not.
-    6.times { |i| entries << [@today + 3, 8 + i, false] }
+    6.times { |i| entries << [@today + 3, 8 + i] }
 
     # The rest of this month, so the landing view is not two events in a corner.
-    [1, 2, 5].each { |offset| entries << [@today + offset, [10, 13, 15].sample, false] }
+    [1, 2, 5].each { |offset| entries << [@today + offset, [10, 13, 15].sample] }
 
-    # Last month, completed, and only if asked for. It is the one group worth having and the one
-    # that cannot be taken back: it populates Prev and it is the only `complete` data in the set,
-    # but every record in it is undeletable the moment a snapshot passes it.
-    if @include_past
-      previous = @today.prev_month.beginning_of_month
-      [4, 11, 19, 25].each { |offset| entries << [previous + offset, [9, 14].sample, true] }
-    end
+    # No past-dated group. See the note on the constructor: a backdated distribution here is a row
+    # with no inventory behind it. `db/seeds.rb` already leaves a few in the previous month, so Prev
+    # is not empty.
 
     # Next month and the one after, so Next and Next-again both land on populated months.
     following = @today.next_month.beginning_of_month
-    [2, 4, 9, 14, 18, 23, 28].each { |offset| entries << [following + offset, [9, 11, 14, 16].sample, false] }
+    [2, 4, 9, 14, 18, 23, 28].each { |offset| entries << [following + offset, [9, 11, 14, 16].sample] }
 
     after = @today.next_month.next_month.beginning_of_month
-    [6, 15, 21].each { |offset| entries << [after + offset, [10, 14].sample, false] }
+    [6, 15, 21].each { |offset| entries << [after + offset, [10, 14].sample] }
 
     entries
   end
 
   def create(entry, index)
-    date, hour, complete = entry
+    date, hour = entry
     distribution = build(date, hour, index)
     return @failures << "#{date}: not enough stock in any location" if distribution.nil?
 
     result = DistributionCreateService.new(distribution).call
     if result.success?
       @by_month[date.strftime("%Y-%m")] += 1
-      distribution.update!(state: :complete) if complete
     else
       @failures << "#{date}: #{result.error}"
     end
