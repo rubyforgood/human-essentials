@@ -3,13 +3,48 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Pick ups & deliveries",
-        subtitle: "Scheduled distributions, by day.",
+        subtitle: "See when each distribution is due out, or subscribe to this calendar from your own.",
         actions: essentials_link_button("Copy calendar URL", "javascript:void(0)",
                    variant: :secondary, icon: "bi-clipboard",
                    id: "copy-calendar-button", data: {url: hashed_calendar_path}) %>
 
+  <%#
+    The toolbar is ours, not FullCalendar's. Its own is three buttons filled `rgb(44,62,80)` at a
+    4px radius and 16px text, beside a 28px/400 title -- a page's worth of primary-looking chrome
+    for moving the month, on a page whose real action is a quiet secondary. The grid is restyled in
+    CSS the way select2 is; these three are cheap to own outright, and owning them means a library
+    upgrade cannot silently revert them. See design.md.
+
+    "‹ Prev" and "Next ›" rather than bare chevrons: design.md reserves icon-only for a repeating
+    row action, and this is the shape the pager already uses for the same job. The `aria-label`
+    extends the visible word rather than replacing it, which is what 2.5.3 asks.
+  %>
   <%= render "shared/essentials/card" do %>
-    <%# FullCalendar renders into #calendar; see application.js. %>
-    <div id="calendar" class="fc min-h-[36rem]"></div>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3"
+         data-controller="calendar">
+      <%# `aria-live`: the buttons change the grid without navigating, so without this nothing
+          tells a screen reader which month is now on screen. %>
+      <h2 class="text-base font-semibold text-slate-900"
+          data-calendar-target="title" aria-live="polite"></h2>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <%= button_tag "Today", type: "button",
+              class: essentials_button_classes(variant: :secondary, size: :sm),
+              data: {action: "calendar#today"} %>
+        <%= button_tag type: "button", "aria-label": "Previous month",
+              class: essentials_button_classes(variant: :secondary, size: :sm),
+              data: {action: "calendar#previous"} do %>
+          <i class="bi-chevron-left" aria-hidden="true"></i> Prev
+        <% end %>
+        <%= button_tag type: "button", "aria-label": "Next month",
+              class: essentials_button_classes(variant: :secondary, size: :sm),
+              data: {action: "calendar#next"} do %>
+          Next <i class="bi-chevron-right" aria-hidden="true"></i>
+        <% end %>
+      </div>
+
+      <%# FullCalendar renders into here; see calendar_controller.js. %>
+      <div id="calendar" class="fc min-h-[36rem] w-full" data-calendar-target="grid"></div>
+    </div>
   <% end %>
 </div>

@@ -380,6 +380,39 @@ button beside it, a third-party widget, a grid column holding one — is `2.375r
 spacing utility. Three things in the app are that number by hand: `.select2-selection`, the line
 item row's icon buttons, and the scan bar's joined button.
 
+<a id="the-calendar"></a>
+**The calendar is restyled too, and its toolbar is ours.** FullCalendar ships the same vintage of
+defaults select2 does — measured on `/distributions/schedule` before this: buttons filled
+`rgb(44,62,80)` at a **4px radius and 16px text**, a 28px/400 month title, day-of-week headings at
+16px/700 where a table heading is 12px/600, day numbers at 16px, and grid lines in
+`rgb(221,221,221)`, a grey outside the palette, with square corners inside a 16px card.
+
+**The font was never the problem**, though it looks like it: the calendar renders in Figtree like
+everything else. What reads as another typeface is **16px at weight 400 against the app's 14px at
+500**.
+
+The grid is restyled in CSS. The **toolbar is not** — `headerToolbar: false`, and Today, Prev and
+Next are ordinary `:secondary, size: :sm` buttons in the view, driven by `calendar_controller`
+through `today()`, `prev()` and `next()`. Three filled dark buttons were a page's worth of
+primary-looking chrome for moving the month, on a page whose real action is a quiet secondary; and
+three buttons are cheap to own outright, which means a library upgrade cannot silently revert them.
+"‹ Prev" and "Next ›" rather than bare chevrons, because [icon-only](#icons) is for a repeating row
+action and this is the shape the pager already uses for the same job.
+
+Three things this taught that the select2 note does not cover:
+
+- **`!important` is required, and for select2 it is not.** FullCalendar injects its stylesheet into
+  `<head>` at runtime, unlayered and later in source order than anything `application.css` can emit.
+  select2's is imported into this file, so leaving `@layer` is enough.
+- **A palette swap breaks the contrast pair you did not change.** Setting `--fc-today-bg-color` to
+  `brand-50` put the existing slate-500 day number at **4.0:1**, and axe caught it on the first run.
+  The text colour was untouched; the background under it moved. Today's date is `brand-700` now,
+  which is the pair the event chips already use.
+- **Check the library's version against its option names.** `defaultView` and `eventLimit` are
+  FullCalendar **4** spellings on a **6** install, so both were silently ignored — the mobile list
+  view had never once rendered. Verified by running the new spec against the old code, which
+  reported `fc-dayGridMonth-view` at 375px. A wrong option name is not an error, it is nothing.
+
 **select2 is restyled, not vendored as-is.** It ships a 28px-tall, 4px-radius, 16px-text control
 in a `#aaa` border, and the app's is 38px, 8px and 14px in `slate-300`. Six selects across five
 views use it — two single, four multiple — and beside a plain input all six read as a control
