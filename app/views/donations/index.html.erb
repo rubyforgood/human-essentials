@@ -4,7 +4,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Donations",
-        subtitle: "Essentials coming in to #{current_organization.name}.",
+        subtitle: "Record what donors bring in, and where you put it.",
         actions: capture {
           if info.donations.any?
             concat essentials_link_button("Export", donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})

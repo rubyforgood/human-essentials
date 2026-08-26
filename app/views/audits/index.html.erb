@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Inventory audits",
-        subtitle: "Counts that set inventory levels at a storage location.",
+        subtitle: "Count what is on the shelves, and set inventory to match.",
         actions: capture {
           concat essentials_link_button("Export", audits_path(format: :csv), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           concat essentials_link_button("New audit", new_audit_path, variant: :primary, icon: "bi-plus-lg")

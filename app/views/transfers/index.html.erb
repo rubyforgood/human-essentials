@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Transfers",
-        subtitle: "Inventory moved between your own storage locations.",
+        subtitle: "Move inventory from one of your storage locations to another.",
         actions: capture {
           if @transfers.any?
             concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})

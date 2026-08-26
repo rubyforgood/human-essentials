@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Families",
-        subtitle: "Families your agency serves.",
+        subtitle: "The families you serve, and the children in each.",
         actions: capture {
           concat essentials_link_button("Export to CSV", partners_families_path(nil, format: :csv), variant: :secondary, icon: "bi-download")
           concat essentials_link_button("Add new family", new_partners_family_path, variant: :primary, icon: "bi-plus-lg")

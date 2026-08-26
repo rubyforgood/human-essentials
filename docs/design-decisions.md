@@ -4131,3 +4131,62 @@ control and only needs the item.
 **Alternative rejected.** Rendering the menu regardless and letting it hold one item, on the grounds
 that the control should be stable as data changes. Stability is worth less than not making someone
 open a menu to find a single link.
+
+
+---
+
+## 2026-08-26 · A subtitle says something the title cannot
+
+**Area.** 22 page headers, `design.md`, `docs/onboarding.md`.
+
+**Reported.** "Copy like this on the requests page is not very helpful: *Essentials requested by
+partner agencies*."
+
+**Measured.** All **40 index pages** carried a subtitle, and about **20 were a definition of their
+own heading**. "Requests" / "Essentials requested by partner agencies" is the clearest: anyone who
+can read the title already has it, and anyone who cannot is not helped.
+
+**Decision.** Option B of `docs/mockups/page-subtitles.html`: on an index page the subtitle says
+**what you do here**, verb-led. 22 rewritten, 8 left alone.
+
+**The rule came out of the app's own good examples**, not from taste. Four already worked —
+`/reports` says how the reports work, `/events` says the ordering, `/admin/account_requests` says
+the scope of both halves, the dashboard says the purpose. What they share is that each says something
+the *title* cannot. None defines a word.
+
+**Scope was rejected on a measurement, and it was the tempting option.** design.md already says the
+opposite for a *card* — "the title names the thing; the subtitle states the scope" — and
+`essentials_stats_scope` would have generated all forty. But the pagination line already says
+"Showing 1–15 of 119 requests" on every one of these pages, so a scope subtitle is the same
+duplication that removed the `<tfoot>` totals from `/distributions`. A convention that holds for a
+card does not automatically hold for a page.
+
+**Deleting them was the other real option** — GOV.UK's position, and the one an experienced user
+would prefer, since they never read it. Rejected because this app is run by volunteers at 200+
+non-profits and "kit", "product drive", "inventory audit" and "base item" are not words anyone
+arrives knowing. Where the noun is jargon the sentence now carries the gloss **and** the action:
+"Items bundled to go out as one. Allocate a kit to change how many you have." Deleting the only
+in-place explanation to save a line is a false economy. It would also have changed the header's
+layout on twenty pages, since the partial is `items-end` without a subtitle and `items-start` with
+one.
+
+**Writing copy that names an action means checking the action exists, and two of my own drafts were
+false.** "Who can sign in, and what each of them is allowed to do" for `/users`, whose table is Name
+and Email with no roles column at all; and a claim that a vendor must exist before a purchase, which
+I had not checked. Both were cut. Six of the seven remaining claims were verified against the code
+that implements them — `Fulfill request` really does post to `start` and redirect to
+`new_distribution_path`; a donation form really does offer a donation site, optionally; `/users`
+really does have "Invite user to this organization".
+
+**Three empty greps nearly became three false conclusions.** Looking for the donation-site field in
+`donations/_form.html.erb` returned nothing because the file is `_donation_form.html.erb`. An empty
+grep is not evidence of absence, and it reads exactly like evidence of absence.
+
+**Inclusive, gender-neutral and non-ableist, checked rather than asserted.** `copy-audit.rb` reports
+clean on all six checks — but "0 findings across 0 checks" is also what a broken audit prints, so
+coverage was proved by planting `Please`, `below` and `insane` in one of the new subtitles and
+confirming all three were caught in that file. Then reverted.
+
+**Alternative rejected.** One helper generating every subtitle from the model name. It is how the
+definitions got there in the first place: a formula can produce a grammatical sentence but not a
+useful one.

@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Users",
-        subtitle: "People at #{current_partner.name} who can sign in.",
+        subtitle: "Who at #{current_partner.name} can sign in and make requests.",
         actions: essentials_link_button("Invite new user", new_partners_user_path, variant: :primary, icon: "bi-envelope") %>
 
   <%= render "shared/essentials/card", padded: @users.blank? do %>

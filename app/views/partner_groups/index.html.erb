@@ -8,7 +8,7 @@
   %>
   <%= render "shared/essentials/page_header",
         title: "Partner agencies",
-        subtitle: "Organizations that receive essentials from #{current_organization.name}.",
+        subtitle: "Who you distribute to. A partner's group sets what it can request.",
         actions: capture {
           concat essentials_link_button("New partner group", new_partner_group_path, variant: :primary, icon: "bi-plus-lg")
         } %>
