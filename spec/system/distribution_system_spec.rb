@@ -99,12 +99,19 @@ RSpec.feature "Distributions", type: :system do
 
     it "goes back to the previous view" do
       visit schedule_distributions_path
+      expect(page).to have_css(".fc-dayGridMonth-view")
+
       click_on "Week"
+      # Wait for the history entry, not only for the rendered class. Going back before pushState has
+      # been committed leaves the assertions racing the popstate handler, and this failed roughly
+      # once in twenty without it.
+      expect(page).to have_current_path(/view=week/)
       expect(page).to have_css(".fc-dayGridWeek-view")
 
       page.go_back
 
       # pushState rather than replaceState, or Back would leave the URL behind and the view alone.
+      expect(page).to have_current_path(schedule_distributions_path, ignore_query: false)
       expect(page).to have_css(".fc-dayGridMonth-view")
       expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
     end

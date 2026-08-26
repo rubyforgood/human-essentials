@@ -130,7 +130,12 @@ const readErrors = () => {
       return e && (e.classList.contains("field-error") || e.closest(".field-error"));
     });
   }).length;
+  // Not anything inside an open <dialog>. /partners/family_requests/new pre-checks every child, so
+  // its submit opens a "You are ordering 2,500 total items. Are you sure?" confirmation rather than
+  // posting -- and that was being read as an error summary, which made the form look like it had
+  // shown errors and failed to attach them to fields. It had not been submitted at all.
   const summary = [...scope.querySelectorAll("[class*='bg-rose-50'], [role=alert], [data-flash]")]
+    .filter((e) => !e.closest("dialog[open]"))
     .map((e) => e.textContent.replace(/\s+/g, " ").trim()).filter(Boolean)[0];
   return {
     url: location.pathname,
@@ -233,6 +238,9 @@ const MODALS = [
       await submit.click().catch(() => {});
       await page.waitForTimeout(1400);
       const neverSubmitted = await page.evaluate(() => window.__submitProbe === true);
+      // A submit that opened a confirmation is waiting on the reader, not reporting on itself.
+      const awaitingConfirm = await page.evaluate(() =>
+        [...document.querySelectorAll("dialog")].some((d) => d.open));
       const errors = await page.evaluate(readErrors);
 
       // Some forms accept an empty submit -- a partner request with no items is still a request,
@@ -240,6 +248,10 @@ const MODALS = [
       // submit does nothing at all. Neither is "errors are not shown"; there were none to show.
       // Reported separately so a page cannot hide in the wrong column.
       const stillOnForm = errors.url === t.path;
+      if (awaitingConfirm) {
+        unsubmittable.push([t.path, "the submit opened a confirmation instead"]);
+        continue;
+      }
       if (neverSubmitted && !errors.inline && !errors.summary) {
         unsubmittable.push([t.path, "the submit never left the page"]);
         continue;

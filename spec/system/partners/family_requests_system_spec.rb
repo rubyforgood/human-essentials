@@ -22,6 +22,22 @@ RSpec.describe "Family requests", type: :system, js: true do
       create(:partners_child, first_name: "Other", last_name: "No Items", family: other_family, requested_item_ids: nil)
     end
 
+    # Every one of these used to be labelled "Include This Child?", so a screen reader announced the
+    # same name for all of them with nothing to tell them apart -- the defect row actions had, and
+    # the same fix: name the control after its row.
+    scenario "each checkbox names the child it includes" do
+      visit new_partners_family_request_path
+
+      names = page.all("input[type=checkbox][id^='child-']", visible: :all).map do |box|
+        page.find("label[for='#{box[:id]}']", visible: :all).text(:all).strip
+      end
+
+      expect(names).to be_present
+      expect(names).to all(start_with("Include "))
+      expect(names.uniq.length).to eq(names.length)
+      expect(names).to include("Include Main Items1")
+    end
+
     scenario "it creates family requests" do
       visit partners_requests_path
       find('a[aria-label="Create a request for a child or family"]').click
