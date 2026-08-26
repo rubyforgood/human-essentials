@@ -11,10 +11,7 @@ namespace :db do
       org = ENV["ORG"] ? Organization.find_by!(name: ENV["ORG"]) : Organization.first
       raise "No organization to seed. Run db:seed first." if org.nil?
 
-      # PAST=1 also seeds last month, completed. Those records cannot be removed again -- see the
-      # seeder -- so it is not the default.
-      include_past = ENV["PAST"].present?
-      created = CalendarSeeder.new(org, include_past: include_past).call
+      created = CalendarSeeder.new(org).call
 
       puts "Seeded #{org.name}:"
       created[:by_month].sort.each { |month, count| puts "  #{month}  #{count}" }
@@ -24,12 +21,35 @@ namespace :db do
         created[:failures].each { |reason| puts "  #{reason}" }
       end
       puts
-      puts %(Remove them with: Distribution.where(comment: "#{CalendarSeeder::MARKER}").destroy_all)
-      if include_past
-        puts "  ...except the ones dated before today. A distribution a SnapshotEvent has already"
-        puts "  folded into inventory cannot be destroyed, so the PAST group is permanent."
-      else
-        puts %(Add last month too, completed and permanent, with: PAST=1 bin/rails db:seed:calendar)
+      puts "Remove them again with: bin/rails db:seed:calendar:clear"
+    end
+
+    namespace :calendar do
+      desc "Remove what db:seed:calendar created, returning its stock to inventory"
+      task clear: :environment do
+        raise "Cannot run this in production" if Rails.env.production?
+
+        require Rails.root.join("db/seeds/calendar_seeder")
+
+        # Through DistributionDestroyService, not `destroy_all`. `Distribution` carries only
+        # `before_destroy :check_no_intervening_snapshot`; nothing on the model publishes a
+        # DistributionDestroyEvent, so `destroy_all` deletes the row and leaves its DistributionEvent
+        # behind. Inventory then stays reduced for a distribution that no longer exists, and the
+        # event is orphaned. Measured: 20 distributions holding 150 units, destroyed that way, moved
+        # inventory by 0.
+        removed = 0
+        failed = []
+        Distribution.where(comment: CalendarSeeder::MARKER).find_each do |distribution|
+          result = DistributionDestroyService.new(distribution.id).call
+          if result.success?
+            removed += 1
+          else
+            failed << "#{distribution.id}: #{result.error}"
+          end
+        end
+
+        puts "Removed #{removed}."
+        failed.each { |line| puts "  could not remove #{line}" }
       end
     end
   end

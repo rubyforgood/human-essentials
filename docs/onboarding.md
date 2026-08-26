@@ -467,8 +467,10 @@ scatter twenty distributions over a couple of years, which leaves that page thin
 want to look at it: the month you land on is sparse, the next one is often empty, no day holds
 enough to overflow, and nothing falls on today. The task fills those in — including a six-event day
 so the "+N more" link appears, and four completed ones last month so the data is not all
-"scheduled". Everything it makes is commented **Calendar test data**, and the task prints the line
-that removes it again. `ORG="Second City Essentials Bank"` picks a different bank.
+"scheduled". Everything it makes is commented **Calendar test data**. Remove it again with
+`bin/rails db:seed:calendar:clear`, which returns the stock to inventory —
+`Distribution.destroy_all` does **not**, because nothing on the model publishes the compensating
+event. `ORG="Second City Essentials Bank"` picks a different bank.
 
 **The pick ups and deliveries calendar looks like the rest of the app now**, and on a phone it
 shows a list of the week rather than a month grid you cannot read. That list view had been asked for
