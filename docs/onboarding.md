@@ -454,6 +454,14 @@ forward, and this app is normally viewed through one. If you are behind a forwar
 TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
 "Your session expired".
 
+**To try the calendar with something on it**, run `bin/rails db:seed:calendar`. The ordinary seeds
+scatter twenty distributions over a couple of years, which leaves that page thin exactly where you
+want to look at it: the month you land on is sparse, the next one is often empty, no day holds
+enough to overflow, and nothing falls on today. The task fills those in — including a six-event day
+so the "+N more" link appears, and four completed ones last month so the data is not all
+"scheduled". Everything it makes is commented **Calendar test data**, and the task prints the line
+that removes it again. `ORG="Second City Essentials Bank"` picks a different bank.
+
 **The pick ups and deliveries calendar looks like the rest of the app now**, and on a phone it
 shows a list of the week rather than a month grid you cannot read. That list view had been asked for
 in the code all along and never worked — the option was spelled for an older version of the calendar
