@@ -454,6 +454,11 @@ forward, and this app is normally viewed through one. If you are behind a forwar
 TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
 "Your session expired".
 
+**The pick ups and deliveries calendar looks like the rest of the app now**, and on a phone it
+shows a list of the week rather than a month grid you cannot read. That list view had been asked for
+in the code all along and never worked — the option was spelled for an older version of the calendar
+library, so it was quietly ignored.
+
 **The app says "you", not "my".** "Edit my profile" is **Edit profile**, "My account" is **Account**,
 and the partner dashboard's "Our impact" is **Your impact**. Where a possessive told you nothing — you
 have exactly one profile — it is simply gone. And **"Need help?" is now "Help"** on both the page and

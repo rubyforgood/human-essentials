@@ -22,6 +22,50 @@ RSpec.feature "Distributions", type: :system do
       expect(page.find(".fc-event-time")).to have_content "7p"
       expect(page.find(".fc-event-title")).to have_content @distribution.partner.name
     end
+
+    # FullCalendar's own toolbar is three buttons filled rgb(44,62,80) at a 4px radius -- a page's
+    # worth of primary-looking chrome for moving the month. The grid is restyled in CSS the way
+    # select2 is; the toolbar is ours outright, so a library upgrade cannot silently revert it.
+    it "uses the app's own toolbar, not the library's" do
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w+ \d{4}/)
+
+      expect(page).to have_no_css(".fc-toolbar")
+      expect(page).to have_no_css(".fc-button")
+
+      expect(page).to have_button("Today")
+      expect(page).to have_button("Prev")
+      expect(page).to have_button("Next")
+    end
+
+    it "moves the month, and says so out loud" do
+      visit schedule_distributions_path
+      # The heading is empty until FullCalendar reports the range it settled on, so wait for a real
+      # month before reading it -- otherwise `before` is "" and the comparison is vacuous.
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w+ \d{4}/)
+
+      title = page.find("[data-calendar-target='title']")
+      # The buttons change the grid without navigating, so nothing else would announce the change.
+      expect(title[:"aria-live"]).to eq("polite")
+
+      before = title.text
+      click_on "Next"
+      expect(page).to have_no_css("[data-calendar-target='title']", text: before)
+
+      click_on "Today"
+      expect(page).to have_css("[data-calendar-target='title']", text: before)
+    end
+
+    # `defaultView` and `eventLimit` are FullCalendar 4 spellings, and this app is on 6, so both
+    # were being ignored: at 375px it rendered the month grid, never the list. Verified by running
+    # this against the old code, which reported fc-dayGridMonth-view.
+    it "falls back to the list view when the window is too narrow for a month grid" do
+      page.driver.resize(375, 800)
+      visit schedule_distributions_path
+
+      expect(page).to have_css(".fc-list")
+      expect(page).to have_no_css(".fc-daygrid")
+    end
   end
 
   context "When creating a new distribution manually" do

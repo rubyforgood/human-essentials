@@ -989,6 +989,102 @@ trix-toolbar .trix-button:focus-visible {
 }
 
 /*
+ * Calendar: the grid, in the app's tokens.
+ *
+ * FullCalendar ships the same vintage of defaults select2 does, and design.md already settles what
+ * to do about that -- restyle, do not vendor as-is. Measured before this: grid lines
+ * `rgb(221,221,221)`, a grey outside the palette; day-of-week headings 16px/700 where a table
+ * heading is 12px/600 slate-500; day numbers 16px where body text is 14; square corners inside a
+ * 16px card; and event chips as a 1px slate-900 outline at a 3px radius.
+ *
+ * `!important` throughout, for the reason the rule above gives: FullCalendar injects its stylesheet
+ * into <head> at runtime, unlayered and later in source order than anything this file can emit.
+ * That is the one way it differs from select2, whose sheet is imported here and can be outranked by
+ * moving out of `@layer`.
+ *
+ * The toolbar is not styled because there is not one: `headerToolbar: false`, and the Today, Prev
+ * and Next buttons are ordinary components in the view. See `calendar_controller`.
+ */
+.fc {
+  --fc-border-color: var(--color-slate-200);
+  --fc-today-bg-color: var(--color-brand-50);
+  --fc-neutral-bg-color: var(--color-slate-50);
+  --fc-page-bg-color: var(--color-white);
+}
+
+/* The grid sits inside a card, so it takes the card's corners rather than square ones. */
+.fc .fc-scrollgrid {
+  border-radius: var(--radius-xl) !important;
+  overflow: hidden !important;
+}
+
+/* Mon Tue Wed: a column heading, sized like every other column heading in the app. */
+.fc .fc-col-header-cell {
+  background-color: var(--color-slate-50) !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  padding: calc(var(--spacing) * 2) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  color: var(--color-slate-500) !important;
+}
+
+/* The date. 16px made it compete with the events in its own cell. */
+.fc .fc-daygrid-day-number {
+  padding: calc(var(--spacing) * 1.5) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  color: var(--color-slate-500) !important;
+}
+
+/*
+ * Today's date, on today's tint.
+ *
+ * `--fc-today-bg-color` is brand-50 above, and slate-500 on brand-50 is **4.0:1** -- under 1.4.3's
+ * 4.5. axe caught it on the first run after this restyling, which is the one contrast pair a
+ * palette swap is most likely to break: the text colour did not change, the background under it
+ * did. brand-700 on brand-50 is the pair the event chips already use.
+ */
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: var(--color-brand-700) !important;
+}
+
+/*
+ * An event. A 1px slate-900 outline at 3px is the library's idea of a chip; the app's is a filled
+ * brand tint, the same shape a status pill uses.
+ */
+.fc .fc-daygrid-event,
+.fc .fc-list-event {
+  border-radius: var(--radius-md) !important;
+  font-size: var(--text-xs) !important;
+}
+
+.fc .fc-daygrid-event {
+  padding: 1px calc(var(--spacing) * 1.5) !important;
+  background-color: var(--color-brand-50) !important;
+  border: 1px solid var(--color-brand-100) !important;
+  color: var(--color-brand-700) !important;
+}
+
+.fc .fc-daygrid-event:hover {
+  background-color: var(--color-brand-100) !important;
+}
+
+.fc .fc-daygrid-event .fc-event-time,
+.fc .fc-daygrid-event .fc-event-title {
+  color: var(--color-brand-700) !important;
+  font-weight: 500 !important;
+}
+
+/* "+2 more" is a control, so it gets the app's link colour rather than the library's grey. */
+.fc .fc-daygrid-more-link {
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  color: var(--color-brand-700) !important;
+}
+
+/*
  * select2's arrow, replaced with the app's chevron.
  *
  * select2 draws a CSS triangle -- `border-width: 5px 4px 0 4px` in #888 -- 7px from the border,

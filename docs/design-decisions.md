@@ -4334,3 +4334,56 @@ inner tags and looks anywhere in the heading, verified by planting a violation a
 **Alternative rejected.** Rewording "Contact Human Essentials" to dodge the false positive. It would
 have left the audit blind to the next heading that names the product, and the copy was not the thing
 that was wrong.
+
+
+---
+
+## 2026-08-26 · The calendar is restyled, and its toolbar is ours
+
+**Area.** `distributions/schedule`, `calendar_controller` (new), `application.js`, `application.css`,
+`design.md`.
+
+**Decision.** Option A plus the toolbar half of C from `docs/mockups/calendar-chrome.html`: restyle
+FullCalendar's grid in CSS the way select2 already is, and take the **toolbar** out of the library's
+hands entirely.
+
+**The font was never the problem**, though that is what it looks like. The calendar renders in
+Figtree like everything else; what reads as another typeface is **16px at weight 400 against the
+app's 14px at 500**. Worth stating plainly, because the obvious next move — hunting a font-family
+bug — would have found nothing.
+
+**Why restyle rather than replace.** design.md already settles it for select2, in almost the same
+words and with literally the same numbers: *"It ships a 28px-tall, 4px-radius, 16px-text control in a
+`#aaa` border."* FullCalendar ships 4px and 16px too. There is a precedent pointing the other way —
+Litepicker was **deleted** rather than restyled — but that argument is *native control versus
+dependency*, and there is no native month grid. Rebuilding event layout, day overflow, the list view
+and Luxon's timezone handling is a great deal of work to fix an appearance.
+
+**Why the toolbar is different.** Three buttons filled `rgb(44,62,80)` were a page's worth of
+primary-looking chrome for moving the month, on a page whose real action is a quiet secondary. They
+are ordinary components now, driven through public API — `today()`, `prev()`, `next()`, `datesSet`.
+Three buttons are cheap to own, and owning them means a library upgrade cannot silently revert them,
+which is exactly what had happened to the rest of this page.
+
+"‹ Prev" and "Next ›" rather than bare chevrons: design.md reserves icon-only for a repeating row
+action, and this is the shape the **pager** already uses for the same job.
+
+### Three findings the styling work turned up
+
+- **`!important` is required here and is not for select2.** FullCalendar injects its stylesheet into
+  `<head>` at runtime, unlayered and later in source order than anything `application.css` can emit.
+  The existing `.fc-day-other` rule had already discovered this and said so; the new rules follow it.
+- **A palette swap breaks the contrast pair you did not touch.** Setting `--fc-today-bg-color` to
+  `brand-50` put the *existing* slate-500 day number at **4.0:1**, and axe caught it on the first run
+  after. The text colour never changed; the background under it did. Today's date is `brand-700` now,
+  the pair the event chips already use — measured at **8.59:1** from painted pixels.
+- **The mobile list view had never worked.** `defaultView` and `eventLimit` are FullCalendar **4**
+  spellings and this app is on **6**, so both were silently ignored. Verified rather than inferred:
+  running the new spec against the stashed old code reported `fc-dayGridMonth-view` at 375px, and
+  against the new code reports `fc-list`. **A wrong option name is not an error, it is nothing** —
+  which is why this survived a version upgrade unnoticed.
+
+**Also.** The subtitle was "Scheduled distributions, by day", which is the subtitle rule failing in
+its own words. It says what you can do now, including the thing the page's only button is for:
+"See when each distribution is due out, or subscribe to this calendar from your own." Checked that
+the Copy calendar URL button really does serve `text/calendar` before writing it.
