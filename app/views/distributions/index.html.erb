@@ -9,7 +9,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Distributions",
-        subtitle: "Essentials sent out to partner agencies.",
+        subtitle: "Track what has gone out to partners, and what is still scheduled.",
         actions: capture {
           if @distributions.any?
             concat essentials_link_button("Export", distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})

@@ -1166,6 +1166,44 @@ is the right fix; rewording around it is not.
 **Buttons take a verb**, and the verb is what will happen: "Save", "Add another item", "Remove
 this item". Not "OK", not "Submit".
 
+<a id="subtitles"></a>
+**A subtitle says something the title cannot.** "Requests" over "Essentials requested by partner
+agencies" is a heading and its own dictionary definition: anyone who can read the title already has
+it. Measured before this rule existed — **all 40 index pages carried a subtitle and about 20 defined
+their own heading**.
+
+The test: read the title, then the subtitle. If the subtitle told you nothing you did not already
+have, it is filler. By page kind:
+
+| Page | The subtitle says |
+| --- | --- |
+| **Index** | What you do here, verb-led. "Review what partners have asked for. Fulfill a request to turn it into a distribution." |
+| **Show** | Which record this is — source and date, name, location and status. **Twelve already did this**, and none changed. |
+| **New and edit** | What submitting will do. "Record essentials coming in to X." |
+
+**Never the scope on an index page.** It is the obvious thing to reach for, and design.md says the
+opposite for a *card* — "the title names the thing; the subtitle states the scope". A page is
+different because the [pagination line](#pagination) already says "Showing 1–15 of 119 requests" on
+every one of them. Two places saying overlapping things is worse than either alone, which is the
+same call that removed the `<tfoot>` totals from `/distributions`.
+
+**Where the noun is genuinely jargon, the sentence carries the gloss *and* the action** rather than
+only the gloss: "Items bundled to go out as one. Allocate a kit to change how many you have." This
+app is run by volunteers at 200+ non-profits, and "kit", "product drive", "inventory audit" and
+"base item" are not words anyone arrives knowing. Deleting the only in-place explanation to save a
+line is a false economy.
+
+**A subtitle that names an action has to be true.** Writing these found two of my own drafts were
+not: "what each of them is allowed to do" for `/users`, whose table is only Name and Email, and a
+claim about vendors being required before a purchase. Check the view before describing it — six of
+the seven claims in these sentences were verified against the code that implements them, and the
+seventh was cut.
+
+Eight are left as they were, because they already passed: `/reports` says how the reports work,
+`/events` says the ordering, `/admin/account_requests` says the scope of *both* halves, the dashboard
+says the purpose, and the four admin lists say which population they cover — something their
+one-word titles cannot.
+
 ### What the audit taught, twice
 
 `copy-audit.rb` reads **copy**, not source, and it knows a **link** from a **heading**. Both cost

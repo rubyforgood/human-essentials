@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Donation sites",
-        subtitle: "Places where the public can drop off donations for #{current_organization.name}.",
+        subtitle: "Drop-off points you can record a donation against.",
         actions: capture {
           if @donation_sites.any?
             concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-download", data: {filter_export: true})

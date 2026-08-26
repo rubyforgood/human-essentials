@@ -441,6 +441,12 @@ hide everything already booked in.
 
 ### How many rows am I looking at?
 
+**The line under each page title tells you what to do, not what the word means.** It used to gloss
+the heading — "Requests / Essentials requested by partner agencies" — which told you nothing you did
+not have from the title. It now points at the job: "Review what partners have asked for. Fulfill a
+request to turn it into a distribution." Where a term is genuinely ours rather than English — kit,
+product drive, inventory audit — the line still explains it, and then says what to do with it.
+
 **Getting requests out of the app is one button now.** The requests page used to carry four buttons
 across the top; the CSV export and the unfulfilled picklists PDF are both behind a single **Export**
 menu, and the totals summary moved down onto the table it summarises, where it is called **Show

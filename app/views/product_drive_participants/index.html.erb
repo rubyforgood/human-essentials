@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Product drive participants",
-        subtitle: "Businesses and individuals who host or contribute to product drives.",
+        subtitle: "Record who hosted or contributed to a drive.",
         actions: capture {
           if @product_drive_participants.any?
             concat essentials_link_button("Export", product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})

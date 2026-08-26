@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Purchases",
-        subtitle: "Essentials bought by #{current_organization.name}.",
+        subtitle: "Record what you bought, what it cost, and where it went.",
         actions: capture {
           if @purchases.any?
             concat essentials_link_button("Export", purchases_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})

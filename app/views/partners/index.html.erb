@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Partner agencies",
-        subtitle: "Organizations that receive essentials from #{current_organization.name}.",
+        subtitle: "Who you distribute to. A partner's group sets what it can request.",
         actions: capture {
           concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
             concat tag.i(nil, class: "bi-upload", aria: {hidden: true})

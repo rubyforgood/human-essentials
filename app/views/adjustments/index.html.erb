@@ -3,7 +3,7 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Inventory adjustments",
-        subtitle: "Manual corrections to inventory levels.",
+        subtitle: "Correct a count by hand when the shelves do not match the system.",
         actions: capture {
           if @adjustments.any?
             concat essentials_link_button("Export", adjustments_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
