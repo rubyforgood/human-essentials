@@ -3,7 +3,15 @@
       subtitle: "Choose the partner you are raising this request on behalf of." do %>
   <%= form_with(url: new_partners_request_path, method: :get, class: "space-y-4") do |form| %>
     <div>
-      <%= form.label :partner_id, "Partner", class: "block text-sm font-medium text-slate-700" %>
+      <%#
+        The select is `required: true`, and it was the only signal -- programmatically required and
+        silently so, which is half of what design.md asks for. The red asterisk is what a sighted
+        reader gets, and simple_form renders it from the `required.html` locale key; this form is
+        `form_with`, so it is written out here to the same markup.
+      %>
+      <%= form.label :partner_id, class: "block text-sm font-medium text-slate-700" do %>
+        Partner <abbr class="required-marker" title="required">*</abbr>
+      <% end %>
       <%= form.collection_select(:partner_id, @requests_info.partners.active, :id, :name,
             {include_blank: "Select a partner", required: true},
             {class: "mt-1.5 #{EssentialsUiHelper::SELECT_CLASSES}"}) %>

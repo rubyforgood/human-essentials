@@ -1508,7 +1508,11 @@ instead, so it kept the exact fault the fix was written for.
 ### Forms: required fields and validation errors
 
 Audit with `pw bin/design/form-validation-audit.js`, which opens every `new` form, reads how its
-required fields are marked, submits it empty and reads what came back.
+required fields are marked, submits it empty and reads what came back — **and opens the four modal
+forms**, which have no route of their own and so had never been audited at all. That gap is how
+`New quantity request` came to carry a `required` select with no visible marker: programmatically
+required, and silently. A modal is checked for marking only; an empty submit in one either navigates
+away or redirects with a flash, so there is no re-rendered form to read.
 
 **Required is stated two ways, and both come from the wrapper.**
 
@@ -1542,9 +1546,24 @@ the server validates and a browser bubble competing with a rendered error is two
 question. Turning it off also removed the only programmatic signal; this puts it back without
 the browser's UI.
 
-**A radio or checkbox group is marked on its `<legend>`, not on each option.** The group is what
-is required. Conditionally required fields — "business or contact name required" — say so in
-words and carry no `aria-required`, because none of them is required on its own.
+**A requirement that belongs to a group is marked on its `<legend>`, not on each control.** The
+group is what is required — a radio set, or a pair where either one will do.
+
+**A conditional requirement goes on the legend too, and is said once.** It used to be written into
+both labels — `Phone (phone or email required)`, and the same sentence again on Email — which made
+the *accessible name* of the field carry the condition and repeat it. The label names the field; the
+legend states the rule; neither field carries `aria-required`, because neither is required alone.
+
+```erb
+<fieldset>
+  <legend>Contact details <span>— a phone number or an email address is required</span></legend>
+  <%= f.input :phone, label: "Phone" %>
+  <%= f.input :email, label: "Email" %>
+</fieldset>
+```
+
+`form-validation-audit` reads a legend for any field now, not only for a radio or checkbox, so a
+condition stated there still counts as marked.
 
 **An error belongs to its field, not only to a summary.**
 

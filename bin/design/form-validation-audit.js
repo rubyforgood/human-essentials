@@ -38,8 +38,17 @@ async function signIn(page, email) {
   await page.waitForURL((u) => !u.pathname.includes("/sign_in"), { timeout: 60000 });
 }
 
+// A form in an open <dialog> is the one the reader is looking at, and it is not inside <main> on
+// every page. Modal forms had never been audited at all: the runner only visited `new` routes, and
+// a modal lives on an index page behind a button.
+//
+// The lookup is written out in both readers rather than shared: these are handed to
+// `page.evaluate`, which serialises the function and drops everything it closed over, so a helper
+// from this scope would simply be undefined in the browser.
 const readForm = () => {
-  const form = document.querySelector("main form:not([action*='sign_out'])");
+  const openDialog = [...document.querySelectorAll("dialog")].find((d) => d.open);
+  const scope = openDialog || document.querySelector("main") || document.body;
+  const form = scope.querySelector("form:not([action*='sign_out'])");
   if (!form) return { noForm: true };
   const fields = [...form.querySelectorAll("input:not([type=hidden]):not([type=submit]):not([type=button]), select, textarea")]
     .filter((f) => f.offsetParent !== null);
@@ -54,18 +63,26 @@ const readForm = () => {
   //   participants need a business name OR a contact name, and say so in words. Prose containing
   //   "required" counts as marked, and correctly has no aria-required, because none of those
   //   fields is required on its own.
+  const legendFor = (f) => {
+    const fs = f.closest("fieldset");
+    return fs ? fs.querySelector("legend") : null;
+  };
   const markedFor = (f) => {
     const l = f.labels && f.labels[0];
     if (l && (l.querySelector(".required-marker") || /\brequired\b/i.test(l.textContent))) return true;
-    if (f.type === "radio" || f.type === "checkbox") {
-      const lg = f.closest("fieldset") && f.closest("fieldset").querySelector("legend");
-      if (lg && (lg.querySelector(".required-marker") || /\brequired\b/i.test(lg.textContent))) return true;
-    }
+    // Any field in a group, not only a radio or checkbox. A conditional pair -- business name or
+    // contact name -- states the rule on the legend now, because neither field is required alone
+    // and the group is what is. Writing it into both labels made the field's accessible *name*
+    // "Phone (phone or email required)", and said it twice.
+    const lg = legendFor(f);
+    if (lg && (lg.querySelector(".required-marker") || /\brequired\b/i.test(lg.textContent))) return true;
     return false;
   };
   const conditional = (f) => {
     const l = f.labels && f.labels[0];
-    return !!l && /\brequired\b/i.test(l.textContent) && !l.querySelector(".required-marker");
+    if (l && /\brequired\b/i.test(l.textContent) && !l.querySelector(".required-marker")) return true;
+    const lg = legendFor(f);
+    return !!lg && /\brequired\b/i.test(lg.textContent) && !lg.querySelector(".required-marker");
   };
 
   const required = fields.filter((f) => f.required || f.getAttribute("aria-required") === "true");
@@ -93,12 +110,14 @@ const readForm = () => {
 };
 
 const readErrors = () => {
-  const form = document.querySelector("main form:not([action*='sign_out'])");
+  const openDialog = [...document.querySelectorAll("dialog")].find((d) => d.open);
+  const scope = openDialog || document.querySelector("main") || document.body;
+  const form = scope.querySelector("form:not([action*='sign_out'])");
   const fields = form ? [...form.querySelectorAll("input:not([type=hidden]), select, textarea")] : [];
   // `.field-error` is the class the wrapper puts on an inline message. This used to look for
   // `p.text-rose-700`, which stopped matching the moment the message went slate behind a glyph --
   // a check keyed to a colour rather than to the thing it is checking for.
-  const inline = document.querySelectorAll("main p.field-error, main .field_with_errors").length;
+  const inline = scope.querySelectorAll("p.field-error, .field_with_errors").length;
   const invalid = fields.filter((f) => f.getAttribute("aria-invalid") === "true").length;
   // The id points at a span inside the error <p>, and `.field-error` is on the <p>, so walk up.
   // This used to test for a `rose` class anywhere in the ancestry -- keyed to the colour, like
@@ -111,7 +130,7 @@ const readErrors = () => {
       return e && (e.classList.contains("field-error") || e.closest(".field-error"));
     });
   }).length;
-  const summary = [...document.querySelectorAll("main [class*='bg-rose-50'], main [role=alert], [data-flash]")]
+  const summary = [...scope.querySelectorAll("[class*='bg-rose-50'], [role=alert], [data-flash]")]
     .map((e) => e.textContent.replace(/\s+/g, " ").trim()).filter(Boolean)[0];
   return {
     url: location.pathname,
@@ -123,11 +142,36 @@ const readErrors = () => {
 
 const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("admin") ? "super" : "bank");
 
+/*
+ * Modal forms, which the `new`-route sweep above cannot reach: a modal lives on an index page,
+ * behind a button, and its <form> is not on a route of its own. Four of them existed and none had
+ * ever been audited -- which is how "(phone or email required)" sat in a label, making the field's
+ * accessible *name* carry the condition, twice per pair.
+ *
+ * `open` is how the modal is triggered: either a `dialog#open` action carrying an id, or a link
+ * that fetches the form and injects it.
+ */
+const MODALS = [
+  // Triggers verified by opening each one; a modal is not reachable from a route, so there is
+  // nothing to derive them from.
+  { role: "bank", path: "/donations/new", name: "New product drive participant",
+    open: (page) => page.evaluate(() => document.getElementById("new_participant").click()) },
+  { role: "bank", path: "/users", name: "Invite a new user",
+    open: (page) => page.click("[data-dialog-id-param='add-user-modal']") },
+  { role: "bank", path: "/requests", name: "New quantity request",
+    open: (page) => page.click("[data-dialog-id-param='new-request']") },
+  // /partners, because four of the five pages that carry this modal only render its trigger when
+  // the list is empty -- import is for seeding, and Export takes the slot once there is data.
+  { role: "bank", path: "/partners", name: "Import from CSV",
+    open: (page) => page.click("[data-dialog-id-param='csv-import-modal']") },
+];
+
 (async () => {
   const browser = await chromium.launch();
   const users = { super: "superadmin@example.com", bank: "org_admin1@example.com",
                   partner: process.env.PARTNER_EMAIL || "verified@example.com" };
   const rows = [];
+  const modalRows = [];
   const unsubmittable = [];
 
   for (const [role, email] of Object.entries(users)) {
@@ -137,6 +181,22 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     // was never submitted -- which is exactly what /audits/new did.
     page.on("dialog", (d) => d.accept().catch(() => {}));
     await signIn(page, email).catch(() => {});
+    for (const m of MODALS) {
+      if (m.role !== role) continue;
+      try {
+        await page.goto(BASE + m.path, { waitUntil: "domcontentloaded", timeout: 40000 });
+        await page.waitForTimeout(400);
+        await m.open(page);
+        await page.waitForTimeout(900);
+      } catch {
+        modalRows.push({ name: m.name, path: m.path, unreachable: true });
+        continue;
+      }
+      const marking = await page.evaluate(readForm);
+      if (marking.noForm) { modalRows.push({ name: m.name, path: m.path, unreachable: true }); continue; }
+      modalRows.push({ name: m.name, path: m.path, marking });
+    }
+
     for (const t of targets) {
       if (roleFor(t.controller) !== role) continue;
       try {
@@ -205,7 +265,33 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     if (p.length) problems.push({ path: r.path, problems: p });
   }
 
-  console.log(`${rows.length} form(s) submitted empty and re-rendered with errors to check\n`);
+  console.log(`${rows.length} form(s) submitted empty and re-rendered with errors to check`);
+  console.log(`${modalRows.length} modal form(s) opened and checked\n`);
+
+  // Modals are checked for marking only. An empty submit in a modal either navigates away or posts
+  // to an endpoint that redirects with a flash, so there is no re-rendered form to read errors from
+  // -- and driving one would be reporting on a page the reader never sees.
+  const modalProblems = [];
+  for (const r of modalRows) {
+    if (r.unreachable) { modalProblems.push([`${r.name} (${r.path})`, "could not be opened"]); continue; }
+    const m = r.marking;
+    if (m.unmarked) {
+      modalProblems.push([`${r.name} (${r.path})`,
+        `${m.unmarked} required field(s) with no visible marker — programmatically required, silently`]);
+    }
+    if (m.markedNotRequired) {
+      modalProblems.push([`${r.name} (${r.path})`,
+        `${m.markedNotRequired} field(s) marked required that are not`]);
+    }
+    if (m.hasAsterisk && !m.markerStyled) {
+      modalProblems.push([`${r.name} (${r.path})`, "required marker not styled"]);
+    }
+  }
+  if (modalProblems.length) {
+    console.log(`== modal forms — ${modalProblems.length} finding(s)`);
+    modalProblems.forEach(([who, what]) => console.log(`   ${who.padEnd(52)} ${what}`));
+    console.log("");
+  }
   const report = () => {
     if (!unsubmittable.length) return;
     // Always printed, including when there are no findings: a form the probe cannot drive is not
@@ -214,7 +300,8 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     unsubmittable.forEach(([p, why]) => console.log("   " + p.padEnd(40) + why));
   };
 
-  if (!problems.length) { console.log("no findings"); report(); await browser.close(); return; }
+  if (!problems.length && !modalProblems.length) { console.log("no findings"); report(); await browser.close(); return; }
+  if (!problems.length) { report(); await browser.close(); return; }
   const byProblem = {};
   for (const { path, problems: ps } of problems) for (const p of ps) (byProblem[p] ||= []).push(path);
   for (const [p, paths] of Object.entries(byProblem).sort((a, b) => b[1].length - a[1].length)) {

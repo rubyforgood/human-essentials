@@ -5,19 +5,33 @@
 
   <%= render "shared/essentials/card" do %>
     <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
-      <%# The "or" requirements here are conditional (presence: if the other is blank), which
-          simple_form deliberately does not infer, and `required: true` would set the HTML5
-          required attribute and block a valid submission. Stated in the label instead --
-          see docs/design-decisions.md.
+      <%#
+        The "or" requirements here are conditional -- `presence: if the other is blank` -- which
+        simple_form deliberately does not infer, and `required: true` would set the HTML5 attribute
+        and block a submission that is actually valid. So no asterisk and no `aria-required`: neither
+        field is required on its own.
 
-          No asterisk in the text. These four used to write one by hand, which was harmless while
-          the real marker was also a grey glyph and is not now that it is red: two asterisks in
-          two colours, one meaning "required" and one meaning "required unless the other one is
-          filled in". The parenthetical says the condition, which the asterisk never did. %>
-      <%= f.input :business_name, label: "Business name (business or contact name required)" %>
-      <%= f.input :contact_name, label: "Contact name (business or contact name required)" %>
-      <%= f.input :phone, label: "Phone (phone or email required)" %>
-      <%= f.input :email, label: "Email (phone or email required)" %>
+        The condition goes on the group's `<legend>`, which is where design.md already puts a
+        requirement that belongs to a group rather than to a control. It used to be written into
+        both labels, so the accessible name of the field was "Phone (phone or email required)" --
+        a screen reader read the whole condition as the field's *name*, and read it again on the
+        next field. Now the label names the field, the legend states the rule, and it is said once.
+      %>
+      <fieldset class="mb-5">
+        <legend class="mb-2 text-sm font-semibold text-slate-900">
+          Name <span class="font-normal text-slate-600">&mdash; a business name or a contact name is required</span>
+        </legend>
+        <%= f.input :business_name, label: "Business name" %>
+        <%= f.input :contact_name, label: "Contact name" %>
+      </fieldset>
+
+      <fieldset class="mb-5">
+        <legend class="mb-2 text-sm font-semibold text-slate-900">
+          Contact details <span class="font-normal text-slate-600">&mdash; a phone number or an email address is required</span>
+        </legend>
+        <%= f.input :phone, label: "Phone" %>
+        <%= f.input :email, label: "Email" %>
+      </fieldset>
       <%= f.input :address, label: "Address" %>
       <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
 

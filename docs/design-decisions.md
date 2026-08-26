@@ -4471,3 +4471,56 @@ repair. The calendar page itself is unaffected, since it reads distributions rat
 **The generalisable part:** in an event-sourced app the model is not the source of truth, and
 `destroy` is not how you remove things — use the service that publishes the compensating event. And
 be suspicious of a delete that moves no numbers.
+
+
+---
+
+## 2026-08-26 · A conditional requirement belongs to the group, not to both labels
+
+**Area.** `product_drive_participants/_form`, `requests/_new`, `bin/design/form-validation-audit.js`,
+`design.md`.
+
+**Reported.** "(phone or email required)" in the New product drive participant popup does not match
+the design system.
+
+**It was the residue of an earlier decision.** design.md records that four labels on this form once
+wrote an asterisk by hand for their conditional requirements; the asterisks went and *the words
+stayed*. The words were right — the placement was not.
+
+**Measured.** The label is the field's accessible name, so a screen reader announced
+**"Phone (phone or email required)"** as the *name* of the field, and then
+**"Email (phone or email required)"** — the same condition twice, as identification rather than
+instruction. Four fields, two conditions, each said twice.
+
+**Decision.** The condition moves to the group's `<legend>`, which is where design.md already puts a
+requirement belonging to a group rather than a control: *"A radio or checkbox group is marked on its
+`<legend>`, not on each option. The group is what is required."* Neither phone nor email is required
+alone; the pair is. The labels are now `Phone` and `Email`, and the rule is stated once.
+
+The rule in design.md is generalised from "a radio or checkbox group" to "a requirement that belongs
+to a group", because that is what it always meant.
+
+### The audit had a hole exactly where the report was
+
+`form-validation-audit` visited every `new` **route**. A modal has no route — it lives on an index
+page behind a button — so **four modal forms had never been audited**. It opens them now, by
+triggers verified one at a time, since there is nothing to derive them from.
+
+It found two things immediately:
+
+- **`New quantity request`** carried a `required` select with **no visible marker**: programmatically
+  required, silently. Half of what design.md asks for. It has the red asterisk now.
+- **`Import from CSV`** could not be opened from `/product_drive_participants` at all — four of the
+  five pages carrying that modal render its trigger only while the list is **empty**, because Export
+  takes the slot once there is data. Deliberate, and worth knowing; the audit points at `/partners`,
+  which shows it always.
+
+**Two mistakes in the audit change itself**, both caught before they shipped. A shared `formInView()`
+helper referenced from functions handed to `page.evaluate` — which serialises them and drops
+everything they closed over, so it would have been `undefined` in the browser. And `markedFor` still
+only consulted a legend for radios and checkboxes, so the moment the condition moved off the labels
+the audit would have stopped recognising these fields as conditional and said nothing at all.
+
+**Left alone, and pre-existing:** `/partners/family_requests/new` shows no inline error and no
+`aria-invalid` — only a summary. Verified against a stashed tree: it reports identically without any
+of this work.
