@@ -4524,3 +4524,40 @@ the audit would have stopped recognising these fields as conditional and said no
 **Left alone, and pre-existing:** `/partners/family_requests/new` shows no inline error and no
 `aria-invalid` — only a summary. Verified against a stashed tree: it reports identically without any
 of this work.
+
+
+---
+
+## 2026-08-26 · The family request form's real defect was not the one reported
+
+**Area.** `partners/family_requests/_list`, `bin/design/form-validation-audit.js`.
+
+**The audit said** `/partners/family_requests/new` showed no inline error and no `aria-invalid` —
+only a summary. Both halves were wrong, and one of them was the audit's own.
+
+**It had not been submitted.** Every child's checkbox is `check_box_tag "child-#{id}", child.active,
+child.active` — **pre-checked**. So the submit did not post: it opened the confirmation dialog,
+*"You are ordering 2,500 total items. Are you sure?"*. The audit's summary selector matched that
+text and concluded the form had shown an error and failed to attach it to a field. It reports the
+case honestly now — "the submit opened a confirmation instead" — and no longer reads anything inside
+an open `<dialog>` as an error summary.
+
+**There is nothing field-level for the error to attach to.** The form's only inputs are 36
+checkboxes; the failure — "every line needs an item selected and a quantity greater than zero" — is
+about the set, not about a control. A callout is the right place for it, and `aria-invalid` on 36
+checkboxes would be a lie.
+
+**The real defect was next to it, and no audit was looking.** Every checkbox's label was
+`<span class="sr-only">Include This Child?</span>` — **36 identical accessible names**. A screen
+reader user tabbing the table hears the same six words thirty-six times with nothing to say which
+child. axe does not flag duplicate labels, so nothing caught it.
+
+It is the defect `row_actions` already records — *"names the row, so a screen reader hears 'More
+actions for distribution 24' rather than 'button' once per row"* — and takes the same fix: the label
+names the child. Verified: **36 checkboxes, 36 distinct names**.
+
+**A flaky spec of my own, found in the same pass.** The calendar's Back-navigation spec failed about
+once in twenty: it called `page.go_back` straight after asserting the rendered class, so the
+assertions raced the popstate handler. It waits for the history entry first now — ten consecutive
+runs clean, and the full suite green. Worth recording because the failure was invisible in isolation
+and only appeared in a full run, which is exactly the shape of thing that gets re-run and forgotten.
