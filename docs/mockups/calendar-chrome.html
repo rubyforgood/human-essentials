@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The calendar is wearing someone else's clothes</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; white-space:nowrap; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+
+  /* AS SHIPPED -- FullCalendar's own defaults, copied exactly from the computed styles. */
+  .fc-now { display:flex; gap:0; }
+  .fc-now button {
+    background: rgb(44,62,80); border: 1px solid rgb(44,62,80); color: #fff;
+    font-size: 16px; font-weight: 400; height: 38.78px; padding: 0 .75rem; border-radius: 4px;
+  }
+  .fc-now button + button { border-radius: 0; }
+  .fc-now .grp { display:flex; }
+  .fc-now .grp button:first-child { border-radius: 4px 0 0 4px; }
+  .fc-now .grp button:last-child  { border-radius: 0 4px 4px 0; }
+  .fc-now .title { font-size: 28px; font-weight: 400; color: var(--color-slate-900); }
+  .fc-now .grid { border: 1px solid rgb(221,221,221); border-radius: 0; }
+  .fc-now .grid th { font-size: 16px; font-weight: 700; padding: .4rem; border: 1px solid rgb(221,221,221); }
+  .fc-now .grid td { height: 3.2rem; border: 1px solid rgb(221,221,221); vertical-align: top; padding: .25rem; }
+  .fc-now .daynum { font-size: 16px; color: var(--color-slate-500); }
+  .fc-now .ev { border: 1px solid var(--color-slate-900); border-radius: 3px; font-size: 13.6px; padding: 0 .2rem; }
+
+  /* PROPOSED -- the same restyling select2 already gets, in the app's tokens. */
+  .fc-fix .title { font-size: 1rem; font-weight: 600; color: var(--color-slate-900); }
+  .fc-fix .grid { border: 1px solid var(--color-slate-200); border-radius: .75rem; overflow: hidden; }
+  .fc-fix .grid th {
+    font-size: .75rem; font-weight: 600; color: var(--color-slate-500);
+    padding: .5rem; border-bottom: 1px solid var(--color-slate-200); background: var(--color-slate-50);
+  }
+  .fc-fix .grid td { height: 3.2rem; border: 1px solid var(--color-slate-200); vertical-align: top; padding: .3rem; }
+  .fc-fix .daynum { font-size: .75rem; font-weight: 600; color: var(--color-slate-500); }
+  .fc-fix .ev {
+    display: block; border-radius: .375rem; font-size: .75rem; padding: .1rem .35rem;
+    background: var(--color-brand-50); color: var(--color-brand-700); border: 1px solid var(--color-brand-100);
+  }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The calendar is wearing FullCalendar's clothes</h1>
+    <p class="max-w-3xl text-slate-600">
+      And the design system already says what to do about that. <strong>The font is not actually
+      different</strong> &mdash; the calendar renders in Figtree, same as everything else. What reads
+      as a different typeface is <strong>16px at weight 400 against the app's 14px at 500</strong>.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Measured, on the running page</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Thing</th><th>Calendar</th><th>The app</th></tr></thead>
+      <tbody>
+        <tr><td>Today / prev / next</td><td><span class="pill pill-bad">filled <code>rgb(44,62,80)</code></span></td><td>white, <code>slate-300</code> border</td></tr>
+        <tr><td>&nbsp;&nbsp;radius</td><td>4px</td><td>8px</td></tr>
+        <tr><td>&nbsp;&nbsp;text</td><td>16px / 400</td><td>14px / 500</td></tr>
+        <tr><td>&nbsp;&nbsp;height</td><td>38.8px and 39.8px</td><td>38px</td></tr>
+        <tr><td>Month title</td><td>28px / 400</td><td>page <code>h1</code> is 24px / <strong>700</strong>; a card title is 16px / 600</td></tr>
+        <tr><td>Mon Tue Wed…</td><td>16px / 700</td><td>a table heading is 12px / 600, <code>slate-500</code></td></tr>
+        <tr><td>Day number</td><td>16px</td><td>body text is 14px</td></tr>
+        <tr><td>Grid lines</td><td><span class="pill pill-bad"><code>rgb(221,221,221)</code></span> — not in the palette</td><td><code>slate-200</code></td></tr>
+        <tr><td>Grid corners</td><td>0</td><td>card is 16px</td></tr>
+        <tr><td>Event chip</td><td>transparent, 1px slate-900 outline, 3px radius</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-sm text-slate-600">
+      <strong>Three filled dark buttons</strong> is the loudest part. The app allows a page
+      <em>one</em> primary, and this page's real action &mdash; "Copy calendar URL" &mdash; is a
+      quiet secondary sitting above three navy blocks that are only there to move the month.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The design system already answers this</h2>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>design.md:</strong> <em>"select2 is restyled, not vendored as-is. It ships a 28px-tall,
+      <strong>4px-radius, 16px-text</strong> control in a <code>#aaa</code> border, and the app's is
+      38px, 8px and 14px in <code>slate-300</code>&hellip; beside a plain input all six read as a
+      control from a different application."</em></p>
+      <p><strong>Those are the same numbers.</strong> 4px radius, 16px text, a grey outside the
+      palette. FullCalendar and select2 are the same vintage and ship the same defaults; select2 got
+      the treatment and the calendar never did.</p>
+      <p>There is a second precedent pointing the other way, and it is worth naming: <strong>Litepicker
+      was deleted</strong> rather than restyled, because native <code>&lt;input type="date"&gt;</code>
+      does that job. That is the test &mdash; <em>is there a native control for this?</em> For a month
+      grid of events there is not, so this is the select2 case, not the Litepicker case.</p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Side by side</h2>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="demo fc-now space-y-3">
+        <p class="text-xs font-semibold text-rose-800">As shipped</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="title">August 2026</span>
+          <div class="flex gap-2">
+            <button type="button">today</button>
+            <span class="grp"><button type="button">&lsaquo;</button><button type="button">&rsaquo;</button></span>
+          </div>
+        </div>
+        <table class="grid w-full" style="border-collapse: collapse">
+          <thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+          <tbody>
+            <tr><td><span class="daynum">3</span></td><td><span class="daynum">4</span><div class="ev">9a Silver Spring</div></td><td><span class="daynum">5</span></td><td><span class="daynum">6</span><div class="ev">2p Northside</div></td><td><span class="daynum">7</span></td></tr>
+            <tr><td><span class="daynum">10</span></td><td><span class="daynum">11</span></td><td><span class="daynum">12</span><div class="ev">11a Hilltop</div></td><td><span class="daynum">13</span></td><td><span class="daynum">14</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="demo fc-fix space-y-3">
+        <p class="text-xs font-semibold text-emerald-800">Restyled, as select2 was</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="title">August 2026</span>
+          <div class="flex items-center gap-2">
+            <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700">Today</button>
+            <div class="flex items-center gap-1">
+              <button type="button" aria-label="Previous month" class="inline-flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600"><i class="bi-chevron-left"></i></button>
+              <button type="button" aria-label="Next month" class="inline-flex size-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600"><i class="bi-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+        <table class="grid w-full" style="border-collapse: collapse">
+          <thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+          <tbody>
+            <tr><td><span class="daynum">3</span></td><td><span class="daynum">4</span><div class="ev">9:00 Silver Spring</div></td><td><span class="daynum">5</span></td><td><span class="daynum">6</span><div class="ev">14:00 Northside</div></td><td><span class="daynum">7</span></td></tr>
+            <tr><td><span class="daynum">10</span></td><td><span class="daynum">11</span></td><td><span class="daynum">12</span><div class="ev">11:00 Hilltop</div></td><td><span class="daynum">13</span></td><td><span class="daynum">14</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">What to do about it</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      A &mdash; Restyle it, exactly as select2 was
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      Unlayered rules in <code class="rounded bg-slate-200 px-1 text-xs">application.css</code>
+      mapping FullCalendar's chrome onto the app's tokens: the buttons become
+      <code class="rounded bg-slate-200 px-1 text-xs">:secondary</code> at the 38px control height,
+      prev/next become icon buttons, the title becomes a card title, the grid takes
+      <code class="rounded bg-slate-200 px-1 text-xs">slate-200</code>, and events become brand chips.
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> it is the convention the app already has for a vendored widget, with the same numbers. Nothing new to decide.</li>
+      <li><strong>For:</strong> no behaviour changes, so no new specs for month navigation, event loading or the iCal feed.</li>
+      <li><strong>For:</strong> FullCalendar's classes are stable and documented, and the app already overrides two of them.</li>
+      <li><strong>Against:</strong> a CSS contract with a dependency. If FullCalendar 7 renames a class the styling silently reverts &mdash; which is exactly what already happened here, since nobody restyled it when select2 was done.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">B &mdash; Replace it with a month grid of our own</h3>
+    <p class="max-w-3xl text-slate-600">A table of days, built from the same components as everything else.</p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> matches by construction rather than by re-theming &mdash; the argument that removed Litepicker.</li>
+      <li><strong>For:</strong> drops four jspm pins.</li>
+      <li><strong>Against:</strong> FullCalendar is doing real work here — event layout within a day, overflow when a day is full, the list view on mobile, timezone handling through Luxon. That is a lot to rebuild for a page most banks open occasionally.</li>
+      <li><strong>Against:</strong> the Litepicker argument does not transfer. There it was <em>native input versus dependency</em>; here there is no native month grid.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Replace the toolbar only, keep the grid</h3>
+    <p class="max-w-3xl text-slate-600">
+      Turn off FullCalendar's header (<code class="rounded bg-slate-200 px-1 text-xs">headerToolbar: false</code>)
+      and render Today, prev, next and the month title as ordinary app components that call
+      <code class="rounded bg-slate-200 px-1 text-xs">calendar.today()</code>, <code class="rounded bg-slate-200 px-1 text-xs">.prev()</code>, <code class="rounded bg-slate-200 px-1 text-xs">.next()</code>.
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the buttons stop being a CSS contract and become real components — they cannot silently revert on a library upgrade.</li>
+      <li><strong>For:</strong> it fixes the loudest part, the three navy buttons, with the least CSS.</li>
+      <li><strong>Against:</strong> the grid still needs the token pass from A, so this is A plus extra work rather than an alternative to it.</li>
+      <li><strong>Against:</strong> more JavaScript to own, and the button state (is "prev" available?) becomes ours to track.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A, with the toolbar part of C.</strong></p>
+      <p>Restyle the grid in CSS, because that is what the app already does for a vendored widget and
+      the numbers are literally the same. But take the <strong>toolbar</strong> out of FullCalendar's
+      hands entirely, because that is where the damage is most visible and where a CSS contract is
+      least worth having &mdash; three buttons are cheap to own, and they stop being able to revert.</p>
+      <p><strong>Not B.</strong> The Litepicker precedent is about replacing a dependency with a
+      <em>native control</em>, and there is no native month grid. Rebuilding event layout, day
+      overflow, the mobile list view and timezone handling is a great deal of work to make a page
+      look right that a token pass fixes.</p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">And the subtitle</h2>
+    <p class="max-w-3xl text-slate-600">
+      "Scheduled distributions, by day." is the subtitle rule failing in its own words: it
+      defines the page's title back at you. It also undersells what the page is for &mdash; the one
+      action on it is <strong>Copy calendar URL</strong>, which subscribes a real calendar
+      application to this feed.
+    </p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="demo">
+        <p class="text-xs font-semibold text-rose-800">Now</p>
+        <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Pick ups &amp; deliveries</p>
+        <p class="mt-1 text-sm text-slate-600">Scheduled distributions, by day.</p>
+      </div>
+      <div class="demo">
+        <p class="text-xs font-semibold text-emerald-800">Proposed</p>
+        <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Pick ups &amp; deliveries</p>
+        <p class="mt-1 text-sm text-slate-600">See when each distribution is due out, or subscribe to this calendar from your own.</p>
+      </div>
+    </div>
+    <p class="max-w-3xl text-sm text-slate-600">
+      Verified before writing it: the button copies a
+      <code class="rounded bg-slate-200 px-1 text-xs">hashed_calendar_path</code>, which is an iCal
+      feed a calendar application can subscribe to.
+    </p>
+  </section>
+</div>
+</body>
+</html>
