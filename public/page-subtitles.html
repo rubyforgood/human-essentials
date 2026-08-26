@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a page subtitle is for</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; white-space:nowrap; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .pill-info { background: var(--color-slate-200);   color: var(--color-slate-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The subtitle is defining the title</h1>
+    <p class="max-w-3xl text-slate-600">
+      <strong>All 40 index pages carry a subtitle, and about 20 of them are a dictionary definition
+      of their own heading.</strong> "Requests" / "Essentials requested by partner agencies" is the
+      clearest case: anyone who can read the title already knows that, and anyone who cannot is not
+      helped by it.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Side by side</h2>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="demo">
+        <p class="text-xs font-semibold text-rose-800">Now</p>
+        <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+        <p class="mt-1 text-sm text-slate-600">Essentials requested by partner agencies.</p>
+      </div>
+      <div class="demo">
+        <p class="text-xs font-semibold text-emerald-800">Proposed</p>
+        <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Requests</h2>
+        <p class="mt-1 text-sm text-slate-600">Review what partners have asked for. Fulfill a request to turn it into a distribution.</p>
+      </div>
+    </div>
+    <p class="max-w-3xl text-sm text-slate-600">
+      The second one tells you the <strong>next step</strong>, and it is true: "Fulfill request"
+      posts to <code class="rounded bg-slate-200 px-1 text-xs">start</code> and redirects to
+      <code class="rounded bg-slate-200 px-1 text-xs">new_distribution_path</code>. I checked before
+      writing it.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The app already has four good ones. They have something in common.</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <tbody>
+        <tr><td><code>/reports</code></td><td>"12 reports. Most take a date range and export to CSV."</td><td>says how they work</td></tr>
+        <tr><td><code>/events</code></td><td>"Every event that changed inventory, most recent first."</td><td>says the ordering</td></tr>
+        <tr><td><code>/admin/account_requests</code></td><td>"Organizations waiting to be let in, and the ones already decided."</td><td>says the scope</td></tr>
+        <tr><td><code>/</code></td><td>"What needs your attention at X."</td><td>says the purpose</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-slate-600">
+      Every one of them says something <strong>the title cannot</strong> — how the page works, how it
+      is ordered, what is in it, or why you are here. None of them defines a word.
+    </p>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <h2 class="text-2xl font-semibold">Three rules to choose between</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Delete it when it only defines the title</h3>
+    <p class="max-w-3xl text-slate-600">
+      GOV.UK's position: if a description does not help someone do the task, do not write one. About
+      twenty subtitles would simply go.
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> nothing to maintain, nothing to translate, no filler. The strongest option for an experienced user, who never reads it.</li>
+      <li><strong>Against:</strong> this app is used by volunteers at 200+ non-profits, and "kit", "product drive", "inventory audit", "base item" and "barcode item" are domain jargon. A first-time user loses their only in-place explanation.</li>
+      <li><strong>Against:</strong> the header's shape changes: `items-end` with no subtitle, `items-start` with one, so removing them alters the layout of twenty pages.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">
+      B &mdash; It says what you do here
+      <span class="pill pill-good">recommended</span>
+    </h3>
+    <p class="max-w-3xl text-slate-600">
+      Verb-led, pointing at the next step. Where the noun is genuinely jargon, the sentence carries
+      the gloss <em>and</em> the action rather than only the gloss &mdash; "Items bundled to go out as
+      one. Allocate a kit to change how many are on hand."
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> useful to both readers. A new user learns what the page is for; an experienced one is pointed at the action they came for.</li>
+      <li><strong>For:</strong> it matches what the app's four good subtitles already do, so it is writing down a pattern rather than inventing one.</li>
+      <li><strong>For:</strong> it cannot repeat the pagination line, which already says "Showing 1&ndash;15 of 119 requests". A scope sentence would duplicate that, and there is a standing decision here that two places saying overlapping things is worse than either alone.</li>
+      <li><strong>Against:</strong> it is judgement, not a formula. Twenty sentences have to be written and each can be argued with.</li>
+      <li><strong>Against:</strong> a verb-led subtitle can drift out of true if the action moves. "Fulfill a request" is only right while that button exists.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; It states the scope, like the summary cards do</h3>
+    <p class="max-w-3xl text-slate-600">
+      design.md already says this for a card: <em>"the title names the thing; the subtitle states the
+      scope"</em>, and <code class="rounded bg-slate-200 px-1 text-xs">essentials_stats_scope</code>
+      renders "13 donations, over the last 30 days".
+    </p>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> consistent with a convention the app already has, and derivable rather than written &mdash; one helper could do all forty.</li>
+      <li><strong>Against, and it is fatal:</strong> the pagination footer already says the scope on every one of these pages. Putting it in the subtitle too is the exact duplication that removed the <code class="rounded bg-slate-200 px-1 text-xs">&lt;tfoot&gt;</code> totals from <code class="rounded bg-slate-200 px-1 text-xs">/distributions</code>.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What B looks like across the app</h2>
+    <p class="max-w-3xl text-slate-600">
+      Four stay as they are, because they already pass the test. The rest are rewritten.
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Page</th><th>Now</th><th></th><th>Proposed</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>/requests</code></td>
+          <td class="text-slate-500">Essentials requested by partner agencies.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Review what partners have asked for. Fulfill a request to turn it into a distribution.</td>
+        </tr>
+        <tr>
+          <td><code>/distributions</code></td>
+          <td class="text-slate-500">Essentials sent out to partner agencies.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Everything on its way to a partner, or already delivered.</td>
+        </tr>
+        <tr>
+          <td><code>/donations</code></td>
+          <td class="text-slate-500">Essentials coming in to X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Record what comes in and where it is stored.</td>
+        </tr>
+        <tr>
+          <td><code>/purchases</code></td>
+          <td class="text-slate-500">Essentials bought by X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">What you bought, what it cost, and where it went.</td>
+        </tr>
+        <tr>
+          <td><code>/transfers</code></td>
+          <td class="text-slate-500">Inventory moved between your own storage locations.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Move stock between your own storage locations.</td>
+        </tr>
+        <tr>
+          <td><code>/adjustments</code></td>
+          <td class="text-slate-500">Manual corrections to inventory levels.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Correct a count by hand when inventory does not match the shelf.</td>
+        </tr>
+        <tr>
+          <td><code>/audits</code></td>
+          <td class="text-slate-500">Counts that set inventory levels at a storage location.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Count a storage location and set its inventory to what you found.</td>
+        </tr>
+        <tr>
+          <td><code>/kits</code></td>
+          <td class="text-slate-500">Bundles of items distributed as a single unit.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Items bundled to go out as one. Allocate a kit to change how many are on hand.</td>
+        </tr>
+        <tr>
+          <td><code>/items</code></td>
+          <td class="text-slate-500">What X stocks, and how much of it.</td>
+          <td><span class="pill pill-good">useful</span></td>
+          <td class="font-medium text-slate-900">Unchanged — it already says what is here rather than what an item is.</td>
+        </tr>
+        <tr>
+          <td><code>/vendors</code></td>
+          <td class="text-slate-500">Businesses X buys essentials from.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Who you buy from. Add a vendor before recording a purchase.</td>
+        </tr>
+        <tr>
+          <td><code>/donation_sites</code></td>
+          <td class="text-slate-500">Places where the public can drop off donations for X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Drop-off points the public can bring donations to.</td>
+        </tr>
+        <tr>
+          <td><code>/product_drives</code></td>
+          <td class="text-slate-500">Collection drives run for X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Collection drives, what each one brought in, and who took part.</td>
+        </tr>
+        <tr>
+          <td><code>/storage_locations</code></td>
+          <td class="text-slate-500">Where X physically keeps inventory.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Unchanged — it answers where, which the title does not.</td>
+        </tr>
+        <tr>
+          <td><code>/partners</code></td>
+          <td class="text-slate-500">Organizations that receive essentials from X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">The agencies you distribute to, and what each is approved to request.</td>
+        </tr>
+        <tr>
+          <td><code>/manufacturers</code></td>
+          <td class="text-slate-500">Companies that donate product directly to X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Companies that donate product directly, rather than through a drive.</td>
+        </tr>
+        <tr>
+          <td><code>/barcode_items</code></td>
+          <td class="text-slate-500">Barcodes that map a scan to an item and a quantity.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Unchanged — a scan mapping to a quantity is not obvious from the title.</td>
+        </tr>
+        <tr>
+          <td><code>/users</code></td>
+          <td class="text-slate-500">People who can sign in to X.</td>
+          <td><span class="pill pill-bad">definition</span></td>
+          <td class="font-medium text-slate-900">Who can sign in, and what each of them is allowed to do.</td>
+        </tr>
+        <tr>
+          <td><code>/reports</code></td>
+          <td class="text-slate-500">N reports. Most take a date range and export to CSV.</td>
+          <td><span class="pill pill-good">useful</span></td>
+          <td class="font-medium text-slate-900">Unchanged — this is the model the rest should follow.</td>
+        </tr>
+        <tr>
+          <td><code>/events</code></td>
+          <td class="text-slate-500">Every event that changed inventory, most recent first.</td>
+          <td><span class="pill pill-good">useful</span></td>
+          <td class="font-medium text-slate-900">Unchanged — “most recent first” is something the title cannot say.</td>
+        </tr>
+        <tr>
+          <td><code>/admin/account_requests</code></td>
+          <td class="text-slate-500">Organizations waiting to be let in, and the ones already decided.</td>
+          <td><span class="pill pill-good">useful</span></td>
+          <td class="font-medium text-slate-900">Unchanged — it states the scope, both halves of it.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">The rule, for design.md</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A subtitle must say something the title cannot.</strong> If the best you can write is
+      a definition of the heading, either the word is obvious and the subtitle should go, or the word
+      is jargon and the sentence should carry the gloss <em>and</em> what to do with it.</p>
+      <p>By page kind:</p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong>Index</strong> &mdash; what you do here, verb-led. Never the scope: the pagination line already says that.</li>
+        <li><strong>Show</strong> &mdash; identify this record. Source and date, name, location and status. <strong>Twelve pages already do this and none of them changes.</strong></li>
+        <li><strong>New and edit</strong> &mdash; what submitting will do. Most already do: "Record essentials coming in to X."</li>
+      </ul>
+      <p><strong>The test:</strong> read the title, then the subtitle. If the subtitle told you nothing
+      you did not already have, it is filler.</p>
+    </div>
+  </section>
+</div>
+</body>
+</html>
