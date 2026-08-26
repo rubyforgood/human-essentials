@@ -4190,3 +4190,39 @@ confirming all three were caught in that file. Then reverted.
 **Alternative rejected.** One helper generating every subtitle from the model name. It is how the
 definitions got there in the first place: a formula can produce a grammatical sentence but not a
 useful one.
+
+
+---
+
+## 2026-08-26 · Copy review, and the partner portal was half done
+
+**Area.** Five partner portal pages, `design.md` (new **Reviewing copy** section), `process.doc`.
+
+**What showing the portal found.** The bank side was complete and the portal was not. **Three pages
+carried no subtitle at all** — `partners/requests/new`, `partners/individuals_requests/new` and the
+profile form — one defined "family", and the dashboard's subtitle was the partner's own name while
+the *bank* dashboard says "What needs your attention at X".
+
+That is the failure mode worth writing down rather than the five sentences: **the portal is a second
+product with a second audience**, an agency volunteer rather than a bank one, and sweeping the bank
+side feels like finishing. No audit distinguishes them, so a person has to. `Reviewing copy` in
+design.md now says so, and `process.doc` carries it as step 6a.
+
+**Removing the org name from the partner dashboard was checked, not assumed.** It is also in the top
+chrome, so the subtitle was the second place it appeared and the page loses nothing.
+
+**The review order matters, and the first step is proving the audit ran.** `0 finding(s) across 0
+check(s)` is a pass and is also exactly what a broken audit prints. Planting `Please`, `below` and
+`insane` and confirming all three are caught *in the file you edited* takes ten seconds and is the
+only thing separating "clean" from "not looking". Same principle as every other proxy this branch has
+found, applied to words.
+
+**Two things flagged and deliberately not changed**, because they are judgement calls about voice
+rather than defects, and they belong to whoever owns the product's tone:
+
+- **First and second person are mixed.** The app says "your bank", "you serve", then "Edit **my**
+  organization" and "Edit my profile". Both conventions are defensible; having both is not.
+- **"Need help?" is a question where every other title is a noun or verb phrase.**
+
+Neither is wrong enough to change unilaterally, and both are now in the review table in design.md so
+the next person meets the question rather than the inconsistency.
