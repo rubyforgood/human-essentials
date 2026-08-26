@@ -47,6 +47,11 @@ branch, not from an ideal.
  └────────┴──────────────┬──────────────────────────────────────────────────────────────┘
                          ▼
  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+ │  6a. REVIEW COPY              If it has words: audit, prove the audit ran, then      │
+ │                               the judgement half by hand.                            │
+ └───────────────────────┬──────────────────────────────────────────────────────────────┘
+                         ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────┐
  │  7. SPECS + FULL SUITE        System specs for anything a browser renders.           │
  │                               Then every audit, then the whole suite.                │
  └───────────────────────┬──────────────────────────────────────────────────────────────┘
@@ -136,6 +141,14 @@ were checking the wrong thing.
 
 Watch for the three quiet failures: a **rule that does not apply** because a utility beat it, a
 **spec that passes for the wrong reason**, and a **mockup that lies**.
+
+### 6a. Review copy, if the change has words in it
+Copy is reviewed like code and in a fixed order — see **Reviewing copy** in `design.md`. The short
+version: run `copy-audit.rb`, then **plant a violation to prove it read your files**, then do the
+judgement half by hand (a subtitle that defines its title, a button whose verb is not what happens,
+a claim that is not true of the code). Verify claims by opening the view, not by grepping — an empty
+grep and a missing feature look identical. And check the **partner portal separately**: it is a
+second product with a second audience, and sweeping the bank side feels like finishing.
 
 ### 7. Specs and the full suite
 System specs for anything a browser renders — request specs do not run JavaScript, and three classes

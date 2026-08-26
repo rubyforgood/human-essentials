@@ -1204,6 +1204,53 @@ Eight are left as they were, because they already passed: `/reports` says how th
 says the purpose, and the four admin lists say which population they cover — something their
 one-word titles cannot.
 
+### Reviewing copy
+
+Copy is reviewed like code, and in this order — the mechanical checks first, because they are free
+and they are the ones that catch what review misses.
+
+**1. Run the audit, then prove it looked at your files.**
+
+```bash
+ruby bin/design/copy-audit.rb        # six checks: 2.4.4, 1.3.3, gendered, ableist, please, shouting
+```
+
+`0 finding(s) across 0 check(s)` is the pass — the second number counts checks *with* findings. It is
+also exactly what a broken audit prints, so **plant a violation and confirm it is caught in your
+file**, then revert:
+
+```
+"Please review this, using the button below. It is insane."
+   -> politeness filler 1, sensory instruction 1, ableist wording 1
+```
+
+That took ten seconds and is the only thing that distinguishes "clean" from "not looking". A
+`copy-audit` run that reports zero because it never read the file is the same failure as an audit
+reading a proxy.
+
+**2. Then the judgement half, which no audit can do.**
+
+| Check | Fails when |
+| --- | --- |
+| **[Subtitles](#subtitles) say something the title cannot** | It is a definition of the heading. "Requests / Essentials requested by partner agencies". |
+| **[Buttons take a verb](#copy)**, and it is the verb that will happen | "Calculate product totals" when nothing is calculated on press. |
+| **Every claim is true of the code** | "…and what each of them is allowed to do" on a page whose table is Name and Email. |
+| **One voice** | First and second person in the same product: "your bank", "you serve", then "Edit **my** organization". |
+| **A title is a phrase, not a question** | "Need help?" where every other page is a noun or verb phrase. |
+
+**3. Verify a claim by reading the code that implements it, not by grepping for it.**
+
+Writing twenty-two subtitles produced two sentences that were false, and both read perfectly well.
+The rule that catches them is to open the view and look. And **an empty grep is not evidence of
+absence** — three of mine were wrong file paths, most memorably looking for a donation site field in
+`donations/_form.html.erb` when the file is `_donation_form.html.erb`. A missing feature and a
+mistyped path produce identical output.
+
+**4. Check the partner portal separately.** It is a second product with a second audience — an agency
+volunteer rather than a bank one — and it is easy to sweep the bank side and call the app done. When
+this review ran, the bank side was complete and the portal still had **three pages with no subtitle
+at all** and one defining "family". The audits do not distinguish the two, so a person has to.
+
 ### What the audit taught, twice
 
 `copy-audit.rb` reads **copy**, not source, and it knows a **link** from a **heading**. Both cost
