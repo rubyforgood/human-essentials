@@ -650,6 +650,18 @@ had been written here for weeks with nothing enforcing it, which is how the four
 that something else is wrong — usually a section of the page wanting an action of its own. Do
 not tuck it above a table; see the tabs rule below.
 
+<a id="import-and-export"></a>
+**Import is always offered; Export only when there is something to export.** The five index pages
+that take a CSV — vendors, donation sites, storage locations, product drive participants, partners —
+all carry `Import X`, `Export`, `New X` in that order, primary last.
+
+Four of them used to make Import the `else` of the Export branch, so **the moment a bank had one
+row the importer became unreachable**. Taking on a batch is not something that only happens to an
+empty list. `/partners` had it right and the rest match it now.
+
+Export stays conditional: an empty CSV is not a useful file, and the import modal carries its own
+template, so there is nothing an empty export would give you.
+
 <a id="menu-button"></a>
 **A menu of related actions is `shared/essentials/menu_button`.** A labelled trigger with a chevron,
 `:secondary` at the normal control height, and a `role="menu"` panel — the page-level counterpart to

@@ -6,6 +6,34 @@ RSpec.describe "Vendor", type: :system, js: true do
     sign_in(user)
   end
 
+  # Import used to be the `else` of the Export branch, so the moment a bank had one vendor the
+  # importer became unreachable -- on four index pages out of five. Taking on a batch of vendors is
+  # not something that only happens to an empty list.
+  describe "the CSV importer" do
+    it "is offered whether or not there are vendors already" do
+      visit vendors_path
+      expect(page).to have_button(text: /Import vendors/)
+      # Nothing to export yet, so that button is not there -- an empty CSV is not a useful file, and
+      # the import modal carries its own template.
+      expect(page).to have_no_link("Export")
+
+      create(:vendor, organization: organization, business_name: "Costco")
+      visit vendors_path
+
+      expect(page).to have_button(text: /Import vendors/)
+      expect(page).to have_link("Export")
+    end
+
+    it "opens the import modal from a populated list" do
+      create(:vendor, organization: organization, business_name: "Costco")
+      visit vendors_path
+
+      find("[data-dialog-id-param='csv-import-modal']").click
+
+      expect(page).to have_css("dialog[open]")
+    end
+  end
+
   context "When a user views the index page" do
     before(:each) do
       @second = create(:vendor, business_name: "Bcd")
