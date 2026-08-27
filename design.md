@@ -366,6 +366,14 @@ Two things that bite:
   chevron inside the right padding, so a select needs `pr-10` where a text input needs `px-3` —
   and it needs `.select-chevron` to turn the browser's own arrow off. Seven selects in the app
   had been given the text-input constant and kept the native arrow because of it.
+- **`essentials_inline_select_classes` for a select in a toolbar**, not `SELECT_CLASSES`. The form
+  constant carries `mt-1.5 block w-full` — layout for a field stacked under its label — which in a
+  row of buttons means full width, a stray top margin, and 38px beside neighbours at 30px. The
+  inline helper is the same surface and the same `.select-chevron`, sized from `BUTTON_SIZES`, and
+  `CONTROL_SURFACE_CLASSES` is the look the two share with no size or layout in it. Measured on the
+  calendar: month select, year select, Today, Prev and the view switcher all 30px, tops and bottoms
+  flush. `pr-10` at both sizes on purpose — the chevron is positioned from the right edge rather
+  than from the padding, so trimming the padding slides the text under it instead of moving it.
 
 <a id="control-height"></a>
 **Every button variant carries a border**, transparent where it is not meant to be seen. `border`
@@ -400,9 +408,22 @@ three buttons are cheap to own outright, which means a library upgrade cannot si
 action and this is the shape the pager already uses for the same job.
 
 <a id="calendar-views"></a>
-**Two views, Month and Week, and the choice lives in the URL.** There was no view switching at all
-before this — FullCalendar's default toolbar carries none unless asked, and the only view decision
-was made *for* the reader by window width.
+**Three views — Month, Week and List — and the choice lives in the URL.** There was no view
+switching at all before this: FullCalendar's default toolbar carries none unless asked, and the only
+view decision was made *for* the reader by window width.
+
+<a id="one-label-one-view"></a>
+**One label means one view.** This shipped as two buttons, where "Week" meant `dayGridWeek` above
+992px and `listWeek` below it — and because the list was *also* the narrow default, Week arrived
+already pressed, `switchView` returned early on `name === requestedView`, and the button did nothing
+at all. Month worked, so only Week looked broken. Measured at 1440, 1200, 1000, 991, 900, 768 and
+375: every width below 992 was inert. **992 is not an unusual window** — a 1440 screen at 150%
+scaling is 960 CSS px, and any window that is not maximised can land under it.
+
+The mapping was the mistake rather than the threshold. A list is a *third view*, not a narrow
+rendering of a week, so it is a third button. The regression test was run against the old controller
+and fails there on `.fc-dayGridWeek-view`, which is the only way to know a regression test regresses
+anything.
 
 **No Day view, and that is a measurement.** Over a year: **22 days** had any distribution, mean
 **1.9**, and **13 of those 22 held exactly one**. A day view is twenty-four rows of hour axis to say
@@ -430,8 +451,43 @@ view — otherwise the rule delivers two thirds of its own sentence. The paramet
 not the library's view names, so a shared link does not carry FullCalendar's vocabulary or break
 when it changes.
 
-**A narrow window defaults to the week, as a list** — which is what the page already fell back to
-before there was any choice about it. Month is still offered there; it is squeezed, not broken.
+**A narrow window defaults to the List** — which is what the page already fell back to before there
+was any choice about it. Month and Week are both still offered there and both now work; they are
+squeezed, not broken.
+
+<a id="calendar-jump"></a>
+**Month and year are two native selects.** Prev and Next move one step, so before this March next
+year was **seven clicks** away and last December five, with no other route to either.
+
+**Not `<input type="month">`**, which is the tidier control and the one this nearly picked. It is a
+real picker in Chrome and Edge and degrades to a bare text box expecting `2026-08` in desktop
+Firefox and Safari — and only Chromium was installed where this was measured, so the cross-browser
+claim could not be made at all. Two selects need no such claim. It is the same argument that
+[deleted Litepicker](#date-range-picker): native controls over a widget.
+
+**The year list is bounded by the organization's own distributions**, `MIN(issued_at)` to
+`MAX(issued_at)`, always including this year so a new bank with nothing in it still gets a usable
+control. Prev and Next can walk off either end, and `ensureYearOption` inserts the year in sorted
+position rather than leaving the select naming a year the calendar is not on.
+
+**The selects follow the calendar as well as drive it.** Today, Prev, Next and a view change all
+move the range, and a control reading August while the grid shows October is worse than no control.
+They sync from `view.currentStart`, so a week straddling two months names the one it *starts* in —
+pick March, land on the week of 23 February, and the selects say February. That is the honest
+answer: the week really is mostly February.
+
+**The month on screen is deliberately not in the URL, although the view is.** Prev, Next and Today
+move the range without touching it, so putting only the select's jumps there would make two thirds
+of the page's navigation linkable and one third not. If position should be shareable it should be
+shareable however you arrived at it.
+
+**Prev and Next are labelled from the controller**, because they step a month in the month view and
+a week in the other two — one fixed "Previous month" is wrong in two views out of three. The visible
+word stays inside the accessible name, which is what 2.5.3 asks.
+
+**A date *range* is not on this page.** The grid draws a month or a week; hand it "3 March to 19
+August" and there is nothing to render. `/distributions` is the same data as a list and already
+carries the [range filter](#date-range-picker), so the subtitle links to it instead.
 
 Three things this taught that the select2 note does not cover:
 

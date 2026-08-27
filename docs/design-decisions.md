@@ -4591,3 +4591,60 @@ markup. All four pages then rendered with **no actions container at all**. `erb_
 broken version; what caught it was loading the page and counting the buttons. A comment in the wrong
 syntax is invisible to a linter checking the template, because the problem is that the code is not
 template.
+
+## 2026-08-27 — Calendar navigation: three views, and two selects rather than a month input
+
+**A label that means two things is the bug.** The calendar shipped with Month and Week, where Week
+rendered a `dayGridWeek` above 992px and a `listWeek` below it. That alone would only have been
+confusing; what made it a defect is that the list was *also* the default below 992, so Week arrived
+with `aria-pressed="true"`, `switchView` returned early on `name === this.requestedView`, and the
+button did nothing. Month still worked, which is why it read as "the Week button is broken" rather
+than "the view switcher is broken".
+
+Rejected: **raising or lowering the 992px threshold.** It moves the dead zone rather than removing
+it, and there is no width at which "one label, two views" becomes true. Rejected: **dropping the
+list entirely** so Week always means the grid — the list is the better view on a phone and was the
+only thing that worked there. Taken: **List is a third button.** A list is a different view, not a
+narrow rendering of a week.
+
+**The regression test was run against the old controller** before being trusted, and fails there on
+`.fc-dayGridWeek-view`. A regression test that has never seen the regression is a guess.
+
+**Two native selects rather than `<input type="month">`.** The single input is the tidier control
+and was the first choice. It is a real picker in Chrome and Edge, and in desktop Firefox and Safari
+it degrades to a plain text box expecting `2026-08` — worse than a select, and silently so for a
+subset of users. Only Chromium is installed in the environment this was measured in, so **the
+cross-browser claim could not be made at all**, and this branch has been caught before asserting
+behaviour it verified by proxy rather than by measurement. Two selects need no such claim, and it is
+the same argument that deleted Litepicker: native controls over a widget.
+
+Rejected: **a clickable title opening a month grid**, the Notion and Linear pattern. It keeps the
+toolbar clean, but a heading that is secretly a button has to be discovered, and it is a popover to
+build, keyboard-handle and test — work two `<select>`s do not need.
+
+**The year list is bounded by the data**, `MIN(issued_at)` to `MAX(issued_at)` plus the current
+year. Offering 1990 to a bank founded in 2023 is noise. Because Prev and Next can still walk past
+either end, `ensureYearOption` inserts the year in sorted position — a select naming a year the
+calendar is not on is a lie, and the alternative was silently showing whichever option happened to
+be first.
+
+**The month on screen is deliberately not in the URL, although the view is.** The temptation is
+obvious: design.md already argues that a view belongs in the URL so it can be linked and gone back
+from. But Prev, Next and Today move the range without touching the URL, so putting only the select's
+jumps there would make two thirds of the page's navigation linkable and one third not — and pushing
+history on every Prev would flood the back button. If position should be shareable, it should be
+shareable however you arrived at it. That is a larger change than this one.
+
+**A date range does not belong on this page**, which is the half of the request that got a "no".
+The grid draws a month or a week; given "3 March to 19 August" there is nothing for it to render,
+and honouring it would mean changing what the page *is*. `/distributions` is the same data as a list
+and already carries the range filter — this was the only index page without one, because it is not
+an index. The subtitle links to it rather than growing a filter the calendar cannot honour.
+
+**A select in a toolbar needed a new constant.** Every other select in the app is a form field:
+`SELECT_CLASSES` carries `mt-1.5 block w-full`, which in a row of buttons means full width, a stray
+top margin and 38px against neighbours at 30px. Rather than override three utilities at the call
+site, `CONTROL_SURFACE_CLASSES` now holds the shared look with no size or layout in it, and
+`essentials_inline_select_classes` sizes from `BUTTON_SIZES`. Measured after: all five toolbar
+controls 30px, tops and bottoms flush.
+
