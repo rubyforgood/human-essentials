@@ -2,3 +2,10 @@
   render(partial: 'partners/children/list', locals: { children: @children })
 ) %>
 $("#filterrific_results").html("<%= js %>");
+
+<%# Filterrific replaces only the results; without this the Reset button keeps claiming there is
+    no search to reset while the list below it shows a filtered one. %>
+<% reset = escape_javascript(
+  render(partial: 'partners/reset_search', locals: { filterrific: @filterrific })
+) %>
+$("#filterrific_reset").replaceWith("<%= reset %>");

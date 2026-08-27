@@ -40,7 +40,8 @@ const VIEWS = {
 };
 
 export default class extends Controller {
-  static targets = ["grid", "title", "viewButton", "monthSelect", "yearSelect", "stepButton"];
+  static targets = ["grid", "title", "viewButton", "monthSelect", "yearSelect", "stepButton",
+                    "todayButton", "todayReason"];
 
   connect() {
     this.onPopState = this.applyViewFromUrl.bind(this);
@@ -78,6 +79,7 @@ export default class extends Controller {
       datesSet: (info) => {
         if (this.hasTitleTarget) this.titleTarget.textContent = info.view.title;
         this.syncJumpTo(info.view.currentStart);
+        this.markToday(info.view);
       }
     });
 
@@ -93,7 +95,44 @@ export default class extends Controller {
   }
 
   today() {
+    if (this.todayIsShowing) return;
     this.calendar.today();
+  }
+
+  /*
+   * Today is the only control on this toolbar that can already be at its destination. The page
+   * opens on today, so on arrival it does nothing -- which is the state you meet it in, and a
+   * control that does nothing when you meet it reads as broken.
+   *
+   * design.md settled this shape for pagination: a control that leads nowhere stays **drawn and
+   * disabled**, because a control set that changes width moves a target out from under the cursor.
+   * That argument is stronger here than there, because Today flips on *every* Prev and Next rather
+   * than only at the ends -- hiding it would shift its neighbours constantly.
+   *
+   * `aria-disabled`, not `disabled`. FullCalendar's own toolbar does disable it -- measured on
+   * 6.0.1, `disabled` is true while the view holds today and false once you leave -- but a real
+   * `disabled` drops the button out of the tab order, so the toolbar's number of tab stops would
+   * change as you navigate. That is the same moving-target defect, one level up. The reason rides
+   * along as sr-only text, which design.md asks of every unavailable action.
+   */
+  markToday(view) {
+    if (!this.hasTodayButtonTarget) return;
+
+    // UTC, because the calendar runs in UTC -- this has to agree with the cell it tints, and a
+    // local-time answer would disagree with it for part of the day.
+    const now = new Date();
+    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const showing = today >= view.currentStart.getTime() && today < view.currentEnd.getTime();
+
+    this.todayButtonTarget.setAttribute("aria-disabled", String(showing));
+    if (this.hasTodayReasonTarget) {
+      this.todayReasonTarget.textContent = showing ? ", you are already viewing today" : "";
+    }
+  }
+
+  get todayIsShowing() {
+    return this.hasTodayButtonTarget &&
+      this.todayButtonTarget.getAttribute("aria-disabled") === "true";
   }
 
   previous() {

@@ -54,10 +54,25 @@ module EssentialsUiHelper
   end
 
   # A link styled as a button. Use for navigation (GET).
-  def essentials_link_button(label, path, variant: :primary, size: :md, icon: nil, **html_attrs)
+  #
+  # `available: false` renders a non-interactive `<span>` rather than an `<a>`, because **a link
+  # cannot be disabled** -- it stays focusable and clickable by keyboard and announces nothing.
+  # This is the treatment pagination's ends already get, and the styling hangs off the attribute so
+  # markup and appearance cannot disagree. `reason:` is sr-only text saying why, which design.md
+  # asks of every unavailable action -- "greyed out" on its own leaves the reader guessing.
+  def essentials_link_button(label, path, variant: :primary, size: :md, icon: nil,
+    available: true, reason: nil, **html_attrs)
     classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
+    body = safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+
+    unless available
+      content = safe_join([body, (tag.span(reason, class: "sr-only") if reason)].compact)
+      return tag.span(content, class: "#{classes} cursor-not-allowed opacity-60",
+        aria: {disabled: true}, **html_attrs)
+    end
+
     link_to path, class: classes, **html_attrs do
-      safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+      body
     end
   end
 

@@ -26,7 +26,7 @@
         </div>
         <div class="pb-2"><%= render_filterrific_spinner %></div>
         <div class="pb-1">
-          <%= link_to "Reset search", reset_filterrific_url, class: essentials_button_classes(variant: :ghost, size: :md) %>
+          <%= render "partners/reset_search", filterrific: @filterrific %>
         </div>
       </div>
     <% end %>

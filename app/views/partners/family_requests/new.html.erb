@@ -34,7 +34,7 @@
         <%= f.label :search_active, "Active children only", class: "text-sm text-slate-700" %>
       </div>
       <div class="flex items-center gap-2 pb-1">
-        <%= essentials_link_button "Reset search", reset_filterrific_url, variant: :ghost, size: :md %>
+        <%= render "partners/reset_search", filterrific: @filterrific %>
         <%= render_filterrific_spinner %>
       </div>
     </div>

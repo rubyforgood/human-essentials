@@ -4676,3 +4676,74 @@ Not changed here, because which view a width defaults to is a design decision an
 a preview before it changes one. The fix is not a different number: it is asking the *container* how
 much room it has, which makes the question answerable rather than guessed.
 
+## 2026-08-27 — Controls that are inert on arrival, and whether disabling one is defensible
+
+The calendar's Today did nothing when pressed. It is not broken: measured in all three views, it
+returns home every time after Prev or Next. The page opens on today, so on arrival it is already at
+its destination — and that is the state a reader meets it in. **A control that does nothing when you
+meet it reads as broken whatever the cause**, which is the second time this branch has shipped that
+experience from two unrelated causes.
+
+**"Is disabling it industry standard?" — genuinely split, and worth stating honestly.**
+
+| | |
+| --- | --- |
+| **FullCalendar 6.0.1**, the library in use | **Disables it.** Measured by rendering its own default toolbar: `disabled` is `true` while the view holds today and `false` once you leave. Replacing its toolbar with ours is how the behaviour was lost. |
+| Google Calendar, Outlook, Apple Calendar, Notion | Keep Today **always enabled**; pressing it on today is a no-op. |
+
+So "industry standard" does not settle it. What does settle it is that the app already has a rule:
+[pagination's ends](../design.md#pagination) stay **drawn and disabled**, explicitly because a
+control set that changes width moves a target out from under the cursor. Today flips on *every* Prev
+and Next rather than only at the ends, so hiding it — the "Clear all" precedent, which was the other
+candidate — would shift its neighbours constantly.
+
+**"Disabled buttons are not ideal" is right, and the objection is about a different thing.** The
+case against them, as usually argued, is about *gating*: a Submit disabled until a form validates
+hides what the reader has to fix, so they are stuck with no way forward. Three things separate this
+from that case:
+
+- **These gate nothing.** No task is blocked by a dimmed Today; the reason it is unavailable — you
+  are looking at today — is already on screen in the title and the tinted cell.
+- **`aria-disabled`, not `disabled`.** The button keeps its place in the tab order and is still
+  announced. A real `disabled` (what FullCalendar uses) would change the toolbar's number of tab
+  stops as you navigate, which is the moving-target defect again, one level up. Verified: the button
+  is still focusable, and Playwright's actionability check treats it as disabled, so the semantics
+  reach tooling.
+- **The reason is said out loud**, as sr-only text on the control — `"Today, you are already viewing
+  today"`, cleared to `"Today"` when live. "Greyed out with no explanation" is most of the
+  complaint, and it costs one span to answer.
+
+axe reports **0 violations** across 156 pages with the dimmed button in place; 1.4.3 exempts
+inactive components, and the treatment is the `opacity: 0.6` the pagination ends already use.
+
+**It ships disabled from the server.** The state is knowable before any JavaScript runs — the page
+always opens on today — so rendering it enabled and dimming it on connect would put a frame of "this
+looks available" in front of every reader.
+
+**Two things came with it that were not the reported bug.**
+
+**Today was not marked at all in the list view.** FullCalendar sets `fc-day-today` on the list row,
+but the app's `--fc-today-bg-color` only reaches day *cells*: measured, the row painted
+`rgba(0, 0, 0, 0)` and its header plain white, identical to every other day. The list is the default
+view on a phone, so on a phone nothing said which day was today and the Today button was the only
+thing that could — which cuts directly against removing it. Fixed with the same brand-50 / brand-700
+pair the grids use.
+
+**Three "Reset search" buttons had the identical shape** — partner children, families and family
+requests, inert until something is searched for. Gating them server-side was not enough on its own:
+filterrific's AJAX replaces only `#filterrific_results`, so the first version stayed dimmed and
+claiming there was no search while the list underneath showed a filtered one. Measured: typing cut
+86 rows to 82 and the button never moved. That is a worse bug than the one being fixed, so the
+button moved into a partial with an id and the three `.js.erb` responses re-render it.
+
+The predicate has one subtlety worth keeping: **an unchecked box is not a search**. Every filter on
+those forms is a text field or a 0/1 checkbox, so `"0"` and `0` count as empty alongside `""` and
+`nil`. Without that, `?filterrific[search_active]=0` — a box the reader unticked — read as an active
+search and Reset offered itself for a search nobody had made. There is a spec for exactly that.
+
+**Rejected: removing Today.** The month and year selects can now get you home, so it is no longer
+the only route, but that is two interactions instead of one and it requires knowing today's date —
+which is precisely what someone pressing Today does not want to think about. Once the button is
+honest about its state it is doing real work in both states: live, it takes you home; dimmed, it
+tells you that you are already there.
+

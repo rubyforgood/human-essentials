@@ -203,6 +203,69 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_select("calendar_year", selected: (issued_at.year + 1).to_s)
     end
 
+    # Today is the one control here that can already be at its destination: the page opens on today,
+    # so on arrival it has nowhere to go. design.md's pagination rule covers it -- a control that
+    # leads nowhere stays drawn and disabled, because a set that changes width moves a target out
+    # from under the cursor.
+    #
+    # `aria-disabled` rather than `disabled`, so the button keeps its place in the tab order.
+    # FullCalendar's own toolbar uses a real `disabled` here; measured on 6.0.1 it reports
+    # disabled=true while the view holds today and false once you leave.
+    it "dims Today while today is already on screen, in every view" do
+      %w[month week list].each do |view|
+        visit "#{schedule_distributions_path}?view=#{view}"
+        expect(page).to have_css("[data-calendar-target='title']")
+
+        button = page.find("[data-calendar-target='todayButton']")
+        expect(button["aria-disabled"]).to eq("true"), "expected Today to be dimmed in the #{view} view"
+        # The reason travels with it, which is what design.md asks of an unavailable action.
+        expect(button.text).to include("already viewing today")
+      end
+    end
+
+    it "brings Today back to life once you navigate away, and takes you home" do
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='title']")
+      home = page.find("[data-calendar-target='title']").text
+
+      click_on "Next"
+
+      expect(page).to have_no_css("[data-calendar-target='title']", text: home)
+      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='false']")
+      # No longer claiming you are already here.
+      expect(page.find("[data-calendar-target='todayButton']").text).to eq("Today")
+
+      click_on "Today"
+
+      expect(page).to have_css("[data-calendar-target='title']", text: home)
+      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='true']")
+    end
+
+    # It ships dimmed from the server, so there is no frame in which it looks available before the
+    # controller connects.
+    it "renders Today dimmed before any JavaScript runs" do
+      # A request spec would be the natural home for this, but the button only exists on this view.
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='true']")
+    end
+
+    # FullCalendar puts fc-day-today on the list row, but --fc-today-bg-color only reaches day
+    # cells, so the list -- the default view on a phone -- marked today nowhere at all. Measured
+    # before the fix: rgba(0, 0, 0, 0).
+    it "marks today in the list view" do
+      visit "#{schedule_distributions_path}?view=list"
+      expect(page).to have_css(".fc-list")
+
+      expect(page).to have_css(".fc-list-day.fc-day-today .fc-list-day-cushion")
+      # The painted colour, not the class -- the class was there before the fix and painted nothing.
+      background = page.evaluate_script(<<~JS)
+        getComputedStyle(
+          document.querySelector(".fc-list-day.fc-day-today .fc-list-day-cushion")
+        ).backgroundColor
+      JS
+      expect(background).to eq("rgb(238, 242, 255)")
+    end
+
     # Prev and Next move a month in the month view and a week in the other two, so one fixed
     # "Previous month" would be wrong in two views out of three.
     #
