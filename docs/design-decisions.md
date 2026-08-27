@@ -4873,3 +4873,63 @@ Sunday`, or `August 26, 2026 | August 26, 2026`. The library's defaults are the 
 renders two different things. A heading that reads in a different order is a smaller problem than
 one that says the same thing twice, so this is recorded rather than fixed.
 
+## 2026-08-27 — The partner pages, and a recommendation I had to withdraw
+
+Five defects on `/partners/2` and `/profiles/2/edit`, all measured at 1440px. Four had one answer.
+The fifth is the interesting one, because my first recommendation was wrong.
+
+**The service-area card: recommended A, built B.** Asked where "See zipcodes" should live, I offered
+a link inside the Zipcodes stat card (A) or a Service-area card of its own (B), and recommended A on
+proximity — the affordance sitting on the number it opens — dismissing B as "a whole card for one
+link". Pressed on *why*, I went and looked at what else could go in the card, which I should have
+done before recommending.
+
+There are **two** answers to "where does this partner serve" on that page, and they are different
+data: the counties the partner **declares** (`Partners::ServedArea`, with the share of their clients
+in each) and the zipcodes their families **actually live in**
+(`families.pluck(:guardian_zip_code).uniq`). Measured, the declared half sat at **y=2733** inside the
+profile block and the observed half at **y=206** as a metric — **2,527px apart**, in two visual
+languages, with nothing relating them. B is the only option that puts them side by side, and that
+comparison is the whole point: *they say two counties; their families come from thirteen zipcodes.*
+
+So B, and A was only right for how far I had looked. It also swept up a defect that was not in the
+report: the declared-counties table carried **no class at all** — a bare unstyled `<table>` where the
+app has `data-table`.
+
+**The modal was not a modal problem.** `#see-zipcodes` rendered at `top: 0`; a native `<dialog>` is
+centred by the browser's own `margin: auto`, and this one sat inside a `space-y-6` container whose
+spacing rule replaced those margins. `.modal-surface` now pins `margin: auto` in the shared partial
+with `!important`, because the container's selector is three class levels to the rule's one. Fixed
+in the partial rather than the call site on purpose: five of the six dialogs were fine only by
+where they happened to sit.
+
+**Two mistakes of my own worth recording, because a linter caught neither.**
+
+The status-pill change first went in as an ERB comment **nested inside an ERB output tag** — a
+`<%# … %>` between two arguments of a `<%= render … %>`. That is a syntax error and the page 500'd.
+`erb_lint` passed on it. This is the *second* time on this branch: the first was an ERB comment
+inside a `capture { }` block, which is Ruby rather than template. The rule that would have caught
+both: **an ERB tag can never appear inside another ERB tag** — if a comment needs to sit among Ruby
+arguments it is a `#` comment, and otherwise it goes above the call.
+
+And the Service-area card indexed `impact_metrics[:family_zipcodes_list]` while the controller sets
+`@impact_metrics` **only for partners that are not uninvited**. I had guarded on
+`@partner.profile.present?`, which an uninvited partner satisfies. Eight specs failed, all from that
+one nil — and the way to know they were all mine was to stash the change and re-run: baseline **47
+examples, 0 failures**. The partial defaults its own local now, because a partial that raises on a
+nil local is a trap for the next caller.
+
+**Two action zones in one card.** "Edit details" sat at the end of the field list and "Manage users"
+below a divider, 63px apart, both at the bottom of "Partner details". Both are card actions and the
+card header is where this app puts them — "Prior distributions" on the same page already did.
+
+**Edit partner profile.** The heading used the page gutter and the form used `mx-5`, so the cards hung
+12px left of their own title. The action row was rendered twice. Its buttons were 36px rather than 38
+because they were raw utility strings with no `border` — the exact defect design.md records — sitting
+0px apart because the row had no `gap`. And `bi-sliders` marked **10 of the 13** sections, which is
+decoration that reads as meaning. One row, at the end, from the helper, and no icon.
+
+**Kept: "Save progress".** It saves without leaving, which on a thirteen-section form is the
+difference between a form you can put down and one you must finish in a sitting. It is the quiet
+button and the primary is last.
+

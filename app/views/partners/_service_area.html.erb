@@ -1,0 +1,73 @@
+<%#
+  Where a partner serves, declared and observed side by side.
+
+  Two different answers to one question used to live at opposite ends of this page. The counties
+  come from the partner's own profile (`Partners::ServedArea`, with the share of their clients in
+  each); the zipcodes are derived from the families they have actually registered. A bank comparing
+  the two is the point -- "they say two counties, their families come from thirteen zipcodes" -- and
+  that comparison was impossible when the halves were 2,527px apart.
+
+  Locals: partner, impact_metrics
+%>
+<%
+  # Defensive on both: the caller guards, but a partial that raises on a nil local is a trap for
+  # the next caller. An uninvited partner reaches neither.
+  served_areas = Partners::ServedArea.includes(:county).where(partner_profile: partner.profile)
+  zipcodes = (impact_metrics || {})[:family_zipcodes_list] || []
+%>
+<%= render "shared/essentials/card", title: "Service area",
+      actions: (zipcodes.any? ? capture {
+        concat(button_tag(type: "button",
+          class: essentials_button_classes(variant: :secondary, size: :sm),
+          data: {action: "click->dialog#open", dialog_id_param: "see-zipcodes"}) do
+            safe_join([tag.i(nil, class: "bi-geo-alt", aria: {hidden: true}), "See zipcodes"], " ")
+          end)
+      } : nil) do %>
+  <div class="grid gap-6 sm:grid-cols-2">
+    <div>
+      <h3 class="text-sm font-semibold text-slate-900">Counties they serve</h3>
+      <p class="mt-1 text-xs text-slate-500">From this partner's profile.</p>
+      <% if served_areas.any? %>
+        <table class="data-table mt-3">
+          <caption>Counties <%= partner.name %> serves, and the share of their clients in each</caption>
+          <thead>
+            <tr>
+              <th scope="col">County</th>
+              <th scope="col" class="percent">Clients</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% served_areas.each do |area| %>
+              <% next if area.county.blank? %>
+              <tr>
+                <td><%= area.county.name %></td>
+                <td class="percent"><%= area.client_share %>%</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="mt-3 text-sm italic text-slate-500">No counties recorded yet.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-semibold text-slate-900">Where their families live</h3>
+      <p class="mt-1 text-xs text-slate-500">From the families they have registered.</p>
+      <p class="mt-3 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+        <%= number_with_delimiter(zipcodes.size) %>
+      </p>
+      <p class="text-sm text-slate-600"><%= "zipcode".pluralize(zipcodes.size) %></p>
+    </div>
+  </div>
+<% end %>
+
+<% if zipcodes.any? %>
+  <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Zipcodes their families live in" do %>
+    <ul class="grid grid-cols-3 gap-1 text-sm text-slate-700 sm:grid-cols-4">
+      <% zipcodes.each do |zipcode| %>
+        <li class="tabular-nums"><%= zipcode %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>

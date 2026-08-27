@@ -395,6 +395,22 @@ Two things that bite:
   flush. `pr-10` at both sizes on purpose — the chevron is positioned from the right edge rather
   than from the padding, so trimming the padding slides the text under it instead of moving it.
 
+<a id="page-header-status"></a>
+**A status goes on the title line, not in `actions`.** `status:` on the page header renders the pill
+beside the `<h1>`. The partner page used to pass its pill *into* `actions`, where a pill among
+buttons reads as a button that has been greyed out — and `actions` is documented as at most three,
+exactly one primary, which a status is none of. A status belongs to the thing, which is where
+GitHub, Linear and Stripe put it.
+
+<a id="modal-centring"></a>
+**A modal keeps `margin: auto` whatever it is rendered inside.** `.modal-surface` on the dialog,
+with `!important`. A native `<dialog>` is centred by the browser's own auto margins, and a spacing
+container replaces them: measured on the partner page, `top: 0` and `margin: 0px 464px 24px` against
+a healthy modal's `339.5px 336px`. Proven by toggling `space-y-6` on the parent with the dialog
+open — **0, then 453 centred, then 0** — in the top layer throughout. The `!important` is required
+because `.space-y-6 > :not([hidden]) ~ :not([hidden])` is three class-level selectors to this rule's
+one. Five of the app's six dialogs were correct only by accident.
+
 <a id="control-height"></a>
 **Every button variant carries a border**, transparent where it is not meant to be seen. `border`
 is 1px top and bottom, so without it a `:primary` is 36px next to a 38px `:secondary`. Measured

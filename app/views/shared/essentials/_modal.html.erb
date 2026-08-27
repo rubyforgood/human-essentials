@@ -13,7 +13,9 @@
 <dialog id="<%= id %>"
         data-action="click->dialog#closeOnBackdrop close->dialog#restoreFocus"
         aria-labelledby="<%= id %>-title"
-        class="w-full <%= width %> rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40 open:flex open:flex-col">
+        <%# `modal-surface` keeps `margin: auto` whatever this is rendered inside -- see
+            application.css. Without it a dialog inside a `space-y-*` container pins to the top. %>
+        class="modal-surface w-full <%= width %> rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40 open:flex open:flex-col">
   <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
     <div class="min-w-0">
       <h2 id="<%= id %>-title" class="text-base font-semibold text-slate-900"><%= title %></h2>

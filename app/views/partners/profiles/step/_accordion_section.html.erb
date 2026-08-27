@@ -1,4 +1,8 @@
-<%# locals: (f:, partner:, section_id:, section_title:, icon_class:, partial_name:, sections_with_errors:) %>
+<%# locals: (f:, partner:, section_id:, section_title:, partial_name:, sections_with_errors:) %>
+<%#
+  No icon. `bi-sliders` was passed for 10 of the 13 sections, so it marked nothing and only
+  three headings differed -- decoration that reads as meaning and is not.
+%>
 <% open = section_with_errors?(section_id, sections_with_errors) %>
 
 <%#
@@ -8,7 +12,6 @@
 <%= render "shared/essentials/disclosure",
       panel_id: section_id,
       title: section_title,
-      icon: icon_class,
       open: open,
       heading: "h2",
       badge: (open ? essentials_status_pill("Needs attention", tone: :danger, icon: "bi-exclamation-triangle") : nil) do %>

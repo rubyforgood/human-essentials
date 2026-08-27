@@ -158,6 +158,25 @@
   }
 
   /*
+   * A modal centres itself, whatever it is rendered inside.
+   *
+   * A native <dialog> is centred by the browser's own `margin: auto`. Rendered as a child of a
+   * spacing container that margin is replaced, and the dialog pins to the top of the viewport --
+   * measured on the partner page, `top: 0` and `margin: 0px 464px 24px` where a healthy modal sat
+   * at 340 with `339.5px 336px`. Proven by toggling `space-y-6` on the parent with the dialog open:
+   * 0, then 453 centred, then 0 again, in the top layer throughout.
+   *
+   * `!important` because it has to beat `.space-y-6 > :not([hidden]) ~ :not([hidden])`, which is
+   * three class-level selectors to this rule's one. That is the same reason the FullCalendar
+   * overrides carry it: the thing being overridden is more specific by construction, and an overlay
+   * that moves depending on which container it happens to sit in is not a thing to leave to luck.
+   * Five of the app's six dialogs were fine only by accident.
+   */
+  .modal-surface {
+    margin: auto !important;
+  }
+
+  /*
    * Skip link. Same contract as the Bootstrap shell's .skip-link so both halves of
    * the app behave identically for keyboard users during the migration.
    */

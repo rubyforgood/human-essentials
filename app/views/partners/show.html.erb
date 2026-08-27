@@ -1,12 +1,13 @@
 <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# The status rides on the title rather than in `actions` -- see the page_header partial. %>
   <%= render "shared/essentials/page_header",
         title: @partner.name,
         subtitle: "Partner administration.",
         back: {path: partners_path, label: "Back to partner agencies"},
+        status: essentials_partner_status_pill(@partner.status),
         actions: capture {
-          concat essentials_partner_status_pill(@partner.status)
           if !@partner.approved? && can_administrate?
             if @partner.approvable?
               concat essentials_link_button("Approve partner", approve_application_partner_path(@partner),
@@ -32,13 +33,22 @@
     <% end %>
 
     <div class="grid gap-6 lg:grid-cols-2">
-      <%= render "shared/essentials/card", title: "Partner details" do %>
+      <%#
+        Both actions in the card header, which is where every other card on this page puts them --
+        "Prior distributions" below already does. They used to be two zones at the bottom of the
+        card, 63px apart with a divider between them, inventing a second action area inside one
+        card.
+      %>
+      <%= render "shared/essentials/card", title: "Partner details",
+            actions: capture {
+              if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+                concat essentials_link_button("Manage users", partner_users_path(@partner),
+                         variant: :secondary, size: :sm, icon: "bi-people")
+              end
+              concat essentials_link_button("Edit details", edit_partner_path(@partner),
+                       variant: :secondary, size: :sm, icon: "bi-pencil")
+            } do %>
         <%= render "partner_details", partner: @partner %>
-        <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-          <div class="mt-4 border-t border-slate-200 pt-4">
-            <%= essentials_link_button "Manage users", partner_users_path(@partner), variant: :secondary, size: :sm, icon: "bi-people" %>
-          </div>
-        <% end %>
       <% end %>
 
       <%= render "shared/essentials/card", title: "Contact information" do %>
@@ -75,6 +85,19 @@
         </div>
       <% end %>
     </div>
+
+    <%#
+      Where this partner serves, in one place. It was in two: the counties they *declare* sat in a
+      bare unstyled <table> inside the profile block at y=2733, and the zipcodes their families
+      actually live in were a metric at y=206 with a loose button under it -- 2,527px apart, in two
+      visual languages, with nothing relating them. Which is exactly the comparison worth making.
+    %>
+    <%# `@impact_metrics` is nil for an uninvited partner -- the controller skips it -- and an
+        uninvited partner has no families to have zipcodes anyway. Same condition as the metrics
+        header above. %>
+    <% if @impact_metrics.present? && @partner.profile.present? %>
+      <%= render "service_area", partner: @partner, impact_metrics: @impact_metrics %>
+    <% end %>
 
     <%= render "shared/essentials/card", title: "Partner specific information" do %>
       <div id="info-for-partner" class="text-sm text-slate-700">

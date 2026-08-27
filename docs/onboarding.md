@@ -490,6 +490,18 @@ rather than clicking Next twelve times. The year list covers the years your bank
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
 the calendar, so they always say what is on screen.
 
+**A partner's page now says where they serve, in one place.** The counties they told you they cover
+and the zipcodes their families actually live in used to be at opposite ends of the page — the
+counties buried in the profile block, the zipcode count as a figure at the top. They sit side by
+side in a **Service area** card now, because comparing them is the useful part: an agency that says
+it covers two counties whose families come from thirteen zipcodes is worth a conversation.
+
+**The status badge moved onto the partner's name.** It used to sit in the row of buttons, where it
+looked like a button that had stopped working.
+
+**Edit details and Manage users are in the "Partner details" heading** rather than stacked at the
+bottom of the card.
+
 **To search a date range** — "everything between March and August" — use the **Distributions** page
 rather than the calendar: a calendar shows one month or one week at a time, and the list page has a
 date range filter. The calendar's subtitle links straight to it.

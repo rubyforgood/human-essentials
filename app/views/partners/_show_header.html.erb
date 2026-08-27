@@ -19,20 +19,3 @@
     </div>
   <% end %>
 </div>
-
-<% if impact_metrics[:family_zipcodes_list].present? %>
-  <div class="mt-3">
-    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
-            data-action="click->dialog#open" data-dialog-id-param="see-zipcodes">
-      <i class="bi-geo-alt" aria-hidden="true"></i>See zipcodes
-    </button>
-  </div>
-
-  <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Serviced zipcodes" do %>
-    <ul class="grid grid-cols-3 gap-1 text-sm text-slate-700 sm:grid-cols-4">
-      <% impact_metrics[:family_zipcodes_list].each do |zipcode| %>
-        <li class="tabular-nums"><%= zipcode %></li>
-      <% end %>
-    </ul>
-  <% end %>
-<% end %>
