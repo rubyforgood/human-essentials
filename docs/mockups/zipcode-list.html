@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading a list of zipcodes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  :root[data-theme="dark"]{--ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;
+    --line-soft:#282A3D;--ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;
+    --accent-soft:#262551;--defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:60rem;margin:0 auto;padding:4rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2rem,5vw,2.7rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.3rem;font-weight:600;letter-spacing:-.014em;margin:0;text-wrap:balance}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.16rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .opt{margin-top:2.75rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-now{background:var(--defect-soft);color:var(--defect)}
+  .stage{background:var(--sunken);border:1px solid var(--line);border-radius:.8rem;padding:1.4rem;margin:1.2rem 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:.7rem;box-shadow:var(--shadow);
+        font-family:Archivo,sans-serif;padding:1.1rem}
+  .h3{font-size:.88rem;font-weight:600;margin:0 0 .1rem}
+  .cap{font-size:.78rem;color:var(--ink-soft);margin:0 0 .7rem}
+  .runon{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--ink-mid);line-height:2}
+  .gridzips{display:grid;grid-template-columns:repeat(auto-fill,minmax(4.6rem,1fr));gap:.3rem .9rem;
+            font-family:"JetBrains Mono",monospace;font-size:.82rem;font-variant-numeric:tabular-nums}
+  .pills{display:flex;flex-wrap:wrap;gap:.35rem}
+  .pill{font-family:"JetBrains Mono",monospace;font-size:.78rem;background:var(--sunken);
+        border:1px solid var(--line);border-radius:.35rem;padding:.12rem .45rem;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:.84rem;font-family:Archivo,sans-serif}
+  th,td{text-align:left;padding:.35rem .5rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-size:.68rem;color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  td.z{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+  ul.why{margin:.8rem 0 0;padding-left:1.15rem;font-size:.95rem}
+  ul.why li{margin-bottom:.35rem}
+  .facts{width:100%;font-size:.9rem;margin:1rem 0}
+  strong{font-weight:600} a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design options</p>
+    <h1>Thirteen numbers in a row</h1>
+    <p class="lede">
+      You are right that it does not read. Three things are wrong with it, and one of them is a data
+      question rather than a layout one.
+    </p>
+  </header>
+
+  <section class="opt">
+    <div class="opthead"><h2>What it does now</h2><span class="chip chip-now">The problem</span></div>
+    <div class="stage">
+      <div class="card">
+        <p class="h3">Family zipcodes</p>
+        <div class="runon">03699-2535&nbsp; 10422-5916&nbsp; 23501-2681&nbsp; 30365-3667&nbsp; 31905-0295&nbsp; 31987&nbsp; 35180&nbsp; 39286-2981&nbsp; 42796-2650&nbsp; 46367&nbsp; 57817-8600&nbsp; 58178-9679&nbsp; 89212-8048</div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>Ragged widths.</strong> Ten of the thirteen carry a <code>+4</code> suffix and three do not, so <code>31987</code> sits beside <code>03699-2535</code> and the eye has no rail to follow. App-wide: <span class="num">35 of 67</span> family zipcodes carry a +4.</li>
+        <li><strong>No boundaries.</strong> Separated by spaces only, a wrapped run of digits gives nothing to tell where one code ends and the next begins.</li>
+        <li><strong>The sort is invisible.</strong> It is a plain string sort — ascending, as it happens — but nothing on the card says so, so it reads as arbitrary.</li>
+        <li><strong>The <code>+4</code> is over-precise, and it can inflate the count.</strong> A +4 identifies a block; the question is where families live, which is the five-digit ZIP. Two families at <code>50266-1234</code> and <code>50266-5678</code> are in <em>one</em> zipcode and count as two today. It does not happen in this bank's data — checked, zero partners affected — but the count is built to.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <p class="col" style="font-size:.97rem;color:var(--ink-mid)">
+    All three options below drop the <code>+4</code> and sort ascending, which fixes the ragged
+    widths and makes the order self-evident. They differ in what carries the list.
+  </p>
+
+  <section class="opt">
+    <div class="opthead"><h2>A — An aligned grid</h2><span class="chip chip-rec">Recommended</span></div>
+    <div class="stage">
+      <div class="card">
+        <p class="h3">Family zipcodes</p>
+        <p class="cap">Lowest to highest.</p>
+        <div class="gridzips">
+          <span>03699</span><span>10422</span><span>23501</span><span>30365</span><span>31905</span>
+          <span>31987</span><span>35180</span><span>39286</span><span>42796</span><span>46367</span>
+          <span>57817</span><span>58178</span><span>89212</span>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>Columns are the rail.</strong> Every code is five digits in a tabular figure, so they line up and the eye moves down a column instead of hunting along a line. This is what the zipcode dialog already did before the list came out of it.</li>
+        <li><strong>Nothing invented.</strong> No new component, no borders around numbers that are not interactive.</li>
+        <li><strong>The order is stated once</strong> in the caption, in the same <code>text-xs</code> the card's other captions use.</li>
+        <li><strong>Against:</strong> a plain grid is quiet — if you want the zipcodes to carry weight on the page, they will not.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>B — Bordered chips</h2></div>
+    <div class="stage">
+      <div class="card">
+        <p class="h3">Family zipcodes</p>
+        <div class="pills">
+          <span class="pill">03699</span><span class="pill">10422</span><span class="pill">23501</span>
+          <span class="pill">30365</span><span class="pill">31905</span><span class="pill">31987</span>
+          <span class="pill">35180</span><span class="pill">39286</span><span class="pill">42796</span>
+          <span class="pill">46367</span><span class="pill">57817</span><span class="pill">58178</span>
+          <span class="pill">89212</span>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>For:</strong> a border round each code is the clearest possible boundary, and it wraps naturally at any width.</li>
+        <li><strong>Against:</strong> in this app a bordered chip already means something — the filter bar uses them for <em>active filters you can remove</em>. Thirteen chips that do nothing when clicked teach the reader that chips are sometimes inert.</li>
+        <li><strong>Against:</strong> chips do not align, so the ordering is harder to see than in a grid.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>C — A table, with how many families are in each</h2></div>
+    <div class="stage">
+      <div class="card">
+        <p class="h3">Family zipcodes</p>
+        <p class="cap">Most families first.</p>
+        <table>
+          <thead><tr><th>Zipcode</th><th class="n">Families</th></tr></thead>
+          <tbody>
+            <tr><td class="z">50266</td><td class="n">4</td></tr>
+            <tr><td class="z">50310</td><td class="n">3</td></tr>
+            <tr><td class="z">50315</td><td class="n">2</td></tr>
+            <tr><td class="z">50322</td><td class="n">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>For:</strong> it is the only option that says anything <em>about</em> the zipcodes. "Most of their families are in one zipcode" is a different conversation from "they are spread across thirteen", and a bank can only have that conversation with counts.</li>
+        <li><strong>For:</strong> sorting by count makes the order carry information, so it no longer needs explaining.</li>
+        <li><strong>Against, and it is why this is not the recommendation:</strong> in this bank's data <strong>every family is in a different zipcode</strong> — the counts column would read <span class="num">1</span> thirteen times. It earns its place only where families cluster, and here they do not. The figures above are invented to show the shape.</li>
+        <li><strong>Against:</strong> a second table directly under the counties table makes the card read as two tables rather than a fact and its detail.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.7rem">
+      <strong>A, plus dropping the <code>+4</code> everywhere</strong> — in the list, and in the
+      count the card's subtitle quotes. The +4 is the actual cause of the ragged look, and it is
+      answering a more precise question than anyone asked.
+    </p>
+    <p>
+      I would not take <strong>C</strong> now: counts are the more useful display, but on this data
+      they would be a column of ones, and I would rather not build a table that only becomes
+      informative for someone else's bank. It is the right change to make the day a partner's
+      families start clustering.
+    </p>
+  </section>
+</div>
+</body>
+</html>
