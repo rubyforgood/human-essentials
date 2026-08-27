@@ -490,6 +490,12 @@ rather than clicking Next twelve times. The year list covers the years your bank
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
 the calendar, so they always say what is on screen.
 
+**A partner's page now tells you where they serve, in a sentence.** The Service area card opens
+with something like "They serve 4 counties. Their families live in 13 zipcodes" — then lists the
+counties with the share of clients in each, and the zipcodes themselves. Comparing the two is the
+useful part: an agency that says it covers two counties whose families come from thirteen zipcodes
+is worth a conversation.
+
 **A partner's page now says where they serve, in one place.** The counties they told you they cover
 and the zipcodes their families actually live in used to be at opposite ends of the page — the
 counties buried in the profile block, the zipcode count as a figure at the top. They sit side by
