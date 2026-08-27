@@ -5020,3 +5020,39 @@ about a component whose markup I had not read.
 the question *"how is it sorted?"* was fair precisely because nothing said so, and a row of numbers
 with an unstated order reads as arbitrary.
 
+## 2026-08-27 — Form width and placement, which the design system had never said anything about
+
+The new-item and new-kit forms sit in a 672px card with **480px of empty page** beside them, and the
+question was whether they should be centred.
+
+**The first finding is that there was no rule.** Thirty-six views set their own max-width and nothing
+documented what it should be; measured at 1440px they had drifted into 672px and 1120px. So the
+answer had to be established rather than looked up.
+
+**Centring is ruled out by a measurement, not a preference.** Every `h1` in this app sits at 288 — on
+index, show and form pages alike. Centring a form moves its heading with it: 144px at `max-w-4xl`,
+208px at `max-w-3xl`, 256px at `max-w-2xl`. Clicking "New item" from the items list would slide the
+page title a quarter of the screen sideways between two views of the same resource, and the heading
+is the thing the eye returns to.
+
+It is also not the convention it is assumed to be. Centring belongs to standalone pages — sign in,
+checkout, onboarding — which have nothing around them to align against. An in-app form under a page
+heading is left-aligned in GOV.UK, GitHub, Stripe, Shopify and Atlassian. This app's own auth screens
+are not centred either: a split panel with the form at `left 888`.
+
+**So the fix was width, and the honest way to spend width is not to stretch.** Widening the column to
+896px would have given a twenty-character name an 896px box — the space filled by making every field
+grow for no reason. `essentials_field_row` pairs short fields instead: new item has ten fields and
+six are numeric, and paired they fill the row while the form gets **shorter** as well as wider.
+
+**Which is form-dependent, and that is the point.** Items pairs value with quantity and the two
+on-hand thresholds with each other; product drives pairs start date with end date, which is the
+clearest pair there is; vendors and donation sites pair phone with email; storage locations pairs
+square footage with warehouse type. **Kits has three fields and nothing that belongs together, so it
+stays at 672.** A blanket width would have pretended every form is the same shape.
+
+The two conditions are written into the helper because both are load-bearing: short enough that full
+width would be absurd, and *related* enough to read as a pair — the DOM order is the order the
+fields are announced and tabbed, so an invented pairing costs a screen-reader user more than the
+layout saves anyone else.
+

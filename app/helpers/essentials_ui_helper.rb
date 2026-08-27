@@ -65,6 +65,24 @@ module EssentialsUiHelper
     ].compact.join(" ")
   end
 
+  # Two short fields side by side inside a form.
+  #
+  #   <%= essentials_field_row do %>
+  #     <%= f.input :value_in_dollars, label: "Value per item" %>
+  #     <%= f.input :distribution_quantity, label: "Quantity per individual" %>
+  #   <% end %>
+  #
+  # Only for fields short enough that a full-width input would be absurd -- a price, a quantity, a
+  # date -- and only where the two belong together. The DOM order is the order they are read and
+  # filled, so a pair that is not really a pair costs a screen reader user more than it saves anyone.
+  #
+  # It stacks below `sm`, so the row is a row only where there is width for one. The default
+  # `:essentials` wrapper already carries `mb-4`, which is the vertical rhythm; this adds the
+  # horizontal gap and nothing else.
+  def essentials_field_row(&block)
+    tag.div(capture(&block), class: "grid gap-x-4 sm:grid-cols-2")
+  end
+
   # A link styled as a button. Use for navigation (GET).
   #
   # `available: false` renders a non-interactive `<span>` rather than an `<a>`, because **a link

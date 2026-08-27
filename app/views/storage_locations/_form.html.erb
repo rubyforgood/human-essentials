@@ -1,14 +1,17 @@
 <%# The AdminLTE version nested a second simple_form_for inside the first, which is invalid
     HTML -- the inner <form> silently swallowed the outer one's fields. One form here. %>
-<div class="max-w-2xl">
+<div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
   <%= render "shared/essentials/card" do %>
     <%= essentials_form_for form, html: {role: "form"} do |f| %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :address, label: "Address" %>
-      <%= f.input :square_footage, label: "Square footage" %>
-      <%= f.input :warehouse_type, label: "Warehouse type", collection: StorageLocation::WAREHOUSE_TYPES %>
+      <%# Both describe the building rather than address it, and neither fills a line. %>
+      <%= essentials_field_row do %>
+        <%= f.input :square_footage, label: "Square footage" %>
+        <%= f.input :warehouse_type, label: "Warehouse type", collection: StorageLocation::WAREHOUSE_TYPES %>
+      <% end %>
       <%= f.input :time_zone, label: "Time zone", collection: CalendarService.time_zones %>
 
       <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">

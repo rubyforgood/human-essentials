@@ -1,4 +1,10 @@
-<div class="max-w-2xl">
+<%#
+  `max-w-4xl` rather than `max-w-2xl` because the fields below pair: two columns of ~430px each is
+  still a comfortable measure, where one column of 896 would be a name box you could park a bus in.
+  Left-aligned at the page gutter -- see design.md; every h1 in the app sits at the same x, and
+  centring a form would slide its heading 144-256px away from the list it was reached from.
+%>
+<div class="max-w-4xl">
   <%= essentials_error_summary(@item) %>
 
   <%= render "shared/essentials/card" do %>
@@ -9,15 +15,23 @@
       <%= f.input :reporting_category, label: "NDBN reporting category",
             collection: Item.reporting_categories_for_select,
             disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
-      <%= f.input :value_in_dollars, label: "Value per item" %>
-      <%= f.input :distribution_quantity, label: "Quantity per individual" %>
-
-      <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-        <%= f.input :on_hand_minimum_quantity, label: "On hand minimum quantity" %>
-        <%= f.input :on_hand_recommended_quantity, label: "On hand recommended quantity" %>
+      <%= essentials_field_row do %>
+        <%= f.input :value_in_dollars, label: "Value per item" %>
+        <%= f.input :distribution_quantity, label: "Quantity per individual" %>
       <% end %>
 
-      <%= f.input :package_size, label: "Package size", input_html: {min: 0} %>
+      <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+        <%# The two on-hand thresholds are read against each other, so they belong on one line. %>
+        <%= essentials_field_row do %>
+          <%= f.input :on_hand_minimum_quantity, label: "On hand minimum quantity" %>
+          <%= f.input :on_hand_recommended_quantity, label: "On hand recommended quantity" %>
+        <% end %>
+      <% end %>
+
+      <%# Alone in a row, so a package size takes half the width rather than all of it. %>
+      <%= essentials_field_row do %>
+        <%= f.input :package_size, label: "Package size", input_html: {min: 0} %>
+      <% end %>
 
       <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
         <%= f.association :request_units, as: :check_boxes, label: "Additional custom request units",

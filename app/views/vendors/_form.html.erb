@@ -1,14 +1,17 @@
 <%# One form. The AdminLTE version nested a second simple_form_for inside the first, which
     is invalid HTML -- the inner <form> swallowed the outer one's fields. %>
-<div class="max-w-2xl">
+<div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
   <%= render "shared/essentials/card" do %>
     <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
       <%= f.input :business_name, label: "Business name" %>
       <%= f.input :contact_name, label: "Contact name" %>
-      <%= f.input :phone, label: "Phone" %>
-      <%= f.input :email, label: "Email" %>
+      <%# Two ways of reaching the same person, and neither needs a full-width box. %>
+      <%= essentials_field_row do %>
+        <%= f.input :phone, label: "Phone" %>
+        <%= f.input :email, label: "Email" %>
+      <% end %>
       <%= f.input :address, label: "Address" %>
 
       <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
