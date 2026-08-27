@@ -85,19 +85,15 @@
               data: {calendar_target: "yearSelect", action: "calendar#jumpTo"} %>
 
         <%#
-          Today is the one control here that can already be at its destination: the page opens on
-          today, so on arrival it has nowhere to go. It ships `aria-disabled` from the server for
-          that reason -- the state is known before any JavaScript runs, so there is no flash of an
-          enabled button. See design.md; the rule is pagination's.
+          Today stays pressable even while today is on screen, where it does nothing. It was dimmed
+          for a day and that is reverted deliberately: the case against disabled controls is about
+          ones that *gate* a task, but every calendar a reader already uses -- Google, Outlook,
+          Apple, Notion -- keeps Today live, and pressing it here costs nothing at all. A no-op is a
+          smaller price than a control someone has to reason about. See docs/design-decisions.md.
         %>
-        <%= button_tag type: "button",
-              class: essentials_button_classes(variant: :secondary, size: :sm,
-                       extra: "aria-disabled:opacity-60 aria-disabled:cursor-not-allowed " \
-                              "aria-disabled:hover:bg-white"),
-              "aria-disabled": "true",
-              data: {action: "calendar#today", calendar_target: "todayButton"} do %>
-          Today<span class="sr-only" data-calendar-target="todayReason">, you are already viewing today</span>
-        <% end %>
+        <%= button_tag "Today", type: "button",
+              class: essentials_button_classes(variant: :secondary, size: :sm),
+              data: {action: "calendar#today"} %>
         <%= button_tag type: "button", "aria-label": "Previous month",
               class: essentials_button_classes(variant: :secondary, size: :sm),
               data: {action: "calendar#previous", calendar_target: "stepButton",

@@ -40,8 +40,7 @@ const VIEWS = {
 };
 
 export default class extends Controller {
-  static targets = ["grid", "title", "viewButton", "monthSelect", "yearSelect", "stepButton",
-                    "todayButton", "todayReason"];
+  static targets = ["grid", "title", "viewButton", "monthSelect", "yearSelect", "stepButton"];
 
   connect() {
     this.onPopState = this.applyViewFromUrl.bind(this);
@@ -79,7 +78,6 @@ export default class extends Controller {
       datesSet: (info) => {
         if (this.hasTitleTarget) this.titleTarget.textContent = info.view.title;
         this.syncJumpTo(info.view.currentStart);
-        this.markToday(info.view);
       }
     });
 
@@ -94,45 +92,23 @@ export default class extends Controller {
     if (this.calendar) this.calendar.destroy();
   }
 
-  today() {
-    if (this.todayIsShowing) return;
-    this.calendar.today();
-  }
-
   /*
-   * Today is the only control on this toolbar that can already be at its destination. The page
-   * opens on today, so on arrival it does nothing -- which is the state you meet it in, and a
-   * control that does nothing when you meet it reads as broken.
+   * Today does nothing while today is already on screen, and that is deliberate.
    *
-   * design.md settled this shape for pagination: a control that leads nowhere stays **drawn and
-   * disabled**, because a control set that changes width moves a target out from under the cursor.
-   * That argument is stronger here than there, because Today flips on *every* Prev and Next rather
-   * than only at the ends -- hiding it would shift its neighbours constantly.
+   * It was dimmed with `aria-disabled` for a day, on the reasoning that design.md disables
+   * pagination's ends when they lead nowhere. Reverted: that rule is about controls whose press
+   * *costs* something -- a pointless navigation, a page reload -- and pressing Today here costs
+   * nothing. `calendar.today()` on today is idempotent and free.
    *
-   * `aria-disabled`, not `disabled`. FullCalendar's own toolbar does disable it -- measured on
-   * 6.0.1, `disabled` is true while the view holds today and false once you leave -- but a real
-   * `disabled` drops the button out of the tab order, so the toolbar's number of tab stops would
-   * change as you navigate. That is the same moving-target defect, one level up. The reason rides
-   * along as sr-only text, which design.md asks of every unavailable action.
+   * The convention agrees. Google, Outlook, Apple Calendar and Notion all keep Today live, and the
+   * accessibility case against disabled controls is aimed at ones that gate a task the reader is
+   * trying to finish. Neither reading argues for dimming something this cheap.
+   *
+   * What makes the no-op tolerable is that today is *marked* in all three views now -- it was not
+   * marked at all in the list, which is what made the button look like the only way to find today.
    */
-  markToday(view) {
-    if (!this.hasTodayButtonTarget) return;
-
-    // UTC, because the calendar runs in UTC -- this has to agree with the cell it tints, and a
-    // local-time answer would disagree with it for part of the day.
-    const now = new Date();
-    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    const showing = today >= view.currentStart.getTime() && today < view.currentEnd.getTime();
-
-    this.todayButtonTarget.setAttribute("aria-disabled", String(showing));
-    if (this.hasTodayReasonTarget) {
-      this.todayReasonTarget.textContent = showing ? ", you are already viewing today" : "";
-    }
-  }
-
-  get todayIsShowing() {
-    return this.hasTodayButtonTarget &&
-      this.todayButtonTarget.getAttribute("aria-disabled") === "true";
+  today() {
+    this.calendar.today();
   }
 
   previous() {
