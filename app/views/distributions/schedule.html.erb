@@ -42,25 +42,38 @@
 
       <div class="flex flex-wrap items-center gap-2">
         <%#
-          Month, Week and List, and no Day: over a year, 22 days had any distribution at all, mean
-          1.9, and 13 of those held exactly one. `aria-pressed` rather than a radio group, because
-          these toggle a state rather than submit a value.
+          Two groups, because these are two questions: how much time, and how it looks. They used
+          to be one row of three -- Month, Week, List -- where "List" named a shape and its
+          neighbours named a duration, so nothing on it said how much time it covered. Measured:
+          the list is a week, and the week of 7 September drew a single row under a heading reading
+          "Sep 7 – 13".
 
-          List is its own button because it is its own view. It used to be what "Week" rendered as
-          below 992px, which made one label mean two things -- and since the list was also the
-          default there, Week arrived pressed and its button did nothing.
+          Splitting them also reaches a whole month as one list, which three buttons could not
+          express. FullCalendar has all four views already. See design.md.
+
+          `aria-pressed` rather than radios, because these toggle a state rather than submit a
+          value. The URL parameter is `layout` and not `format`: `format` is reserved by Rails
+          routing for the response MIME type, and `?format=grid` raised a 406 before rendering.
         %>
         <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
-             role="group" aria-label="Calendar view">
-          <% [["month", "Month"], ["week", "Week"], ["list", "List"]].each_with_index do |(value, label), index| %>
+             role="group" aria-label="Calendar range">
+          <% [["month", "Month"], ["week", "Week"]].each_with_index do |(value, label), index| %>
             <%= button_tag label, type: "button",
-                  class: "px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors " \
-                         "hover:bg-slate-50 aria-pressed:bg-slate-100 aria-pressed:text-slate-900 " \
-                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 " \
-                         "#{"border-l border-slate-300" if index.positive?}",
+                  class: essentials_view_toggle_classes(first: index.zero?),
                   "aria-pressed": "false",
-                  data: {calendar_view: value, action: "calendar#switchView",
-                         calendar_target: "viewButton"} %>
+                  data: {calendar_range: value, action: "calendar#switchRange",
+                         calendar_target: "rangeButton"} %>
+          <% end %>
+        </div>
+
+        <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
+             role="group" aria-label="Calendar layout">
+          <% [["grid", "Grid"], ["list", "List"]].each_with_index do |(value, label), index| %>
+            <%= button_tag label, type: "button",
+                  class: essentials_view_toggle_classes(first: index.zero?),
+                  "aria-pressed": "false",
+                  data: {calendar_layout: value, action: "calendar#switchLayout",
+                         calendar_target: "layoutButton"} %>
           <% end %>
         </div>
 
@@ -107,6 +120,14 @@
           Next <i class="bi-chevron-right" aria-hidden="true"></i>
         <% end %>
       </div>
+
+      <%#
+        What the list covers, and how much of it is empty. A list draws only the days that hold
+        something -- FullCalendar has no option for the empty ones -- so a week with one
+        distribution renders one row, which reads as "there is one distribution, ever". Hidden in
+        the grids, where the empty days are already visible as empty cells.
+      %>
+      <p class="w-full text-xs text-slate-500" data-calendar-target="caption" hidden></p>
 
       <%# FullCalendar renders into here; see calendar_controller.js. %>
       <div id="calendar" class="fc min-h-[36rem] w-full" data-calendar-target="grid"></div>

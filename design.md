@@ -428,17 +428,28 @@ three buttons are cheap to own outright, which means a library upgrade cannot si
 action and this is the shape the pager already uses for the same job.
 
 <a id="calendar-views"></a>
-**Three views — Month, Week and List — and the choice lives in the URL.** There was no view
-switching at all before this: FullCalendar's default toolbar carries none unless asked, and the only
-view decision was made *for* the reader by window width.
+**Two axes — a duration and a layout — and both live in the URL.** How long: Month or Week. How it
+looks: Grid or List. There was no view switching at all before this; FullCalendar's default toolbar
+carries none unless asked, and the only view decision was made *for* the reader by window width.
 
 <a id="one-label-one-view"></a>
-**One label means one view.** This shipped as two buttons, where "Week" meant `dayGridWeek` above
-992px and `listWeek` below it — and because the list was *also* the narrow default, Week arrived
-already pressed, `switchView` returned early on `name === requestedView`, and the button did nothing
-at all. Month worked, so only Week looked broken. Measured at 1440, 1200, 1000, 991, 900, 768 and
-375: every width below 992 was inert. **992 is not an unusual window** — a 1440 screen at 150%
-scaling is 960 CSS px, and any window that is not maximised can land under it.
+**One label answers one question, and that took three goes.** It shipped as two buttons, where
+"Week" meant `dayGridWeek` above 992px and `listWeek` below it — and because the list was *also* the
+narrow default, Week arrived already pressed, `switchView` returned early, and the button did
+nothing at all. Month worked, so only Week looked broken. Measured at 1440, 1200, 1000, 991, 900,
+768 and 375: every width below 992 was inert. **992 is not an unusual window** — a 1440 screen at
+150% scaling is 960 CSS px, and any window that is not maximised can land under it.
+
+Then it became three buttons, Month / Week / List — which fixed the dead button and left a subtler
+version of the same fault: **"List" named a shape where its neighbours named a duration**, so
+nothing on it said how much time it covered. It is a week; measured, the week of 7 September drew a
+single row under a heading reading "Sep 7 – 13".
+
+Splitting the two questions is the fix, and it reaches a fourth view that three buttons could not
+express: **a whole month as one list**, which is the obvious thing to want for a monthly
+reconciliation. FullCalendar has all four already — `dayGridMonth`, `dayGridWeek`, `listMonth`,
+`listWeek` — so it costs no plugin. Its own toolbar labels these by duration for exactly this
+reason: in the library, a list is a rendering of a range rather than a range.
 
 The mapping was the mistake rather than the threshold. A list is a *third view*, not a narrow
 rendering of a week, so it is a third button. **The threshold is separately wrong and left
@@ -468,6 +479,16 @@ It also needs no new plugin or importmap pin, on a library this app has already 
 a major version of. If banks start recording times on everything, `timeGridWeek` becomes the better
 answer and the change is a view name.
 
+<a id="calendar-url"></a>
+**The parameter is `layout`, not `format`** — `format` is reserved by Rails routing for the response
+MIME type, so `?format=grid` reached the action as a request for a "grid" representation and raised
+`ActionController::UnknownFormat`, a 406, before anything rendered.
+
+**Clicking one axis writes both.** A link that carried only the axis you changed would leave the
+other to a default that depends on the *reader's* window width — the sender's view on the sender's
+screen and something else on the recipient's. `?view=` from before the split is still honoured, so
+links shared while it existed open on what they meant.
+
 **The view is a URL parameter, not `localStorage`.** [Page tabs](#tabs) already settled this: *"it is
 also how a tab becomes something you can link to, bookmark and go back from."* A view is a tab by
 another name, and the URL is the only option that can answer "why does mine look different from
@@ -476,9 +497,28 @@ view — otherwise the rule delivers two thirds of its own sentence. The paramet
 not the library's view names, so a shared link does not carry FullCalendar's vocabulary or break
 when it changes.
 
-**A narrow window defaults to the List** — which is what the page already fell back to before there
-was any choice about it. Month and Week are both still offered there and both now work; they are
-squeezed, not broken.
+**A narrow window defaults to a Week, as a List** — which is what the page already fell back to
+before there was any choice about it. Both grids are still reachable there; they are squeezed, not
+broken.
+
+<a id="list-caption"></a>
+**A list says what it covers and how much of it is empty.** `Monday, September 7 – Sunday,
+September 13 · 1 of 7 days has a distribution`. A list draws only the days that hold something —
+FullCalendar has no option for the empty ones, confirmed against its list-view documentation — so a
+week with one distribution renders one row, and one row is indistinguishable from "there is one
+distribution, ever". The caption is hidden in the grids, where the empty days are already on screen
+as empty cells and the sentence would only restate the picture.
+
+Built from `Intl.DateTimeFormat.formatRange`, which drops the parts the two ends share and does it
+per locale. The first attempt asked for `{weekday, day}` on the near end and added the month only
+when the range crossed one; Intl has no sensible pattern for a weekday and a bare day, and en-US
+rendered it `24 Monday – Sunday, August 30`.
+
+**The two list views order a day heading differently** — `listWeek` leads with the weekday,
+`listMonth` with the date — and that is left alone because it cannot be fixed from here. Overriding
+`listDayFormat` at all makes `listDayAltFormat` mirror it, globally or per view, so every heading
+renders its own date twice: `Sunday | Sunday`. A heading that reads in a different order is a
+smaller problem than one that says the same thing twice.
 
 <a id="calendar-jump"></a>
 **Month and year are two native selects.** Prev and Next move one step, so before this March next

@@ -13,40 +13,69 @@ import listPlugin from "@fullcalendar/list";
  * components instead, because a handful of buttons are cheap to own and owning them means a
  * library upgrade cannot silently revert them. `headerToolbar: false` turns the library's off.
  *
- * Three views, and each name means exactly one thing. That is the whole of the fix for a bug this
- * file shipped: Week used to mean a *grid* above 992px and a *list* below it, and below 992 the
- * list was also the default -- so Week arrived already pressed, `switchView` returned early, and
- * the button did nothing at all. Month worked, so only Week looked broken. The mapping was the
- * mistake rather than the threshold; a list is a third view, not a narrow rendering of a week.
+ * TWO AXES, and that is the whole shape of this file. How long -- a month or a week -- and how it
+ * looks: a grid or a list. They are separate questions and they used to share one row of three
+ * buttons, Month / Week / List, which could not answer either cleanly:
+ *
+ *   - "List" named a *shape* where its neighbours named a *duration*, so nothing said how much time
+ *     it covered. Measured, the list is a week; the week of 7 September drew a single row.
+ *   - Before that it was worse: "Week" meant a grid above 992px and a list below, and since the
+ *     list was also the narrow default, Week arrived already pressed and its button did nothing.
+ *
+ * Both were the same mistake at different depths -- one label trying to carry two answers.
+ * FullCalendar had the model right all along: its own toolbar labels these by duration, because a
+ * list is a rendering of a range rather than a range.
+ *
+ * Splitting them also reaches `listMonth`, a whole month as one list, which three buttons could not
+ * express at all.
  *
  * There is no Day view and that is a measurement, not an omission: over a year, 22 days had any
- * distribution at all, mean 1.9, and 13 of those held exactly one. A day view is twenty-four rows
- * of hour axis for a line and a half.
+ * distribution at all, mean 1.9, and 13 of those held exactly one.
  *
- * Week is day cells rather than an hour axis, for the same kind of reason. A distribution has no
- * end column, so on a time grid every event is a zero-length block; and half the rows in a fresh
+ * Week is day cells rather than an hour axis, for a related reason. A distribution has no end
+ * column, so on a time grid every event is a zero-length block; and half the rows in a fresh
  * database sit at 00:00, because `db/seeds.rb` writes a date with no time, so a time grid would
  * stack missing data at midnight and present it as an appointment.
  */
 
 const WIDE_ENOUGH_FOR_A_GRID = 992;
+const MS_PER_DAY = 86400000;
 
-// The URL carries these names, not FullCalendar's, so a shared link does not inherit the library's
-// vocabulary or break when it changes.
+// The URL carries "month"/"week" and "grid"/"list", not FullCalendar's names, so a shared link does
+// not inherit the library's vocabulary or break when it changes.
+//
+// The second parameter is `layout` rather than the obvious `format`, because **`format` is reserved
+// by Rails routing** -- it is the response MIME type. `?format=grid` reached the controller as a
+// request for a "grid" representation and the action raised `ActionController::UnknownFormat`, a
+// 406, before rendering anything at all.
 const VIEWS = {
-  month: "dayGridMonth",
-  week: "dayGridWeek",
-  list: "listWeek"
+  "month:grid": "dayGridMonth",
+  "month:list": "listMonth",
+  "week:grid": "dayGridWeek",
+  "week:list": "listWeek"
+};
+
+const RANGES = ["month", "week"];
+const LAYOUTS = ["grid", "list"];
+
+// `?view=` was the parameter before the switcher split in two. Links shared while it existed still
+// open on what they meant: `week` was the grid, and `list` was a week rendered as a list.
+const LEGACY_VIEWS = {
+  month: { range: "month", layout: "grid" },
+  week: { range: "week", layout: "grid" },
+  list: { range: "week", layout: "list" }
 };
 
 export default class extends Controller {
-  static targets = ["grid", "title", "viewButton", "monthSelect", "yearSelect", "stepButton"];
+  static targets = ["grid", "title", "caption", "rangeButton", "layoutButton",
+                    "monthSelect", "yearSelect", "stepButton"];
 
   connect() {
-    this.onPopState = this.applyViewFromUrl.bind(this);
+    this.onPopState = this.applyFromUrl.bind(this);
     window.addEventListener("popstate", this.onPopState);
 
-    const view = this.requestedView;
+    const range = this.requestedRange;
+    const layout = this.requestedLayout;
 
     this.calendar = new Calendar(this.gridTarget, {
       headerToolbar: false,
@@ -55,6 +84,16 @@ export default class extends Controller {
       plugins: [luxonPlugin, dayGridPlugin, listPlugin],
       displayEventTime: true,
       dayMaxEvents: true,
+      /*
+       * The two list views order a day heading differently -- `listWeek` leads with the weekday and
+       * `listMonth` with the date -- and that is left alone, because it cannot be fixed from here.
+       *
+       * Tried: `listDayFormat` and `listDayAltFormat`, globally and then per view. Overriding the
+       * primary at all makes the *alt* mirror it, so every heading renders its own date twice --
+       * "Sunday | Sunday", or "August 26, 2026 | August 26, 2026". The library's own defaults are
+       * the only pair that renders two different things. A heading that reads in a different order
+       * is a smaller problem than one that says the same thing twice.
+       */
       events: "schedule.json",
       /*
        * FullCalendar renders "+2 more" as an `<a>` with no `href`, carrying `aria-expanded` and an
@@ -71,19 +110,22 @@ export default class extends Controller {
         // Empty and therefore pointing at nothing; the popover it opens has no id to reference.
         info.el.removeAttribute("aria-controls");
       },
-      height: this.heightFor(view),
-      initialView: this.fullCalendarView(view),
+      height: this.heightFor(layout),
+      initialView: VIEWS[`${range}:${layout}`],
       // The heading is the only thing naming the range now that the library's title is gone, and it
       // is `aria-live` in the view so moving through months is announced.
       datesSet: (info) => {
         if (this.hasTitleTarget) this.titleTarget.textContent = info.view.title;
         this.syncJumpTo(info.view.currentStart);
-      }
+        this.renderCaption();
+      },
+      // Events arrive after the range is set, so the caption's count is wrong until they do.
+      eventsSet: () => this.renderCaption()
     });
 
     this.calendar.render();
-    this.markPressed(view);
-    this.labelStepButtons(view);
+    this.markPressed(range, layout);
+    this.labelStepButtons(range);
   }
 
   disconnect() {
@@ -103,9 +145,6 @@ export default class extends Controller {
    * The convention agrees. Google, Outlook, Apple Calendar and Notion all keep Today live, and the
    * accessibility case against disabled controls is aimed at ones that gate a task the reader is
    * trying to finish. Neither reading argues for dimming something this cheap.
-   *
-   * What makes the no-op tolerable is that today is *marked* in all three views now -- it was not
-   * marked at all in the list, which is what made the button look like the only way to find today.
    */
   today() {
     this.calendar.today();
@@ -120,8 +159,8 @@ export default class extends Controller {
   }
 
   /*
-   * The month and year selects. Prev and Next move one step, so before this the only way to reach
-   * March next year was seven clicks, and last December was five.
+   * The month and year selects. Prev and Next move one step, so before these the only way to reach
+   * March next year was seven clicks, and last December five.
    *
    * Two native selects rather than one `<input type="month">`: the app deleted Litepicker in favour
    * of native inputs and the argument is unchanged, but `type="month"` is a picker only in Chrome
@@ -164,6 +203,80 @@ export default class extends Controller {
   }
 
   /*
+   * What the list covers, and how much of it is empty.
+   *
+   * A list renders only the days that have something on them -- FullCalendar has no option for
+   * drawing empty ones, confirmed against its list-view documentation -- so a week holding one
+   * distribution draws one row, and one row is indistinguishable from "there is one distribution,
+   * ever". Measured before this: the week of 7 September rendered a single line under a heading
+   * that said "Sep 7 – 13".
+   *
+   * List only. In a grid the empty days are already on screen as empty cells, so the same sentence
+   * would be restating the picture.
+   */
+  renderCaption() {
+    if (!this.hasCaptionTarget) return;
+
+    const showing = this.requestedLayout === "list";
+    this.captionTarget.hidden = !showing;
+    if (!showing || !this.calendar) return;
+
+    const view = this.calendar.view;
+    const start = view.currentStart;
+    const end = view.currentEnd;
+    const total = Math.round((end - start) / MS_PER_DAY);
+
+    const days = new Set();
+    this.calendar.getEvents().forEach((event) => {
+      if (!event.start || event.start < start || event.start >= end) return;
+      days.add(event.start.toISOString().slice(0, 10));
+    });
+
+    this.captionTarget.textContent =
+      `${this.rangeLabel(start, end)} · ${this.emptiness(days.size, total)}`;
+  }
+
+  rangeLabel(start, end) {
+    if (this.requestedRange === "month") {
+      return this.dateFormat({ month: "long", year: "numeric" }).format(start);
+    }
+
+    // `currentEnd` is exclusive, so the last day on screen is the day before it.
+    const last = new Date(end.getTime() - MS_PER_DAY);
+
+    /*
+     * `formatRange`, not two `format` calls joined by a dash. It drops the parts the two ends share
+     * -- "Monday, August 24 – Sunday, 30" rather than repeating August -- and it does so per locale
+     * rather than by a rule written here.
+     *
+     * The first attempt asked for `{weekday, day}` on the near end and added the month only when
+     * the range crossed one. Intl has no sensible pattern for a weekday and a bare day, and en-US
+     * rendered it "24 Monday – Sunday, August 30".
+     */
+    return this.dateFormat({ weekday: "long", month: "long", day: "numeric" })
+      .formatRange(start, last);
+  }
+
+  dateFormat(options) {
+    return new Intl.DateTimeFormat(document.documentElement.lang || "en",
+      { timeZone: "UTC", ...options });
+  }
+
+  emptiness(withEvents, total) {
+    if (withEvents === 0) return `nothing scheduled in these ${total} days`;
+    if (withEvents === 1) return `1 of ${total} days has a distribution`;
+    return `${withEvents} of ${total} days have distributions`;
+  }
+
+  switchRange(event) {
+    this.switchTo("range", event.currentTarget.dataset.calendarRange);
+  }
+
+  switchLayout(event) {
+    this.switchTo("layout", event.currentTarget.dataset.calendarLayout);
+  }
+
+  /*
    * The choice lives in the URL, not in localStorage. design.md settled this for page tabs and the
    * argument is unchanged: it is how a view becomes something you can link to, bookmark and go back
    * from. It is also the only option that can answer "why does mine look different from yours".
@@ -171,69 +284,91 @@ export default class extends Controller {
    * `pushState`, so Back really does return to the previous view -- `replaceState` would deliver the
    * first two thirds of that sentence and quietly not the last.
    *
-   * The month on screen is deliberately *not* in the URL. Prev, Next and Today move the range
-   * without touching it, so putting only the select's jumps there would make two thirds of the
-   * page's navigation linkable and one third not. If position should be shareable it should be
-   * shareable however you got there.
+   * *Both* parameters are written even though only one changed, so a shared link carries the whole
+   * answer. Writing only the axis that moved would leave the other to a default that depends on the
+   * reader's window width -- which is the sender's view on the sender's screen, and something else
+   * on the recipient's.
+   *
+   * The month on screen is deliberately not in the URL. Prev, Next and Today move the range without
+   * touching it, so putting only the select's jumps there would make two thirds of the page's
+   * navigation linkable and one third not.
    */
-  switchView(event) {
-    const name = event.currentTarget.dataset.calendarView;
-    if (name === this.requestedView) return;
+  switchTo(axis, value) {
+    const current = axis === "range" ? this.requestedRange : this.requestedLayout;
+    if (value === current) return;
 
     const url = new URL(window.location);
-    url.searchParams.set("view", name);
+    url.searchParams.set("range", axis === "range" ? value : this.requestedRange);
+    url.searchParams.set("layout", axis === "layout" ? value : this.requestedLayout);
+    url.searchParams.delete("view");
     window.history.pushState({}, "", url);
 
-    this.applyView(name);
+    this.apply();
   }
 
-  applyViewFromUrl() {
-    this.applyView(this.requestedView);
+  applyFromUrl() {
+    this.apply();
   }
 
-  applyView(name) {
-    this.calendar.setOption("height", this.heightFor(name));
-    this.calendar.changeView(this.fullCalendarView(name));
-    this.markPressed(name);
-    this.labelStepButtons(name);
+  apply() {
+    const range = this.requestedRange;
+    const layout = this.requestedLayout;
+
+    this.calendar.setOption("height", this.heightFor(layout));
+    this.calendar.changeView(VIEWS[`${range}:${layout}`]);
+    this.markPressed(range, layout);
+    this.labelStepButtons(range);
+    this.renderCaption();
   }
 
-  markPressed(name) {
-    this.viewButtonTargets.forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.calendarView === name));
+  markPressed(range, layout) {
+    this.rangeButtonTargets.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.calendarRange === range));
+    });
+    this.layoutButtonTargets.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.calendarLayout === layout));
     });
   }
 
-  // Prev and Next move a month in the month view and a week in the other two, so one fixed
-  // "Previous month" would be wrong in two views out of three. The visible word is still inside the
-  // accessible name, which is what 2.5.3 asks.
-  labelStepButtons(name) {
-    const unit = name === "month" ? "month" : "week";
+  // Prev and Next step whatever the *duration* is, so their names follow the range and not the
+  // shape. The visible word stays inside the accessible name, which is what 2.5.3 asks.
+  labelStepButtons(range) {
     this.stepButtonTargets.forEach((button) => {
-      button.setAttribute("aria-label", `${button.dataset.calendarStep} ${unit}`);
+      button.setAttribute("aria-label", `${button.dataset.calendarStep} ${range}`);
     });
   }
 
-  get requestedView() {
-    const asked = new URL(window.location).searchParams.get("view");
-    return VIEWS[asked] ? asked : this.defaultView;
+  get params() {
+    return new URL(window.location).searchParams;
   }
 
-  get defaultView() {
-    // A month grid on a phone is unreadable, so the default there is the list -- which is what this
-    // page already fell back to before there was any choice about it. Month and Week are both still
-    // offered there; they are squeezed, not broken, and now they both work.
-    return this.narrow ? "list" : "month";
+  get requestedRange() {
+    const asked = this.params.get("range");
+    if (RANGES.includes(asked)) return asked;
+
+    const legacy = LEGACY_VIEWS[this.params.get("view")];
+    if (legacy) return legacy.range;
+
+    // A month grid on a phone is unreadable, so a narrow window opens on the week.
+    return this.narrow ? "week" : "month";
   }
 
-  fullCalendarView(name) {
-    return VIEWS[name] ?? VIEWS.month;
+  get requestedLayout() {
+    const asked = this.params.get("layout");
+    if (LAYOUTS.includes(asked)) return asked;
+
+    const legacy = LEGACY_VIEWS[this.params.get("view")];
+    if (legacy) return legacy.layout;
+
+    // ...and as a list, which is what this page already fell back to before there was any choice
+    // about it. Both grids are still offered there; they are squeezed, not broken.
+    return this.narrow ? "list" : "grid";
   }
 
   // A list is as tall as its contents; a grid fills the card, unless the window is too narrow for
   // filling it to be readable.
-  heightFor(name) {
-    if (name === "list") return "auto";
+  heightFor(layout) {
+    if (layout === "list") return "auto";
     return this.narrow ? "auto" : "parent";
   }
 

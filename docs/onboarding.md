@@ -454,19 +454,26 @@ forward, and this app is normally viewed through one. If you are behind a forwar
 TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
 "Your session expired".
 
-**The calendar has a Month, a Week and a List.** Week is the useful one when a day is busy — the
-month grid hides everything past the first event behind "+5 more", and the week shows the whole day.
-List is the plain agenda, one line per distribution. Your choice goes in the address bar, so you can
-send someone a link to the view you are looking at, and Back returns to where you were. On a phone
-it opens on the List.
+**The calendar asks two questions separately: how long, and how it looks.** *Month* or *Week* for
+how much time, *Grid* or *List* for how to draw it — so you can have a week as a grid, a month as a
+plain list, or any of the four. Week as a grid is the useful one when a day is busy, because the
+month grid hides everything past the first event behind "+5 more". A month as a list is the one to
+reach for when you want every distribution in the month on one page.
+
+Both choices go in the address bar, so you can send someone a link to exactly what you are looking
+at, and Back returns to where you were. On a phone it opens on a week, as a list.
+
+**A list tells you what it covers** — "Monday, September 7 – Sunday, September 13 · 1 of 7 days has
+a distribution" — because a list only draws the days that have something on them, and one row for a
+whole week otherwise looks like one row for all time.
 
 There is deliberately no Day view: across a year, a day held **1.9 distributions on average**, and
 just one on 13 days out of 22.
 
 **If you found the Week button did nothing, that was a real bug and it is fixed.** In a window
 narrower than about 992 pixels — a laptop at 150% scaling, or any window that is not maximised — the
-page already opened in what it called "Week", so pressing Week changed nothing. Week and List are
-separate buttons now and each one does exactly what it says.
+page already opened in what it called "Week", so pressing Week changed nothing. Duration and layout
+are separate controls now, and each one does exactly what it says.
 
 **Today is marked in the List view now.** It never was — on a phone, where the List is what opens,
 nothing on the page said which day was today. Now that you can always see which day is today, the

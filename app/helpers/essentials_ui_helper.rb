@@ -53,6 +53,18 @@ module EssentialsUiHelper
     ].compact.join(" ")
   end
 
+  # One segment of a segmented toggle -- the calendar's range and layout switchers. Its state is
+  # `aria-pressed`, and the styling hangs off the attribute so markup and appearance cannot
+  # disagree. `first:` drops the divider, which belongs between segments rather than before them.
+  def essentials_view_toggle_classes(first: false)
+    [
+      "px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors",
+      "hover:bg-slate-50 aria-pressed:bg-slate-100 aria-pressed:text-slate-900",
+      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
+      ("border-l border-slate-300" unless first)
+    ].compact.join(" ")
+  end
+
   # A link styled as a button. Use for navigation (GET).
   #
   # `available: false` renders a non-interactive `<span>` rather than an `<a>`, because **a link
