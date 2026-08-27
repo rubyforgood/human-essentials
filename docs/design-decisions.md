@@ -5056,3 +5056,42 @@ width would be absurd, and *related* enough to read as a pair — the DOM order 
 fields are announced and tabbed, so an invented pairing costs a screen-reader user more than the
 layout saves anyone else.
 
+## 2026-08-27 — Considered and declined: capping the content width
+
+**Decision: leave the layout as it is.** `<main class="flex-1">` stays uncapped. Recorded here so
+the measurements are not lost and the question is not reopened from scratch.
+
+**What prompted it.** The item form's card looked stranded, and the question was whether to centre
+it. Centring the card is the wrong fix for a measured reason — every `h1` in this app sits at 288, so
+centring a form moves its heading 144–256px and the page title slides sideways between an index and
+its form. But investigating that turned up something larger: the layout has no maximum width, so
+every page grows to fill any monitor.
+
+**What was measured**, on `/items/new` and the index tables:
+
+| Viewport | Content area | Wasted beside the form | Distributions table |
+| --- | --- | --- | --- |
+| 1440 | 1184 | 256 (22%) | 1120 |
+| 1920 | 1664 | 736 (44%) | 1600 |
+| 2560 | 2304 | 1376 (60%) | 2240 |
+| 3440 | 3184 | 2256 (71%) | 3120 |
+
+Every index table is stretched past what its content needs — distributions needs **1505px** and
+renders at **2238** on a 27-inch monitor; donations and items are stretched by over 1000px each.
+
+**What the fix would have been**, and it was built and screenshotted before being declined:
+`mx-auto w-full max-w-[100rem]` on `<main>`. Verified in the running app — nothing changes at or
+below 1440 because the content area is already 1184; at 1920 and 2560 the content area becomes 1600,
+the distributions table renders at 1534 and stops scrolling, and the `h1` stays aligned between an
+index and its form because the cap applies to every page equally. `docs/mockups/content-width-in-app.html`
+holds the before/after screenshots.
+
+**Why it is fine to leave.** The cost is real but it is bounded to wide monitors, and the trade runs
+both ways: a cap letterboxes anyone who deliberately maximises a window to see more of a table at
+once. Nobody has reported the wide-monitor behaviour as a problem — it was found by measuring, not
+by using — and a layout change touching every page in the app is a poor thing to do on a hunch.
+
+**What would change the answer:** a bank actually working at 1920 or above and finding the tables
+hard to read, or a table growing past 1505px of content, which is where the chosen 1600 cap stops
+being generous. If it is revisited, the work is one class and the preview already exists.
+
