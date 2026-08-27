@@ -421,7 +421,12 @@ at all. Month worked, so only Week looked broken. Measured at 1440, 1200, 1000, 
 scaling is 960 CSS px, and any window that is not maximised can land under it.
 
 The mapping was the mistake rather than the threshold. A list is a *third view*, not a narrow
-rendering of a week, so it is a third button. The regression test was run against the old controller
+rendering of a week, so it is a third button. **The threshold is separately wrong and left
+alone on purpose**: 992 is Bootstrap's `lg`, the only place in `app/` that number outlived ADR 0011,
+and it asks `window.innerWidth` when the sidebar docks at 1024 and takes 256px — so the grid is
+narrowest at 1025 (94px day cells) and roomiest at 1023 (133px). Measured in
+[design-decisions.md](docs/design-decisions.md); changing which view a width defaults to needs a
+preview first. The regression test was run against the old controller
 and fails there on `.fc-dayGridWeek-view`, which is the only way to know a regression test regresses
 anything.
 

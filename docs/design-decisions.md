@@ -4648,3 +4648,31 @@ site, `CONTROL_SURFACE_CLASSES` now holds the shared look with no size or layout
 `essentials_inline_select_classes` sizes from `BUTTON_SIZES`. Measured after: all five toolbar
 controls 30px, tops and bottoms flush.
 
+**What this deliberately did not change, and the measurement behind it.** The threshold itself is
+wrong twice over, and both are worth writing down rather than fixing in passing.
+
+`992` is **Bootstrap's `lg` breakpoint** — the only place in `app/` that number survives ADR 0011.
+The app is on Tailwind's scale, which is why `responsive-audit` probes 639/641, 767/769 and
+1023/1025: it straddles every boundary the app actually uses and no boundary near 992. That is a
+large part of why a dead button survived 1573 page/width checks.
+
+The deeper problem is that it measures **`window.innerWidth` when what matters is the container**.
+The sidebar is off-canvas below 1024 and docks at 256px above it, so the calendar's own width does
+*not* increase monotonically with the window. Measured, forcing the month grid at each width:
+
+| Window | Grid container | Day cell | Event title visible |
+| --- | --- | --- | --- |
+| 1440 | 1078px | 154px | 16 of 21 chars |
+| **1025** | **663px** | **94px** | **6 of 21** |
+| **1023** | **933px** | **133px** | **13 of 21** |
+| 900 | 810px | 115px | 10 of 21 |
+| 768 | 678px | 97px | 7 of 21 |
+
+So the month grid is at its **narrowest in the 1024–1100px band**, where it is the default — tighter
+than at a 768px window, which the same rule calls too narrow for a grid. Widening the window from
+1023 to 1025 costs 39px per day cell.
+
+Not changed here, because which view a width defaults to is a design decision and this branch shows
+a preview before it changes one. The fix is not a different number: it is asking the *container* how
+much room it has, which makes the question answerable rather than guessed.
+
