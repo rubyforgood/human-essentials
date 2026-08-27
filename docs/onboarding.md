@@ -490,6 +490,15 @@ rather than clicking Next twelve times. The year list covers the years your bank
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
 the calendar, so they always say what is on screen.
 
+**Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
+the two on-hand thresholds beside each other; product drives puts start date beside end date. The
+forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with
+nothing worth pairing — new kit has three fields — are unchanged.
+
+**Forms stay left-aligned**, lined up with the page title, because that is where every other page in
+the app puts its heading. Centring them would slide the title sideways as you moved between a list
+and its form.
+
 **Zipcodes are shown as five digits, in boxes, lowest to highest.** They used to be a run of numbers
 separated by spaces, some with a `-1234` suffix and some without, which was hard to read and hard to
 tell apart. The suffix identifies a city block rather than an area, so it is gone.

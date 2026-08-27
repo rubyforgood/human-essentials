@@ -1,11 +1,14 @@
-<div class="max-w-2xl">
+<div class="max-w-4xl">
   <%= essentials_error_summary(@product_drive) %>
 
   <%= render "shared/essentials/card" do %>
     <%= essentials_form_for @product_drive, remote: request.xhr? do |f| %>
       <%= f.input :name, label: "Name" %>
-      <%= f.input :start_date, label: "Start date", as: :date, html5: true %>
-      <%= f.input :end_date, label: "End date", as: :date, html5: true %>
+      <%# A date range is the clearest pair there is: the second is read against the first. %>
+      <%= essentials_field_row do %>
+        <%= f.input :start_date, label: "Start date", as: :date, html5: true %>
+        <%= f.input :end_date, label: "End date", as: :date, html5: true %>
+      <% end %>
       <%= f.input :tags, collection: @tags, value_method: :name, multiple: true,
             selected: @product_drive.tags.map(&:name),
             input_html: {

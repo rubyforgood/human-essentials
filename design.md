@@ -824,6 +824,44 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+<a id="form-width"></a>
+**A form is left-aligned at the page gutter, and its width follows its layout.** This had no rule at
+all until now — thirty-six views set their own max-width and had drifted into two.
+
+| | Width | For |
+| --- | --- | --- |
+| One column | `max-w-2xl` (672px) | Forms with nothing worth pairing — kits has three fields |
+| Two columns | `max-w-4xl` (896px) | Forms with short fields that belong together, paired with `essentials_field_row` |
+| Full | `max-w-none` (1120px) | Line-item forms: donations, purchases, transfers, adjustments, distributions |
+
+**Left-aligned, and centring is ruled out by a measurement rather than a preference.** Every `h1` in
+this app sits at **288**, on every index, show and form page. Centring a form moves its heading with
+it: **144px** at `max-w-4xl`, **256px** at `max-w-2xl`. Clicking "New item" from the items list would
+slide the page title a quarter of the screen sideways, between two views of the same resource.
+
+It is also not the convention it is assumed to be. Centring belongs to **standalone** pages — sign
+in, checkout, onboarding — which have no surrounding furniture to align against. An in-app form
+under a page heading is left-aligned in GOV.UK, GitHub, Stripe, Shopify and Atlassian alike, sharing
+its heading's edge. This app's own auth screens are not centred either: a split panel, form at
+`left 888`.
+
+<a id="field-row"></a>
+**`essentials_field_row` puts two short fields on one line.** A price beside a quantity, a start date
+beside an end date, a minimum beside a recommended. It exists because the alternative way to fill a
+wider form is to stretch every input, which gives a twenty-character name an 896px box.
+
+Two conditions, both of them real:
+
+- **Short enough that a full-width input would be absurd.** A name, an address or a select of long
+  option labels stays full width.
+- **Related enough to read as a pair**, because the DOM order is the order the fields are announced
+  and tabbed. A pair that is not really a pair costs a screen-reader user more than the layout saves
+  anyone else.
+
+A lone short field gets a row to itself, so it takes half a line rather than all of one. The row
+stacks below `sm`. The `:essentials` wrapper already carries `mb-4`, so the helper adds the
+horizontal gap and nothing else.
+
 <a id="primary-position"></a>
 **A primary sits at the row's alignment edge**, which is why the two rules below look opposite and
 are not. A page header's actions are right-aligned, so its primary is **last**. A form's action row

@@ -1,14 +1,21 @@
-<div class="max-w-2xl">
+<div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
   <%= render "shared/essentials/card" do %>
     <%= essentials_form_for form, data: {controller: "checkbox-with-nested-element"} do |f| %>
-      <%= f.input :name, label: "Name" %>
-      <%= f.input :email, label: "Email" %>
-      <%= f.input :default_storage_location_id, label: "Default storage location",
-            collection: current_organization.storage_locations.active.alphabetized,
-            label_method: :name, value_method: :id, include_blank: true %>
-      <%= f.input :partner_group_id, label: "Group", collection: @partner_groups, include_blank: "None" %>
+      <%# How you name them and how you reach them. %>
+      <%= essentials_field_row do %>
+        <%= f.input :name, label: "Name" %>
+        <%= f.input :email, label: "Email" %>
+      <% end %>
+
+      <%# Both say where this partner sits in the bank's arrangements. %>
+      <%= essentials_field_row do %>
+        <%= f.input :default_storage_location_id, label: "Default storage location",
+              collection: current_organization.storage_locations.active.alphabetized,
+              label_method: :name, value_method: :id, include_blank: true %>
+        <%= f.input :partner_group_id, label: "Group", collection: @partner_groups, include_blank: "None" %>
+      <% end %>
 
       <div>
         <%= f.input :send_reminders, as: :boolean,
@@ -31,7 +38,10 @@
         <% end %>
       </div>
 
-      <%= f.input :quota, label: "Quota" %>
+      <%# Alone in a row, so a number takes half a line rather than all of one. %>
+      <%= essentials_field_row do %>
+        <%= f.input :quota, label: "Quota" %>
+      <% end %>
       <%= f.input :notes, label: "Notes", as: :text, input_html: {rows: 3} %>
       <%= f.input :info_for_partner, label: "Partner specific information", as: :text,
             hint: "The partner can see, but cannot change, this information. 500 characters maximum.",
