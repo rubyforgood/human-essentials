@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How wide is a form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  :root[data-theme="dark"]{--ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;
+    --line-soft:#282A3D;--ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;
+    --accent-soft:#262551;--defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:64rem;margin:0 auto;padding:4rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2rem,5vw,2.7rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.3rem;font-weight:600;letter-spacing:-.014em;margin:0;text-wrap:balance}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.16rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .opt{margin-top:2.75rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1.1rem 0}
+  th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-family:Archivo,sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .flag{color:var(--defect);font-weight:600}
+  /* scale model of the page: 1184px content shown at 1/2 */
+  .page{background:var(--sunken);border:1px solid var(--line);border-radius:.6rem;padding:.9rem;
+        margin:1.1rem 0;font-family:Archivo,sans-serif;overflow-x:auto}
+  .canvas{width:592px;position:relative}
+  .gut{position:absolute;top:0;bottom:0;width:1px;background:var(--accent);opacity:.45}
+  .hl{font-size:.8rem;font-weight:700;margin-bottom:.4rem}
+  .box{background:var(--surface);border:1px solid var(--line);border-radius:.4rem;padding:.55rem;box-shadow:var(--shadow)}
+  .fld{height:1.1rem;background:var(--sunken);border:1px solid var(--line-soft);border-radius:.2rem;margin-bottom:.35rem}
+  .lab{height:.45rem;width:35%;background:var(--line);border-radius:.15rem;margin-bottom:.2rem}
+  .dead{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,var(--defect-soft) 5px,var(--defect-soft) 10px);
+        border-left:1px dashed var(--defect)}
+  .deadlabel{position:absolute;top:50%;transform:translateY(-50%);font-size:.65rem;color:var(--defect);font-weight:600;padding-left:.4rem}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 .5rem}
+  ul.why{margin:.8rem 0 0;padding-left:1.15rem;font-size:.95rem}
+  ul.why li{margin-bottom:.35rem}
+  strong{font-weight:600} a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design options</p>
+    <h1>How wide is a form, and where does it sit</h1>
+    <p class="lede">
+      The dead space is real. But the fix is width, not alignment — and I can show you the number
+      that rules centring out.
+    </p>
+  </header>
+
+  <section class="opt">
+    <h2>What the app does today</h2>
+    <p class="col" style="margin-top:.7rem">
+      <strong>design.md has no rule for this at all</strong>, which is the first finding. Thirty-six
+      views set their own max-width and nothing says what it should be. Measured at 1440px, they
+      have settled into two:
+    </p>
+    <table>
+      <thead><tr><th>Pages</th><th class="n">Card</th><th class="n">Dead space</th></tr></thead>
+      <tbody>
+        <tr><td>Items, kits, vendors, donation sites, storage locations, product drives, partners</td><td class="n">672</td><td class="n flag">480</td></tr>
+        <tr><td>Transfers, adjustments, donations, purchases, distributions</td><td class="n">1120</td><td class="n">32</td></tr>
+      </tbody>
+    </table>
+    <div class="page"><div class="canvas" style="height:150px">
+      <div class="hl">New item</div>
+      <div class="box" style="width:336px">
+        <div class="lab"></div><div class="fld"></div>
+        <div class="lab"></div><div class="fld"></div>
+        <div class="lab"></div><div class="fld"></div>
+      </div>
+      <div class="dead" style="left:344px;right:0;top:22px"><span class="deadlabel">480px</span></div>
+    </div></div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="opt">
+    <div class="opthead"><h2>B — Centre it</h2><span class="chip chip-no">Ruled out by measurement</span></div>
+    <p class="col" style="margin-top:.7rem">
+      What you asked for, and the one number that decides it: <strong>every <code>h1</code> in this
+      app sits at 288</strong> — index pages, show pages, form pages, all of them. Centring the form
+      moves its heading, so the page title jumps sideways as you navigate:
+    </p>
+    <table>
+      <thead><tr><th>If centred at</th><th class="n">h1 lands at</th><th class="n">Jump from every index page</th></tr></thead>
+      <tbody>
+        <tr><td><code>max-w-2xl</code> (672)</td><td class="n">544</td><td class="n flag">256px</td></tr>
+        <tr><td><code>max-w-3xl</code> (768)</td><td class="n">496</td><td class="n flag">208px</td></tr>
+        <tr><td><code>max-w-4xl</code> (896)</td><td class="n">432</td><td class="n flag">144px</td></tr>
+      </tbody>
+    </table>
+    <div class="page"><div class="canvas" style="height:130px">
+      <div class="gut" style="left:0"></div>
+      <div style="margin-left:104px">
+        <div class="hl">New item</div>
+        <div class="box" style="width:384px">
+          <div class="lab"></div><div class="fld"></div>
+          <div class="lab"></div><div class="fld"></div>
+        </div>
+      </div>
+      <span style="position:absolute;left:4px;bottom:0;font-size:.65rem;color:var(--accent);font-weight:600">gutter every other page uses</span>
+    </div></div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>Click "New item" from the items list and the title slides 208px right.</strong> The heading is the thing your eye returns to, and it would move between two views of the same resource.</li>
+        <li><strong>It is also not the convention it is assumed to be.</strong> Centring is the pattern for <em>standalone</em> pages — sign in, checkout, onboarding — which have no surrounding furniture to align to. An in-app form under a page heading is left-aligned in GOV.UK, GitHub, Stripe, Shopify and Atlassian alike, sharing the heading's edge.</li>
+        <li>This app's own auth pages are not centred either: a split panel, form at <span class="num">left 888</span>, width <span class="num">384</span>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>A — Widen the column, keep it left</h2></div>
+    <div class="page"><div class="canvas" style="height:130px">
+      <div class="hl">New item</div>
+      <div class="box" style="width:448px">
+        <div class="lab"></div><div class="fld"></div>
+        <div class="lab"></div><div class="fld"></div>
+      </div>
+      <div class="dead" style="left:456px;right:0;top:22px"><span class="deadlabel">256px</span></div>
+    </div></div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>For:</strong> one line changed per form, alignment preserved, dead space down from 480 to 256.</li>
+        <li><strong>Against:</strong> it makes a text box for a 20-character name <span class="num">896px</span> wide. The space gets filled by stretching fields that had no reason to grow, and the eye travels further from label to value.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>C — Use the width: short fields two-up</h2><span class="chip chip-rec">Recommended</span></div>
+    <div class="page"><div class="canvas" style="height:150px">
+      <div class="hl">New item</div>
+      <div class="box" style="width:448px">
+        <div class="lab"></div><div class="fld"></div>
+        <div class="two">
+          <div><div class="lab"></div><div class="fld"></div></div>
+          <div><div class="lab"></div><div class="fld"></div></div>
+        </div>
+        <div class="two">
+          <div><div class="lab"></div><div class="fld"></div></div>
+          <div><div class="lab"></div><div class="fld"></div></div>
+        </div>
+      </div>
+      <div class="dead" style="left:456px;right:0;top:22px"><span class="deadlabel">256px</span></div>
+    </div></div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>The width earns itself.</strong> New item has ten fields and <strong>six are numeric</strong> — value, distribution quantity, minimum on hand, recommended on hand, package size. Paired two-up they fill the row without any single field growing past what it holds, and the form gets shorter as well as wider.</li>
+        <li><strong>It is form-dependent, which is the honest answer.</strong> Kits has three fields and nothing to pair, so it stays as it is. Vendors has five, two of them short. A blanket width would have pretended every form is the same shape.</li>
+        <li><strong>Against:</strong> more than one line per form, and it needs a judgement per form about which fields belong side by side. Getting that wrong pairs two things that are not related.</li>
+        <li><strong>Against:</strong> a two-column form is harder to scan down for a screen reader user if the order is not right — the DOM order has to stay the order you would fill them in.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.7rem">
+      <strong>C, and write the rule down.</strong> Keep the left edge — it is the industry standard
+      for a form under a page heading, and it is the only thing keeping every title in this app on
+      the same line. Fill the space by pairing short fields on forms that have enough of them, and
+      leave three-field forms alone.
+    </p>
+    <p>
+      <strong>A is the cheap version</strong> if you would rather not touch field layout: one line
+      per form, half the dead space, at the cost of very wide inputs.
+    </p>
+    <p>
+      Either way <strong>design.md gains the rule it never had</strong> — a form is left-aligned at
+      the page gutter, and here is the width to use.
+    </p>
+  </section>
+</div>
+</body>
+</html>
