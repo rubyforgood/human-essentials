@@ -4,8 +4,26 @@ Design proposals that were shown before anything was built. They are checked in 
 are the record of what was offered and chosen, and because this workspace has been reset out
 from under the work more than once.
 
-Each one loads the app's real stylesheet, so it has to be served by the app rather than opened
-from disk:
+## New mockups are self-contained. Open them from disk.
+
+**Write every new mockup so it needs nothing but itself** — its CSS inline, its fonts from Google
+Fonts or fallen back gracefully, no `/mockup.css`. Then it opens by double-clicking it, or:
+
+```bash
+open docs/mockups/<file>.html            # or: file:///…/docs/mockups/<file>.html
+```
+
+The reason is not tidiness. **Twice now a mockup could not be seen at all** — "i am not able to see
+the design preview", and later "where is the design preview?" — because the older ones need the dev
+server running *and* reachable from the reader's browser, and a design preview nobody can look at
+has failed at the only thing it exists to do. A reviewer should never have to boot a Rails app to
+look at a picture.
+
+`partner-page-repairs.html` is the first one written this way and is the model to copy.
+
+### The older ones (server required)
+
+Everything above that file loads the app's real stylesheet, so it has to be served by the app:
 
 ```bash
 cp docs/mockups/<file>.html public/          # ignored by git; the tracked copy is the one here
@@ -18,6 +36,10 @@ pipeline became Propshaft (ADR 0012) the undigested asset path 404s — only
 `/assets/tailwind-<digest>.css` resolves, and that digest changes on every rebuild. A mockup that
 links it would silently render unstyled, which is how all nine of these were found: the heading
 font had fallen back to Times New Roman.
+
+The trade is real and worth stating: borrowing the app's stylesheet makes a mockup look *exactly*
+like the app, which is the point of a mockup. A self-contained one has to restate enough of the
+system to be honest about it. That is a smaller cost than a preview that cannot be opened.
 
 Two traps in that arrangement, both of which have produced a mockup that lied:
 
