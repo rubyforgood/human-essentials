@@ -834,6 +834,13 @@ all until now — thirty-six views set their own max-width and had drifted into 
 | Two columns | `max-w-4xl` (896px) | Forms with short fields that belong together, paired with `essentials_field_row` |
 | Full | `max-w-none` (1120px) | Line-item forms: donations, purchases, transfers, adjustments, distributions |
 
+**The content container is deliberately uncapped.** `<main>` is `flex-1` with no max-width, so a
+page fills the monitor. That was measured and left alone on purpose: beside a form it wastes 22% of
+the width at 1440 and 60% at 2560, and the distributions table renders at 2238 for content needing
+1505. Capping it at 1600 was built, screenshotted and declined — see
+[design-decisions.md](docs/design-decisions.md). Do not treat the emptiness beside a form as a bug in
+the form.
+
 **Left-aligned, and centring is ruled out by a measurement rather than a preference.** Every `h1` in
 this app sits at **288**, on every index, show and form page. Centring a form moves its heading with
 it: **144px** at `max-w-4xl`, **256px** at `max-w-2xl`. Clicking "New item" from the items list would
