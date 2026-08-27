@@ -1,6 +1,21 @@
 <%# locals: (f:, partner:) %>
+<%#
+  One action row, at the end of the form, on the page gutter.
 
-<div class="mb-4 mt-4 flex justify-start mx-5">
-  <%= f.submit "Save progress", class: 'inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600', data: { action: "click->accordion#disableOpenClose" } %>
-  <%= f.submit "Save and review", name: "save_review", class: 'inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600' %>
+  It was rendered twice -- above the accordion and below it -- from raw utility strings rather than
+  `essentials_button_classes`. Measured before this: four submit buttons on the page, 36px tall
+  rather than the app's 38 because the strings carried no `border`, sitting 0px apart because the
+  row had `justify-start` and no `gap`, and inset by `mx-5` while the heading above used the page
+  gutter, so the whole form hung 12px to the left of its own title.
+
+  "Save progress" stays. It saves without leaving, which on a thirteen-section form is the
+  difference between a form you can put down and one you have to finish in a sitting. It is the
+  quiet one, and the primary is last -- design.md.
+%>
+<div class="mt-6 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-5">
+  <%= f.submit "Save progress",
+        class: essentials_button_classes(variant: :secondary, size: :md),
+        data: {action: "click->accordion#disableOpenClose"} %>
+  <%= f.submit "Save and review", name: "save_review",
+        class: essentials_button_classes(variant: :primary, size: :md) %>
 </div>

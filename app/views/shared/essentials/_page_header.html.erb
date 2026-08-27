@@ -2,6 +2,8 @@
   The ONE page header. Every migrated page renders this so the spacing cannot drift.
 
     render "shared/essentials/page_header", title: "Distributions"
+    render "shared/essentials/page_header", title: "Pawnee Homeless Shelter",
+           status: essentials_partner_status_pill(partner.status)
     render "shared/essentials/page_header", title: "New donation",
            back: {path: donations_path, label: "Back to donations"},
            subtitle: "Record essentials coming in from a donor."
@@ -16,6 +18,7 @@
   back ||= nil
   subtitle ||= nil
   actions ||= nil
+  status ||= nil
   wrapper_class ||= "mb-6"
 %>
 <div class="<%= wrapper_class %>">
@@ -27,7 +30,16 @@
 
   <div class="flex flex-wrap justify-between gap-3 <%= subtitle ? "items-start" : "items-end" %>">
     <div class="min-w-0">
-      <h1 class="text-2xl font-bold tracking-tight text-slate-900"><%= title %></h1>
+      <%#
+        A status belongs to the *thing*, not to the row of buttons. The partner page used to put its
+        pill in `actions`, next to Deactivate, where a pill among buttons reads as a button that has
+        been greyed out -- and `actions` is documented as "at most three, exactly one primary",
+        which a status is none of. It rides on the title line instead, which is where GitHub, Linear
+        and Stripe put an entity's state.
+      %>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+        <%= title %><% if status %> <span class="ml-1 align-middle"><%= status %></span><% end %>
+      </h1>
       <% if subtitle %>
         <p class="mt-1 text-sm text-slate-600"><%= subtitle %></p>
       <% end %>
