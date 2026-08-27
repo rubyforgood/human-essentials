@@ -65,4 +65,23 @@ module FilterHelper
       concat label_tag(id, label, class: "text-sm text-slate-700")
     end
   end
+
+  # Has the reader actually searched for anything?
+  #
+  # The three partner-portal search forms carry a "Reset search" button that is inert until they
+  # have -- the same shape as the calendar's Today, and the same answer: drawn, and disabled while
+  # it leads nowhere. See design.md.
+  #
+  # Every filter on those forms is a text field or a 0/1 checkbox, so `"0"` and `0` have to count as
+  # empty alongside `""` and `nil`. Without that an *unchecked* box reads as an active search, and
+  # Reset would offer itself for a search nobody made -- which is the bug, not the fix.
+  EMPTY_FILTER_VALUES = ["0", 0, false].freeze
+
+  def filterrific_searching?(filterrific)
+    return false if filterrific.blank?
+
+    filterrific.to_hash.any? do |_name, value|
+      value.present? && EMPTY_FILTER_VALUES.exclude?(value)
+    end
+  end
 end

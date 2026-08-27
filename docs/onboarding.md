@@ -468,6 +468,16 @@ narrower than about 992 pixels — a laptop at 150% scaling, or any window that 
 page already opened in what it called "Week", so pressing Week changed nothing. Week and List are
 separate buttons now and each one does exactly what it says.
 
+**Today is greyed out when you are already looking at today**, and comes back the moment you move
+to another month or week. It used to be pressable at all times and did nothing on arrival, which
+made it look broken. Greyed out it is still telling you something: that you are already there.
+
+**Today is marked in the List view now.** It never was — on a phone, where the List is what opens,
+nothing on the page said which day was today.
+
+**The three "Reset search" buttons in the partner portal** — on children, families and family
+requests — are greyed out until you have actually searched for something, for the same reason.
+
 **To reach a month in another year, use the month and year dropdowns** beside the view buttons,
 rather than clicking Next twelve times. The year list covers the years your bank actually has
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow

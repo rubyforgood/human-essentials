@@ -224,6 +224,23 @@ Target is **WCAG 2.1 AA**. These are the rules this app has actually had to enfo
   `font-medium text-brand-700 underline hover:text-brand-800`. A link that is its own block —
   a table cell, a list item, a card row — does not need one, because there is no body text for it
   to be confused with.
+<a id="inert-on-arrival"></a>
+- **A control that is already at its destination says so.** Some controls can be pressed before
+  they can do anything — Today on a calendar that opens on today, "Reset search" before a search.
+  They stay **drawn and disabled**, never hidden: the [pagination rule](#pagination) is that a
+  control set which changes width moves a target out from under the cursor, and these flip far more
+  often than a page's ends do. Dimmed on arrival also stops them reading as broken, which is
+  otherwise the first thing a reader concludes.
+  - `aria-disabled`, **not** `disabled`, on a *button*. A real `disabled` leaves the tab order, so
+    the number of tab stops in a toolbar would change as you navigate — the same moving-target
+    defect one level up. FullCalendar's own toolbar uses a real `disabled` here (measured on 6.0.1:
+    `disabled` true while the view holds today, false once you leave); this app does not.
+  - A **link** cannot be either, so an unavailable one is a `<span aria-disabled>` —
+    `essentials_link_button(..., available: false, reason: "…")` renders it.
+  - **The reason is sr-only text on the control**, not a tooltip. The objection to disabled
+    buttons is a real one and it is about *gating*: a Submit disabled until a form validates hides
+    what the reader must fix. These gate nothing — the reason they are unavailable is already on
+    screen — and saying it out loud costs one span.
 - **Disclosure state is announced**: `aria-expanded` plus `aria-controls` on anything that
   opens or closes a region.
 - **Colour is never the only signal** (see [Colour](#colour)).
@@ -485,6 +502,17 @@ answer: the week really is mostly February.
 move the range without touching it, so putting only the select's jumps there would make two thirds
 of the page's navigation linkable and one third not. If position should be shareable it should be
 shareable however you arrived at it.
+
+**Today is dimmed while today is on screen.** The page opens on today, so on arrival Today has
+nowhere to go — it did nothing in the state you first meet it in, which reads as broken. It carries
+`aria-disabled` from the *server*, so there is no frame in which it looks available before Stimulus
+connects, and the reason rides along as sr-only text. See [inert on arrival](#inert-on-arrival).
+
+**Today is marked in the list view now, and was not marked at all.** FullCalendar does put
+`fc-day-today` on the list row, but `--fc-today-bg-color` only reaches day *cells* — measured, the
+row painted `rgba(0, 0, 0, 0)` and its header plain white like every other day. The list is the
+default view on a phone, so on a phone nothing said which day was today and the Today button was the
+only thing that could. Same brand-50 / brand-700 pair as the grids.
 
 **Prev and Next are labelled from the controller**, because they step a month in the month view and
 a week in the other two — one fixed "Previous month" is wrong in two views out of three. The visible

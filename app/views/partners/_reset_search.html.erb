@@ -1,0 +1,17 @@
+<%#
+  "Reset search", drawn always and inert until there is a search to reset. design.md settles the
+  shape for pagination's ends -- a control that leads nowhere stays drawn and disabled -- and a
+  link cannot be `disabled`, so an unavailable one is a non-interactive <span>.
+
+  It is a partial with an id because filterrific's AJAX replaces only `#filterrific_results`.
+  Without re-rendering this alongside it, the button keeps saying "there is no search to reset"
+  while the list underneath shows a filtered result: measured, typing cut 86 rows to 82 and left
+  the button dimmed and lying.
+
+    render "partners/reset_search", filterrific: @filterrific
+%>
+<span id="filterrific_reset">
+  <%= essentials_link_button "Reset search", reset_filterrific_url, variant: :ghost, size: :md,
+        available: filterrific_searching?(filterrific),
+        reason: ", there is no search to reset" %>
+</span>
