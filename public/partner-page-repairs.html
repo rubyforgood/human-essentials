@@ -1,252 +1,448 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Partner page repairs</title>
-<link rel="stylesheet" href="/mockup.css" media="all">
+<title>Partner Page Repairs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
-  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
-  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
-  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
-  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
-  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
-  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
-  .bad  { border-color: var(--color-rose-300);    background: var(--color-rose-50); }
-  .good { border-color: var(--color-emerald-300); background: var(--color-emerald-50); }
-  .btn { display:inline-flex; align-items:center; gap:.375rem; height:2.375rem; padding:0 .875rem;
-         border-radius:.5rem; font-size:.875rem; font-weight:500; border:1px solid transparent; }
-  .btn-sec { border-color: var(--color-slate-300); background:#fff; color: var(--color-slate-700); }
-  .btn-pri { background: var(--color-brand-600); color:#fff; }
-  .btn-sm { height:1.875rem; padding:0 .625rem; font-size:.75rem; }
-  .stat { border:1px solid var(--color-slate-200); border-radius:1rem; background:#fff; padding:1rem; }
-  .cardish { border:1px solid var(--color-slate-200); border-radius:1rem; background:#fff; }
-  .cardhead { display:flex; align-items:center; justify-content:space-between; gap:.75rem;
-              border-bottom:1px solid var(--color-slate-200); padding:.75rem 1.25rem; }
-</style>
-</head>
-<body class="bg-slate-50 text-slate-900">
-<div class="mx-auto max-w-5xl px-6 py-10 space-y-12">
+  :root {
+    --ground:   #FBFBFD;
+    --surface:  #FFFFFF;
+    --sunken:   #F3F3F8;
+    --line:     #E1E1EC;
+    --line-soft:#EDEDF4;
+    --ink:      #1A1B25;
+    --ink-mid:  #4A4C60;
+    --ink-soft: #6E7085;
+    --accent:   #4338CA;
+    --accent-soft: #EEEDFB;
+    --defect:   #B4232E;
+    --defect-soft: #FBEDEE;
+    --fixed:    #0F6E4F;
+    --fixed-soft:  #E9F5EF;
+    --shadow:   0 1px 2px rgba(26,27,37,.05), 0 8px 24px -16px rgba(26,27,37,.25);
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:   #131420;
+      --surface:  #1C1D2B;
+      --sunken:   #232436;
+      --line:     #33344A;
+      --line-soft:#282A3D;
+      --ink:      #ECECF5;
+      --ink-mid:  #B6B7C9;
+      --ink-soft: #8D8FA5;
+      --accent:   #A7A1FA;
+      --accent-soft: #262551;
+      --defect:   #F2909A;
+      --defect-soft: #3A1F26;
+      --fixed:    #6FCBA5;
+      --fixed-soft:  #16332A;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:   #131420;
+    --surface:  #1C1D2B;
+    --sunken:   #232436;
+    --line:     #33344A;
+    --line-soft:#282A3D;
+    --ink:      #ECECF5;
+    --ink-mid:  #B6B7C9;
+    --ink-soft: #8D8FA5;
+    --accent:   #A7A1FA;
+    --accent-soft: #262551;
+    --defect:   #F2909A;
+    --defect-soft: #3A1F26;
+    --fixed:    #6FCBA5;
+    --fixed-soft:  #16332A;
+    --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
 
-  <header class="space-y-3">
-    <p class="text-xs font-semibold text-brand-700">Design preview</p>
-    <h1 class="text-3xl font-semibold">Five things wrong on the partner pages</h1>
-    <p class="max-w-3xl text-slate-600">
-      All measured on <code class="rounded bg-slate-200 px-1 text-xs">/partners/2</code> and
-      <code class="rounded bg-slate-200 px-1 text-xs">/profiles/2/edit</code> at 1440px. Four are
-      defects with one right answer; one is a genuine choice.
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 62rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .col { max-width: 40rem; }
+
+  h1, h2, h3, .ui { font-family: Archivo, "Helvetica Neue", Arial, sans-serif; }
+  h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.08; font-weight: 700;
+       letter-spacing: -.022em; margin: .5rem 0 0; text-wrap: balance; }
+  h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -.014em; margin: 0; text-wrap: balance; }
+  h3 { font-size: .8rem; font-weight: 600; margin: 0 0 .6rem;
+       text-transform: uppercase; letter-spacing: .09em; color: var(--ink-soft); }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent); }
+  code, .num { font-family: "JetBrains Mono", ui-monospace, monospace;
+               font-size: .855em; font-variant-numeric: tabular-nums; }
+  code { background: var(--sunken); border: 1px solid var(--line-soft);
+         padding: .08em .34em; border-radius: .3rem; }
+
+  .eyebrow { font-family: Archivo, sans-serif; font-size: .74rem; font-weight: 600;
+             text-transform: uppercase; letter-spacing: .14em; color: var(--accent); margin: 0; }
+  .lede { font-size: 1.19rem; color: var(--ink-mid); margin-top: 1.1rem; }
+  .rule { height: 1px; background: var(--line); border: 0; margin: 3.5rem 0; }
+
+  /* A finding: number in the margin, content in the column. */
+  .finding { display: grid; grid-template-columns: 3.25rem 1fr; gap: 0 1.25rem;
+             margin-top: 3.25rem; }
+  .fnum { font-family: "JetBrains Mono", monospace; font-size: .9rem; font-weight: 600;
+          color: var(--ink-soft); padding-top: .3rem; font-variant-numeric: tabular-nums; }
+  .fhead { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
+  .fbody { grid-column: 2; margin-top: .85rem; }
+  @media (max-width: 34rem) {
+    .finding { grid-template-columns: 1fr; }
+    .fbody { grid-column: 1; }
+  }
+
+  .chip { font-family: Archivo, sans-serif; font-size: .68rem; font-weight: 600;
+          text-transform: uppercase; letter-spacing: .08em; padding: .18rem .5rem;
+          border-radius: .3rem; white-space: nowrap; }
+  .chip-defect { background: var(--defect-soft); color: var(--defect); }
+  .chip-choice { background: var(--accent-soft); color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: .93rem; }
+  .scroll { overflow-x: auto; }
+  th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--line-soft);
+           vertical-align: top; }
+  thead th { font-family: Archivo, sans-serif; font-size: .72rem; font-weight: 600;
+             text-transform: uppercase; letter-spacing: .07em; color: var(--ink-soft);
+             border-bottom: 1px solid var(--line); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.n { font-family: "JetBrains Mono", monospace; font-variant-numeric: tabular-nums;
+         white-space: nowrap; }
+  .flag { color: var(--defect); font-weight: 600; }
+  .ok   { color: var(--fixed); font-weight: 600; }
+
+  /* before / after */
+  .pair { display: grid; gap: 1rem; margin: 1.5rem 0; }
+  @media (min-width: 46rem) { .pair { grid-template-columns: 1fr 1fr; } }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: .7rem;
+           padding: 1rem 1.1rem 1.1rem; box-shadow: var(--shadow); position: relative;
+           overflow: hidden; }
+  .panel::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; }
+  .panel-now::before   { background: var(--defect); }
+  .panel-fix::before   { background: var(--fixed); }
+  .panel h3 { margin-bottom: .75rem; }
+  .panel-now h3 { color: var(--defect); }
+  .panel-fix h3 { color: var(--fixed); }
+  .note { font-size: .875rem; color: var(--ink-soft); margin: .8rem 0 0; }
+
+  /* miniature UI used inside the panels */
+  .mini { font-family: Archivo, sans-serif; }
+  .mini-card { border: 1px solid var(--line); border-radius: .55rem; background: var(--surface); }
+  .mini-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+               border-bottom: 1px solid var(--line-soft); padding: .5rem .7rem; font-size: .8rem;
+               font-weight: 600; }
+  .mini-body { padding: .7rem; font-size: .78rem; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; font-family: Archivo, sans-serif;
+         font-size: .75rem; font-weight: 500; height: 1.85rem; padding: 0 .6rem;
+         border-radius: .4rem; border: 1px solid var(--line); background: var(--surface);
+         color: var(--ink-mid); white-space: nowrap; }
+  .btn-pri { background: var(--accent); border-color: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .btn-pri, :root:not([data-theme="light"]) .btn-pri { color: #14141f; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .btn-pri { color: #fff; } }
+  .row { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+  .row-tight { display: flex; gap: 0; align-items: center; }
+  .status { font-family: Archivo, sans-serif; font-size: .65rem; font-weight: 600;
+            padding: .1rem .4rem; border-radius: .25rem;
+            background: var(--fixed-soft); color: var(--fixed); }
+  .title-lg { font-family: Archivo, sans-serif; font-weight: 700; font-size: 1rem; }
+  .sub { font-size: .78rem; color: var(--ink-soft); }
+
+  .callout { background: var(--sunken); border: 1px solid var(--line);
+             border-left: 3px solid var(--accent); border-radius: .5rem;
+             padding: 1rem 1.15rem; margin: 1.5rem 0; font-size: .97rem; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  ol.rec { counter-reset: r; list-style: none; padding: 0; margin: 1rem 0 0; }
+  ol.rec li { counter-increment: r; position: relative; padding-left: 2.1rem;
+              margin-bottom: .8rem; }
+  ol.rec li::before { content: counter(r); position: absolute; left: 0; top: .12rem;
+                      font-family: "JetBrains Mono", monospace; font-size: .78rem;
+                      font-weight: 600; color: var(--accent);
+                      background: var(--accent-soft); border-radius: .3rem;
+                      width: 1.5rem; height: 1.5rem; display: grid; place-items: center; }
+  strong { font-weight: 600; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: .2rem; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design review</p>
+    <h1>Five things wrong on the partner pages</h1>
+    <p class="lede">
+      Measured on <code>/partners/2</code> and <code>/profiles/2/edit</code> at 1440&nbsp;px.
+      Four have one right answer. One is a genuine choice.
     </p>
   </header>
 
   <!-- 1 -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">1. The badge is inside the actions slot</h2>
-    <p class="max-w-3xl text-slate-600">
-      Measured, the page header's <code class="rounded bg-slate-200 px-1 text-xs">[data-page-header="actions"]</code>
-      container holds exactly two children: <strong>a <code>SPAN</code> reading "Approved"</strong> and
-      the Deactivate form. A status is not an action, so a pill sitting in a row of buttons reads as a
-      button that has been greyed out.
-    </p>
-    <div class="grid gap-3 sm:grid-cols-2">
-      <div class="demo bad">
-        <p class="mb-2 text-xs font-semibold text-rose-800">Now</p>
-        <div class="flex items-start justify-between gap-3">
-          <div><p class="text-xl font-bold">Pawnee Homeless Shelter</p>
-               <p class="text-sm text-slate-600">Partner administration.</p></div>
-          <div class="flex items-center gap-2">
-            <span class="pill pill-good">Approved</span>
-            <span class="btn btn-sec">Deactivate partner</span>
-          </div>
-        </div>
-        <p class="mt-2 text-xs text-slate-600">Status and action in one row, reading as two controls.</p>
+  <article class="finding">
+    <div class="fnum">01</div>
+    <div class="fhead">
+      <h2>The badge is inside the actions slot</h2>
+      <span class="chip chip-defect">Defect</span>
+    </div>
+    <div class="fbody">
+      <div class="col">
+        <p>
+          The page header's <code>[data-page-header="actions"]</code> container holds exactly two
+          children: a <code>SPAN</code> reading “Approved”, and the Deactivate form. A status is not
+          an action — so a pill sitting in a row of buttons reads as a button that has been greyed
+          out.
+        </p>
       </div>
-      <div class="demo good">
-        <p class="mb-2 text-xs font-semibold text-emerald-800">Proposed</p>
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <p class="text-xl font-bold">Pawnee Homeless Shelter <span class="pill pill-good align-middle">Approved</span></p>
-            <p class="text-sm text-slate-600">Partner administration.</p>
+      <div class="pair">
+        <div class="panel panel-now mini">
+          <h3>Now</h3>
+          <div style="display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start">
+            <div>
+              <div class="title-lg">Pawnee Homeless Shelter</div>
+              <div class="sub">Partner administration.</div>
+            </div>
+            <div class="row"><span class="status">Approved</span><span class="btn">Deactivate partner</span></div>
           </div>
-          <div class="flex items-center gap-2"><span class="btn btn-sec">Deactivate partner</span></div>
+          <p class="note">Status and action in one row, reading as two controls — one of them broken.</p>
         </div>
-        <p class="mt-2 text-xs text-slate-600">Status belongs to the <em>thing</em>, so it sits with its name — GitHub, Linear and Stripe all do this. The actions slot holds only actions.</p>
+        <div class="panel panel-fix mini">
+          <h3>Proposed</h3>
+          <div style="display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start">
+            <div>
+              <div class="title-lg">Pawnee Homeless Shelter <span class="status">Approved</span></div>
+              <div class="sub">Partner administration.</div>
+            </div>
+            <div class="row"><span class="btn">Deactivate partner</span></div>
+          </div>
+          <p class="note">Status belongs to the thing, so it sits with its name. The actions slot holds only actions.</p>
+        </div>
+      </div>
+      <div class="col">
+        <p class="note">
+          Needs a <code>status:</code> slot on the page-header partial — which nothing in the app has
+          today, and which every other entity page could then use.
+        </p>
       </div>
     </div>
-    <p class="text-sm text-slate-600">Needs a <code class="rounded bg-slate-200 px-1 text-xs">status:</code> slot on the page-header partial, which nothing has today.</p>
-  </section>
+  </article>
 
   <!-- 2 -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">2. "See zipcodes" is 757px from the zipcodes</h2>
-    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
-      <thead><tr><th></th><th>left</th><th>top</th></tr></thead>
-      <tbody>
-        <tr><td>"Zipcodes served" card</td><td>1045</td><td>ends at 292</td></tr>
-        <tr><td>"See zipcodes" button</td><td><strong>288</strong></td><td>316</td></tr>
-      </tbody>
-    </table>
-    <p class="max-w-3xl text-slate-600">
-      The button that explains the third card sits on the next row, at the far left, under the
-      <em>first</em> card. Nothing connects them.
-    </p>
-    <div class="grid gap-3 sm:grid-cols-2">
-      <div class="demo good">
-        <p class="mb-2 text-xs font-semibold text-emerald-800">A — inside the card it explains <span class="pill pill-good">recommended</span></p>
-        <div class="stat">
-          <div class="flex items-center gap-3">
-            <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">◎</span>
-            <div><p class="text-2xl font-bold leading-tight">13</p>
-                 <p class="text-sm text-slate-600">Zipcodes served</p></div>
-          </div>
-          <a href="#" class="mt-2 inline-block text-xs font-medium text-brand-700 underline hover:text-brand-800">See all 13</a>
-        </div>
-        <p class="mt-2 text-xs text-slate-600">The affordance sits on the number it expands. A stat card that has detail behind it is the standard place to put the way in.</p>
+  <article class="finding">
+    <div class="fnum">02</div>
+    <div class="fhead">
+      <h2>“See zipcodes” is 757&nbsp;px from the zipcodes</h2>
+      <span class="chip chip-choice">Your call</span>
+    </div>
+    <div class="fbody">
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Element</th><th>Left edge</th><th>Vertical</th></tr></thead>
+          <tbody>
+            <tr><td>“Zipcodes served” card</td><td class="n">1045</td><td class="n">ends at 292</td></tr>
+            <tr><td>“See zipcodes” button</td><td class="n flag">288</td><td class="n">starts at 316</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="demo">
-        <p class="mb-2 text-xs font-semibold text-slate-700">B — a "Service area" card of its own</p>
-        <div class="cardish">
-          <div class="cardhead"><span class="text-sm font-semibold">Service area</span>
-            <span class="btn btn-sec btn-sm">See zipcodes</span></div>
-          <div class="px-5 py-4 text-sm text-slate-600">13 zipcodes · 13 families · 68 children</div>
+      <div class="col">
+        <p>
+          The button that expands the <em>third</em> stat sits on the next row down, at the far left,
+          underneath the <em>first</em> one. Nothing connects them.
+        </p>
+      </div>
+      <div class="pair">
+        <div class="panel panel-fix mini">
+          <h3>A — inside the card it explains &nbsp;·&nbsp; recommended</h3>
+          <div class="mini-card" style="padding:.8rem">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.35rem;font-weight:600">13</div>
+            <div class="sub">Zipcodes served</div>
+            <a href="#" style="display:inline-block;margin-top:.5rem;font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600">See all 13</a>
+          </div>
+          <p class="note">The way in sits on the number it opens. A stat card with detail behind it is the standard place to put it.</p>
         </div>
-        <p class="mt-2 text-xs text-slate-600">More room, and a home for served-area detail later. But it is a new card for one link, on a page that already has six.</p>
+        <div class="panel mini" style="border-left:3px solid var(--line)">
+          <h3>B — a “Service area” card</h3>
+          <div class="mini-card">
+            <div class="mini-head"><span>Service area</span><span class="btn">See zipcodes</span></div>
+            <div class="mini-body">13 zipcodes · 13 families · 68 children</div>
+          </div>
+          <p class="note">More room, and somewhere for served-area detail later. But it is a whole card for one link, on a page that already carries six.</p>
+        </div>
       </div>
     </div>
-  </section>
+  </article>
 
   <!-- 3 -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">3. Two buttons, two places, one card</h2>
-    <p class="max-w-3xl text-slate-600">
-      In "Partner details", <strong>Edit details</strong> sits at y=906 at the end of the field list
-      and <strong>Manage users</strong> at y=969 below a divider — two separate action zones stacked
-      63px apart, both left-aligned at the bottom of one card.
-    </p>
-    <div class="grid gap-3 sm:grid-cols-2">
-      <div class="demo bad">
-        <p class="mb-2 text-xs font-semibold text-rose-800">Now</p>
-        <div class="cardish">
-          <div class="cardhead"><span class="text-sm font-semibold">Partner details</span></div>
-          <div class="px-5 py-4 text-sm text-slate-500">Email, storage location, group, notes…</div>
-          <div class="px-5 pb-3"><span class="btn btn-sec btn-sm">Edit details</span></div>
-          <div class="mx-5 border-t border-slate-200"></div>
-          <div class="px-5 py-3"><span class="btn btn-sec btn-sm">Manage users</span></div>
-        </div>
+  <article class="finding">
+    <div class="fnum">03</div>
+    <div class="fhead">
+      <h2>Two buttons, two zones, one card</h2>
+      <span class="chip chip-defect">Defect</span>
+    </div>
+    <div class="fbody">
+      <div class="col">
+        <p>
+          In “Partner details”, <strong>Edit details</strong> sits at <span class="num">y=906</span>
+          at the end of the field list and <strong>Manage users</strong> at
+          <span class="num">y=969</span> below a divider — two separate action zones
+          <span class="num">63&nbsp;px</span> apart, both left-aligned at the bottom of one card.
+        </p>
       </div>
-      <div class="demo good">
-        <p class="mb-2 text-xs font-semibold text-emerald-800">Proposed — card header actions</p>
-        <div class="cardish">
-          <div class="cardhead">
-            <span class="text-sm font-semibold">Partner details</span>
-            <span class="flex gap-2"><span class="btn btn-sec btn-sm">Manage users</span><span class="btn btn-sec btn-sm">Edit details</span></span>
+      <div class="pair">
+        <div class="panel panel-now mini">
+          <h3>Now</h3>
+          <div class="mini-card">
+            <div class="mini-head"><span>Partner details</span></div>
+            <div class="mini-body">Email, storage location, group, notes…</div>
+            <div style="padding:0 .7rem .5rem"><span class="btn">Edit details</span></div>
+            <div style="margin:0 .7rem;border-top:1px solid var(--line-soft)"></div>
+            <div style="padding:.5rem .7rem"><span class="btn">Manage users</span></div>
           </div>
-          <div class="px-5 py-4 text-sm text-slate-500">Email, storage location, group, notes…</div>
         </div>
-        <p class="mt-2 text-xs text-slate-600">This is the app's own pattern and it is already used <em>on this page</em> — "Prior distributions" puts Export in its card header. One row, predictable place, no divider inventing a second zone.</p>
+        <div class="panel panel-fix mini">
+          <h3>Proposed — card header actions</h3>
+          <div class="mini-card">
+            <div class="mini-head">
+              <span>Partner details</span>
+              <span class="row"><span class="btn">Manage users</span><span class="btn">Edit details</span></span>
+            </div>
+            <div class="mini-body">Email, storage location, group, notes…</div>
+          </div>
+          <p class="note">The app's own pattern, already used on this very page — “Prior distributions” puts Export in its card header.</p>
+        </div>
       </div>
     </div>
-  </section>
+  </article>
 
   <!-- 4 -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">4. The zipcodes modal is pinned to the top — and it is not just this modal</h2>
-    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
-      <thead><tr><th>Dialog</th><th>top</th><th>margin</th></tr></thead>
-      <tbody>
-        <tr><td>#see-zipcodes</td><td><strong>0</strong></td><td><code>0px 464px 24px</code></td></tr>
-        <tr><td>#csv-import-modal</td><td>340</td><td><code>339.5px 336px</code> — centred</td></tr>
-      </tbody>
-    </table>
-    <p class="max-w-3xl text-slate-600">
-      A native <code class="rounded bg-slate-200 px-1 text-xs">&lt;dialog&gt;</code> centres itself
-      through the browser's own <code class="rounded bg-slate-200 px-1 text-xs">margin: auto</code>.
-      This one is rendered inside a
-      <code class="rounded bg-slate-200 px-1 text-xs">space-y-6</code> container, and that
-      container's spacing rule lands on the dialog and replaces the auto margins. Proven by toggling
-      the class with the dialog open:
-    </p>
-    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
-      <thead><tr><th>parent</th><th>margin-top</th><th>top</th><th>still in the top layer?</th></tr></thead>
-      <tbody>
-        <tr><td><code>space-y-6</code></td><td>0px</td><td>0</td><td>yes</td></tr>
-        <tr><td>class removed</td><td>452.5px</td><td>453 <span class="pill pill-good">centred</span></td><td>yes</td></tr>
-        <tr><td>restored</td><td>0px</td><td>0</td><td>yes</td></tr>
-      </tbody>
-    </table>
-    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700">
-      <p><strong>This is a defect, not a choice.</strong> Six dialogs exist in the app; five happen to
-      sit somewhere harmless and one does not, and nothing stops the next one landing in a spacing
-      container. The fix belongs in the shared modal partial so the dialog cannot be moved by
-      whatever it happens to be rendered inside — not in this one call site.</p>
+  <article class="finding">
+    <div class="fnum">04</div>
+    <div class="fhead">
+      <h2>The modal is pinned to the top — and it isn't only this modal</h2>
+      <span class="chip chip-defect">Defect</span>
     </div>
-  </section>
+    <div class="fbody">
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Dialog</th><th>Top</th><th>Margin</th></tr></thead>
+          <tbody>
+            <tr><td><code>#see-zipcodes</code></td><td class="n flag">0</td><td class="n">0px 464px 24px</td></tr>
+            <tr><td><code>#csv-import-modal</code></td><td class="n">340</td><td class="n ok">339.5px 336px</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <p>
+          A native <code>&lt;dialog&gt;</code> centres itself through the browser's own
+          <code>margin: auto</code>. This one is rendered inside a <code>space-y-6</code> container,
+          and that container's spacing rule lands on the dialog and replaces the auto margins.
+        </p>
+        <p>Proven by toggling the class with the dialog still open:</p>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Parent</th><th>margin-top</th><th>Top</th><th>In the top layer?</th></tr></thead>
+          <tbody>
+            <tr><td><code>space-y-6</code></td><td class="n">0px</td><td class="n flag">0</td><td>yes</td></tr>
+            <tr><td>class removed</td><td class="n">452.5px</td><td class="n ok">453 — centred</td><td>yes</td></tr>
+            <tr><td>restored</td><td class="n">0px</td><td class="n flag">0</td><td>yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout col">
+        <p>
+          Six dialogs exist in the app. Five happen to sit somewhere harmless and one does not, and
+          nothing stops the next one landing in a spacing container. <strong>The fix belongs in the
+          shared modal partial</strong>, so a dialog cannot be moved by whatever it happens to be
+          rendered inside — not in this one call site.
+        </p>
+      </div>
+    </div>
+  </article>
 
   <!-- 5 -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">5. Edit partner profile</h2>
-    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
-      <thead><tr><th>Measured</th><th></th></tr></thead>
-      <tbody>
-        <tr><td>Heading left edge 288, cards left edge 276</td><td><span class="pill pill-bad">12px out</span> the header uses the page gutter, the form uses <code>mx-5</code></td></tr>
-        <tr><td>4 submit buttons on the page</td><td><span class="pill pill-bad">duplicated</span> the same row rendered above <em>and</em> below</td></tr>
-        <tr><td>Buttons are 36px tall</td><td><span class="pill pill-bad">not 38</span> raw utility strings, no <code>border</code> — the exact defect design.md documents</td></tr>
-        <tr><td>Gap between the two buttons: <strong>0px</strong></td><td><span class="pill pill-bad">touching</span> <code>flex justify-start</code>, no <code>gap</code></td></tr>
-        <tr><td><code>bi-sliders</code> used <strong>10</strong> times of 13 sections</td><td><span class="pill pill-bad">noise</span> an icon that never distinguishes anything</td></tr>
-      </tbody>
-    </table>
-    <div class="grid gap-3 sm:grid-cols-2">
-      <div class="demo bad">
-        <p class="mb-2 text-xs font-semibold text-rose-800">Now</p>
-        <p class="text-lg font-bold" style="margin-left:12px">Edit partner profile</p>
-        <div class="mt-2 flex"><span class="btn btn-sec" style="height:36px;border-radius:.5rem">Save progress</span><span class="btn btn-pri" style="height:36px">Save and review</span></div>
-        <div class="mt-3 space-y-2">
-          <div class="cardish px-4 py-3 text-sm">⚙ Sources of funding</div>
-          <div class="cardish px-4 py-3 text-sm">⚙ Area served</div>
-          <div class="cardish px-4 py-3 text-sm">⚙ Population served</div>
-        </div>
-        <p class="mt-2 text-xs text-slate-600">Buttons above the content and touching; cards hanging left of the title; the same icon three times.</p>
+  <article class="finding">
+    <div class="fnum">05</div>
+    <div class="fhead">
+      <h2>Edit partner profile</h2>
+      <span class="chip chip-defect">Defect</span>
+    </div>
+    <div class="fbody">
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Measured</th><th>Reading</th></tr></thead>
+          <tbody>
+            <tr><td>Heading at <span class="num">288</span>, cards at <span class="num">276</span></td>
+                <td><span class="flag">12&nbsp;px out</span> — the header uses the page gutter, the form uses <code>mx-5</code></td></tr>
+            <tr><td><span class="num">4</span> submit buttons on the page</td>
+                <td><span class="flag">Duplicated</span> — the same row rendered above <em>and</em> below</td></tr>
+            <tr><td>Buttons are <span class="num">36&nbsp;px</span> tall</td>
+                <td><span class="flag">Not 38</span> — raw utility strings with no <code>border</code>, the exact defect design.md records</td></tr>
+            <tr><td>Gap between them: <span class="num">0&nbsp;px</span></td>
+                <td><span class="flag">Touching</span> — <code>flex justify-start</code>, no <code>gap</code></td></tr>
+            <tr><td><code>bi-sliders</code> on <span class="num">10</span> of 13 sections</td>
+                <td><span class="flag">Noise</span> — an icon that never distinguishes anything</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="demo good">
-        <p class="mb-2 text-xs font-semibold text-emerald-800">Proposed</p>
-        <p class="text-lg font-bold">Edit partner profile</p>
-        <p class="text-sm text-slate-600">Pawnee Homeless Shelter</p>
-        <div class="mt-3 space-y-2">
-          <div class="cardish px-4 py-3 text-sm">Sources of funding</div>
-          <div class="cardish px-4 py-3 text-sm">Area served</div>
-          <div class="cardish px-4 py-3 text-sm">Population served</div>
+      <div class="pair">
+        <div class="panel panel-now mini">
+          <h3>Now</h3>
+          <div style="margin-left:12px" class="title-lg">Edit partner profile</div>
+          <div class="row-tight" style="margin-top:.6rem">
+            <span class="btn" style="height:1.7rem">Save progress</span><span class="btn btn-pri" style="height:1.7rem">Save and review</span>
+          </div>
+          <div style="display:grid;gap:.35rem;margin-top:.7rem">
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">⚙&nbsp; Sources of funding</div>
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">⚙&nbsp; Area served</div>
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">⚙&nbsp; Population served</div>
+          </div>
+          <p class="note">Buttons above the content and touching, cards hanging left of the title, one icon three times.</p>
         </div>
-        <div class="mt-4 flex gap-2 border-t border-slate-200 pt-4">
-          <span class="btn btn-sec">Cancel</span><span class="btn btn-pri">Save and review</span>
+        <div class="panel panel-fix mini">
+          <h3>Proposed</h3>
+          <div class="title-lg">Edit partner profile</div>
+          <div class="sub">Pawnee Homeless Shelter</div>
+          <div style="display:grid;gap:.35rem;margin-top:.7rem">
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">Sources of funding</div>
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">Area served</div>
+            <div class="mini-card" style="padding:.45rem .6rem;font-size:.78rem">Population served</div>
+          </div>
+          <div class="row" style="margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line-soft)">
+            <span class="btn">Cancel</span><span class="btn btn-pri">Save and review</span>
+          </div>
+          <p class="note">One action row, at the end, on the page gutter, from the button helper — 38&nbsp;px, a real gap, primary last.</p>
         </div>
-        <p class="mt-2 text-xs text-slate-600">One action row, at the end, on the page gutter, from the button helper — 38px, <code>gap-2</code>, primary last. No decorative icon.</p>
+      </div>
+      <div class="col">
+        <p>
+          <strong>One sub-question is genuinely yours.</strong> “Save progress” is a second submit
+          that saves without leaving, which is worth keeping on a thirteen-section form — but two
+          submits side by side, one of them primary, is ambiguous. Keep both with the primary clearly
+          last, or drop it and let each section save itself. I would keep it: a long form you can
+          only save by finishing is worse.
+        </p>
       </div>
     </div>
-    <p class="max-w-3xl text-sm text-slate-600">
-      <strong>The one real question here is "Save progress".</strong> It is a second submit that saves
-      without leaving, which is worth keeping on a thirteen-section form — but two submits side by
-      side, one of them primary, is ambiguous. Options: keep both with <em>Save progress</em> as the
-      quiet one and <em>Save and review</em> primary and last (drawn above); or drop <em>Save
-      progress</em> and let each section save itself. I would keep both — a long form that can only
-      be saved by finishing it is worse.
-    </p>
-  </section>
+  </article>
 
-  <hr class="border-slate-200">
+  <hr class="rule">
 
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Recommendation</h2>
-    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
-      <p><strong>All five, and only #2 is a real choice.</strong></p>
-      <ol class="list-decimal pl-5 space-y-1">
-        <li><strong>Status pill onto the title line</strong>, out of the actions slot — a new <code>status:</code> slot on the page header, which other entity pages can then use too.</li>
-        <li><strong>"See all 13" inside the Zipcodes card</strong> (option A) rather than a floating button, unless you would rather have the Service-area card in B.</li>
-        <li><strong>Edit details and Manage users into the card header</strong>, the pattern already used by "Prior distributions" on the same page.</li>
-        <li><strong>Fix modal centring in the shared partial</strong>, so no ancestor's spacing can move a dialog again.</li>
-        <li><strong>Edit partner profile onto the page gutter</strong>, one action row at the end, real button helpers, and drop the icon that repeats ten times.</li>
-      </ol>
-    </div>
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.75rem">All five. Only <strong>02</strong> is a real choice.</p>
+    <ol class="rec">
+      <li>Status pill onto the title line, out of the actions slot — via a new <code>status:</code> slot other entity pages can share.</li>
+      <li>“See all 13” inside the Zipcodes card, unless you would rather have the Service-area card.</li>
+      <li>Edit details and Manage users into the card header, the pattern already used by “Prior distributions”.</li>
+      <li>Fix modal centring in the shared partial, so no ancestor's spacing can move a dialog again.</li>
+      <li>Edit partner profile onto the page gutter: one action row at the end, real button helpers, and drop the icon that repeats ten times.</li>
+    </ol>
   </section>
 </div>
-</body>
-</html>
