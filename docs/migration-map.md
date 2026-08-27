@@ -199,6 +199,7 @@ specs ran — those had never been run during the migration and were failing 298
 | `public/*.html` still linked `/assets/application.css` | Error pages served unstyled, including the 500 page that is served when nothing else can render. |
 | Four `fa-*` names still passed into the bank-side profile accordion | Four section headers rendered an empty `<i>`. Found later, by grep, not by the tooling — see below. |
 | The manufacturers CSV import was rebuilt on the new modal, and nothing was ever behind it | No `Importable`, no `Manufacturer.import_csv`, no `public/manufacturers.csv`: the button raised. It predates this branch — the same modal is on the pre-migration view — which is the point. A faithful rewrite asks whether a screen looks right, and a broken feature looks fine. Removed in August 2026 along with its route. |
+| `WIDE_ENOUGH_FOR_A_GRID = 992` in `calendar_controller` | **992 is Bootstrap's `lg`**, and it is the only place in `app/` that number survives. This app is on Tailwind's scale — 640, 768, 1024, 1280 — which is why `responsive-audit` probes 639/641, 767/769 and 1023/1025 and **straddles no boundary near 992**. A view-switching bug that only appeared below 992 was therefore invisible to the audit at every one of its ten widths. Found in August 2026, while fixing that bug. |
 
 The lesson is recorded in [design-decisions.md](design-decisions.md): a static sweep catches
 what renders wrongly, and the system specs catch what renders fine but cannot be used. Neither
