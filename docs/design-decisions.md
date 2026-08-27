@@ -4747,3 +4747,42 @@ which is precisely what someone pressing Today does not want to think about. Onc
 honest about its state it is doing real work in both states: live, it takes you home; dimmed, it
 tells you that you are already there.
 
+### Re-examined the same day: "many design systems do not disable it"
+
+A fair challenge, and worth answering with the sources rather than from memory. Two things came out
+of it, one of which nearly reversed the decision.
+
+**The guidance against disabled buttons is about *gating*, and it names a replacement that has
+nothing to replace here.** [Adrian Roselli](https://adrianroselli.com/2024/02/dont-disable-form-controls.html)
+is the strongest form of it and its title is *Don't Disable Form Controls*; the
+[NSW Design System](https://community.digital.nsw.gov.au/t/what-should-a-button-look-like-when-disabled/935)
+says avoid them "where possible, using progressive disclosure instead";
+[Shopify Polaris](https://github.com/Shopify/polaris-react/pull/6461) moved from `disabled` to
+`aria-disabled` plus click suppression. The pattern all of them recommend instead is: keep the
+control live, let the reader press it, and *explain what is wrong*. Today has nothing wrong to
+explain — it is not gating a task, and the reason it is unavailable is the largest thing on screen.
+The consensus rates `aria-disabled` + suppression + a stated reason as **acceptable**; the thing it
+warns against is native `disabled`, which is what FullCalendar uses and what this deliberately does
+not.
+
+**The calendar convention is the other way, and the reason for it does not transfer.** Google and
+Outlook keep Today live — but in Google's case
+[because it also re-centres a scrolling day or week grid](https://support.google.com/calendar/thread/439515290/calendar-does-not-open-with-today-s-date-in-view?hl=en),
+so it is never truly inert. That was nearly enough to reverse this. Measured on all three of our
+views: `scrollHeight` equals `clientHeight` — **35/35, 35/35, 478/478** — and today is on screen
+whenever it is in range. Nothing to re-centre. Ours is inert in a way Google's is not, so the
+convention arrives without its justification.
+
+**What is deliberately not added: a tooltip.** The tier-2 advice pairs a dimmed control with a
+visible hint. This has none, for two reasons: a `title` beside the existing sr-only text becomes the
+accessible *description* and screen readers would announce the reason twice, and a tooltip does
+nothing on touch. The app has no general tooltip component either — `.tip-bubble` belongs to
+`clipped_text_controller`. So sighted readers infer it from the month title and the tinted cell,
+which are both on screen and are the reason. That is the honest residue of this decision rather than
+a solved problem.
+
+**If this is ever revisited, the change is small**: drop `aria-disabled` from the button in
+`schedule.html.erb`, and delete `markToday` and the `todayIsShowing` guard from
+`calendar_controller`. The list-view today marker and the three Reset buttons stand on their own and
+should not go with it.
+
