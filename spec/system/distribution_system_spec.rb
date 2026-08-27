@@ -177,7 +177,9 @@ RSpec.feature "Distributions", type: :system do
     # range, and a control reading August while the grid shows October is worse than no control.
     it "keeps the month and year selects on whatever the calendar is showing" do
       visit schedule_distributions_path
-      expect(page).to have_css("[data-calendar-target='title']")
+      # Text, not just the element: the server renders the h2 empty and `datesSet` fills it once
+      # Stimulus connects, so waiting on presence alone races the controller.
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w/)
 
       click_on "Prev"
 
@@ -192,7 +194,9 @@ RSpec.feature "Distributions", type: :system do
     # either end of it -- and a select showing a year the calendar is not on is a lie.
     it "adds the year when stepping past the end of the list" do
       visit schedule_distributions_path
-      expect(page).to have_css("[data-calendar-target='title']")
+      # Text, not just the element: the server renders the h2 empty and `datesSet` fills it once
+      # Stimulus connects, so waiting on presence alone races the controller.
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w/)
 
       select "December", from: "calendar_month"
       expect(page).to have_css("[data-calendar-target='title']", text: "December #{issued_at.year}")
@@ -210,7 +214,9 @@ RSpec.feature "Distributions", type: :system do
     it "keeps Today pressable even while today is already on screen" do
       %w[month week list].each do |view|
         visit "#{schedule_distributions_path}?view=#{view}"
-        expect(page).to have_css("[data-calendar-target='title']")
+        # Text, not just the element: the server renders the h2 empty and `datesSet` fills it once
+        # Stimulus connects, so waiting on presence alone races the controller.
+        expect(page).to have_css("[data-calendar-target='title']", text: /\w/)
 
         button = page.find_button("Today")
         expect(button[:disabled]).to be_falsey, "expected Today to stay live in the #{view} view"
@@ -220,7 +226,9 @@ RSpec.feature "Distributions", type: :system do
 
     it "takes you home from another month" do
       visit schedule_distributions_path
-      expect(page).to have_css("[data-calendar-target='title']")
+      # Text, not just the element: the server renders the h2 empty and `datesSet` fills it once
+      # Stimulus connects, so waiting on presence alone races the controller.
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w/)
       home = page.find("[data-calendar-target='title']").text
 
       click_on "Next"
