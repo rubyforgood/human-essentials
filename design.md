@@ -395,6 +395,24 @@ Two things that bite:
   flush. `pr-10` at both sizes on purpose — the chevron is positioned from the right edge rather
   than from the padding, so trimming the padding slides the text under it instead of moving it.
 
+<a id="compare-in-words"></a>
+**A card that exists for a comparison should make the comparison**, in its `subtitle:`, not leave
+two facts near each other. The Service area card holds what a partner *declares* — counties, with
+the share of their clients in each — beside where their families *actually* are. Its first version
+put those in two columns and said nothing: measured, the right column was **273px tall holding one
+number**, about 85% empty beside a four-row table, under two headings and two captions. It reads
+*"They serve 4 counties. Their families live in 13 zipcodes."* now, which is the sentence a bank
+would otherwise have to assemble.
+
+**Stacked, not columned**, for the same reason: a table and a list are not parallel shapes and were
+never going to balance, and full width lets "Berkshire County, Massachusetts" sit on one line. The
+table sorts by share, so the county most of their clients are in reads first.
+
+**The zipcodes are shown, not hidden behind a dialog.** Measured across the bank: **max 13, median
+8** per partner. Truncation kicks in only when it saves something — a flat `first(12)` rendered
+"and 1 more" for a partner with 13, which is a dialog to save one line — so the list shows whole up
+to 16 and truncates beyond that. Below the threshold the dialog is not rendered at all.
+
 <a id="page-header-status"></a>
 **A status goes on the title line, not in `actions`.** `status:` on the page header renders the pill
 beside the `<h1>`. The partner page used to pass its pill *into* `actions`, where a pill among

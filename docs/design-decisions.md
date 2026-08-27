@@ -4950,3 +4950,37 @@ about ten minutes of the next person's time, and worth none of it if they do not
 been looked at. If it recurs, the thing to suspect is the create path's visibility check, not the
 view work above it.
 
+## 2026-08-27 — The Service area card, rebuilt, and where a primary button goes
+
+**The card I built did not do its job.** It was added so a bank could compare a partner's declared
+counties against where their families actually live, and it put the two facts in two columns and
+left the reader to do the comparing. Measured: the right column was **273px tall holding a single
+number** — about 85% empty beside a four-row table — under two headings and two captions, with the
+zipcode affordance stranded in the card header away from the number it opened. That last part is the
+same disconnection the card was created to fix, reintroduced one level down.
+
+The structural mistake was **two columns**. A table of counties with shares and a list of zipcodes
+are not parallel shapes; equal columns force one of them to be mostly air. Stacked, full width, the
+table gets room for "Berkshire County, Massachusetts" on one line and sorts by share so the county
+holding most of the clients reads first.
+
+**The comparison now lives in the card's `subtitle:`** — *"They serve 4 counties. Their families
+live in 13 zipcodes."* That is the design system's own slot for it: the title names the thing, the
+subtitle states the scope.
+
+**The zipcodes are shown rather than hidden.** Measured across the bank, **max 13 and median 8** per
+partner, so the list fits and the dialog need not exist. The first cut capped at twelve, which for a
+partner with thirteen rendered *"and 1 more"* — a dialog to save one line. It shows whole up to
+sixteen now and truncates beyond, and below that threshold the dialog is not rendered at all.
+
+**Where a primary button goes, which I got backwards.** The profile form shipped `Save progress`
+before `Save and review`, from reading design.md's *"primary last"* — which sits in the **page
+header** section and describes a row that is **right-aligned**. A form's action row is
+**left-aligned**, and measured across twelve forms, the six carrying a primary and a secondary all
+read `[Save] Cancel`: **six of six, primary first**.
+
+One rule covers both and is written down now: **the primary sits at the row's alignment edge.**
+Right-aligned row, primary last; left-aligned row, primary first. `button-audit` only checks the
+header case, which is part of why this survived — the form convention held by construction and had
+never been stated, so there was nothing to contradict the rule I misapplied.
+
