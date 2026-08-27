@@ -37,9 +37,10 @@
         which a status is none of. It rides on the title line instead, which is where GitHub, Linear
         and Stripe put an entity's state.
       %>
-      <h1 class="text-2xl font-bold tracking-tight text-slate-900">
-        <%= title %><% if status %> <span class="ml-1 align-middle"><%= status %></span><% end %>
-      </h1>
+      <%# No stray whitespace inside the h1: it is a heading whose text other things compare
+          against, and reformatting this onto three lines put a newline and eight spaces either
+          side of every title in the app. %>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900"><%= title %><% if status %> <span class="ml-1 align-middle"><%= status %></span><% end %></h1>
       <% if subtitle %>
         <p class="mt-1 text-sm text-slate-600"><%= subtitle %></p>
       <% end %>

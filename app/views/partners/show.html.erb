@@ -92,10 +92,10 @@
       actually live in were a metric at y=206 with a loose button under it -- 2,527px apart, in two
       visual languages, with nothing relating them. Which is exactly the comparison worth making.
     %>
-    <%# `@impact_metrics` is nil for an uninvited partner -- the controller skips it -- and an
-        uninvited partner has no families to have zipcodes anyway. Same condition as the metrics
-        header above. %>
-    <% if @impact_metrics.present? && @partner.profile.present? %>
+    <%# Any partner with a profile, including an uninvited one: they can have declared counties
+        before they have a single family. `@impact_metrics` is nil for them -- the controller skips
+        it -- and the partial defaults it, so the zipcode half reads zero, which is true. %>
+    <% if @partner.profile.present? %>
       <%= render "service_area", partner: @partner, impact_metrics: @impact_metrics %>
     <% end %>
 

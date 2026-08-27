@@ -41,7 +41,9 @@
               <% next if area.county.blank? %>
               <tr>
                 <td><%= area.county.name %></td>
-                <td class="percent"><%= area.client_share %>%</td>
+                <%# "26 %" with the space, which is how the two served-area forms already render a client
+                    share. Closing it up here would have been a copy change nobody asked for. %>
+                <td class="percent"><%= area.client_share %> %</td>
               </tr>
             <% end %>
           </tbody>
