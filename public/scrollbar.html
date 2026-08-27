@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two scrollbars, and one of them is loud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --s100:#F1F5F9;--s200:#E2E8F0;--s300:#CBD5E1;--s400:#94A3B8;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --s100:#262838;--s200:#333549;--s300:#4A4D68;--s400:#6E718F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  :root[data-theme="dark"]{--ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;
+    --line-soft:#282A3D;--ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;
+    --accent-soft:#262551;--defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --s100:#262838;--s200:#333549;--s300:#4A4D68;--s400:#6E718F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:62rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(1.9rem,4.5vw,2.6rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.28rem;font-weight:600;margin:0}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.14rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:2.75rem 0}
+  .opt{margin-top:2.5rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{text-align:left;padding:.35rem .55rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-family:Archivo,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  .flag{color:var(--defect);font-weight:600}
+
+  /* a stand-in for the bottom of a table, so each bar can be judged over real content */
+  .demo{border:1px solid var(--line);border-radius:.5rem;background:var(--surface);overflow:hidden;
+        font-family:Archivo,sans-serif;margin:1rem 0}
+  .rows{font-size:.8rem;color:var(--ink-mid)}
+  .row{display:flex;gap:1.5rem;padding:.4rem .8rem;border-top:1px solid var(--line-soft);white-space:nowrap}
+  .row span:first-child{color:var(--ink-soft);width:3rem}
+  .row span:nth-child(2){flex:1}
+  .bararea{position:relative;height:34px;background:var(--surface)}
+  .bararea .row{border-top:1px solid var(--line-soft);position:absolute;inset:0;align-items:center}
+
+  /* today */
+  .bar-today{position:absolute;left:0;right:0;bottom:0;height:25px;background:rgba(255,255,255,.92);
+             border-top:1px solid var(--s200);display:flex;align-items:center;padding:0 8px}
+  .bar-today .trk{position:relative;flex:1;height:100%}
+  .bar-today .trk::before{content:"";position:absolute;inset-inline:0;top:50%;translate:0 -50%;
+                          height:6px;border-radius:999px;background:var(--s100)}
+  .bar-today .thm{position:absolute;top:50%;translate:0 -50%;height:6px;width:34%;border-radius:999px;
+                  background:var(--s400)}
+  .native{position:absolute;left:0;right:0;bottom:25px;height:10px;background:var(--s100);
+          display:flex;align-items:center}
+  .native i{display:block;height:10px;width:34%;border-radius:999px;background:var(--s300)}
+
+  /* option A -- thumb only */
+  .bar-a{position:absolute;left:8px;right:8px;bottom:5px;height:6px}
+  .bar-a .thm{position:absolute;top:0;height:6px;width:34%;border-radius:999px;background:var(--s400);
+              box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+  /* option B -- faint track, no chrome */
+  .bar-b{position:absolute;left:8px;right:8px;bottom:5px;height:6px}
+  .bar-b::before{content:"";position:absolute;inset:0;border-radius:999px;background:var(--s100)}
+  .bar-b .thm{position:absolute;top:0;height:6px;width:34%;border-radius:999px;background:var(--s300)}
+  /* option C -- lighter version of today */
+  .bar-c{position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--surface);
+         display:flex;align-items:center;padding:0 8px}
+  .bar-c .trk{position:relative;flex:1;height:100%}
+  .bar-c .trk::before{content:"";position:absolute;inset-inline:0;top:50%;translate:0 -50%;
+                      height:4px;border-radius:999px;background:var(--s100)}
+  .bar-c .thm{position:absolute;top:50%;translate:0 -50%;height:4px;width:34%;border-radius:999px;background:var(--s300)}
+
+  ul.why{margin:.8rem 0 0;padding-left:1.15rem;font-size:.95rem}
+  ul.why li{margin-bottom:.35rem}
+  .parts{font-family:Archivo,sans-serif;font-size:.78rem;color:var(--ink-soft);margin-top:.4rem}
+  strong{font-weight:600} a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design preview</p>
+    <h1>Two scrollbars, and one of them is loud</h1>
+    <p class="lede">
+      The ghost is not a rendering glitch. The app builds a horizontal scrollbar
+      <strong>twice</strong> for the same table, and both are meant to be permanently visible.
+    </p>
+  </header>
+
+  <section class="opt">
+    <div class="opthead"><h2>The bug</h2><span class="chip chip-no">Defect</span></div>
+    <div class="col">
+      <p>Two separate mechanisms, each solving the same problem, both switched on:</p>
+    </div>
+    <table>
+      <thead><tr><th>Where</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>.table-scroll</code> in CSS</td><td>Forces the <em>native</em> scrollbar to be permanently visible. The comment says why: <em>"A scrollbar that is there before you touch it. The platform default on macOS is an overlay that appears mid-gesture."</em></td></tr>
+        <tr><td><code>.table-rail</code> + <code>table_scroll_controller</code></td><td>Builds a <em>second</em>, custom scrollbar that floats at the bottom of the window, then settles below the table.</td></tr>
+      </tbody>
+    </table>
+    <div class="col">
+      <p>
+        Measured, the rail's top edge sits at <span class="num">637</span> and the scroll region's
+        bottom edge sits at <span class="num">637</span> — so the native bar occupies the last
+        ~10px <em>inside</em> the region and the rail begins immediately below it. Two bars, touching.
+      </p>
+      <p>
+        That is the ghost. And it moves, which is why it seems to come and go: while the table runs
+        past the fold the rail floats at the bottom of the window, and as the table's end scrolls
+        into view the rail travels down to meet it — passing the native bar on the way.
+      </p>
+    </div>
+    <div class="demo">
+      <div class="rows">
+        <div class="row"><span>231</span><span>Pawnee Homeless Shelter</span><span>08/26/2026</span></div>
+        <div class="row"><span>230</span><span>Second Street Community Outreach</span><span>08/27/2026</span></div>
+      </div>
+      <div class="bararea">
+        <div class="row"><span>229</span><span>Pawnee Senior Citizens Center</span><span>08/28/2026</span></div>
+        <div class="native"><i style="margin-left:18%"></i></div>
+        <div class="bar-today"><div class="trk"><div class="thm" style="left:18%"></div></div></div>
+      </div>
+    </div>
+    <p class="parts">Today: a native bar, then a 25px rail carrying a 92%-white backdrop over a table row, a top border, a track and a thumb — <strong>six elements</strong> where a scrollbar needs one or two.</p>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>The fix for the ghost, which is not a choice</h2>
+    <p style="margin-top:.7rem">
+      <strong>Hide the native scrollbar wherever the rail exists.</strong> The rail is already a
+      complete scrollbar — it drags, it takes a click on the track, it tracks position. Keeping the
+      native one as well is what puts two bars on screen.
+    </p>
+    <p>
+      It also removes something the CSS comment already admits is unreliable: forcing a persistent
+      native scrollbar <em>"is an improvement where the platform honours it and not the signal
+      itself"</em>. Firefox never honours it. The rail behaves the same everywhere.
+    </p>
+    <p style="color:var(--ink-soft);font-size:.95rem">
+      Worth saying plainly: I could not reproduce your platform's exact rendering here — this
+      container forces overlay scrollbars, so both stylings measure as taking no space. What is not
+      in doubt is that two scrollbars are built for one region; that is in the code, not in the
+      rendering.
+    </p>
+  </section>
+
+  <hr class="rule">
+
+  <h2 class="col">Then: how loud should the remaining one be?</h2>
+  <p class="col" style="color:var(--ink-mid)">
+    The edge fade already carries the <em>signal</em> — the CSS says so: <em>"The fade below is the
+    signal, because it depends on nothing."</em> So the bar does not have to shout that there is more
+    to see. It only has to be a usable control.
+  </p>
+
+  <section class="opt">
+    <div class="opthead"><h2>A — Thumb only</h2></div>
+    <div class="demo">
+      <div class="rows"><div class="row"><span>231</span><span>Pawnee Homeless Shelter</span><span>08/26/2026</span></div></div>
+      <div class="bararea">
+        <div class="row"><span>229</span><span>Pawnee Senior Citizens Center</span><span>08/28/2026</span></div>
+        <div class="bar-a"><div class="thm" style="left:18%"></div></div>
+      </div>
+    </div>
+    <div class="col"><ul class="why">
+      <li><strong>For:</strong> what macOS, GitHub and Linear do — one element, no chrome, nothing covering a row.</li>
+      <li><strong>Against:</strong> the track is the click-to-jump target, and an invisible track is an invisible affordance. You can only drag.</li>
+    </ul></div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>B — Faint track, no chrome</h2><span class="chip chip-rec">Recommended</span></div>
+    <div class="demo">
+      <div class="rows"><div class="row"><span>231</span><span>Pawnee Homeless Shelter</span><span>08/26/2026</span></div></div>
+      <div class="bararea">
+        <div class="row"><span>229</span><span>Pawnee Senior Citizens Center</span><span>08/28/2026</span></div>
+        <div class="bar-b"><div class="thm" style="left:18%"></div></div>
+      </div>
+    </div>
+    <div class="col"><ul class="why">
+      <li><strong>Two elements instead of six.</strong> The 25px bar, the 92% backdrop and the border all go; the track and thumb stay.</li>
+      <li><strong>The click target survives</strong>, which is the thing A gives up — and the track is what tells you how much of the table you are seeing.</li>
+      <li><strong>Thumb drops to slate-300</strong>, matching every other resting-state line in the app. slate-400 is the app's <em>hover</em> weight, and the bar sits at that weight all the time today.</li>
+      <li><strong>Nothing covers a row.</strong> The backdrop existed to keep the bar legible over content; a 6px pill on a faint track does not need one.</li>
+    </ul></div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>C — The same bar, quieter</h2></div>
+    <div class="demo">
+      <div class="rows"><div class="row"><span>231</span><span>Pawnee Homeless Shelter</span><span>08/26/2026</span></div></div>
+      <div class="bararea">
+        <div class="row"><span>229</span><span>Pawnee Senior Citizens Center</span><span>08/28/2026</span></div>
+        <div class="bar-c"><div class="trk"><div class="thm" style="left:18%"></div></div></div>
+      </div>
+    </div>
+    <div class="col"><ul class="why">
+      <li><strong>For:</strong> keeps the solid strip, so the bar never sits over content at all — 16px instead of 25, no border, 4px thumb.</li>
+      <li><strong>Against:</strong> still reserves a strip under every scrollable table, and still reads as a piece of furniture rather than a scrollbar.</li>
+    </ul></div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.7rem"><strong>Hide the native scrollbar, and restyle the rail as B.</strong></p>
+    <p>
+      The ghost goes because there is only one scrollbar left. The heaviness goes because the rail
+      stops being a bar with a backdrop and a border, and becomes what it actually is: a track and a
+      thumb. Six elements to two, and the thumb at the app's resting weight rather than its hover
+      weight.
+    </p>
+  </section>
+</div>
+</body>
+</html>
