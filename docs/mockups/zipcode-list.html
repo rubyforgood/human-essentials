@@ -101,7 +101,7 @@
   </p>
 
   <section class="opt">
-    <div class="opthead"><h2>A — An aligned grid</h2><span class="chip chip-rec">Recommended</span></div>
+    <div class="opthead"><h2>A — An aligned grid</h2><span class="chip chip-now">Withdrawn</span></div>
     <div class="stage">
       <div class="card">
         <p class="h3">Family zipcodes</p>
@@ -115,16 +115,15 @@
     </div>
     <div class="col">
       <ul class="why">
-        <li><strong>Columns are the rail.</strong> Every code is five digits in a tabular figure, so they line up and the eye moves down a column instead of hunting along a line. This is what the zipcode dialog already did before the list came out of it.</li>
-        <li><strong>Nothing invented.</strong> No new component, no borders around numbers that are not interactive.</li>
-        <li><strong>The order is stated once</strong> in the caption, in the same <code>text-xs</code> the card's other captions use.</li>
-        <li><strong>Against:</strong> a plain grid is quiet — if you want the zipcodes to carry weight on the page, they will not.</li>
+        <li><strong>The argument for this was "columns are the rail" — and measured at the real card width, there are no columns.</strong> 1144px fits twelve five-digit codes across, so thirteen renders as <span class="num">12 &times; 2</span>: one full-width row stretched by <code>1fr</code>, and <code>89212</code> orphaned on a line of its own. With a median of 8 per partner it is a single sparse row. The scanning benefit needs a list long enough to wrap several times, and this one never is.</li>
+        <li><strong>Against:</strong> stretched columns put ~90px of empty space between adjacent codes, which is the opposite of the boundary problem being solved — it separates them so far that the group stops reading as one set.</li>
+        <li>Withdrawn. It would be the right shape for a list of fifty.</li>
       </ul>
     </div>
   </section>
 
   <section class="opt">
-    <div class="opthead"><h2>B — Bordered chips</h2></div>
+    <div class="opthead"><h2>B — Bordered boxes</h2><span class="chip chip-rec">Recommended</span></div>
     <div class="stage">
       <div class="card">
         <p class="h3">Family zipcodes</p>
@@ -139,9 +138,10 @@
     </div>
     <div class="col">
       <ul class="why">
-        <li><strong>For:</strong> a border round each code is the clearest possible boundary, and it wraps naturally at any width.</li>
-        <li><strong>Against:</strong> in this app a bordered chip already means something — the filter bar uses them for <em>active filters you can remove</em>. Thirteen chips that do nothing when clicked teach the reader that chips are sometimes inert.</li>
-        <li><strong>Against:</strong> chips do not align, so the ordering is harder to see than in a grid.</li>
+        <li><strong>A border is the boundary</strong>, which is the actual complaint. Measured at the real card width: thirteen codes on <strong>one</strong> row, tight, each one clearly its own thing.</li>
+        <li><strong>The objection I raised does not survive checking.</strong> I said a bordered chip already means "an active filter you can remove". Both existing chip-shaped things in this app — the status pill and the filter chip — are <code>rounded-full</code>, and the pill carries a tone colour while the filter carries an <code>&times;</code>. A <code>rounded</code> square-cornered box, uncoloured, monospace, with nothing to click is not the same object. design.md's rule is that <em>a pill is a state</em>; keeping these square is what keeps that rule true.</li>
+        <li><strong>Constraints that keep it distinct:</strong> square corners not <code>rounded-full</code>, neutral not toned, monospace with <code>tabular-nums</code>, and no remove control.</li>
+        <li><strong>Against:</strong> thirteen borders is more ink than thirteen numbers, and if the list ever ran to fifty it would read as a wall.</li>
       </ul>
     </div>
   </section>
@@ -178,9 +178,18 @@
   <section class="col">
     <h2>Recommendation</h2>
     <p style="margin-top:.7rem">
-      <strong>A, plus dropping the <code>+4</code> everywhere</strong> — in the list, and in the
+      <strong>B, plus dropping the <code>+4</code> everywhere</strong> — in the list, and in the
       count the card's subtitle quotes. The +4 is the actual cause of the ragged look, and it is
       answering a more precise question than anyone asked.
+    </p>
+    <p>
+      <strong>This reverses the first recommendation, which was A.</strong> Asked to justify the
+      grid over the boxes, neither of my two reasons held. "Columns are the rail" assumed a list long
+      enough to wrap into a block; at 1144px and thirteen codes it renders as one stretched row and
+      an orphan. And "a bordered chip already means a removable filter" is only true of the
+      <code>rounded-full</code> shape the filter bar and the status pill both use — a square,
+      uncoloured, monospace box is not that object. The complaint was that the codes have no
+      boundaries; the option that draws boundaries is the answer.
     </p>
     <p>
       I would not take <strong>C</strong> now: counts are the more useful display, but on this data
