@@ -70,32 +70,76 @@ RSpec.feature "Distributions", type: :system do
       expect(link[:"aria-controls"]).to be_nil
     end
 
-    # Three views, and no Day: over a year, 22 days had any distribution at all, mean 1.9, and 13 of
-    # those held exactly one. A day view is an hour axis for a line and a half.
-    it "offers a month, a week and a list, and nothing else" do
+    # Two axes, because these are two questions. They used to be one row of three -- Month, Week,
+    # List -- where "List" named a shape and its neighbours named a duration, so nothing said how
+    # much time it covered. No Day view: over a year, 22 days had any distribution at all, mean 1.9,
+    # and 13 of those held exactly one.
+    it "offers a duration and a layout, and no Day" do
       visit schedule_distributions_path
 
       expect(page).to have_button("Month")
       expect(page).to have_button("Week")
+      expect(page).to have_button("Grid")
       expect(page).to have_button("List")
       expect(page).to have_no_button("Day")
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
+      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Month")
+      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
+    end
+
+    # All four combinations, including a whole month as one list -- which the three-button switcher
+    # could not express at all, and which is the obvious thing to want for a monthly reconciliation.
+    it "reaches all four combinations of duration and layout" do
+      {
+        "month" => {"grid" => ".fc-dayGridMonth-view", "list" => ".fc-listMonth-view"},
+        "week" => {"grid" => ".fc-dayGridWeek-view", "list" => ".fc-listWeek-view"}
+      }.each do |range, layouts|
+        layouts.each do |layout, selector|
+          visit "#{schedule_distributions_path}?range=#{range}&layout=#{layout}"
+          expect(page).to have_css(selector), "expected #{range}/#{layout} to render #{selector}"
+        end
+      end
+    end
+
+    # The parameter is `layout` and not the obvious `format`, because `format` is reserved by Rails
+    # routing for the response MIME type: `?format=grid` raised ActionController::UnknownFormat, a
+    # 406, before the view rendered at all.
+    it "does not collide with Rails' own format parameter" do
+      visit "#{schedule_distributions_path}?range=week&layout=list"
+
+      expect(page).to have_css(".fc-listWeek-view")
+      expect(page).to have_no_content("UnknownFormat")
     end
 
     # The choice lives in the URL, not localStorage: design.md settled that for page tabs, and the
     # argument is unchanged -- it is how a view becomes something you can link to and go back from.
-    it "puts the chosen view in the URL, and reads it back" do
+    it "puts both axes in the URL, even when only one was clicked" do
       visit schedule_distributions_path
-      click_on "Week"
+      click_on "List"
 
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
-      expect(page).to have_current_path(/view=week/)
-      expect(page).to have_css(".fc-dayGridWeek-view")
+      # Both, so a shared link carries the whole answer rather than half of it plus a default that
+      # depends on the reader's window width.
+      expect(page).to have_current_path(/range=month/)
+      expect(page).to have_current_path(/layout=list/)
+      expect(page).to have_css(".fc-listMonth-view")
 
       # And a link straight to it opens there.
+      visit "#{schedule_distributions_path}?range=week&layout=grid"
+      expect(page).to have_css(".fc-dayGridWeek-view")
+      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Week")
+      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
+    end
+
+    # `?view=` was the parameter before the switcher split in two. Links shared while it existed
+    # still open on what they meant.
+    it "still honours the old view parameter" do
+      visit "#{schedule_distributions_path}?view=list"
+      expect(page).to have_css(".fc-listWeek-view")
+
       visit "#{schedule_distributions_path}?view=week"
       expect(page).to have_css(".fc-dayGridWeek-view")
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
+
+      visit "#{schedule_distributions_path}?view=month"
+      expect(page).to have_css(".fc-dayGridMonth-view")
     end
 
     it "goes back to the previous view" do
@@ -104,9 +148,8 @@ RSpec.feature "Distributions", type: :system do
 
       click_on "Week"
       # Wait for the history entry, not only for the rendered class. Going back before pushState has
-      # been committed leaves the assertions racing the popstate handler, and this failed roughly
-      # once in twenty without it.
-      expect(page).to have_current_path(/view=week/)
+      # been committed leaves the assertions racing the popstate handler.
+      expect(page).to have_current_path(/range=week/)
       expect(page).to have_css(".fc-dayGridWeek-view")
 
       page.go_back
@@ -114,46 +157,83 @@ RSpec.feature "Distributions", type: :system do
       # pushState rather than replaceState, or Back would leave the URL behind and the view alone.
       expect(page).to have_current_path(schedule_distributions_path, ignore_query: false)
       expect(page).to have_css(".fc-dayGridMonth-view")
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
+      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Month")
     end
 
-    # A month grid on a phone is unreadable, so the list is the default there -- which is what this
-    # page already fell back to before there was any choice about it.
-    it "defaults a narrow window to the list" do
+    # A month grid on a phone is unreadable, so a narrow window opens on the week, as a list --
+    # which is what this page already fell back to before there was any choice about it.
+    it "defaults a narrow window to a week, as a list" do
       page.driver.resize(375, 800)
       visit schedule_distributions_path
 
       expect(page).to have_css(".fc-listWeek-view")
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "List")
+      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Week")
+      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "List")
     end
 
-    # The bug this file shipped. "Week" used to mean a grid above 992px and a *list* below it, and
-    # below 992 the list was also the default -- so Week arrived already pressed, switchView returned
-    # early, and the button did nothing. Month worked, so only Week looked broken. 992 is not an
-    # unusual width: a 1440 screen at 150% scaling is 960 CSS px.
-    #
-    # Verified against the old code, which left .fc-listWeek-view on screen at every width below 992.
-    it "switches to the week grid in a narrow window, where Week used to do nothing" do
+    # The bug the split was born from: "Week" once meant a grid above 992px and a list below it, and
+    # since the list was also the narrow default, Week arrived pressed and its button did nothing.
+    # Both grids are reachable in a narrow window now.
+    it "reaches a grid in a narrow window" do
       page.driver.resize(900, 800)
       visit schedule_distributions_path
       expect(page).to have_css(".fc-listWeek-view")
 
-      click_on "Week"
+      click_on "Grid"
 
       expect(page).to have_css(".fc-dayGridWeek-view")
-      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
-      expect(page).to have_current_path(/view=week/)
+      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
     end
 
     # `defaultView` and `eventLimit` are FullCalendar 4 spellings, and this app is on 6, so both
-    # were being ignored: at 375px it rendered the month grid, never the list. Verified by running
-    # this against the old code, which reported fc-dayGridMonth-view.
+    # were being ignored: at 375px it rendered the month grid, never the list.
     it "shows a list rather than a month grid when the window is too narrow for one" do
       page.driver.resize(375, 800)
       visit schedule_distributions_path
 
       expect(page).to have_css(".fc-list")
       expect(page).to have_no_css(".fc-daygrid")
+    end
+
+    # A list draws only the days that hold something -- FullCalendar has no option for the empty
+    # ones -- so a week with one distribution renders one row, which reads as "there is one
+    # distribution, ever". Measured before this: the week of 7 September drew a single line under a
+    # heading saying "Sep 7 – 13".
+    it "says what the list covers and how much of it is empty" do
+      visit "#{schedule_distributions_path}?range=week&layout=list"
+
+      # `have_css(text:)` rather than `find` then read `.text`: find waits for the element, which
+      # the server renders empty, and the controller fills it a beat later.
+      expect(page).to have_css("[data-calendar-target='caption']",
+        text: issued_at.to_date.strftime("%B"))
+      expect(page).to have_css("[data-calendar-target='caption']", text: /\d+ of 7 days/)
+    end
+
+    it "counts a single day in the singular" do
+      # The only distribution this organization has is the one created above, so the week holds
+      # exactly one day -- the case that reads as "there is one distribution, ever". Deliberately
+      # not `Distribution.destroy_all` to arrange that: nothing on the model publishes the
+      # compensating event, so it strands stock. See CLAUDE.md.
+      visit "#{schedule_distributions_path}?range=week&layout=list"
+
+      expect(page).to have_css("[data-calendar-target='caption']",
+        text: "1 of 7 days has a distribution")
+    end
+
+    it "names the month, not a span of days, when the list is a month" do
+      visit "#{schedule_distributions_path}?range=month&layout=list"
+
+      expect(page).to have_css("[data-calendar-target='caption']",
+        text: /#{issued_at.strftime("%B %Y")} · \d+ of \d+ days/)
+    end
+
+    # In a grid the empty days are already on screen as empty cells, so the same sentence would be
+    # restating the picture.
+    it "hides the caption in the grids" do
+      visit "#{schedule_distributions_path}?range=month&layout=grid"
+      expect(page).to have_css(".fc-dayGridMonth-view")
+
+      expect(page).to have_no_css("[data-calendar-target='caption']", visible: true)
     end
 
     # Prev and Next move one step, so before this the only way to reach a month in another year was
@@ -270,6 +350,11 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css(".fc-dayGridWeek-view")
       expect(page).to have_css("button[aria-label='Previous week']")
       expect(page).to have_css("button[aria-label='Next week']")
+
+      # The layout does not change what Prev and Next step, only the duration does.
+      click_on "List"
+      expect(page).to have_css(".fc-listWeek-view")
+      expect(page).to have_css("button[aria-label='Previous week']")
     end
   end
 

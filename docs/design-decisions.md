@@ -4826,3 +4826,50 @@ question once; a dimmed one raises it every visit.
 across all three views — so this does not get quietly re-disabled by someone reading only the
 pagination rule.
 
+## 2026-08-27 — The calendar switcher splits into a duration and a layout
+
+Asked what range the list covered, and the honest answer was that nothing on the page said. It is a
+week, Monday to Sunday; the heading names that range and the list underneath draws **only the days
+that hold something**, so what you see rarely matches what it covers. Measured: this week drew 4 of
+7 days and started on a Wednesday, next week 3 of 7, and the week of 7 September drew **one row** —
+indistinguishable from "there is one distribution, ever".
+
+**The cause was a naming mistake, and the third version of the same one.** Month and Week name a
+*duration*. List names a *shape*. Putting them in one row of buttons asks a single control to answer
+two questions, so the third label could not say how much time it covered. The first version of this
+bug was worse — "Week" meaning a grid at one width and a list at another — and this was the subtler
+survivor of the same fault.
+
+FullCalendar had the model right all along: its own toolbar labels these by duration, never "List",
+because in the library a list is a rendering of a range. Splitting the two questions also reaches
+`listMonth` — a whole month as one list — which three buttons could not express and which is the
+obvious thing to want for a monthly reconciliation. All four views already exist, so no plugin.
+
+Rejected: **renaming the third button "Week list"** — smallest possible change, but "Week" and
+"Week list" side by side read as near-duplicates and the month stays unreachable as a list.
+Rejected: **making the list a month and calling it "Agenda"** — a nicer word with the same defect,
+since "Agenda" still does not say how long it is.
+
+**Four things this turned up that the plan did not predict.**
+
+**`format` is reserved by Rails routing.** The obvious parameter pair was `?range=…&format=…`, and
+`?format=grid` reached the action as a request for a "grid" representation:
+`ActionController::UnknownFormat`, a 406, before the view rendered at all. The parameter is `layout`.
+
+**Clicking one axis writes both parameters.** Writing only the axis that moved would leave the other
+to a default that depends on the reader's window width — so a shared link would be the sender's view
+on the sender's screen and something else on the recipient's. `?view=` from before the split is
+still honoured.
+
+**`Intl` has no sensible pattern for a weekday and a bare day.** The caption first asked for
+`{weekday, day}` on the near end of a range and added the month only when it crossed one; en-US
+rendered that `24 Monday – Sunday, August 30`. `formatRange` with a full date on both ends is
+correct in any locale and collapses what it can itself.
+
+**The list day headings cannot be made consistent, and that is left alone.** `listWeek` leads with
+the weekday, `listMonth` with the date. Overriding `listDayFormat` — globally, then per view — makes
+`listDayAltFormat` mirror the primary, so every heading renders its own date twice: `Sunday |
+Sunday`, or `August 26, 2026 | August 26, 2026`. The library's defaults are the only pair that
+renders two different things. A heading that reads in a different order is a smaller problem than
+one that says the same thing twice, so this is recorded rather than fixed.
+
