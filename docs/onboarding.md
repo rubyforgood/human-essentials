@@ -454,13 +454,28 @@ forward, and this app is normally viewed through one. If you are behind a forwar
 TLS-terminating tunnel, still start with `TUNNEL=1` or CSRF rejects every form and calls it
 "Your session expired".
 
-**The calendar has a Month and a Week now.** Week is the useful one when a day is busy — the month
-grid hides everything past the first event behind "+5 more", and the week shows the whole day. Your
-choice goes in the address bar, so you can send someone a link to the week you are looking at, and
-Back returns to where you were. On a phone it opens on the week as a list.
+**The calendar has a Month, a Week and a List.** Week is the useful one when a day is busy — the
+month grid hides everything past the first event behind "+5 more", and the week shows the whole day.
+List is the plain agenda, one line per distribution. Your choice goes in the address bar, so you can
+send someone a link to the view you are looking at, and Back returns to where you were. On a phone
+it opens on the List.
 
 There is deliberately no Day view: across a year, a day held **1.9 distributions on average**, and
 just one on 13 days out of 22.
+
+**If you found the Week button did nothing, that was a real bug and it is fixed.** In a window
+narrower than about 992 pixels — a laptop at 150% scaling, or any window that is not maximised — the
+page already opened in what it called "Week", so pressing Week changed nothing. Week and List are
+separate buttons now and each one does exactly what it says.
+
+**To reach a month in another year, use the month and year dropdowns** beside the view buttons,
+rather than clicking Next twelve times. The year list covers the years your bank actually has
+distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
+the calendar, so they always say what is on screen.
+
+**To search a date range** — "everything between March and August" — use the **Distributions** page
+rather than the calendar: a calendar shows one month or one week at a time, and the list page has a
+date range filter. The calendar's subtitle links straight to it.
 
 **To try the calendar with something on it**, run `bin/rails db:seed:calendar`. The ordinary seeds
 scatter twenty distributions over a couple of years, which leaves that page thin exactly where you

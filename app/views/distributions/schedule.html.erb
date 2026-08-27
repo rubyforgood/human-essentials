@@ -1,9 +1,21 @@
 <% content_for :title, "Pick Ups & Deliveries - #{current_organization.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The date *range* question belongs on the index, not here. A grid draws a month or a week; hand
+    it "3 March to 19 August" and there is nothing for it to render. /distributions is the same data
+    as a list and already has the range filter, so this points at it rather than growing a filter
+    the calendar could not honour. See docs/design-decisions.md.
+  %>
   <%= render "shared/essentials/page_header",
         title: "Pick ups & deliveries",
-        subtitle: "See when each distribution is due out, or subscribe to this calendar from your own.",
+        subtitle: safe_join([
+          "See when each distribution is due out, or subscribe to this calendar from your own. ",
+          "To pick a date range instead, ",
+          link_to("search all distributions", distributions_path,
+                  class: "font-medium text-brand-700 underline hover:text-brand-800"),
+          "."
+        ]),
         actions: essentials_link_button("Copy calendar URL", "javascript:void(0)",
                    variant: :secondary, icon: "bi-clipboard",
                    id: "copy-calendar-button", data: {url: hashed_calendar_path}) %>
@@ -12,12 +24,13 @@
     The toolbar is ours, not FullCalendar's. Its own is three buttons filled `rgb(44,62,80)` at a
     4px radius and 16px text, beside a 28px/400 title -- a page's worth of primary-looking chrome
     for moving the month, on a page whose real action is a quiet secondary. The grid is restyled in
-    CSS the way select2 is; these three are cheap to own outright, and owning them means a library
+    CSS the way select2 is; these are cheap to own outright, and owning them means a library
     upgrade cannot silently revert them. See design.md.
 
     "‹ Prev" and "Next ›" rather than bare chevrons: design.md reserves icon-only for a repeating
     row action, and this is the shape the pager already uses for the same job. The `aria-label`
-    extends the visible word rather than replacing it, which is what 2.5.3 asks.
+    extends the visible word rather than replacing it, which is what 2.5.3 asks -- and it is set
+    from the controller, because these step a month in one view and a week in the other two.
   %>
   <%= render "shared/essentials/card" do %>
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3"
@@ -29,13 +42,17 @@
 
       <div class="flex flex-wrap items-center gap-2">
         <%#
-          Month and Week, and no Day: over a year, 22 days had any distribution at all, mean 1.9,
-          and 13 of those held exactly one. `aria-pressed` rather than a radio group, because these
-          are two buttons that toggle a state rather than a value being submitted.
+          Month, Week and List, and no Day: over a year, 22 days had any distribution at all, mean
+          1.9, and 13 of those held exactly one. `aria-pressed` rather than a radio group, because
+          these toggle a state rather than submit a value.
+
+          List is its own button because it is its own view. It used to be what "Week" rendered as
+          below 992px, which made one label mean two things -- and since the list was also the
+          default there, Week arrived pressed and its button did nothing.
         %>
         <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
              role="group" aria-label="Calendar view">
-          <% [["month", "Month"], ["week", "Week"]].each_with_index do |(value, label), index| %>
+          <% [["month", "Month"], ["week", "Week"], ["list", "List"]].each_with_index do |(value, label), index| %>
             <%= button_tag label, type: "button",
                   class: "px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors " \
                          "hover:bg-slate-50 aria-pressed:bg-slate-100 aria-pressed:text-slate-900 " \
@@ -47,17 +64,39 @@
           <% end %>
         </div>
 
+        <%#
+          Jumping to a month in another year. Prev and Next move one step, so before this March next
+          year was seven clicks away and last December was five.
+
+          Two selects rather than one `<input type="month">`, which is a picker in Chrome and Edge
+          and a bare text box expecting "2026-08" in desktop Firefox and Safari. The year list is
+          bounded by this organization's own data; the controller adds a year if Prev or Next walks
+          past either end. Two labels rather than one, because they are two controls.
+        %>
+        <%= select_tag "calendar_month",
+              options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |name, index| [name, index] }),
+              class: essentials_inline_select_classes(size: :sm),
+              aria: {label: "Month"},
+              data: {calendar_target: "monthSelect", action: "calendar#jumpTo"} %>
+        <%= select_tag "calendar_year",
+              options_for_select(@calendar_years.to_a),
+              class: essentials_inline_select_classes(size: :sm),
+              aria: {label: "Year"},
+              data: {calendar_target: "yearSelect", action: "calendar#jumpTo"} %>
+
         <%= button_tag "Today", type: "button",
               class: essentials_button_classes(variant: :secondary, size: :sm),
               data: {action: "calendar#today"} %>
         <%= button_tag type: "button", "aria-label": "Previous month",
               class: essentials_button_classes(variant: :secondary, size: :sm),
-              data: {action: "calendar#previous"} do %>
+              data: {action: "calendar#previous", calendar_target: "stepButton",
+                     calendar_step: "Previous"} do %>
           <i class="bi-chevron-left" aria-hidden="true"></i> Prev
         <% end %>
         <%= button_tag type: "button", "aria-label": "Next month",
               class: essentials_button_classes(variant: :secondary, size: :sm),
-              data: {action: "calendar#next"} do %>
+              data: {action: "calendar#next", calendar_target: "stepButton",
+                     calendar_step: "Next"} do %>
           Next <i class="bi-chevron-right" aria-hidden="true"></i>
         <% end %>
       </div>

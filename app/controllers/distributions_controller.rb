@@ -245,7 +245,7 @@ class DistributionsController < ApplicationController
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
     respond_to do |format|
-      format.html
+      format.html { @calendar_years = calendar_years }
       format.json do
         start_at = params[:start].to_datetime
         end_at = params[:end].to_datetime
@@ -289,6 +289,21 @@ class DistributionsController < ApplicationController
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
     PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
+  end
+
+  # The years the month/year jump offers. Bounded by this organization's own data -- there is no
+  # point offering 1990 to a bank whose first distribution was in 2023 -- and always including this
+  # year, so a new organization with nothing in it still gets a usable control.
+  #
+  # Prev and Next can still walk past either end; `calendar_controller` adds the year to the list
+  # when they do, rather than leaving the select naming a year the calendar is not on.
+  def calendar_years
+    years = [
+      current_organization.distributions.minimum(:issued_at)&.year,
+      current_organization.distributions.maximum(:issued_at)&.year,
+      Time.zone.today.year
+    ].compact
+    (years.min..years.max)
   end
 
   def schedule_reminder_email(distribution)

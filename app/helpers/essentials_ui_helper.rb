@@ -392,9 +392,14 @@ module EssentialsUiHelper
   # single definition of what one looks like, shared by both helpers. Only the options-array
   # variant lives here, because FilterHelper has no equivalent for it.
 
-  FILTER_CONTROL_BASE = "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white " \
-                        "py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 " \
-                        "focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
+  # What a control *looks* like -- border, radius, surface, focus ring -- with no size and no
+  # layout in it, so a toolbar select and a stacked form field can share the look without one
+  # inheriting the other's shape.
+  CONTROL_SURFACE_CLASSES = "rounded-lg border border-slate-300 bg-white text-slate-900 " \
+                            "shadow-sm focus:border-brand-500 focus:ring-2 " \
+                            "focus:ring-brand-500/30 focus:outline-none"
+
+  FILTER_CONTROL_BASE = "mt-1.5 block w-full py-2 text-sm #{CONTROL_SURFACE_CLASSES}"
 
   # Text inputs and date pickers: even padding.
   FILTER_CONTROL_CLASSES = "#{FILTER_CONTROL_BASE} px-3"
@@ -408,6 +413,27 @@ module EssentialsUiHelper
   # dropdowns: the chevron belongs to every select, and the ones outside a filter bar are the
   # majority. Use it for any `select_tag` or `f.select` that simple_form does not build.
   SELECT_CLASSES = "#{FILTER_CONTROL_BASE} select-chevron pl-3 pr-10"
+
+  # A select that sits *in a row of buttons* rather than stacked under a label in a form. Every
+  # other select in this app is a form field: `mt-1.5 block w-full`, which in a toolbar means full
+  # width, a stray top margin, and 38px against its neighbours' 30px. This is the same surface and
+  # the same `.select-chevron`, sized to `BUTTON_SIZES` so the row lines up.
+  #
+  # `pr-10` at both sizes on purpose -- the chevron is positioned from the right edge, not from the
+  # padding, so shrinking the padding would slide the text under it rather than move it.
+  INLINE_SELECT_SIZES = {
+    sm: "py-1.5 pl-2.5 pr-10 text-xs",
+    md: "py-2 pl-3 pr-10 text-sm"
+  }.freeze
+
+  def essentials_inline_select_classes(size: :md, extra: nil)
+    [
+      CONTROL_SURFACE_CLASSES,
+      "select-chevron w-auto",
+      INLINE_SELECT_SIZES.fetch(size.to_sym),
+      extra
+    ].compact.join(" ")
+  end
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 

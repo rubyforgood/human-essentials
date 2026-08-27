@@ -70,13 +70,14 @@ RSpec.feature "Distributions", type: :system do
       expect(link[:"aria-controls"]).to be_nil
     end
 
-    # Two views, and no Day: over a year, 22 days had any distribution at all, mean 1.9, and 13 of
+    # Three views, and no Day: over a year, 22 days had any distribution at all, mean 1.9, and 13 of
     # those held exactly one. A day view is an hour axis for a line and a half.
-    it "offers a month and a week, and nothing else" do
+    it "offers a month, a week and a list, and nothing else" do
       visit schedule_distributions_path
 
       expect(page).to have_button("Month")
       expect(page).to have_button("Week")
+      expect(page).to have_button("List")
       expect(page).to have_no_button("Day")
       expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
     end
@@ -116,25 +117,107 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Month")
     end
 
-    # A month grid on a phone is unreadable, so the week is the default there -- as a list, which is
-    # what this page already fell back to before there was any choice about it.
-    it "defaults a narrow window to the week, as a list" do
+    # A month grid on a phone is unreadable, so the list is the default there -- which is what this
+    # page already fell back to before there was any choice about it.
+    it "defaults a narrow window to the list" do
       page.driver.resize(375, 800)
       visit schedule_distributions_path
 
       expect(page).to have_css(".fc-listWeek-view")
+      expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "List")
+    end
+
+    # The bug this file shipped. "Week" used to mean a grid above 992px and a *list* below it, and
+    # below 992 the list was also the default -- so Week arrived already pressed, switchView returned
+    # early, and the button did nothing. Month worked, so only Week looked broken. 992 is not an
+    # unusual width: a 1440 screen at 150% scaling is 960 CSS px.
+    #
+    # Verified against the old code, which left .fc-listWeek-view on screen at every width below 992.
+    it "switches to the week grid in a narrow window, where Week used to do nothing" do
+      page.driver.resize(900, 800)
+      visit schedule_distributions_path
+      expect(page).to have_css(".fc-listWeek-view")
+
+      click_on "Week"
+
+      expect(page).to have_css(".fc-dayGridWeek-view")
       expect(page).to have_css("[data-calendar-view][aria-pressed='true']", text: "Week")
+      expect(page).to have_current_path(/view=week/)
     end
 
     # `defaultView` and `eventLimit` are FullCalendar 4 spellings, and this app is on 6, so both
     # were being ignored: at 375px it rendered the month grid, never the list. Verified by running
     # this against the old code, which reported fc-dayGridMonth-view.
-    it "falls back to the list view when the window is too narrow for a month grid" do
+    it "shows a list rather than a month grid when the window is too narrow for one" do
       page.driver.resize(375, 800)
       visit schedule_distributions_path
 
       expect(page).to have_css(".fc-list")
       expect(page).to have_no_css(".fc-daygrid")
+    end
+
+    # Prev and Next move one step, so before this the only way to reach a month in another year was
+    # to click through every month between here and there.
+    #
+    # Matched by id rather than by the `aria-label`, which Capybara does not look at unless
+    # `enable_aria_label` is on -- it is not, and this file already had to work around that once.
+    it "jumps to a month in another year" do
+      # The year list is bounded by the data, so there has to be data in the other year.
+      create(:distribution, organization: organization, issued_at: issued_at - 1.year)
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w+ #{issued_at.year}/)
+
+      select (issued_at.year - 1).to_s, from: "calendar_year"
+      select "March", from: "calendar_month"
+
+      expect(page).to have_css("[data-calendar-target='title']", text: "March #{issued_at.year - 1}")
+    end
+
+    # The selects drive the calendar and follow it: Today, Prev, Next and a view change all move the
+    # range, and a control reading August while the grid shows October is worse than no control.
+    it "keeps the month and year selects on whatever the calendar is showing" do
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='title']")
+
+      click_on "Prev"
+
+      previous_month = issued_at.to_date.prev_month
+      expect(page).to have_css("[data-calendar-target='title']",
+        text: previous_month.strftime("%B %Y"))
+      expect(page).to have_select("calendar_month", selected: previous_month.strftime("%B"))
+      expect(page).to have_select("calendar_year", selected: previous_month.year.to_s)
+    end
+
+    # The year list is bounded by the organization's own distributions, so Prev and Next can walk off
+    # either end of it -- and a select showing a year the calendar is not on is a lie.
+    it "adds the year when stepping past the end of the list" do
+      visit schedule_distributions_path
+      expect(page).to have_css("[data-calendar-target='title']")
+
+      select "December", from: "calendar_month"
+      expect(page).to have_css("[data-calendar-target='title']", text: "December #{issued_at.year}")
+
+      click_on "Next"
+
+      expect(page).to have_css("[data-calendar-target='title']", text: "January #{issued_at.year + 1}")
+      expect(page).to have_select("calendar_year", selected: (issued_at.year + 1).to_s)
+    end
+
+    # Prev and Next move a month in the month view and a week in the other two, so one fixed
+    # "Previous month" would be wrong in two views out of three.
+    #
+    # By CSS, because the accessible name is an `aria-label` and Capybara only matches those with
+    # `enable_aria_label` on. The visible word stays inside the name, which is what 2.5.3 asks.
+    it "names what Prev and Next actually step" do
+      visit schedule_distributions_path
+      expect(page).to have_css("button[aria-label='Previous month']")
+      expect(page).to have_css("button[aria-label='Next month']")
+
+      click_on "Week"
+
+      expect(page).to have_css(".fc-dayGridWeek-view")
+      expect(page).to have_css("button[aria-label='Previous week']")
+      expect(page).to have_css("button[aria-label='Next week']")
     end
   end
 
