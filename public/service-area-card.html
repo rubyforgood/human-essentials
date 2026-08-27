@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Area Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  :root[data-theme="dark"]{--ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;
+    --line-soft:#282A3D;--ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;
+    --accent-soft:#262551;--defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:62rem;margin:0 auto;padding:4rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2rem,5vw,2.7rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.35rem;font-weight:600;letter-spacing:-.014em;margin:0;text-wrap:balance}
+  h3{font-size:.78rem;font-weight:600;margin:0 0 .6rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft)}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.16rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .opt{margin-top:2.75rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-now{background:var(--defect-soft);color:var(--defect)}
+  .stage{background:var(--sunken);border:1px solid var(--line);border-radius:.8rem;padding:1.5rem;margin:1.25rem 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:.75rem;box-shadow:var(--shadow);
+        font-family:Archivo,sans-serif;overflow:hidden}
+  .chead{display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+         border-bottom:1px solid var(--line-soft);padding:.7rem 1.1rem;font-size:.9rem;font-weight:600}
+  .cbody{padding:1.1rem}
+  .btn{display:inline-flex;align-items:center;gap:.35rem;font-family:Archivo,sans-serif;font-size:.75rem;
+       font-weight:500;height:1.85rem;padding:0 .6rem;border-radius:.4rem;border:1px solid var(--line);
+       background:var(--surface);color:var(--ink-mid);white-space:nowrap}
+  table{width:100%;border-collapse:collapse;font-size:.84rem;font-family:Archivo,sans-serif}
+  th,td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);
+           border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  td.p,th.p{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .zips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.55rem}
+  .zip{font-family:"JetBrains Mono",monospace;font-size:.74rem;background:var(--sunken);
+       border:1px solid var(--line-soft);border-radius:.3rem;padding:.1rem .38rem}
+  .summary{font-family:Archivo,sans-serif;font-size:.9rem;color:var(--ink-mid);margin:0 0 .9rem;
+           display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+  .summary b{color:var(--ink);font-weight:600}
+  .statrow{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
+  .stat .n{font-family:"JetBrains Mono",monospace;font-size:1.5rem;font-weight:600;line-height:1.1}
+  .stat .l{font-family:Archivo,sans-serif;font-size:.76rem;color:var(--ink-soft)}
+  .twocol{display:grid;gap:1.25rem}
+  @media(min-width:40rem){.twocol{grid-template-columns:1fr 1fr}}
+  .note{font-size:.88rem;color:var(--ink-soft);margin:.9rem 0 0}
+  ul.why{margin:.8rem 0 0;padding-left:1.15rem;font-size:.95rem}
+  ul.why li{margin-bottom:.35rem}
+  .empty{outline:2px dashed var(--defect);outline-offset:-4px;border-radius:.4rem}
+  strong{font-weight:600}
+  a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design options</p>
+    <h1>The Service area card, again</h1>
+    <p class="lede">
+      You are right that it is hard to read. The card exists so a bank can compare what a partner
+      <em>says</em> it covers with where its families <em>actually</em> are — and it puts two facts
+      near each other and leaves you to do the comparing.
+    </p>
+  </header>
+
+  <section class="opt">
+    <div class="opthead"><h2>What it does now</h2><span class="chip chip-now">The problem</span></div>
+    <div class="stage">
+      <div class="card">
+        <div class="chead"><span>Service area</span><span class="btn">See zipcodes</span></div>
+        <div class="cbody twocol">
+          <div>
+            <div style="font-size:.9rem;font-weight:600">Counties they serve</div>
+            <div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:.5rem">From this partner's profile.</div>
+            <table>
+              <thead><tr><th>County</th><th class="p">Clients</th></tr></thead>
+              <tbody>
+                <tr><td>Otter Tail County, Minnesota</td><td class="p">1 %</td></tr>
+                <tr><td>Audubon County, Iowa</td><td class="p">18 %</td></tr>
+                <tr><td>Powell County, Kentucky</td><td class="p">11 %</td></tr>
+                <tr><td>Berkshire County, Massachusetts</td><td class="p">70 %</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="empty">
+            <div style="font-size:.9rem;font-weight:600">Where their families live</div>
+            <div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:.5rem">From the families they have registered.</div>
+            <div class="num" style="font-size:1.6rem;font-weight:600">13</div>
+            <div style="font-size:.8rem;color:var(--ink-soft)">zipcodes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li>The right column is <span class="num">273px</span> tall and holds <strong>one number</strong> — measured, about 85% empty, next to a four-row table.</li>
+        <li><strong>Two headings and two captions</strong> — four lines of chrome to carry two facts.</li>
+        <li><strong>"See zipcodes" is in the card header</strong>, away from the 13 it belongs to. That is the same disconnection this card was built to fix, at smaller scale.</li>
+        <li><strong>They are not parallel things.</strong> One is a table of counties with shares; one is a single count. Forcing them into equal columns was the mistake.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="opt">
+    <div class="opthead"><h2>A — Say the comparison, then show the detail</h2><span class="chip chip-rec">Recommended</span></div>
+    <div class="stage">
+      <div class="card">
+        <div class="chead"><span>Service area</span></div>
+        <div class="cbody">
+          <p class="summary">They serve <b>4 counties</b>. Their families live in <b>13 zipcodes</b>.</p>
+          <table>
+            <thead><tr><th>County</th><th class="p">Share of clients</th></tr></thead>
+            <tbody>
+              <tr><td>Berkshire County, Massachusetts</td><td class="p">70 %</td></tr>
+              <tr><td>Audubon County, Iowa</td><td class="p">18 %</td></tr>
+              <tr><td>Powell County, Kentucky</td><td class="p">11 %</td></tr>
+              <tr><td>Otter Tail County, Minnesota</td><td class="p">1 %</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line-soft)">
+            <h3 style="margin-bottom:.25rem">Family zipcodes</h3>
+            <div class="zips">
+              <span class="zip">50266</span><span class="zip">50310</span><span class="zip">50315</span>
+              <span class="zip">50322</span><span class="zip">50324</span><span class="zip">50325</span>
+              <span class="zip">50327</span><span class="zip">50401</span><span class="zip">50501</span>
+              <span class="zip">50588</span><span class="zip">51301</span><span class="zip">51401</span>
+              <span class="zip">52001</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>It makes the comparison</strong> — in a sentence, which is the card's whole reason for existing.</li>
+        <li><strong>Stacked, not columned.</strong> A table and a list are different shapes; full width lets long county names sit on one line and sorts by share so the biggest is first.</li>
+        <li><strong>The zipcodes are shown, not hidden.</strong> Measured across this bank: <span class="num">max 13</span>, <span class="num">median 8</span> per partner — the list fits. Past a dozen it truncates with "and 7 more", which opens the dialog; below that the dialog never appears.</li>
+        <li><strong>Against:</strong> the card gets taller, and "13" stops being a big number you can spot from across the page.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>B — Two figures, then the table</h2></div>
+    <div class="stage">
+      <div class="card">
+        <div class="chead"><span>Service area</span><span class="btn">See zipcodes</span></div>
+        <div class="cbody">
+          <div class="statrow">
+            <div class="stat"><div class="n">4</div><div class="l">counties declared</div></div>
+            <div class="stat"><div class="n">13</div><div class="l">zipcodes families live in</div></div>
+          </div>
+          <table>
+            <thead><tr><th>County</th><th class="p">Share of clients</th></tr></thead>
+            <tbody>
+              <tr><td>Berkshire County, Massachusetts</td><td class="p">70 %</td></tr>
+              <tr><td>Audubon County, Iowa</td><td class="p">18 %</td></tr>
+              <tr><td>Powell County, Kentucky</td><td class="p">11 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>For:</strong> the two numbers sit side by side, so the comparison is one glance, and both keep their weight as figures.</li>
+        <li><strong>Against:</strong> two more stat tiles on a page that already opens with three, and it still needs the dialog for the zipcodes themselves.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="opt">
+    <div class="opthead"><h2>C — Keep two columns, fill the empty one</h2></div>
+    <div class="stage">
+      <div class="card">
+        <div class="chead"><span>Service area</span></div>
+        <div class="cbody twocol">
+          <div>
+            <h3>Counties they serve</h3>
+            <table>
+              <thead><tr><th>County</th><th class="p">Clients</th></tr></thead>
+              <tbody>
+                <tr><td>Berkshire County, MA</td><td class="p">70 %</td></tr>
+                <tr><td>Audubon County, IA</td><td class="p">18 %</td></tr>
+                <tr><td>Powell County, KY</td><td class="p">11 %</td></tr>
+                <tr><td>Otter Tail County, MN</td><td class="p">1 %</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Zipcodes their families live in</h3>
+            <div class="zips">
+              <span class="zip">50266</span><span class="zip">50310</span><span class="zip">50315</span>
+              <span class="zip">50322</span><span class="zip">50324</span><span class="zip">50325</span>
+              <span class="zip">50327</span><span class="zip">50401</span><span class="zip">50501</span>
+              <span class="zip">50588</span><span class="zip">51301</span><span class="zip">51401</span>
+              <span class="zip">52001</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>For:</strong> the smallest change, and the empty column stops being empty because the content that was behind the dialog comes out from behind it.</li>
+        <li><strong>Against:</strong> county names have to be abbreviated to fit half a card, and it still never states the comparison — it just puts the two halves closer together.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.7rem">
+      <strong>A.</strong> The card was added to make one comparison possible, and A is the only
+      option that actually makes it rather than arranging the parts and hoping. Stacking also admits
+      what the two-column layout denied: a table of counties and a list of zipcodes are not parallel
+      things and were never going to balance.
+    </p>
+    <p>
+      If you would rather keep the numbers big and glanceable, <strong>B</strong> is the one — it
+      trades the sentence for two figures and keeps the dialog.
+    </p>
+  </section>
+</div>
+</body>
+</html>

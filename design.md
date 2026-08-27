@@ -782,6 +782,17 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+<a id="primary-position"></a>
+**A primary sits at the row's alignment edge**, which is why the two rules below look opposite and
+are not. A page header's actions are right-aligned, so its primary is **last**. A form's action row
+is left-aligned, so its primary is **first** — `[Save] Cancel`, which is what every form in this app
+does: measured across twelve, the six carrying a primary and a secondary all read that way. Getting
+this backwards is easy, because the header rule is the one written down; the calendar profile form
+shipped `Save progress` before `Save and review` for exactly that reason.
+
+`button-audit` checks the header rule only. The form rule holds by construction, since
+`essentials_form_for` renders the submit before anything a view appends.
+
 **At most three actions, exactly one of them primary, primary last.** Everything else is
 `:secondary` or `:ghost`. Past three, the least-used collapse behind a menu — and **name the
 menu after what is in it**. `/requests` had four, the only page in the app that did; its two

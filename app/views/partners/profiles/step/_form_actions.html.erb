@@ -9,13 +9,18 @@
   gutter, so the whole form hung 12px to the left of its own title.
 
   "Save progress" stays. It saves without leaving, which on a thirteen-section form is the
-  difference between a form you can put down and one you have to finish in a sitting. It is the
-  quiet one, and the primary is last -- design.md.
+  difference between a form you can put down and one you have to finish in a sitting.
+
+  **The primary is first.** This first shipped the other way round, from reading design.md's
+  "primary last" -- which is in the *page header* section and is about a row that is
+  right-aligned. A form's row is left-aligned, and every other form in this app puts the primary
+  at that edge: measured across twelve forms, six have a primary and secondary pair and all six
+  read `[Save] Cancel`. One rule covers both: the primary sits at the row's alignment edge.
 %>
 <div class="mt-6 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-5">
+  <%= f.submit "Save and review", name: "save_review",
+        class: essentials_button_classes(variant: :primary, size: :md) %>
   <%= f.submit "Save progress",
         class: essentials_button_classes(variant: :secondary, size: :md),
         data: {action: "click->accordion#disableOpenClose"} %>
-  <%= f.submit "Save and review", name: "save_review",
-        class: essentials_button_classes(variant: :primary, size: :md) %>
 </div>
