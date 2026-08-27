@@ -21,7 +21,8 @@
     .reject { |area| area.county.blank? }
     .sort_by { |area| -area.client_share.to_f }
 
-  zipcodes = ((impact_metrics || {})[:family_zipcodes_list] || []).compact.uniq.sort
+  # Already five-digit, deduplicated and sorted by the model -- see Partner#family_zipcodes_list.
+  zipcodes = (impact_metrics || {})[:family_zipcodes_list] || []
   # Measured across this bank: max 13, median 8 per partner, so the list almost always fits whole and
   # the dialog never has to open. It truncates only when that saves something -- the first cut was a
   # flat first(12), which for a partner with 13 rendered "and 1 more", hiding a single zipcode behind
@@ -66,9 +67,27 @@
       <%# Sentence case, and the same weight the Contact information card gives "Executive director".
           Not the uppercase eyebrow this slot attracts -- design.md has no exception for small text. %>
       <h3 class="text-sm font-semibold text-slate-900">Family zipcodes</h3>
-      <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-700">
+      <p class="mt-0.5 text-xs text-slate-500">Lowest to highest.</p>
+      <%#
+        A bordered box each, because the complaint was that a space-separated run of digits gives
+        nothing to say where one code ends and the next begins.
+
+        Square corners, no tone, no control -- which is what keeps it out of the way of the two
+        chip-shaped things this app already has. Both are `rounded-full`: a status pill, which
+        carries a tone colour and which design.md defines as *a state*, and a filter chip, which
+        carries an "x" and means a filter you can remove. A square uncoloured box that does nothing
+        when clicked is a third thing and reads as one.
+
+        `font-mono`, the same treatment barcode values get: a code you read a character at a time.
+
+        An aligned grid was recommended first and withdrawn. Measured at the real card width, 1144px
+        fits twelve five-digit codes across, so thirteen rendered 12 x 2 -- one row stretched by
+        `1fr` with ~90px between neighbours, and the thirteenth orphaned. Columns only help a list
+        long enough to wrap into a block, and at a median of 8 per partner this one never is.
+      %>
+      <ul class="mt-2 flex flex-wrap gap-1.5">
         <% shown_zipcodes.each do |zipcode| %>
-          <li class="tabular-nums"><%= zipcode %></li>
+          <li class="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-xs tabular-nums text-slate-700"><%= zipcode %></li>
         <% end %>
       </ul>
       <% if hidden_zipcodes.positive? %>
@@ -84,9 +103,9 @@
 <%# Only when the list was too long to show in full -- otherwise there is nothing behind it. %>
 <% if hidden_zipcodes.positive? %>
   <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Zipcodes their families live in" do %>
-    <ul class="grid grid-cols-3 gap-1 text-sm text-slate-700 sm:grid-cols-4">
+    <ul class="flex flex-wrap gap-1.5">
       <% zipcodes.each do |zipcode| %>
-        <li class="tabular-nums"><%= zipcode %></li>
+        <li class="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-xs tabular-nums text-slate-700"><%= zipcode %></li>
       <% end %>
     </ul>
   <% end %>

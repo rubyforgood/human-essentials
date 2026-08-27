@@ -348,8 +348,10 @@ RSpec.describe "Partners", type: :request do
       {
         families_served: 3,
         children_served: 4,
-        family_zipcodes: 2,
-        family_zipcodes_list: contain_exactly("45612-126", "45612-123") # order of zipcodes not guaranteed
+        family_zipcodes: 1,
+        # One zipcode: the two families differ only in the suffix, which names a block rather than
+        # an area. Sorted by the model now, so the order *is* guaranteed.
+        family_zipcodes_list: %w[45612]
       }
     end
 

@@ -152,12 +152,29 @@ class Partner < ApplicationRecord
     children.count { |child| !child.archived? }
   end
 
+  # Which *areas* a partner's families live in, which is the five-digit zipcode.
+  #
+  # The stored value often carries a suffix -- 35 of 67 in this database are "NNNNN-NNNN" -- and
+  # that suffix identifies a block rather than an area. Keeping it made this a counting bug as well
+  # as a display one: two families at "45612-123" and "45612-126" live in one zipcode and were
+  # counted as two. The spec for this method asserted exactly that pair and exactly that count, so
+  # the wrong answer had been pinned down rather than caught.
+  #
+  # Sorted, because the list is rendered in order and "how is this sorted?" is a fair question to
+  # have to ask of a row of numbers.
   def family_zipcodes_count
-    families.pluck(:guardian_zip_code).uniq.count
+    family_zipcodes_list.size
   end
 
   def family_zipcodes_list
-    families.pluck(:guardian_zip_code).uniq
+    families.pluck(:guardian_zip_code).filter_map { |zip| five_digit_zipcode(zip) }.uniq.sort
+  end
+
+  # Anything with digits in it keeps its first five. A value too short to be a zipcode is left as
+  # it is rather than dropped -- malformed data that silently disappears is worse than malformed
+  # data you can see.
+  def five_digit_zipcode(zip)
+    zip.to_s.gsub(/\D/, "").presence&.first(5)
   end
 
   def correct_document_mime_type

@@ -490,6 +490,13 @@ rather than clicking Next twelve times. The year list covers the years your bank
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
 the calendar, so they always say what is on screen.
 
+**Zipcodes are shown as five digits, in boxes, lowest to highest.** They used to be a run of numbers
+separated by spaces, some with a `-1234` suffix and some without, which was hard to read and hard to
+tell apart. The suffix identifies a city block rather than an area, so it is gone.
+
+**That may change a partner's zipcode count**, and the new number is the right one: two families at
+`45612-123` and `45612-126` live in the same zipcode and used to be counted as two.
+
 **A partner's page now tells you where they serve, in a sentence.** The Service area card opens
 with something like "They serve 4 counties. Their families live in 13 zipcodes" — then lists the
 counties with the share of clients in each, and the zipcodes themselves. Comparing the two is the
