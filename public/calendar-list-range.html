@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the list covers</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+  .switch { display:inline-flex; border:1px solid var(--color-slate-300); border-radius:.5rem; overflow:hidden; vertical-align:middle; }
+  .switch button { padding:.35rem .7rem; font-size:.75rem; font-weight:500; background:#fff; color:var(--color-slate-700); }
+  .switch button[aria-pressed="true"] { background:var(--color-slate-100); color:var(--color-slate-900); }
+  .switch button + button { border-left:1px solid var(--color-slate-300); }
+  .ctl { height:1.875rem; display:inline-flex; align-items:center; border:1px solid var(--color-slate-300);
+         border-radius:.5rem; padding:0 .6rem; font-size:.75rem; font-weight:500; background:#fff; color:var(--color-slate-700); }
+  .rowline { border-top:1px solid var(--color-slate-200); padding:.4rem .6rem; font-size:.8125rem; }
+  .dayhead { background:var(--color-slate-50); font-weight:600; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">The list is a week. Nothing on it says so.</h1>
+    <p class="max-w-3xl text-slate-600">
+      You are right that it is unclear, and the cause is a naming mistake I made: <strong>Month and
+      Week name a span of time. List names a shape.</strong> They are not the same kind of thing, so
+      the third button cannot tell you what it covers.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">What it actually shows</h2>
+    <p class="max-w-3xl text-slate-600">
+      <code class="rounded bg-slate-200 px-1 text-xs">listWeek</code> — Monday to Sunday. The heading
+      names that range. The list underneath <strong>only renders days that have something on them</strong>,
+      so the days you can see rarely match the week it is showing:
+    </p>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Week</th><th>Heading says</th><th>Days rendered</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>this one</td><td>Aug 24 – 30</td><td>26, 27, 28, 29 &mdash; starts on a Wednesday</td><td><span class="pill pill-bad">4 of 7</span></td></tr>
+        <tr><td>next</td><td>Aug 31 – Sep 6</td><td>31, 3, 5</td><td><span class="pill pill-bad">3 of 7</span></td></tr>
+        <tr><td>the one after</td><td>Sep 7 – 13</td><td><strong>Sep 10, and nothing else</strong></td><td><span class="pill pill-bad">1 of 7</span></td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700">
+      <p>That last row is the whole problem: <strong>one line on screen, standing for a week.</strong>
+      Nothing distinguishes it from "there is one distribution, ever". FullCalendar has no setting for
+      showing empty days &mdash; when an interval is empty it shows a "No events" screen and otherwise
+      renders only the days it has, so this has to be answered by us.</p>
+    </div>
+    <p class="max-w-3xl text-slate-600">
+      Worth knowing: FullCalendar's <em>own</em> toolbar never labels these "List". It labels them by
+      duration &mdash; "Week", "Month" &mdash; because in the library a list is a <em>rendering</em> of
+      a range, not a range. The library had the model right and I flattened it.
+    </p>
+  </section>
+
+  <h2 class="text-2xl font-semibold">The options</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Two toggles: how long, and how it looks <span class="pill pill-good">recommended</span></h3>
+    <div class="demo space-y-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <strong class="mr-1 text-sm" id="demoTitle">Aug 24 – 30, 2026</strong>
+        <span class="switch" id="rangeSwitch">
+          <button data-range="month" aria-pressed="false">Month</button>
+          <button data-range="week" aria-pressed="true">Week</button>
+        </span>
+        <span class="switch" id="formatSwitch">
+          <button data-format="grid" aria-pressed="false">Grid</button>
+          <button data-format="list" aria-pressed="true">List</button>
+        </span>
+        <span class="ctl">Today</span><span class="ctl">&lsaquo; Prev</span><span class="ctl">Next &rsaquo;</span>
+      </div>
+      <p class="text-xs text-slate-600">Live &mdash; the heading follows both, so the range is never a guess.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>Each label means exactly one thing again</strong> &mdash; the same fix as Month/Week/List, one level up. Month and Week are always durations; Grid and List are always shapes.</li>
+      <li><strong>It unlocks a view you cannot currently reach: the whole month as a list.</strong> Today there is no way to get a plain list of a month's distributions, which for a bank doing a monthly reconciliation is the obvious thing to want.</li>
+      <li><strong>It matches the library</strong>, which already has all four (<code class="rounded bg-slate-200 px-1 text-xs">dayGridMonth</code>, <code class="rounded bg-slate-200 px-1 text-xs">dayGridWeek</code>, <code class="rounded bg-slate-200 px-1 text-xs">listMonth</code>, <code class="rounded bg-slate-200 px-1 text-xs">listWeek</code>) &mdash; no new plugin, no custom view.</li>
+      <li><strong>Against:</strong> a fourth control group in a toolbar that already carries a title, two selects and three buttons. Each group is two buttons rather than three, so the width is close to unchanged, but it is one more thing to read.</li>
+      <li><strong>Against:</strong> four combinations instead of three &mdash; slightly more to hold in your head, though no combination is meaningless.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">B &mdash; Keep three buttons, name the range in the label</h3>
+    <div class="demo">
+      <span class="switch"><button aria-pressed="true">Month</button><button aria-pressed="false">Week</button><button aria-pressed="false">Week&nbsp;list</button></span>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the smallest possible change, and it does remove the ambiguity.</li>
+      <li><strong>Against:</strong> "Week" and "Week list" side by side read as near-duplicates, and the month is still unreachable as a list.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Make the list a month, and call it Agenda</h3>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> a month of pick-ups as one list is genuinely useful, and "Agenda" is a familiar word for it.</li>
+      <li><strong>Against:</strong> "Agenda" still does not say how long it is &mdash; the same defect with a nicer word. And a month as a list on a phone is a long scroll where a week was the right horizon.</li>
+    </ul>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">And separately &mdash; say what is empty</h2>
+    <p class="max-w-3xl text-slate-600">
+      This is worth doing <em>whichever</em> option you pick, because even with a perfect label a week
+      showing one row still looks like a mistake.
+    </p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="demo">
+        <p class="mb-2 text-xs font-semibold text-rose-800">Now &mdash; week of Sep 7</p>
+        <div class="rounded-lg border border-slate-200 bg-white">
+          <div class="rowline dayhead flex justify-between"><span>Thursday</span><span>September 10, 2026</span></div>
+          <div class="rowline">2:00pm &nbsp;&bull;&nbsp; Pawnee Middle School</div>
+        </div>
+        <p class="mt-2 text-xs text-slate-600">Is this a week? A month? Everything there is?</p>
+      </div>
+      <div class="demo">
+        <p class="mb-2 text-xs font-semibold text-emerald-800">Proposed</p>
+        <div class="rounded-lg border border-slate-200 bg-white">
+          <div class="rowline text-xs text-slate-500">Monday 7 – Sunday 13 September &nbsp;&bull;&nbsp; 1 of 7 days has a distribution</div>
+          <div class="rowline dayhead flex justify-between"><span>Thursday</span><span>September 10, 2026</span></div>
+          <div class="rowline">2:00pm &nbsp;&bull;&nbsp; Pawnee Middle School</div>
+        </div>
+        <p class="mt-2 text-xs text-slate-600">One line, inside the list, saying what the list is.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A, plus the caption.</strong></p>
+      <p>A because it is the same fix as the Week button, one level up: I collapsed two questions
+      &mdash; <em>how long</em> and <em>how should it look</em> &mdash; into one row of buttons, and a
+      label that answers half a question cannot be read. Splitting them also hands you the month-as-a-list
+      that is currently unreachable.</p>
+      <p>The caption because the label is only half the confusion. The other half is a week rendering
+      as a single line, and no label fixes that &mdash; the list has to say what it covers and how much
+      of it is empty.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const state = { range: "week", format: "list" };
+  const titles = { month: "August 2026", week: "Aug 24 – 30, 2026" };
+  const paint = () => {
+    document.querySelectorAll("#rangeSwitch button").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.range === state.range)));
+    document.querySelectorAll("#formatSwitch button").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.format === state.format)));
+    document.getElementById("demoTitle").textContent = titles[state.range];
+  };
+  document.querySelectorAll("#rangeSwitch button").forEach(b =>
+    b.onclick = () => { state.range = b.dataset.range; paint(); });
+  document.querySelectorAll("#formatSwitch button").forEach(b =>
+    b.onclick = () => { state.format = b.dataset.format; paint(); });
+  paint();
+</script>
+</body>
+</html>
