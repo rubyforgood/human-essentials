@@ -413,6 +413,30 @@ table sorts by share, so the county most of their clients are in reads first.
 "and 1 more" for a partner with 13, which is a dialog to save one line — so the list shows whole up
 to 16 and truncates beyond that. Below the threshold the dialog is not rendered at all.
 
+<a id="code-boxes"></a>
+**A set of codes is a row of bordered boxes**, square-cornered, neutral, `font-mono` with
+`tabular-nums`, and nothing to click. Space-separated digits give the eye nothing to say where one
+code ends and the next begins — which is the complaint the zipcode list drew.
+
+**Square, specifically, and that is the whole distinction.** Both chip-shaped things this app already
+has are `rounded-full`: a [status pill](#pills), which carries a tone colour and which is *a state*,
+and a filter chip, which carries an `×` and means a filter you can remove. A square uncoloured box
+that does nothing when clicked is a third object and reads as one. `font-mono` is the treatment
+barcode values already get — a code you read a character at a time.
+
+**An aligned grid was recommended first, and withdrawn.** The argument was that columns give the eye
+a rail; measured at the real card width they do not exist. 1144px fits twelve five-digit codes
+across, so thirteen rendered **12 × 2** — one row stretched by `1fr` with ~90px between neighbours,
+and the thirteenth orphaned on a line of its own. Columns only help a list long enough to wrap into a
+block, and at a median of 8 this one never is. A grid would be right for fifty.
+
+<a id="five-digit-zipcodes"></a>
+**A zipcode is five digits.** `Partner#family_zipcodes_list` truncates and deduplicates; **35 of 67**
+stored values carry a `-NNNN` suffix, which names a block rather than an area. This was a counting
+bug as much as a display one — two families at `45612-123` and `45612-126` live in one zipcode and
+were counted as two — and the model spec asserted that pair *and* that count, so the wrong answer had
+been pinned down rather than caught.
+
 <a id="page-header-status"></a>
 **A status goes on the title line, not in `actions`.** `status:` on the page header renders the pill
 beside the `<h1>`. The partner page used to pass its pill *into* `actions`, where a pill among

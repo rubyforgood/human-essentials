@@ -325,13 +325,16 @@ RSpec.describe Partner, type: :model do
       let!(:child1) { create_list(:partners_child, 2, family: family1) }
       let!(:child2) { create_list(:partners_child, 2, family: family3) }
 
-      it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
+      # 45612-123 and 45612-126 are one zipcode, 45612 -- the suffix identifies a block. This used
+      # to expect `family_zipcodes: 2` and the pair unchanged, which pinned the counting bug down
+      # rather than catching it.
+      it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 1, family_zipcodes_list: %w[45612]}) }
 
       context "when children are archived" do
         let!(:child2) { create_list(:partners_child, 2, archived: true, family: family2) }
 
         it "does not include the children in children_served_count" do
-          expect(subject).to eq({families_served: 3, children_served: 2, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]})
+          expect(subject).to eq({families_served: 3, children_served: 2, family_zipcodes: 1, family_zipcodes_list: %w[45612]})
         end
       end
     end

@@ -4984,3 +4984,39 @@ Right-aligned row, primary last; left-aligned row, primary first. `button-audit`
 header case, which is part of why this survived — the form convention held by construction and had
 never been stated, so there was nothing to contradict the rule I misapplied.
 
+## 2026-08-27 — Zipcodes: five digits, in boxes, and a recommendation withdrawn under questioning
+
+The list read as a run of digits. Three faults, one of them a data bug.
+
+**The `+4` was the cause of the ragged look and of a wrong number.** Ten of the thirteen on the page
+carried a suffix and three did not, so `31987` sat beside `03699-2535` with nothing to align to;
+across the database **35 of 67** carry one. The suffix identifies a block, and the question the card
+asks is which *areas* families live in. Worse, `uniq` over the stored values counted `45612-123` and
+`45612-126` as **two** zipcodes when they are one — and `spec/models/partner_spec.rb` asserted
+exactly that pair with `family_zipcodes: 2`. A spec that pins the wrong answer is worse than no spec,
+because it converts a bug into a requirement. `family_zipcodes_list` truncates to five digits,
+deduplicates and sorts now, and the two specs were corrected to expect **1**.
+
+**Recommended a grid, then withdrew it when asked why.** The argument was "columns are the rail".
+Measured at the real card width it does not survive: 1144px fits twelve five-digit codes across, so
+thirteen renders **12 × 2** — one row stretched by `1fr` with roughly 90px between neighbours, and
+the thirteenth orphaned. That spacing is the *opposite* of the boundary problem being solved; it
+separates the codes until the group stops reading as a set. Columns help a list long enough to wrap
+into a block, and at a median of 8 per partner this one never is.
+
+**The second argument did not survive either.** I said a bordered chip already means "a filter you
+can remove". True only of the shape: both chip-shaped things in this app are `rounded-full`, the
+status pill carrying a tone and the filter chip an `×`. A `rounded` square box, uncoloured,
+monospace, inert, is not that object — and keeping these square is what keeps *"a pill is a state"*
+true rather than eroding it.
+
+So bordered boxes, with the constraints that hold the distinction: square corners, no tone, no
+control, `font-mono` and `tabular-nums`. The complaint was that the codes had no boundaries, and the
+option that draws boundaries was the answer. Both of my reasons for the other one were things I had
+assumed and not measured — the first about a layout I had not rendered at the real width, the second
+about a component whose markup I had not read.
+
+**The sort is stated.** "Lowest to highest", in the caption. Ascending was already what the code did;
+the question *"how is it sorted?"* was fair precisely because nothing said so, and a row of numbers
+with an unstated order reads as arbitrary.
+
