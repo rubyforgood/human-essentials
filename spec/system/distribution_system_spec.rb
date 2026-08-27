@@ -203,50 +203,31 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_select("calendar_year", selected: (issued_at.year + 1).to_s)
     end
 
-    # Today is the one control here that can already be at its destination: the page opens on today,
-    # so on arrival it has nowhere to go. design.md's pagination rule covers it -- a control that
-    # leads nowhere stays drawn and disabled, because a set that changes width moves a target out
-    # from under the cursor.
-    #
-    # `aria-disabled` rather than `disabled`, so the button keeps its place in the tab order.
-    # FullCalendar's own toolbar uses a real `disabled` here; measured on 6.0.1 it reports
-    # disabled=true while the view holds today and false once you leave.
-    it "dims Today while today is already on screen, in every view" do
+    # Today stays pressable even while today is on screen, where it does nothing. It was dimmed with
+    # `aria-disabled` for a day and that is reverted -- see docs/design-decisions.md. The case
+    # against disabled controls is aimed at ones that gate a task, and every calendar a reader
+    # already uses keeps Today live. This spec exists so the reversal is not undone by accident.
+    it "keeps Today pressable even while today is already on screen" do
       %w[month week list].each do |view|
         visit "#{schedule_distributions_path}?view=#{view}"
         expect(page).to have_css("[data-calendar-target='title']")
 
-        button = page.find("[data-calendar-target='todayButton']")
-        expect(button["aria-disabled"]).to eq("true"), "expected Today to be dimmed in the #{view} view"
-        # The reason travels with it, which is what design.md asks of an unavailable action.
-        expect(button.text).to include("already viewing today")
+        button = page.find_button("Today")
+        expect(button[:disabled]).to be_falsey, "expected Today to stay live in the #{view} view"
+        expect(button["aria-disabled"]).to be_nil
       end
     end
 
-    it "brings Today back to life once you navigate away, and takes you home" do
+    it "takes you home from another month" do
       visit schedule_distributions_path
       expect(page).to have_css("[data-calendar-target='title']")
       home = page.find("[data-calendar-target='title']").text
 
       click_on "Next"
-
       expect(page).to have_no_css("[data-calendar-target='title']", text: home)
-      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='false']")
-      # No longer claiming you are already here.
-      expect(page.find("[data-calendar-target='todayButton']").text).to eq("Today")
 
       click_on "Today"
-
       expect(page).to have_css("[data-calendar-target='title']", text: home)
-      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='true']")
-    end
-
-    # It ships dimmed from the server, so there is no frame in which it looks available before the
-    # controller connects.
-    it "renders Today dimmed before any JavaScript runs" do
-      # A request spec would be the natural home for this, but the button only exists on this view.
-      visit schedule_distributions_path
-      expect(page).to have_css("[data-calendar-target='todayButton'][aria-disabled='true']")
     end
 
     # FullCalendar puts fc-day-today on the list row, but --fc-today-bg-color only reaches day

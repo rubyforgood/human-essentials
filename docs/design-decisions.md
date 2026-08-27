@@ -4786,3 +4786,43 @@ a solved problem.
 `calendar_controller`. The list-view today marker and the three Reset buttons stand on their own and
 should not go with it.
 
+## 2026-08-27 — Reverted: Today stays always enabled
+
+Decided by the user after the evidence above was laid out, and the rule is better for it.
+
+**What was wrong with the original reasoning.** It leaned on design.md's pagination rule — *a
+control that leads nowhere stays drawn and disabled* — and treated "leads nowhere" as the test. That
+is not what the pagination rule is really about. Pressing a disabled pagination end would
+**navigate**; pressing "Reset search" with nothing searched **reloads the whole page** for no
+change. Both cost something. Pressing Today while today is on screen calls `calendar.today()`, which
+is idempotent, and returns. Nothing happens and nothing is spent.
+
+So the distinction is not *does it lead anywhere* but **does pressing it cost anything**, and on
+that test Today was on the wrong side of the line. The rule in design.md now turns on the cost.
+
+**The convention was right and I under-weighted it.** Google, Outlook, Apple Calendar and Notion all
+keep Today live. I discounted that because Google's Today also re-centres a scrolling grid and ours
+has nothing to scroll — measured, `scrollHeight` equals `clientHeight` in all three views. That
+measurement is still true and it is still the reason this was a judgement call rather than an
+obvious correction. But it argues only that our Today is *more* of a no-op, not that a no-op is
+worth a disabled state.
+
+**A no-op costs less than a control the reader has to interpret.** A dimmed button raises a
+question — *why can't I press this?* — and this one could only answer it for screen-reader users,
+because there is no tooltip and no room for a hint. A live button that does nothing raises the
+question once; a dimmed one raises it every visit.
+
+**What stays, and why it is not inconsistent.**
+
+- **Today is marked in all three views**, including the list, where it was marked nowhere at all.
+  This is the change that makes the no-op fair: the button was only ever the reader's way of finding
+  today because nothing else on a phone said where today was. Fix that and the button stops carrying
+  weight it should not have been carrying.
+- **The three "Reset search" buttons stay gated.** Same shape, opposite side of the cost line: a
+  live one reloads the page and changes nothing. They are also *links*, which cannot be `disabled`
+  at all, so the `<span aria-disabled>` is forced rather than chosen.
+
+**A spec locks the reversal in** — `keeps Today pressable even while today is already on screen`,
+across all three views — so this does not get quietly re-disabled by someone reading only the
+pagination rule.
+
