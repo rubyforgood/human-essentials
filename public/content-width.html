@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where the page ends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --sidebar:#DCDCEA;--shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;--sidebar:#2E3048;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  :root[data-theme="dark"]{--ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;
+    --line-soft:#282A3D;--ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;
+    --accent-soft:#262551;--defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --sidebar:#2E3048;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:64rem;margin:0 auto;padding:4rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2rem,5vw,2.7rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.3rem;font-weight:600;letter-spacing:-.014em;margin:0;text-wrap:balance}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.16rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .opt{margin-top:2.75rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1.1rem 0}
+  th,td{text-align:left;padding:.35rem .55rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-family:Archivo,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .flag{color:var(--defect);font-weight:600}
+  .ok{color:var(--fixed);font-weight:600}
+
+  /* Scale models. 1 mock px = 4 real px. */
+  .screens{display:grid;gap:1rem;margin:1.3rem 0}
+  .screen{font-family:Archivo,sans-serif}
+  .screen .cap{font-size:.72rem;color:var(--ink-soft);margin-bottom:.3rem;display:flex;justify-content:space-between}
+  .mon{display:flex;background:var(--sunken);border:1px solid var(--line);border-radius:.35rem;overflow:hidden;height:78px}
+  .side{background:var(--sidebar);flex:0 0 64px}
+  .area{position:relative;flex:1;display:flex}
+  .pad{flex:0 0 8px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:.25rem;margin:8px 0;
+        box-shadow:var(--shadow);position:relative}
+  .card::before{content:"";position:absolute;left:6px;right:6px;top:8px;height:4px;background:var(--line);border-radius:2px}
+  .card::after{content:"";position:absolute;left:6px;right:6px;top:17px;height:9px;background:var(--sunken);border:1px solid var(--line-soft);border-radius:2px}
+  .void{flex:1;background:repeating-linear-gradient(45deg,transparent,transparent 4px,var(--defect-soft) 4px,var(--defect-soft) 8px);
+        display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--defect);font-weight:600}
+  .void-bal{background:repeating-linear-gradient(45deg,transparent,transparent 4px,var(--line-soft) 4px,var(--line-soft) 8px);color:var(--ink-soft)}
+  .capline{position:absolute;top:0;bottom:0;width:1px;background:var(--accent);opacity:.5;z-index:2}
+  .h1mark{position:absolute;top:2px;font-size:.6rem;font-weight:700;color:var(--ink)}
+  ul.why{margin:.8rem 0 0;padding-left:1.15rem;font-size:.95rem}
+  ul.why li{margin-bottom:.35rem}
+  strong{font-weight:600} a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="col">
+    <p class="eyebrow">Design preview</p>
+    <h1>Where the page ends</h1>
+    <p class="lede">
+      The card is not the problem. <code>&lt;main class="flex-1"&gt;</code> has no maximum width, so
+      every page in the app grows to fill whatever monitor it is opened on — tables included.
+    </p>
+  </header>
+
+  <!-- the problem -->
+  <section class="opt">
+    <div class="opthead"><h2>Today, on three monitors</h2><span class="chip chip-no">The problem</span></div>
+    <p class="col" style="margin-top:.7rem">Scale models — sidebar in grey, the form card in white, wasted width hatched.</p>
+    <div class="screens">
+      <div class="screen">
+        <div class="cap"><span><strong>1440</strong> — a laptop</span><span>256px wasted · 22%</span></div>
+        <div class="mon" style="width:360px">
+          <div class="side"></div>
+          <div class="area"><div class="pad"></div><div class="card" style="flex:0 0 224px"></div><div class="void">256px</div></div>
+        </div>
+      </div>
+      <div class="screen">
+        <div class="cap"><span><strong>1920</strong> — a desk monitor</span><span>736px wasted · 44%</span></div>
+        <div class="mon" style="width:480px">
+          <div class="side"></div>
+          <div class="area"><div class="pad"></div><div class="card" style="flex:0 0 224px"></div><div class="void">736px</div></div>
+        </div>
+      </div>
+      <div class="screen">
+        <div class="cap"><span><strong>2560</strong> — a 27&Prime;</span><span>1376px wasted · 60%</span></div>
+        <div class="mon" style="width:640px">
+          <div class="side"></div>
+          <div class="area"><div class="pad"></div><div class="card" style="flex:0 0 224px"></div><div class="void">1376px</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <p><strong>And it is not only forms.</strong> Index tables stretch the same way — every one of
+      them is pulled hundreds of pixels past what its content needs:</p>
+    </div>
+    <table>
+      <thead><tr><th>Table</th><th class="n">Content needs</th><th class="n">Rendered at 2560</th><th class="n">Stretched by</th></tr></thead>
+      <tbody>
+        <tr><td>Distributions</td><td class="n">1505</td><td class="n">2238</td><td class="n flag">733</td></tr>
+        <tr><td>Requests</td><td class="n">1420</td><td class="n">2238</td><td class="n flag">818</td></tr>
+        <tr><td>Purchases</td><td class="n">1396</td><td class="n">2238</td><td class="n flag">842</td></tr>
+        <tr><td>Donations</td><td class="n">1235</td><td class="n">2238</td><td class="n flag">1003</td></tr>
+        <tr><td>Items</td><td class="n">1218</td><td class="n">2238</td><td class="n flag">1020</td></tr>
+      </tbody>
+    </table>
+    <p class="col" style="font-size:.95rem;color:var(--ink-soft)">
+      A row of eight columns spread over 2238px is its own readability problem — the eye loses the
+      row between the first cell and the last. This has been invisible because nobody reviews at 2560.
+    </p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- the rejected option -->
+  <section class="opt">
+    <div class="opthead"><h2>Centring the card</h2><span class="chip chip-no">Fixes one page, leaves the rest</span></div>
+    <div class="screens">
+      <div class="screen">
+        <div class="cap"><span><strong>2560</strong> — card centred in the space</span><span>same 1376px, now split</span></div>
+        <div class="mon" style="width:640px">
+          <div class="side"></div>
+          <div class="area">
+            <div class="capline" style="left:8px"></div>
+            <div class="void void-bal" style="flex:0 0 180px">688px</div>
+            <div class="card" style="flex:0 0 224px"></div>
+            <div class="void void-bal">688px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>The heading moves with it.</strong> Every <code>h1</code> in this app sits at
+          <span class="num">288</span> — the blue line above. Centring the form pushes its title
+          <span class="num">144–256px</span> right, so the page title slides sideways as you go from
+          the items list to the item form.</li>
+        <li><strong>It does nothing for the tables.</strong> Distributions still renders at 2238 for
+          content that needs 1505. The form stops looking stranded; the actual waste is untouched.</li>
+        <li>It treats the symptom on one page. The cause is that the page has no end.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- the recommendation -->
+  <section class="opt">
+    <div class="opthead"><h2>Capping the container</h2><span class="chip chip-rec">Recommended</span></div>
+    <p class="col" style="margin-top:.7rem">
+      One class on the layout — <code>mx-auto w-full max-w-[100rem]</code> — so the whole page has an
+      end, and centres once the monitor is wider than it.
+    </p>
+    <div class="screens">
+      <div class="screen">
+        <div class="cap"><span><strong>1440</strong></span><span class="ok">unchanged — already under the cap</span></div>
+        <div class="mon" style="width:360px">
+          <div class="side"></div>
+          <div class="area"><div class="pad"></div><div class="card" style="flex:0 0 224px"></div><div class="void void-bal">256px</div></div>
+        </div>
+      </div>
+      <div class="screen">
+        <div class="cap"><span><strong>1920</strong></span><span>page ends at 1600, centred</span></div>
+        <div class="mon" style="width:480px">
+          <div class="side"></div>
+          <div class="area">
+            <div class="void void-bal" style="flex:0 0 8px"></div>
+            <div class="pad"></div><div class="card" style="flex:0 0 224px"></div>
+            <div class="void void-bal" style="flex:0 0 176px">704px</div>
+            <div class="void void-bal" style="flex:0 0 8px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen">
+        <div class="cap"><span><strong>2560</strong></span><span>page ends at 1600, centred</span></div>
+        <div class="mon" style="width:640px">
+          <div class="side"></div>
+          <div class="area">
+            <div class="void void-bal" style="flex:0 0 88px">352px</div>
+            <div class="pad"></div><div class="card" style="flex:0 0 224px"></div>
+            <div class="void void-bal" style="flex:0 0 176px">704px</div>
+            <div class="void void-bal" style="flex:0 0 88px">352px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="why">
+        <li><strong>Nothing changes below 1600.</strong> At 1440 the content area is 1184 — already
+          under the cap — so a laptop sees exactly what it sees today. The change only appears where
+          the problem does.</li>
+        <li><strong>The tables come back to a readable width.</strong> 1600 leaves 1536 inside the
+          gutters, and the widest table in the app needs <span class="num">1505</span>. Every one
+          fits without scrolling.</li>
+        <li><strong>No heading jump</strong>, because the cap applies to every page equally. An index
+          page and its form both sit in the same container, so the <code>h1</code> stays put as you
+          move between them — which is the thing centring the card would have broken.</li>
+        <li><strong>The card stays left</strong> inside the container. Its remaining space is bounded
+          and the page around it is balanced, instead of a void hanging off one side that grows
+          without limit.</li>
+        <li><strong>Against:</strong> anyone who deliberately maximises a wide window to see more
+          table at once will now get letterboxing instead. That is the trade — and at 2560 they were
+          getting 733px of stretched whitespace inside the table, not more information.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="col">
+    <h2>Recommendation</h2>
+    <p style="margin-top:.7rem">
+      <strong>Cap the container at 1600 and centre it. Leave the card left-aligned inside it.</strong>
+    </p>
+    <p>
+      You were right that something is wrong with the space — but the card was the place it happened
+      to show. Centring the card would have made one form look composed while every table in the app
+      kept stretching to 3120px on a wide monitor. Capping the page fixes both, and keeps the card's
+      alignment correct.
+    </p>
+    <p style="font-size:.95rem;color:var(--ink-soft)">
+      1600 is chosen from the data, not the eye: the widest table needs 1505, so it is the smallest
+      round cap that never introduces a horizontal scroll.
+    </p>
+  </section>
+</div>
+</body>
+</html>
