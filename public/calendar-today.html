@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Today is for</title>
+<link rel="stylesheet" href="/mockup.css" media="all">
+<style>
+  .pill { display:inline-block; padding:.05rem .4rem; border-radius:.375rem; font-size:.6875rem; font-weight:600; }
+  .pill-good { background: var(--color-emerald-100); color: var(--color-emerald-800); }
+  .pill-bad  { background: var(--color-rose-100);    color: var(--color-rose-800); }
+  .facts td, .facts th { padding: .35rem .6rem; text-align: left; font-size: .8125rem; vertical-align: top; }
+  .facts thead th { border-bottom: 1px solid var(--color-slate-300); font-weight: 600; }
+  .facts tbody tr + tr td { border-top: 1px solid var(--color-slate-200); }
+  .demo { border: 1px dashed var(--color-slate-300); border-radius: .75rem; padding: 1rem 1.25rem; background: var(--color-slate-50); }
+  .ctl { height:1.875rem; display:inline-flex; align-items:center; border:1px solid var(--color-slate-300);
+         border-radius:.5rem; padding:0 .6rem; font-size:.75rem; font-weight:500; background:#fff; color:var(--color-slate-700); }
+  .ctl[aria-disabled="true"] { opacity:.55; cursor:not-allowed; }
+  .ctl[disabled] { opacity:.55; cursor:not-allowed; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <p class="text-xs font-semibold text-brand-700">Design preview</p>
+    <h1 class="text-3xl font-semibold">Today works. It just has nowhere to go when you meet it.</h1>
+    <p class="max-w-3xl text-slate-600">
+      Two of your three premises hold, one does not, and the app has already answered this question
+      three times in other places &mdash; Today follows none of them.
+    </p>
+  </header>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">1. It is not broken</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>View</th><th>Press Today on arrival</th><th>Press Next, then Today</th></tr></thead>
+      <tbody>
+        <tr><td>Month</td><td><span class="pill pill-bad">no change</span> August 2026</td><td><span class="pill pill-good">works</span> Sep &rarr; August 2026</td></tr>
+        <tr><td>Week</td><td><span class="pill pill-bad">no change</span> Aug 24&ndash;30</td><td><span class="pill pill-good">works</span> Aug 31&ndash;Sep 6 &rarr; Aug 24&ndash;30</td></tr>
+        <tr><td>List</td><td><span class="pill pill-bad">no change</span> Aug 24&ndash;30</td><td><span class="pill pill-good">works</span> Aug 31&ndash;Sep 6 &rarr; Aug 24&ndash;30</td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-slate-600">
+      The page opens on today, so Today is already at its destination. It is inert in exactly the
+      state you first see it in &mdash; which is the same <em>experience</em> as the Week button, for
+      a completely different reason. A control that does nothing when you meet it reads as broken
+      whatever the cause.
+    </p>
+  </section>
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">2. "Already highlighted blue" &mdash; true twice, false once</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>View</th><th>Today's background, measured</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Month</td><td><code>rgb(238 242 255)</code> &mdash; brand-50</td><td><span class="pill pill-good">marked</span></td></tr>
+        <tr><td>Week</td><td><code>rgb(238 242 255)</code> &mdash; brand-50</td><td><span class="pill pill-good">marked</span></td></tr>
+        <tr><td><strong>List</strong></td><td><code>rgba(0 0 0 / 0)</code> &mdash; transparent, header plain white like every other day</td><td><span class="pill pill-bad">not marked</span></td></tr>
+      </tbody>
+    </table>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-slate-700">
+      <p><strong>That is a separate defect, and it is mine.</strong> FullCalendar does put
+      <code>fc-day-today</code> on the list row; the app's <code>--fc-today-bg-color</code> only
+      reaches day <em>cells</em>, never list rows. So in the List view &mdash; the default on a phone
+      &mdash; nothing at all says which day is today, and the Today button is currently the only
+      thing that can tell you. Worth fixing whichever option you pick.</p>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">3. The app has answered this three times</h2>
+    <table class="facts w-full rounded-xl border border-slate-200 bg-white">
+      <thead><tr><th>Control</th><th>When it would do nothing</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lsaquo; Prev</code> / <code>Next &rsaquo;</code> paging</td><td><strong>Drawn, disabled.</strong> Explicitly so the row does not change width &mdash; <em>"a target moved out from under the cursor of the person using it."</em></td><td>design.md</td></tr>
+        <tr><td><code>&laquo; First</code> / <code>Last &raquo;</code></td><td><strong>Not drawn</strong> &mdash; but only when they could <em>never</em> name anything (a one-page table), not transiently.</td><td>design.md</td></tr>
+        <tr><td>Filter bar "Clear all"</td><td><strong>Hidden</strong> until a filter is active: <code>clearTarget.hidden = active.length === 0</code>.</td><td>filter_summary_controller.js</td></tr>
+        <tr><td><strong>Calendar "Today"</strong></td><td><strong>Always drawn, always enabled, inert on arrival.</strong></td><td><span class="pill pill-bad">follows none</span></td></tr>
+        <tr><td><strong>"Reset search" &times; 3</strong><br><span class="text-xs text-slate-500">partner children, families, family requests</span></td><td><strong>Always drawn, inert until you search.</strong> Same shape, three more places.</td><td><span class="pill pill-bad">follows none</span></td></tr>
+      </tbody>
+    </table>
+    <p class="max-w-3xl text-slate-600">
+      So the answer to "what is the value in having it" is not a matter of taste &mdash; the app
+      already has a rule, and this button is one of five controls not keeping it.
+    </p>
+  </section>
+
+  <h2 class="text-2xl font-semibold">The options</h2>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">A &mdash; Disable Today while today is already on screen <span class="pill pill-good">recommended</span></h3>
+    <div class="demo space-y-3" id="demoA">
+      <div class="flex flex-wrap items-center gap-2">
+        <strong class="mr-2 text-sm" data-t>August 2026</strong>
+        <button class="ctl" data-prev>&lsaquo; Prev</button>
+        <button class="ctl" data-next>Next &rsaquo;</button>
+        <button class="ctl" data-today aria-disabled="true">Today</button>
+        <span class="text-xs text-slate-500" data-note>&larr; dimmed: you are already here</span>
+      </div>
+      <p class="text-xs text-slate-600">Live &mdash; press Next, and Today becomes available.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> it is the app's own pagination rule, and the reason behind that rule applies here harder. Today flips in and out on <em>every</em> Prev and Next, so a Today that appeared and vanished would shift Prev and Next sideways constantly.</li>
+      <li><strong>For:</strong> it answers your question in the interface rather than in a document &mdash; dimmed means "nothing to do here", so it stops reading as broken.</li>
+      <li><strong>For:</strong> the button still tells you something when disabled: <em>you are looking at today</em>. That is information the List view currently has nowhere else.</li>
+      <li><strong>Detail worth deciding:</strong> <code>aria-disabled="true"</code>, not a real <code>disabled</code>. A genuinely disabled button leaves the tab order, so the toolbar's number of tab stops would change as you navigate &mdash; the same moving-target defect as changing width, one level up. design.md's "form actions get a real <code>disabled</code>" exists so a form cannot submit; Today submits nothing.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">B &mdash; Hide Today until it means something</h3>
+    <div class="demo space-y-3" id="demoB">
+      <div class="flex flex-wrap items-center gap-2">
+        <strong class="mr-2 text-sm" data-t>August 2026</strong>
+        <button class="ctl" data-prev>&lsaquo; Prev</button>
+        <button class="ctl" data-next>Next &rsaquo;</button>
+        <button class="ctl" data-today hidden>Today</button>
+      </div>
+      <p class="text-xs text-slate-600">Live &mdash; press Next and watch Prev and Next jump sideways.</p>
+    </div>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> also an app precedent &mdash; it is exactly what "Clear all" does.</li>
+      <li><strong>Against:</strong> "Clear all" appears when you filter, which is rare and deliberate. Today would appear and disappear on every single Prev and Next, moving its neighbours each time. Try the demo above.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">C &mdash; Remove Today altogether</h3>
+    <ul class="max-w-3xl list-disc pl-5 text-sm text-slate-600 space-y-1">
+      <li><strong>For:</strong> the month and year selects can now get you back, so it is no longer the only route home. One less control.</li>
+      <li><strong>Against:</strong> two interactions instead of one, and you have to know today's date to use them &mdash; which is precisely what someone pressing Today does not want to think about.</li>
+      <li><strong>Against:</strong> Google Calendar, Outlook, Apple Calendar and Notion all have it. It is close to a universal affordance, and the cost of keeping it is one dimmed button.</li>
+      <li><strong>Against:</strong> in the List view it is currently the only thing that locates today at all.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-3">
+    <h3 class="text-lg font-semibold">D &mdash; Leave it as it is</h3>
+    <p class="max-w-3xl text-slate-600 text-sm">
+      Defensible &mdash; Google keeps Today always enabled too. But it is the thing you have now
+      reported twice, and "it is fine, the convention is odd" is a worse answer than a dimmed button.
+    </p>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <section class="space-y-3">
+    <h2 class="text-xl font-semibold">Recommendation</h2>
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-slate-700 space-y-2">
+      <p><strong>A, with <code>aria-disabled</code>, plus two fixes that come with it.</strong></p>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li><strong>Today is dimmed while today is on screen</strong> and live once you navigate away. The app's pagination rule, applied to the control it was written for.</li>
+        <li><strong>Mark today in the List view.</strong> A real defect, independent of this: on a phone the list is the default and nothing on it says which day is now.</li>
+        <li><strong>The three "Reset search" buttons get the same treatment</strong> &mdash; otherwise this is one fix to one button and the same inconsistency stays in three other places.</li>
+      </ol>
+      <p>I would not remove Today. Once it is honest about its state it is doing real work: when it
+      is live it takes you home in one click, and when it is dimmed it is telling you that you are
+      already there.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  document.querySelectorAll("#demoA, #demoB").forEach((root) => {
+    const months = ["June 2026","July 2026","August 2026","September 2026","October 2026"];
+    let i = 2;
+    const t = root.querySelector("[data-t]"), today = root.querySelector("[data-today]");
+    const note = root.querySelector("[data-note]");
+    const paint = () => {
+      t.textContent = months[i];
+      const home = i === 2;
+      if (root.id === "demoA") {
+        today.setAttribute("aria-disabled", String(home));
+        if (note) note.textContent = home ? "← dimmed: you are already here" : "← live: takes you back";
+      } else {
+        today.hidden = home;
+      }
+    };
+    root.querySelector("[data-prev]").onclick = () => { i = Math.max(0, i - 1); paint(); };
+    root.querySelector("[data-next]").onclick = () => { i = Math.min(months.length - 1, i + 1); paint(); };
+    today.onclick = () => { if (today.getAttribute("aria-disabled") !== "true") { i = 2; paint(); } };
+    paint();
+  });
+</script>
+</body>
+</html>
