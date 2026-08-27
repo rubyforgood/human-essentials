@@ -342,6 +342,10 @@ RSpec.feature "Distributions", type: :system do
     # `enable_aria_label` on. The visible word stays inside the name, which is what 2.5.3 asks.
     it "names what Prev and Next actually step" do
       visit schedule_distributions_path
+      # The title has text only once the controller has connected. The aria-label assertions below
+      # would pass without it -- "Previous month" is what the *server* renders -- and then the click
+      # would race the controller, which is how this failed once in a full-suite run.
+      expect(page).to have_css("[data-calendar-target='title']", text: /\w/)
       expect(page).to have_css("button[aria-label='Previous month']")
       expect(page).to have_css("button[aria-label='Next month']")
 
