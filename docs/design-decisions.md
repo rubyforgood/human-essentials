@@ -4933,3 +4933,20 @@ decoration that reads as meaning. One row, at the end, from the helper, and no i
 difference between a form you can put down and one you must finish in a sitting. It is the quiet
 button and the primary is last.
 
+### One failure left unexplained, deliberately
+
+`spec/requests/partners/family_requests_requests_spec.rb:68` failed once in a full-suite run —
+the response carried the families index instead of the "not currently available for request" error,
+which reads as the create succeeding where it should have been rejected.
+
+What was checked, and what it rules out: **8 of 8** in isolation, **9 of 9** running its whole file,
+and re-running the full suite **with the same seed** came back **3020 examples, 0 failures**. So it
+is not order-dependent, which is what a seed replay is for. Two consecutive full runs each failed
+one *different* spec and both passed on retry, so the honest reading is timing under load rather
+than anything this branch changed.
+
+Written down rather than chased because an unreproducible failure with a clean seed replay is worth
+about ten minutes of the next person's time, and worth none of it if they do not know it has already
+been looked at. If it recurs, the thing to suspect is the create path's visibility check, not the
+view work above it.
+
