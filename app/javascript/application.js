@@ -15,8 +15,6 @@ import("@hotwired/turbo-rails").then(({ Turbo }) => {
 import "trix"
 import "@rails/actiontext"
 
-import toastr from 'toastr';
-
 import 'controllers'
 
 import 'utils/barcode_items'
@@ -32,11 +30,11 @@ Rails.start()
 import * as ActiveStorage from "@rails/activestorage";
 ActiveStorage.start();
 
-// Global toastr options
-window.toastr = toastr;
-toastr.options = {
-  "timeOut": "1400"
-}
+// toastr is gone, along with its CDN pin. It had one caller left -- barcode_items/create.js.erb --
+// and no styling on a design-system page: the essentials layouts load only tailwind.css, and no
+// toastr CSS is in that build, so its container rendered `position: static` with no background,
+// appended at the foot of the document. That message is a flash bar now, from the same partial the
+// server-rendered strip uses. Anything wanting a transient pop-up should build one here.
 
 // The `$(document).ready` block that lived here held two things and now holds neither: opening a
 // tab named by the URL fragment, which is the tabs Stimulus controller's job, and building the

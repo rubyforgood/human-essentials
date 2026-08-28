@@ -2119,10 +2119,32 @@ Two rules fall out of that, both learned the hard way:
   time anyone touched a filter, the export silently reverted to a foreground request. It now keeps
   any param on the link that the form does not supply.
 
-The message is a flash rather than a pop-up **because there is no toast in this design system.**
-main built one on `toastr`; the essentials layouts load only `tailwind.css`, and no toastr CSS is
-in that build, so it would inject markup nothing styles. If a transient pop-up is ever genuinely
-wanted, it needs building here rather than importing.
+The message is a flash rather than a pop-up **because there is no toast in this design system, and
+`toastr` has been removed.** If a transient pop-up is ever genuinely wanted, it needs building here
+rather than importing — see below for what happened to the last one.
+
+<a id="messages-raised-after-load"></a>
+### A message raised after the page loaded
+
+**Append it to `[data-flash-region]`, rendered from `shared/essentials/flash_message`.** That is the
+same partial the server-side strip renders each of its messages with, so a message raised by
+JavaScript is the same object as one that arrived with the page — same tint, same glyph, same
+`data-flash` hook a spec can find it by.
+
+**The strip is always in the DOM, and hides itself while empty.** `.flash-strip:not(:has([data-flash]))`
+is `display: none`, so an empty strip costs no space and appending a message is all it takes to
+reveal it. CSS rather than a class the server toggles, so nothing has to remember to switch it back
+off when the last message goes.
+
+This exists because `barcode_items/create.js.erb` used `toastr.success(...)` and **nobody could see
+it.** The essentials layouts load only `tailwind.css`; measured on `/donations/new`, **zero toastr
+CSS rules load**, so the container rendered `position: static` with no background or padding,
+appended at the foot of the document — **y=1284 on a 900px viewport**, below the fold. The scan
+worked and said nothing. `toastr` is gone from the importmap and from `application.js` now, that
+being its last caller.
+
+**Assert these by `[data-flash]`, not by text.** The spec covering that message passed the entire
+time it was invisible, because `have_content` finds text in the DOM whether or not it is on screen.
 
 <a id="callouts"></a>
 ### Callouts

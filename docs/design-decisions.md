@@ -5568,3 +5568,46 @@ main's versions *and* drops Bootstrap, sassc and autoprefixer, because the Gemfi
 for them. It needed `aarch64-linux` and `aarch64-linux-gnu` adding back, which design's lock had and
 main's does not.
 
+
+## 2026-08-28 — The last toastr call, and a message nobody could see
+
+The leftover flagged at the end of the merge, picked up. `barcode_items/create.js.erb` announced a
+successful scan with `toastr.success("Barcode Added to Inventory")`, on a page that uses the
+essentials layout.
+
+**It was invisible, and that is measured rather than assumed.** Driving a design-system page and
+calling the same function: **zero toastr CSS rules load** — the essentials layouts pull only
+`tailwind.css` — so the container came out `position: static`, `z-index: auto`, no background, no
+padding, appended at the foot of the document at **y=1284 on a 900px viewport**. Below the fold, on
+a page 384px taller than the window. The scan worked, filled the field, and said nothing.
+
+**The spec passed the whole time.** `expect(page).to have_content("Barcode Added to Inventory")` —
+and Capybara's `have_content` finds text in the DOM whether or not anyone could see it. This is the
+same shape as three earlier findings on this branch: a proxy assertion that cannot fail for the
+reason the thing exists. It asserts `[data-flash]` now, and I checked it fails when the `toastr`
+call is put back.
+
+**The fix is the strip that was already there.** Rather than build a toast, the message is appended
+to `[data-flash-region]` — rendered from `shared/essentials/_flash_message`, extracted from the
+strip so both the server and this JavaScript emit the *same* markup. A message raised after the page
+loaded is then indistinguishable from one that arrived with it, which is the point: two ways of
+saying "that worked" is the duplication this system keeps removing.
+
+**The strip is always in the DOM now, and hides itself.** JavaScript needs somewhere to append to,
+and on a page with no flash there was nothing. An always-present wrapper would have cost `pt-6` —
+24px above every page in the app — so `.flash-strip:not(:has([data-flash]))` is `display: none`.
+CSS rather than a class the server toggles, because then appending a message is all it takes to
+reveal it and nothing has to remember to switch it off when the last one goes. Verified: on a page
+with no flash the strip measures 0px and the `h1` does not move; append one and it becomes a 48px
+bar at y=93.
+
+**`toastr` is gone entirely** — the importmap pin and the `application.js` import — because that was
+its last caller. A dependency that renders nothing is worse than no dependency: it looks like a
+working notification system to the next person who reaches for it.
+
+**Worth naming: the merge is what surfaced this.** The toast was pre-existing and out of scope for
+the merge itself, and I recorded it as a known leftover rather than fixing it in the same commit.
+It would have stayed a footnote if it had not been asked about — which is an argument for writing
+leftovers down where someone will read them, and against assuming a passing spec means a working
+feature.
+
