@@ -1725,6 +1725,28 @@ thing and the reasoning is the same in each: in an instruction the reader has no
 is not really a courtesy, and it is a word on every screen. "Check your spam filter", not "Please
 check your spam filter". Forty-seven instances went in one pass and none of them read worse for it.
 
+<a id="button-labels"></a>
+**A button label is a verb and its object, and the page supplies the rest.** Two or three words:
+`New donation site`, `Promote to admin`, `Import storage locations`, `Invite user`. Measured across
+the app, **41 distinct button labels: 31 are one word, 26 are two, 12 are three, and two are four.**
+A create action is `New <noun>` — that is what nine of them say, so a tenth should not say
+`Add New Organization`.
+
+**Do not restate the context the button is sitting in.** `Invite user to this organization` was the
+longest label in the app at five words, in the footer of a card titled **Users**, on a page whose
+`<h1>` is the organization's name — so three of its five words repeated what was already on screen
+twice. WCAG 2.4.4 is Link Purpose *In Context*, and the card and the heading **are** that context.
+Where a longer form genuinely helps, it belongs in the thing the button opens: this one's modal is
+still headed "Invite a new user to {organization}", which is where naming the organization actually
+tells you something.
+
+Sentence case applies to buttons like everything else, and this is the rule that drifts quietest:
+`page-audit.rb` checks Title Case in **headings only**, so four button labels sat outside it for the
+length of the migration. The check that finds them is a scan of the button helpers —
+`new_button_to`, `modal_button_to`, `essentials_link_button`, `essentials_action_button`,
+`submit_tag`, `button_tag` — not of `label:`, which belongs to form fields and is a separate
+question.
+
 **A link says where it goes** — WCAG 2.4.4. "Click here", "this link", "read more" and "here" are
 all the same failure: a screen reader can list every link on a page, and out of context those say
 nothing. Name the destination: "NDBN member spreadsheet", not "this link".

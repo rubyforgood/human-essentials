@@ -584,6 +584,18 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### Some buttons are shorter
+
+**"Invite user to this organization" is now "Invite user."** It sits at the foot of a card headed
+*Users*, on a page whose title is your organization's name, so three of its five words were saying
+something the screen already said twice. It does exactly the same thing, and the window it opens
+still says which organization you are inviting someone to. The same button on the super admin's user
+list said "Invite a new user"; both say "Invite user" now.
+
+**Four buttons lost their Capital Letters**: *New announcement*, *New donation*, and *New
+organization* — which was "Add New Organization", and is now shaped like every other "New something"
+button in the app.
+
 ### If you are a partner: your agency's status has moved
 
 **Your status pill is gone from the top-right of your Dashboard and Distributions pages.** It sat

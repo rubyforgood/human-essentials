@@ -170,7 +170,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit organization_path
-      click_on "Invite user to this organization"
+      click_on "Invite user"
       within "#add-user-modal" do
         fill_in "email", with: "some_new_user@website.com"
         click_on "Invite user"
