@@ -1,62 +1,70 @@
-<%= render "shared/essentials/card", padded: false do %>
-          <div class="border-b border-slate-200 px-5 py-4">
-<h3 class="text-sm font-semibold text-slate-900"><%= user.display_name %> - Roles</h3>
-          </div>
+<%#
+  A user's roles, and the form that adds one.
 
-          <div class="px-5 py-4">
-<% if user.roles.any? %>
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Role Type</th>
-        <th>Resource</th>
-        <th class="text-right">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% user.roles.each do |role| %>
-        <tr>
-          <td><%= role.title %></td>
-          <td>
-            <%= role.resource&.name || "Super Admin" %> <%= role.resource&.id ? "(id: #{role.resource&.id})" : "" %>
-          </td>
-          <td class="text-right">
-            <div class="flex justify-end gap-1.5">
-              <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
-                    variant: :ghost_danger, size: :sm, icon: "bi-trash",
+  The card was rendered properly and then its header was written out by hand underneath it --
+  a `border-b` div and an `<h3>`, which is the shape `shell-first-audit.rb` looks for. The card
+  takes a `title:`, and it renders an `<h2>`, so the "Add role" heading below is a level 3 under
+  it rather than a second level 3 with nothing above it.
+%>
+<%= render "shared/essentials/card", padded: false, title: "#{user.display_name} \u2014 roles" do %>
+  <% if user.roles.any? %>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Role type</th>
+            <th scope="col">Resource</th>
+            <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% user.roles.each do |role| %>
+            <tr>
+              <td><%= role.title %></td>
+              <td>
+                <%= role.resource&.name || "Super admin" %>
+                <% if role.resource&.id %><span class="text-slate-500">(id: <%= role.resource.id %>)</span><% end %>
+              </td>
+              <td class="text-right">
+                <div class="flex justify-end gap-1.5">
+                  <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
+                        variant: :ghost_danger, size: :sm, icon: "bi-trash",
+                        confirm: "Are you sure you want to remove this role?" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="p-5">
+      <%= render "shared/essentials/empty_state", kind: :cold_start,
+            title: "No roles yet",
+            body: "This user cannot reach anything until they have one. Add a role below." %>
+    </div>
+  <% end %>
 
-                    confirm: "Are you sure you want to remove this role?" %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <%= render "shared/essentials/empty_state", kind: :cold_start,
-        title: "No roles yet",
-        body: "This user cannot reach anything until they have one. Add a role below." %>
-<% end %>
-<div data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
-<h3 class="text-sm font-semibold text-slate-900">Add role</h3>
-<%# Both selects had a bare <label> with no `for`, so neither was named. %>
-<%= form_tag admin_user_add_role_path(user) do %>
-  <div class="form-inputs">
-    <div class="mb-4">
-      <%= label_tag :resource_type, "Type", class: "block text-sm font-medium text-slate-700" %>
-      <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
-            class: EssentialsUiHelper::SELECT_CLASSES,
-            data: {"double-select-target": "source", action: "double-select#sourceChanged"} %>
-    </div>
-    <div class="mb-4">
-      <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
-      <%= select_tag :resource_id, [],
-            class: EssentialsUiHelper::SELECT_CLASSES,
-            data: {"double-select-target": "destination"} %>
-    </div>
-  </div>
-  <%= submit_tag "Add role", class: essentials_button_classes(variant: :secondary) %>
-<% end %>
-          </div>
+  <div class="border-t border-slate-200 p-5"
+       data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
+    <h3 class="text-sm font-semibold text-slate-900">Add role</h3>
+    <%# Both selects had a bare <label> with no `for`, so neither was named. %>
+    <%= form_tag admin_user_add_role_path(user) do %>
+      <div class="form-inputs mt-4">
+        <div class="mb-4">
+          <%= label_tag :resource_type, "Type", class: "block text-sm font-medium text-slate-700" %>
+          <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
+                class: EssentialsUiHelper::SELECT_CLASSES,
+                data: {"double-select-target": "source", action: "double-select#sourceChanged"} %>
         </div>
+        <div class="mb-4">
+          <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
+          <%= select_tag :resource_id, [],
+                class: EssentialsUiHelper::SELECT_CLASSES,
+                data: {"double-select-target": "destination"} %>
+        </div>
+      </div>
+      <%= submit_tag "Add role", class: essentials_button_classes(variant: :secondary) %>
+    <% end %>
+  </div>
 <% end %>

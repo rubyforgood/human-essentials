@@ -87,7 +87,10 @@
   <div class="mb-3 flex flex-wrap items-center gap-2">
     <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
             data-action="click->disclosure#toggle" data-filter-toggle
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+            <%# A secondary button, and it had drifted from one: `font-semibold` and a `shadow-sm`
+                that no other secondary button in the app carries. That is the cost of a pasted
+                class string, so it asks the helper for them now. %>
+            class="<%= essentials_button_classes(variant: :secondary) %>">
       <i class="bi-funnel" aria-hidden="true"></i>Filters
       <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white"
             data-filter-summary-target="count" hidden></span>

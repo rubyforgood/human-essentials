@@ -1,42 +1,47 @@
 <% content_for :title, "Users - #{current_organization.name}" %>
+<%#
+  The card opened with an *empty* `border-b` strip -- a hand-written header with nothing in it,
+  drawing a hairline across the top of the card for no reason. No `title:` here either: the page
+  header already says Users, and repeating it on the only card would be the same word twice.
+
+  The table is `.data-table` in a `.table-scroll` region, like every other table in the app. No
+  `.pin-col`, though: freezing a column is for a table that scrolls sideways, and two columns never
+  do. Pinned, "Name" held 417px of a 740px landscape phone for no benefit.
+%>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Users",
         subtitle: "Invite someone to help run #{current_organization.name}, or remove their access." %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false do %>
-          <div class="border-b border-slate-200 px-5 py-4">
-          </div>
-          <div class="px-5 py-4">
-            <% if @users.any? %>
-              <table class="data-table">
-                <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% @users.each do |user| %>
-                  <tr>
-                    <td><%= user.display_name %></td>
-                    <td><%= user.email %></td>
-                  </tr>
-                <% end %>
-                </tbody>
-              </table>
-            <% else %>
-              <%= render "shared/essentials/empty_state", kind: :cold_start,
-                    title: "No users yet",
-                    body: "Invite a colleague so they can sign in to this organization." %>
+  <%= render "shared/essentials/card", padded: false,
+        footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user to this organization"}) : nil) do %>
+    <% if @users.any? %>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+        <table class="data-table">
+          <caption>People who can sign in for this organization</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="name">Name</th>
+              <th scope="col">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td class="name font-medium text-slate-900"><%= user.display_name %></td>
+                <td><%= user.email %></td>
+              </tr>
             <% end %>
-          </div>
-
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= modal_button_to("#add-user-modal", { text: "Invite user to this organization" }) if can_administrate? %>
-          </div>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-5">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No users yet",
+              body: "Invite a colleague so they can sign in to this organization." %>
+      </div>
+    <% end %>
   <% end %>
 
   <%= render "add_user_modal" %>

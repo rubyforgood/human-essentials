@@ -1,16 +1,23 @@
 <%#
-  Header for an organization page. `link_path` is where "back" goes -- the bank dashboard for
-  an organization looking at itself, the admin dashboard for a super admin looking at one of
-  many.
+  Header for an organization page. `link_path` is where "back" goes -- the bank dashboard for an
+  organization looking at itself, the admin dashboard for a super admin looking at one of many.
 
-  The AdminLTE version carried a breadcrumb whose only real link was "Home"; the back link is
-  the design system's equivalent and is the same one destination.
+  The AdminLTE version carried a breadcrumb whose only real link was "Home"; the back link is the
+  design system's equivalent and goes to that same one destination.
+
+  **No wrapper of its own, and no `mb-0`.** This used to open a `px-4 py-6` block and then cancel
+  the header's own bottom margin, while the details partial opened a *second* `px-4 py-6` -- so the
+  gap between the heading and the first card measured 48px where the design system's is 24 (`mb-6`,
+  the page header's default). It was the only view in the app overriding `wrapper_class`. The two
+  `show` templates own the wrapper now, and everything on the page sits in it.
+
+  **Edit lives here, not in the card.** It acts on the whole record rather than on one card's
+  contents, which is the test in design.md. In the card header it read as editing that card's six
+  fields rather than the record's twenty-eight.
 %>
 <% content_for :title, "Organizations - #{@organization.name}" %>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/page_header",
-        title: @organization.name,
-        back: {path: link_path, label: "Back to dashboard"},
-        wrapper_class: "mb-0" %>
-</div>
+<%= render "shared/essentials/page_header",
+      title: @organization.name,
+      back: {path: link_path, label: "Back to dashboard"},
+      actions: (can_administrate? ? edit_button_to(edit_organization_path, {size: "md"}) : nil) %>

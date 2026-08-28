@@ -239,6 +239,7 @@ page exactly one `<h1>`, name every control, and never let colour be the only si
 ```bash
 ruby bin/design/status.rb            # which controllers are on a design system layout
 ruby bin/design/page-audit.rb        # defects and debt, per view
+ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
 python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
@@ -251,6 +252,30 @@ bin/rails runner bin/design/dead-code.rb     # code no route, render or caller r
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the
 version with a hardcoded list of 56 paths missed three pages that were in the sidebar the whole
 time and had no `<h1>`.
+
+`shell-first-audit.rb` is the one to run when a page "looks unmigrated" but every other check says
+it is fine. All the others ask whether anything from the old system is still present; this one asks
+whether the page is built the way the new system builds things. A page can have a proper header, a
+proper card, no Bootstrap class and no console error, and still hold a body nobody converted. Read
+the narrowings in [bin/design/README.md](../bin/design/README.md) before adding a check to it --
+four of its eight were false-positive factories first, and the reasons are the useful part.
+
+**Two dev-only overlays will fool a DOM-reading audit.** rack-mini-profiler and the `bullet` gem
+both inject markup into every development page -- tables, `<br>`, a floating panel. A probe written
+during this work reported 19 non-`.data-table` tables on a page with one table, and all 19 were the
+profiler's. Exclude `.profiler-results, .profiler-result` and bullet's notice before believing a
+count.
+
+**One `px-4 py-6 sm:px-6 lg:px-8` per page**, with the page header inside it, is the layout rule
+most often got wrong -- 14 templates closed the wrapper after the header and opened a second one for
+the content, which stacks two paddings and puts 72px under the heading where the design system's
+number is 24. Nothing catches it but counting:
+
+```bash
+for f in $(grep -rl 'px-4 py-6 sm:px-6 lg:px-8' app/views --include=*.erb); do
+  n=$(grep -c 'px-4 py-6 sm:px-6 lg:px-8' "$f"); [ "$n" -ge 2 ] && echo "$n  $f"
+done
+```
 
 `dead-code.rb` is the mirror of `dead-routes.rb` and reports 118 findings today — six controllers
 no route reaches, 24 helper methods nothing calls, 81 files in `public/` nothing links to. They
@@ -529,6 +554,35 @@ Those longer forms already worked this way; the shorter ones now match.
 users* on the admin dashboard, and the page controls under a table are all still where they were —
 they change what is in the card, so they belong to it. The rule is what pressing it affects: if it
 would be the last thing you do on the page, it is at the bottom.
+
+### Your organization page, and the gap under every heading
+
+**The gap between a page's heading and the first white card was too big on fourteen pages**, and is
+now the same everywhere: your organization page, Users, the admin lists, the annual survey and the
+partner request pages all had roughly three lines of empty space under the title and now have one.
+Nothing moved except the spacing.
+
+**Your organization page has a Users list again, in a real table.** It was a plain unstyled grid
+before — no shading on the header row, no line between rows, the *Invite user* button floated off to
+the right of a strip of its own. It is the same table as everywhere else in the app now, and the
+invite button sits at the foot of the card with the other footer buttons.
+
+**Edit has moved from the "Organization info" card up to the page heading.** It always saved every
+field on the page, not just the six in that card, and sitting in the card's header it looked like it
+edited only those. It does exactly what it did before.
+
+**On the partner profile pages, "Area served" is a proper table**, and two labels there are now in
+sentence case — *% of clients in county*, and *No county specified* where a partner has no county
+recorded. Same information, same rows.
+
+**The yellow notice on the account request form is now a blue one**, in the same shape as every other
+notice in the app, and the two sentences in it are two paragraphs rather than one paragraph split by
+blank lines.
+
+**A partner profile's sections are spaced consistently.** The gaps between *Agency information*,
+*Media information*, *Contacts* and the rest were uneven, because they were made of blank lines
+rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
+reader can jump to it.
 
 ### If you are a partner: your agency's status has moved
 

@@ -103,6 +103,34 @@ mode that looks like success. To exercise it end to end, add
 re-run: that file should appear under `debt`. Debt does not change the exit code — only defects
 do.
 
+`shell-first-audit.rb` asks the question none of the others do. Every audit above answers *is
+anything from the old system still present?* This one answers *is this built the way the new system
+builds things?* — which is what a **shell-first** page fails: page header, card, no Bootstrap class,
+no console error, and inside the card a body nobody migrated.
+
+```bash
+ruby bin/design/shell-first-audit.rb
+```
+
+No browser, no server, no database; it reads the templates. Eight checks: a `<table>` that is not
+`.data-table`, a bare `<hr>`, `float-*`, a `<br>` standing in for a margin, four or more flat `<p>`
+label pairs where a `<dl>` belongs, a hand-written card header, button classes pasted inline, and a
+Font Awesome icon. Exits non-zero on any finding.
+
+**Read the narrowings before adding a check**, because four of these eight started as false-positive
+factories and the reasons are the useful part. Mailers and `static/` are skipped — HTML email needs
+tables, and the legal pages are standalone documents with their own `<style>`. A `<br>` inside an
+`<address>` is correct HTML, so only a doubled one or one right after a block closes counts;
+unnarrowed it reported 31 and 29 were fine. A detail pair must carry `font-medium` and there must be
+four, or a stat card's caption matches. And a hand-written card header only counts when the file
+actually contains a card, because a modal's header is the same markup — matching markup alone
+reported all fourteen modals in the app, and three of those keep their `<dialog>` in
+`confirmation_controller.js`, so no amount of looking for `<dialog>` would have helped.
+
+It proves its detectors against a probe table first and aborts if one is wrong, the same as
+`page-audit.rb` and `copy-audit.rb`. That caught its own first bug: `'\n'` in a single-quoted Ruby
+string is two characters, so the card-header probe failed before the audit could report a false zero.
+
 `sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
 
 ```bash

@@ -1,36 +1,39 @@
-<%= render "shared/essentials/card", padded: false do %>
-  <div class="border-b border-slate-200 px-5 py-4">
-    <h2 class="text-base font-semibold text-slate-900">Users</h2>
-</div>
+<%#
+  The organization's users.
 
-<div class="px-5 py-4">
-  <table class="table border">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Role</th>
-        <th scope="col">Last Sign in</th>
-        <th scope="col">Status</th>
-        <th scope="col">Reinvite</th>
-        <th scope="col"><span class="sr-only">Actions</span></th>
-      </tr>
-    </thead>
+  Was `<table class="table border">` -- Bootstrap's `.table`, which this design system defines
+  nowhere and which therefore styled nothing -- inside a card whose header was written out by hand
+  rather than passed as `title:`, with the invite button shoved over by `float-right`. The row
+  partial had been migrated; the table around it had not.
 
-    <tbody>
-      <%= render partial: "/users/organization_user",
-                 collection: @users,
-                 as: :user,
-                 locals: { current_organization: current_organization || @organization } %>
-    </tbody>
-  </table>
-</div>
-
-<% if can_administrate? %>
-  <div class="border-t border-slate-200 px-5 py-3">
-    <%= modal_button_to("#add-user-modal", {text: "Invite user to this organization", class: "float-right"}) %>
+  `.data-table` inside a `.table-scroll` region, like every other table in the app: the region is
+  focusable and named so the arrow keys scroll it, and it is what gives the table its edge shadow,
+  its frozen first column and its rail. See design.md.
+%>
+<%= render "shared/essentials/card", padded: false, title: "Users",
+      footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user to this organization"}) : nil) do %>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+    <table class="data-table">
+      <caption>People who can sign in for this organization</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="pin-col name">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Role</th>
+          <th scope="col" class="date">Last sign in</th>
+          <th scope="col">Status</th>
+          <th scope="col">Reinvite</th>
+          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "/users/organization_user",
+              collection: @users,
+              as: :user,
+              locals: {current_organization: current_organization || @organization} %>
+      </tbody>
+    </table>
   </div>
-<% end %>
 <% end %>
 
 <%= render "/users/add_user_modal", current_organization: current_organization || @organization %>

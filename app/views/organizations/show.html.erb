@@ -1,5 +1,13 @@
-<%= render "header", link_path: @header_link %>
+<%#
+  One wrapper for the whole page, and a `space-y-6` stack inside it -- the shape the rest of the
+  app uses. The header and each card used to open their own `px-4 py-6`, which stacked two paddings
+  between the heading and the first card and put 48px where the design system's number is 24.
+%>
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "header", link_path: @header_link %>
 
-<%= render "details" %>
-
-<%= render "users/organization_users_table" %>
+  <div class="space-y-6">
+    <%= render "details" %>
+    <%= render "users/organization_users_table" %>
+  </div>
+</div>

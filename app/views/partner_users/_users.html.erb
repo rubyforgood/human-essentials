@@ -43,14 +43,14 @@
               </td>
               <td class='flex flex-col'>
                 <% unless user.invitation_accepted_at %>
-                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: essentials_button_classes(variant: :secondary) do %>
                     <i class="bi-envelope"></i> Resend Invitation
                   <% end %>
                 <% end %>
-                <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
+                <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: essentials_button_classes(variant: :secondary) do %>
                      Reset Password
                 <% end %>
-                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: "inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600" do %>
+                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: essentials_button_classes(variant: :ghost_danger) do %>
                     <i class="bi-slash-circle"></i> Remove Access
                 <% end %>
 
