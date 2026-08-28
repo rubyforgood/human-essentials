@@ -2193,6 +2193,13 @@ something. `wide: true` spans both columns, for a paragraph, a list or an image.
 does not double with the card header's rule. It is the line item card's band, marking a change of
 kind, and it is the reason **a detail card needs no `<hr>` at all**.
 
+<a id="a-band-has-no-last-case"></a>
+**A band has no special case for the last one.** Every band is `px-5 py-4`, including the final one.
+The card is rendered `padded: false` so its body supplies no padding of its own, and a last band
+that drops to `pt-4` leaves its final field **1px** from the card's bottom edge against the 16px
+every band above it has. If a container's padding is the reason a child can skip its own, check
+that the container actually has some.
+
 <a id="shell-first-audit"></a>
 **`bin/design/shell-first-audit.rb` is the check for this.** Every other audit in `bin/design`
 answers *is anything from the old system still present?* — a shell-first page passes all of them.

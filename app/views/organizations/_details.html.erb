@@ -152,7 +152,7 @@
           humanize_boolean(@organization.include_packages_in_distribution_export) %>
   <% end %>
 
-  <%= render "organizations/details_band", title: "Annual survey", last: true do %>
+  <%= render "organizations/details_band", title: "Annual survey" do %>
     <%= essentials_detail "Does your bank repackage essentials?",
           humanize_boolean(@organization.repackage_essentials) %>
     <%= essentials_detail "Does your bank distribute monthly?",

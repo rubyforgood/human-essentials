@@ -65,6 +65,19 @@ RSpec.describe "Page layout", type: :system, js: true do
     it "positions the footer button without a float" do
       expect(page).to have_no_css("[class*='float-']")
     end
+
+    # The last band dropped to `pt-4` on the assumption that the card supplied the bottom padding.
+    # It does not -- the card is rendered `padded: false` -- so the final field sat 1px from the
+    # card's bottom edge while the seven bands above it had 16.
+    it "gives every band the same padding, including the last" do
+      paddings = page.evaluate_script(<<~JS)
+        [...document.querySelectorAll("section.card-surface h3")]
+          .map(h => { const cs = getComputedStyle(h.nextElementSibling);
+                      return cs.paddingTop + "/" + cs.paddingBottom; })
+      JS
+      expect(paddings).to all(eq("16px/16px"))
+      expect(paddings.length).to be >= 2
+    end
   end
 
   describe "the users page" do
