@@ -20,7 +20,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:zebra_item) { create :item, name: "Zebra", organization: org }
 
   let!(:partner) { create :partner, organization: org, name: "Howdy Partner", email: "test@rfg.com" }
-  
+
   let!(:inactive_item_request) do
     create(:request,
            :started,
