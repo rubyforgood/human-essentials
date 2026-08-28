@@ -1,8 +1,8 @@
 <div class="max-w-4xl">
   <%= essentials_error_summary(@product_drive) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for @product_drive, remote: request.xhr? do |f| %>
+  <%= essentials_form_for @product_drive, remote: request.xhr? do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
       <%# A date range is the clearest pair there is: the second is read against the first. %>
       <%= essentials_field_row do %>
@@ -16,11 +16,11 @@
               "data-select2-config-value": '{"selectOnClose": "true", "width": "100%", "placeholder":"Add a tag", "tags": "true", "tokenSeparators": [",", "\t"]}'
             } %>
       <%= f.input :virtual, label: "Product drive is virtual?", as: :boolean %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md) + " diaper-drive-submit", id: "product_drive_submit", data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", product_drives_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md) + " diaper-drive-submit", id: "product_drive_submit", data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", product_drives_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

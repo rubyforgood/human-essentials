@@ -2,16 +2,16 @@
 <div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for [:admin, form], html: {role: "form"} do |f| %>
+  <%= essentials_form_for [:admin, form], html: {role: "form"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :quantity, label: "Quantity" %>
       <%= f.association :barcodeable, collection: @base_items, label: "Item" %>
       <%= f.input :value, label: "Barcode" %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= submit_button %>
-        <%= essentials_link_button "Cancel", admin_barcode_items_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= submit_button %>
+      <%= essentials_link_button "Cancel", admin_barcode_items_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

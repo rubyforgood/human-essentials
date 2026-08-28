@@ -5328,3 +5328,66 @@ which is what the `data-railed="settled"` gate on the removed rule depends on. I
 than comfortable now (the margin can be a fraction of a pixel), so it stays asserted rather than
 assumed: 0 bad positions across four pages × four viewport heights × every scroll offset.
 
+
+## 2026-08-28 — Where a form's buttons go, and the rule the design system never had
+
+*"All of those pages have the button nested within the card with a divider separating them. Check the
+design system for the pattern on this."* Checked, and **there was no pattern.** `design.md` said one
+thing about a form's action row — that the primary comes first, because the row is left-aligned —
+and nothing about where the row lives. So the app had drifted into three answers: a divider inside
+the card body (**33** views), buttons below the cards with no divider (**7**), and the card's own
+`footer:` slot (**2**).
+
+**The divider was the symptom and it measured.** Drawn inside the card's 20px body padding, it came
+out **854px of rule in an 896px card, inset 21px on each side**, with 21px of card below it. Every
+other divider in the app is full bleed — the card header's, the card footer's, the row dividers, the
+pagination strip; `/users/new`'s real footer slot measures 958 of 960. It was the only rule in the
+app that did not reach the edges of what it divided, which is why it read as a stray line rather
+than a boundary.
+
+**Option C was chosen: below the card, no divider.** Two options were offered and I deliberately did
+not pick between them — A put the row in the card's `footer:` slot, which fixes the line but leaves
+the buttons nested; C takes them off the surface entirely. "Nested within the card *with* a divider"
+could have been an objection to either.
+
+**The argument that makes C the better rule is scope, not appearance.** A card groups related
+content; the submit commits the *form*. On seven forms the form spans two or three cards and belongs
+to none of them — and those seven already worked this way, which is the tell: the app had already
+derived the right rule for the case where the distinction is visible, and only got it wrong where
+the distinction is invisible. C ends with **one** rule for all 42 forms; A would have ended with two
+(footer slot for single-card, below for multi-card) and a judgement call at every new form.
+
+**The structural change is the risky part, not the styling.** 31 views had `card > form`, and a
+submit cannot be outside the card and inside the form at once, so the nesting had to swap. A form
+boundary in the wrong place puts fields outside the form that submits them — markup that renders
+fine, greps fine, and quietly loses data. **This app has done it twice**, and both scars are still
+in the source: `profiles/edit` carries *"the submit row sat outside the fields it submits"* and
+`partners/requests/new` carries *"a closing div appeared before the form block ended"*. So the
+verification was a browser one — 12 form pages, **0 orphaned controls**, every submit inside its
+form and outside its card — plus the full system suite, **674 examples**.
+
+**A helper rather than 42 utility strings.** `essentials_form_actions` renders the row, so the rule
+has one definition. The eight multi-card forms were already correct and were converted anyway, to
+route them through the same helper: a rule enforced in one place beats a rule that happens to be
+followed in eight.
+
+**The caveat, which was asked for explicitly: a button may live inside a card when the card is its
+scope.** *Add another item* adds a row to the line item card. *View all users* expands the admin
+dashboard card's list. A pager pages that table. All three stay, and all three use the card's
+`footer:` slot, whose rule *is* full bleed. The test is what pressing it affects: **a card action
+changes what is in the card; a form action commits the whole form.** Put another way — if pressing
+it would be the last thing you do on the page, it is a form action and it goes below.
+
+**And it does not compete with the page header.** Checked across every form view: exactly one has
+`actions:` on its header, `partners/profiles/edit`, and it holds a status *pill*, not a button. So a
+form page never shows two action rows arguing about which is primary. The two rows still look
+opposite — header primary last, form primary first — and are the same rule, since the primary sits
+at the row's alignment edge and the two rows align at opposite edges.
+
+**Left alone deliberately.** The fieldset dividers inside `organizations/edit`, `admin/organizations/new`
+and `users/registrations/edit` use the same border utility but divide *bands of fields* within a
+card, which is the line item card's band pattern and is correct. And `partners/profiles/edit` puts a
+status pill in `data-page-header="actions"` while `_page_header` carries a comment saying a pill
+among buttons reads as a greyed-out button — a real inconsistency, unrelated to this change, and not
+fixed here.
+

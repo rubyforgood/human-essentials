@@ -17,7 +17,7 @@
       <%= render "line_items/line_item_table", form: f, id: "audit_line_items", noun: "audit" %>
     <% end %>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <%= essentials_form_actions do %>
       <%= f.button :button, "Confirm audit", name: "confirm_audit",
             class: essentials_button_classes(variant: :primary, size: :md),
             data: {
@@ -29,7 +29,7 @@
             class: essentials_button_classes(variant: :secondary, size: :md),
             data: {disable_with: "Saving...", "duplicate-items-target": "itemSubmitButton"} %>
       <%= essentials_link_button "Cancel", audits_path, variant: :ghost, size: :md %>
-    </div>
+    <% end %>
   </div>
 <% end %>
 

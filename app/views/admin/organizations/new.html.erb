@@ -9,8 +9,8 @@
 <div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
   <%= essentials_error_summary(@organization) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for @organization, url: admin_organizations_path do |f| %>
+  <%= essentials_form_for @organization, url: admin_organizations_path do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.hidden_field :account_request_id, value: @organization.account_request_id %>
 
       <%= f.input :name, required: true, autofocus: true %>
@@ -40,11 +40,11 @@
           <%= render "admin/users/user_form_fields", f: user %>
         <% end %>
       </fieldset>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= submit_button %>
-        <%= essentials_link_button "Cancel", admin_organizations_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= submit_button %>
+      <%= essentials_link_button "Cancel", admin_organizations_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

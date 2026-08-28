@@ -20,11 +20,11 @@
     <%= f.input :name, label: "Name" %>
     <%= f.input :email, label: "E-mail" %>
     <%= f.input :send_reminders, label: "Send reminders?", as: :boolean %>
+  <% end %>
 
-    <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-      <%= submit_button %>
-      <%= essentials_link_button "Cancel", admin_partners_path, variant: :ghost, size: :md %>
-    </div>
+  <%= essentials_form_actions do %>
+    <%= submit_button %>
+    <%= essentials_link_button "Cancel", admin_partners_path, variant: :ghost, size: :md %>
   <% end %>
 </div>
 <% end %>

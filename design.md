@@ -1006,6 +1006,53 @@ A lone short field gets a row to itself, so it takes half a line rather than all
 stacks below `sm`. The `:essentials` wrapper already carries `mb-4`, so the helper adds the
 horizontal gap and nothing else.
 
+<a id="where-a-button-goes"></a>
+### Where a button goes
+
+**Three kinds of button, and the test is what pressing it affects.** Not where it looks tidy — scope
+decides the home, and the three homes are already distinct components.
+
+| If pressing it… | It belongs to | Where it goes |
+| --- | --- | --- |
+| acts on the page or the record as a whole — *New item*, *Export*, *Deactivate* | the **page** | the page header's `actions:`, right-aligned |
+| acts on **that card's own contents** — *Add another item*, *View all users*, a pager | the **card** | the card's `actions:` (header) or `footer:` slot |
+| **commits or abandons the whole form** — *Save*, *Cancel*, *Submit request* | the **form** | `essentials_form_actions`, **below the card**, no divider |
+
+<a id="form-actions"></a>
+**A form's buttons go below the card, not inside it.** `essentials_form_actions` renders the row:
+`mt-6`, left-aligned, and **no divider of any kind**. Off the surface, the card's own edge is the
+boundary; a rule under it would be a second mechanism for one job.
+
+The reason is scope, not looks. A card groups related content; the submit commits the *form*, which
+on seven of these forms spans two or three cards and belongs to none of them — donations, purchases,
+distributions, transfers, audits, adjustments and kits all worked this way already. The other 33
+forms drew the row inside the card under a divider, and that divider was the visible symptom:
+measured on `/items/new`, **854px of rule in an 896px card, inset 21px each side**, because it was
+drawn inside the card's 20px body padding. Every other divider in the app is full bleed. It was the
+only rule in the app that did not reach the edges of what it divided.
+
+**This means the form wraps the card, not the other way round.** 31 views had `card > form`, which
+cannot put a submit outside the card and inside the form at once. Swapping the nesting is the part
+that needs care rather than the styling: a form boundary in the wrong place puts fields outside the
+form they submit, which is invisible to a request spec and to the eye. Both have happened here
+before — `profiles/edit` and `partners/requests/new` each carry a comment about it. **Verified in a
+browser across 12 form pages: 0 orphaned controls, every submit inside its form and outside its
+card.**
+
+<a id="buttons-inside-a-card"></a>
+**The caveat: a button may live inside a card when the card is its scope.** *Add another item* sits
+in the line item card's footer because it adds a row to that card. *View all users* sits in the
+admin dashboard card's footer because it expands that card's list. A pager sits in the table card's
+footer because it pages that table. These are right where they are, and they use the card's
+`footer:` slot, whose rule **is** full bleed. The distinction to hold onto: **a card action changes
+what is in the card; a form action commits the whole form.** If pressing it would be the last thing
+you do on the page, it is a form action and it goes below.
+
+**And it never competes with the page header.** A form page's header carries navigation — *Back to
+items* — and no submit; checked across every form view, the one header carrying `actions:` on a form
+page holds a status *pill*, not a button. So the two rows never appear on one page arguing about
+which is primary.
+
 <a id="primary-position"></a>
 **A primary sits at the row's alignment edge**, which is why the two rules below look opposite and
 are not. A page header's actions are right-aligned, so its primary is **last**. A form's action row

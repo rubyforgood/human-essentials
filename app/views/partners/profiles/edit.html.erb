@@ -21,10 +21,10 @@
               locals: {form: profile_form, profile: current_partner.profile} %>
       </div>
 
-      <div class="mt-6 flex items-center gap-2">
+      <%= essentials_form_actions do %>
         <%= form.submit "Update information", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
         <%= essentials_link_button "Cancel", partners_profile_path, variant: :ghost, size: :md %>
-      </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

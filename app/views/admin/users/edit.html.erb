@@ -7,16 +7,16 @@
 </div>
 
 <div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card" do %>
-            <%= essentials_form_for @user, url: admin_user_path, html: {id: "quickForm"} do |f| %>
+          <%= essentials_form_for @user, url: admin_user_path, html: {id: "quickForm"} do |f| %>
+    <%= render "shared/essentials/card" do %>
               <div class="form-inputs">
                 <%= render 'admin/users/user_form_fields', f: f %>
               </div>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= submit_button %>
-        <%= essentials_link_button "Cancel", admin_users_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= submit_button %>
+      <%= essentials_link_button "Cancel", admin_users_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

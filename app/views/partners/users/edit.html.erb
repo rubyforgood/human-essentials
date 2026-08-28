@@ -8,17 +8,17 @@
   <div class="max-w-2xl">
     <%= essentials_error_summary(@user) %>
 
-    <%= render "shared/essentials/card" do %>
-      <%= form_for @user, html: {method: :patch}, url: partners_user_path(@user) do |form| %>
+    <%= form_for @user, html: {method: :patch}, url: partners_user_path(@user) do |form| %>
+      <%= render "shared/essentials/card" do %>
         <div>
           <%= form.label :name, class: "block text-sm font-medium text-slate-700" %>
           <%= form.text_field :name, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
         </div>
+      <% end %>
 
-        <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-          <%= form.submit "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-          <%= essentials_link_button "Cancel", partners_users_path, variant: :ghost, size: :md %>
-        </div>
+      <%= essentials_form_actions do %>
+        <%= form.submit "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+        <%= essentials_link_button "Cancel", partners_users_path, variant: :ghost, size: :md %>
       <% end %>
     <% end %>
   </div>

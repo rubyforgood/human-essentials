@@ -1,8 +1,8 @@
 <div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for form, data: {controller: "checkbox-with-nested-element"} do |f| %>
+  <%= essentials_form_for form, data: {controller: "checkbox-with-nested-element"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%# How you name them and how you reach them. %>
       <%= essentials_field_row do %>
         <%= f.input :name, label: "Name" %>
@@ -72,12 +72,12 @@
               accept: Partner::ALLOWED_MIME_TYPES.join(","),
               class: "mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
       </div>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, (submit_btn_options[:text] || "Save"),
-              class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", partners_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, (submit_btn_options[:text] || "Save"),
+            class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", partners_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

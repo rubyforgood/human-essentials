@@ -9,15 +9,13 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8"
      data-controller="confirmation"
      data-confirmation-pre-check-path-value="<%= validate_partners_individuals_requests_path(format: :json) %>">
-  <%= render "shared/essentials/card" do %>
+  <% if @errors.present? %>
+    <%= render partial: 'partners/requests/error' %>
+  <% end %>
 
-            <% if @errors.present? %>
-              <%= render partial: 'partners/requests/error' %>
-            <% end %>
-
-            <%= essentials_form_for @request, url: partners_individuals_requests_path, html: {role: "form"},
-              data: {controller: 'form-input', confirmation_target: "form"} do |form| %>
-
+  <%= essentials_form_for @request, url: partners_individuals_requests_path, html: {role: "form"},
+        data: {controller: 'form-input', confirmation_target: "form"} do |form| %>
+    <%= render "shared/essentials/card" do %>
               <%= form.input :comments, label: "Comments", as: :text, input_html: {rows: 3} %>
 
               <table class="data-table">
@@ -39,20 +37,21 @@
                 <% end %>
               </div>
 
-              <%# TODO(chaserx): prevent submission when an item is blank or a quantity is empty. %>
-              <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-                <%= form.button :button, "Submit essentials request",
-                      class: essentials_button_classes(variant: :primary, size: :md),
-                      data: {action: "click->confirmation#openModal"} %>
-                <%= essentials_link_button "Cancel", partners_requests_path, variant: :ghost, size: :md %>
-              </div>
             <% end %>
 
-          <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
-          <%# and app/controllers/partners/individuals_requests_controller.rb#validate for how it gets populated. %>
-          <dialog id="partnerIndividualRequestConfirmationModal"
-            class="confirm w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
-            aria-labelledby="partnerRequestConfirmationTitle"
-            data-confirmation-target="modal"></dialog>
+    <%# TODO(chaserx): prevent submission when an item is blank or a quantity is empty. %>
+    <%= essentials_form_actions do %>
+      <%= form.button :button, "Submit essentials request",
+            class: essentials_button_classes(variant: :primary, size: :md),
+            data: {action: "click->confirmation#openModal"} %>
+      <%= essentials_link_button "Cancel", partners_requests_path, variant: :ghost, size: :md %>
+    <% end %>
   <% end %>
+
+  <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+  <%# and app/controllers/partners/individuals_requests_controller.rb#validate for how it gets populated. %>
+  <dialog id="partnerIndividualRequestConfirmationModal"
+    class="confirm w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40"
+    aria-labelledby="partnerRequestConfirmationTitle"
+    data-confirmation-target="modal"></dialog>
 </div>

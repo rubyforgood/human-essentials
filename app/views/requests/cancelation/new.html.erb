@@ -15,15 +15,15 @@
 
     <% end %>
 
-    <%= render "shared/essentials/card" do %>
-      <%= essentials_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+    <%= essentials_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+      <%= render "shared/essentials/card" do %>
         <%= f.input :reason, label: "Cancellation reason", as: :text, input_html: {rows: 3},
               hint: "This is included in the email notification sent to the partner. Cancellation emails are not sent to deactivated partners." %>
+      <% end %>
 
-        <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-          <%= f.submit "Yes, cancel this request", class: essentials_button_classes(variant: :danger, size: :md), data: {disable_with: "Please wait..."} %>
-          <%= essentials_link_button "No, keep it", request_path(@request), variant: :ghost, size: :md %>
-        </div>
+      <%= essentials_form_actions do %>
+        <%= f.submit "Yes, cancel this request", class: essentials_button_classes(variant: :danger, size: :md), data: {disable_with: "Please wait..."} %>
+        <%= essentials_link_button "No, keep it", request_path(@request), variant: :ghost, size: :md %>
       <% end %>
     <% end %>
   </div>

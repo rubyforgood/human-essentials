@@ -83,6 +83,29 @@ module EssentialsUiHelper
     tag.div(capture(&block), class: "grid gap-x-4 sm:grid-cols-2")
   end
 
+  # A form's action row: Save and Cancel, *below* the card rather than inside it.
+  #
+  # The buttons belong to the form, not to a card. A card groups related content; the submit
+  # commits the whole form, which on seven of these forms spans two or three cards and belongs to
+  # none of them. That was already how every multi-card form worked -- donations, purchases,
+  # distributions, transfers, audits, adjustments, kits -- while 33 single-card forms drew the row
+  # inside the card under a divider. The divider was the visible symptom: drawn inside the card's
+  # 20px body padding, it measured 854px of rule in an 896px card, the only rule in the app that
+  # did not reach the edges of what it divided.
+  #
+  # No divider here at all. Off the surface, the card's own edge is the boundary, and a second line
+  # under it would be the two-mechanisms-for-one-job pattern again.
+  #
+  # `mt-6` is the gap to the card above -- 24px, matching the `space-y-6` that multi-card forms
+  # already put between their cards, so the buttons sit off the stack at the stack's own rhythm.
+  #
+  # The row is left-aligned, which is why its primary comes *first*: see design.md. A page header's
+  # actions are right-aligned and so put the primary last. One rule -- the primary sits at the row's
+  # alignment edge -- and it reads as two only if you forget which edge each row has.
+  def essentials_form_actions(&block)
+    tag.div(capture(&block), class: "mt-6 flex flex-wrap items-center gap-2")
+  end
+
   # A link styled as a button. Use for navigation (GET).
   #
   # `available: false` renders a non-interactive `<span>` rather than an `<a>`, because **a link

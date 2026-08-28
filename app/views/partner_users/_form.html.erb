@@ -1,13 +1,13 @@
 <%# Locals: user, partner. %>
-<%= render "shared/essentials/card", title: "Invite a user" do %>
-  <%= essentials_form_for user, url: partner_users_path(partner) do |f| %>
+<%= essentials_form_for user, url: partner_users_path(partner) do |f| %>
+  <%= render "shared/essentials/card", title: "Invite a user" do %>
     <%= f.input :name, label: "Name", required: true %>
     <%= f.input :email, label: "Email", required: true %>
+  <% end %>
 
-    <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-      <%= f.button :button, "Invite user",
-            class: essentials_button_classes(variant: :primary, size: :md),
-            data: {disable_with: "Inviting..."} %>
-    </div>
+  <%= essentials_form_actions do %>
+    <%= f.button :button, "Invite user",
+          class: essentials_button_classes(variant: :primary, size: :md),
+          data: {disable_with: "Inviting..."} %>
   <% end %>
 <% end %>

@@ -3,14 +3,14 @@
 <div class="max-w-2xl">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+  <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", id: "manufacturer-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", manufacturers_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", id: "manufacturer-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", manufacturers_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

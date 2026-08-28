@@ -516,6 +516,20 @@ That spacing was reported wrong three times before it landed, in both directions
 to you it is worth saying: it is measured from the bar to the buttons, not from anything you can see
 the edges of.
 
+**Save and Cancel now sit below the card, not inside it.** On New item, New kit, New vendor and the
+rest, the buttons used to sit inside the white card under a short grey line. The line is gone and
+the buttons have moved just below the card. Nothing about saving has changed — the buttons do the
+same thing in the same order, `Save` then `Cancel`.
+
+The reason for the move, if you are curious: the buttons submit the whole form, and on longer forms
+like New donation the form covers several cards, so the buttons never belonged to any one of them.
+Those longer forms already worked this way; the shorter ones now match.
+
+**Buttons that act on one card stay in that card.** *Add another item* on a donation, *View all
+users* on the admin dashboard, and the page controls under a table are all still where they were —
+they change what is in the card, so they belong to it. The rule is what pressing it affects: if it
+would be the last thing you do on the page, it is at the bottom.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with

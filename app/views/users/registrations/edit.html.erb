@@ -23,8 +23,8 @@
 
   <%= essentials_error_summary(resource) %>
 
-  <%= render "shared/essentials/card", title: current_user.display_name do %>
-    <%= essentials_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
+  <%= essentials_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
+    <%= render "shared/essentials/card", title: current_user.display_name do %>
       <%= f.input :name, label: "Name", required: true, autofocus: true %>
       <%= f.input :email, label: "Email" %>
       <%= f.input :current_password, label: "Current password",
@@ -36,15 +36,15 @@
         <%= f.input :password, label: "New password" %>
         <%= f.input :password_confirmation, label: "Confirm new password" %>
       </fieldset>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <% if Rails.env.staging? %>
-          <%= _button_to({text: "Save", icon: "floppy-o", type: "success"}, disabled: true) %>
-        <% else %>
-          <%= submit_button %>
-        <% end %>
-        <%= essentials_link_button "Cancel", dashboard_path_from_current_role, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <% if Rails.env.staging? %>
+        <%= _button_to({text: "Save", icon: "floppy-o", type: "success"}, disabled: true) %>
+      <% else %>
+        <%= submit_button %>
+      <% end %>
+      <%= essentials_link_button "Cancel", dashboard_path_from_current_role, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>
