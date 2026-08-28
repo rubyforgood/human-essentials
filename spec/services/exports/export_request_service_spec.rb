@@ -19,7 +19,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:banana_item) { create :item, name: "Banana", organization: org }
   let!(:zebra_item) { create :item, name: "Zebra", organization: org }
 
-  let!(:partner) { create :partner, organization: org, name: "Howdy Partner" }
+  let!(:partner) { create :partner, organization: org, name: "Howdy Partner", email: "test@partner.com" }
 
   let!(:inactive_item_request) do
     create(:request,
@@ -48,6 +48,7 @@ RSpec.describe Exports::ExportRequestService do
            :with_item_requests,
            organization: org,
            partner: partner,
+           comments: "Hi!",
            request_items: [{ item_id: item_2t.id, quantity: 100 }])
   end
 
@@ -122,6 +123,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Request Sender",
+          "Comments",
           "Type",
           "Status",
           "2T Diapers -- UPDATED",
@@ -145,6 +148,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Child",
           "Started",
           0,   # 2T Diapers
@@ -164,6 +168,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
+          "Hi!",
           "Individual",
           "Fulfilled",
           100, # 2T Diapers
@@ -183,6 +189,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           nil,
           "Fulfilled",
           0,   # 2T Diapers
@@ -202,6 +209,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           nil,
           "Started",
           3,   # 2T Diapers
@@ -221,6 +229,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Quantity",
           "Started",
           0,   # 2T Diapers
@@ -240,6 +249,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Quantity",
           "Started",
           0,   # 2T Diapers
@@ -260,6 +270,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Quantity",
           "Started",
           0,   # 2T Diapers
@@ -287,6 +298,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Request Sender",
+          "Comments",
           "Type",
           "Status",
           "2T Diapers -- UPDATED",
@@ -309,6 +322,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
+          "Hi!",
           "Child",
           request_3t.status.humanize,
           0,   # 2T Diapers
@@ -327,6 +342,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
+          "Hi!",
           "Individual",
           "Fulfilled",
           100, # 2T Diapers
@@ -345,7 +362,8 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
-          nil,
+           "test@partner.com",
+          "Hi!",
           "Fulfilled",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -363,6 +381,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           nil,
           "Started",
           3,   # 2T Diapers
@@ -381,6 +400,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Quantity",
           "Started",
           0,   # 2T Diapers
@@ -399,6 +419,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@partner.com",
           "Quantity",
           "Started",
           0,   # 2T Diapers
