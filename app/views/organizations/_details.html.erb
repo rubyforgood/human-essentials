@@ -15,147 +15,147 @@
 
   `essentials_detail` renders each field and puts the em dash in an empty one. `wide: true` spans
   both columns, for a value that is a paragraph, a list or an image.
+
+  No page wrapper here and no `actions:` on the card. `show` owns the wrapper, and Edit acts on the
+  whole record rather than on this card's fields, so it belongs in the page header -- design.md's
+  "where a button goes".
 %>
-<div class="px-4 py-6 sm:px-6 lg:px-8">
-  <%= render "shared/essentials/card", padded: false,
-        title: "Organization info",
-        actions: (can_administrate? ? edit_button_to(edit_organization_path, {size: "sm"}) : nil) do %>
+<%= render "shared/essentials/card", padded: false, title: "Organization info" do %>
 
-    <%= render "organizations/details_band", title: "Basic information" do %>
-      <%= essentials_detail "Name", @organization.name %>
-      <%= essentials_detail "NDBN membership ID", @organization.ndbn_member&.full_name %>
-      <%= essentials_detail "URL" do %>
-        <% if @organization.url.present? %>
-          <%= link_to @organization.url, @organization.url, class: "text-brand-700 hover:text-brand-800" %>
-        <% end %>
+  <%= render "organizations/details_band", title: "Basic information" do %>
+    <%= essentials_detail "Name", @organization.name %>
+    <%= essentials_detail "NDBN membership ID", @organization.ndbn_member&.full_name %>
+    <%= essentials_detail "URL" do %>
+      <% if @organization.url.present? %>
+        <%= link_to @organization.url, @organization.url, class: "text-brand-700 hover:text-brand-800" %>
       <% end %>
-      <%= essentials_detail "Email" do %>
-        <% if @organization.email.present? %>
-          <%= link_to @organization.email, "mailto:#{@organization.email}",
-                class: "text-brand-700 hover:text-brand-800",
-                aria: {label: "Email organization"} %>
-        <% end %>
+    <% end %>
+    <%= essentials_detail "Email" do %>
+      <% if @organization.email.present? %>
+        <%= link_to @organization.email, "mailto:#{@organization.email}",
+              class: "text-brand-700 hover:text-brand-800",
+              aria: {label: "Email organization"} %>
       <% end %>
-      <%#
-        The address used to close its `</address>` inside the `else` branch, with a stray `</p>`
-        after it, so a blank address left the element open and the browser reparsed the rest of the
-        card inside it.
-      %>
-      <%= essentials_detail "Address" do %>
-        <% if @organization.address.present? %>
-          <address class="not-italic"><%= @organization.address %></address>
-        <% end %>
+    <% end %>
+    <%#
+      The address used to close its `</address>` inside the `else` branch, with a stray `</p>`
+      after it, so a blank address left the element open and the browser reparsed the rest of the
+      card inside it.
+    %>
+    <%= essentials_detail "Address" do %>
+      <% if @organization.address.present? %>
+        <address class="not-italic"><%= @organization.address %></address>
       <% end %>
-      <%= essentials_detail "Logo", wide: true do %>
-        <% if @organization.logo.attached? %>
-          <div class="flex items-center gap-3">
-            <%= image_tag @organization.logo, alt: "", class: "h-12 w-auto rounded" %>
-            <%#
-              `button_tag` with `essentials_button_classes`, not the hand-copied class string this
-              had. Two buttons here carried the whole `inline-flex ... focus-visible:outline-brand-600`
-              string inline, which is the copy that cannot follow the variant when it changes.
-            %>
-            <%= button_tag type: "button",
-                  class: essentials_button_classes(variant: :secondary, size: :sm),
-                  data: {action: "click->dialog#open", dialog_id_param: "showTheLogo"} do %>
-              View original
-            <% end %>
-          </div>
-          <%= render "shared/essentials/modal", id: "showTheLogo", title: "Organization logo" do %>
-            <%= image_tag @organization.logo, alt: "", class: "max-h-[70vh] w-auto rounded-lg" %>
+    <% end %>
+    <%= essentials_detail "Logo", wide: true do %>
+      <% if @organization.logo.attached? %>
+        <div class="flex items-center gap-3">
+          <%= image_tag @organization.logo, alt: "", class: "h-12 w-auto rounded" %>
+          <%#
+            `button_tag` with `essentials_button_classes`, not the hand-copied class string this
+            had. Two buttons here carried the whole `inline-flex ... focus-visible:outline-brand-600`
+            string inline, which is the copy that cannot follow the variant when it changes.
+          %>
+          <%= button_tag type: "button",
+                class: essentials_button_classes(variant: :secondary, size: :sm),
+                data: {action: "click->dialog#open", dialog_id_param: "showTheLogo"} do %>
+            View original
           <% end %>
+        </div>
+        <%= render "shared/essentials/modal", id: "showTheLogo", title: "Organization logo" do %>
+          <%= image_tag @organization.logo, alt: "", class: "max-h-[70vh] w-auto rounded-lg" %>
         <% end %>
       <% end %>
     <% end %>
+  <% end %>
 
-    <%= render "organizations/details_band", title: "Storage" do %>
-      <%= essentials_detail "Default intake storage location", @intake_storage_location&.name %>
-      <%= essentials_detail "Default storage location", @default_storage_location&.name %>
-    <% end %>
+  <%= render "organizations/details_band", title: "Storage" do %>
+    <%= essentials_detail "Default intake storage location", @intake_storage_location&.name %>
+    <%= essentials_detail "Default storage location", @default_storage_location&.name %>
+  <% end %>
 
-    <%= render "organizations/details_band", title: "Partner approval process" do %>
-      <%= essentials_detail "One-step partner invite and approve",
-            humanize_boolean(@organization.one_step_partner_invite) %>
-      <%= essentials_detail "Custom partner invitation message", @organization.invitation_text %>
-      <%= essentials_detail "Partner profile sections", wide: true do %>
-        <% if @organization.partner_form_fields.present? %>
-          <ul class="list-inside list-disc">
-            <% @organization.partner_form_fields.each do |partner_form_field| %>
-              <li><%= display_partner_fields_value(partner_form_field) %></li>
-            <% end %>
-          </ul>
-        <% end %>
-      <% end %>
-    <% end %>
-
-    <%= render "organizations/details_band", title: "Requests approved partners can make" do %>
-      <%= essentials_detail "Child-based requests",
-            humanize_boolean(@organization.enable_child_based_requests) %>
-      <%= essentials_detail "Requests by number of individuals",
-            humanize_boolean(@organization.enable_individual_requests) %>
-      <%= essentials_detail "Quantity-based requests",
-            humanize_boolean(@organization.enable_quantity_based_requests) %>
-      <% if Flipper.enabled?(:enable_packs) %>
-        <%= essentials_detail "Custom request units", wide: true do %>
-          <% if @organization.request_units.any? %>
-            <%= @organization.request_units.map { |unit| unit.name.titlecase }.to_sentence %>
+  <%= render "organizations/details_band", title: "Partner approval process" do %>
+    <%= essentials_detail "One-step partner invite and approve",
+          humanize_boolean(@organization.one_step_partner_invite) %>
+    <%= essentials_detail "Custom partner invitation message", @organization.invitation_text %>
+    <%= essentials_detail "Partner profile sections", wide: true do %>
+      <% if @organization.partner_form_fields.present? %>
+        <ul class="list-inside list-disc">
+          <% @organization.partner_form_fields.each do |partner_form_field| %>
+            <li><%= display_partner_fields_value(partner_form_field) %></li>
           <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render "organizations/details_band", title: "Requests approved partners can make" do %>
+    <%= essentials_detail "Child-based requests",
+          humanize_boolean(@organization.enable_child_based_requests) %>
+    <%= essentials_detail "Requests by number of individuals",
+          humanize_boolean(@organization.enable_individual_requests) %>
+    <%= essentials_detail "Quantity-based requests",
+          humanize_boolean(@organization.enable_quantity_based_requests) %>
+    <% if Flipper.enabled?(:enable_packs) %>
+      <%= essentials_detail "Custom request units", wide: true do %>
+        <% if @organization.request_units.any? %>
+          <%= @organization.request_units.map { |unit| unit.name.titlecase }.to_sentence %>
         <% end %>
       <% end %>
     <% end %>
+  <% end %>
 
-    <%= render "organizations/details_band", title: "Emails" do %>
-      <%= essentials_detail "Reminder emails are sent" do %>
-        <%= @organization.reminder_schedule&.show_description.presence %>
+  <%= render "organizations/details_band", title: "Emails" do %>
+    <%= essentials_detail "Reminder emails are sent" do %>
+      <%= @organization.reminder_schedule&.show_description.presence %>
+      <% if @organization.reminder_schedule.valid? %>
+        <span class="mt-0.5 block text-xs text-slate-500">
+          Your next reminder date is <%= @organization.reminder_schedule.next_occurrence&.strftime("%a %b %d %Y") %>.
+        </span>
+      <% end %>
+    <% end %>
+    <%= essentials_detail "Deadline day in reminder email" do %>
+      <% if @organization.deadline_day.present? %>
+        The <%= @organization.deadline_day.ordinalize %> after the reminder.
         <% if @organization.reminder_schedule.valid? %>
+          <%# One interpolation, not a sentence split across lines: the rendered text has to read
+              contiguously, and a spec asserts the whole sentence. %>
           <span class="mt-0.5 block text-xs text-slate-500">
-            Your next reminder date is <%= @organization.reminder_schedule.next_occurrence&.strftime("%a %b %d %Y") %>.
+            <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                  deadline_day: @organization.deadline_day,
+                  today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime("%a %b %d %Y")}." %>
           </span>
         <% end %>
       <% end %>
-      <%= essentials_detail "Deadline day in reminder email" do %>
-        <% if @organization.deadline_day.present? %>
-          The <%= @organization.deadline_day.ordinalize %> after the reminder.
-          <% if @organization.reminder_schedule.valid? %>
-            <%# One interpolation, not a sentence split across lines: the rendered text has to read
-                contiguously, and a spec asserts the whole sentence. %>
-            <span class="mt-0.5 block text-xs text-slate-500">
-              <%= "The deadline on your next reminder email will be #{DeadlineService.new(
-                    deadline_day: @organization.deadline_day,
-                    today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime("%a %b %d %Y")}." %>
-            </span>
-          <% end %>
-        <% end %>
-      <% end %>
-      <%= essentials_detail "Additional text for reminder email", @organization.reminder_email_text, wide: true %>
-      <%= essentials_detail "Distribution email content", @organization.default_email_text, wide: true %>
-      <%= essentials_detail "Email when a partner makes a request",
-            humanize_boolean(@organization.receive_email_on_requests) %>
     <% end %>
-
-    <%= render "organizations/details_band", title: "Printing" do %>
-      <%= essentials_detail "Year-to-date values on the distribution printout",
-            humanize_boolean(@organization.ytd_on_distribution_printout) %>
-      <%= essentials_detail "Signature lines on the distribution printout",
-            humanize_boolean(@organization.signature_for_distribution_pdf) %>
-      <%= essentials_detail "Hide value columns on distribution and donation printouts",
-            humanize_boolean(@organization.hide_value_columns_on_receipt) %>
-      <%= essentials_detail "Hide the package column on the distribution printout",
-            humanize_boolean(@organization.hide_package_column_on_receipt) %>
-    <% end %>
-
-    <%= render "organizations/details_band", title: "Exports" do %>
-      <%= essentials_detail "In-kind value in donation and distribution exports",
-            humanize_boolean(@organization.include_in_kind_values_in_exported_files) %>
-      <%= essentials_detail "Packages in the distribution export",
-            humanize_boolean(@organization.include_packages_in_distribution_export) %>
-    <% end %>
-
-    <%= render "organizations/details_band", title: "Annual survey", last: true do %>
-      <%= essentials_detail "Does your bank repackage essentials?",
-            humanize_boolean(@organization.repackage_essentials) %>
-      <%= essentials_detail "Does your bank distribute monthly?",
-            humanize_boolean(@organization.distribute_monthly) %>
-    <% end %>
+    <%= essentials_detail "Additional text for reminder email", @organization.reminder_email_text, wide: true %>
+    <%= essentials_detail "Distribution email content", @organization.default_email_text, wide: true %>
+    <%= essentials_detail "Email when a partner makes a request",
+          humanize_boolean(@organization.receive_email_on_requests) %>
   <% end %>
-</div>
+
+  <%= render "organizations/details_band", title: "Printing" do %>
+    <%= essentials_detail "Year-to-date values on the distribution printout",
+          humanize_boolean(@organization.ytd_on_distribution_printout) %>
+    <%= essentials_detail "Signature lines on the distribution printout",
+          humanize_boolean(@organization.signature_for_distribution_pdf) %>
+    <%= essentials_detail "Hide value columns on distribution and donation printouts",
+          humanize_boolean(@organization.hide_value_columns_on_receipt) %>
+    <%= essentials_detail "Hide the package column on the distribution printout",
+          humanize_boolean(@organization.hide_package_column_on_receipt) %>
+  <% end %>
+
+  <%= render "organizations/details_band", title: "Exports" do %>
+    <%= essentials_detail "In-kind value in donation and distribution exports",
+          humanize_boolean(@organization.include_in_kind_values_in_exported_files) %>
+    <%= essentials_detail "Packages in the distribution export",
+          humanize_boolean(@organization.include_packages_in_distribution_export) %>
+  <% end %>
+
+  <%= render "organizations/details_band", title: "Annual survey", last: true do %>
+    <%= essentials_detail "Does your bank repackage essentials?",
+          humanize_boolean(@organization.repackage_essentials) %>
+    <%= essentials_detail "Does your bank distribute monthly?",
+          humanize_boolean(@organization.distribute_monthly) %>
+  <% end %>
+<% end %>

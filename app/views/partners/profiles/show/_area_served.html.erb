@@ -1,11 +1,27 @@
-<%= render "shared/essentials/card", title: "Area served" do %>
-    <table>
-      <th>County</th><th class="percent">% of Clients in county</th>
-
-      <% if profile.served_areas.load.any? %>
-        <%= render partial: "partners/profiles/show/served_area_row", collection: profile.served_areas %>
-      <% else %>
-        <tr><td><%= "No County Specified" %></td><td class="percent">100 %</td></tr>
-      <% end %>
+<%#
+  Was a bare `<table>` with a `<th>` row sitting loose in the element -- no `<thead>`, no `<tbody>`
+  and no class, so the browser manufactured the sections and the design system styled none of it.
+  `.data-table` in a `.table-scroll` region, like every other table in the app.
+%>
+<%= render "shared/essentials/card", padded: false, title: "Area served" do %>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">County</th>
+          <th scope="col" class="percent text-right">% of clients in county</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if profile.served_areas.load.any? %>
+          <%= render partial: "partners/profiles/show/served_area_row", collection: profile.served_areas %>
+        <% else %>
+          <tr>
+            <td>No county specified</td>
+            <td class="percent text-right">100 %</td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
+  </div>
 <% end %>

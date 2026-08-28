@@ -1,20 +1,19 @@
 <% content_for :title, "Essentials Requests - #{current_user.display_name}" %>
+<%#
+  Three page-level wrappers before this: one for the header, one inside a `<section>` for the
+  options card, and a third with `pb-6` only -- which is what a page looks like when each block
+  was migrated on its own. One wrapper, and the 24px between blocks comes from `space-y-6` rather
+  than from two paddings meeting.
+%>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Essentials requests",
         subtitle: "Start a new request, or see how an earlier one is going." %>
-</div>
 
-<section>
-  <div class="px-4 py-6 sm:px-6 lg:px-8">
-    <div class="grid gap-6">
-      <div class="min-w-0">
-        <%= render 'request_options_card' if @partner.approved? %>
-      </div>
-    </div>
+  <div class="space-y-6">
+    <% if @partner.approved? %>
+      <section><%= render "request_options_card" %></section>
+    <% end %>
+    <%= render partial: "/partners/requests/history" %>
   </div>
-</section>
-
-<div class="px-4 pb-6 sm:px-6 lg:px-8">
-  <%= render partial: "/partners/requests/history" %>
 </div>

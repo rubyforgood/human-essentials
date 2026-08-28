@@ -3,9 +3,7 @@
   <%= render "shared/essentials/page_header",
         title: "Base items",
         subtitle: "The shared catalogue every organization's items map onto." %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/card", padded: false,
         footer: essentials_pagination_footer(@paginated_base_items) do %>
           <div class="px-5 py-4">

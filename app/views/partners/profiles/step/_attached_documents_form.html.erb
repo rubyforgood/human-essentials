@@ -42,7 +42,7 @@
       data: { file_input_target: "input" } %>
 
     <%# Custom button to trigger file selection %>
-    <button type="button" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" data-action="click->file-input#triggerFileSelection">
+    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>" data-action="click->file-input#triggerFileSelection">
       Choose Files
     </button>
 

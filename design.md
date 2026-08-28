@@ -961,6 +961,39 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+<a id="one-page-wrapper"></a>
+**One `px-4 py-6 sm:px-6 lg:px-8` per page, and the header goes inside it.** The gap between the
+heading and the first card is **24px** — the header's own `mb-6`, and nothing else. Do not override
+`wrapper_class`, and do not close the wrapper after the header to open a second one for the content:
+that stacks the first wrapper's bottom padding on the second's top padding, and the measured gap
+becomes **72px**.
+
+This is worth stating because it was the single most common defect on the branch, and it is
+invisible to every check: **14 templates** had two page wrappers, and each renders, validates and
+passes the sweeps. `/organization` was reported by eye; the other thirteen were found by counting
+the wrapper in the templates once the first one was understood. Below the header, a page with more
+than one block spaces them with `space-y-6` — 24px again, from one mechanism rather than from two
+paddings meeting.
+
+```erb
+<div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "shared/essentials/page_header", title: "Users" %>
+
+  <div class="space-y-6">
+    <%= render "shared/essentials/card" do %>…<% end %>
+    <%= render "shared/essentials/card" do %>…<% end %>
+  </div>
+</div>
+```
+
+Count them before believing a page is fine:
+
+```bash
+for f in $(grep -rl 'px-4 py-6 sm:px-6 lg:px-8' app/views --include=*.erb); do
+  n=$(grep -c 'px-4 py-6 sm:px-6 lg:px-8' "$f"); [ "$n" -ge 2 ] && echo "$n  $f"
+done
+```
+
 <a id="form-width"></a>
 **A form is left-aligned at the page gutter, and its width follows its layout.** This had no rule at
 all until now — thirty-six views set their own max-width and had drifted into two.
@@ -2160,6 +2193,38 @@ something. `wide: true` spans both columns, for a paragraph, a list or an image.
 does not double with the card header's rule. It is the line item card's band, marking a change of
 kind, and it is the reason **a detail card needs no `<hr>` at all**.
 
+<a id="shell-first-audit"></a>
+**`bin/design/shell-first-audit.rb` is the check for this.** Every other audit in `bin/design`
+answers *is anything from the old system still present?* — a shell-first page passes all of them.
+This one asks *is this built the way the new system builds things?* It looks for a `<table>` that is
+not `.data-table`, a bare `<hr>`, `float-*`, a `<br>` standing in for a margin, four or more flat
+`<p>` label pairs where a `<dl>` belongs, a hand-written card header, a button's classes copied out
+instead of `essentials_button_classes`, and a Font Awesome icon.
+
+**Four of its checks were narrowed after they produced false positives**, which is worth knowing
+before adding a fifth:
+
+- **Mailers and `static/` are skipped.** HTML email is laid out in tables by necessity, and the legal
+  pages are complete documents `StaticController` renders with `layout false` and their own
+  `<style>`. Neither is built from this design system.
+- **A `<br>` between two lines of text is correct HTML.** An address, a second line in a cell. Only
+  a doubled `<br>` or one straight after a block closes is a margin in disguise — unnarrowed the
+  check reported 31 and **29 of them were right**.
+- **A detail pair needs `font-medium`, and four of them.** `text-xs text-slate-500` alone is the
+  documented *meta* style for a timestamp; `font-medium` is what `essentials_detail` puts on a `<dt>`,
+  so it marks a label *above* a value rather than a stat card's caption *below* a number.
+- **A hand-written card header only counts when there is a card.** A modal's header is the same
+  markup exactly — hairline rule, heading, close button — and matching markup alone reported all
+  fourteen modals, every one of them fine. Three of those have their `<dialog>` in
+  `confirmation_controller.js` rather than in the template, so looking for `<dialog>` would not have
+  excluded them either.
+
+Like `page-audit.rb` and `copy-audit.rb`, it **proves its detectors against a probe table before
+reporting anything** and refuses to run if one is wrong — a check that silently matches nothing
+reports a clean sweep, which is the failure mode that looks like success. The probe table earned its
+place immediately: `"…px-5 py-4">\n<h2>"` in a single-quoted Ruby string is a literal backslash and
+an `n`, not a newline, so the card-header detector was dead on arrival and said so.
+
 <a id="never-a-bare-hr"></a>
 **Never a bare `<hr>`.** Preflight sets `border-color: currentColor`, so an unstyled `<hr>` draws in
 the **text** colour. The organization page carried six of them and they rendered
@@ -2329,6 +2394,12 @@ Safari draw one that takes real space, Firefox ignores it, and Chrome ignores th
 entirely on any element that also sets `scrollbar-width`. **No** combination of
 `--disable-features=OverlayScrollbar,FluentOverlayScrollbar,FluentScrollbar` makes headless Chromium
 141 reserve a single pixel, so it cannot be verified here at all.
+
+<a id="pin-only-what-scrolls"></a>
+**Pin the identifying column only on a table that overflows.** `.pin-col` earns its place on the six
+wide tables that scroll sideways; on a table that fits it freezes a column that was never going to
+move. `/users` is Name and Email, and pinned, "Name" held **417px of a 740px** landscape phone. Two
+columns never scroll, so there is nothing to keep in view.
 
 <a id="never-fade-a-frozen-column"></a>
 **Never fade a frozen column.** The first version of the fade drew it at the container's left edge,

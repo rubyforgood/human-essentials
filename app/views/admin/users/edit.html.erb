@@ -4,9 +4,8 @@
         title: "Edit user",
         subtitle: @user.display_name,
         back: {path: admin_users_path, label: "Back to users"} %>
-</div>
 
-<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <div class="max-w-3xl">
           <%= essentials_form_for @user, url: admin_user_path, html: {id: "quickForm"} do |f| %>
     <%= render "shared/essentials/card" do %>
               <div class="form-inputs">
@@ -24,3 +23,4 @@
 <% unless @user == current_user %>
   <%= render partial: 'roles', object: @user, as: :user %>
 <% end %>
+</div>

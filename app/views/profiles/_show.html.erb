@@ -1,7 +1,7 @@
 <div class="grid gap-x-8 gap-y-6 lg:grid-cols-2">
   <div class="space-y-4">
 
-    <h2 class="text-base font-semibold text-slate-900">Agency information</h2>
+    <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Agency information</h2>
     <%# The field for inputting the name registers it as partner.name  %>
     <%# not partner_profile.name, so this pulls from partner.name %>
     <dl>
@@ -43,10 +43,8 @@
       <dt class="text-xs font-medium text-slate-500">Zip Code</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zip_code %></dd>
     </dl>
-    <br>
-    <br>
     <% if partner_profile.program_address1.present? || partner_profile.program_address2.present? || partner_profile.program_city.present? || partner_profile.program_state.present? || partner_profile.program_zip_code.present? %>
-      <h2 class="text-base font-semibold text-slate-900">Program or delivery address, if different</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Program or delivery address, if different</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Program Address</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_address1 %></dd>
@@ -67,11 +65,10 @@
         <dt class="text-xs font-medium text-slate-500">Program Zip Code</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_zip_code %></dd>
       </dl>
-      <br>
     <% end %>
 
     <% if partner_profile_fields.include?('media_information') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Media information</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Media information</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Website</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.website %></dd>
@@ -92,10 +89,9 @@
         <dt class="text-xs font-medium text-slate-500">No Social Media Presence</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.no_social_media_presence) %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Agency stability</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Agency stability</h2>
       <p class="text-sm text-slate-700">Founded <%= partner_profile.founded %></p>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Form 990</dt>
@@ -135,7 +131,7 @@
       </dl>
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Organizational capacity</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Organizational capacity</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Client Capacity</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.client_capacity %></dd>
@@ -148,7 +144,6 @@
         <dt class="text-xs font-medium text-slate-500">Storage Space Description</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.describe_storage_space %></dd>
       </dl>
-      <br>
     <% end %>
 
     <%# "Area served" is not repeated here. It moved to the Service area card at the top of the
@@ -156,7 +151,7 @@
         the observed halves of the same question were 2,527px apart. The markup here was also a bare
         <table> with no class -- unstyled, where the app has `data-table`. %>
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Population served</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Population served</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Income Requirement</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></dd>
@@ -165,12 +160,11 @@
         <dt class="text-xs font-medium text-slate-500">Income Verification</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_verification) %></dd>
       </dl>
-      <br>
     <% end %>
   </div>
   <div class="space-y-4">
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Race and ethnicity of client base</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Race and ethnicity of client base</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">African American</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_black %></dd>
@@ -203,14 +197,12 @@
         <dt class="text-xs font-medium text-slate-500">Other</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_other %></dd>
       </dl>
-      <br>
-      <h2 class="text-base font-semibold text-slate-900">Zip codes served</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Zip codes served</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Zips</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zips_served %></dd>
       </dl>
-      <br>
-      <h2 class="text-base font-semibold text-slate-900">Poverty information of those served</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Poverty information of those served</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">At FPL or Below</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.at_fpl_or_below %></dd>
@@ -229,10 +221,9 @@
         <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.poverty_unknown %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('contacts') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Contacts</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Contacts</h2>
       <strong>Executive Director</strong>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Executive Director Name</dt>
@@ -246,8 +237,7 @@
         <dt class="text-xs font-medium text-slate-500">Executive Director Email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_email %></dd>
       </dl>
-      <br>
-      <strong>Primary Contact Person</strong>
+      <h3 class="mt-6 text-sm font-semibold text-slate-900">Primary contact person</h3>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Primary Contact Name</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_name %></dd>
@@ -264,10 +254,9 @@
         <dt class="text-xs font-medium text-slate-500">Primary Contact Email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_email %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('pick_up_person') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Pick-up person</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Pick-up person</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Pick Up Name</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_name %></dd>
@@ -280,10 +269,9 @@
         <dt class="text-xs font-medium text-slate-500">Pick Up Email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_email %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_distribution_information') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Agency distribution information</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Agency distribution information</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Distribution Times</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.distribution_times %></dd>
@@ -296,10 +284,9 @@
         <dt class="text-xs font-medium text-slate-500">More Docs Required</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.more_docs_required %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('sources_of_funding') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Sources of Funding</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Sources of Funding</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Sources of Funding</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.sources_of_funding %></dd>
@@ -313,15 +300,13 @@
         <dt class="text-xs font-medium text-slate-500">Essentials Funding Source</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.essentials_funding_source %></dd>
       </dl>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
-      <h2 class="text-base font-semibold text-slate-900">Other documents</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Other documents</h2>
         <% partner_profile.documents.each do |document| %>
           <p class="text-sm text-slate-700"><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
         <% end %>
-        <br>
-    <h2 class="text-base font-semibold text-slate-900">Settings</h2>
+    <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Settings</h2>
         <% if partner_profile.organization.enable_child_based_requests? %>
           <dl>
             <dt class="text-xs font-medium text-slate-500">Uses Child Based Requests</dt>

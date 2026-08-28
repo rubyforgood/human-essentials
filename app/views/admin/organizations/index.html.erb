@@ -3,9 +3,7 @@
   <%= render "shared/essentials/page_header",
         title: "Organizations",
         subtitle: "Every bank using Human Essentials." %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/card", padded: false do %>
           <div class="border-b border-slate-200 px-5 py-4">
             <%= form_for_filterrific @filterrific, remote: true do |f| %>
@@ -18,7 +16,9 @@
                   <%= render_filterrific_spinner %>
                 </div>
                 <div class="min-w-0">
-                  <div class="float-right">
+                  <%# `float-right` here, and the button was the only thing in the cell. A flex row
+                      that pushes its one child to the end does the same job and stays in flow. %>
+                  <div class="flex justify-end">
                     <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
                   </div>
                 </div>

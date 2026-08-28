@@ -5659,3 +5659,80 @@ icons-per-row, not a bug fix. Worth noting where that leaves it: those 14 were n
 the app, and **one call site now remains**, `users_helper.rb:12`. The helper is close to deletable,
 which is a thing for whoever migrates that helper next rather than for this change.
 
+## 2026-08-28 — A detector before a fix, and fixing the page rather than the element
+
+The organization page came back a second time with three more defects on it — the users table, the
+spacing, the button's location — after the details card had been rebuilt. The report that came with
+them was fair: *why is there a need to individually point out elements on the same page.*
+
+The cause was that I had diagnosed a **partial** and not a **page**. `_details.html.erb` was the
+thing named, so it was the thing measured, and the two partials beside it in the same `show`
+template were never opened.
+
+**So the order was inverted this time: build the detector first, then fix everything it finds.**
+`bin/design/shell-first-audit.rb` was written before any of these were touched, and it is the reason
+the fix covered 24 templates instead of the 3 that had been pointed at. Of those, **13 were the same
+double-wrapper defect as `/organization`** and none had been reported by anyone — they were found by
+counting, once the first one was understood.
+
+**Alternative rejected: fixing what was reported and moving on.** It is faster per round and it is
+what produced the round before. A page is the unit a person sees; a partial is the unit I happened
+to be handed.
+
+**Alternative rejected: a browser check for the spacing.** The gap is measurable in the DOM and I did
+measure it there — 72px against the system's 24 — but the *detector* is static, because the defect is
+a shape in the template (`</div>` then a second `px-4 py-6`) and a static check needs no server, runs
+in under a second, and can be run on a template that has no route yet.
+
+### The narrowings are the substance of the audit, not a footnote
+
+Four of the eight checks were narrowed after producing false positives, and each narrowing is a real
+statement about the design system rather than a hack to get to zero:
+
+- A `<br>` between two lines of an `<address>` is **correct HTML**. Unnarrowed, the check reported 31
+  and **29 were right**.
+- `text-xs text-slate-500` is the documented **meta** style. It becomes a description-list smell only
+  with `font-medium` — what `essentials_detail` puts on a `<dt>` — and only at four or more.
+- A **modal's** header is a card's header exactly: hairline rule, heading, close button. Matching the
+  markup reported all fourteen modals in the app. The discriminator that works is whether the file
+  contains a card at all.
+- An **icon-only chrome control** — the hamburger, the kebab — is `inline-flex rounded-lg` with a
+  `size-*` and no padding. It is not a copy of a button the helper has ever produced.
+
+A check that reports zero because it matches nothing is indistinguishable from a clean codebase,
+which is why the script proves its detectors against a probe table and aborts if one is wrong. That
+paid for itself immediately: `'…py-4">\n<h2>'` in a **single-quoted** Ruby string is a backslash and
+an `n`, so the card-header detector was dead when written, and said so instead of reporting a clean
+sweep.
+
+### Two dev-only overlays that look exactly like findings
+
+The browser probe written to confirm the fixes reported 19 non-`.data-table` tables and 27 layout
+`<br>` on a page with one table and no `<br>`. All of it belonged to **rack-mini-profiler**, and a
+later `<br>` on `/partners/1` belonged to the **bullet** gem's "AVOID eager loading" notice. Both
+inject markup into every development page. Any DOM-reading audit has to exclude them, and the reason
+this is worth writing down is that both were reported as confidently as a real finding.
+
+### The Edit button moved to the page header
+
+design.md's own rule is that a button in a card's header acts on that card's contents. Edit acted on
+the record — all 28 fields across eight bands — while sitting in the "Organization info" card, whose
+own band holds six of them. Moving it to the page header follows the rule that was already written;
+the interesting part is that the rule existed and the page contradicted it anyway, which is what a
+shell-first migration does.
+
+### `pin-col` on a two-column table
+
+`/users` is Name and Email. Freezing the first column made "Name" hold **417px of a 740px** landscape
+phone, and the frozen column exists so that a table which scrolls sideways keeps its identifying
+column in view. Two columns never scroll. The rule is now written in design.md rather than left to be
+inferred from the six tables that legitimately use it.
+
+### One copy change broke a spec, and the spec was the thing that moved
+
+`_area_served` said "No County Specified" and "% of Clients in county", asserted verbatim in four
+places. design.md names table headers explicitly under sentence case, so the templates were right to
+change and the assertions followed. Worth flagging plainly: this is a **user-visible copy change**
+made in the course of a markup fix, and the alternative — leaving Title Case in a table I had just
+rewritten, beside the sentence-case headers I had written in the same pass — would have been the
+inconsistency that this whole sweep is about.

@@ -16,7 +16,7 @@ RSpec.describe "/partners/profiles", type: :request do
 
       it "handles empty county list" do
         get partners_profile_path(partner)
-        expect(response.body).to include("No County Specified")
+        expect(response.body).to include("No county specified")
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe "/partners/profiles", type: :request do
       end
       it "handles empty county list" do
         get partners_profile_path(partner)
-        expect(response.body).to include("No County Specified")
+        expect(response.body).to include("No county specified")
       end
 
       describe "full_county_list" do
@@ -81,7 +81,7 @@ RSpec.describe "/partners/profiles", type: :request do
           get partners_profile_path(partner)
           expect(response.body).to include(sa_1.county.name)
           expect(response.body).to include(sa_2.county.name)
-          expect(response.body).not_to include("No County Specified")
+          expect(response.body).not_to include("No county specified")
         end
       end
     end
@@ -104,7 +104,7 @@ RSpec.describe "/partners/profiles", type: :request do
         it "displays the counties" do
           expect(response.body).to include(sa_1.county.name)
           expect(response.body).to include(sa_2.county.name)
-          expect(response.body).not_to include("No County Specified")
+          expect(response.body).not_to include("No county specified")
         end
         it "has the right total" do
           expect(response.body).to include "100 %" # Yes, it could have 100 % for other reasons, but "Total is 100%" is split between two divs

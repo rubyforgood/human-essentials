@@ -32,11 +32,13 @@
       </div>
 
       <div class="text-sm text-slate-700" id='create_bank'>
-        <p class='p-2 bg-yellow-200'>
-          Request a free account to use Human Essentials for your organization's essentials bank.
-          <br><br>
-          <span class="font-semibold">Do you <em>partner</em> with diaper or period supply banks? Sign in to the <%= link_to 'partner app', new_user_session_path %> instead.</span>
-        </p>
+        <%# Was a `<p>` painted `bg-yellow-200` -- a raw palette colour no callout in the app uses --
+            with two `<br>` holding its two sentences apart. It is a callout: it belongs to the page
+            rather than to the request, and it says the same thing on every load. %>
+        <%= render "shared/essentials/callout", tone: :info, wrapper_class: "mb-6" do %>
+          <p>Request a free account to use Human Essentials for your organization's essentials bank.</p>
+          <p class="mt-2 font-semibold">Do you <em>partner</em> with diaper or period supply banks? Sign in to the <%= link_to "partner app", new_user_session_path %> instead.</p>
+        <% end %>
 
         <%= essentials_form_for(@account_request) do |f| %>
           <%= essentials_error_summary(@account_request) %>
