@@ -14,7 +14,6 @@
       <% @partner_requests.each do |partner_request| %>
         <tr class="border-bottom last:border-none">
           <td class="p-4">
-            <i class="text-primary far fa-file-alt mr-1"></i>
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
           <td class="p-4"><%= partner_request.total_items %></td>

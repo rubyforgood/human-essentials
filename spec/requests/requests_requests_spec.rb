@@ -261,5 +261,33 @@ RSpec.describe 'Requests', type: :request do
         end
       end
     end
+
+    describe 'POST #create for cancelation' do
+      let(:request) { create(:request, organization: organization) }
+
+      context 'when a cancellation reason is given' do
+        it 'cancels the request and redirects to the index', :aggregate_failures do
+          expect do
+            post request_cancelation_path(request_id: request.id), params: { cancelation: { reason: 'Partner closed for the season' } }
+          end.to change { request.reload.status }.from('pending').to('cancelled')
+
+          expect(request.reload.discard_reason).to eq('Partner closed for the season')
+          expect(flash[:notice]).to eq("Request #{request.id} has been removed!")
+          expect(response).to redirect_to(requests_path)
+        end
+      end
+
+      context 'when the cancellation reason is blank' do
+        it 'does not cancel the request and redirects back with an error', :aggregate_failures do
+          expect do
+            post request_cancelation_path(request_id: request.id), params: { cancelation: { reason: '' } }
+          end.not_to change { request.reload.status }
+
+          expect(request.reload.discarded?).to be false
+          expect(flash[:error]).to eq("Request #{request.id} could not be removed because a cancellation reason is required")
+          expect(response).to redirect_to(new_request_cancelation_path(request_id: request.id))
+        end
+      end
+    end
   end
 end
