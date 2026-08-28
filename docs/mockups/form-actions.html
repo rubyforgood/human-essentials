@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where a form's buttons go</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --s200:#E2E8F0;--s600:#45556C;--brand:#4F46E5;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;--s200:#333549;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:64rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(1.9rem,4.5vw,2.6rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.28rem;font-weight:600;margin:0}
+  h3{font-size:1rem;font-weight:600;margin:0}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.14rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .quote{border-left:3px solid var(--accent);padding:.1rem 0 .1rem 1rem;margin:1.5rem 0;color:var(--ink-mid);font-style:italic}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{text-align:left;padding:.4rem .55rem;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  thead th{font-family:Archivo,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  .flag{color:var(--defect);font-weight:600}
+  .good{color:var(--fixed);font-weight:600}
+  .opt{margin-top:2.5rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  .note{font-size:.9rem;color:var(--ink-soft);margin:.4rem 0 0}
+  .rec{background:var(--fixed-soft);border:1px solid rgba(15,110,79,.25);border-radius:.75rem;padding:1.25rem 1.4rem;margin:1.5rem 0}
+  .rec h3{color:var(--fixed);margin-bottom:.5rem}
+
+  /* a stand-in for the app's card, at the app's own numbers */
+  .demo{font-family:Archivo,sans-serif;margin:1.1rem 0;max-width:44rem}
+  .card{background:var(--surface);border:1px solid var(--s200);border-radius:1rem;box-shadow:var(--shadow);overflow:hidden}
+  .cbody{padding:20px}
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .lab{display:block;font-size:.78rem;font-weight:600;color:var(--ink-mid);margin-bottom:.3rem}
+  .box{height:38px;border:1px solid var(--s200);border-radius:.5rem;background:var(--surface)}
+  .btns{display:flex;align-items:center;gap:8px}
+  .btn{font-family:Archivo,sans-serif;font-size:.82rem;font-weight:600;padding:.5rem .9rem;
+       border-radius:.5rem;border:1px solid transparent;background:var(--brand);color:#fff}
+  .btn.ghost{background:transparent;color:var(--ink-mid)}
+  /* the three treatments */
+  .inset{margin-top:24px;padding-top:20px;border-top:1px solid var(--s200)}
+  .footerslot{border-top:1px solid var(--s200);padding:12px 20px}
+  .outside{margin-top:20px}
+  .measure{position:relative}
+  .tick{position:absolute;height:100%;border-left:1px dashed var(--defect);top:0}
+  .caption{font-family:Archivo,sans-serif;font-size:.72rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.08em;color:var(--ink-soft);margin:0 0 .4rem}
+  .toggle{position:fixed;top:1rem;right:1rem;font-family:Archivo,sans-serif;font-size:.75rem;
+          background:var(--surface);border:1px solid var(--line);border-radius:.5rem;padding:.4rem .7rem;
+          color:var(--ink-mid);cursor:pointer;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+<button class="toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">theme</button>
+<div class="wrap">
+<div class="col">
+  <p class="eyebrow">Design preview &middot; 28 August 2026</p>
+  <h1>Where a form's buttons go</h1>
+  <p class="lede">Asked of New item, New kit &ldquo;and so on&rdquo;: the button sits inside the card
+  with a divider above it, and that does not look right.</p>
+  <div class="quote">&ldquo;all of those pages have the button nested within the card with a divider
+  separating them. Check the design system for the pattern on this, this does not look right.&rdquo;</div>
+  <p><strong>Checked, and the design system has no pattern for this.</strong> `design.md` says exactly
+  one thing about a form's action row &mdash; that the primary button comes <em>first</em>, because
+  the row is left-aligned &mdash; and nothing at all about where the row lives or how it is separated
+  from the fields. So the app has drifted into <strong>three</strong> different answers.</p>
+</div>
+
+<div class="col"><table>
+  <thead><tr><th>Treatment</th><th>Views</th><th>Shape of those views</th></tr></thead>
+  <tbody>
+    <tr><td>Divider <strong>inside the card body</strong></td><td class="num">33</td><td>31 single-card, 1 two-card, 1 with no card</td></tr>
+    <tr><td>Buttons <strong>below the cards</strong>, no divider</td><td class="num">7</td><td>every one of them multi-card (2&ndash;3)</td></tr>
+    <tr><td>The card's <strong><code>footer:</code> slot</strong></td><td class="num">2</td><td><code>users/new</code>, <code>admin/users/new</code></td></tr>
+  </tbody>
+</table></div>
+
+<div class="col">
+  <p><strong>The 33 are the ones that look wrong, and there is a measurement for it.</strong> That
+  divider is drawn <em>inside</em> the card's 20px body padding, so it stops short of both edges:
+  measured on <code>/items/new</code>, <span class="num">854px</span> of rule in an
+  <span class="num">896px</span> card &mdash; <strong>inset 21px on each side</strong>, with 21px of
+  card left below it. Every other divider in the app is full bleed: the card header's, the card
+  footer's, the table row dividers, the pagination strip. This is <strong>the only rule in the app
+  that does not reach the edges of the thing it is dividing</strong>, which is what makes it read as
+  a stray line rather than a boundary.</p>
+  <p class="note">Measured for comparison on <code>/users/new</code>, which uses the real footer slot:
+  <span class="num">958px</span> of rule in a <span class="num">960px</span> card &mdash; edge to edge.</p>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <h2>What it looks like now</h2>
+  <p class="note">New item, at the app's own numbers: 20px of card padding, the rule inset inside it.</p>
+</div>
+<div class="demo">
+  <div class="card">
+    <div class="cbody">
+      <div class="field"><span class="lab">Name</span><div class="box"></div></div>
+      <div class="field"><span class="lab">Category</span><div class="box"></div></div>
+      <div class="inset btns">
+        <span class="btn">Save</span><span class="btn ghost">Cancel</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col"><p class="note">The rule floats: 21px of white to its left, 21px to its right, and
+21px of card below the buttons. It divides nothing from nothing at either end.</p></div>
+
+<hr class="rule">
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>A &mdash; the card's footer slot</h3>
+    <span class="chip chip-rec">Recommended</span><span class="chip">31 views change</span></div>
+  <p>The card component already has a <code>footer:</code> slot, and it draws exactly this: a strip
+  at the foot of the card with a full-bleed rule above it. Two forms already use it, and so does
+  every paginated table, the admin dashboard cards and the transfers page. The buttons stay attached
+  to the surface they act on, and the rule becomes a boundary between two parts of one card rather
+  than a line drawn across the middle of one.</p></div>
+  <div class="demo">
+    <div class="card">
+      <div class="cbody">
+        <div class="field"><span class="lab">Name</span><div class="box"></div></div>
+        <div class="field"><span class="lab">Category</span><div class="box"></div></div>
+      </div>
+      <div class="footerslot btns">
+        <span class="btn">Save</span><span class="btn ghost">Cancel</span>
+      </div>
+    </div>
+  </div>
+  <div class="col"><p class="note">Costs one thing worth naming: the buttons are still
+  <em>inside</em> the card. If the objection is the nesting itself rather than the stray rule, this
+  is not the option &mdash; C is.</p></div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>B &mdash; keep them in the body, drop the rule</h3>
+    <span class="chip">33 views change</span></div>
+  <p>The smallest change: delete the border and keep the spacing. The buttons sit under the last
+  field as part of the same block.</p>
+  <p class="note">The argument against is that the fields and the actions are different kinds of
+  thing, and with nothing between them the Save button reads as one more field in the stack &mdash;
+  particularly on the long forms, where the last field is a 3-row textarea and the button lands
+  directly beneath it.</p></div>
+  <div class="demo">
+    <div class="card">
+      <div class="cbody">
+        <div class="field"><span class="lab">Name</span><div class="box"></div></div>
+        <div class="field"><span class="lab">Category</span><div class="box"></div></div>
+        <div class="btns" style="margin-top:24px">
+          <span class="btn">Save</span><span class="btn ghost">Cancel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>C &mdash; below the card entirely</h3>
+    <span class="chip">33 views change</span><span class="chip">one rule for all 42 forms</span></div>
+  <p>The buttons leave the card and sit under it, on the page background, with no divider at all.
+  <strong>This is already what all seven multi-card forms do</strong> &mdash; donations, purchases,
+  distributions, transfers, audits, adjustments and New kit &mdash; and it is the only treatment the
+  app applies consistently anywhere.</p>
+  <p>It also has the cleanest argument behind it: <strong>the buttons belong to the form, not to a
+  card.</strong> A card groups related content; Save submits the whole thing. On New kit that is
+  obvious, because there are three cards and the button belongs to none of them. On New item the
+  distinction is invisible &mdash; but the rule that follows from it is the same either way, which is
+  why this is the only option that ends with <em>one</em> rule instead of two.</p></div>
+  <div class="demo">
+    <div class="card">
+      <div class="cbody">
+        <div class="field"><span class="lab">Name</span><div class="box"></div></div>
+        <div class="field"><span class="lab">Category</span><div class="box"></div></div>
+      </div>
+    </div>
+    <div class="outside btns">
+      <span class="btn">Save</span><span class="btn ghost">Cancel</span>
+    </div>
+  </div>
+  <div class="col"><p class="note">The argument against is that a button on the page background is
+  less anchored than one on a surface, and on a short form it can look adrift. Against that: the
+  seven forms already doing it are the <em>longest</em> forms in the app, where it reads fine.</p></div>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <div class="rec">
+    <h3>What I would ship, and the honest caveat</h3>
+    <p><strong>A</strong>, if the complaint is the stray rule &mdash; it uses a slot the card already
+    has, makes the divider full bleed like every other divider in the app, and touches 31 views.</p>
+    <p style="margin-bottom:0"><strong>C</strong>, if the complaint is the nesting &mdash; it is the
+    only option that leaves the app with a single rule for all 42 forms rather than one rule for
+    single-card forms and another for multi-card ones, and seven forms already work that way.</p>
+  </div>
+  <p>Your words were &ldquo;nested within the card <em>with a divider</em>&rdquo;, which could be
+  either, so I have not guessed. <strong>A</strong> keeps the buttons on the surface and fixes the
+  line; <strong>C</strong> takes them off it and removes the line entirely.</p>
+  <p class="note">Whichever you pick, <code>design.md</code> gains the rule it never had, and
+  `profiles/edit` and `kits/allocations` &mdash; the two views in the 33 that are not single-card
+  forms &mdash; get handled explicitly rather than swept along with the rest.</p>
+</div>
+
+</div>
+</body>
+</html>
+
