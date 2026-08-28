@@ -7,6 +7,7 @@
 #  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
+#  phone_number                :string
 #  quota                       :integer
 #  send_reminders              :boolean          default(FALSE), not null
 #  status                      :integer          default("uninvited")
