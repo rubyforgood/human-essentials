@@ -7,9 +7,19 @@
   reader interrupts only when something actually went wrong.
 %>
 <%= turbo_frame_tag "flash" do %>
-  <% if flash.any? %>
-    <div class="px-4 pt-6 sm:px-6 lg:px-8">
-      <div class="space-y-3">
+  <%#
+    The strip is always in the DOM, even with nothing in it, because a message can be raised after
+    the page has rendered -- `barcode_items/create.js.erb` appends one -- and JS needs somewhere to
+    put it. `data-flash-region` is that hook, as stable a contract as `data-flash`.
+
+    An always-present wrapper would otherwise cost 24px of `pt-6` on every page in the app, so the
+    strip hides itself while it holds no message: `.flash-strip:not(:has([data-flash]))` in
+    application.css. CSS rather than JS, so nothing has to remember to toggle it, and appending a
+    message is all it takes to reveal it.
+  %>
+  <div class="flash-strip px-4 pt-6 sm:px-6 lg:px-8">
+    <div class="space-y-3" data-flash-region>
+      <% if flash.any? %>
         <%# Read through flash[key], not flash.each. The memflash gem stores a large message
             in the cache and leaves a lookup key in the cookie; only the reader resolves it,
             so iterating pairs renders the key itself. %>
@@ -21,20 +31,9 @@
           <% next if EssentialsUiHelper::NON_MESSAGE_FLASH_KEYS.include?(key.to_s) %>
           <% message = flash[key] %>
           <% next if message.blank? %>
-          <% tone = essentials_flash_tone(key) %>
-          <% style = essentials_flash_style(tone) %>
-          <%# data-flash names the flash key and its tone. Specs used to find a flash by its
-              Bootstrap classes (.alert, .alert-danger); these are a stable contract that does
-              not change when the styling does. %>
-          <div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %>"
-               data-flash="<%= key %>"
-               data-flash-tone="<%= tone %>"
-               role="<%= [:warning, :danger].include?(tone) ? "alert" : "status" %>">
-            <i class="<%= style[:icon] %> mt-0.5 shrink-0" aria-hidden="true"></i>
-            <div class="min-w-0 flex-1 whitespace-pre-line"><%= sanitize(message.to_s, tags: %w[ul ol li strong em a], attributes: %w[href]) %></div>
-          </div>
+          <%= render "shared/essentials/flash_message", key: key, message: message %>
         <% end %>
-      </div>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 <% end %>

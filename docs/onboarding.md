@@ -579,6 +579,10 @@ drive has donations.
 vendors served the blank import template instead of your data — a sample file was sitting at the
 same address as the export. Both now export what you asked for.
 
+**Scanning a barcode now tells you it worked.** The confirmation was being drawn at the very bottom
+of the page with no styling, so in practice nobody saw it — the scan succeeded silently. It appears
+as a normal message bar at the top of the page now, the same one you see after saving anything else.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with

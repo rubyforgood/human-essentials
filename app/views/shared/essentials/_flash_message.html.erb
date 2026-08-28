@@ -1,0 +1,26 @@
+<%#
+  One message bar. Locals: `key` (the flash key, or a name for a message that never went through
+  the flash), `message`, and optionally `tone` to override what the key implies.
+
+  Extracted from the flash strip so that a message raised *after* the page was rendered looks
+  identical to one the server sent with it. `barcode_items/create.js.erb` is the reason: it used
+  `toastr.success(...)`, and toastr has no styling on a design-system page -- measured, zero toastr
+  CSS rules load, so its container came out `position: static` at y=1284 on a 900px viewport, below
+  the fold, no background, no padding. A confirmation nobody could see.
+
+  A message bar gets a PLAIN glyph, never an icon tile: a soft -50 tile on a -50 surface is
+  invisible, and a filled one shouts and adds height. Tint, hairline border and a leading glyph
+  carry the semantics.
+%>
+<% tone = local_assigns[:tone] || essentials_flash_tone(key) %>
+<% style = essentials_flash_style(tone) %>
+<%# data-flash names the flash key and its tone. Specs used to find a flash by its Bootstrap
+    classes (.alert, .alert-danger); these are a stable contract that does not change when the
+    styling does. %>
+<div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %>"
+     data-flash="<%= key %>"
+     data-flash-tone="<%= tone %>"
+     role="<%= [:warning, :danger].include?(tone) ? "alert" : "status" %>">
+  <i class="<%= style[:icon] %> mt-0.5 shrink-0" aria-hidden="true"></i>
+  <div class="min-w-0 flex-1 whitespace-pre-line"><%= sanitize(message.to_s, tags: %w[ul ol li strong em a], attributes: %w[href]) %></div>
+</div>

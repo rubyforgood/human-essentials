@@ -71,7 +71,10 @@ RSpec.describe "Kit management", type: :system do
       click_button "Save"
     end
 
-    expect(page).to have_content("Barcode Added to Inventory")
+    # In the flash strip, not a toastr pop-up: toastr had no styling on a design-system page, so
+    # the confirmation rendered below the fold with no background. Asserted through `[data-flash]`
+    # rather than by text alone, because `have_content` passed the whole time it was invisible.
+    expect(page).to have_css("[data-flash]", text: "Barcode added to inventory.")
     # Check that item details have been filled in via javascript
     # `kit_line_items_...`, not `kit_item_line_items_...`: main made Kit an STI subclass of Item, so
     # the form builds the line items on the kit itself and the field names lost the nested scope.

@@ -11,8 +11,20 @@ $('#barcode_item_barcodeable_id').val('');
 $('#barcode_item_value').val('');
 $('#trigger-field-id').val('');
 
-// Notify the user
-toastr.success("Barcode Added to Inventory");
+// Notify the user, in the flash strip rather than a toastr pop-up.
+//
+// `toastr.success(...)` here was invisible on a design-system page. The essentials layouts load
+// only tailwind.css and no toastr CSS exists in that build -- measured, zero matching rules -- so
+// the container came out `position: static` with no background or padding, appended at the foot of
+// the document: y=1284 on a 900px viewport, below the fold. The scan worked and said nothing.
+//
+// Rendered from the same partial the server-side strip uses, so a message raised here is the same
+// object as one that arrived with the page.
+(function () {
+  const region = document.querySelector("[data-flash-region]");
+  if (!region) return;
+  region.insertAdjacentHTML("beforeend", <%= render("shared/essentials/flash_message", key: "notice", message: "Barcode added to inventory.").to_json.html_safe %>);
+})();
 
 // Trigger the capture_entry/barcode_item_lookup functions with a return keypress
 // which fills in the item name and quantity, adds new item, and changes focus

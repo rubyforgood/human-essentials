@@ -13,7 +13,6 @@ pin "select2", to: "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.
 pin "trix", to: "https://ga.jspm.io/npm:trix@2.0.4/dist/trix.esm.min.js"
 pin "@rails/actiontext", to: "https://ga.jspm.io/npm:@rails/actiontext@7.0.4/app/assets/javascripts/actiontext.js"
 pin "luxon", to: "https://ga.jspm.io/npm:luxon@1.28.0/build/cjs-browser/luxon.js"
-pin "toastr", to: "https://ga.jspm.io/npm:toastr@2.1.4/toastr.js"
 pin "@fullcalendar/core", to: "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/index.js"
 pin "preact", to: "https://ga.jspm.io/npm:preact@10.11.3/dist/preact.module.js"
 pin "preact/compat", to: "https://ga.jspm.io/npm:preact@10.11.3/compat/dist/compat.module.js"

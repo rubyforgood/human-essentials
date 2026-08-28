@@ -408,6 +408,19 @@
     background-color: var(--color-slate-100);
   }
 
+  /*
+   * The flash strip is always in the DOM so that JavaScript has somewhere to append a message
+   * raised after the page rendered -- see shared/essentials/_flash. Empty, it would still cost
+   * `pt-6`, which is 24px of dead space above every page in the app, so it hides itself until it
+   * holds something.
+   *
+   * `:has()` rather than a class the server toggles: appending a message is then all it takes to
+   * reveal the strip, and nothing has to remember to switch it back off when the last one goes.
+   */
+  .flash-strip:not(:has([data-flash])) {
+    display: none;
+  }
+
   /* Horizontal scroll container for a table inside a card. */
   .table-scroll {
     overflow-x: auto;
