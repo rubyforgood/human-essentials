@@ -7,8 +7,8 @@
 <div class="max-w-4xl">
   <%= essentials_error_summary(@item) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for @item.becomes(Item), remote: request.xhr? do |f| %>
+  <%= essentials_form_for @item.becomes(Item), remote: request.xhr? do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :item_category_id, label: "Category", collection: @item_categories,
             hint: "Categories help organize and identify items" %>
@@ -44,11 +44,11 @@
 
       <%= f.input :additional_info, label: "Additional information (bank use only)", as: :text,
             maxlength: 500, hint: "500 character maximum", input_html: {rows: 3} %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

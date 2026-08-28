@@ -28,11 +28,11 @@
         <%= render "line_items/line_item_table", form: f, id: "transfer_line_items", noun: "transfer" %>
       <% end %>
 
-      <div class="flex items-center gap-2">
+      <%= essentials_form_actions do %>
         <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md),
               data: {disable_with: "Saving...", action: "click->confirmation#openModal"} %>
         <%= essentials_link_button "Cancel", transfers_path, variant: :ghost, size: :md %>
-      </div>
+      <% end %>
     </div>
   <% end %>
 

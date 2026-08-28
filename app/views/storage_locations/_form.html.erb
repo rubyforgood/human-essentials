@@ -3,8 +3,8 @@
 <div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for form, html: {role: "form"} do |f| %>
+  <%= essentials_form_for form, html: {role: "form"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :address, label: "Address" %>
       <%# Both describe the building rather than address it, and neither fills a line. %>
@@ -13,11 +13,11 @@
         <%= f.input :warehouse_type, label: "Warehouse type", collection: StorageLocation::WAREHOUSE_TYPES %>
       <% end %>
       <%= f.input :time_zone, label: "Time zone", collection: CalendarService.time_zones %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", storage_locations_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", storage_locations_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

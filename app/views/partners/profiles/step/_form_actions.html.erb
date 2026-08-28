@@ -17,10 +17,10 @@
   at that edge: measured across twelve forms, six have a primary and secondary pair and all six
   read `[Save] Cancel`. One rule covers both: the primary sits at the row's alignment edge.
 %>
-<div class="mt-6 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-5">
+<%= essentials_form_actions do %>
   <%= f.submit "Save and review", name: "save_review",
         class: essentials_button_classes(variant: :primary, size: :md) %>
   <%= f.submit "Save progress",
         class: essentials_button_classes(variant: :secondary, size: :md),
         data: {action: "click->accordion#disableOpenClose"} %>
-</div>
+<% end %>

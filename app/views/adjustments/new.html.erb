@@ -26,10 +26,10 @@
         <%= render "line_items/line_item_table", form: f, id: "adjustment_line_items", noun: "adjustment" %>
       <% end %>
 
-      <div class="flex items-center gap-2">
+      <%= essentials_form_actions do %>
         <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
         <%= essentials_link_button "Cancel", adjustments_path, variant: :ghost, size: :md %>
-      </div>
+      <% end %>
     </div>
   <% end %>
 </div>

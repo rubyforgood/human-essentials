@@ -1,16 +1,16 @@
 <div class="max-w-2xl">
   <%= essentials_error_summary(@item_category) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for @item_category, remote: request.xhr? do |f| %>
+  <%= essentials_form_for @item_category, remote: request.xhr? do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Category name" %>
       <%= f.input :description, label: "Category description", as: :text,
             hint: "Cannot be more than 250 characters", input_html: {rows: 3, maxlength: 250} %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", items_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

@@ -5,19 +5,19 @@
 <div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
   <%= essentials_error_summary(@broadcast_announcement) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for @broadcast_announcement, url: admin_form_url do |f| %>
+  <%= essentials_form_for @broadcast_announcement, url: admin_form_url do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.hidden_field :user_id, value: current_user.id %>
 
       <%= f.input :message, label: "Announcement", autofocus: true,
             hint: "500 characters maximum.", input_html: {maxlength: 500} %>
       <%= f.input :link, label: "URL for more information" %>
       <%= f.input :expiry, label: "Expiration date", as: :date, html5: true %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= submit_button({text: "Broadcast announcement", icon: "envelope"}) %>
-        <%= essentials_link_button "Cancel", admin_broadcast_announcements_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= submit_button({text: "Broadcast announcement", icon: "envelope"}) %>
+      <%= essentials_link_button "Cancel", admin_broadcast_announcements_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

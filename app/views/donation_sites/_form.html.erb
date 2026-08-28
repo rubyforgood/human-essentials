@@ -3,8 +3,8 @@
 <div class="max-w-4xl">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+  <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :address, label: "Address" %>
       <%= f.input :contact_name, label: "Contact name" %>
@@ -13,11 +13,11 @@
         <%= f.input :email, label: "Email" %>
         <%= f.input :phone, label: "Phone" %>
       <% end %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", id: "donation-site-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", donation_sites_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", id: "donation-site-submit", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", donation_sites_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>

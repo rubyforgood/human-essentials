@@ -34,9 +34,9 @@
       <%= render "line_items/line_item_table", form: f, id: "purchase_line_items", noun: "purchase", changes_disallowed: @changes_disallowed %>
     <% end %>
 
-    <div class="flex items-center gap-2">
+    <%= essentials_form_actions do %>
       <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
       <%= essentials_link_button "Cancel", purchases_path, variant: :ghost, size: :md %>
-    </div>
+    <% end %>
   </div>
 <% end %>

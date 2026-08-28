@@ -1,16 +1,16 @@
 <div class="max-w-2xl">
   <%= essentials_error_summary(form) %>
 
-  <%= render "shared/essentials/card" do %>
-    <%= essentials_form_for form, html: {role: "form"} do |f| %>
+  <%= essentials_form_for form, html: {role: "form"} do |f| %>
+    <%= render "shared/essentials/card" do %>
       <%= f.association :barcodeable, collection: @items, label: "Item" %>
       <%= f.input :quantity, label: "Quantity in the box" %>
       <%= f.input :value, label: "Barcode" %>
+    <% end %>
 
-      <div class="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
-        <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
-        <%= essentials_link_button "Cancel", barcode_items_path, variant: :ghost, size: :md %>
-      </div>
+    <%= essentials_form_actions do %>
+      <%= f.button :button, "Save", class: essentials_button_classes(variant: :primary, size: :md), data: {disable_with: "Saving..."} %>
+      <%= essentials_link_button "Cancel", barcode_items_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
 </div>
