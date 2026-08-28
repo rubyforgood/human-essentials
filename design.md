@@ -444,6 +444,40 @@ buttons reads as a button that has been greyed out — and `actions` is document
 exactly one primary, which a status is none of. A status belongs to the thing, which is where
 GitHub, Linear and Stripe put it.
 
+<a id="one-scrollbar"></a>
+**A scrollable table gets one scrollbar, and it is the rail.** `.table-scroll` forces a persistent
+native scrollbar; `.table-rail` builds a floating one. Both were on, both permanent, so a scrollable
+table carried **two horizontal bars** — measured on `/distributions` at 1280, the rail's top edge and
+the region's bottom edge both at **637**, the native bar occupying the last ~10px inside the region
+and the rail beginning immediately below it. Because the rail rides the fold and travels down to
+meet the table's end, the second bar appeared to arrive and leave: reported as *"a ghost scroll bar
+appears above the actual scroll bar and then it disappears"*.
+
+The native one is hidden under **`[data-railed]`**, which the controller sets only once it has built
+a rail. No JavaScript, or a table that does not overflow, and the native scrollbar is untouched —
+this hides a scrollbar only after its replacement is on the page.
+
+**The rail is a track and a thumb, and nothing else.** It carried a 25px bar, a 92%-white backdrop
+over a table row, and a hairline border — six elements including the native bar, for a control that
+needs two. All three are gone. The height stays **24px and transparent**, because the track is the
+pointer target and 2.5.8 asks for 24; the bar you see is 6px of it, and at rest the visible bar
+covers **no rows** (measured: 0.1px of sub-pixel contact with the 24px band, none with the 6px bar).
+
+<a id="scrollbar-contrast"></a>
+**The thumb is `slate-500`, and this is a contrast requirement rather than a preference.** A custom
+scrollbar thumb is author content, so 1.4.11 applies and asks 3:1 against what it sits on. Against
+the `slate-100` track:
+
+| Thumb | Ratio | |
+| --- | --- | --- |
+| `slate-300` | 1.36:1 | fails — and this is what "match the app's resting weight" would suggest |
+| `slate-400` | 2.34:1 | fails — what the bar shipped with |
+| `slate-500` | **4.34:1** | passes, and 4.76:1 against the white card |
+
+**axe cannot catch this.** Nothing in the markup says that div is a control, so no automated check
+knows to hold it to 1.4.11. It was found by computing the ratio, which is the only way it was going
+to be.
+
 <a id="modal-centring"></a>
 **A modal keeps `margin: auto` whatever it is rendered inside.** `.modal-surface` on the dialog,
 with `!important`. A native `<dialog>` is centred by the browser's own auto margins, and a spacing

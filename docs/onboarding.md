@@ -490,6 +490,15 @@ rather than clicking Next twelve times. The year list covers the years your bank
 distributions in, and grows if you step past either end with Prev or Next. The dropdowns also follow
 the calendar, so they always say what is on screen.
 
+**A wide table has one scrollbar now, not two.** There used to be a second, fainter bar just above
+the real one that seemed to appear and vanish as you scrolled — that was a custom scrollbar and the
+browser's own, both switched on. The custom one does the work and the browser's is hidden.
+
+**It is also quieter and easier to see.** The grey strip, its border and the white band that washed
+out the row underneath are gone; what is left is a thin track and a darker handle. The handle is
+darker on purpose — the old one did not have enough contrast against its track to meet the
+accessibility standard for a control.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with
