@@ -31,9 +31,12 @@
     }
   },
 
-  // DOCKER env variable passed to Cuprite to enable --no-sandbox so Chrome can run in Docker
+  // DOCKER env variable passed to Cuprite to enable --no-sandbox so Chrome can run in Docker.
+  // TUNNEL relaxes the CSRF origin check in development (see config/environments/development.rb)
+  // so the app works behind the Codespaces port-forwarding proxy.
   "remoteEnv": {
-    "DOCKER": "true"
+    "DOCKER": "true",
+    "TUNNEL": "true"
   },
 
   "postCreateCommand": "bash -i .devcontainer/post-create.sh"
