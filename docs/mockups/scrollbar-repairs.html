@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The rail: four things wrong with it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --s100:#F1F5F9;--s200:#E2E8F0;--s300:#CAD5E2;--s400:#90A1B9;--s450:#7A8DA6;--s500:#62748E;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:62rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(1.9rem,4.5vw,2.6rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.28rem;font-weight:600;margin:0}
+  h3{font-size:1rem;font-weight:600;margin:0}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.14rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .quote{border-left:3px solid var(--accent);padding:.1rem 0 .1rem 1rem;margin:1.5rem 0;color:var(--ink-mid);font-style:italic}
+  .opt{margin-top:2.25rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{text-align:left;padding:.4rem .55rem;border-bottom:1px solid var(--line-soft)}
+  thead th{font-family:Archivo,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  .flag{color:var(--defect);font-weight:600}
+  .good{color:var(--fixed);font-weight:600}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:1rem;box-shadow:var(--shadow);
+        overflow:hidden;margin:1.25rem 0}
+  .rows{font-family:Archivo,sans-serif;font-size:.78rem;color:var(--ink-mid)}
+  .trow{display:flex;gap:1.25rem;padding:.45rem .9rem;border-top:1px solid var(--line-soft);white-space:nowrap}
+  .trow span:first-child{color:var(--ink-soft);width:2.5rem}
+  .trow span:nth-child(2){flex:1}
+  .pager{font-family:Archivo,sans-serif;font-size:.76rem;color:var(--ink-soft);
+         border-top:1px solid var(--s200);padding:1rem .9rem;display:flex;justify-content:space-between}
+  /* the rail itself, at real size */
+  .band{height:24px;display:flex;align-items:center;padding:0 8px;position:relative}
+  .track{position:relative;flex:1;height:100%}
+  .track::before{content:"";position:absolute;inset-inline:0;top:50%;height:6px;translate:0 -50%;
+                 background:var(--s100);border-radius:9999px}
+  .thumb{position:absolute;top:50%;height:6px;translate:0 -50%;border-radius:9999px;left:0;width:62%}
+  .sq .track::before,.sq .thumb{border-radius:0}
+  .t400{background:var(--s400)}.t450{background:var(--s450)}.t500{background:var(--s500)}
+  .backdrop{background:rgba(255,255,255,.92);border-top:1px solid var(--line-soft)}
+  .note{font-size:.9rem;color:var(--ink-soft);margin:.4rem 0 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  @media (max-width:46rem){.grid2{grid-template-columns:1fr}}
+  .caption{font-family:Archivo,sans-serif;font-size:.72rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.08em;color:var(--ink-soft);margin:0 0 .4rem}
+  .zoom{transform:scale(3);transform-origin:left center;image-rendering:pixelated}
+  .zoombox{overflow:hidden;height:72px;display:flex;align-items:center;background:var(--surface);
+           border:1px solid var(--line);border-radius:.5rem;padding-left:.5rem}
+  .rec{background:var(--fixed-soft);border:1px solid rgba(15,110,79,.25);border-radius:.75rem;padding:1.25rem 1.4rem;margin:1.5rem 0}
+  .rec h3{color:var(--fixed);margin-bottom:.5rem}
+  .toggle{position:fixed;top:1rem;right:1rem;font-family:Archivo,sans-serif;font-size:.75rem;
+          background:var(--surface);border:1px solid var(--line);border-radius:.5rem;padding:.4rem .7rem;
+          color:var(--ink-mid);cursor:pointer;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+<button class="toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">theme</button>
+<div class="wrap">
+<div class="col">
+  <p class="eyebrow">Design preview &middot; 28 August 2026</p>
+  <h1>The rail: four things wrong with it</h1>
+  <p class="lede">All four reported at once, and they are not independent &mdash; three of them were
+  introduced together by the last change, and they make each other worse.</p>
+  <div class="quote">&ldquo;the scroll bar is very dark, when the user scrolls to the bottom of the
+  page it hovers in an odd way. it also has no padding above the pagination, and doesnt have a
+  border radius so it does not match with the rest of the components.&rdquo;</div>
+  <p>Everything below is measured on <code>/distributions</code> at 1280&times;800 against the running
+  app, not estimated.</p>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <p class="eyebrow">Defect 1</p>
+  <h2>The corners never rendered &mdash; and this one is just a bug</h2>
+  <p>The CSS asks for a pill on both the track and the thumb:</p>
+</div>
+<div class="col"><table>
+  <tbody>
+    <tr><td><code>.table-rail-track::before</code></td><td><code>border-radius: var(--radius-full)</code></td></tr>
+    <tr><td><code>.table-rail-thumb</code></td><td><code>border-radius: var(--radius-full)</code></td></tr>
+  </tbody>
+</table></div>
+<div class="col">
+  <p><strong><code>--radius-full</code> does not exist.</strong> It is referenced twice and defined
+  nowhere &mdash; not in <code>application.css</code>, not in the compiled output. Tailwind&nbsp;v4 has
+  no such token: its scale stops at <code>--radius-2xl</code>, and <code>rounded-full</code> compiles
+  to <code>calc(infinity * 1px)</code> directly rather than through a variable. So the declaration is
+  invalid, the browser drops it, and both parts render square. Measured computed
+  <code>border-radius</code> on the live page: <span class="num flag">0px</span> on the track and
+  <span class="num flag">0px</span> on the thumb.</p>
+  <p>At 3&times;, what ships against what was intended:</p>
+</div>
+<div class="grid2">
+  <div>
+    <p class="caption">Now &mdash; square</p>
+    <div class="zoombox"><div class="zoom" style="width:120px">
+      <div class="band sq"><div class="track"><div class="thumb t500"></div></div></div>
+    </div></div>
+  </div>
+  <div>
+    <p class="caption">Intended &mdash; pill</p>
+    <div class="zoombox"><div class="zoom" style="width:120px">
+      <div class="band"><div class="track"><div class="thumb t500"></div></div></div>
+    </div></div>
+  </div>
+</div>
+<div class="col">
+  <p class="note">No option to choose here &mdash; it is a one-word fix. But it matters for defect&nbsp;2:
+  a hard-edged 600px&nbsp;&times;&nbsp;6px bar reads considerably heavier than the same colour as a
+  pill, so some of &ldquo;very dark&rdquo; is this.</p>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <p class="eyebrow">Defect 2</p>
+  <h2>Very dark &mdash; and there is room to lighten it</h2>
+  <p>The thumb ships at <code>slate-500</code>, which measures
+  <span class="num">4.35:1</span> against its <code>slate-100</code> track. WCAG&nbsp;1.4.11 asks for
+  <span class="num">3:1</span>, because a custom scrollbar thumb is author content rather than a
+  platform control. So it is not that dark <em>by requirement</em> &mdash; it overshoots the floor by
+  a wide margin, and the previous change went to slate-500 because it was the next step on the
+  Tailwind scale, not because 4.35 was needed.</p>
+  <p>The scale has nothing between slate-400 and slate-500, and that gap is exactly where the answer
+  sits. Solving for the lightest slate-hued value that still clears the floor:</p>
+</div>
+<div class="col"><table>
+  <thead><tr><th>Thumb</th><th>vs track</th><th>vs white card</th><th>1.4.11</th></tr></thead>
+  <tbody>
+    <tr><td><code>slate-300</code></td><td class="num">1.36:1</td><td class="num">1.49:1</td><td class="flag">fails</td></tr>
+    <tr><td><code>slate-400</code> <span class="note">(what it was before)</span></td><td class="num">2.40:1</td><td class="num">2.63:1</td><td class="flag">fails</td></tr>
+    <tr><td><code>oklch(0.636 0.044 257.1)</code></td><td class="num good">3.10:1</td><td class="num">3.39:1</td><td class="good">passes</td></tr>
+    <tr><td><code>slate-500</code> <span class="note">(shipped)</span></td><td class="num">4.35:1</td><td class="num">4.76:1</td><td class="good">passes</td></tr>
+  </tbody>
+</table></div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>A &mdash; leave it at slate-500</h3><span class="chip">4.35:1</span></div>
+  <p class="note">Most legible, and the one you are calling too dark.</p></div>
+  <div class="card">
+    <div class="rows">
+      <div class="trow"><span>#1042</span><span>Pawnee Elementary</span><span>12 Sep 2026</span></div>
+      <div class="trow"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep 2026</span></div>
+    </div>
+    <div class="band"><div class="track"><div class="thumb t500"></div></div></div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>B &mdash; the lightest value that still passes</h3>
+    <span class="chip chip-rec">Recommended</span><span class="chip">3.10:1</span></div>
+  <p class="note">A custom step between slate-400 and slate-500. Visibly lighter, still
+  <span class="num">0.10</span> above the floor &mdash; enough margin that sub-pixel antialiasing
+  cannot drag it under.</p></div>
+  <div class="card">
+    <div class="rows">
+      <div class="trow"><span>#1042</span><span>Pawnee Elementary</span><span>12 Sep 2026</span></div>
+      <div class="trow"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep 2026</span></div>
+    </div>
+    <div class="band"><div class="track"><div class="thumb t450"></div></div></div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>C &mdash; back to slate-400</h3><span class="chip chip-no">Fails 1.4.11</span></div>
+  <p class="note">Shown because it is what the bar looked like before this branch touched it, and it
+  is the weight you may actually be picturing. It measures <span class="num">2.40:1</span>. I am not
+  recommending it, but it is your call to make rather than mine &mdash; say the word and it ships
+  with the shortfall recorded in the decision log.</p></div>
+  <div class="card">
+    <div class="rows">
+      <div class="trow"><span>#1042</span><span>Pawnee Elementary</span><span>12 Sep 2026</span></div>
+      <div class="trow"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep 2026</span></div>
+    </div>
+    <div class="band"><div class="track"><div class="thumb t400"></div></div></div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <p class="eyebrow">Defect 3</p>
+  <h2>Nothing between the bar and the pagination</h2>
+  <p>The card reserves a strip for the rail to settle into &mdash;
+  <code>[data-railed] { padding-bottom: 24px }</code> &mdash; and the rail is
+  <span class="num">24px</span> tall. The strip is therefore exactly the height of the thing that
+  goes in it, so the rail fills it edge to edge and its bottom lands
+  <span class="num flag">0.14px</span> above the pagination&rsquo;s top border. Two horizontal lines
+  a hair apart, one of them a control.</p>
+</div>
+<div class="grid2">
+  <div>
+    <p class="caption">Now &mdash; 0px</p>
+    <div class="card">
+      <div class="rows"><div class="trow"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep</span></div></div>
+      <div class="band"><div class="track"><div class="thumb t450"></div></div></div>
+      <div class="pager"><span>Showing 1&ndash;15 of 30</span><span>&laquo; First &nbsp; &lsaquo; Prev &nbsp; 1 &nbsp; 2 &nbsp; Next &rsaquo;</span></div>
+    </div>
+  </div>
+  <div>
+    <p class="caption">Proposed &mdash; 8px</p>
+    <div class="card">
+      <div class="rows"><div class="trow"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep</span></div></div>
+      <div class="band"><div class="track"><div class="thumb t450"></div></div></div>
+      <div style="height:8px"></div>
+      <div class="pager"><span>Showing 1&ndash;15 of 30</span><span>&laquo; First &nbsp; &lsaquo; Prev &nbsp; 1 &nbsp; 2 &nbsp; Next &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+<div class="col">
+  <p class="note">The strip goes to <span class="num">32px</span> and the rail keeps its 24, leaving
+  <span class="num">8px</span> of clear space above the border. 8 rather than 12 because the
+  pagination adds its own <span class="num">12px</span> (<code>py-3</code>) below that border, so the
+  eye reads 8&nbsp;+&nbsp;rule&nbsp;+&nbsp;12 as one gap and a larger number starts to look like a
+  missing row.</p>
+</div>
+
+
+<hr class="rule">
+
+<div class="col">
+  <p class="eyebrow">Defect 4</p>
+  <h2>&ldquo;Hovers in an odd way&rdquo;</h2>
+  <p>The rail is <code>position: fixed</code>. While the table runs past the bottom of the window it
+  rides the fold; once the table&rsquo;s end comes on screen it settles into the reserved strip. Traced
+  down <code>/distributions</code>, which scrolls <span class="num">611px</span> in total:</p>
+</div>
+<div class="col"><table>
+  <thead><tr><th>Page scroll</th><th>Rail top</th><th>Table bottom</th><th>State</th></tr></thead>
+  <tbody>
+    <tr><td class="num">0</td><td class="num">776</td><td class="num">1249</td><td>riding the fold, <span class="num">473px</span> of table below it</td></tr>
+    <tr><td class="num">224</td><td class="num">776</td><td class="num">1025</td><td>riding the fold</td></tr>
+    <tr><td class="num">448</td><td class="num">776</td><td class="num">801</td><td>riding the fold</td></tr>
+    <tr><td class="num">476</td><td class="num">773</td><td class="num">773</td><td>settled at the table&rsquo;s end</td></tr>
+    <tr><td class="num">588</td><td class="num">661</td><td class="num">661</td><td>settled</td></tr>
+  </tbody>
+</table></div>
+<div class="col">
+  <p><strong>It floats for 448 of the 611 pixels &mdash; <span class="num">73%</span> of the
+  scroll.</strong> For all of that it lies across live table rows. That was survivable when it had a
+  92%-white backdrop and a hairline above it, which is what separated it from the text underneath.
+  The last change removed both, on the reasoning that with the native scrollbar hidden the rail no
+  longer had to hold its own against a second bar. That reasoning was about the
+  <em>settled</em> state, where nothing is behind it &mdash; and it took the backdrop away from the
+  <em>floating</em> state too, where something always is.</p>
+  <p class="note"><strong>One reading I could not test.</strong> &ldquo;Hovers oddly&rdquo; might
+  instead mean it judders or trails the page during momentum scrolling. That is the classic symptom
+  of a fixed element repositioned from a scroll handler, and I cannot reproduce it here: with
+  synthetic scrolls the rail measured <span class="num">0px</span> from its correct position on every
+  sampled frame. Option C fixes that reading whether or not I can see it, which is why it is in the
+  recommendation as well.</p>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>A &mdash; leave the floating bar transparent</h3></div>
+  <p class="note">What ships today: a dark bar lying directly on the row text.</p></div>
+  <div class="card">
+    <div class="rows">
+      <div class="trow"><span>#1042</span><span>Pawnee Elementary School District</span><span>12 Sep 2026</span></div>
+      <div class="trow" style="position:relative"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep 2026</span>
+        <div class="band" style="position:absolute;inset-inline:0;bottom:-4px"><div class="track"><div class="thumb t450"></div></div></div>
+      </div>
+      <div class="trow"><span>#1040</span><span>Sweetums Community Outreach</span><span>10 Sep 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>B &mdash; give it a ground, but only while it floats</h3>
+    <span class="chip chip-rec">Recommended</span></div>
+  <p class="note">The backdrop and hairline come back, gated on a <code>data-floating</code> attribute
+  the controller already knows how to set &mdash; it is the same test it uses to place the rail. When
+  the rail settles into the reserved strip it drops both again, so the tidy version you chose is what
+  you see at rest, and the row underneath stops being washed out the moment there is no row.</p></div>
+  <div class="card">
+    <div class="rows">
+      <div class="trow"><span>#1042</span><span>Pawnee Elementary School District</span><span>12 Sep 2026</span></div>
+      <div class="trow" style="position:relative"><span>#1041</span><span>Eagleton Family Center</span><span>11 Sep 2026</span>
+        <div class="band backdrop" style="position:absolute;inset-inline:0;bottom:-4px"><div class="track"><div class="thumb t450"></div></div></div>
+      </div>
+      <div class="trow"><span>#1040</span><span>Sweetums Community Outreach</span><span>10 Sep 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>C &mdash; stop being a floating element once it settles</h3>
+    <span class="chip chip-rec">Recommended</span><span class="chip">with B</span></div>
+  <p class="note">Nothing visual &mdash; a mechanism change. Today the rail is <code>fixed</code> the
+  whole time, so even at rest its position is recomputed by JavaScript on every scroll frame. Once
+  the table&rsquo;s end is on screen it does not need to be: it can be <code>absolute</code> inside
+  the strip the card already reserves, and then the browser moves it with the page for free. At the
+  bottom of the page &mdash; which is exactly where you are seeing the problem &mdash; there would be
+  no per-frame repositioning left to go wrong. It stays <code>fixed</code> only while genuinely
+  riding the fold.</p></div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>D &mdash; never float at all</h3><span class="chip chip-no">Costs the feature</span></div>
+  <p class="note">The rail could simply live at the end of the table and never ride the fold, which
+  removes the complaint completely. The cost is the reason the rail exists: on a long table the only
+  horizontal scroll control would be below the fold again, and the platform will not supply one
+  because its scrollbar is an overlay taking <span class="num">0px</span>. Worth having on the table,
+  but it undoes rather than repairs.</p></div>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <div class="rec">
+    <h3>What I would ship</h3>
+    <p style="margin-bottom:.6rem"><strong>1.</strong> Fix <code>--radius-full</code> &rarr;
+    <code>calc(infinity * 1px)</code>. A bug, not a choice.<br>
+    <strong>2.</strong> Thumb to <code>oklch(0.636 0.044 257.1)</code> &mdash; option&nbsp;B, the
+    lightest value that still clears 1.4.11 at <span class="num">3.10:1</span>.<br>
+    <strong>3.</strong> Reserved strip <span class="num">24px</span> &rarr;
+    <span class="num">32px</span>, for 8px of air above the pagination rule.<br>
+    <strong>4.</strong> Backdrop back while floating only (B), and
+    <code>absolute</code> once settled (C).</p>
+    <p style="margin:0">Together these are one coherent change: the rail is quiet and tidy where it
+    rests, and legible where it has to sit on top of something.</p>
+  </div>
+  <p class="note">Tell me which of the four you want and I will build exactly that. If &ldquo;very
+  dark&rdquo; still describes option&nbsp;B when you see it in the app, say so &mdash; below 3:1 is
+  available, it just has to be a decision taken with the number in front of us rather than by
+  accident.</p>
+</div>
+
+</div>
+</body>
+</html>
