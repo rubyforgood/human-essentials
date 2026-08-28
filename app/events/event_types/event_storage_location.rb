@@ -22,7 +22,12 @@ module EventTypes
     # @param item_id [Integer]
     # @param quantity [Integer]
     def set_inventory(item_id, quantity)
-      items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: quantity, storage_location_id: id)
+      items[item_id] = EventTypes::EventItem.new(
+        item_id: item_id,
+        storage_location_id: id,
+        quantity: quantity,
+        committed_quantity: items[item_id]&.committed_quantity || 0
+      )
     end
 
     # @param item_id [Integer]
@@ -38,18 +43,24 @@ module EventTypes
         end
       end
       current_quantity = items[item_id]&.quantity || 0
-      items[item_id] = EventTypes::EventItem.new(item_id: item_id,
+      items[item_id] = EventTypes::EventItem.new(
+        item_id: item_id,
         storage_location_id: id,
-        quantity: current_quantity - quantity)
+        quantity: current_quantity - quantity,
+        committed_quantity: items[item_id]&.committed_quantity || 0
+      )
     end
 
     # @param item_id [Integer]
     # @param quantity [Integer]
     def add_inventory(item_id, quantity)
       current_quantity = items[item_id]&.quantity || 0
-      items[item_id] = EventTypes::EventItem.new(item_id: item_id,
+      items[item_id] = EventTypes::EventItem.new(
+        item_id: item_id,
         storage_location_id: id,
-        quantity: current_quantity + quantity)
+        quantity: current_quantity + quantity,
+        committed_quantity: items[item_id]&.committed_quantity || 0
+      )
     end
   end
 end

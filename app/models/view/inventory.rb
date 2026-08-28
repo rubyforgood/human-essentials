@@ -153,6 +153,7 @@ module View
             item_id: item.item_id,
             storage_location_id: loc.id,
             quantity: item.quantity,
+            committed_quantity: item.committed_quantity,
             db_item: db_item
           )
           false
