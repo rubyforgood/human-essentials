@@ -10,21 +10,7 @@ end
 # Random Record Generators
 # ----------------------------------------------------------------------------
 load "lib/dispersed_past_dates_generator.rb"
-
-def random_record_for_org(org, klass)
-  klass.where(organization: org).all.sample
-end
-
-def skip_dupes_and_seed(collection)
-  errors = []
-  collection.each do |entry|
-    yield entry
-  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
-    errors << e.to_s
-    Rails.logger.info "[SEEDS] Error while adding #{entry.inspect} - #{e}"
-  end
-  errors
-end
+load "lib/seeds.rb"
 
 puts "\033[1;33m 🌱 Seeding data...";
 
@@ -41,7 +27,7 @@ base_items = Rails.root.join("db", "base_items.json").read
 items_by_category = JSON.parse(base_items)
 
 items_by_category.each do |category, entries|
-  skip_dupes_and_seed(entries) do |entry|
+  Seeds.skip_dupes_and_seed(entries) do |entry|
     BaseItem.find_or_create_by!(
       name: entry["name"],
       category: category,
@@ -104,18 +90,10 @@ Organization.all.find_each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
 end
 
-def seed_random_item_with_name(organization, name)
-  # Once we break the link between BaseItem and Item, we can remove the 'kit' BaseItem, and change this to BaseItem.all CLF 20251202
-  base_items = BaseItem.where.not(reporting_category: nil).map(&:to_h)
-  base_item = Array.wrap(base_items).sample
-  base_item[:name] = name
-  organization.seed_items(base_item)
-end
-
 # Add a couple unique items based on random base items named after the sc_bank
 # so it will be clear if they are showing up where they aren't supposed to be
 4.times do |index|
-  seed_random_item_with_name(sc_org, "Second City Item ##{index + 1}")
+  Seeds.seed_random_item_with_name(sc_org, "Second City Item ##{index + 1}")
 end
 
 # Keep a list of these unique items so its easy to use them for later records
@@ -754,24 +732,10 @@ end
 # Line Items
 # ----------------------------------------------------------------------------
 
-def seed_quantity(item_name, organization, storage_location, quantity)
-  return if quantity.zero?
-
-  item = Item.find_by(name: item_name, organization: organization)
-
-  adjustment = organization.adjustments.create!(
-    comment: "Starting inventory",
-    storage_location: storage_location,
-    user: User.with_role(:org_admin, organization).first
-  )
-  adjustment.line_items = [LineItem.new(quantity: quantity, item: item, itemizable: adjustment)]
-  AdjustmentCreateService.new(adjustment).call
-end
-
 JSON.parse(Rails.root.join("db", "base_items.json").read).each do |_category, entries|
   entries.each do |entry|
-    seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
-    seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
+    Seeds.seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
+    Seeds.seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
   end
 end
 
@@ -920,15 +884,15 @@ complete_orgs.each do |org|
     case source
     when Donation::SOURCES[:product_drive]
       donation.product_drive = org.product_drives.find_by(name: "Best Product Drive")
-      donation.product_drive_participant = random_record_for_org(org, ProductDriveParticipant)
+      donation.product_drive_participant = Seeds.random_record_for_org(org, ProductDriveParticipant)
     when Donation::SOURCES[:donation_site]
-      donation.donation_site = random_record_for_org(org, DonationSite)
+      donation.donation_site = Seeds.random_record_for_org(org, DonationSite)
     when Donation::SOURCES[:manufacturer]
-      donation.manufacturer = random_record_for_org(org, Manufacturer)
+      donation.manufacturer = Seeds.random_record_for_org(org, Manufacturer)
     end
 
     rand(1..5).times.each do
-      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(org, Item)))
+      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: Seeds.random_record_for_org(org, Item)))
     end
 
     # Guarantee that there are at least a few donations for the items unique to the Second City Bank
@@ -954,7 +918,7 @@ complete_orgs.each do |org|
     shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
     distribution = Distribution.new(
       storage_location: storage_location,
-      partner: random_record_for_org(org, Partner),
+      partner: Seeds.random_record_for_org(org, Partner),
       organization: org,
       issued_at: issued_at,
       created_at: 3.days.ago(issued_at),
@@ -1003,7 +967,7 @@ complete_orgs.each do |org|
 
       kit_distribution = Distribution.new(
         storage_location: storage_location,
-        partner: random_record_for_org(org, Partner),
+        partner: Seeds.random_record_for_org(org, Partner),
         organization: org,
         issued_at: issued_at,
         created_at: 3.days.ago(issued_at),
@@ -1101,7 +1065,7 @@ complete_orgs.each do |org|
   25.times do |index|
     purchase_date = dates_generator.next
     storage_location = org.storage_locations.active.sample
-    vendor = random_record_for_org(org, Vendor)
+    vendor = Seeds.random_record_for_org(org, Vendor)
     purchase = Purchase.new(
       purchased_from: suppliers.sample,
       comment: comments.sample,
