@@ -611,18 +611,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_12_130000) do
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.string "email"
     t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.integer "organization_id"
-    t.integer "status", default: 0
-    t.boolean "send_reminders", default: false, null: false
-    t.text "notes"
-    t.integer "quota"
-    t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.string "email"
     t.text "info_for_partner"
+    t.string "name"
+    t.text "notes"
+    t.integer "organization_id"
+    t.bigint "partner_group_id"
+    t.string "phone_number"
+    t.integer "quota"
+    t.boolean "send_reminders", default: false, null: false
+    t.integer "status", default: 0
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
