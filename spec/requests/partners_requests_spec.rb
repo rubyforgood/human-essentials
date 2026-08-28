@@ -143,6 +143,7 @@ RSpec.describe "Partners", type: :request do
           expected_values = [
             "Leslie Sue",
             "leslie@sue.com",
+            "999-999-9999",
             "Some notes",
             "", # Columns from the agency_information partial
             "",
@@ -251,6 +252,7 @@ RSpec.describe "Partners", type: :request do
             [
               "Jane Doe",
               "jane@doe.com",
+              "",
               "Some notes",
               I18n.t("partners_profile.other"), # Columns from the agency_information partial
               "Another Agency Name",
