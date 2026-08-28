@@ -5095,3 +5095,41 @@ by using — and a layout change touching every page in the app is a poor thing 
 hard to read, or a table growing past 1505px of content, which is where the chosen 1600 cap stops
 being generous. If it is revisited, the work is one class and the preview already exists.
 
+## 2026-08-28 — The ghost scrollbar, and a thumb that never met its contrast requirement
+
+**The ghost was two scrollbars.** `.table-scroll` forces a persistent native scrollbar — the comment
+explains why, macOS overlays appear mid-gesture and cannot tell you scrolling is possible — and
+`.table-rail` builds a floating custom one. Both were on and both were meant to be permanent.
+Measured on `/distributions` at 1280: the rail's top edge and the scroll region's bottom edge both at
+**637**, so the native bar occupied the last ten pixels inside the region and the rail began
+immediately below it. Two bars, touching. It appeared to come and go because the rail rides the fold
+while the table runs past it and travels down to meet the table's end.
+
+Two mechanisms solving one problem is the actual defect; the visual was the symptom. The native one
+is hidden now, gated on `[data-railed]` so it only disappears once the controller has built its
+replacement — no JavaScript and the native scrollbar is exactly as it was.
+
+**Something I could not do from here, said plainly.** This container forces overlay scrollbars, so
+both stylings measure as taking no layout space and neither paints at rest. I could not reproduce
+the platform rendering, and did not claim to. What settled it is that the code builds two
+scrollbars, which needs no reproduction.
+
+**The thumb was below its contrast requirement and had been all along.** A custom scrollbar thumb is
+author content, so 1.4.11 applies. Against the `slate-100` track: the shipped `slate-400` is
+**2.34:1**, under the 3:1 threshold. `slate-500` is 4.34:1.
+
+Worth recording that **my own recommendation was wrong here**. The preview argued for `slate-300` on
+the grounds that slate-400 is the app's *hover* weight and the bar sat at hover weight permanently —
+a reasonable-sounding argument that would have taken the ratio to **1.36:1**, less than half of what
+the standard asks. The rule of thumb was fine; it just had no business overruling a number I had not
+computed yet.
+
+**axe will never find this.** Nothing in the markup identifies that div as a control, so no automated
+pass knows to hold it to 1.4.11 — the same shape as the fade over the frozen column earlier on this
+branch, which axe also missed because it reads declared colours rather than what a thing is.
+
+**What was kept.** The 24px height, because the track is the pointer target and 2.5.8 asks for 24 —
+the visible bar is 6px of a transparent 24px band. And the reserved strip, so at rest the rail
+settles below the table rather than over the last row: measured after the change, the visible bar
+covers **no rows**, with 0.1px of sub-pixel contact against the invisible band.
+

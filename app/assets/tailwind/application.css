@@ -425,22 +425,27 @@
     scrollbar-color: var(--color-slate-300) var(--color-slate-100);
   }
 
-  .table-scroll::-webkit-scrollbar {
-    height: calc(var(--spacing) * 2.5);
+  /*
+   * ...and then hidden again, once `.table-rail` exists to replace it.
+   *
+   * These two were solving the same problem at the same time and both were permanent, so a
+   * scrollable table carried **two** horizontal bars: measured on `/distributions` at 1280, the
+   * rail's top edge and the region's bottom edge both at 637, the native bar occupying the last
+   * ~10px inside the region and the rail beginning immediately below it. Because the rail rides the
+   * fold and travels down to meet the table's end, the second one appeared to arrive and leave --
+   * which is exactly how it was reported: "a ghost scroll bar appears above the actual scroll bar
+   * and then it disappears".
+   *
+   * Gated on `[data-railed]`, which the controller sets only after building a rail. No JavaScript,
+   * or a table that does not overflow, and the native scrollbar is left exactly as it was -- this
+   * hides a scrollbar only once its replacement is on the page.
+   */
+  [data-railed] .table-scroll {
+    scrollbar-width: none;
   }
 
-  .table-scroll::-webkit-scrollbar-track {
-    background-color: var(--color-slate-100);
-    border-radius: var(--radius-full);
-  }
-
-  .table-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--color-slate-300);
-    border-radius: var(--radius-full);
-  }
-
-  .table-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-slate-400);
+  [data-railed] .table-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   /*
@@ -549,11 +554,18 @@
     z-index: 20;
     display: flex;
     align-items: center;
-    /* 24px of track plus the hairline: the track is the target, and 2.5.8 asks for 24. */
-    height: calc(var(--spacing) * 6 + 1px);
+    /*
+     * 24px, and transparent. The track is the pointer target and 2.5.8 asks for 24, so the height
+     * stays; the bar you can see is 6px of it.
+     *
+     * The 92%-white backdrop and the hairline above it are gone. With the native scrollbar hidden
+     * this is the only bar on screen, and it no longer has to hold its own against one -- it was
+     * six elements for a scrollbar (bar, backdrop, border, track, thumb, and the native bar under
+     * it) and is now two. Transparent also means it stops washing out the row it floats over while
+     * the table runs past the fold.
+     */
+    height: calc(var(--spacing) * 6);
     padding-inline: calc(var(--spacing) * 2);
-    background-color: color-mix(in oklch, var(--color-white) 92%, transparent);
-    border-top: 1px solid var(--color-slate-200);
     /* Hidden until the controller has both measured the table and found it on screen. */
     visibility: hidden;
   }
@@ -564,7 +576,7 @@
    * comment cell went to the rail and the tooltip never opened.
    */
   [data-railed] {
-    padding-bottom: calc(var(--spacing) * 6 + 1px);
+    padding-bottom: calc(var(--spacing) * 6);
   }
 
   .table-rail[data-visible] {
@@ -600,15 +612,22 @@
     min-width: calc(var(--spacing) * 6);
     translate: 0 -50%;
     border-radius: var(--radius-full);
-    background-color: var(--color-slate-400);
-  }
-
-  .table-rail-track:hover .table-rail-thumb {
+    /*
+     * slate-500, not the slate-400 this had, and not the slate-300 that "match the resting weight"
+     * would suggest. A custom scrollbar thumb is author content, so 1.4.11 applies to it and asks
+     * 3:1 against what it sits on. Measured against the slate-100 track: slate-300 **1.36:1**,
+     * slate-400 **2.34:1**, slate-500 **4.34:1**. The bar shipped below the threshold and axe
+     * cannot see it -- nothing in the markup says this div is a control.
+     */
     background-color: var(--color-slate-500);
   }
 
-  .table-rail[data-dragging] .table-rail-thumb {
+  .table-rail-track:hover .table-rail-thumb {
     background-color: var(--color-slate-600);
+  }
+
+  .table-rail[data-dragging] .table-rail-thumb {
+    background-color: var(--color-slate-700);
   }
 
   /*
