@@ -32,7 +32,7 @@ RSpec.describe "Partners", type: :request do
       let(:response_format) { 'csv' }
 
       let!(:partner) do
-        create(:partner, name: "Leslie Sue", email: "leslie@sue.com", status: :approved, organization:, notes: "Some notes", without_profile: true)
+        create(:partner, name: "Leslie Sue", email: "leslie@sue.com", phone_number: "999-999-9999", status: :approved, organization:, notes: "Some notes", without_profile: true)
       end
       let!(:profile) do
         create(:partner_profile,
@@ -64,6 +64,7 @@ RSpec.describe "Partners", type: :request do
         [
           "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
+          "Agency Phone Number",
           "Notes",
           "Agency Type", # Columns from the agency_information partial
           "Other Agency Type",
@@ -93,6 +94,7 @@ RSpec.describe "Partners", type: :request do
         [
           "Leslie Sue", # Technically not part of the agency_information partial, but comes at the start of the export
           "leslie@sue.com",
+          "999-999-9999",
           "Some notes",
           I18n.t("partners_profile.other"), # Columns from the agency_information partial
           "Another Agency Name",
