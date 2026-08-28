@@ -164,6 +164,19 @@ class ApplicationController < ActionController::Base
     @selected_date_range_label = helpers.date_range_label
   end
 
+  def handle_csv_export
+    return unless params[:export_csv]
+
+    # The flag starts the background fetch; the notice is the part a person reads, and it goes
+    # through the flash strip like every other message. main paired the flag with a `toastr` call
+    # instead -- see shared/essentials/_csv_download for why that could not come across.
+    flash[:trigger_csv_download] = true
+    flash[:notice] = "Your CSV export is downloading."
+    clean_params = request.query_parameters.except("export_csv")
+    redirect_url = clean_params.any? ? "#{request.path}?#{clean_params.to_query}" : request.path
+    redirect_to redirect_url
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end

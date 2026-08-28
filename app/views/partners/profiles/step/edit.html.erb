@@ -1,7 +1,9 @@
 <% content_for :title, "Step Editing - #{current_partner.name}" %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# "Profile", not "Organization": main renamed this page's heading (1f03c49e0), and the portal's
+      own nav calls it the profile. Sentence case, per design.md. %>
   <%= render "shared/essentials/page_header",
-        title: "Edit organization",
+        title: "Edit profile",
         subtitle: "Update the details your bank holds about your agency.",
         back: {path: partners_profile_path, label: "Back to profile"} %>
 

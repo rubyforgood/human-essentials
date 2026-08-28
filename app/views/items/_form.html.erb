@@ -14,7 +14,7 @@
             hint: "Categories help organize and identify items" %>
       <%= f.input :reporting_category, label: "NDBN reporting category",
             collection: Item.reporting_categories_for_select,
-            disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
+            disabled: @item.is_a?(Kit), required: !@item.is_a?(Kit), hint: @reporting_category_hint %>
       <%= essentials_field_row do %>
         <%= f.input :value_in_dollars, label: "Value per item" %>
         <%= f.input :distribution_quantity, label: "Quantity per individual" %>

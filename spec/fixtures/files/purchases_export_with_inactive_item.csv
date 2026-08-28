@@ -1,0 +1,5 @@
+Purchases from,Storage Location,Purchased Date,Quantity of Items,Variety of Items,Amount Spent,Spent on Diapers,Spent on Adult Incontinence,Spent on Period Supplies,Spent on Other,Comment,A Item,B Item,C Item,Dupe Item,E Item,Inactive Item
+Test Vendor 0,Test Storage Location,2025-01-01,15,2,5.55,1.00,1.25,1.30,2.00,This is the 0-th purchase in the test.,7,0,0,8,0,0
+Test Vendor 1,Test Storage Location,2025-01-02,1,1,5.59,1.01,1.26,1.31,2.01,This is the 1-th purchase in the test.,0,1,0,0,0,0
+Test Vendor 2,Test Storage Location,2025-01-03,2,1,5.63,1.02,1.27,1.32,2.02,This is the 2-th purchase in the test.,0,0,2,0,0,0
+Test Vendor 3,Test Storage Location,2025-01-04,3,1,5.67,1.03,1.28,1.33,2.03,This is the 3-th purchase in the test.,0,0,0,0,3,0

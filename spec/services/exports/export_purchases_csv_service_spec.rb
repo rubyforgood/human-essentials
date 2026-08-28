@@ -1,44 +1,33 @@
 RSpec.describe Exports::ExportPurchasesCSVService do
-  describe "#generate_csv_data" do
-    subject { described_class.new(purchase_ids: purchase_ids).generate_csv_data }
+  describe "#generate_csv" do
+    let(:organization) { create(:organization) }
+    let(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
+
+    subject { described_class.new(purchase_ids: purchase_ids, organization: organization).generate_csv }
     let(:purchase_ids) { purchases.map(&:id) }
-    let(:duplicate_item) do
-      FactoryBot.create(
-        :item, name: Faker::Appliance.unique.equipment
-      )
-    end
-    let(:items_lists) do
+    let(:duplicate_item) { create(:item, name: "Dupe Item", organization: organization) }
+
+    let(:purchase_items_and_quantities) {
       [
         [
           [duplicate_item, 5],
-          [
-            FactoryBot.create(
-              :item, name: Faker::Appliance.unique.equipment
-            ),
-            7
-          ],
+          [create(:item, name: "A Item", organization: organization), 7],
           [duplicate_item, 3]
         ],
-        *(Array.new(3) do |i|
-          [[FactoryBot.create(
-            :item, name: Faker::Appliance.unique.equipment
-          ), i + 1]]
-        end)
+        [[create(:item, name: "B Item", organization: organization), 1]],
+        [[create(:item, name: "C Item", organization: organization), 2]],
+        [[create(:item, name: "E Item", organization: organization), 3]]
       ]
-    end
-
-    let(:item_names) { items_lists.flatten(1).map(&:first).map(&:name).sort.uniq }
+    }
 
     let(:purchases) do
-      start_time = Time.current
-
-      items_lists.each_with_index.map do |items, i|
+      purchase_items_and_quantities.each_with_index.map do |items, i|
         purchase = create(
           :purchase,
-          vendor: create(
-            :vendor, business_name: "Vendor Name #{i}"
-          ),
-          issued_at: start_time + i.days,
+          organization: organization,
+          storage_location: storage_location,
+          vendor: create(:vendor, business_name: "Test Vendor #{i}", organization: organization),
+          issued_at: "2025-01-0#{i + 1}",
           comment: "This is the #{i}-th purchase in the test.",
           amount_spent_in_cents: i * 4 + 555,
           amount_spent_on_diapers_cents: i + 100,
@@ -48,70 +37,48 @@ RSpec.describe Exports::ExportPurchasesCSVService do
         )
 
         items.each do |(item, quantity)|
-          purchase.line_items << create(
-            :line_item, quantity: quantity, item: item
-          )
+          purchase.line_items << create(:line_item, item: item, quantity: quantity)
         end
 
         purchase
       end
     end
 
-    let(:expected_headers) do
-      [
-        "Purchases from",
-        "Storage Location",
-        "Purchased Date",
-        "Quantity of Items",
-        "Variety of Items",
-        "Amount Spent",
-        "Spent on Diapers",
-        "Spent on Adult Incontinence",
-        "Spent on Period Supplies",
-        "Spent on Other",
-        "Comment"
-      ] + expected_item_headers
-    end
-
-    let(:total_item_quantities) do
-      template = item_names.index_with(0)
-
-      items_lists.map do |items_list|
-        row = template.dup
-        items_list.each do |(item, quantity)|
-          row[item.name] += quantity
-        end
-        row.values
-      end
-    end
-
-    let(:expected_item_headers) do
-      expect(item_names).not_to be_empty
-
-      item_names
+    def expected_csv(fixture_name)
+      Rails.root.join("spec/fixtures/files", fixture_name).read
     end
 
     it "should match the expected content for the csv" do
-      expect(subject[0]).to eq(expected_headers)
+      expect(subject).to eq(expected_csv("purchases_export.csv"))
+    end
 
-      purchases.zip(total_item_quantities).each_with_index do |(purchase, total_item_quantity), idx|
-        row = [
-          purchase.vendor.try(:business_name),
-          purchase.storage_view,
-          purchase.issued_at.strftime("%F"),
-          purchase.line_items.total,
-          total_item_quantity.count(&:positive?),
-          purchase.amount_spent,
-          purchase.amount_spent_on_diapers,
-          purchase.amount_spent_on_adult_incontinence,
-          purchase.amount_spent_on_period_supplies,
-          purchase.amount_spent_on_other,
-          purchase.comment
+    it "should include inactive items in the export with zero quantities" do
+      create(:item, :inactive, name: "Inactive Item", organization: organization)
+
+      expect(subject).to eq(expected_csv("purchases_export_with_inactive_item.csv"))
+    end
+
+    it "should include items that are not in any purchase with zero quantities" do
+      create(:item, name: "Unused Item", organization: organization)
+
+      expect(subject).to eq(expected_csv("purchases_export_with_unused_item.csv"))
+    end
+
+    context "when item names differ only by case" do
+      let(:purchase_items_and_quantities) {
+        [
+          [[create(:item, name: "Banana", organization: organization), 2]]
         ]
+      }
 
-        row += total_item_quantity
+      it "should sort item columns case-insensitively, ASC" do
+        # Create the other items in reverse-ASCII order to prove the sort is
+        # case-insensitive rather than relying on creation order or ASCII order
+        # (which would put "Zebra" before "apple").
+        create(:item, name: "apple", organization: organization)
+        create(:item, name: "Zebra", organization: organization)
 
-        expect(subject[idx + 1]).to eq(row)
+        expect(subject).to eq(expected_csv("purchases_export_case_insensitive_sort.csv"))
       end
     end
   end

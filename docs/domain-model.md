@@ -33,7 +33,7 @@ Organization
 ├── partners ─────────────── partner_groups ──── item_categories
 ├── storage_locations ────── inventory_items
 ├── items ────────────────── item_categories, base_item, barcode_items, request_units
-├── kits ─────────────────── kit_item
+├── kits ─────────────────── (a Kit *is* an Item — STI)
 ├── donations ────────────── donation_site, product_drive, product_drive_participant, manufacturer
 ├── purchases ────────────── vendor
 ├── distributions ────────── partner, storage_location, request
@@ -52,7 +52,17 @@ Organization
 | --- | --- | --- |
 | `BaseItem` | global | The catalogue entry every bank shares — "Diapers, size 1". Maintained by super admins. |
 | `Item` | one organization | That bank's version: its own name, value, category, visibility to partners. Tied to its base item by `partner_key`. |
-| `KitItem` | one organization | The item a `Kit` presents itself as when allocated. |
+| `Kit` | one organization | A bundle distributed as one unit. **`Kit < Item`, single-table inheritance on `items.type`** — a kit *is* an item rather than owning one. |
+
+**`Kit` was two classes until August 2026**, a `Kit` record owning a `KitItem`, and the rename is
+the thing to know when reading anything older. `KitItem` no longer exists; verified against the
+running app, `Kit.superclass` is `Item` and `Kit.table_name` is `items`. **The old schema is still
+there and is now vestigial**: the `kits` table and `items.kit_id` both remain, deliberately, so the
+two data migrations that moved the rows are reversible. Nothing reads them.
+
+So `@kit.kit_item.line_items` is now `@kit.line_items`, `item.kit_id` is `item.is_a?(Kit)`, and a
+kit form builds its line items on the kit's own form builder rather than opening a `fields_for` on
+a nested record.
 
 `ItemCategory` groups a bank's items, and a `PartnerGroup` uses those categories to decide what
 its partners may request. So *what a partner can ask for* is:
@@ -71,7 +81,7 @@ One join table carries the contents of every kind of movement. `LineItem` `belon
 
 ```
 Adjustment   Audit   ConcreteItem   Distribution   Donation
-Item         KitItem Purchase       Transfer
+Item         Kit     Purchase       Transfer
 ```
 
 Practical consequence: a query that walks `line_items` must say which itemizable it means, and

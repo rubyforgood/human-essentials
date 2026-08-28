@@ -555,6 +555,30 @@ last week"**, and plain **"Added in the last week"** when the list is the whole 
 title carries it instead, which is where the third card on that page already explained itself. The
 period is new information: before, "in the last week" appeared *only* when there was nothing to show.
 
+### Brought over from the main branch
+
+**Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying
+the download has started; the file arrives in the background. A large export used to leave the
+browser sitting on a blank request.
+
+**The donations table leads with the date**, which is also the column that stays put when you scroll
+sideways. Source moved one place right.
+
+**A donation's page names the drive participant**, under the donation site, when it came from a
+product drive. Donations from anywhere else show a dash there, like every other blank field.
+
+**Product drive participants can be filtered** by business name and contact name, from the Filters
+button above the list.
+
+**A product drive's page can export its participants**, from the button in the page header, once the
+drive has donations.
+
+**A finalized audit can no longer be edited**, and neither can a rejected or closed account request.
+
+**Two CSV exports were returning the wrong file.** *Export* on product drive participants and on
+vendors served the blank import template instead of your data — a sample file was sitting at the
+same address as the export. Both now export what you asked for.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with

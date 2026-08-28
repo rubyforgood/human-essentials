@@ -35,7 +35,13 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
       expect(AccountRequest.count).to eq(0)
 
-      expect { click_button 'Submit' }.to change(AccountRequest, :count).by(1)
+      click_button 'Submit'
+
+      # Wait for the redirect before asserting on the count, otherwise the
+      # async form submission may not have been processed yet. main's flake fix (4c3b72875);
+      # the text is design's sentence-case copy, which is what the page actually says.
+      expect(page).to have_content('Request received')
+      expect(AccountRequest.count).to eq(1)
 
       created_account_request = AccountRequest.last
 

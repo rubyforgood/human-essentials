@@ -22,34 +22,24 @@ class KitCreateService
     return self unless valid?
 
     organization.transaction do
-      # Create the Kit record
-      line_items = kit_params.delete(:line_items_attributes)
-      @kit = Kit.new(kit_params_with_organization)
-      @kit.save!
-      if line_items.blank?
+      if kit_params[:line_items_attributes].blank?
+        @kit = build_kit
         @kit.errors.add(:base, 'At least one item is required')
         raise ActiveRecord::RecordInvalid.new(@kit)
       end
 
-      # Find or create the BaseItem for all items housing kits
-      item_housing_a_kit_base_item = KitCreateService.find_or_create_kit_base_item!
-
-      # Create the item
+      # A kit is an Item (STI type 'Kit') that contains other items as line items.
       item_creation = ItemCreateService.new(
         organization_id: organization.id,
-        item_params: {
-          type: 'KitItem',
-          line_items_attributes: line_items,
-          name: kit.name,
-          partner_key: item_housing_a_kit_base_item.partner_key,
-          kit_id: kit.id
-        }
+        item_params: kit_attributes
       )
 
       item_creation_result = item_creation.call
       unless item_creation_result.success?
         raise item_creation_result.error
       end
+
+      @kit = item_creation_result.value
     rescue StandardError => e
       errors.add(:base, e.message)
       raise ActiveRecord::Rollback
@@ -61,14 +51,21 @@ class KitCreateService
   private
 
   attr_reader :organization_id, :kit_params
+
   def organization
     @organization ||= Organization.find_by(id: organization_id)
   end
 
-  def kit_params_with_organization
-    kit_params.merge({
-                       organization_id: organization.id
-                     })
+  # All kits share the same "Kit" base item / partner_key.
+  def kit_attributes
+    kit_params.merge(
+      type: 'Kit',
+      partner_key: KitCreateService.find_or_create_kit_base_item!.partner_key
+    )
+  end
+
+  def build_kit
+    organization.kits.new(kit_params.except(:line_items_attributes))
   end
 
   def valid?
@@ -87,9 +84,8 @@ class KitCreateService
   def kit_validation_errors
     return @kit_validation_errors if @kit_validation_errors
 
-    # Exclude line_items_attributes as they belong to the Item, not the Kit
-    kit_only_params = kit_params_with_organization.except(:line_items_attributes)
-    kit = Kit.new(kit_only_params)
+    # Exclude line_items_attributes; the line item validity is checked when the item is saved.
+    kit = build_kit
     kit.valid?
 
     @kit_validation_errors = kit.errors

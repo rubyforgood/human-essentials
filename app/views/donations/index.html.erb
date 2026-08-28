@@ -71,8 +71,12 @@
             <caption>Donations received, most recent first</caption>
             <thead>
               <tr>
-                <th scope="col" class="pin-col name">Source</th>
-                <th scope="col" class="date">Date</th>
+                <%# Date leads, from main (#5599). The frozen column follows the first column
+                    rather than the other way round -- `.pin-col` is `left: 0`, so only column one
+                    can be pinned -- and a date is a cheaper thing to freeze than a source name,
+                    because it is narrower. Source keeps the emphasis that marks the row's subject. %>
+                <th scope="col" class="pin-col date">Date</th>
+                <th scope="col" class="name">Source</th>
                 <th scope="col">Details</th>
                 <th scope="col">Storage location</th>
                 <th scope="col" class="quantity">Quantity of items</th>

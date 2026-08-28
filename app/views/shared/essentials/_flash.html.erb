@@ -13,7 +13,12 @@
         <%# Read through flash[key], not flash.each. The memflash gem stores a large message
             in the cache and leaves a lookup key in the cookie; only the reader resolves it,
             so iterating pairs renders the key itself. %>
+        <%# Not every flash entry is a message. `trigger_csv_download` is a boolean flag that
+            survives the redirect in `handle_csv_export` and tells the page to start a background
+            download; rendering it here would draw a message bar reading "true", because `true` is
+            not blank. Anything that is a signal rather than a sentence belongs in this list. %>
         <% flash.keys.each do |key| %>
+          <% next if EssentialsUiHelper::NON_MESSAGE_FLASH_KEYS.include?(key.to_s) %>
           <% message = flash[key] %>
           <% next if message.blank? %>
           <% tone = essentials_flash_tone(key) %>

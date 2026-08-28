@@ -54,7 +54,7 @@
     <% end %>
 
     <%= render layout: "shared/essentials/csv_import_modal", locals: {
-          import_type: "Vendors", csv_template_url: "/vendors.csv", csv_import_url: import_csv_vendors_path
+          import_type: "Vendors", csv_template_url: "/vendors_template.csv", csv_import_url: import_csv_vendors_path
         } do %>
       <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
       <li>Delete the sample data and enter your vendor names, emails and phone numbers in the matching columns.</li>

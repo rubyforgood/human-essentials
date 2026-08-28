@@ -779,6 +779,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             visit partners_path
 
             click_on 'Groups'
+            # Not scoped to `#nav-partner-groups`. main's flake fix (4c3b72875) wrapped this in that
+            # panel to pick the right "Edit" out of several tab panels rendered at once -- but the
+            # tabs became real URLs on this branch, so Groups is its own page, there is only one
+            # Edit on it, and the panel it named does not exist.
             assert page.has_content? existing_partner_group.name, wait: page_content_wait
 
             click_on 'Edit'

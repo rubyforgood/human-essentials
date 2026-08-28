@@ -70,7 +70,9 @@ RSpec.describe "Donations", type: :request do
         end
 
         context "when given a misc donation" do
-          let(:full_comment) { Faker::Lorem.paragraph }
+          # Comment must be longer than the 140 characters the Comments column
+          # truncates at, so that asserting the full comment is absent is meaningful.
+          let(:full_comment) { Faker::Lorem.paragraph_by_chars(number: 200) }
           let(:donation) { create(:donation, source: "Misc. Donation", comment: full_comment) }
 
           it "should display Misc Donation and a truncated comment" do
@@ -79,8 +81,10 @@ RSpec.describe "Donations", type: :request do
             # Scope to the Details column: the Comments column legitimately shows more of the
             # comment (it truncates at 140), so a whole-row search would find the full text.
             row = Nokogiri::HTML(subject.body).css("table tbody tr").find { |tr| tr.text.include?("Misc. Donation") }
+            # Source is the second column, not the first: main moved Date to the front (#5599).
+            # Details is still the third, because only those two swapped.
             details = row.css("td")[2].text.strip
-            expect(row.css("td")[0].text.strip).to eq("Misc. Donation")
+            expect(row.css("td")[1].text.strip).to eq("Misc. Donation")
             expect(details).to eq(short_comment)
             expect(details).not_to eq(full_comment)
           end
@@ -248,6 +252,44 @@ RSpec.describe "Donations", type: :request do
         edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
         expect(edit).to be_present
         expect(response.body).not_to match(/reactivate these items:/)
+      end
+
+      # main's coverage for the Drive Participant field (#5598), rewritten for the detail list this
+      # page renders. main asserted a <table> of <th>/<td>; the migrated page states a donation's
+      # details as a <dl>, so the assertion follows the <dt> to its <dd> instead of matching a
+      # column index. The empty value is "—", the convention in sixteen other places, where main's
+      # helper returned the string "N/A".
+      def detail_value(body, label)
+        page = Nokogiri::HTML(body)
+        term = page.css("dt").find { |dt| dt.text.strip == label }
+        term && term.parent.at_css("dd").text.strip
+      end
+
+      context "with a donation from a product drive participant" do
+        let(:participant) do
+          create(:product_drive_participant, business_name: "Acme Diaper Drive", organization: organization)
+        end
+        let!(:drive_donation) do
+          create(:product_drive_donation, :with_items, item: item,
+            product_drive_participant: participant, organization: organization)
+        end
+
+        it "names the participant, after the donation site" do
+          get donation_path(id: drive_donation.id)
+
+          expect(detail_value(response.body, "Drive participant")).to eq("Acme Diaper Drive")
+
+          labels = Nokogiri::HTML(response.body).css("dt").map { |dt| dt.text.strip }
+          expect(labels.index("Drive participant")).to eq(labels.index("Donation site") + 1)
+        end
+      end
+
+      context "with a donation that has no product drive participant" do
+        it "shows the empty marker rather than a value" do
+          get donation_path(id: donation.id)
+
+          expect(detail_value(response.body, "Drive participant")).to eq("—")
+        end
       end
 
       context "with an inactive item - non organization admin user" do

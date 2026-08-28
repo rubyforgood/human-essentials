@@ -1,0 +1,23 @@
+<%#
+  Starts a background CSV download, when `handle_csv_export` has redirected here with the flag set.
+
+  A big export used to look like a hung page: the browser sat on the request with nothing to show
+  for it. main fixed that by fetching the file in the background and announcing it -- the fetch is
+  `csv_download_controller`, which is kept as it came, and the announcement was `toastr`, which is
+  not.
+
+  `toastr` could not come across. The essentials layouts load *only* `tailwind.css` -- Bootstrap,
+  AdminLTE and the Font Awesome CDNs are deliberately absent -- and there is no toastr CSS anywhere
+  in the Tailwind build, so `toastr.info(...)` would inject markup that nothing styles. Not merely
+  off-brand: invisible. The message is a `flash[:notice]` now and the flash strip draws it, which is
+  the component this design system already has for saying something happened.
+
+  `hidden` rather than Bootstrap's `d-none`, which is defined nowhere here and renders as nothing --
+  meaning main's element was a visible empty div on a design-system page.
+%>
+<% if flash[:trigger_csv_download] %>
+  <% csv_url = "#{request.path}.csv#{"?#{request.query_string}" if request.query_string.present?}" %>
+  <div hidden
+       data-controller="csv-download"
+       data-csv-download-url-value="<%= csv_url %>"></div>
+<% end %>

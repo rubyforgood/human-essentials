@@ -21,9 +21,10 @@ Rails.application.configure do
   config.hosts << ".app.github.dev"
 
   # Reaching the dev server through a proxy -- a TLS-terminating tunnel like localhost.run,
-  # or a port forward that changes the port -- means Rails cannot always work out the scheme
-  # the browser actually used. It then computes a base_url that disagrees with the Origin
-  # header and CSRF rejects every form, which surfaces as "Your session expired".
+  # GitHub Codespaces port forwarding, or a port forward that changes the port -- means Rails
+  # cannot always work out the scheme the browser actually used. It then computes a base_url
+  # that disagrees with the Origin header and CSRF rejects every form, which surfaces as
+  # "Your session expired".
   #
   # Relaxing the ORIGIN check (not the token) is the right lever: the token is the actual
   # defence, and the origin comparison is the part the proxy breaks. Forcing assume_ssl was

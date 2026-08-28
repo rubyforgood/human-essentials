@@ -1,52 +1,51 @@
 # == Schema Information
 #
-# Table name: kits
+# Table name: items
 #
-#  id                  :bigint           not null, primary key
-#  active              :boolean          default(TRUE)
-#  name                :string           not null
-#  value_in_cents      :integer          default(0)
-#  visible_to_partners :boolean          default(TRUE), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organization_id     :integer          not null
+#  id                           :integer          not null, primary key
+#  active                       :boolean          default(TRUE)
+#  additional_info              :text
+#  barcode_count                :integer
+#  distribution_quantity        :integer
+#  name                         :string
+#  on_hand_minimum_quantity     :integer          default(0), not null
+#  on_hand_recommended_quantity :integer
+#  package_size                 :integer
+#  partner_key                  :string
+#  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
+#  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  item_category_id             :integer
+#  kit_id                       :integer
+#  organization_id              :integer
 #
-class Kit < ApplicationRecord
-  has_paper_trail
-  include Filterable
-  include Valuable
-
-  belongs_to :organization
-  has_one :kit_item, dependent: :restrict_with_exception
-
-  scope :active, -> { where(active: true) }
-  scope :alphabetized, -> { order(:name) }
+class Kit < Item
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
 
-  validates :name, presence: true
-  validates :name, uniqueness: { scope: :organization }
-
-  # @param inventory [View::Inventory]
-  # @return [Boolean]
-  def can_deactivate?(inventory = nil)
-    inventory ||= View::Inventory.new(organization_id)
-    inventory.quantity_for(item_id: kit_item.id).zero?
-  end
-
-  def deactivate
-    update!(active: false)
-    kit_item.update!(active: false)
+  # Kits are managed through the kits UI (deactivate/reactivate), not the normal
+  # item-deletion path.
+  def can_delete?(inventory = nil, kits = nil)
+    false
   end
 
   # Kits can't reactivate if they have any inactive items, because now whenever they are allocated
   # or deallocated, we are changing inventory for inactive items (which we don't allow).
   # @return [Boolean]
   def can_reactivate?
-    kit_item.line_items.joins(:item).where(items: { active: false }).none?
+    line_items.joins(:item).where(items: {active: false}).none?
   end
 
   def reactivate
     update!(active: true)
-    kit_item.update!(active: true)
+  end
+
+  private
+
+  # Kits default to a distribution quantity of 1 (a single kit), not 50.
+  def default_distribution_quantity
+    1
   end
 end

@@ -5,6 +5,11 @@
 # nothing there is used on a Tailwind page. When the last Bootstrap page is migrated,
 # UiHelper is deleted and these lose the `essentials_` prefix.
 module EssentialsUiHelper
+  # Flash entries that are signals rather than sentences, and so are not drawn by the flash strip.
+  # `handle_csv_export` sets `trigger_csv_download` to carry a boolean across its redirect; the
+  # strip renders every key it finds, so without this the page grew a message bar reading "true".
+  NON_MESSAGE_FLASH_KEYS = %w[trigger_csv_download].freeze
+
   # --- Buttons --------------------------------------------------------------
   #
   # One treatment per role. The variant carries the meaning, the size carries the

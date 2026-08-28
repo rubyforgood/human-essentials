@@ -15,6 +15,13 @@ module Exports
       ).order(created_at: :asc)
 
       @organization = organization
+      item_header_names = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+
+      @item_headers = if @organization.include_in_kind_values_in_exported_files
+        item_header_names.flat_map { |header| [header, "#{header} In-Kind Value"] }
+      else
+        item_header_names
+      end
     end
 
     def generate_csv
@@ -42,7 +49,7 @@ module Exports
 
     def headers
       # Build the headers in the correct order
-      base_headers + item_headers
+      base_headers + @item_headers
     end
 
     # Returns a Hash of keys to indexes so that obtaining the index
@@ -95,24 +102,6 @@ module Exports
       base_table.keys
     end
 
-    def item_headers
-      return @item_headers if @item_headers
-
-      item_names = Set.new
-
-      donations.each do |donation|
-        donation.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
-
-      @item_headers = @item_headers.flat_map { |header| [header, "#{header} In-Kind Value"] } if @organization.include_in_kind_values_in_exported_files
-
-      @item_headers
-    end
-
     def build_row_data(donation)
       row = base_table.values.map { |closure| closure.call(donation) }
       row += make_item_quantity_and_value_slots
@@ -128,7 +117,7 @@ module Exports
     end
 
     def make_item_quantity_and_value_slots
-      slots = Array.new(item_headers.size, 0)
+      slots = Array.new(@item_headers.size, 0)
       slots = slots.map.with_index { |value, index| index.odd? ? Money.new(0) : value } if @organization.include_in_kind_values_in_exported_files
       slots
     end

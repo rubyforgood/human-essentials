@@ -28,9 +28,14 @@
 
     <%= render "shared/essentials/card", title: "Details" do %>
       <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        <%# "Drive participant" is main's addition (#5598), in the same order it put it there:
+            after the donation site, before the storage location. The `.presence || "—"` below is
+            what renders it on a donation that came from anywhere else: the helper returns nil
+            rather than main's "N/A", so this field reads like the others. %>
         <% {"Date" => @donation.created_at.to_fs(:distribution_date),
             "Source" => @donation.source,
             "Donation site" => @donation.donation_site_view,
+            "Drive participant" => drive_participant_view(@donation),
             "Storage location" => @donation.storage_view}.each do |label, value| %>
           <div>
             <dt class="text-xs font-medium text-slate-500"><%= label %></dt>

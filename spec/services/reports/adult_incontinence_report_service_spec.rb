@@ -42,31 +42,28 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
       let!(:ai_concrete_3) { create(:item, name: "Adult Briefs (Small)", reporting_category: "adult_incontinence", organization: organization) }
       let!(:non_ai_concrete) { create(:item, name: "Baby Wipes", reporting_category: "other", organization: organization) }
 
-      # Create kits and configure their kit_items with concrete items
+      # Create kits and configure their contents with concrete items
       let!(:kit_1) do
-        kit = create(:kit, organization: organization)
-        kit.kit_item.update!(distribution_quantity: 1)
-        kit.kit_item.line_items = [create(:line_item, item: ai_concrete_1, quantity: 5)]
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
+        kit.line_items = [create(:line_item, item: ai_concrete_1, quantity: 5)]
         kit
       end
 
       let!(:kit_2) do
-        kit = create(:kit, organization: organization)
-        kit.kit_item.update!(distribution_quantity: 1)
-        kit.kit_item.line_items = [create(:line_item, item: ai_concrete_2, quantity: 5)]
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
+        kit.line_items = [create(:line_item, item: ai_concrete_2, quantity: 5)]
         kit
       end
 
       let!(:kit_4) do
-        kit = create(:kit, organization: organization)
-        kit.kit_item.update!(distribution_quantity: 1)
-        kit.kit_item.line_items = [create(:line_item, item: ai_concrete_3, quantity: 5)]
+        kit = create(:kit, organization: organization, distribution_quantity: 1)
+        kit.line_items = [create(:line_item, item: ai_concrete_3, quantity: 5)]
         kit
       end
 
       let!(:kit_3) do
         kit = create(:kit, organization: organization)
-        kit.kit_item.line_items = [create(:line_item, item: non_ai_concrete, quantity: 5)]
+        kit.line_items = [create(:line_item, item: non_ai_concrete, quantity: 5)]
         kit
       end
 
@@ -81,11 +78,11 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         # wipes distribution
         kit_distribution_3 = create(:distribution, organization: organization, issued_at: within_time)
 
-        create(:line_item, :distribution, quantity: 100, item: kit_1.kit_item, itemizable: kit_distribution_1)
-        create(:line_item, :distribution, quantity: 100, item: kit_2.kit_item, itemizable: kit_distribution_2)
-        create(:line_item, :distribution, quantity: 100, item: kit_4.kit_item, itemizable: kit_distribution_4)
+        create(:line_item, :distribution, quantity: 100, item: kit_1, itemizable: kit_distribution_1)
+        create(:line_item, :distribution, quantity: 100, item: kit_2, itemizable: kit_distribution_2)
+        create(:line_item, :distribution, quantity: 100, item: kit_4, itemizable: kit_distribution_4)
         # wipes kit no ai items
-        create(:line_item, :distribution, quantity: 100, item: kit_3.kit_item, itemizable: kit_distribution_3)
+        create(:line_item, :distribution, quantity: 100, item: kit_3, itemizable: kit_distribution_3)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 

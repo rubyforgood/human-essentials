@@ -47,6 +47,17 @@ RSpec.describe "Events", type: :request do
         expect(response.body).not_to include("99<br>")
       end
 
+      it "renders kit allocation events linking to the kit" do
+        content_item = create(:item, organization: organization, name: "KitContent")
+        kit = create_kit(organization: organization, line_items_attributes: [{item_id: content_item.id, quantity: 1}])
+        TestInventory.create_inventory(organization, {storage_location.id => {content_item.id => 10}})
+        KitAllocateEvent.publish(kit, storage_location.id, 2)
+
+        subject
+        expect(response).to be_successful
+        expect(response.body).to include(kit_path(kit.id))
+      end
+
       it "should show items in alphabetical order" do
         item_1 = create(:item, organization: organization, name: "Zebra")
         item_2 = create(:item, organization: organization, name: "apple")

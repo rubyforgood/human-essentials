@@ -8,16 +8,16 @@
       <%= f.input :value_in_dollars, label: "Value for kit", input_html: {min: 0} %>
     <% end %>
 
-    <%= fields_for @kit.kit_item do |ff| %>
-      <%= render "shared/essentials/card", title: "Items in this kit", padded: false do %>
-        <%= render "line_items/line_item_table", form: ff, id: "kit_line_items", noun: "kit" %>
-      <% end %>
+    <%# The kit's own builder, not `fields_for @kit.kit_item`: main made Kit an STI subclass of
+        Item, so a kit *is* the item and its line items hang off it directly. There is no nested
+        record left to open a scope for. %>
+    <%= render "shared/essentials/card", title: "Items in this kit", padded: false do %>
+      <%= render "line_items/line_item_table", form: f, id: "kit_line_items", noun: "kit" %>
     <% end %>
 
     <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
       You will not be able to change the composition of the kit once it is saved.
       Partner visibility and name can be changed later via the kit’s item.
-
     <% end %>
 
     <%= essentials_form_actions do %>

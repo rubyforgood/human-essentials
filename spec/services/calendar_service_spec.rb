@@ -92,7 +92,7 @@ RSpec.describe CalendarService do
       ["Newfoundland -03:30", "America/St_Johns"]]
 
     result = described_class.time_zones
-    expect(result.size).to eq(151)
+    expect(result.size).to eq(152)
     expect(result[0..11]).to eq(expected)
   end
 end

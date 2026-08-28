@@ -25,6 +25,8 @@ class AccountRequest < ApplicationRecord
 
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
+  validate :cannot_change_status_once_rejected,
+    :cannot_change_status_once_closed, on: :update
 
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
 
@@ -98,6 +100,18 @@ class AccountRequest < ApplicationRecord
     user = User.find_by(email: email)
     if user && (!organization || user.organization_id != organization.id)
       errors.add(:email, 'already used by an existing User')
+    end
+  end
+
+  def cannot_change_status_once_rejected
+    if status_changed? && status_was == "rejected"
+      errors.add(:status, "cannot be changed once rejected")
+    end
+  end
+
+  def cannot_change_status_once_closed
+    if status_changed? && status_was == "admin_closed"
+      errors.add(:status, "cannot be changed once closed by an admin")
     end
   end
 end

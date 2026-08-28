@@ -23,4 +23,5 @@
 #  organization_id              :integer
 #
 class ConcreteItem < Item
+  validates :reporting_category, presence: true
 end
