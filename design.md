@@ -962,15 +962,20 @@ sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be
 to the subtitle's baseline.
 
 <a id="radio-spacing"></a>
-**Radio and checkbox options are 32px rows with 8px between them** — a 40px pitch, set once on
+**Radio and checkbox options are 24px rows with 8px between them** — a 32px pitch, set once on
 `:essentials_collection`'s `item_wrapper_class`, so no page decides this for itself.
 
-They were **24px rows with a 0px gap**, flush against each other, in all 14 groups on the settings
-page and every other group in the app. That passes [2.5.8](#target-size) on size alone — the row is
-exactly the 24px minimum — and it is the floor of it with no separation at all, which is not where
-anyone else sits: **GOV.UK** pairs a 40px control with a 10px gap, **Material 3** asks for 48dp
-rows, **Apple's HIG** for 44pt. 32 and 8 clears the AA minimum in both dimensions and matches
-GOV.UK's rhythm without the density change a full 48px row would mean in this app.
+They were 24px rows with a **0px** gap, flush against each other, in every group in the app. That
+passes [2.5.8](#target-size) on size alone — the row is exactly the 24px minimum — and sits on its
+floor with no separation.
+
+**The gap is what buys the separation; do not inflate the row.** A first pass took the row to 32px
+as well, for a 40px pitch, on **GOV.UK**'s 40+10 and **Material 3**'s 48dp — and it was reported as
+too loose, correctly. Those two are the wrong comparators: GOV.UK sizes for a full-page public
+service form and Material for a touch list. The systems this app resembles agree with each other at
+24/8 — **Carbon** 24px rows with 8px between, **Ant Design** 8px between 16px controls,
+**Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
+gap was missing.
 
 <a id="one-page-wrapper"></a>
 **One `px-4 py-6 sm:px-6 lg:px-8` per page, and the header goes inside it.** The gap between the
@@ -2273,6 +2278,22 @@ The card is rendered `padded: false` so its body supplies no padding of its own,
 that drops to `pt-4` leaves its final field **1px** from the card's bottom edge against the 16px
 every band above it has. If a container's padding is the reason a child can skip its own, check
 that the container actually has some.
+
+<a id="cta-icons"></a>
+**Every action CTA carries a leading icon.** Measured across 39 screens in three roles: **27 of 27**
+page-header CTAs have one, and they agree on which — `bi-plus-lg` to create, `bi-upload` to import,
+`bi-download` to export. A create action anywhere else takes the same treatment: the users card's
+invite button was the one action button without one, and takes `bi-person-plus`, pairing with the
+`bi-person-dash` already used to remove a user.
+
+Two things are deliberately **not** CTAs and correctly have no icon: **pagination** controls, and
+**"View all …"** links, which are navigation rather than action and are consistent among themselves
+across five screens.
+
+<a id="inline-code"></a>
+**An inline literal is a tinted chip.** `<code>` had no styling at all, so the four substitutions in
+the email hints — `%{partner_name}` and friends — rendered as bare monospace mid-sentence and read
+as a templating bug that had leaked into the page rather than as something to type.
 
 <a id="form-section"></a>
 **A long form is banded the same way a long record is.** `shared/essentials/form_section` is the

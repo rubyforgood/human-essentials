@@ -5877,3 +5877,84 @@ two wrappers looked like one wrapper and something else. Matching the *gutter* r
 class string finds both shapes, and `shell-first-audit.rb` carries the check now so it is not a
 thing anyone has to remember.
 
+## 2026-08-28 — Icons that drew nothing, a spacing over-correction, and the CTA convention measured
+
+### The icons I "fixed" one commit earlier rendered nothing
+
+Reported as "weird squares" under the email fields, and that is exactly what they were: fourteen
+empty boxes. Adding the `bi-*` class to the **button** could never have worked — Trix sets
+`content: ""` on `.trix-button--icon::before` at `trix-toolbar .trix-button--icon` specificity,
+which outranks `.bi-type-bold::before`.
+
+**The spec passed the entire time.** It asserted `btn.className.includes("bi-type-bold")` and that
+the computed font family was `bootstrap-icons`. Both were true. Neither is evidence that a glyph was
+painted. This is the **third** time on this branch that a passing assertion has hidden an invisible
+feature — after the toastr message below the fold and the frozen-column shadow that drew nothing —
+and the shape is identical every time: the assertion checks the *declared* state, not the result.
+
+What found it was counting painted pixels inside each button's bounding box: **0 of 14**. The spec
+reads computed `content` now and rejects both `none` and the empty string.
+
+**The fix is an `<i class="bi-…">` child**, which is what design.md says an icon is anyway. There is
+no competing rule on a child element, so the specificity fight disappears rather than being won.
+
+### Radio spacing: I over-corrected, and the comparators were wrong
+
+Yesterday's change took the row from 24px to 32px *and* added an 8px gap, for a 40px pitch, citing
+GOV.UK (40+10) and Material 3 (48dp). Reported as far too much, and that is right.
+
+**Those were the wrong systems to copy.** GOV.UK sizes for a full-page public-service form used once
+by people who may struggle with small targets; Material 3's 48dp is a touch list row. This app is a
+dense back-office tool with 38px controls. The systems it actually resembles agree closely:
+**Carbon** 24px rows with 8px between, **Ant Design** 8px between 16px controls, **Atlassian** 8px,
+**Bootstrap 5** a 24px `.form-check` row.
+
+**24px row, 8px gap.** The row was already exactly WCAG 2.5.8's minimum, so the gap was the only
+thing missing; inflating a compliant row bought nothing and cost the density of every form in the
+app. General lesson worth keeping: **pick the comparator that shares your context before you copy
+its numbers.**
+
+### Do all CTAs have leading icons? Measured rather than answered
+
+39 screens, three roles, every button in a page header, card header or card footer. **27 of 27**
+page-header CTAs carry one and agree on which: `bi-plus-lg` create, `bi-upload` import,
+`bi-download` export. So the convention is real and near-total, and the honest answer to the
+question is "yes, with one exception" — the users card's **Invite user**, which now takes
+`bi-person-plus`, pairing with the `bi-person-dash` already used to remove a user.
+
+**Two things were left without icons on purpose.** Pagination controls are not CTAs. And "View all
+…" links are navigation rather than action; five of them exist and none has an icon, so they are
+consistent with each other — though they are split between `essentials_link_button` and a plain text
+link, which is a separate inconsistency, noted and not fixed here.
+
+### The address was four placeholders
+
+Street, City, State and Zipcode carried their names only as `placeholder` and `aria-label`. A
+placeholder is not a label: it disappears the moment anything is typed, which is precisely when
+someone wants to check what a box is for. Every other address in the app labels each field, so this
+now does too, with State and Zip sharing a row — they were each running the full 726px width of the
+card, which is a lot of box for a two-letter state code.
+
+### Bottom padding is a boundary to chrome, not a gap between peers
+
+"No padding below the save button" measured as **24px** — and 24px is the design system's spacing
+unit, so the page was internally consistent. But the thing below it is the footer's hairline rule,
+which is chrome, and a boundary to chrome should be louder than the rhythm inside the content. 24px
+became 48 by adding `pb-6` to `<main>` in both shells: one place, every page, rather than 31
+templates.
+
+### The `%{…}` tokens looked like a bug because nothing styled them
+
+`<code>` had no rule in this design system at all, so the four email substitutions rendered as bare
+monospace mid-sentence. A tinted chip is what every documentation UI uses to say "this is a literal
+you can type", and it is now defined once.
+
+### Custom request units: preview built, decision open
+
+`docs/mockups/request-units.html`. The shipped field is a select2 in free-tagging mode with its
+dropdown hidden, so it looks like a select, opens nothing, and never says the interaction is "type,
+then comma". Measured: the chip remove target is **9x21** against WCAG 2.5.8's 24x24, and the chips
+are select2's own `#aaa`/`#e4e4e4`, which appear nowhere else here. Three options with costs;
+**A recommended** — same interaction, design system chips, a hint that says what to do, and select2
+dropped from this field. Not built pending a choice.
+

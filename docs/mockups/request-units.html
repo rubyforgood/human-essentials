@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Custom request units — options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F8FAFC;--line:#E2E8F0;--ink:#0F172A;
+    --ink-mid:#475569;--ink-soft:#64748B;--brand:#4F46E5;--brand-50:#EEF2FF;--brand-700:#4338CA;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--ok:#0F6E4F;--ok-soft:#E9F5EF;
+    --shadow:0 1px 2px rgba(15,23,42,.05);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;
+    padding:48px 24px 96px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--ink-mid);max-width:70ch;margin:0 0 8px}
+  h2{font-size:19px;margin:44px 0 6px;letter-spacing:-.01em}
+  h2 .tag{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+    padding:3px 8px;border-radius:999px;vertical-align:middle;margin-left:8px}
+  .rec{background:var(--ok-soft);color:var(--ok)}
+  .now{background:var(--defect-soft);color:var(--defect)}
+  .note{color:var(--ink-mid);max-width:74ch;margin:0 0 16px;font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:20px;max-width:680px}
+  label.lbl{display:block;font-size:14px;font-weight:500;color:#334155;margin-bottom:2px}
+  .hint{font-size:12px;color:var(--ink-soft);margin:2px 0 8px}
+  .field{width:100%;border:1px solid #CBD5E1;border-radius:8px;padding:8px 12px;font:14px Figtree,sans-serif;
+    background:#fff;color:var(--ink)}
+  .chipbox{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid #CBD5E1;
+    border-radius:8px;padding:6px 8px;background:#fff;min-height:38px}
+  .chipbox:focus-within{border-color:#6366F1;box-shadow:0 0 0 2px rgba(99,102,241,.3)}
+  .chip{display:inline-flex;align-items:center;gap:4px;background:var(--brand-50);color:var(--brand-700);
+    border:1px solid #C7D2FE;border-radius:6px;padding:2px 4px 2px 8px;font-size:13px;font-weight:500}
+  .chip button{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:4px;color:#6366F1;font-size:14px;line-height:1}
+  .chip button:hover{background:#E0E7FF;color:#3730A3}
+  .chipinput{border:0;outline:0;flex:1;min-width:120px;font:14px Figtree,sans-serif;padding:4px 2px}
+  .old{display:inline-flex;flex-wrap:wrap;gap:4px;border:1px solid #aaa;border-radius:4px;padding:4px;
+    background:#fff;width:100%;min-height:34px;align-items:center}
+  .oldchip{display:inline-flex;align-items:center;gap:3px;border:1px solid #aaa;background:#e4e4e4;
+    border-radius:4px;padding:0 5px;font-size:13px;color:#444}
+  .oldchip i{font-style:normal;color:#999;cursor:pointer}
+  .row{display:flex;gap:8px;align-items:flex-end}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;
+    padding:8px 14px;font-size:14px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:inherit}
+  .btn-sec{border-color:#CBD5E1;background:#fff;color:#334155}
+  .btn-sec:hover{background:#F8FAFC}
+  .btn-pri{background:var(--brand);color:#fff}
+  ul.units{list-style:none;margin:10px 0 0;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  ul.units li{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:8px 12px;font-size:14px;border-bottom:1px solid var(--line)}
+  ul.units li:last-child{border-bottom:0}
+  ul.units li.fixed{color:var(--ink-soft);background:var(--sunken)}
+  .x{all:unset;cursor:pointer;width:28px;height:28px;border-radius:6px;display:inline-flex;
+    align-items:center;justify-content:center;color:#64748B}
+  .x:hover{background:#F1F5F9;color:#B4232E}
+  .checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;margin-top:8px}
+  .check{display:flex;align-items:center;gap:8px;min-height:24px;font-size:14px}
+  .check input{width:16px;height:16px;accent-color:var(--brand)}
+  table{border-collapse:collapse;width:100%;max-width:900px;margin-top:14px;font-size:14px}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:13px;color:#334155}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Custom request units</h1>
+<p class="lede">Reported as "not intuitive". Three options, and what each one costs. The field stores
+a list of unit names — <code>pack</code>, <code>box</code>, <code>flat</code> — that partners can
+then request items in. The wire format is a multi-value parameter either way, so all three write
+the same thing.</p>
+
+<h2>What is there now <span class="tag now">shipped</span></h2>
+<p class="note">A select2 in free-tagging mode with <code>select2-hide-dropdown-value: true</code>.
+It looks like a select, so the first thing you do is click it expecting a list — and nothing opens.
+Nothing on screen says the interaction is "type a word, then press comma or Tab". The chips are
+select2's own <code>#aaa</code> borders and grey fill, which appear nowhere else in this design
+system, and the remove target measures <strong>9&times;21</strong> — WCAG 2.5.8 asks for 24&times;24, so it fails on both axes.</p>
+<div class="card">
+  <label class="lbl">Custom request units</label>
+  <p class="hint">Use the singular form, so pack rather than packs. A default "unit" entry is always provided.</p>
+  <div class="old">
+    <span class="oldchip"><i>&times;</i>pack</span>
+    <span class="oldchip"><i>&times;</i>box</span>
+    <span class="oldchip"><i>&times;</i>flat</span>
+  </div>
+</div>
+
+<h2>Option A — the same tag input, wearing the design system <span class="tag rec">recommended</span></h2>
+<p class="note">Keeps the interaction and fixes what makes it unreadable: the box is framed like every
+other input, the chips are the app's brand-50 token, the remove control is a real 20px button inside a
+24px row, and <strong>the hint says what to do</strong>. The caret sits after the last chip so it reads
+as a field you type into, not a select you open. This is the GitHub / Linear / Jira labels pattern, and
+it is what most people have seen before.</p>
+<div class="card">
+  <label class="lbl" for="a">Custom request units</label>
+  <p class="hint">Type a unit and press Enter. Use the singular — <em>pack</em>, not <em>packs</em>.
+    Every partner can always request a plain "unit".</p>
+  <div class="chipbox">
+    <span class="chip">pack <button aria-label="Remove pack">&times;</button></span>
+    <span class="chip">box <button aria-label="Remove box">&times;</button></span>
+    <span class="chip">flat <button aria-label="Remove flat">&times;</button></span>
+    <input class="chipinput" id="a" placeholder="Add a unit…">
+  </div>
+</div>
+
+<h2>Option B — field and button, with the units listed below</h2>
+<p class="note">No hidden interaction at all: a text box, an <em>Add</em> button, and the units as a
+list you can remove from. The most explicit of the three and the easiest to operate with a keyboard or
+a screen reader — every control is a real control with a real name. It costs vertical space, and it is
+slower for someone entering four units in a row.</p>
+<div class="card">
+  <label class="lbl" for="b">Custom request units</label>
+  <p class="hint">Use the singular — <em>pack</em>, not <em>packs</em>.</p>
+  <div class="row">
+    <input class="field" id="b" placeholder="e.g. pack">
+    <button class="btn btn-sec" type="button">Add</button>
+  </div>
+  <ul class="units">
+    <li class="fixed">unit <span style="font-size:12px">always available</span></li>
+    <li>pack <button class="x" aria-label="Remove pack">&times;</button></li>
+    <li>box <button class="x" aria-label="Remove box">&times;</button></li>
+    <li>flat <button class="x" aria-label="Remove flat">&times;</button></li>
+  </ul>
+</div>
+
+<h2>Option C — common units as checkboxes, plus free text</h2>
+<p class="note">Treats this as what it usually is: picking from a short known set. Nothing to type for
+the common case, and no way to end up with <em>packs</em>, <em>Pack</em> and <em>pack</em> as three
+different units — which the free-text options both allow. The cost is that the list of "common" units
+is a judgement someone has to make and maintain, and anything outside it still needs the text field,
+so there are two ways to do one thing.</p>
+<div class="card">
+  <span class="lbl">Custom request units</span>
+  <p class="hint">Pick the units your partners order in. A plain "unit" is always available.</p>
+  <div class="checks">
+    <label class="check"><input type="checkbox" checked> pack</label>
+    <label class="check"><input type="checkbox" checked> box</label>
+    <label class="check"><input type="checkbox" checked> flat</label>
+    <label class="check"><input type="checkbox"> case</label>
+    <label class="check"><input type="checkbox"> bundle</label>
+    <label class="check"><input type="checkbox"> bale</label>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <div style="flex:1">
+      <label class="lbl" for="c" style="font-weight:400;font-size:13px">Something else</label>
+      <input class="field" id="c" placeholder="e.g. carton">
+    </div>
+    <button class="btn btn-sec" type="button">Add</button>
+  </div>
+</div>
+
+<h2>How they compare</h2>
+<table>
+  <tr><th></th><th>Now</th><th>A</th><th>B</th><th>C</th></tr>
+  <tr><td>Says what to do</td><td>no</td><td>yes, in the hint</td><td>yes, by construction</td><td>yes, by construction</td></tr>
+  <tr><td>Remove target</td><td>9&times;21 — fails 2.5.8</td><td>20px in a 24px row</td><td>28&times;28</td><td>24px label row</td></tr>
+  <tr><td>Chip styling</td><td>select2's, used nowhere else</td><td>design system token</td><td>n/a</td><td>n/a</td></tr>
+  <tr><td>Keyboard</td><td>select2's own handling</td><td>Enter to add, Backspace to remove</td><td>plain controls</td><td>plain controls</td></tr>
+  <tr><td>Prevents near-duplicates</td><td>no</td><td>no</td><td>no</td><td>for the listed ones</td></tr>
+  <tr><td>Vertical space at 3 units</td><td>~38px</td><td>~38px</td><td>~180px</td><td>~150px</td></tr>
+  <tr><td>Drops select2</td><td>—</td><td>yes</td><td>yes</td><td>yes</td></tr>
+</table>
+<p class="note" style="margin-top:18px"><strong>Recommendation: A.</strong> The interaction is not the
+problem — the absence of any cue that it <em>is</em> an interaction is, along with borrowed styling and
+a remove target under the minimum. A fixes all three, keeps the field one row tall, and drops a select2
+dependency on this field. B is the right answer if this should be operable without any convention
+knowledge at all; C only if constraining the vocabulary is worth maintaining a list.</p>
+
+</div>
+</body>
+</html>

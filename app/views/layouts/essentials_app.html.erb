@@ -24,7 +24,10 @@
       <div class="flex min-w-0 flex-1 flex-col">
         <%= render "layouts/essentials_topbar" %>
 
-        <main id="main-content" tabindex="-1" class="flex-1">
+        <%# `pb-6` on top of the page wrapper's own: the footer is chrome behind a hairline rule, not
+            another block in the stack, so the 24px the design system puts between peers reads tight
+            against it. 48px total below the last control. %>
+        <main id="main-content" tabindex="-1" class="flex-1 pb-6">
           <%= render "shared/essentials/flash" %>
           <%# Beside the flash rather than inside one view: the download is started by a flag on the
               flash, so any page that redirects through `handle_csv_export` gets it. main rendered

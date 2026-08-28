@@ -594,6 +594,24 @@ reader can jump to it.
 
 ### Organization settings looks different
 
+**The text editor's buttons had no icons at all** for a few hours between two commits -- fourteen
+empty squares above each email box. Fixed; they are the same icons as the rest of the app.
+
+**The address is labelled again.** Street, City, State and Zip each have a visible label, like every
+other address in the app. They used to show their name only as grey text inside the box, which
+vanished as soon as you typed. State and Zip now share a line instead of each running the full width
+of the card.
+
+**The Yes/No options are a little tighter than they were yesterday.** They went from too close
+together to too far apart in one step; they are now 8px apart, which is what Carbon, Ant Design,
+Atlassian and Bootstrap all use for the same control.
+
+**`%{partner_name}` and the other placeholders in the email hints are now grey chips**, so they read
+as something you can type rather than as a bug.
+
+**There is more room at the foot of every page**, between the last thing on it and the grey footer
+bar.
+
 **The sections are banded now.** Each heading -- *Basic information*, *Storage*, *Emails* and the
 rest -- sits on a pale strip running the full width of the card, the same way the sections on your
 organization page do. Before, each one had a grey line that started halfway across, level with the

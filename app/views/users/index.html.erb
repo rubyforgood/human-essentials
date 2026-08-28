@@ -14,7 +14,7 @@
         subtitle: "Invite someone to help run #{current_organization.name}, or remove their access." %>
 
   <%= render "shared/essentials/card", padded: false,
-        footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user"}) : nil) do %>
+        footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user", icon: "user-plus"}) : nil) do %>
     <% if @users.any? %>
       <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">

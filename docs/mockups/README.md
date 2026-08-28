@@ -62,6 +62,7 @@ Chromium's default 300px that way.
 
 | Mockup | Question it was made to answer | Outcome |
 | --- | --- | --- |
+| `request-units.html` | The custom request units field is a select2 free-tag input with its dropdown hidden, reported as not intuitive. What should it be? | **Awaiting a decision.** Three options against the shipped field, which measured a **9&times;21** remove target against WCAG 2.5.8's 24 and used select2's own `#aaa`/`#e4e4e4` chips. A recommended: same interaction, design system chips, and a hint that says "type a unit and press Enter". |
 | `page-actions-options.html` | Where does a tab's action belong, and how many buttons may a page header carry? | **Option A chosen**: tabs became real URLs and the primary action follows the tab. |
 | `reports-options.html` | How much should a reports hub card carry, and what does an index page look like once its summary report is folded into it? | **V2 chosen**, without the per-row icons; `<tfoot>` totals dropped. Built on `design-preview-reports-hub`. |
 | `date-picker-options.html` | The Litepicker popup looks foreign to the app. What is the industry-standard simple date range picker for the design system? | **Option B chosen**, keeping the wire format: a preset `<select>` with two native date inputs behind "Custom". Litepicker and its two CDN pins removed. Later: the Apply button was removed, out-of-order dates reorder themselves, and the trigger shows US short dates. |

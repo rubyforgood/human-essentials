@@ -136,27 +136,6 @@ RSpec.describe "Page layout", type: :system, js: true do
       expect(bands.map { |b| b["fullWidth"] }).to all(be true)
     end
 
-    # 24px rows flush against each other before: the floor of WCAG 2.5.8 with no separation.
-    # GOV.UK pairs a 40px control with a 10px gap, Material 3 asks 48dp, Apple 44pt.
-    it "gives radio options a 32px row and 8px between them" do
-      rows = page.evaluate_script(<<~JS)
-        (() => {
-          const groups = {};
-          document.querySelectorAll("section.card-surface input[type=radio]")
-            .forEach(r => (groups[r.name] = groups[r.name] || []).push(r));
-          return Object.values(groups).map(els => {
-            const rects = els.map(e => e.parentElement.getBoundingClientRect())
-                             .sort((a, z) => a.top - z.top);
-            return { h: Math.round(rects[0].height),
-                     gap: rects.length > 1 ? Math.round(rects[1].top - rects[0].bottom) : null };
-          });
-        })()
-      JS
-      expect(rows.length).to be >= 10
-      expect(rows.map { |r| r["h"] }).to all(be >= 32)
-      expect(rows.map { |r| r["gap"] }).to all(eq(8))
-    end
-
     # The field was 44px wide with a 92px placeholder, so "Deadline day" was cut off mid-word.
     # Placeholder text does not affect scrollWidth, so it is measured against the content box.
     it "leaves room for every placeholder it sets" do
@@ -180,6 +159,9 @@ RSpec.describe "Page layout", type: :system, js: true do
     # Trix draws its own icons as SVG data-URIs. This app retired Font Awesome so it would have
     # one icon set; the toolbar is Bootstrap Icons like everything else.
     it "styles the rich text toolbar like the rest of the app" do
+      # `evaluate_script` does not retry, and the toolbar is enhanced by a Stimulus
+      # controller after load -- so wait on the DOM first or this races under load.
+      expect(page).to have_css("trix-toolbar i.bi-type-bold", visible: :all)
       toolbar = page.evaluate_script(<<~JS)
         (() => {
           const btn = document.querySelector("trix-toolbar .trix-button--icon-bold");
@@ -187,8 +169,8 @@ RSpec.describe "Page layout", type: :system, js: true do
           const r = btn.getBoundingClientRect();
           const grp = btn.closest(".trix-button-group");
           return { w: Math.round(r.width), h: Math.round(r.height),
-                   bootstrapIcon: btn.className.includes("bi-type-bold"),
-                   trixSvg: getComputedStyle(btn, "::before").backgroundImage,
+                   // The class is on the `<i>` child, not the button.
+                   bootstrapIcon: !!btn.querySelector("i.bi-type-bold"),
                    glyphFont: getComputedStyle(btn, "::before").fontFamily,
                    groupRadius: getComputedStyle(grp).borderRadius };
         })()
@@ -197,9 +179,59 @@ RSpec.describe "Page layout", type: :system, js: true do
       expect(toolbar["w"]).to eq(32)
       expect(toolbar["h"]).to eq(32)
       expect(toolbar["bootstrapIcon"]).to be true
-      expect(toolbar["trixSvg"]).to eq("none")
-      expect(toolbar["glyphFont"]).to include("bootstrap-icons")
       expect(toolbar["groupRadius"]).to eq("8px")
+    end
+
+    # This assertion exists because the first version of the one above passed while every icon
+    # rendered *nothing*. It checked the class and the font family, and both were correct: the
+    # class was on the button and `bootstrap-icons` was loaded. What it did not check is whether a
+    # glyph came out -- Trix sets `content: ""` on `.trix-button--icon::before` at a specificity
+    # that outranks `.bi-x::before`, so the button drew fourteen empty squares. Third time a
+    # passing spec has hidden an invisible feature on this branch.
+    it "actually renders a glyph in every toolbar button" do
+      # `evaluate_script` does not retry, and the toolbar is enhanced by a Stimulus
+      # controller after load -- so wait on the DOM first or this races under load.
+      expect(page).to have_css("trix-toolbar i.bi-type-bold", visible: :all)
+      glyphs = page.evaluate_script(<<~JS)
+        [...document.querySelector("trix-toolbar").querySelectorAll(".trix-button--icon")].map(b => {
+          const i = b.querySelector("i");
+          return { hasIcon: !!i && /\\bbi-/.test(i.className),
+                   content: i ? getComputedStyle(i, "::before").content : null,
+                   trixPseudo: getComputedStyle(b, "::before").content };
+        })
+      JS
+      expect(glyphs.length).to eq(14)
+      expect(glyphs.map { |g| g["hasIcon"] }).to all(be true)
+      # A real codepoint, not `none` and not the empty string Trix would leave behind.
+      expect(glyphs.map { |g| g["content"] }).to all(satisfy { |c| c.present? && c != "none" && c != '""' })
+      expect(glyphs.map { |g| g["trixPseudo"] }).to all(eq("none"))
+    end
+
+    # 24px row and 8px gap. A first pass took the row to 32 as well, on GOV.UK's and Material's
+    # numbers, and that was too loose -- Carbon, Ant, Atlassian and Bootstrap all sit at 24/8.
+    it "spaces radio options 24/8 rather than 32/8" do
+      rows = page.evaluate_script(<<~JS)
+        (() => {
+          const g = {};
+          document.querySelectorAll("section.card-surface input[type=radio]")
+            .forEach(r => (g[r.name] = g[r.name] || []).push(r));
+          return Object.values(g).map(els => {
+            const rr = els.map(e => e.parentElement.getBoundingClientRect()).sort((a, z) => a.top - z.top);
+            return { h: Math.round(rr[0].height),
+                     gap: rr.length > 1 ? Math.round(rr[1].top - rr[0].bottom) : null };
+          });
+        })()
+      JS
+      expect(rows.map { |r| r["h"] }).to all(eq(24))
+      expect(rows.map { |r| r["gap"] }).to all(eq(8))
+    end
+
+    # Placeholder-only address fields: the label vanishes the moment anything is typed.
+    it "gives every address field a visible label" do
+      %w[street city state zipcode].each do |f|
+        id = "organization_#{f}"
+        expect(page).to have_css("label[for='#{id}']", visible: :all), "#{f} has no visible label"
+      end
     end
   end
 end

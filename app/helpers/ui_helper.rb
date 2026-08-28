@@ -35,6 +35,10 @@ module UiHelper
     "dot-circle-o" => "bi-record-circle", "sign-out" => "bi-box-arrow-right",
     "thumbs-o-up" => "bi-hand-thumbs-up", "undo" => "bi-arrow-counterclockwise",
     "eye" => "bi-eye", "user" => "bi-person", "users" => "bi-people", "close" => "bi-x-lg",
+    # Inviting someone is a create action, and every create CTA in the app carries a leading icon
+    # -- 27 of 27 in page headers. `bi-person-plus` rather than `bi-plus-lg` because the app already
+    # pairs it with `bi-person-dash` for removing a user.
+    "user-plus" => "bi-person-plus",
     "exclamation-circle" => "bi-exclamation-circle", "minus" => "bi-dash-lg"
   }.freeze
 
