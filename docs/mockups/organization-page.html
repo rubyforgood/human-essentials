@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The organization page was never really migrated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--sunken:#F3F3F8;--line:#E1E1EC;--line-soft:#EDEDF4;
+    --ink:#1A1B25;--ink-mid:#4A4C60;--ink-soft:#6E7085;--accent:#4338CA;--accent-soft:#EEEDFB;
+    --defect:#B4232E;--defect-soft:#FBEDEE;--fixed:#0F6E4F;--fixed-soft:#E9F5EF;
+    --s200:#E2E8F0;--s500:#62748E;--s900:#0F172B;--brand:#4F46E5;
+    --shadow:0 1px 2px rgba(26,27,37,.05),0 8px 24px -16px rgba(26,27,37,.25);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#131420;--surface:#1C1D2B;--sunken:#232436;--line:#33344A;--line-soft:#282A3D;
+    --ink:#ECECF5;--ink-mid:#B6B7C9;--ink-soft:#8D8FA5;--accent:#A7A1FA;--accent-soft:#262551;
+    --defect:#F2909A;--defect-soft:#3A1F26;--fixed:#6FCBA5;--fixed-soft:#16332A;--s200:#333549;
+    --s900:#ECECF5;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;
+       font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:64rem;margin:0 auto;padding:3.5rem 1.5rem 6rem}
+  .col{max-width:40rem}
+  h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(1.9rem,4.5vw,2.6rem);line-height:1.1;font-weight:700;letter-spacing:-.022em;margin:.5rem 0 0;text-wrap:balance}
+  h2{font-size:1.28rem;font-weight:600;margin:0}
+  h3{font-size:1rem;font-weight:600;margin:0}
+  p{margin:0 0 1rem}
+  .eyebrow{font-family:Archivo,sans-serif;font-size:.74rem;font-weight:600;text-transform:uppercase;
+           letter-spacing:.14em;color:var(--accent);margin:0}
+  .lede{font-size:1.14rem;color:var(--ink-mid);margin-top:1rem}
+  code,.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.855em;font-variant-numeric:tabular-nums}
+  .rule{height:1px;background:var(--line);border:0;margin:3rem 0}
+  .quote{border-left:3px solid var(--accent);padding:.1rem 0 .1rem 1rem;margin:1.5rem 0;color:var(--ink-mid);font-style:italic}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{text-align:left;padding:.4rem .55rem;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  thead th{font-family:Archivo,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  .flag{color:var(--defect);font-weight:600}
+  .opt{margin-top:2.5rem}
+  .opthead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .chip{font-family:Archivo,sans-serif;font-size:.67rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.08em;padding:.18rem .5rem;border-radius:.3rem;background:var(--accent-soft);color:var(--accent)}
+  .chip-rec{background:var(--fixed-soft);color:var(--fixed)}
+  .chip-no{background:var(--defect-soft);color:var(--defect)}
+  .note{font-size:.9rem;color:var(--ink-soft);margin:.4rem 0 0}
+  .rec{background:var(--fixed-soft);border:1px solid rgba(15,110,79,.25);border-radius:.75rem;padding:1.25rem 1.4rem;margin:1.5rem 0}
+  .rec h3{color:var(--fixed);margin-bottom:.5rem}
+  .demo{font-family:Archivo,sans-serif;margin:1.1rem 0;max-width:46rem}
+  .card{background:var(--surface);border:1px solid var(--s200);border-radius:1rem;box-shadow:var(--shadow);overflow:hidden}
+  .chead{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+         border-bottom:1px solid var(--s200);padding:16px 20px}
+  .chead h4{margin:0;font-size:.95rem;font-weight:600}
+  .cbody{padding:20px}
+  .btn{font-family:Archivo,sans-serif;font-size:.78rem;font-weight:600;padding:.4rem .75rem;
+       border-radius:.5rem;border:1px solid var(--s200);background:var(--surface);color:var(--ink-mid)}
+  /* the page as it is now */
+  .now .lab{font-size:.72rem;font-weight:600;color:var(--s500);margin:0}
+  .now .val{margin:0;font-size:.85rem}
+  .now hr{border:0;border-top:1px solid var(--s900);margin:14px 0}
+  .now .band{font-size:.82rem;font-weight:600;margin:0 0 6px}
+  .g24{margin-bottom:24px}.g36{margin-bottom:36px}.g45{margin-bottom:45px}.g61{margin-bottom:61px}
+  /* the proposal */
+  .dl{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin:0}
+  .dl>div{min-width:0}
+  .dt{font-size:.72rem;font-weight:600;color:var(--s500);margin:0}
+  .dd{margin:2px 0 0;font-size:.85rem}
+  .band-head{font-size:.8rem;font-weight:600;padding:12px 20px;border-bottom:1px solid var(--s200);
+             background:var(--sunken);margin:0}
+  .toggle{position:fixed;top:1rem;right:1rem;font-family:Archivo,sans-serif;font-size:.75rem;
+          background:var(--surface);border:1px solid var(--line);border-radius:.5rem;padding:.4rem .7rem;
+          color:var(--ink-mid);cursor:pointer;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+<button class="toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">theme</button>
+<div class="wrap">
+<div class="col">
+  <p class="eyebrow">Design preview &middot; 28 August 2026</p>
+  <h1>The organization page kept its old body</h1>
+  <p class="lede">Reported as looking unmigrated. The shell <em>was</em> migrated &mdash; page header,
+  card, no Bootstrap classes anywhere &mdash; and then the 28 fields inside it were left as they
+  were. That is why it passes every automated check and still looks wrong.</p>
+  <div class="quote">&ldquo;the organization view page is an issue, it looks like it was not migrated
+  at all. The one you get to from the organization button on the bottom left or from the avatar
+  dropdown&rdquo;</div>
+</div>
+
+<div class="col"><table>
+  <thead><tr><th>What is wrong</th><th>Measured on the live page</th></tr></thead>
+  <tbody>
+    <tr><td>Fields are flat <code>&lt;p&gt;</code> stacks</td><td><span class="num">28</span> label/value pairs, <span class="num flag">zero &lt;dl&gt;</span> &mdash; every other detail page in the app uses a <code>&lt;dl&gt;</code> grid</td></tr>
+    <tr><td>Dividers are nearly black</td><td><span class="num">6</span> <code>&lt;hr&gt;</code> at <code>oklch(0.208 0.042 265.755)</code> &mdash; <strong>slate-900</strong>. An unstyled <code>&lt;hr&gt;</code> inherits <code>currentColor</code> under preflight; the app's dividers are slate-200</td></tr>
+    <tr><td>No vertical rhythm</td><td><span class="num flag">7 different gaps</span> between fields: 24, 36, 44, 45, 54, 61, 93px</td></tr>
+    <tr><td>Title Case labels</td><td><span class="num flag">15 of 28</span> &mdash; "Default intake Storage Location", "Enable Partners to make child-based Requests?"</td></tr>
+    <tr><td>An icon on every field</td><td><span class="num">14</span> <code>fa_icon</code> calls, one per row &mdash; the thing design.md argues against for repeated rows</td></tr>
+    <tr><td>Invalid nesting</td><td><span class="num flag">2 empty &lt;p&gt;</span> the browser manufactured; <code>&lt;/address&gt;</code> is closed inside an <code>if</code> branch and there is a stray <code>&lt;/p&gt;</code></td></tr>
+  </tbody>
+</table></div>
+
+<div class="col">
+  <p class="note">The invalid nesting is the one to note: it is the same class of defect as the three
+  profile partials that closed wrappers they never opened, and it is invisible to every check the
+  app has &mdash; the page returns 200, carries no legacy class, and throws no JavaScript error.</p>
+</div>
+
+<hr class="rule">
+
+<div class="col"><h2>What it looks like now</h2>
+<p class="note">Four of the twenty-eight fields, at the app's own numbers &mdash; the gaps and the
+divider colour are the measured ones.</p></div>
+<div class="demo now">
+  <div class="card">
+    <div class="chead"><h4>Organization info</h4><span class="btn">Edit</span></div>
+    <div class="cbody">
+      <p class="band">Basic information</p>
+      <div class="g24"><p class="lab">Name</p><p class="val">Pawnee Diaper Bank</p></div>
+      <div class="g45"><p class="lab">URL</p><p class="val">&#128279; https://pawneediaperbank.org</p></div>
+      <hr>
+      <p class="band">Storage</p>
+      <div class="g61"><p class="lab">Default intake Storage Location (for Donations and Purchases)</p><p class="val">&#127970; Pawnee Main Warehouse</p></div>
+      <div class="g36"><p class="lab">Default Storage Location</p><p class="val">&#127970; Not defined</p></div>
+      <hr>
+      <p class="band">Partner approval process</p>
+      <div><p class="lab">Use one-step Partner invite and approve process?</p><p class="val">No</p></div>
+    </div>
+  </div>
+</div>
+<div class="col"><p class="note">One column at any width, an icon on most rows, a different gap under
+every field, and rules in near-black rather than the app's hairline.</p></div>
+
+<hr class="rule">
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>A &mdash; one card, bands, and a two-column list</h3>
+    <span class="chip chip-rec">Recommended</span></div>
+  <p>Keep it as one card. Each of the eight sections becomes a <strong>band</strong> &mdash; the same
+  tinted strip the line item card uses to separate a change of kind &mdash; and the fields inside it
+  become a <code>&lt;dl&gt;</code> on a two-column grid, which is what every other detail page in
+  this app already does. One gap number throughout, no icons, sentence case.</p>
+  <p class="note">Two columns halves the height: the card measures <span class="num">1,519px</span>
+  today. The long labels in the approval and request sections are the reason it is two and not
+  four.</p></div>
+  <div class="demo">
+    <div class="card">
+      <div class="chead"><h4>Organization info</h4><span class="btn">Edit</span></div>
+      <p class="band-head">Basic information</p>
+      <div class="cbody">
+        <div class="dl">
+          <div><p class="dt">Name</p><p class="dd">Pawnee Diaper Bank</p></div>
+          <div><p class="dt">NDBN membership ID</p><p class="dd">Not defined</p></div>
+          <div><p class="dt">URL</p><p class="dd">https://pawneediaperbank.org</p></div>
+          <div><p class="dt">Email</p><p class="dd">hello@pawneediaperbank.org</p></div>
+        </div>
+      </div>
+      <p class="band-head">Storage</p>
+      <div class="cbody">
+        <div class="dl">
+          <div><p class="dt">Default intake storage location</p><p class="dd">Pawnee Main Warehouse</p></div>
+          <div><p class="dt">Default storage location</p><p class="dd">&mdash;</p></div>
+        </div>
+      </div>
+      <p class="band-head">Partner approval process</p>
+      <div class="cbody">
+        <div class="dl">
+          <div><p class="dt">One-step partner invite and approve</p><p class="dd">No</p></div>
+          <div><p class="dt">Custom partner invitation message</p><p class="dd">&mdash;</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col"><p class="note">Blank values read <strong>&mdash;</strong> rather than "Not
+  defined", which is the convention in sixteen other places and stops the eye reading a sentence
+  where there is no value.</p></div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>B &mdash; a card per section</h3><span class="chip">8 cards</span></div>
+  <p>The eight sections become eight cards in the page's stack, each with its own heading, the way
+  the partner profile page lays out its sections. More structure, and each section can carry its own
+  action later &mdash; but eight cards for what is one record reads as eight separate things, and the
+  page becomes a long scroll of mostly two-field cards.</p></div>
+  <div class="demo">
+    <div class="card" style="margin-bottom:12px">
+      <div class="chead"><h4>Basic information</h4></div>
+      <div class="cbody"><div class="dl">
+        <div><p class="dt">Name</p><p class="dd">Pawnee Diaper Bank</p></div>
+        <div><p class="dt">URL</p><p class="dd">https://pawneediaperbank.org</p></div>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="chead"><h4>Storage</h4></div>
+      <div class="cbody"><div class="dl">
+        <div><p class="dt">Default intake storage location</p><p class="dd">Pawnee Main Warehouse</p></div>
+        <div><p class="dt">Default storage location</p><p class="dd">&mdash;</p></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="col"><div class="opthead"><h3>C &mdash; repair only</h3><span class="chip chip-no">Leaves the layout</span></div>
+  <p>Fix the broken nesting, recolour the six rules to the hairline, regularise the gaps to one
+  number and put the labels in sentence case &mdash; and leave the one-column <code>&lt;p&gt;</code>
+  stack alone. It is the smallest change and it fixes everything that is <em>broken</em>, but the
+  page still would not look like the rest of the app, which is what was reported.</p></div>
+</div>
+
+<hr class="rule">
+
+<div class="col">
+  <div class="rec">
+    <h3>What I would ship</h3>
+    <p style="margin:0"><strong>A.</strong> It is the layout the app already uses for a record's
+    details, it halves the page's height, and it fixes the broken markup on the way through. B is
+    defensible but turns one record into eight cards; C leaves the reported problem in place.</p>
+  </div>
+  <p class="note">Whichever you pick, the same three go with it: the six near-black rules become the
+  design system's hairline, the 15 Title Case labels become sentence case, and the per-row icons go
+  &mdash; design.md already argues that case for repeated rows.</p>
+</div>
+
+</div>
+</body>
+</html>
+
