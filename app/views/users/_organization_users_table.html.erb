@@ -11,7 +11,7 @@
   its frozen first column and its rail. See design.md.
 %>
 <%= render "shared/essentials/card", padded: false, title: "Users",
-      footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user to this organization"}) : nil) do %>
+      footer: (can_administrate? ? modal_button_to("#add-user-modal", {text: "Invite user"}) : nil) do %>
   <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="data-table">
       <caption>People who can sign in for this organization</caption>

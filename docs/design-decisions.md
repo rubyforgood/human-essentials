@@ -5736,3 +5736,53 @@ change and the assertions followed. Worth flagging plainly: this is a **user-vis
 made in the course of a markup fix, and the alternative — leaving Title Case in a table I had just
 rewritten, beside the sentence-case headers I had written in the same pass — would have been the
 inconsistency that this whole sweep is about.
+
+## 2026-08-28 — Button labels: two or three words, and the page supplies the rest
+
+Asked what the recommendation was for "Invite user to this organization", which reads as verbose.
+It is, and the measurement says so plainly: across the app's **41 distinct button labels**, 31 are
+one word, 26 are two, 12 are three, two are four — and that one is the only five. It was the longest
+authored label in the app.
+
+**The specific fault is not length, it is restating the context.** The button sits in the footer of
+a card titled *Users*, on a page whose `<h1>` is the organization's name. Three of its five words
+repeated what the screen said twice already. WCAG 2.4.4 is Link Purpose **In Context**, and the card
+and the heading are that context — the rule does not ask a label to stand alone with no surroundings.
+
+**Chosen: `Invite user`.** Verb plus object, the shape 26 other labels already use, and it reads
+consistently beside `Promote to admin` and `Demote to user` in the same table.
+
+**Rejected: `New user`.** It matches `New <noun>` exactly, which is the app's create convention, but
+the action sends an invitation email and leaves a pending record. The app's other `New X` buttons
+create the thing immediately. Matching the pattern would have cost the meaning.
+
+**Rejected: `Invite a user`.** Fine, just a word longer for nothing.
+
+**The context did not disappear, it moved.** The modal this opens is still headed "Invite a new user
+to {organization}" — which is where naming the organization tells you something, because by then you
+are committing to it. Short label, full context on arrival.
+
+`/admin/users` said `Invite a new user` for the same action, so the two disagreed. Both say
+`Invite user` now.
+
+### Four Title Case button labels, and the reason nothing caught them
+
+`page-audit.rb` enforces sentence case on **headings**, and buttons were never in its scope. So
+`New Announcement` (twice), `Add New Organization` and `New Donation` sat outside a normative rule
+for the length of the migration. `Add New Organization` became `New organization` rather than
+`Add new organization`: sentence case fixes the case, but `New <noun>` is what nine other create
+buttons say, and it was the only one carrying two verbs.
+
+**What was deliberately not done: 57 Title Case form field labels** in the partner profile forms.
+`design.md` covers labels under the same sentence-case rule, so these are genuinely non-conforming.
+They are excluded here because it is a large user-visible copy change across two parallel form trees
+that must stay in step — `profiles/edit/` and `profiles/step/` render the same fields — and because
+a copy change of that size is a decision to take on its own merits, not one to slip in behind a
+button label. Written down rather than left: an undocumented known leftover costs the next person an
+afternoon deciding whether it matters.
+
+**A dead reference found on the way**, left alone: `spec/support/pages/organization_dashboard_page.rb`
+defines `create_new_donation`, which clicks a "New Donation" link on the dashboard. Nothing calls the
+method and no such link exists in the view — stale on both sides, which is `dead-code.rb` territory
+rather than this change's.
+
