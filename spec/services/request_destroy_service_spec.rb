@@ -45,7 +45,7 @@ RSpec.describe RequestDestroyService, type: :service do
         expect(request.reload).to be_status_pending
       end
 
-      it 'should not send a email notification to the partner' do
+      it 'should not send an email notification to the partner' do
         expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
         subject
       end
@@ -69,7 +69,7 @@ RSpec.describe RequestDestroyService, type: :service do
         expect { subject }.to change { request.reload.discard_reason }.from(nil).to(reason)
       end
 
-      it 'should send a email notification to the partner' do
+      it 'should send an email notification to the partner' do
         subject
         expect(fake_mailer).to have_received(:deliver_later)
       end
@@ -83,7 +83,7 @@ RSpec.describe RequestDestroyService, type: :service do
         expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
-      it 'should not send a email notification to the partner' do
+      it 'should not send an email notification to the partner' do
         expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
         subject
       end
