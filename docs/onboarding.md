@@ -544,6 +544,17 @@ so *and* says what it means — that you cannot make requests yet. That was the 
 options disappeared from the dashboard for anyone not approved, and the only clue was one word in the
 corner. If your agency is approved, there is no message and no pill, because there is nothing to say.
 
+### Super admins: the dashboard's "new users" count was wrong
+
+**"Recently added users" reported the number of rows it could show, not the number of people who
+signed up.** The card lists at most 20, and the badge counted the list — so it said *20 new users*
+whether 20 or 200 had joined that week. It now reads **"The 20 most recent of 23 users added in the
+last week"**, and plain **"Added in the last week"** when the list is the whole of it.
+
+**The badges are gone from both cards' top-right**, where page actions live. The line under the card
+title carries it instead, which is where the third card on that page already explained itself. The
+period is new information: before, "in the last week" appeared *only* when there was nothing to show.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with

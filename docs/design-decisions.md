@@ -5451,3 +5451,45 @@ not page headers: the pills are counts (*"3 new users"*) beside a card title wit
 alongside, which is a badge on a heading and a different pattern. The page-header rule does not reach
 them.
 
+
+## 2026-08-28 — The admin dashboard's count pills, and a number that had been wrong all along
+
+The two I named as "left alone" in the entry above, on the grounds that they are *card* headers
+rather than page headers and the pills are counts rather than statuses. Asked to fix them too — and
+looking properly turned up something the placement argument had missed.
+
+**The number was wrong.** `@recent_users = User.where(...).limit(20)`, and the pill printed
+`@recent_users.count`. On a limited relation `.count` returns the **cap**: verified against the
+seeded database, 23 users had signed up in the week and the relation counted **20**. So the card
+read "20 new users" and would have read "20 new users" if two hundred had joined. A page size
+presented as a total — the precise failure `essentials_pagination_summary` was written to stop, whose
+own comment says a proxy number "never answers the question ... how big is this result set?"
+
+Worth recording how it stayed hidden: it is only wrong **once the list overflows**, which is not the
+state anyone is looking at on the day the `.limit` is added, and the pill looks equally confident
+either way. The spec added for it creates `RECENT_LIMIT + 3` users, because a spec that does not
+overflow the cap passes against the broken code.
+
+**So there were three faults in one control**, and only the first two were about placement: a count
+is not a status, a status is not an action, and the number was false.
+
+**Where it went, and why not simply to `status:`.** A card has no `status:` slot — that is the page
+header's — but it has `subtitle:`, and the *third* card on the same page already used it for exactly
+this kind of line. So the count becomes a subtitle.
+
+**What it should say was the more interesting question.** The organizations card's count was
+*correct* and still not worth keeping: its list is uncapped, so the number equalled the length of the
+list directly beneath it. That is the redundancy the `<tfoot>` totals were dropped for, and the
+reason the page-subtitles pass rejected scope lines — the pagination line already says it. Deleting
+it outright would have lost something though, because **the period was never stated anywhere a reader
+with data could see it**: "this week" appeared only in the card's *empty* state. So the subtitle says
+the period always, and a total only when the list is truncated.
+
+**`total:` defaults to the shown count**, which makes the honest case free and the dishonest one
+impossible to reach by accident: adding a `.limit` later leaves the subtitle correct until someone
+passes a total, and the moment they do they have to think about which number they mean.
+
+**Left alone, and named.** The users list still truncates at 20 with no way to page it in the card.
+That is fine and deliberate — the card's footer links to the full list, which is what a dashboard
+card should do — but it is now *said* rather than silently true.
+

@@ -83,6 +83,31 @@ module EssentialsUiHelper
     tag.div(capture(&block), class: "grid gap-x-4 sm:grid-cols-2")
   end
 
+  # The subtitle on a "recently added" dashboard card: what period it covers, and whether the list
+  # under it is the whole of that period or only the top of it.
+  #
+  # This replaces a status pill in the card header's `actions:` slot, which was wrong three ways: a
+  # count is not a status, a status is not an action, and the number was the *shown* count rather
+  # than the total -- `@recent_users` is `.limit(20)`, and `.limit(20).count` returns 20, so the
+  # card read "20 new users" when 23 had signed up. A page size presented as a total is the exact
+  # thing essentials_pagination_summary was written to stop, and its "Showing 20 of 23" is the
+  # phrasing borrowed here.
+  #
+  # The period was worth saying whatever the count did: before this it appeared only in the card's
+  # *empty* state ("No new users this week"), so a reader who saw a list was never told what
+  # "recently" meant.
+  #
+  # `total:` is only needed where the list is capped. Left out, it is the shown count, which is the
+  # truth for an uncapped list -- and the moment someone adds a `.limit` they have to pass it, which
+  # is the point: the caller is made to say whether the number it is showing is the whole of it.
+  def essentials_recent_subtitle(shown, total: nil, noun: nil)
+    total ||= shown
+    return "Added in the last week." if total <= shown
+
+    "The #{number_with_delimiter(shown)} most recent of #{number_with_delimiter(total)} " \
+      "#{noun} added in the last week."
+  end
+
   # A form's action row: Save and Cancel, *below* the card rather than inside it.
   #
   # The buttons belong to the form, not to a card. A card groups related content; the submit
