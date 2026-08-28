@@ -5391,3 +5391,63 @@ status pill in `data-page-header="actions"` while `_page_header` carries a comme
 among buttons reads as a greyed-out button — a real inconsistency, unrelated to this change, and not
 fixed here.
 
+
+## 2026-08-28 — A status is not an action, and on a page-titled page it is not a pill either
+
+Following the previous entry, which recorded the pill-in-`actions:` inconsistency and left it. Asked
+to fix it. **Four** partner-facing headers had it — dashboard, profile, profile edit and
+distributions — all after the bank's `partners/show` had been fixed for exactly this and had the
+reasoning written into the `page_header` partial.
+
+**Why the audit never caught them.** `bin/design/button-audit.js` counts `box.querySelectorAll("a,
+button")`, and a status pill is a `span`. So the audit reported those headers as carrying *zero*
+actions, which is both true and useless: the container held something that was not an action, which
+is the defect. The new spec counts spans in the container instead. A rule enforced by counting the
+things it permits will not notice the things it forbids.
+
+**The obvious fix was wrong on two of the four, and the reason is worth keeping.** `status:` renders
+the pill *inside the h1*, which is right when the title names the pill's subject — `partners/show`
+reads "Pawnee Homeless Shelter Approved", the entity and its state. But a portal's dashboard is
+titled *Dashboard* and its distributions page *Distributions*, so the same move would have produced
+the heading "Distributions Approved". A status pill needs a subject in the heading, and a page title
+is not one.
+
+**Retitling was tried and reverted, by a spec.** I changed the dashboard's title to the agency's name
+so the pill would have its subject. `partner_system_spec.rb:293` failed: it asserts `h1` text
+"Dashboard" to prove a redirect landed on the dashboard. That is a fair use of a heading — it names
+its page — and the failure is the evidence that the name was load-bearing. Reverted. Worth recording
+because the spec was not testing headings; it was testing a redirect, and it caught a design change
+anyway.
+
+**So the answer is different per page, and the split is not arbitrary.**
+
+| Page | Title names | Where the status went |
+| --- | --- | --- |
+| `partners/show` (bank) | the partner | already correct — `status:`, on the title line |
+| `partners/profiles/show` | *Profile* → now the agency | `status:`, title and subtitle swapped |
+| `partners/profiles/edit` | *Edit profile* → now the agency | `status:`, same swap |
+| `partners/dashboards/show` | the page | a **callout**, and only when unapproved |
+| `partners/distributions/index` | the page | **removed** |
+
+**The dashboard pill was load-bearing and bad at the job, which is why it became a callout rather
+than moving.** The request options card is hidden outright for a partner who is not approved —
+`render ... if @partner.approved?` — and the pill was the only thing on the page explaining that: one
+word, in a corner, next to an unrelated title, never naming the consequence. It says the consequence
+now, and only when there is one; an approved partner sees nothing, where before they saw "Approved"
+every day. This is not a new pattern — `partners/profiles/show` already answers
+`recertification_required` with a callout, five lines above the pill this change removed.
+
+**Copy per state, not the humanized enum.** The first draft printed `status.humanize.downcase`,
+which produced *"Your agency is recertification required"* — a column value, not a sentence. Three
+states, three sentences, each naming what the reader is actually trying to explain: that they cannot
+make requests.
+
+**Removed rather than moved on distributions**, because the partner's own standing has no bearing on
+a list of what has already been delivered. They see it on the dashboard when it matters and on their
+profile always.
+
+**Left alone.** `admin/dashboard` passes pills into `actions:` twice, but those are **card** headers,
+not page headers: the pills are counts (*"3 new users"*) beside a card title with no buttons
+alongside, which is a badge on a heading and a different pattern. The page-header rule does not reach
+them.
+

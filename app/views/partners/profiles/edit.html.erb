@@ -2,10 +2,10 @@
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
-        title: "Edit profile",
-        subtitle: current_partner.name,
+        title: current_partner.name,
+        subtitle: "Edit your agency's profile.",
         back: {path: partners_profile_path, label: "Back to profile"},
-        actions: essentials_partner_status_pill(current_partner.status) %>
+        status: essentials_partner_status_pill(current_partner.status) %>
 
   <%= essentials_form_for current_partner, url: partners_profile_path,
         data: {controller: "form-input"}, html: {role: "form"} do |form| %>

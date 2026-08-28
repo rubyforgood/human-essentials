@@ -1,10 +1,45 @@
 <% content_for :title, "Dashboard - #{@partner.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The status pill that used to sit in `actions:` is a callout instead, and only when it has
+    something to say.
+
+    It could not stay: a status is not an action, and `actions:` is documented as "at most three,
+    exactly one primary". It could not move to `status:` either, the way the profile's did -- that
+    slot renders on the title line, and this title is a page rather than the agency, so the heading
+    would have read "Dashboard Approved". Retitling the page to the agency's name was tried and
+    reverted: a spec asserts `h1` text "Dashboard" to prove a redirect landed here, which is a fair
+    use of a heading that names its page.
+
+    A callout is the better answer anyway, because the pill was doing a job it was bad at. The
+    request options card below is hidden outright for a partner who is not approved, and the pill
+    was the only thing on the page explaining why -- a word in the corner, next to a page title,
+    with no statement of consequence. And for the approved majority it said "Approved" every day,
+    which is noise. `partners/profiles/show` already answers a status this way, with a callout for
+    `recertification_required`; this is the same pattern.
+  %>
+  <%# A sentence per state rather than the humanized enum: "Your agency is recertification
+      required" is a column value, not something anyone says. Each one names the consequence --
+      you cannot make requests -- because that is the change the reader is trying to explain. %>
+  <% unless @partner.approved? %>
+    <%= render "shared/essentials/callout",
+          tone: (@partner.deactivated? ? :danger : :warning), wrapper_class: "mb-6" do %>
+      <% if @partner.deactivated? %>
+        Your agency is deactivated, so you cannot make requests. Contact your bank if that is unexpected.
+      <% elsif @partner.recertification_required? %>
+        Your agency needs recertifying before you can make requests again. Review your profile and
+        submit it for approval.
+      <% else %>
+        Your agency is waiting for your bank to approve it. You will be able to make requests once
+        it has.
+      <% end %>
+    <% end %>
+  <% end %>
+
   <%= render "shared/essentials/page_header",
         title: "Dashboard",
-        subtitle: "News from your bank, and what is coming or already delivered.",
-        actions: essentials_partner_status_pill(@partner.status) %>
+        subtitle: "News from your bank, and what is coming or already delivered." %>
 
   <div class="space-y-6">
     <%= render "broadcast_announcement" if @broadcast_announcements.any? %>

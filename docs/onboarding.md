@@ -530,6 +530,20 @@ users* on the admin dashboard, and the page controls under a table are all still
 they change what is in the card, so they belong to it. The rule is what pressing it affects: if it
 would be the last thing you do on the page, it is at the bottom.
 
+### If you are a partner: your agency's status has moved
+
+**Your status pill is gone from the top-right of your Dashboard and Distributions pages.** It sat
+where page buttons go, which made it look like a button you could not press.
+
+**On your Profile it is still there**, now beside your agency's name at the top — the same place your
+bank sees it on their copy of your record.
+
+**On your Dashboard you will now see a short message instead, and only when something needs saying.**
+If your agency is waiting for approval, needs recertifying, or has been deactivated, the message says
+so *and* says what it means — that you cannot make requests yet. That was the real gap: the request
+options disappeared from the dashboard for anyone not approved, and the only clue was one word in the
+corner. If your agency is approved, there is no message and no pill, because there is nothing to say.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with

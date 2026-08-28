@@ -1,10 +1,14 @@
 <% content_for :title, "Distributions - #{@partner.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# No status pill. It was in `actions:` here, where a status is not an action -- and unlike the
+      dashboard and the profile, this page has no subject for it to attach to: the partner's own
+      standing has no bearing on a list of what has already been delivered, and "Distributions
+      Approved" is what a heading carrying it would say. The partner sees their status on the
+      dashboard and on their profile, which are about them. %>
   <%= render "shared/essentials/page_header",
         title: "Distributions",
-        subtitle: "What your bank has sent you, and when.",
-        actions: essentials_partner_status_pill(@partner.status) %>
+        subtitle: "What your bank has sent you, and when." %>
 
   <%= render partial: "distribution_section",
         locals: {distributions: @distributions,
