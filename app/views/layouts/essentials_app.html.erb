@@ -26,6 +26,11 @@
 
         <main id="main-content" tabindex="-1" class="flex-1">
           <%= render "shared/essentials/flash" %>
+          <%# Beside the flash rather than inside one view: the download is started by a flag on the
+              flash, so any page that redirects through `handle_csv_export` gets it. main rendered
+              the partial from `distributions/index` alone, which is the one page that uses it
+              today -- putting it here means the second page to adopt the flow needs no wiring. %>
+          <%= render "shared/essentials/csv_download" %>
           <%= yield %>
         </main>
 

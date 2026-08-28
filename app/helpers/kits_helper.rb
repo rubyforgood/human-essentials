@@ -4,7 +4,10 @@ module KitsHelper
   # assistive tech that way -- and the reason is given as sr-only text rather than a
   # hover-only tooltip, which a keyboard or touch user can never read.
   def deactivate_kit_button(kit, inventory)
-    if kit.can_deactivate?(inventory)
+    # `can_deactivate_or_delete?` is the predicate's real name, taken from main. This called
+    # `can_deactivate?`, which is defined nowhere -- not on Item, not on Kit, and not at the merge
+    # base either -- so reaching this branch raised NoMethodError.
+    if kit.can_deactivate_or_delete?(inventory)
       return essentials_action_button("Deactivate", deactivate_kit_path(kit), method: :put,
         variant: :ghost, size: :sm, icon: "bi-slash-circle",
         class: "deactivate-kit-button",

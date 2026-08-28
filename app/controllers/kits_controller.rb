@@ -7,7 +7,7 @@ class KitsController < ApplicationController
   end
 
   def index
-    @kits = current_organization.kits.includes(kit_item: {line_items: :item}).class_filter(filter_params)
+    @kits = current_organization.kits.includes(line_items: :item).class_filter(filter_params)
     @inventory = View::Inventory.new(current_organization.id)
     unless params[:include_inactive_items]
       @kits = @kits.active
@@ -19,8 +19,7 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
-    @kit.kit_item = KitItem.new(organization: current_organization)
-    @kit.kit_item.line_items.build
+    @kit.line_items.build
   end
 
   def create
@@ -31,19 +30,20 @@ class KitsController < ApplicationController
       flash[:notice] = "Kit created successfully"
       redirect_to kits_path
     else
-      # Extract kit and item params separately since line_items belong to Item, not Kit
-      kit_only_params = kit_params.except(:line_items_attributes)
-      @kit = Kit.new(kit_only_params)
+      load_form_collections
+      @kit = current_organization.kits.new(kit_params)
 
       # The service reports its errors separately from the record, and this used to flatten them
       # into a flash sentence and render a Kit with none -- so every field came back clean and
       # the only sign of trouble was a line at the top. Copying them onto the record the form
       # renders is what puts each message beside its own field.
+      #
+      # Built from `current_organization.kits.new(kit_params)` rather than the `Kit.new` +
+      # `kit_item` pair this used: main made Kit an STI subclass of Item, so the line items hang
+      # off the kit itself and there is no KitItem to construct. Errors are added *after* the
+      # record is built, because building it is what would clear them.
       kit_creation.errors.each { |error| @kit.errors.add(error.attribute, error.message) }
-      load_form_collections
-      @kit.kit_item ||= KitItem.new(organization: current_organization,
-                                    **kit_params.slice(:line_items_attributes))
-      @kit.kit_item.line_items.build if @kit.kit_item.line_items.empty?
+      @kit.line_items.build if @kit.line_items.empty?
 
       render :new
     end
@@ -51,7 +51,7 @@ class KitsController < ApplicationController
 
   def deactivate
     @kit = current_organization.kits.find(params[:id])
-    @kit.deactivate
+    @kit.deactivate!
     redirect_back_or_to(dashboard_path, notice: "Kit has been deactivated!")
   end
 
@@ -97,14 +97,12 @@ class KitsController < ApplicationController
   end
 
   def kit_params
-    kit_params = params.require(:kit).permit(
+    params.require(:kit).permit(
       :name,
       :visible_to_partners,
-      :value_in_dollars
-    )
-    item_params = params.require(:kit_item)
-      .permit(line_items_attributes: [:item_id, :quantity, :_destroy])
-    kit_params.to_h.merge(item_params.to_h)
+      :value_in_dollars,
+      line_items_attributes: [:item_id, :quantity, :_destroy]
+    ).to_h
   end
 
   def kit_adjustment_params
@@ -117,11 +115,7 @@ class KitsController < ApplicationController
     params.require(:filters).slice(:by_name)
   end
 
-  def formatted_error_message(error)
-    if error.attribute.to_s == "inventory"
-      "Sorry, we weren't able to save the kit. Validation failed: #{error.message}"
-    else
-      error.full_message.humanize
-    end
-  end
+  # main's `formatted_error_message` is deliberately not merged. It existed only to build the flash
+  # sentence that `create` no longer writes: the service's errors go onto the record now, so the
+  # summary above the form and the field-level messages render them. Nothing else called it.
 end

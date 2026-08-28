@@ -24,13 +24,13 @@
             </td>
             <td>
               <ul class="space-y-0.5 text-sm text-slate-700">
-                <% kit.kit_item.line_items.quantities_by_name.map do |_id, item_hash| %>
+                <% kit.line_items.quantities_by_name.map do |_id, item_hash| %>
                   <li><%= "#{number_with_delimiter(item_hash[:quantity])} #{item_hash[:name]}" %></li>
                 <% end %>
               </ul>
             </td>
             <td>
-              <% allocations = @inventory.all_items.select { |i| i.item_id == kit.kit_item.id } %>
+              <% allocations = @inventory.all_items.select { |i| i.item_id == kit.id } %>
               <% if allocations.empty? %>
                 <p class="text-sm italic text-slate-500">Not allocated anywhere</p>
               <% else %>

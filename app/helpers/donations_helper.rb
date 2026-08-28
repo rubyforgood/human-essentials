@@ -21,6 +21,15 @@ module DonationsHelper
     current_organization.product_drives.within_date_range(formatted_range).count
   end
 
+  # nil rather than main's "N/A" when the donation did not come from a product drive. Every other
+  # field in the detail list this feeds renders `value.presence || "—"`, which is the convention in
+  # sixteen places; returning a string here would make one field in the row say something different
+  # for the same condition. The helper stays because it is the one place that knows how a
+  # participant is named.
+  def drive_participant_view(donation)
+    donation.product_drive_participant&.display_name
+  end
+
   def options_with_new(records)
     model_class = records.klass
     label = "---Create New #{model_class.model_name.human}---"

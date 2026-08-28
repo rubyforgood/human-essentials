@@ -2100,6 +2100,30 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+<a id="background-downloads"></a>
+### A long export downloads in the background
+
+A big CSV used to look like a hung page — the browser sat on the request with nothing to show.
+`handle_csv_export` redirects instead, with two things on the flash: a **notice**, which the flash
+strip draws like any other message, and **`trigger_csv_download`**, a boolean the layout's
+`shared/essentials/csv_download` partial turns into a hidden element that fetches the file and
+saves it.
+
+Two rules fall out of that, both learned the hard way:
+
+- **A flash entry that is a flag, not a sentence, goes in `EssentialsUiHelper::NON_MESSAGE_FLASH_KEYS`.**
+  The strip renders every key it finds and `true` is not blank, so an ungated flag draws a message
+  bar reading *"true"*.
+- **An export link carrying a non-filter param must survive the filter rewrite.** `auto_submit`
+  rebuilds an export href from the filter form, which dropped `export_csv=true` — so the first
+  time anyone touched a filter, the export silently reverted to a foreground request. It now keeps
+  any param on the link that the form does not supply.
+
+The message is a flash rather than a pop-up **because there is no toast in this design system.**
+main built one on `toastr`; the essentials layouts load only `tailwind.css`, and no toastr CSS is
+in that build, so it would inject markup nothing styles. If a transient pop-up is ever genuinely
+wanted, it needs building here rather than importing.
+
 <a id="callouts"></a>
 ### Callouts
 

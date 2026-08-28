@@ -34,6 +34,7 @@ breaks that down.
 | `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
 | `donations#add_item`, `donations#remove_item` | Removed in 2026, not migrated: routes with no actions whose only templates were 2018 scaffold stubs. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
+| `toastr` | Still pinned in `config/importmap.rb` and imported by `app/javascript/application.js`, and still called by `app/views/barcode_items/create.js.erb`. Not reachable from a design-system page in any *styled* form: the essentials layouts load only `tailwind.css`, and no toastr CSS exists in that build. The `toast` Stimulus controller that main added on top of it was **not** merged — see below. |
 
 ### Class names that style nothing
 
@@ -185,6 +186,7 @@ specs ran — those had never been run during the migration and were failing 298
 
 | Defect | Consequence |
 | --- | --- |
+| Two static CSVs shadowed their own export routes | `public/product_drive_participants.csv` and `public/vendors.csv` were **import templates**, and Rails serves `public/` ahead of the router — so `GET /product_drive_participants.csv` returned the three-row sample file instead of the organization's data, and the same for vendors. Found when main added a filtered CSV export at that exact path and its spec returned 3 rows whatever the filter said. Both renamed to `*_template.csv`, which is what the other three templates were already called. |
 | Three profile partials closed wrappers they never opened | The browser closed the `<form>` early; the served-areas fieldset, the remaining sections and the submit button all sat outside it. Nothing below that point could be submitted. |
 | Four Stimulus controllers toggled `d-none` | Partner-group reminder fields, shipping cost and the admin role picker could never be revealed. |
 | Profile accordion declared `accordion` but its sections call `disclosure#toggle` | No section could open. |

@@ -5,6 +5,7 @@ class AuditsController < ApplicationController
 
   before_action :authorize_admin
   before_action :set_audit, only: %i(show edit update destroy finalize)
+  before_action :ensure_audit_is_editable, only: %i(finalize update)
 
   def index
     @selected_location = filter_params[:at_location]
@@ -85,6 +86,19 @@ class AuditsController < ApplicationController
   end
 
   private
+
+  # From main: a finalized audit cannot be edited. `error:` is a registered flash type
+  # (add_flash_types in ApplicationController), so this renders through the flash strip.
+  def ensure_audit_is_editable
+    if @audit.reload.finalized?
+      redirect_to audit_path(@audit), error: "This audit has been finalized and cannot be edited."
+    end
+  end
+
+  # main's `handle_audit_errors` is deliberately not merged. It flattened the record's errors into
+  # one flash sentence, and nothing calls it here any more: `update` keeps the errors on @audit so
+  # the summary above the form lists them and each field carries its own. See the comment in
+  # `update` -- the flash was a third copy of the same sentence.
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])

@@ -1300,4 +1300,23 @@ RSpec.feature "Distributions", type: :system do
     # will fail (the distribution is already complete) and show this error
     expect(page).not_to have_content("Sorry, we encountered an error when trying to mark this distribution as being completed")
   end
+
+  describe "CSV export", js: true do
+    before do
+      create(:distribution, :with_items, organization: organization)
+      visit distributions_path
+    end
+
+    # "Export", not main's "Export Distributions": every index page in this app labels it the same
+    # way. And the notice arrives in the flash strip rather than a toastr pop-up, which could not
+    # come across -- the essentials layouts load only tailwind.css, so toastr has no styling here.
+    it "downloads a CSV and says so" do
+      click_on "Export"
+
+      wait_for_download
+      expect(downloads.length).to eq(1)
+      expect(download).to match(/Distributions.*\.csv/)
+      expect(page).to have_css("[data-flash]", text: "Your CSV export is downloading.")
+    end
+  end
 end

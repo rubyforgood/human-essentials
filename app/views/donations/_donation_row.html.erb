@@ -1,8 +1,9 @@
 <%# The AdminLTE version left three <td> elements unclosed, so the browser nested the
     remaining cells inside them. Flat row here. %>
 <tr>
-  <td class="pin-col name font-medium text-slate-900"><%= donation_row.source %></td>
-  <td class="date"><%= donation_row.issued_at.strftime("%F") %></td>
+  <%# Date first, from main (#5599); the header comment explains why it takes the frozen column. %>
+  <td class="pin-col date"><%= donation_row.issued_at.strftime("%F") %></td>
+  <td class="name font-medium text-slate-900"><%= donation_row.source %></td>
   <td><%= donation_row.details %></td>
   <td><%= donation_row.storage_location.name %></td>
   <td class="quantity"><%= number_with_delimiter(donation_row.line_items.total) %></td>

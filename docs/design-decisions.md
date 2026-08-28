@@ -5493,3 +5493,78 @@ passes a total, and the moment they do they have to think about which number the
 That is fine and deliberate — the card's footer links to the full list, which is what a dashboard
 card should do — but it is now *said* rather than silently true.
 
+
+## 2026-08-28 — Merging four months of main into the design branch
+
+`origin/main` had moved **104 commits** while this branch did **330**. Asked to bring main's updates
+in, keep every design-system change, reintroduce no Bootstrap, and migrate anything that arrived
+wearing it.
+
+**Merge, not rebase, and the reason is specific to this repo.** A rebase replays 330 commits and
+rewrites every SHA — and `docs/changelog.md` is a table keyed by commit hash with **165 rows, all
+of them pointing at design-branch commits**. Rebasing would have left the app's own record of what
+happened referencing 165 commits that no longer exist, on top of 78 conflict resolutions. The merge
+was one pass over **21 conflicted files** with 110 auto-merged, and every hash still resolves. Both
+numbers were measured in a throwaway worktree before choosing.
+
+**The resolution rule was: main's behaviour, design's presentation.** Where the two disagreed about
+*what the software does* — a finalized audit cannot be edited, a donation names its drive
+participant, participants filter by name — main won. Where they disagreed about *how it looks or is
+built*, design won. Three cases needed both halves at once:
+
+- **`kits_helper`** kept design's accessible control — a real disabled `<button>` with an sr-only
+  reason, against main's `title` tooltip — but took main's predicate. Worth recording: design was
+  calling **`can_deactivate?`, which is defined nowhere**, not on Item, not on Kit, and not at the
+  merge base either. Every render of that branch raised `NoMethodError`. It survived because the
+  kits table is its only caller and no spec reaches the branch.
+- **`kits_controller#create`** kept design's per-field error copying and dropped main's flash
+  sentence, but rebuilt the record main's way, because `Kit` is now an STI subclass of `Item` and
+  there is no `KitItem` to construct.
+- **The donations table** took main's column order (Date first, #5599) and design's markup. The
+  frozen column follows column one — `.pin-col` is `left: 0` — so Date is pinned now; a date is a
+  cheaper thing to freeze than a source name because it is narrower.
+
+**The toast could not come across, and that is a fact rather than a preference.** main added a
+pop-up for background CSV downloads built on `toastr`. The essentials layouts load *only*
+`tailwind.css` — Bootstrap, AdminLTE and the Font Awesome CDNs are deliberately absent — and there
+is no toastr CSS anywhere in the Tailwind build, so `toastr.info(...)` would inject markup nothing
+styles. Its element also carried `d-none`, which is defined nowhere here and renders as nothing,
+meaning main's "hidden" trigger was a visible empty div on a design page. The *feature* is worth
+having, so the fetch controller came across untouched and the announcement became a
+`flash[:notice]`, which the flash strip already draws.
+
+That exposed two things worth keeping:
+
+- `flash[:trigger_csv_download] = true` would have rendered **a message bar reading "true"**, because
+  the strip draws every key and `true` is not blank. Hence `NON_MESSAGE_FLASH_KEYS`.
+- `auto_submit` rebuilds an export link's query from the filter form, which **dropped
+  `export_csv=true`** — so the first filter change would have silently reverted the export to a
+  foreground request. It now preserves params the form does not supply.
+
+**The best find was not a conflict at all.** main's new filtered CSV export for product drive
+participants returned three rows whatever the filter said. The cause: `public/product_drive_participants.csv`
+— an **import template** this branch added — and Rails serves `public/` ahead of the router, so the
+export route was shadowed by a sample file. `public/vendors.csv` shadowed the vendors export the
+same way. Both were the only two of five templates not named `*_template.csv`; renaming them to
+match the other three unshadowed both routes. This was a live bug on this branch before the merge;
+it took main adding an export at that path to make anything notice.
+
+**Two of main's spec changes were reverted on purpose**, both from its flake-fix commit
+(`4c3b72875`), because they encode a UI this branch no longer has: one scoped a click to
+`#nav-partner-groups`, a Bootstrap tab panel that became its own page here, and one asserted
+`'Request Received!'` where the copy is now sentence case. main's *intent* in the second — wait for
+the redirect before counting — was kept, with the text corrected.
+
+**`schema.rb` was deliberately left alone.** Running the two Kit migrations under Rails 8.1
+regenerated it in 8.1's dump format, reordering every column: a thousand-line diff, semantically
+identical, at the same migration version. Carrying that in a merge commit would bury the merge and
+conflict with everyone else's schema. It will reformat on its own the next time someone adds a
+migration, which is a deliberate commit rather than a side effect of this one.
+
+**The lock was rebased on main's, not design's.** Taking design's and running `bundle install` kept
+design's older gems — brakeman 8.0.2, nokogiri 1.19.0, webmock 3.26.1 — silently dropping the
+dependency bumps that are most of main's 104 commits. Main's lock plus the merged Gemfile gives
+main's versions *and* drops Bootstrap, sassc and autoprefixer, because the Gemfile no longer asks
+for them. It needed `aarch64-linux` and `aarch64-linux-gnu` adding back, which design's lock had and
+main's does not.
+

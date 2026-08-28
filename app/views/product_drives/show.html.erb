@@ -5,6 +5,14 @@
         title: @product_drive.name,
         back: {path: product_drives_path, label: "Back to product drives"},
         actions: capture {
+          # Exporting this drive's participants is main's (#5596). It arrived as a `card-footer`
+          # with a float-right button; an export belongs in the page header here, which is where
+          # every index page in this app puts one. Conditional as main had it -- there is nothing
+          # to export from a drive with no donations. "Export participants", not plain "Export",
+          # because this page could export either thing and the label has to say which.
+          if @product_drive.donations.any?
+            concat essentials_link_button("Export participants", product_drive_path(@product_drive, format: :csv), variant: :secondary, icon: "bi-download")
+          end
           concat essentials_link_button("Make a correction", edit_product_drive_path(@product_drive), variant: :secondary, icon: "bi-pencil")
           if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
             concat essentials_action_button("Delete", product_drive_path(@product_drive), method: :delete,

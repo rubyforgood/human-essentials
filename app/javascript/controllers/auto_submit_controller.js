@@ -64,7 +64,15 @@ export default class extends Controller {
 
     document.querySelectorAll("[data-filter-export]").forEach((link) => {
       const url = new URL(link.getAttribute("href"), window.location.origin)
-      link.setAttribute("href", `${url.pathname}?${params}`)
+      // The filters replace the filter params, but not everything on an export link is a filter.
+      // `/distributions` carries `export_csv=true`, which is what puts the download in the
+      // background; rebuilding the query from the form alone dropped it, so the first time anyone
+      // touched a filter the export silently went back to a foreground request.
+      const next = new URLSearchParams(params)
+      for (const [name, value] of url.searchParams) {
+        if (!next.has(name)) next.append(name, value)
+      }
+      link.setAttribute("href", `${url.pathname}?${next}`)
     })
   }
 

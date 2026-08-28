@@ -1,5 +1,5 @@
 <% content_for :title, "Kit allocations - #{@kit.name} - #{current_organization.name}" %>
-<% rows = @inventory ? @inventory.all_items.select { |i| i.item_id == @kit.kit_item.id } : @item_inventories.order("id ASC") %>
+<% rows = @inventory ? @inventory.all_items.select { |i| i.item_id == @kit.id } : @item_inventories.order("id ASC") %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8" data-controller="kit-allocation">
   <%= render "shared/essentials/page_header",
@@ -77,7 +77,7 @@
                     <td class="quantity font-semibold text-slate-500"
                         data-base-quantity="-1" data-kit-allocation-target="preview">0</td>
                   </tr>
-                  <% @kit.kit_item.line_items.each do |li| %>
+                  <% @kit.line_items.each do |li| %>
                     <tr>
                       <td><%= li.item.name %></td>
                       <td class="quantity font-semibold text-slate-500"

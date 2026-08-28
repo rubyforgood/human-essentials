@@ -855,12 +855,10 @@ end
 complete_orgs.each do |org|
   org.storage_locations.active.each do |storage_location|
     org.kits.active.each do |kit|
-      next unless kit.kit_item # Ensure kit has an associated item
-
       # Create inventory for each kit
       InventoryItem.create!(
         storage_location: storage_location,
-        item: kit.kit_item,
+        item: kit,
         quantity: Faker::Number.within(range: 10..50)
       )
     end
@@ -953,15 +951,15 @@ complete_orgs.each do |org|
   end
 
   # Create some distributions that use kits instead of individual items
-  kit_items = org.items.joins(:kit).where(kits: {active: true})
-  if kit_items.any?
+  kits = org.kits.active
+  if kits.any?
     5.times do |index|
       issued_at = dates_generator.next
       storage_location = org.storage_locations.active.sample
-      kit_item = kit_items.sample
+      kit = kits.sample
 
       # Check if there's inventory for this kit
-      kit_inventory_qty = storage_location.item_total(kit_item.id)
+      kit_inventory_qty = storage_location.item_total(kit.id)
       next if kit_inventory_qty.zero?
 
       delivery_method = Distribution.delivery_methods.keys.sample
@@ -983,7 +981,7 @@ complete_orgs.each do |org|
         kit_distribution.line_items.push(
           LineItem.new(
             quantity: distribution_qty,
-            item_id: kit_item.id
+            item_id: kit.id
           )
         )
 

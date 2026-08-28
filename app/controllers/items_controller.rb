@@ -134,15 +134,17 @@ class ItemsController < ApplicationController
 
   # Shared by the three item-shaped views and by the CSV export.
   def load_catalogue
+    # No `:kit` in the includes and no `kit_item:` below: main made Kit an STI subclass of Item, so
+    # the `kit` and `kit_item` associations this used to preload no longer exist.
     @items = current_organization
       .items
-      .includes(:kit, :line_items, :request_units, :item_category)
+      .includes(:line_items, :request_units, :item_category)
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
     @items = @items.active unless params[:include_inactive_items]
 
-    @kits = current_organization.kits.includes(kit_item: {line_items: :item})
+    @kits = current_organization.kits.includes(line_items: :item)
 
     @include_inactive_items = params[:include_inactive_items]
     @selected_reporting_category = filter_params[:by_reporting_category]
@@ -164,7 +166,7 @@ class ItemsController < ApplicationController
 
   def reporting_category_hint
     item = current_organization.items.find(params[:id])
-    if item.kit_id
+    if item.is_a?(Kit)
       "Kits are reported based on their contents."
     end
   end

@@ -83,6 +83,30 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to be_successful
       end
 
+      context "with export_csv param" do
+        it "redirects then renders a csv-download stimulus controller to export CSV" do
+          get distributions_path(export_csv: true, foo: "bar")
+          expect(response).to redirect_to(distributions_path(foo: "bar"))
+          follow_redirect!
+          # `csv-download` alone. main paired it with a `toast` controller driving `toastr`, which
+          # the essentials layouts cannot style -- they load only tailwind.css -- so the message is
+          # a flash now and the strip draws it.
+          expect(response.body).to include("data-controller=\"csv-download\"")
+          expect(response.body).not_to include("data-controller=\"toast")
+          expect(response.body).to include("distributions.csv?foo=bar")
+        end
+
+        it "announces the download through the flash strip, not as a stray 'true'" do
+          get distributions_path(export_csv: true)
+          follow_redirect!
+
+          expect(response.body).to include("Your CSV export is downloading.")
+          # The trigger is a boolean flash entry. The strip renders every key it finds, so without
+          # NON_MESSAGE_FLASH_KEYS this drew a message bar reading "true".
+          expect(response.body).not_to match(/data-flash="trigger_csv_download"/)
+        end
+      end
+
       it "sums distribution totals accurately" do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
@@ -662,7 +686,7 @@ RSpec.describe "Distributions", type: :request do
               storage_location_id: location.id,
               'issued_at(1i)' => issued_at.to_date.year,
               'issued_at(2i)' => issued_at.to_date.month,
-              'issued_at(3i)' => nil # day part of date missing
+              'issued_at(3i)' => '' # day part of date missing
             }}
         end
 

@@ -14,18 +14,32 @@
               concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
               concat " Import participants"
             end)
-          if @product_drive_participants.any?
+          if @products.participants.any?
             concat essentials_link_button("Export", product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
           end
           concat essentials_link_button("New participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
+  <%# Filtering by business and contact name is main's (6ece95935), rebuilt on the filter bar
+      rather than the Bootstrap card it arrived in: collapsed behind a Filters button, applying on
+      change into the results frame, with the set filters shown as chips. `View::ProductDriveParticipants`
+      is main's too, and supplies both the rows and the selected values. %>
+  <%= render "shared/essentials/filter_bar", url: product_drive_participants_path, frame: "product-drive-participants-results" do %>
+    <div class="min-w-0"><%= filter_text(label: "Business name", scope: :by_business_name, selected: @products.selected_business_name) %></div>
+    <div class="min-w-0"><%= filter_text(label: "Contact name", scope: :by_contact_name, selected: @products.selected_contact_name) %></div>
+  <% end %>
+
+  <%= turbo_frame_tag "product-drive-participants-results", target: "_top", data: {turbo_action: "advance"} do %>
   <%= render "shared/essentials/card", padded: false do %>
-    <% if @product_drive_participants.empty? %>
-      <%= render "shared/essentials/empty_state", kind: :cold_start,
-            title: "No product drive participants yet",
-            body: "Add the businesses and people who run drives for you, so their donations can be credited.",
-            action: essentials_link_button("Add your first participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg") %>
+    <% if @products.participants.empty? %>
+      <%# Two empty states now that this page filters: "nothing matched" is a different situation
+          from "nothing here yet", and offering "Add your first participant" to someone whose filter
+          simply missed is the wrong advice. Same shape as every other filtered index. %>
+      <%= render "shared/essentials/empty_state",
+            kind: essentials_filtered? ? :no_results : :cold_start,
+            title: essentials_filtered? ? "No participants match those filters" : "No product drive participants yet",
+            body: essentials_filtered? ? "Try a different name, or clear the filters to see everyone." : "Add the businesses and people who run drives for you, so their donations can be credited.",
+            action: essentials_filtered? ? nil : essentials_link_button("Add your first participant", new_product_drive_participant_path, variant: :primary, icon: "bi-plus-lg") %>
     <% else %>
       <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
         <table class="data-table">
@@ -40,14 +54,15 @@
               <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
-          <tbody><%= render partial: "product_drive_participant_row", collection: @product_drive_participants %></tbody>
+          <tbody><%= render partial: "product_drive_participant_row", collection: @products.participants %></tbody>
         </table>
       </div>
     <% end %>
   <% end %>
+  <% end %>
 
   <%= render layout: "shared/essentials/csv_import_modal", locals: {
-        import_type: "Product drive participants", csv_template_url: "/product_drive_participants.csv", csv_import_url: import_csv_product_drive_participants_path
+        import_type: "Product drive participants", csv_template_url: "/product_drive_participants_template.csv", csv_import_url: import_csv_product_drive_participants_path
       } do %>
     <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
     <li>Delete the sample data and enter the participant names, emails and phone numbers in the matching columns.</li>

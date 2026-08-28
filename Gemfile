@@ -14,7 +14,7 @@ gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.0"
 
 ###### MODELS / DATABASE #######
 
@@ -24,7 +24,7 @@ gem "rails", "~> 8.0.2"
 gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.3'
+gem 'discard', '~> 2.0'
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -162,7 +162,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.54"
+  gem "standard", "~> 1.56"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
