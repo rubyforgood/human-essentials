@@ -21,30 +21,24 @@ RSpec.describe RequestsTotalItemsService, type: :service do
         Request.where(id: local_requests.map(&:id))
       end
 
-      context 'when enable_packs is enabled' do
-        context 'when not all items have request units' do
-          it 'return items with correct quantities calculated, by individual items' do
-            Flipper.enable(:enable_packs)
-
-            expect(subject).to eq({"item_name_0" => 20, "item_name_0 - bundles" => 60, "item_name_1" => 20, "item_name_1 - bundles" => 60, "item_name_2" => 20, "item_name_2 - bundles" => 60})
-          end
+      context 'when not all items have request units' do
+        it 'return items with correct quantities calculated, by individual items' do
+          expect(subject).to eq({"item_name_0" => 20, "item_name_0 - bundles" => 60, "item_name_1" => 20, "item_name_1 - bundles" => 60, "item_name_2" => 20, "item_name_2 - bundles" => 60})
         end
+      end
 
-        context 'when the items have request units' do
-          it 'return items with correct quantities calculated, grouped by packs' do
-            Flipper.enable(:enable_packs)
+      context 'when the items have request units' do
+        it 'return items with correct quantities calculated, grouped by packs' do
+          requests = [
+            create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20, "request_unit" => "bundle"} }),
+            create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10, "request_unit" => "bundle" } }),
+            create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 50, "request_unit" => "bundle" } })
+          ]
+          requests_with_units = Request.where(id: requests.map(&:id))
 
-            requests = [
-              create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20, "request_unit" => "bundle"} }),
-              create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10, "request_unit" => "bundle" } }),
-              create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 50, "request_unit" => "bundle" } })
-            ]
-            Request.where(id: requests.map(&:id))
+          result = RequestsTotalItemsService.new(requests: requests_with_units).calculate
 
-            result = RequestsTotalItemsService.new(requests: requests).calculate
-
-            expect(result).to eq({"item_name_0 - bundles" => 80, "item_name_1 - bundles" => 80, "item_name_2 - bundles" => 80})
-          end
+          expect(result).to eq({"item_name_0 - bundles" => 80, "item_name_1 - bundles" => 80, "item_name_2 - bundles" => 80})
         end
       end
 
@@ -86,37 +80,31 @@ RSpec.describe RequestsTotalItemsService, type: :service do
     end
 
     context 'when request item belongs to deleted item' do
-      context 'when enable_packs is enabled' do
-        context 'when the request unit is present' do
-          it 'returns item with correct quantity calculated' do
-            Flipper.enable(:enable_packs)
+      context 'when the request unit is present' do
+        it 'returns item with correct quantity calculated' do
+          item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
+          request = create(
+            :request,
+            :with_item_requests,
+            request_items: [{"item_id" => item.id, "quantity" => 10, "request_unit" => "pack"}]
+          )
+          item.destroy
 
-            item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
-            request = create(
-              :request,
-              :with_item_requests,
-              request_items: [{"item_id" => item.id, "quantity" => 10, "request_unit" => "pack"}]
-            )
-            item.destroy
-
-            expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper - packs" => 10})
-          end
+          expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper - packs" => 10})
         end
+      end
 
-        context 'when the request unit is not present' do
-          it 'returns item with correct quantity calculated, without the request unit' do
-            Flipper.enable(:enable_packs)
+      context 'when the request unit is not present' do
+        it 'returns item with correct quantity calculated, without the request unit' do
+          item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
+          request = create(
+            :request,
+            :with_item_requests,
+            request_items: [{"item_id" => item.id, "quantity" => 10}]
+          )
+          item.destroy
 
-            item = create(:item, :with_unit, name: "Diaper", organization:, unit: "pack")
-            request = create(
-              :request,
-              :with_item_requests,
-              request_items: [{"item_id" => item.id, "quantity" => 10}]
-            )
-            item.destroy
-
-            expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper" => 10})
-          end
+          expect(RequestsTotalItemsService.new(requests: [request]).calculate).to eq({"Diaper" => 10})
         end
       end
     end
