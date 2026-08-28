@@ -240,6 +240,7 @@ page exactly one `<h1>`, name every control, and never let colour be the only si
 ruby bin/design/status.rb            # which controllers are on a design system layout
 ruby bin/design/page-audit.rb        # defects and debt, per view
 ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
+bin/design/serve-mockup <name>       # serve a design preview and print its URL
 python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440

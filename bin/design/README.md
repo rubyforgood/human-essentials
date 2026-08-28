@@ -131,6 +131,21 @@ It proves its detectors against a probe table first and aborts if one is wrong, 
 `page-audit.rb` and `copy-audit.rb`. That caught its own first bug: `'\n'` in a single-quoted Ruby
 string is two characters, so the card-header probe failed before the audit could report a false zero.
 
+`serve-mockup` puts a design preview somewhere the person reviewing it can actually open.
+
+```bash
+bin/design/serve-mockup request-units
+# => http://localhost:3000/request-units.html
+bin/design/serve-mockup                  # lists all 44
+```
+
+Mockups are written self-contained so they open by double-clicking, and **that is not enough**:
+when the app runs in a container or behind a tunnel, the reviewer's browser reaches the dev server
+and nothing else, so a `file:///` path shows them nothing. Three previews have been unviewable for
+this reason. The script copies the mockup into `public/`, where Rails serves it ahead of the router,
+refreshes `mockup.css` for the older ones that link it, warns if the served copy is not gitignored,
+and prints the URL to send.
+
 `sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
 
 ```bash

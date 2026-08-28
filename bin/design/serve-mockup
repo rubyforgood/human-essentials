@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+# Serves a mockup so the person who asked for it can actually look at it.
+#
+# Mockups are written self-contained so they open by double-clicking -- but that only helps when
+# the reader's browser can reach the file. It cannot when the app runs in a container, a codespace
+# or over a tunnel: the browser reaches the *dev server*, not the filesystem the repo is on. So a
+# mockup that only exists on disk is invisible, which has now happened three times:
+#
+#   "i am not able to see the design preview"
+#   "where is the design preview?"
+#   "I cannot see the Preview"
+#
+# This copies it into public/, where Rails serves it ahead of the router, and prints the URL.
+#
+#   bin/design/serve-mockup request-units
+#   bin/design/serve-mockup            # lists what is available
+#
+# The tracked copy is always the one in docs/mockups/. The copy in public/ is gitignored.
+
+require "fileutils"
+
+ROOT = File.expand_path("../..", __dir__)
+SRC = File.join(ROOT, "docs/mockups")
+DEST = File.join(ROOT, "public")
+PORT = ENV.fetch("PORT", "3000")
+
+names = Dir.glob(File.join(SRC, "*.html")).map { |f| File.basename(f, ".html") }.sort
+
+if ARGV.empty?
+  puts "Usage: bin/design/serve-mockup <name>\n\n#{names.size} mockups:\n"
+  names.each { |n| puts "  #{n}" }
+  exit 1
+end
+
+name = ARGV[0].sub(/\.html\z/, "")
+src = File.join(SRC, "#{name}.html")
+
+unless File.exist?(src)
+  matches = names.select { |n| n.include?(name) }
+  abort "No mockup named #{name}.\n" + (matches.any? ? "Did you mean: #{matches.join(", ")}?" : "Run without arguments to list them.")
+end
+
+FileUtils.cp(src, File.join(DEST, "#{name}.html"))
+
+# The older mockups link /mockup.css, a snapshot of the app's stylesheet. It is a snapshot rather
+# than a link because Propshaft only serves the digested path, and the digest changes on rebuild --
+# so it has to be re-copied or the mockup renders with the classes the app had at copy time.
+built = File.join(ROOT, "app/assets/builds/tailwind.css")
+if File.read(src).include?("/mockup.css")
+  if File.exist?(built)
+    FileUtils.cp(built, File.join(DEST, "mockup.css"))
+    puts "Refreshed public/mockup.css from the current build."
+  else
+    warn "This mockup links /mockup.css but app/assets/builds/tailwind.css is missing.\n" \
+         "Run `bin/rails tailwindcss:build` first, or it will render unstyled."
+  end
+end
+
+ignore = File.join(ROOT, ".gitignore")
+entry = "/public/#{name}.html"
+unless File.read(ignore).include?(entry)
+  warn "Note: #{entry} is not in .gitignore, so `git add -A` will track the served copy."
+end
+
+puts "http://localhost:#{PORT}/#{name}.html"

@@ -4,20 +4,34 @@ Design proposals that were shown before anything was built. They are checked in 
 are the record of what was offered and chosen, and because this workspace has been reset out
 from under the work more than once.
 
-## New mockups are self-contained. Open them from disk.
-
-**Write every new mockup so it needs nothing but itself** — its CSS inline, its fonts from Google
-Fonts or fallen back gracefully, no `/mockup.css`. Then it opens by double-clicking it, or:
+## Serve it. Always send a URL, never a path.
 
 ```bash
-open docs/mockups/<file>.html            # or: file:///…/docs/mockups/<file>.html
+bin/design/serve-mockup request-units
+# => http://localhost:3000/request-units.html
 ```
 
-The reason is not tidiness. **Twice now a mockup could not be seen at all** — "i am not able to see
-the design preview", and later "where is the design preview?" — because the older ones need the dev
-server running *and* reachable from the reader's browser, and a design preview nobody can look at
-has failed at the only thing it exists to do. A reviewer should never have to boot a Rails app to
-look at a picture.
+**Send that URL. Do not send a file path.** Being self-contained is not enough on its own, and
+assuming it was is how this failed a *third* time:
+
+> "i am not able to see the design preview" · "where is the design preview?" · "I cannot see the
+> Preview"
+
+The first two were the older mockups needing the dev server. The third was a self-contained one
+that opened perfectly — from the container's disk, which is not where the reader's browser is.
+**When the app runs in a container, a codespace or behind a tunnel, the browser can reach the dev
+server and nothing else.** `file:///…` and `open docs/mockups/…` are useless in that situation, and
+a design preview nobody can look at has failed at the only thing it exists to do.
+
+`serve-mockup` copies it into `public/`, where Rails serves it ahead of the router, re-copies
+`mockup.css` if the mockup needs it, warns if the served copy is not gitignored, and prints the URL.
+The tracked copy stays here; the copy in `public/` is ignored.
+
+## Still write every new mockup self-contained
+
+Its CSS inline, its fonts from Google Fonts or falling back gracefully, no `/mockup.css`. That way
+it also opens by double-clicking for anyone who *does* have the repo locally, and it cannot render
+against a stale stylesheet snapshot. `partner-page-repairs.html` is the model to copy.
 
 `partner-page-repairs.html` is the first one written this way and is the model to copy.
 
