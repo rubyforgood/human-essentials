@@ -593,6 +593,19 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### Custom request units is a proper tag box
+
+**It used to look like a dropdown that would not open.** Clicking it did nothing, because it was a
+list control with its list switched off — the only way to add a unit was to type and press comma,
+which the screen never said.
+
+**Now: type a unit and press Enter.** Comma and Tab still work if that is your habit. Each unit is a
+chip with its own remove button, backspace on an empty box removes the last one, and typing a unit
+that is already there — in any capitalisation — is refused rather than silently added twice. The
+line under the label says all of this.
+
+This field only appears when the **packs** feature flag is on.
+
 ### Organization settings looks different
 
 **The text editor's buttons had no icons at all** for a few hours between two commits -- fourteen

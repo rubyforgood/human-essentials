@@ -1,0 +1,50 @@
+<%#
+  A tag input: type a word, press Enter, get a chip.
+
+  Locals: `name` (the submitted parameter, without the trailing []), `values`, `label`, `id`,
+  and optionally `hint` and `placeholder`.
+
+  The `<select multiple>` is the field -- it is what submits, so the wire format is a repeated
+  `name[]` exactly as before. `tag_input_controller.js` hides it and draws the chips, and only once
+  it has: `[data-tag-input="ready"]` gates the hiding, so with no JavaScript the native
+  multi-select is exactly what it always was. Same arrangement as the table rail.
+
+  Replaces select2 in free-tagging mode with its dropdown hidden, which looked like a select,
+  opened nothing, never said the interaction was "type, then comma", and gave the remove control a
+  9x21 target against WCAG 2.5.8's 24x24. See docs/mockups/request-units.html.
+%>
+<div class="mb-4" data-controller="tag-input">
+  <label class="block text-sm font-medium text-slate-700" for="<%= id %>_input"><%= label %></label>
+  <% if local_assigns[:hint].present? %>
+    <p class="mt-1 text-xs text-slate-500" id="<%= id %>_hint"><%= hint %></p>
+  <% end %>
+
+  <%# Visible until the controller replaces it, so this works with JavaScript off. %>
+  <select id="<%= id %>" name="<%= name %>[]" multiple
+          class="tag-input-native <%= EssentialsUiHelper::SELECT_CLASSES %>"
+          aria-label="<%= label %>"
+          data-tag-input-target="source">
+    <% Array(values).each do |value| %>
+      <option value="<%= value %>" selected><%= value %></option>
+    <% end %>
+  </select>
+
+  <div class="mt-1.5 flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2 py-1.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30"
+       <%# No click handler on this div to focus the input. `keyboard-audit.js` flags a click
+           handler on a non-focusable element and it is right to: the input is `flex-1`, so it
+           already fills the row and the only area not covered is 8px of padding. %>
+       data-tag-input-target="box">
+    <span class="contents" data-tag-input-target="chips"></span>
+    <%# `autocomplete="off"`: the browser's saved values for a field name are whole answers, and
+        this box takes one tag at a time -- an autofill suggestion here would be a whole list. %>
+    <input type="text" id="<%= id %>_input" autocomplete="off"
+           class="min-w-32 flex-1 border-0 bg-transparent p-1 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+           placeholder="<%= local_assigns.fetch(:placeholder, "Add one…") %>"
+           <%= "aria-describedby=#{id}_hint" if local_assigns[:hint].present? %>
+           data-tag-input-target="input"
+           data-action="keydown->tag-input#keydown blur->tag-input#blur paste->tag-input#paste">
+  </div>
+
+  <%# Chips come and go without focus moving, so nothing else would announce it. %>
+  <p class="sr-only" role="status" aria-live="polite" data-tag-input-target="status"></p>
+</div>

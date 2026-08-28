@@ -118,19 +118,14 @@
         <%= f.input :enable_quantity_based_requests, as: :radio_buttons, collection: yes_no,
               label: "Quantity-based requests?", label_method: :second, value_method: :first %>
         <% if Flipper.enabled?(:enable_packs) %>
-          <div class="mb-4">
-            <%= label_tag "organization[request_unit_names]", "Custom request units",
-                  class: "block text-sm font-medium text-slate-700" %>
-            <p class="mt-1 text-xs text-slate-500">
-              Use the singular form, so pack rather than packs. A default "unit" entry is always provided.
-            </p>
-            <%= select_tag "organization[request_unit_names]",
-                  options_from_collection_for_select(current_organization.request_units, "name", "name", ->(_) { true }),
-                  multiple: true,
-                  class: EssentialsUiHelper::SELECT_CLASSES,
-                  data: {controller: "select2", "select2-hide-dropdown-value": true,
-                         "select2-config-value": '{"selectOnClose": "true", "tags": "true", "tokenSeparators": [",", "\t"]}'} %>
-          </div>
+          <%= render "shared/essentials/tag_input",
+                id: "organization_request_unit_names",
+                name: "organization[request_unit_names]",
+                label: "Custom request units",
+                hint: "Type a unit and press Enter. Use the singular \u2014 pack, not packs. " \
+                      "Partners can always request a plain \"unit\".",
+                placeholder: "Add a unit\u2026",
+                values: current_organization.request_units.map(&:name) %>
         <% end %>
       <% end %>
 

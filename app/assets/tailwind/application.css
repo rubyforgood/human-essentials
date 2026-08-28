@@ -1133,6 +1133,22 @@
  */
 
 /*
+ * The tag input's native `<select multiple>`, hidden only once its replacement is built.
+ *
+ * Gated on `[data-tag-input="ready"]`, which the controller sets after rendering the chips -- the
+ * same arrangement as `[data-railed]` on the table rail. With no JavaScript the select is exactly
+ * the control it always was, rather than a field that has vanished.
+ *
+ * Outside `@layer components` for the reason given above: the select carries `block w-full` from
+ * SELECT_CLASSES, and a utility beats a layered rule however specific the layered one is. Written
+ * in the components layer first, and it did nothing at all -- the select stayed visible under the
+ * chips.
+ */
+[data-tag-input="ready"] .tag-input-native {
+  display: none;
+}
+
+/*
  * Trix toolbar focus. Trix sets `outline: none` on its buttons and ships no focus style, which did
  * not matter while every button was tabindex="-1" and unreachable. trix_toolbar_controller.js
  * makes them keyboard-operable, so they need a visible indicator -- WCAG 2.4.7.

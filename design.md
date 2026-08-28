@@ -2279,6 +2279,39 @@ that drops to `pt-4` leaves its final field **1px** from the card's bottom edge 
 every band above it has. If a container's padding is the reason a child can skip its own, check
 that the container actually has some.
 
+### Tag input
+
+```erb
+<%= render "shared/essentials/tag_input",
+      id: "organization_request_unit_names", name: "organization[request_unit_names]",
+      label: "Custom request units", hint: "Type a unit and press Enter.",
+      values: current_organization.request_units.map(&:name) %>
+```
+
+For a free-form list of short values — the custom request units are the one use today. Type a word
+and press **Enter**; comma and Tab also commit, and Backspace on an empty box removes the last chip.
+Duplicates are refused case-insensitively, so `Pack` cannot join `pack`.
+
+**The `<select multiple>` is the field.** It is what submits — a repeated `name[]` — and the
+controller keeps it in sync and draws the chips from it. Hiding it is gated on
+`[data-tag-input="ready"]`, which the controller sets only after the chips exist, so with no
+JavaScript the native multi-select is exactly the control it always was. Same arrangement as
+[the table rail](#the-rail).
+
+<a id="tag-input-hide-rule"></a>
+**That hide rule lives outside `@layer components`,** with the third-party overrides. The select
+carries `block w-full` from `SELECT_CLASSES`, and **a utility beats a layered rule however specific
+the layered one is** — written in the components layer first, it did nothing at all and the select
+stayed visible underneath the chips.
+
+It replaced select2 in free-tagging mode with `select2-hide-dropdown-value`, which was reported as
+not intuitive and was: it looked like a select, so the first thing anyone did was click it expecting
+a list, and nothing opened. Nothing on screen said the interaction was "type, then comma". Measured
+before: the remove target was **9&times;21** against [2.5.8](#target-size)'s 24&times;24, and the
+chips were select2's own `#aaa` border on `#e4e4e4`, which appear nowhere else here. Now a 24px
+button in a brand-50 chip. Options and reasoning in
+[docs/mockups/request-units.html](docs/mockups/request-units.html).
+
 <a id="cta-icons"></a>
 **Every action CTA carries a leading icon.** Measured across 39 screens in three roles: **27 of 27**
 page-header CTAs have one, and they agree on which — `bi-plus-lg` to create, `bi-upload` to import,
