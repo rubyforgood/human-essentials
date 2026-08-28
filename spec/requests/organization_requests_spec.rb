@@ -115,15 +115,15 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile sections")
-        expect(html.text).to include("Custom Partner invitation message")
-        expect(html.text).to include("Enable Partners to make child-based Requests?")
-        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
-        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
-        expect(html.text).to include("Show year-to-date values on Distribution printout?")
+        expect(html.text).to include("Partner profile sections")
+        expect(html.text).to include("Custom partner invitation message")
+        expect(html.text).to include("Child-based requests")
+        expect(html.text).to include("Requests by number of individuals")
+        expect(html.text).to include("Quantity-based requests")
+        expect(html.text).to include("Year-to-date values on the distribution printout")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use one-step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when Partner makes a Request?")
+        expect(html.text).to include("One-step partner invite and approve")
+        expect(html.text).to include("Email when a partner makes a request")
         expect(html.text).not_to include("Your next reminder date is ")
         expect(html.text).not_to include("The deadline on your next reminder email will be ")
       end
@@ -221,16 +221,16 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile sections")
-        expect(html.text).to include("Custom Partner invitation message")
-        expect(html.text).to include("Enable Partners to make child-based Requests?")
-        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
-        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
-        expect(html.text).to include("Show year-to-date values on Distribution printout?")
+        expect(html.text).to include("Partner profile sections")
+        expect(html.text).to include("Custom partner invitation message")
+        expect(html.text).to include("Child-based requests")
+        expect(html.text).to include("Requests by number of individuals")
+        expect(html.text).to include("Quantity-based requests")
+        expect(html.text).to include("Year-to-date values on the distribution printout")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use one-step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when Partner makes a Request?")
-        expect(html.text).to include("Include packages in distribution export:")
+        expect(html.text).to include("One-step partner invite and approve")
+        expect(html.text).to include("Email when a partner makes a request")
+        expect(html.text).to include("Packages in the distribution export")
       end
 
       context "when enable_packs flipper is on" do
@@ -433,13 +433,13 @@ RSpec.describe "Organizations", type: :request do
           subject
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          # The label was an <h6> used as a type size rather than a document level, which
-          # made the page skip h1 -> h6. It is a labelled paragraph now, so read the pair
-          # rather than the exact markup.
+          # The label was an <h6> used as a type size rather than a document level, which made the
+          # page skip h1 -> h6. It became a labelled paragraph, and is a <dt>/<dd> pair now that the
+          # page states its fields as a <dl> like every other detail page -- so read the pair.
           page = Nokogiri::HTML(response.body)
-          label = page.css("p").find { |p| p.text.strip == "Receive email when Partner makes a Request?" }
+          label = page.css("dt").find { |dt| dt.text.strip == "Email when a partner makes a request" }
           expect(label).to be_present
-          expect(label.at_xpath("following-sibling::p[1]").text.strip).to eq("Yes")
+          expect(label.at_xpath("following-sibling::dd[1]").text.strip).to eq("Yes")
         end
       end
 

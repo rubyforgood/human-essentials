@@ -172,7 +172,11 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Address")
       expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
-      expect(page).to have_content("Receive email when Partner makes a Request?")
+      # Sentence case, per design.md -- this page had 15 of 28 labels in Title Case.
+      expect(page).to have_content("Email when a partner makes a request")
+      # The eight sections are bands rather than headings stacked over near-black rules.
+      expect(page).to have_content("Basic information")
+      expect(page).to have_content("Annual survey")
     end
 
     describe "can create an organization with deadline and reminder" do

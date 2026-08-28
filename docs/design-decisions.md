@@ -5611,3 +5611,51 @@ It would have stayed a footnote if it had not been asked about — which is an a
 leftovers down where someone will read them, and against assuming a passing spec means a working
 feature.
 
+
+## 2026-08-28 — A migrated shell around an unmigrated body
+
+Reported as *"the organization view page is an issue, it looks like it was not migrated at all."*
+It had been — the page header, the card, no Bootstrap classes anywhere — and then the 28 fields
+inside were left exactly as they were.
+
+**That combination is the finding, not the layout.** The page returns 200, carries no legacy class,
+throws no JavaScript error and passes `undefined-classes`, `button-audit` and the system suite. Every
+check this app has says it is migrated. What it actually had, measured live: **28 label/value pairs
+and zero `<dl>`**; **six `<hr>` rendering `oklch(0.208 0.042 265.755)` — slate-900**, because
+preflight sets `border-color: currentColor` and an unstyled `<hr>` therefore draws in the *text*
+colour; **seven different vertical gaps** (24/36/44/45/54/61/93px); **15 of 28 labels in Title Case**;
+an icon on 14 rows; and invalid nesting that made the browser manufacture **two empty `<p>`**.
+
+**"No Bootstrap classes" is not the same as "migrated", and nothing automated can tell the
+difference.** That is the transferable part. Every audit this branch has built answers "is anything
+here from the old system?" — none answers "is this built the way the new one builds things?". A page
+can pass all of them by having had its wrapper replaced and its contents ignored.
+
+**The broken markup is the same shape as three earlier findings.** `</address>` was closed inside the
+`else` branch of a conditional, with a stray `</p>` after it, so a blank address left the element
+open and the browser reparsed the rest of the card inside it. That is the profile-partial defect
+again, and again invisible: it renders, it greps clean, and no spec looks.
+
+**Option A, one card of eight bands.** The bands are the line item card's — a tinted strip marking a
+change of kind — which is what makes six `<hr>` unnecessary rather than merely recoloured. Fields
+become a `<dl>` on a two-column grid through a new `essentials_detail` helper, so the em dash for a
+blank value is decided in one place rather than 28. Two columns and not four because the labels in
+the approval and request sections would wrap at four.
+
+**The preview's height claim was wrong, and I am recording it rather than quietly dropping it.** It
+said two columns would roughly halve the card. Measured after: **1,519px to 1,516px**. The eight band
+strips cost about 368px, which is almost exactly what the second column saves. The case for the
+rebuild is consistency and the broken markup; the height is a wash. I have corrected the mockup too,
+since it is checked in and someone will read it.
+
+**Two spec files changed, neither wrongly.** They asserted the Title Case labels and, in one case,
+searched for a `<p>` whose sibling `<p>` held the value — reasonable against the old markup, and
+exactly the coupling that makes a rewrite look like a regression. They read `<dt>`/`<dd>` now, and
+additionally assert what the page must *not* have: `hr` count zero, `dt` count 28.
+
+**`fa_icon` is not itself broken and stays in the codebase.** It is a shim mapping Font Awesome
+names onto Bootstrap Icons, so those glyphs render; dropping the 14 calls here was a judgement about
+icons-per-row, not a bug fix. Worth noting where that leaves it: those 14 were nearly every use in
+the app, and **one call site now remains**, `users_helper.rb:12`. The helper is close to deletable,
+which is a thing for whoever migrates that helper next rather than for this change.
+

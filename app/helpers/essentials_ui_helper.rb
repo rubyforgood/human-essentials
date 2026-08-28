@@ -88,6 +88,30 @@ module EssentialsUiHelper
     tag.div(capture(&block), class: "grid gap-x-4 sm:grid-cols-2")
   end
 
+  # One field in a record's detail list: a `<dt>`/`<dd>` pair wrapped in a `<div>`, which is how
+  # HTML5 groups them inside a `<dl>`.
+  #
+  #   <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+  #     <%= essentials_detail("Name", @organization.name) %>
+  #     <%= essentials_detail("URL", wide: true) { link_to ... } %>
+  #   </dl>
+  #
+  # A blank value renders the em dash, which is the convention in sixteen other places and is why
+  # this takes the value rather than leaving each caller to write `presence ||`. "Not defined" reads
+  # as a sentence and makes an empty field look like it says something.
+  #
+  # `wide:` spans both columns, for a value that is a paragraph, a list or an image rather than a
+  # word -- those look wrong in a half-width column and push their neighbour out of line.
+  def essentials_detail(label, value = nil, wide: false, &block)
+    body = block ? capture(&block) : value
+    body = "—" if body.blank?
+
+    tag.div(class: ("sm:col-span-2" if wide)) do
+      tag.dt(label, class: "text-xs font-medium text-slate-500") +
+        tag.dd(body, class: "mt-0.5 text-sm text-slate-900")
+    end
+  end
+
   # The subtitle on a "recently added" dashboard card: what period it covers, and whether the list
   # under it is the whole of that period or only the top of it.
   #

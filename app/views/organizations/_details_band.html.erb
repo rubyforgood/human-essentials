@@ -1,0 +1,20 @@
+<%#
+  One banded section of the organization card: a tinted heading strip, then its fields as a
+  two-column `<dl>`. Locals: `title`, and `last:` for the final band.
+
+  The band is the line item card's pattern -- `border-b border-slate-200 bg-slate-50` -- which marks
+  a change of kind. It replaces six bare `<hr>` elements that rendered in **slate-900**, because an
+  unstyled `<hr>` inherits `currentColor` under preflight, so the page carried six near-black rules
+  where every other divider in the app is a slate-200 hairline.
+
+  One gap number, `gap-y-4`, against the seven different gaps this had before. Two columns rather
+  than four: the labels in the approval and request sections are long enough that four would wrap
+  every one of them.
+%>
+<% last = local_assigns.fetch(:last, false) %>
+<h3 class="border-y border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-900 first:border-t-0">
+  <%= title %>
+</h3>
+<div class="px-5 <%= last ? "pt-4" : "py-4" %>">
+  <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2"><%= yield %></dl>
+</div>

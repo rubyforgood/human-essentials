@@ -141,9 +141,13 @@ every field, and rules in near-black rather than the app's hairline.</p></div>
   tinted strip the line item card uses to separate a change of kind &mdash; and the fields inside it
   become a <code>&lt;dl&gt;</code> on a two-column grid, which is what every other detail page in
   this app already does. One gap number throughout, no icons, sentence case.</p>
-  <p class="note">Two columns halves the height: the card measures <span class="num">1,519px</span>
-  today. The long labels in the approval and request sections are the reason it is two and not
-  four.</p></div>
+  <p class="note">Two columns rather than four because the labels in the approval and request
+  sections are long enough that four would wrap every one of them.</p>
+  <p class="note"><strong>Correction, measured after building it:</strong> this does <em>not</em>
+  shorten the page, which is what this preview originally predicted. The card went
+  <span class="num">1,519px</span> to <span class="num">1,516px</span> &mdash; the eight band strips
+  cost about <span class="num">368px</span>, which is almost exactly what two columns save. The case
+  for A is consistency and the broken markup, not height.</p></div>
   <div class="demo">
     <div class="card">
       <div class="chead"><h4>Organization info</h4><span class="btn">Edit</span></div>
