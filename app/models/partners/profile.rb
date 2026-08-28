@@ -80,6 +80,13 @@ module Partners
   class Profile < Base
     has_paper_trail
     self.table_name = "partner_profiles"
+
+    # Contact details of named individuals at the agency, so PII by the same standard as the
+    # product drive participants. None of these are queried by value, so non-deterministic.
+    encrypts :executive_director_email, :executive_director_phone,
+      :primary_contact_email, :primary_contact_phone, :primary_contact_mobile,
+      :pick_up_email, :pick_up_phone
+
     belongs_to :partner
     has_one :organization, through: :partner, class_name: "::Organization"
 

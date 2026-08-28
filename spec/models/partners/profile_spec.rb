@@ -307,4 +307,27 @@ RSpec.describe Partners::Profile, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
+
+  describe "encrypts the contact details at rest" do
+    let(:profile) do
+      create(:partner_profile,
+        executive_director_email: "director@example.com",
+        executive_director_phone: "555-111-1111",
+        primary_contact_email: "contact@example.com",
+        primary_contact_phone: "555-222-2222",
+        primary_contact_mobile: "555-333-3333",
+        pick_up_email: "pickup@example.com",
+        pick_up_phone: "555-444-4444")
+    end
+
+    it "stores them as ciphertext but round-trips them" do
+      expect(profile.reload.executive_director_email).to eq("director@example.com")
+      expect(profile.primary_contact_phone).to eq("555-222-2222")
+      expect(profile.pick_up_email).to eq("pickup@example.com")
+
+      expect(profile.ciphertext_for(:executive_director_email)).not_to include("director@example.com")
+      expect(profile.ciphertext_for(:primary_contact_phone)).not_to include("555-222-2222")
+      expect(profile.ciphertext_for(:pick_up_email)).not_to include("pickup@example.com")
+    end
+  end
 end

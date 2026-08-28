@@ -4,7 +4,7 @@
 #
 #  id            :bigint           not null, primary key
 #  comments      :text
-#  date_of_birth :date
+#  date_of_birth :string
 #  first_name    :string
 #  gender        :string
 #  last_name     :string
@@ -17,6 +17,9 @@ module Partners
     has_paper_trail
     belongs_to :family
     has_many :child_item_requests, dependent: :nullify
+
+    attribute :date_of_birth, :date
+    encrypts :date_of_birth
 
     def display_name
       "#{first_name} #{last_name}"

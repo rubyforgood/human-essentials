@@ -28,6 +28,7 @@
 module Partners
   class Family < Base
     has_paper_trail
+    encrypts :guardian_phone
     belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
     has_many :authorized_family_members, dependent: :destroy
