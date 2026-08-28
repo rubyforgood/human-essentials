@@ -34,9 +34,13 @@
   </div>
 
   <div class="mt-6 grid gap-6 lg:grid-cols-2">
+    <%# The count moved out of `actions:` and into the subtitle, where the sibling card below
+        already puts its explanatory line. It was wrong three ways there: a count is not a status,
+        a status is not an action, and `@recent_users.count` returned the `.limit(20)` cap rather
+        than the total -- "20 new users" with 23 signed up. See essentials_recent_subtitle. %>
     <%= render "shared/essentials/card",
           title: "Recently added users",
-          actions: capture { essentials_status_pill(pluralize(@recent_users.count, "new user"), tone: :brand) },
+          subtitle: essentials_recent_subtitle(@recent_users.length, total: @recent_users_total, noun: "users"),
           footer: capture { essentials_link_button("View all users", admin_users_path, variant: :secondary, size: :sm) } do %>
       <% if @recent_users.any? %>
         <ul class="divide-y divide-slate-100">
@@ -55,9 +59,12 @@
       <% end %>
     <% end %>
 
+    <%# This list is not capped, so its count was correct -- and exactly the length of the list
+        directly below it, which is the redundancy the `<tfoot>` totals were dropped for. What the
+        card never said is the period, so that is what the subtitle carries. %>
     <%= render "shared/essentials/card",
           title: "Recently added organizations",
-          actions: capture { essentials_status_pill(pluralize(@recent_organizations.count, "new organization"), tone: :brand) },
+          subtitle: essentials_recent_subtitle(@recent_organizations.length),
           footer: capture { essentials_link_button("View all organizations", admin_organizations_path, variant: :secondary, size: :sm) } do %>
       <% if @recent_organizations.any? %>
         <ul class="divide-y divide-slate-100">

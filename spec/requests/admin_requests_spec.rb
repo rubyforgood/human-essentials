@@ -18,6 +18,25 @@ RSpec.describe "Admin", type: :request do
       expect(response.body).to match(/log out/im)
     end
 
+    # The "recently added users" card lists at most AdminController::RECENT_LIMIT rows, and used to
+    # report `@recent_users.count` as the number of new users -- which on a limited relation is the
+    # *cap*, so it read "20 new users" once more than twenty had signed up. A page size presented as
+    # a total. It states both now, and this only fails once the list overflows, which is exactly the
+    # condition nobody is looking at.
+    context "when more users signed up this week than the card can list" do
+      let(:limit) { AdminController::RECENT_LIMIT }
+
+      before { create_list(:user, limit + 3, organization: organization) }
+
+      it "reports the true total rather than the number of rows shown" do
+        get admin_dashboard_path
+
+        total = User.where("created_at > ?", 1.week.ago).count
+        expect(total).to be > limit
+        expect(response.body).to include("The #{limit} most recent of #{total} users")
+      end
+    end
+
     context "when the user has a name" do
       let!(:user_with_name) { create(:user, name: "John Doe", email: "john@example.com") }
 

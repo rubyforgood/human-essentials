@@ -1074,6 +1074,23 @@ Four partner-facing headers carried a pill in `actions:` after the bank's partne
 it. `bin/design/button-audit.js` did not catch them, and could not: it counts `a, button`, and a pill
 is a `span`. `spec/system/page_header_status_system_spec.rb` counts spans in the container instead.
 
+<a id="counts-are-not-pills"></a>
+**The same applies to a card's `actions:`, and a count is not a status either.** The admin dashboard
+put `essentials_status_pill("20 new users")` in two card headers' `actions:` slots. Three faults in
+one control: a count is not a status, a status is not an action, and **the number was wrong** —
+`@recent_users` is `.limit(20)`, and `.count` on a limited relation returns the *cap*, so the card
+read "20 new users" when 23 had signed up. A page size presented as a total, which is the failure
+[the pagination summary](#pagination) exists to prevent.
+
+A count belongs in the card's **`subtitle:`**, where the third card on that same page already put its
+explanatory line — and it earns its place only by saying something the list below does not. The
+organizations card's count *equalled* the length of the list directly beneath it, which is the
+redundancy that killed the `<tfoot>` totals. So `essentials_recent_subtitle` states the period, which
+nothing did before (it appeared only in the *empty* state, so a reader who saw a list was never told
+what "recently" meant), and states a total only where the list is truncated: **"The 20 most recent of
+23 users added in the last week."** `total:` is optional and defaults to the shown count, so adding a
+`.limit` later forces the caller to say whether the number is the whole of it.
+
 <a id="primary-position"></a>
 **A primary sits at the row's alignment edge**, which is why the two rules below look opposite and
 are not. A page header's actions are right-aligned, so its primary is **last**. A form's action row
@@ -2483,6 +2500,7 @@ Real `role="tablist"` semantics with roving `tabindex`: arrow keys move between 
 End jump to the ends, `aria-selected` and `aria-controls` are wired to the panels. Panels
 carry `data-tabs-target="panel"` in the same order as the tabs.
 
+<a id="pagination"></a>
 ### Pagination
 
 **Every index table is paginated.** A table whose row count grows with use and has no pager is
