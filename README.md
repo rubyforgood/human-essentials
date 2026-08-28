@@ -17,9 +17,9 @@
 <a href="https://github.com/rubyforgood/human-essentials/issues" alt="Contributors"> <img src="https://img.shields.io/github/issues-closed/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/count/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/top/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/pulls" alt="Pull Requests"><img src="https://img.shields.io/github/issues-pr-closed-raw/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
 <a href="https://github.com/badges/shields/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Last Commit"><img src="https://img.shields.io/github/last-commit/rubyforgood/human-essentials?logo=github" /></a>
 </p>
@@ -34,13 +34,13 @@
 
 Human Essentials is an inventory management system built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and adapted to meet the needs of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need. This application aims to serve those needs and facilitate the general operations of the Diaper Banks (e.g., using barcode readers, scale weighing, inventory audits).
 
-Human Essentials is a free hosted service! There is no cost to Essentials banks, and all of the source code ([MIT Licensed](./LICENSE)) is shared and built by volunteers as part of [Ruby for Good](https://rubyforgood.org/). You can find out more about Ruby for Good at [rubyforgood.org](https://rubyforgood.org)
+Human Essentials is a free hosted service! There is no cost to Essentials banks, and all of the source code ([MIT Licensed](./LICENSE)) is shared and built by volunteers as part of [Ruby for Good](https://rubyforgood.org/). You can find out more about Ruby for Good at [rubyforgood.org](https://rubyforgood.org).
 
 ### Impact 🌟
 
-Human Essentials has over 200 registered banks across the United States at **no cost** to them. It is currently helping over **3 million** children receive diapers and over **400k** period supply recipients receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
+Human Essentials has over 200 registered banks across the United States at **no cost** to them. It is currently helping over **3 million** children receive diapers and over **400k** period supply recipients receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous non-profit organizations that distribute essential products to people.
 
-We are proud of our achievements up to date but there is much more to do! This is where you come in...
+We are proud of our achievements to date but there is much more to do! This is where you come in...
 
 ### Digital Public Good 🎉
 
@@ -61,24 +61,28 @@ Thanks for checking us out! Here is a quick-start, and also check out our [Contr
 
 1. Install Ruby
    - Install the version specified in [`.ruby-version`](.ruby-version).
-   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. Follow only the Installing Ruby step, as our project setup differs. It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
+   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOS setup. Follow only the Installing Ruby step, as our project setup differs. It is highly recommended you use a Ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
    - Verify that your Ruby installation works by running `ruby -v`.
 2. Install Postgres
-   - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
-   - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
+   - Follow one of these guides: [macOS](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
+   - Create a `database.yml` file in the `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 3. Clone the project and switch to its directory
 4. Run `bin/setup`
-5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-6. Log in as a sample user with the default [credentials](#credentials).
+5. Run `bin/start` and visit http://localhost:3000/ to see the Human Essentials page.
+6. Log in as a sample user with the default [credentials](#credentials-for-development-and-staging).
 
 ### Cloud Development
 
-You may also use [Github Codespaces](https://github.com/features/codespaces) to start an instant and free cloud-based dev environment. Click here:
+You may also use [GitHub Codespaces](https://github.com/features/codespaces) to start an instant cloud-based dev environment. Click here:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials?quickstart=1)
+
+Or clone the project and open it locally in a VS Code Dev Container:
 
 [![Clone and open in VSCode Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Clone%20and%20Open%20in%20VSCode&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/rubyforgood/human-essentials)
 
 ### Credentials for development and staging
-The staging server is at [staging.humanessentials.app](https://staging.humanessentials.app/). The database there is reset every night, so feel free to make changes. These are also the test users for local development, with more users in the [Contributor Documentation](CONTRIBUTORS.md).
+The staging server is at [staging.humanessentials.app](https://staging.humanessentials.app/). The database there is reset every night, so feel free to make changes. These are also the test users for local development, with more users in the [Contributing Guidelines](CONTRIBUTING.md#credentials).
 
 | Type            | Organization / Group | Role               | Email                  | Password  |
 |-----------------|----------------------|--------------------|------------------------|-----------|
@@ -87,6 +91,9 @@ The staging server is at [staging.humanessentials.app](https://staging.humanesse
 | Super User    |                      | Super Admin        | superadmin@example.com | password! |
 
 
+
+# Acknowledgements
+Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
 
 # Contributors ✨
 
