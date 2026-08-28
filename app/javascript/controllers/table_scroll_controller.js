@@ -177,7 +177,6 @@ export default class extends Controller {
      */
     const fold = window.innerHeight - height;
     const top = Math.min(fold, box.bottom);
-    if (region.parentElement) region.parentElement.dataset.railed = "";
     const onScreen = box.bottom > 0 && top + height > 0 && box.top < window.innerHeight;
 
     if (onScreen) rail.dataset.visible = "";
@@ -187,13 +186,21 @@ export default class extends Controller {
      * Whether it is riding the fold or settled at the table's end, which is the same test that just
      * placed it: the clamp bit, so there is table below the rail and it is lying on rows.
      *
-     * Only the CSS cares -- it puts the backdrop and hairline back for that state and takes them off
-     * again at rest. Settled, the rail sits in the strip the card reserves with nothing behind it,
+     * Only the CSS cares. It puts the backdrop and hairline back while floating and takes them off
+     * again at rest -- settled, the rail sits in the strip the card reserves with nothing behind it,
      * and a backdrop there washes out the card for no reason. This is the majority state rather than
      * the exception: on `/distributions` the rail floats for 448 of the page's 611 scrollable pixels.
      */
-    if (box.bottom > fold) rail.dataset.floating = "";
+    const floating = box.bottom > fold;
+    if (floating) rail.dataset.floating = "";
     else delete rail.dataset.floating;
+
+    /*
+     * The state goes on the wrapper as well as the rail, because the card footer needs it and cannot
+     * see the rail: the rail is a child of `body`, so no selector relates the two. `[data-railed]`
+     * still matches either value, which is what the strip and the native-scrollbar rules test.
+     */
+    if (region.parentElement) region.parentElement.dataset.railed = floating ? "floating" : "settled";
 
     rail.style.left = `${Math.round(box.left)}px`;
     rail.style.width = `${Math.round(box.width)}px`;
