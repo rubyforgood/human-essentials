@@ -719,7 +719,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Opt in to sending deadline reminders
           check 'Yes'
 
-          choose 'Day of Month'
+          choose 'Day of the month'
           fill_in "partner_group_reminder_schedule_service_day_of_month", with: 1
           fill_in "partner_group_deadline_day", with: 25
           find_button('Add partner group').click
@@ -795,16 +795,16 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             travel_to Time.zone.local(2025, 9, 30)
             refresh
             post_refresh
-            choose "Day of Month"
+            choose "Day of the month"
             fill_in "partner_group_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
             fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
 
-            reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+            reminder_text = find('[data-deadline-day-target="reminderText"]').text
             reminder_text.slice!("Your next reminder date is ")
             reminder_text.slice!(".")
             shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
 
-            deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+            deadline_text = find('[data-deadline-day-target="deadlineText"]').text
             deadline_text.slice!("The deadline on your next reminder email will be ")
             deadline_text.slice!(".")
             shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")

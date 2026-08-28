@@ -1,17 +1,15 @@
 <% content_for :title, "Editing - #{@partner.name}" %>
 
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Edit partner profile",
         subtitle: @partner.name,
         back: {path: partner_path(@partner), label: "Back to #{@partner.name}"} %>
-</div>
 
-<%#
+  <%#
   The nesting was wrong here: the `<div class="grid gap-6">` opened inside `simple_fields_for`
   was closed after that block had ended, so the submit row sat outside the fields it submits.
-%>
-<div class="px-4 py-6 sm:px-6 lg:px-8">
+  %>
   <%= essentials_form_for @partner, url: profile_path,
         data: {controller: "form-input"}, html: {role: "form"} do |form| %>
     <div class="space-y-6">

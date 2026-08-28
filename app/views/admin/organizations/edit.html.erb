@@ -1,12 +1,11 @@
 <% content_for :title, "Edit - Organizations" %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Edit organization",
         subtitle: @organization.name,
         back: {path: admin_organizations_path, label: "Back to organizations"} %>
-</div>
 
-<div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+<div class="max-w-3xl">
   <%= essentials_error_summary(@organization) %>
 
   <%= essentials_form_for @organization, url: admin_organization_path do |f| %>
@@ -80,4 +79,5 @@
       <%= essentials_link_button "Cancel", admin_organizations_path, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
+</div>
 </div>

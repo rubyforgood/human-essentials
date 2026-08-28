@@ -1,5 +1,29 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Trix's own icons are SVG data-URI background images -- a second icon set in an app that retired
+// Font Awesome so it would have exactly one. These are the Bootstrap Icons class names the rest of
+// the app writes, so the codepoints stay in one place and a missing glyph fails the same way it
+// would in any view rather than silently drawing nothing.
+//
+// Set here rather than in CSS because the toolbar does not exist until Trix has run, so there is
+// nothing to style without JavaScript anyway.
+const ICONS = {
+  "trix-button--icon-bold": "bi-type-bold",
+  "trix-button--icon-italic": "bi-type-italic",
+  "trix-button--icon-strike": "bi-type-strikethrough",
+  "trix-button--icon-link": "bi-link-45deg",
+  "trix-button--icon-heading-1": "bi-type-h1",
+  "trix-button--icon-quote": "bi-quote",
+  "trix-button--icon-code": "bi-code",
+  "trix-button--icon-bullet-list": "bi-list-ul",
+  "trix-button--icon-number-list": "bi-list-ol",
+  "trix-button--icon-decrease-nesting-level": "bi-text-indent-left",
+  "trix-button--icon-increase-nesting-level": "bi-text-indent-right",
+  "trix-button--icon-attach": "bi-paperclip",
+  "trix-button--icon-undo": "bi-arrow-counterclockwise",
+  "trix-button--icon-redo": "bi-arrow-clockwise"
+}
+
 // Makes the Trix toolbar keyboard-operable.
 //
 // Trix renders its toolbar as 14 buttons, every one of them tabindex="-1", with no role and no
@@ -44,6 +68,12 @@ export default class extends Controller {
     this.buttons(toolbar).forEach((button) => {
       const title = button.getAttribute("title");
       if (title && !button.getAttribute("aria-label")) button.setAttribute("aria-label", title);
+    });
+
+    // Every button, not only the enabled ones `buttons()` returns: undo and redo start disabled.
+    toolbar.querySelectorAll("button").forEach((button) => {
+      const icon = [...button.classList].map((c) => ICONS[c]).find(Boolean);
+      if (icon) button.classList.add(icon);
     });
 
     this.setTabStop(toolbar, 0);

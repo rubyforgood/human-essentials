@@ -118,6 +118,21 @@ def fa_icons(src)
   src.scan(/\bfa-[a-z0-9-]+/)
 end
 
+# Two page gutters in one template: the wrapper closed after the page header and a second one
+# opened for the content, so the first one's bottom padding stacks on the second one's top and the
+# gap under the heading becomes 48 or 72 where the design system's is 24.
+#
+# Matched on the *gutter* -- `px-4 sm:px-6 lg:px-8` -- and not on the whole `px-4 py-6 sm:px-6
+# lg:px-8` string, which is how the first version of this check missed 17 of them: they open with
+# `pt-6` rather than `py-6`, and comparing the full class string made two wrappers look like one
+# wrapper and something else.
+PAGE_GUTTER = /<div[^>]*class="[^"]*\bpx-4\b[^"]*\bsm:px-6\b[^"]*\blg:px-8\b[^"]*"/
+
+def double_page_wrapper(src)
+  hits = src.scan(PAGE_GUTTER)
+  (hits.size >= 2) ? hits : []
+end
+
 CHECKS = {
   "table is not .data-table" => method(:legacy_table),
   "bare <hr> (draws in slate-900)" => method(:bare_hr),
@@ -126,7 +141,8 @@ CHECKS = {
   "4+ flat <p> label pairs (should be a <dl>)" => method(:flat_detail_pairs),
   "hand-written card header" => method(:handrolled_card_header),
   "button classes pasted inline" => method(:raw_button_string),
-  "Font Awesome icon" => method(:fa_icons)
+  "Font Awesome icon" => method(:fa_icons),
+  "two page gutters (48-72px under the heading)" => method(:double_page_wrapper)
 }.freeze
 
 # The detectors are proved before anything is reported. A check that silently matches nothing
@@ -163,7 +179,14 @@ PROBES = [
   # An icon-only chrome control: sized, not padded. The helper has never produced one.
   ['class="inline-flex size-11 items-center justify-center rounded-lg text-slate-500"', :raw_button_string, false],
   ['<i class="fa fa-plus"></i>', :fa_icons, true],
-  ['<i class="bi bi-plus"></i>', :fa_icons, false]
+  ['<i class="bi bi-plus"></i>', :fa_icons, false],
+  [%(<div class="px-4 py-6 sm:px-6 lg:px-8">a</div><div class="px-4 py-6 sm:px-6 lg:px-8">b</div>),
+    :double_page_wrapper, true],
+  # The variant the first version missed: the header wrapper opens `pt-6`, the content one `py-6`.
+  [%(<div class="px-4 pt-6 sm:px-6 lg:px-8">a</div><div class="max-w-3xl px-4 py-6 sm:px-6 lg:px-8">b</div>),
+    :double_page_wrapper, true],
+  [%(<div class="px-4 py-6 sm:px-6 lg:px-8"><div class="space-y-6">a</div></div>),
+    :double_page_wrapper, false]
 ].freeze
 
 PROBES.each do |markup, check, expected|

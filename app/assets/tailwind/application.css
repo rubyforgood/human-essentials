@@ -217,6 +217,31 @@
   }
 
   /*
+   * A banded section of a form, so a long form is sectioned the same way a long detail card is.
+   *
+   * The organization settings form used `border-t` on the `<fieldset>`, and a `<legend>` is
+   * rendered *in* its fieldset's top border -- the browser cuts a gap for it, so the rule started
+   * where the legend text ended and ran to the right edge. That is a fieldset rendering artefact,
+   * not a pattern this design system has anywhere.
+   *
+   * A `<legend>` shrink-wraps and cannot be laid out like a normal block, which is why it looks
+   * unstylable. `display: block; width: 100%` makes it one, and then it can be the same band the
+   * detail card uses -- so the settings page and the organization page it edits are sectioned
+   * identically. The fieldset keeps its semantics: the group is still announced.
+   */
+  .form-section {
+    @apply min-w-0 border-0 p-0;
+  }
+
+  .form-section > legend {
+    @apply block w-full border-y border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-900;
+  }
+
+  .form-section:first-of-type > legend {
+    @apply border-t-0;
+  }
+
+  /*
    * Data tables.
    *
    * Deliberately component classes rather than repeated utility strings: there are ~78
@@ -1098,10 +1123,140 @@
  * not matter while every button was tabindex="-1" and unreachable. trix_toolbar_controller.js
  * makes them keyboard-operable, so they need a visible indicator -- WCAG 2.4.7.
  */
+/*
+ * The rich text editor's toolbar.
+ *
+ * The editor body was already styled to match a text input (see vendor/actiontext.css); the
+ * toolbar was left as Trix ships it -- #bbb borders, a 3px radius, `1.5vw` group margins, 42x26
+ * buttons with no radius, and a `#cbeefa` active state that appears nowhere else in this app. So
+ * the field looked like the design system and the controls above it did not.
+ *
+ * The buttons are the app's ghost button: transparent, slate-500, slate-100 on hover, brand-50 on
+ * the pressed state, in a slate-300 group with the design system's `rounded-lg`. 32x32 each, above
+ * WCAG 2.5.8's 24px minimum -- Trix's own 42x26 met it only in one dimension.
+ *
+ * Icons come from Bootstrap Icons like every other icon in the app, added as `bi-*` classes by
+ * trix_toolbar_controller.js. Trix draws its own as SVG data-URI background images, which is a
+ * second icon set in a codebase that retired Font Awesome to have exactly one. Doing it in the
+ * controller rather than in CSS means the codepoints stay in one place: the class name is the
+ * same one any view would write. The toolbar only exists when JS has run, so nothing is lost.
+ *
+ * Trix hides each button's text with `text-indent: -9999px`, which keeps the accessible name --
+ * so the glyph is placed absolutely with the indent undone, and the label stays where a screen
+ * reader can read it.
+ */
+trix-toolbar {
+  margin-bottom: calc(var(--spacing) * 2);
+}
+
+trix-toolbar .trix-button-row {
+  gap: calc(var(--spacing) * 2);
+}
+
+trix-toolbar .trix-button-group {
+  margin-bottom: 0;
+  border: 1px solid var(--color-slate-300);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+trix-toolbar .trix-button-group:not(:first-child) {
+  margin-left: 0;
+}
+
+trix-toolbar .trix-button {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+  max-width: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-slate-500);
+  transition: background-color 150ms, color 150ms;
+}
+
+/*
+ * `--icon` explicitly, and not only `.trix-button`, because Trix narrows the icon buttons below
+ * `768px` with `max-width: calc(0.8em + 3.5vw)` and the two selectors have equal specificity.
+ *
+ * `flex: none` is the part that actually matters, and it was not obvious: the buttons are flex
+ * children of `.trix-button-group` inside `.trix-button-row`, so at 375px fourteen 32px buttons do
+ * not fit in the row and every one of them *shrinks* -- to 19px, under WCAG 2.5.8's 24. Widening
+ * them did nothing, because the width was never what was being ignored. The row is already
+ * `overflow-x: auto`, so refusing to shrink makes the toolbar scroll sideways on a phone, which is
+ * how editor toolbars handle this everywhere.
+ */
+trix-toolbar .trix-button--icon {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+  max-width: none;
+}
+
+trix-toolbar .trix-button,
+trix-toolbar .trix-button-group {
+  flex: none;
+}
+
+trix-toolbar .trix-button:not(:first-child) {
+  border-left: 1px solid var(--color-slate-200);
+}
+
+trix-toolbar .trix-button:not(:disabled):hover {
+  background: var(--color-slate-100);
+  color: var(--color-slate-900);
+}
+
+trix-toolbar .trix-button.trix-active {
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+}
+
+trix-toolbar .trix-button:disabled {
+  color: var(--color-slate-300);
+}
+
+/* Trix's own SVG icons, replaced by the Bootstrap Icons glyph the controller adds. */
+trix-toolbar .trix-button--icon::before {
+  background-image: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-indent: 0;
+  font-size: 1rem;
+  opacity: 1;
+}
+
 trix-toolbar .trix-button:focus-visible {
   outline: 2px solid var(--color-brand-600);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline-offset: -2px;
+  border-radius: 0;
+}
+
+/* The link dialog Trix opens from the toolbar, which is a form and should look like one. */
+trix-toolbar .trix-dialog {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-200);
+  box-shadow: var(--shadow-xl);
+  padding: calc(var(--spacing) * 3);
+}
+
+trix-toolbar .trix-input--dialog {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-300);
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+}
+
+trix-toolbar .trix-button--dialog {
+  border: 1px solid var(--color-slate-300);
+  border-radius: var(--radius-lg);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-slate-700);
 }
 
 /*

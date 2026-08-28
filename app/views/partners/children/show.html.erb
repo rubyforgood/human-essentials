@@ -5,7 +5,7 @@
   a different tree; a bare `<dl>` with no styling, so the labels and values ran together; and an
   `<h3>` sitting outside the padded div it titled.
 %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Child details",
         subtitle: "#{@child.first_name} #{@child.last_name}".strip.presence || "Child",
@@ -14,9 +14,8 @@
           concat essentials_link_button("Edit child", edit_partners_child_path(@child),
                    variant: :primary, icon: "bi-pencil")
         } %>
-</div>
 
-<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+<div class="space-y-6">
   <%= render "shared/essentials/card", title: "Child information" do %>
     <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
       <% [
@@ -87,4 +86,5 @@
       </div>
     <% end %>
   <% end %>
+</div>
 </div>

@@ -141,7 +141,15 @@ SimpleForm.setup do |config|
   config.wrappers :essentials_collection,
     tag: "fieldset",
     class: "mb-4",
-    item_wrapper_class: "flex min-h-6 items-center gap-2",
+    # `gap-2` is the horizontal gap between the control and its label. `mb-2` is the vertical one
+    # between options, and it was missing: every radio and checkbox group in the app rendered its
+    # options flush, 24px rows with a 0px gap. That meets WCAG 2.5.8 on size alone -- the row is
+    # exactly the 24px minimum -- and it is the floor of it, with no separation at all, which is
+    # what every other design system gives here: GOV.UK pairs a 40px control with a 10px gap,
+    # Material 3 asks for 48dp rows, and Apple's HIG for 44pt. `min-h-8` and `mb-2` put the row at
+    # 32px with 8px between, a 40px pitch: above the AA minimum in both dimensions, and matching
+    # GOV.UK's rhythm without the 48px density change a full Material row would mean here.
+    item_wrapper_class: "flex min-h-8 items-center gap-2 mb-2 last:mb-0",
     item_label_class: "py-0.5 text-sm text-slate-700" do |b|
     b.use :html5
     b.optional :readonly

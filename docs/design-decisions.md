@@ -5786,3 +5786,94 @@ defines `create_new_donation`, which clicks a "New Donation" link on the dashboa
 method and no such link exists in the view — stale on both sides, which is `dead-code.rb` territory
 rather than this change's.
 
+## 2026-08-28 — The settings form: bands, spacing, and an editor the design system did not have
+
+Six things reported on `/manage/edit`. Five were defects; the sixth needed a component that did not
+exist.
+
+### The divider that started mid-sentence
+
+Seven sections were `<fieldset class="border-t border-slate-200 pt-5">` with a `<legend>` inside.
+A legend is rendered **in** its fieldset's top border and the browser cuts a gap for it, so the rule
+began where the legend text ended. Correctly described as "not a pattern" — it is a fieldset
+rendering artefact that nobody chose.
+
+**Chosen: the band, via a new `shared/essentials/form_section`.** design.md already argues that the
+detail card's band is "the reason a detail card needs no `<hr>` at all", and the page this form
+edits is banded exactly that way — so the record and the form that edits it now look alike.
+
+**Rejected: a `::before` pseudo-element drawing the rule.** It works and needs no extra markup, but
+it keeps a divider the design system had already decided against, and it would have left the edit
+page looking unlike the view page for no gain.
+
+**Rejected: dropping the rule and using spacing alone.** Also defensible, and it is what "never a
+bare `<hr>`" implies. The band was preferred only because the sibling page already uses it.
+
+A legend shrink-wraps and is laid out specially, which is why it is thought to be unstylable.
+`display: block; width: 100%` makes it an ordinary block. Both facts are in `.form-section` with the
+reasoning attached, because the next person will otherwise re-derive them.
+
+### Radio spacing, and where the numbers come from
+
+All 14 groups rendered **24px rows with a 0px gap**. Stated precisely: that **passes** WCAG 2.5.8,
+because the row is exactly the 24px minimum and the spacing exception only applies to *undersized*
+targets. It sits on the floor of the requirement with no separation at all, which is not where any
+comparable system sits — **GOV.UK** pairs a 40px control with a 10px gap, **Material 3** specifies
+48dp rows, **Apple's HIG** 44pt.
+
+**Chosen: 32px rows, 8px gap, 40px pitch**, set once on `:essentials_collection` so no page decides
+it. That clears the AA minimum in both dimensions and lands on GOV.UK's rhythm.
+
+**Rejected: 48px rows (Material).** It is the most generous option and it would have changed the
+density of every form in an app whose controls are 38px. Matching the platform this most resembles
+— a government-service-shaped admin tool — was the better fit.
+
+### The truncation was a symptom of a block-form input
+
+"Deadline day" was cut off because the field was **44px wide against a 92px placeholder**. The cause
+is worth recording because it is a repeat: `f.input ... do` with a block *replaces* the wrapper's
+input, so the field skips the whole `:essentials` pipeline — no classes, no width, and on this
+branch previously no `aria-required`, no `aria-invalid` and no inline error either. The same shape
+was fixed on the partner profile form earlier. **If a field is rendered inside `f.input ... do`,
+assume it has none of the design system's behaviour until checked.**
+
+### The rich text editor, which the design system did not have
+
+Correctly spotted: the editor body matched the app's inputs and the toolbar above it did not,
+because only the body had ever been styled. There was no rich text section in design.md at all.
+
+**Icons: no, they did not match the convention, and the answer is not close.** The app uses
+Bootstrap Icons — 91 distinct glyphs, self-hosted, with Font Awesome deliberately removed so there
+would be exactly one set. Trix draws its fourteen toolbar buttons as SVG data-URI background
+images: a second icon set, on four screens, in an app that had gone to the trouble of retiring one.
+
+**Chosen: map the classes in `trix_toolbar_controller.js`**, not CSS `content` codepoints. The class
+name is then the same one any view writes, the codepoints stay in Bootstrap Icons' own stylesheet,
+and a renamed glyph fails the way it would anywhere else rather than silently drawing nothing. The
+toolbar does not exist until Trix has run, so a JavaScript mapping costs nothing.
+
+**The phone bug was not what it looked like.** Below 768px Trix narrows the buttons with
+`max-width: calc(0.8em + 3.5vw)` — about 22px at 375, under 2.5.8. Overriding the width did nothing,
+twice, because width was never being ignored: the buttons are flex children and fourteen 32px
+buttons do not fit a 375px row, so they *shrank*. `flex: none` fixed it, and the row was already
+`overflow-x: auto`. Worth writing down as a general lesson: when a size override has no effect,
+check whether something is shrinking the element before overriding harder.
+
+### Two specs that pinned the wrong thing
+
+`find('small[data-deadline-day-target="reminderText"]')` coupled the assertion to the element name,
+so replacing `<small>` with the design system's hint `<p>` failed 31 examples for no behavioural
+reason. The data attribute is the contract — the same conclusion `[data-flash]` reached earlier on
+this branch — and the selectors are tag-agnostic now.
+
+The label copy also moved to sentence case ("Day of Month" to "Day of the month"), which design.md
+requires of labels, and four spec files followed.
+
+### The wrapper check I wrote last week missed seventeen pages
+
+Stated plainly because it is my own miss. The check for double page wrappers required both to be
+the exact string `px-4 py-6 sm:px-6 lg:px-8`; seventeen templates open the header with `pt-6`, so
+two wrappers looked like one wrapper and something else. Matching the *gutter* rather than the whole
+class string finds both shapes, and `shell-first-audit.rb` carries the check now so it is not a
+thing anyone has to remember.
+

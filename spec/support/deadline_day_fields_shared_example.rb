@@ -24,7 +24,7 @@ end
 
 RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit, post_refresh|
   it "can set a reminder on a day of the month" do
-    choose "Day of Month"
+    choose "Day of the month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 1
     fill_in "Deadline day in reminder email", with: 10
     click_on save_button
@@ -37,7 +37,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   end
 
   it "can set a reminder on a day of the week" do
-    choose "Day of the Week"
+    choose "Day of the week"
     select("First", from: "#{form_prefix}_reminder_schedule_service_every_nth_day")
     select("Sunday", from: "#{form_prefix}_reminder_schedule_service_day_of_week")
     fill_in "Deadline day in reminder email", with: 10
@@ -51,7 +51,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   end
 
   it "warns the user if they enter an invalid reminder or deadline day", :aggregate_failures do
-    choose "Day of Month"
+    choose "Day of the month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 15
     fill_in "Deadline day in reminder email", with: 15
     expect(page).to have_content("Reminder day cannot be the same as deadline day.")
@@ -87,7 +87,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
     context "when the reminder is a day of the month" do
       before do
-        choose "Day of Month"
+        choose "Day of the month"
         @now = safe_add_days(Time.zone.now, 0)
       end
 
@@ -119,7 +119,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
     context "when the reminder is a day of the week" do
       before do
-        choose "Day of the Week"
+        choose "Day of the week"
         @now = safe_add_days(Time.zone.now, 0)
       end
 

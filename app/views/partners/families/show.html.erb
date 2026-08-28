@@ -5,7 +5,7 @@
   table headers (which summed to more than 100% in both tables), two action links crammed into
   an <h3> with a `margin-left:10px` inline style, and a bare <dl> with no styling.
 %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Family details",
         subtitle: "#{@family.guardian_first_name} #{@family.guardian_last_name}".strip.presence,
@@ -17,9 +17,8 @@
                    new_partners_authorized_family_member_path(family_id: @family.id),
                    variant: :primary, icon: "bi-person-plus")
         } %>
-</div>
 
-<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+<div class="space-y-6">
   <%= render "shared/essentials/card", title: "Family information" do %>
     <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
       <% [
@@ -141,4 +140,5 @@
       </div>
     <% end %>
   <% end %>
+</div>
 </div>
