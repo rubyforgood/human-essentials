@@ -7,10 +7,15 @@
     <% end %>
   <% end %>
 
+  <%# The agency names the page, so the status pill has something to attach to: `status:` renders it
+      on the title line, which is where it belongs and is what `partners/show` already does. It was
+      in `actions:`, the container documented as "at most three, exactly one primary" -- which a
+      status is none of. Title and subtitle swap round for the same reason: a pill after "Profile"
+      would read as the profile being approved. %>
   <%= render "shared/essentials/page_header",
-        title: "Profile",
-        subtitle: current_partner.name,
-        actions: essentials_partner_status_pill(current_partner.status) %>
+        title: current_partner.name,
+        subtitle: "Your agency's profile, as your bank holds it.",
+        status: essentials_partner_status_pill(current_partner.status) %>
 
   <div class="mb-6"><%= render "actions", partner: current_partner %></div>
 

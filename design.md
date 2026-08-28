@@ -1049,9 +1049,30 @@ what is in the card; a form action commits the whole form.** If pressing it woul
 you do on the page, it is a form action and it goes below.
 
 **And it never competes with the page header.** A form page's header carries navigation — *Back to
-items* — and no submit; checked across every form view, the one header carrying `actions:` on a form
-page holds a status *pill*, not a button. So the two rows never appear on one page arguing about
-which is primary.
+items* — and no submit, so the two rows never appear on one page arguing about which is primary.
+
+<a id="status-is-not-an-action"></a>
+**A status is not an action, and does not go in `actions:`.** That container is "at most three,
+exactly one primary", which a status is none of, and a pill among buttons reads as a button that has
+been greyed out. Where it goes depends on whether the heading names the pill's subject:
+
+- **The title names the thing** — `partners/show`, whose h1 *is* the partner — so the pill rides the
+  title line via `status:`, which is where GitHub, Linear and Stripe put an entity's state.
+- **The title names a page** — a portal's *Dashboard*, *Distributions* — and there is no subject in
+  the heading to attach to. `status:` would render "Distributions Approved". Retitling the page to
+  the agency's name was tried and reverted: a spec asserts `h1` text "Dashboard" to prove a redirect
+  landed there, which is a fair use of a heading that names its page.
+- **So on a page-titled page the status becomes a [callout](#callouts) — or nothing.** A pill saying
+  *Approved* on your own dashboard every day is noise. A pill saying *Awaiting review* is
+  load-bearing but bad at the job: on the partner dashboard the request options card is hidden
+  outright for an unapproved partner, and the pill was the only thing explaining that, in one word,
+  in a corner, with no statement of consequence. It is a callout now, shown only when there is
+  something to say, naming the consequence — *you cannot make requests* — rather than the enum
+  value. `partners/profiles/show` already answered `recertification_required` this way.
+
+Four partner-facing headers carried a pill in `actions:` after the bank's partner page was fixed for
+it. `bin/design/button-audit.js` did not catch them, and could not: it counts `a, button`, and a pill
+is a `span`. `spec/system/page_header_status_system_spec.rb` counts spans in the container instead.
 
 <a id="primary-position"></a>
 **A primary sits at the row's alignment edge**, which is why the two rules below look opposite and
@@ -2062,6 +2083,7 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+<a id="callouts"></a>
 ### Callouts
 
 A notice that belongs to the **page** rather than to the request. The flash says "that worked";
