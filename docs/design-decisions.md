@@ -5987,3 +5987,45 @@ Worth stating plainly because it generalises: **a deliverable is not delivered u
 is for can open it.** The preview existed, was correct, was committed, and was described accurately
 in the summary — and none of that was worth anything.
 
+## 2026-08-28 — Custom request units: option A built
+
+Chosen from `docs/mockups/request-units.html`. What shipped matches the preview, with two
+departures worth naming.
+
+**The `<select multiple>` stayed as the field.** The chips are a view of it, not a replacement, so
+the submitted parameter is the same repeated `name[]` select2 was sending and
+`OrganizationUpdateService` did not change. Hiding the select is gated on `[data-tag-input="ready"]`,
+which the controller sets only after the chips exist — the arrangement the table rail already uses,
+so with JavaScript off the field is the native multi-select rather than nothing at all. The
+alternative, hidden inputs owned by the controller, would have left a no-JS user with no control.
+
+**Departure 1: duplicates are refused, case-insensitively.** The preview's comparison table said
+option A did *not* prevent near-duplicates, and that was true of the design as drawn. Refusing an
+exact repeat is cheap, and `Pack` joining `pack` as a second unit is a data problem rather than a
+preference. It is less than option C offered — `packs` and `pack` are still two units — so the
+table's claim was right about the general case and the change is a small improvement on it.
+
+**Departure 2: the remove button is 24x24, not the 20px the mockup drew.** At 20 it passed 2.5.8
+only through the spacing exception, since the next target is a chip away. 24 passes outright, and
+the chip grew from 26px to 30px to hold it, which is not enough to change the row.
+
+**Two things the audits caught that review would not have.**
+
+`undefined-classes.py` reported `tag-input-box`: I had put a class on the box and styled it entirely
+with utilities on the same element, so the class selected nothing and styled nothing. Removed.
+
+`keyboard-audit.js` reported a click handler on a non-focusable `<div>` — the "click the padding to
+focus the input" convenience. It is right to flag that shape, and the affordance was worth almost
+nothing here because the input is `flex-1` and already fills the row; the only area it did not cover
+was 8px of padding. Removed rather than worked around.
+
+**And one that cost a rebuild:** the rule hiding the native select was written in `@layer
+components` and did nothing at all — the select carries `block w-full` from `SELECT_CLASSES`, and a
+utility beats a layered rule however specific. The stylesheet already had a section for exactly this
+("Deliberately outside @layer components"), and the rule belongs there. Worth remembering as the
+general form: **if a rule that should obviously win is being ignored, check the layer before the
+selector.**
+
+`Flipper.enable(:enable_packs)` was set in the development database so the field is visible;
+`Flipper.disable(:enable_packs)` puts it back.
+
