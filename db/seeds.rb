@@ -15,6 +15,19 @@ def random_record_for_org(org, klass)
   klass.where(organization: org).all.sample
 end
 
+def skip_dupes_and_seed(collection)
+  errors = []
+  collection.each do |entry|
+    yield entry
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+    errors << e.to_s
+    Rails.logger.info "[SEEDS] Error while adding #{entry.inspect} - #{e}"
+  end
+  errors
+end
+
+puts "\033[1;33m 🌱 Seeding data...";
+
 # ----------------------------------------------------------------------------
 # Script-Global Variables
 # ----------------------------------------------------------------------------
@@ -23,8 +36,24 @@ end
 # Base Items
 # ----------------------------------------------------------------------------
 
-require "seeds"
-Seeds.seed_base_items
+# Initial starting qty for our test organizations
+base_items = Rails.root.join("db", "base_items.json").read
+items_by_category = JSON.parse(base_items)
+
+items_by_category.each do |category, entries|
+  skip_dupes_and_seed(entries) do |entry|
+    BaseItem.find_or_create_by!(
+      name: entry["name"],
+      category: category,
+      partner_key: entry["key"]
+    ) do |base_item|
+      base_item.created_at = Time.zone.now
+      base_item.updated_at = Time.zone.now
+    end
+  end
+end
+# Create global 'Kit' base item
+KitCreateService.find_or_create_kit_base_item!
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -105,17 +134,17 @@ end
 
 complete_orgs.each do |org|
   %w[pack box flat].each do |name|
-    Unit.create!(organization: org, name: name)
+    Unit.find_or_create_by!(organization: org, name: name)
   end
 
   org.items.each_with_index do |item, i|
     if item.name == "Pads"
-      %w[box pack].each { |name| item.request_units.create!(name: name) }
+      %w[box pack].each { |name| item.request_units.find_or_create_by!(name: name) }
     elsif item.name == "Wipes (Baby)"
-      item.request_units.create!(name: "pack")
+      item.request_units.find_or_create_by!(name: "pack")
     elsif item.name == "Kids Pull-Ups (5T-6T)"
       %w[pack flat].each do |name|
-        item.request_units.create!(name: name)
+        item.request_units.find_or_create_by!(name: name)
       end
     end
   end
@@ -127,7 +156,9 @@ end
 
 Organization.all.find_each do |org|
   ["One", "Two", "Three"].each do |letter|
-    FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
+    ItemCategory.find_or_create_by!(organization: org, name: "Category #{letter}") do |item_category|
+      item_category.assign_attributes(FactoryBot.attributes_for(:item_category).except(:name))
+    end
   end
 end
 
@@ -147,18 +178,23 @@ end
 # ----------------------------------------------------------------------------
 # Partner Group & Item Categories
 # ----------------------------------------------------------------------------
+
 Organization.all.find_each do |org|
   # Setup the Partner Group & their item categories
-  partner_group_one = FactoryBot.create(:partner_group, organization: org)
+  partner_group_one = PartnerGroup.find_or_create_by!(organization: org, name: "Group 1") do |partner_group|
+    partner_group.assign_attributes(FactoryBot.attributes_for(:partner_group).except(:name, :organization))
+  end
 
   total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
-    partner_group_one.item_categories << item_category
+    partner_group_one.item_categories << item_category unless partner_group_one.item_categories.include?(item_category)
   end
   next unless org.name== pdx_org.name
-  partner_group_two=FactoryBot.create(:partner_group, organization: org)
+  partner_group_two = PartnerGroup.find_or_create_by!(organization: org, name: "Group 2") do |partner_group|
+    partner_group.assign_attributes(FactoryBot.attributes_for(:partner_group).except(:name, :organization))
+  end
   org.item_categories.each do |item_category|
-    partner_group_two.item_categories << item_category
+    partner_group_two.item_categories << item_category unless partner_group_two.item_categories.include?(item_category)
   end
 end
 
@@ -282,6 +318,10 @@ note = [
       partner.organization.partner_groups.first
     end
   end
+
+  # Partner's profile, users, families, and requests are all set up once when
+  # the partner is first created; skip re-creating them on subsequent seed runs.
+  next unless p.previously_new_record?
 
   # Base profile information all partners should have
   # Includes fields in the agency_information, contacts, and pick_up_person partial
@@ -629,11 +669,9 @@ inactive_storage.discard
 #
 StorageLocation.active.each do |sl|
   sl.organization.items.active.each do |item|
-    InventoryItem.create!(
-      storage_location: sl,
-      item: item,
-      quantity: Faker::Number.within(range: 500..2000)
-    )
+    InventoryItem.find_or_create_by!(storage_location: sl, item: item) do |inventory_item|
+      inventory_item.quantity = Faker::Number.within(range: 500..2000)
+    end
   end
 end
 Organization.all.find_each { |org| SnapshotEvent.publish(org) }
@@ -643,13 +681,13 @@ Organization.all.find_each { |org| SnapshotEvent.publish(org) }
 complete_orgs.each do |org|
   half_items_count = (org.items.count / 2).to_i
   low_items = org.items.left_joins(:inventory_items)
-    .select("items.*, SUM(inventory_items.quantity) AS total_quantity")
+    .select("items.*, SUM(inventory_items.quantity) AS inventory_quantity")
     .group("items.id")
-    .order("total_quantity")
+    .order("inventory_quantity")
     .limit(half_items_count).to_a
 
-  min_qty = low_items.first.total_quantity
-  max_qty = low_items.last.total_quantity
+  min_qty = low_items.first.inventory_quantity
+  max_qty = low_items.last.inventory_quantity
 
   # Ensure at least one of the items unique to the Second City Bank has minimum
   # and recommended quantities set
@@ -856,11 +894,9 @@ complete_orgs.each do |org|
   org.storage_locations.active.each do |storage_location|
     org.kits.active.each do |kit|
       # Create inventory for each kit
-      InventoryItem.create!(
-        storage_location: storage_location,
-        item: kit,
-        quantity: Faker::Number.within(range: 10..50)
-      )
+      InventoryItem.find_or_create_by!(storage_location: storage_location, item: kit) do |inventory_item|
+        inventory_item.quantity = Faker::Number.within(range: 10..50)
+      end
     end
   end
 end
