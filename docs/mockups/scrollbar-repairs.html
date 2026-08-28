@@ -85,8 +85,10 @@
 <div class="col">
   <p class="eyebrow">Design preview &middot; 28 August 2026</p>
   <h1>The rail: four things wrong with it</h1>
-  <p class="lede">All four reported at once, and they are not independent &mdash; three of them were
-  introduced together by the last change, and they make each other worse.</p>
+  <p class="lede">All four reported at once, and they are not independent. <strong>Two</strong> were
+  introduced by the last change &mdash; the darkness, and the backdrop removal that makes it hover
+  badly. The other two have been there since the rail was first built and were never noticed, because
+  each was masked by something the last change took away.</p>
   <div class="quote">&ldquo;the scroll bar is very dark, when the user scrolls to the bottom of the
   page it hovers in an odd way. it also has no padding above the pagination, and doesnt have a
   border radius so it does not match with the rest of the components.&rdquo;</div>
@@ -135,6 +137,16 @@
   <p class="note">No option to choose here &mdash; it is a one-word fix. But it matters for defect&nbsp;2:
   a hard-edged 600px&nbsp;&times;&nbsp;6px bar reads considerably heavier than the same colour as a
   pill, so some of &ldquo;very dark&rdquo; is this.</p>
+  <p class="note"><strong>It has been broken the whole time.</strong> The token dates to
+  <code>015da3b36</code>, the commit that first gave a scrolling table a rail &mdash; not to last
+  night&rsquo;s change, which only reduced four references to two. Nobody saw it because a square
+  thumb at slate-400 under a 92%-white backdrop is a much quieter object than a square thumb at
+  slate-500 with nothing behind it.</p>
+  <p class="note"><strong>And it is the only one.</strong> Every custom property
+  <code>application.css</code> references was resolved against the running app:
+  <span class="num">30</span> referenced, <span class="num">28</span> resolve, and the two that do
+  not are <code>--radius-full</code> and <code>--pin-width</code> &mdash; the latter correctly, since
+  the controller sets it per element at runtime. So this is one bad token, not a pattern.</p>
 </div>
 
 <hr class="rule">
