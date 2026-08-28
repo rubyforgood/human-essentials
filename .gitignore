@@ -113,4 +113,7 @@ out/
 /public/scrollbar-repairs.html
 /public/form-actions.html
 /public/organization-page.html
+# Any mockup copied into public/ to be served. The tracked copy lives in docs/mockups/.
+/public/*-options.html
+/public/request-units.html
 /public/mockup.css

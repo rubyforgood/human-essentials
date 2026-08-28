@@ -5958,3 +5958,32 @@ are select2's own `#aaa`/`#e4e4e4`, which appear nowhere else here. Three option
 **A recommended** — same interaction, design system chips, a hint that says what to do, and select2
 dropped from this field. Not built pending a choice.
 
+## 2026-08-28 — A design preview has to be reachable, not merely written
+
+"I cannot see the Preview." Third time, and the first two are already quoted in
+`docs/mockups/README.md` — which is what makes this one worth its own entry: the rule written after
+the first two was **followed** and it still failed.
+
+That rule was "write every mockup self-contained so it opens from disk". `request-units.html` is
+self-contained; it opens by double-clicking; it renders correctly with no dev server at all. And it
+was still invisible, because **the reader's browser is not on the machine the repo is on.** The app
+runs in a container here. A browser that can reach `localhost:3000` cannot reach
+`/Users/…/docs/mockups/anything.html`, and no amount of self-containment changes that.
+
+**The rule is now about the delivery, not the file: send a URL, never a path.**
+`bin/design/serve-mockup <name>` copies the mockup into `public/` — which Rails serves ahead of the
+router — and prints the URL. Self-containment is still required, for a different and smaller reason:
+it means the preview cannot render against a stale `mockup.css` snapshot, a trap that has already
+made one mockup lie about a disabled control's colour.
+
+**Why a script rather than a line in the README.** There was already a line in the README. It said
+`open docs/mockups/<file>.html`, which is exactly the advice that failed. Three occurrences of the
+same failure is the point at which the thing being remembered should stop needing to be remembered
+— and the script also handles the two traps the README documents (re-copying `mockup.css`, and the
+gitignore entry that keeps the served copy out of commits) instead of listing them as things to do
+by hand.
+
+Worth stating plainly because it generalises: **a deliverable is not delivered until the person it
+is for can open it.** The preview existed, was correct, was committed, and was described accurately
+in the summary — and none of that was worth anything.
+
