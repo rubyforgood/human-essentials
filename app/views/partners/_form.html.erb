@@ -17,6 +17,10 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control" %>
               <% end %>
+              <%= f.input :phone_number, label: "Phone Number", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                <%= f.input_field :phone_number, class: "form-control" %>
+              <% end %>
               <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.active.alphabetized,
                           :label_method => :name,
                           :value_method => :id,

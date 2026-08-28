@@ -619,6 +619,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_130000) do
     t.text "notes"
     t.integer "organization_id"
     t.bigint "partner_group_id"
+    t.string "phone_number"
     t.integer "quota"
     t.boolean "send_reminders", default: false, null: false
     t.integer "status", default: 0
