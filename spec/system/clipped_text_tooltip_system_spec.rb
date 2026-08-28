@@ -342,8 +342,10 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
   end
 
   # The reserved strip used to be exactly the height of the rail that goes in it, which left the
-  # rail's bottom edge 0.14px above the pagination's top border: two rules a hair apart, one of them
-  # a control.
+  # rail's bottom edge 0.14px above the pagination's top border. Widening it to 32 was still not
+  # enough: what decides this is proximity, not arithmetic. The bar is the darkest and thickest
+  # full-width line the card draws, the row dividers run on a 53px rhythm, and at 32 the bar sat 62px
+  # below the last divider and 18px above the footer's rule -- so it grouped with the footer.
   it "leaves the settled rail clear of the pagination" do
     create_list(:distribution, 20, organization: organization)
     visit distributions_path
@@ -361,7 +363,56 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
       })()
     JS
 
-    expect(gap).to be >= 7.5
+    expect(gap).to be >= 19
+  end
+
+  # One boundary gets one line. The bar is a heavier line than the footer's hairline, so where the
+  # rail has settled the footer does not draw its own -- the same call `_pagination` already made
+  # when drawing its own border put the pager inside two hairlines twelve pixels apart.
+  it "drops the footer's rule where the rail has settled above it, and keeps it otherwise" do
+    create_list(:distribution, 20, organization: organization)
+    visit distributions_path
+
+    border = lambda do
+      page.evaluate_script(<<~JS)
+        (() => {
+          const region = document.querySelector('.table-scroll');
+          const footer = region.parentElement.nextElementSibling;
+          return footer ? getComputedStyle(footer).borderTopColor : null;
+        })()
+      JS
+    end
+
+    expect(page).to have_css(".table-rail[data-visible]")
+
+    # Riding the fold, the bar is not above the footer, so the footer keeps its own rule. The footer
+    # is off screen here, which is why the swap is never seen happening.
+    page.execute_script("window.scrollTo(0, 0)")
+    expect(page).to have_css("[data-railed='floating']")
+    expect(border.call).not_to eq("rgba(0, 0, 0, 0)")
+
+    page.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
+    expect(page).to have_css("[data-railed='settled']")
+    expect(border.call).to eq("rgba(0, 0, 0, 0)")
+  end
+
+  # A table that does not overflow has no bar to act as the separator, so nothing may touch its
+  # footer. `/adjustments` fits at this width.
+  it "leaves the footer's rule alone on a table with no rail" do
+    create(:adjustment, organization: organization,
+      storage_location: create(:storage_location, organization: organization))
+    visit adjustments_path
+
+    expect(page).to have_no_css(".table-rail")
+    colour = page.evaluate_script(<<~JS)
+      (() => {
+        const region = document.querySelector('.table-scroll');
+        const footer = region.parentElement.nextElementSibling;
+        return footer ? getComputedStyle(footer).borderTopColor : 'no footer';
+      })()
+    JS
+
+    expect(colour).not_to eq("rgba(0, 0, 0, 0)")
   end
 
   # Every table in the app scrolled sideways at 320px and at 375 before this: 15 of 15, the worst

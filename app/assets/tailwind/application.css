@@ -592,13 +592,42 @@
    * the last row and, being a control, took the pointer with it -- the hover on the bottom row's
    * comment cell went to the rail and the tooltip never opened.
    *
-   * 32px for a 24px rail, so 8px of it is clear space. At 24 the strip was exactly the height of the
-   * thing that goes in it, which left the rail's bottom edge 0.14px above the pagination's top
-   * border: two rules a hair apart, one of them a control. 8 rather than 12 because the pagination
-   * adds its own 12px below that border, and the eye reads 8 + rule + 12 as one gap.
+   * 44px for a 24px rail, so 20px of it is clear space and the visible bar clears the footer by 29.
+   *
+   * This has been wrong twice. At 24 the strip was exactly the height of the thing that goes in it
+   * and the rail's bottom edge landed 0.14px above the footer's border. At 32 the bar still read as
+   * stuck to it, and the reason is proximity rather than arithmetic: scanning every full-width line
+   * painted in the card, the row dividers run on a 53px rhythm, and the bar -- the darkest and
+   * thickest line of the lot at 6px and rgb(122,140,166) against the dividers' 1px slate-200 -- sat
+   * 62px below the last divider and only 18px above the footer's rule. It groups with whichever is
+   * nearer, and that was the footer.
+   *
+   * 44 and not more: a table row here is 53px, and a strip that reaches a row's height starts to
+   * read as an empty row. Padding alone cannot finish this, which is what the rule below is for.
    */
   [data-railed] {
-    padding-bottom: calc(var(--spacing) * 8);
+    padding-bottom: calc(var(--spacing) * 11);
+  }
+
+  /*
+   * Where the rail has settled, the card footer does not draw its own rule.
+   *
+   * Two full-width horizontal lines 18px apart, for one boundary. This app has already made this
+   * call once and written it down: `shared/essentials/_pagination` draws no border of its own
+   * because doing so "put the pager inside two stacked hairlines twelve pixels apart". The bar is a
+   * heavier line than the hairline it was pairing with, so the answer is the same -- keep one.
+   *
+   * Gated on `settled` specifically, not on `[data-railed]`. While the rail rides the fold it is not
+   * above the footer and the footer would lose its separator with nothing replacing it. That cannot
+   * currently happen -- floating means the table's bottom is below the fold, which puts the footer
+   * at least 8px below the viewport, so it is never on screen without the rail above it -- but the
+   * rule should not depend on a coincidence of the placement arithmetic holding.
+   *
+   * `!important` because the border is a Tailwind utility on the footer div, and a utility beats a
+   * rule in `@layer components` whatever its specificity. Same reason `.modal-surface` carries one.
+   */
+  [data-railed="settled"] + div {
+    border-top-color: transparent !important;
   }
 
   .table-rail[data-visible] {

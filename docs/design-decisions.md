@@ -5215,3 +5215,65 @@ which is weak evidence, since synthetic scrolls do not exercise the compositor p
 appear). B was chosen and C was not, so it is not built. If the bar still moves strangely at the
 bottom of the page now that it has a ground under it, that is the next thing to try.
 
+
+## 2026-08-28 — The bar looked stuck to the pagination, and padding was never going to fix it
+
+Reported after the previous fix had already widened the gap: *"there is still an issue with it
+sticking to the pagination component. there is no padding between the scroll and pagination when you
+get to the bottom of the screen."*
+
+**The measurement said there was padding, and the measurement was answering the wrong question.**
+The box gap was **8.14px** — not zero — and I confirmed it was 8.14 on every page with a pager, at
+three viewport widths, at seven viewport heights, and at **every scroll position** in a full sweep.
+Nothing was overlapping and nothing was touching. It would have been easy to stop there and report
+that the geometry was correct, which would have been true and useless.
+
+So I sampled the painted pixels instead — every full-width horizontal line the card draws, with its
+width and its darkest value — and the answer was immediate:
+
+| Line | Weight | Gap to the next |
+| --- | --- | --- |
+| row divider | 1px, `slate-200` (darkest 233) | 53px |
+| row divider | 1px, `slate-200` (darkest 233) | 62px |
+| **the bar** | **6px, darkest 143** | **18px** |
+| footer rule | 1px, `slate-200` (darkest 233) | — |
+
+**The bar is the heaviest line in the card and it sat 18px from the footer rule, in a card whose
+every other line is 53–62px apart.** Proximity decides grouping, so it read as part of the
+pagination. "No padding" was a precise description of what the eye was doing, and "8.14px" was a
+precise description of something nobody was looking at. The lesson worth keeping: *a box gap is not a
+visual gap*, and when someone reports a spacing problem that measurement says does not exist, measure
+the **ink** rather than the boxes.
+
+**Padding alone could not close it.** The gap above the bar is 62px — a table row — so making the two
+sides comparable needs a strip near a row's height, and a strip that tall reads as an empty row. The
+first fix moved 0.14 → 8.14 and barely shifted the ratio: 3.4:1 became 2.6:1.
+
+**So the duplicated line goes.** One boundary gets one line, and the bar is the heavier of the two.
+This is not a new principle here — `shared/essentials/_pagination` already carries a comment saying
+it draws no border of its own because doing so *"put the pager inside two stacked hairlines twelve
+pixels apart"*. The same defect, the same answer, five weeks apart; I had read that comment while
+looking for the footer markup and did not recognise it as the precedent it was until after measuring.
+The strip also goes to **44px**, giving 29px of clear space — enough to breathe, short of the 53px
+row.
+
+**Gated on `data-railed="settled"`, not on `[data-railed]`.** While the rail rides the fold it is not
+above the footer, and blanking the rule then would leave the footer with no separator at all. That
+cannot currently happen — floating means the table's bottom is below the fold, which puts the footer
+at least 20px below the viewport — but a rule that silently depends on placement arithmetic staying
+true is a trap for whoever changes the placement. The controller now writes `floating` or `settled`
+rather than an empty string; `[data-railed]` still matches either, so the strip and native-scrollbar
+rules are untouched. Verified by sweeping four pages × four viewport heights at every scroll
+position: **0** positions where the footer has neither a rule nor a bar above it.
+
+**Alternatives rejected.** *Only padding*, for the reason above — it is the fix that had already been
+tried once. *Moving the bar up to sit against the table* would group it correctly, but placing the
+rail over the last row is the thing three passing specs caught the first time, because a control that
+overlaps a row takes the pointer from it. *Lightening the bar* so it stops competing with the rule
+runs straight into the 1.4.11 floor that set its colour two changes ago.
+
+**`!important` on the border override**, because the border is a Tailwind utility on the footer div
+and a utility beats a rule in `@layer components` whatever its specificity — the same reason
+`.modal-surface` carries one. `design.md` already records this at the stacked-table rules, where the
+same cascade behaviour silently ate a `font-weight` on a card title earlier on this branch.
+

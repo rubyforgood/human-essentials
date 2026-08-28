@@ -508,6 +508,10 @@ you can always reach it, and it sits on a pale band there so it does not lie dir
 behind it. Once you reach the end of the table it settles underneath, drops the band, and leaves a
 gap above the page controls.
 
+**Where it settles, the line that used to sit above the page controls is gone**, because the bar is
+now that line. Two rules for one boundary is what made the bar look stuck to the pager. A table
+narrow enough not to scroll has no bar, and keeps its line.
+
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
 forms are wider and shorter, and no box is stretched to a width its contents never needed. Forms with
