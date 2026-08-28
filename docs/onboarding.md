@@ -505,12 +505,16 @@ stylesheet. If you remember it as a hard-edged rectangle, that is why.
 
 **While you are still scrolling down a long table, the bar floats at the bottom of the window** so
 you can always reach it, and it sits on a pale band there so it does not lie directly on the row
-behind it. Once you reach the end of the table it settles underneath, drops the band, and leaves a
-gap above the page controls.
+behind it. Once you reach the end of the table it settles underneath and drops the band.
 
 **Where it settles, the line that used to sit above the page controls is gone**, because the bar is
 now that line. Two rules for one boundary is what made the bar look stuck to the pager. A table
 narrow enough not to scroll has no bar, and keeps its line.
+
+**The page controls sit evenly between the bar and the foot of the card** — 13px above, 12px below.
+That spacing was reported wrong three times before it landed, in both directions, so if it looks off
+to you it is worth saying: it is measured from the bar to the buttons, not from anything you can see
+the edges of.
 
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The

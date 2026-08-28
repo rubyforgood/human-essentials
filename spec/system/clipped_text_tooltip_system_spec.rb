@@ -341,12 +341,12 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     expect(settled_background).to eq("rgba(0, 0, 0, 0)")
   end
 
-  # The reserved strip used to be exactly the height of the rail that goes in it, which left the
-  # rail's bottom edge 0.14px above the pagination's top border. Widening it to 32 was still not
-  # enough: what decides this is proximity, not arithmetic. The bar is the darkest and thickest
-  # full-width line the card draws, the row dividers run on a 53px rhythm, and at 32 the bar sat 62px
-  # below the last divider and 18px above the footer's rule -- so it grouped with the footer.
-  it "leaves the settled rail clear of the pagination" do
+  # The pager sits between the bar and the foot of the card, and wants the same air on both sides.
+  # Measured in *boxes*, not in the strip's height: the rail carries 9px of dead space under a
+  # centred bar for 2.5.8, so the strip alone never described what anyone was looking at. This has
+  # been reported three times -- 0.14px, then 8px, then 30px too much -- so it is asserted as the
+  # symmetry it actually is rather than as a magic number.
+  it "gives the pager the same air above it as below it" do
     create_list(:distribution, 20, organization: organization)
     visit distributions_path
 
@@ -354,16 +354,27 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     page.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
     expect(page).to have_no_css(".table-rail[data-floating]")
 
-    gap = page.evaluate_script(<<~JS)
+    gaps = page.evaluate_script(<<~JS)
       (() => {
         const region = document.querySelector('.table-scroll');
-        const rail = document.querySelector('.table-rail');
-        const below = region.parentElement.nextElementSibling;
-        return below.getBoundingClientRect().top - rail.getBoundingClientRect().bottom;
+        const footer = region.parentElement.nextElementSibling;
+        const thumb = document.querySelector('.table-rail-thumb');
+        const controls = [...footer.querySelectorAll('a, button, input, select')];
+        const top = Math.min(...controls.map((c) => c.getBoundingClientRect().top));
+        const bottom = Math.max(...controls.map((c) => c.getBoundingClientRect().bottom));
+        return {
+          above: top - thumb.getBoundingClientRect().bottom,
+          below: footer.getBoundingClientRect().bottom - bottom,
+          clearance: top - document.querySelector('.table-rail').getBoundingClientRect().bottom
+        };
       })()
     JS
 
-    expect(gap).to be >= 19
+    expect(gaps["above"]).to be_within(3).of(gaps["below"])
+
+    # And the rail's own box -- the 24px pointer target, not the 6px bar -- must stay off the pager's
+    # controls, or a click meant for "Next" jumps the table sideways instead.
+    expect(gaps["clearance"]).to be > 4
   end
 
   # One boundary gets one line. The bar is a heavier line than the footer's hairline, so where the
