@@ -2146,6 +2146,41 @@ being its last caller.
 **Assert these by `[data-flash]`, not by text.** The spec covering that message passed the entire
 time it was invisible, because `have_content` finds text in the DOM whether or not it is on screen.
 
+<a id="detail-list"></a>
+### A record's details are a `<dl>`, and long ones are banded
+
+**`essentials_detail` renders one field** — a `<dt>`/`<dd>` pair in a `<div>`, which is how HTML5
+groups them inside a `<dl>` — on a `grid gap-x-6 gap-y-4 sm:grid-cols-2`. **A blank value is the em
+dash**, which is why the helper takes the value rather than leaving each caller to write
+`presence ||`: "Not defined" reads as a sentence and makes an empty field look like it says
+something. `wide: true` spans both columns, for a paragraph, a list or an image.
+
+**Past a handful of fields, group them into bands** rather than one long list —
+`border-y border-slate-200 bg-slate-50 px-5 py-3` on the heading, `first:border-t-0` so the top one
+does not double with the card header's rule. It is the line item card's band, marking a change of
+kind, and it is the reason **a detail card needs no `<hr>` at all**.
+
+<a id="never-a-bare-hr"></a>
+**Never a bare `<hr>`.** Preflight sets `border-color: currentColor`, so an unstyled `<hr>` draws in
+the **text** colour. The organization page carried six of them and they rendered
+`oklch(0.208 0.042 265.755)` — **slate-900**, six near-black rules through a card whose every other
+divider is a slate-200 hairline. That page is the worked example for all of this: its shell was
+migrated and its 28 fields were not, so it passed every automated check — 200, no legacy class, no
+JS error — while looking nothing like the rest of the app. What it actually had:
+
+| | Before | After |
+| --- | --- | --- |
+| Field markup | 28 `<p>` pairs, **zero `<dl>`** | 28 `<dt>`/`<dd>` in eight `<dl>` |
+| Dividers | 6 `<hr>` in **slate-900** | 8 bands, slate-200 |
+| Vertical gaps | **7 different** (24–93px) | **one**, 16px |
+| Labels | **15 of 28** Title Case | sentence case |
+| Icons | 14, one per row | none |
+| Invalid nesting | `</address>` closed inside an `if`; **2 empty `<p>`** the browser made | valid |
+
+**It did not get shorter, and that is worth recording** because the preview predicted it would:
+1,519px to **1,516px**. The eight bands cost ~368px, almost exactly what two columns save. The
+argument for the rebuild is consistency and the broken markup — not height.
+
 <a id="callouts"></a>
 ### Callouts
 

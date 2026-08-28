@@ -579,6 +579,11 @@ drive has donations.
 vendors served the blank import template instead of your data — a sample file was sitting at the
 same address as the export. Both now export what you asked for.
 
+**The organization page has been rebuilt.** Same information, in the same order, grouped under
+headings you can scan — Basic information, Storage, Partner approval process, and so on — with the
+fields in two columns instead of one long list. The heavy black lines between sections are gone, and
+empty fields show a dash rather than the words "Not defined".
+
 **Scanning a barcode now tells you it worked.** The confirmation was being drawn at the very bottom
 of the page with no styling, so in practice nobody saw it — the scan succeeded silently. It appears
 as a normal message bar at the top of the page now, the same one you see after saving anything else.
