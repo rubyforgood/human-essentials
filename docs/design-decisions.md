@@ -5133,3 +5133,85 @@ the visible bar is 6px of a transparent 24px band. And the reserved strip, so at
 settles below the table rather than over the last row: measured after the change, the visible bar
 covers **no rows**, with 0.1px of sub-pixel contact against the invisible band.
 
+
+## 2026-08-28 — The rail, reported four ways, and a token that had been failing silently for weeks
+
+Reported together: *"the scroll bar is very dark, when the user scrolls to the bottom of the page it
+hovers in an odd way. it also has no padding above the pagination, and doesnt have a border radius so
+it does not match with the rest of the components."* Four complaints, and the useful finding is that
+they were not four independent problems.
+
+**Two of the four were mine from the night before; two had been there since the rail was built.** I
+first wrote that three came from the previous change and had to correct it — `--radius-full` dates to
+`015da3b36`, and the gap above the pagination was zero then too, at a 25px strip holding a 25px rail.
+What the previous change did was *unmask* them. A square slate-400 thumb under a 92%-white backdrop
+is a much quieter object than a square slate-500 thumb with nothing behind it, so removing the chrome
+is what made two old defects visible at the same moment it introduced two new ones. Worth recording
+because the instinct — four complaints arriving together must share one cause, and the last commit is
+the suspect — was half right in a way that would have produced a wrong fix.
+
+**A `var()` naming a token that does not exist fails silently, and this one had for weeks.** Both the
+track and the thumb set `border-radius: var(--radius-full)`. There is no `--radius-full` in Tailwind
+v4: the radius scale stops at `--radius-2xl`, and `rounded-full` compiles to `calc(infinity * 1px)`
+as a literal rather than through a variable. So the declaration was invalid, the browser dropped it,
+and the rail rendered as sharp rectangles from the day it was built. Nothing caught it — not a spec,
+not an audit, not me writing about the rail three times — because the failure mode of a bad token is
+*nothing happens*, which looks exactly like a design choice.
+
+I resolved all 30 custom properties `application.css` references against the running app to find out
+whether this was a pattern: 28 resolve, and the only other one that does not is `--pin-width`, which
+`table_scroll_controller` sets per element at runtime and is correct. One bad token. The spec added
+for it asserts the *computed* `border-radius`, since asserting the declaration would have passed
+throughout.
+
+**A contrast floor says which values are available, not which one to use.** This is the second time
+on this branch that 1.4.11 has decided this thumb's colour, and the first time it decided it *too*
+far. slate-500 measures 4.35:1 against the slate-100 track where the floor is 3:1 — it was chosen not
+because 4.35 was wanted but because the Tailwind scale has nothing between slate-400 (2.40:1, fails)
+and slate-500, so clearing the floor meant taking the whole step. "Very dark" was a fair report of
+that, and the answer was to stop treating the scale as the set of available values: solving for the
+lightest slate-hued value that still clears the floor gives `oklch(0.636 0.044 257.1)`, which paints
+`rgb(122, 140, 166)` and measures **3.13:1**.
+
+The general form, since I got this wrong in both directions within a week: a standard is a
+constraint to satisfy, and satisfying it is not the same as maximising it. The previous entry records
+me recommending slate-300 on taste and having to withdraw it because I had not computed the number.
+This one records the opposite error — taking the number as the whole answer and shipping a value
+45% past the threshold without asking whether anything between was reachable.
+
+**The ratios here are sampled from painted pixels**, and that changed two previously-recorded figures:
+slate-400 reads 2.40 rather than the 2.34 in `design.md`, and slate-500 4.35 rather than 4.34. Both
+older numbers came from Tailwind **v3** hex values (`#94a3b8`, `#64748b`), and this app is on v4,
+whose slate is defined in oklch. Confirmed by computing both: v3's hex reproduces 2.34 and 4.34
+exactly. The corrected numbers do not change any conclusion — slate-400 fails either way — but a
+table of ratios that was measured against the wrong palette is exactly the sort of thing the next
+person would trust.
+
+**"Hovers in an odd way" was the backdrop, and the fix is per-state rather than global.** The rail
+has two states and I had been reasoning about one of them. At rest it sits in a strip the card
+reserves with nothing behind it, so removing the backdrop was right. But traced down
+`/distributions`, which scrolls 611px, it rides the fold for **448 of them — 73% of the scroll** —
+lying across live rows the whole way, and there the backdrop was the only thing separating a 6px bar
+from the text under it. So it comes back gated on `data-floating`, set from the same test that
+already places the rail.
+
+The hairline that returns with it is an **inset shadow, not a border**. Under `box-sizing:
+border-box` a 1px border is drawn inside the box, which would take the track from 24px to 23 and put
+[2.5.8](../design.md#target-size) a pixel short in precisely the state where the control is hardest
+to hit — a moving target over a moving table. A shadow paints without occupying.
+
+**Alternatives rejected.** *Never float* removes the complaint completely and was offered, but it
+undoes the reason the rail exists: on a long table the only horizontal control would be below the
+fold again, and the platform will not supply one, since its scrollbar is an overlay taking 0px.
+*Keeping slate-500 and rounding the corners only* was plausible — a pill reads lighter than a
+rectangle of the same colour, so some of "very dark" was the radius bug — but it leaves a value that
+was picked by accident of the scale rather than chosen.
+
+**Also offered and not taken: `absolute` rather than `fixed` once the rail settles.** It has no
+visual effect; it removes the per-frame JavaScript repositioning at the bottom of the page, which is
+the other reading of "hovers oddly" — a judder trailing the content during momentum scrolling. I
+could not reproduce that reading headless (the rail measured 0px off target on every sampled frame,
+which is weak evidence, since synthetic scrolls do not exercise the compositor path where it would
+appear). B was chosen and C was not, so it is not built. If the bar still moves strangely at the
+bottom of the page now that it has a ground under it, that is the next thing to try.
+

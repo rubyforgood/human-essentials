@@ -494,10 +494,19 @@ the calendar, so they always say what is on screen.
 the real one that seemed to appear and vanish as you scrolled — that was a custom scrollbar and the
 browser's own, both switched on. The custom one does the work and the browser's is hidden.
 
-**It is also quieter and easier to see.** The grey strip, its border and the white band that washed
-out the row underneath are gone; what is left is a thin track and a darker handle. The handle is
-darker on purpose — the old one did not have enough contrast against its track to meet the
-accessibility standard for a control.
+**It is also quieter and easier to see.** The grey strip and its border are gone; what is left is a
+thin track and a rounded handle. The handle is darker than the original one on purpose — that one
+did not have enough contrast against its track to meet the accessibility standard for a control —
+but it is lighter than the version that shipped briefly on 28 August, which overshot the standard
+and read as heavy.
+
+**The handle was also meant to be rounded from the start and never was**, because of a mistake in the
+stylesheet. If you remember it as a hard-edged rectangle, that is why.
+
+**While you are still scrolling down a long table, the bar floats at the bottom of the window** so
+you can always reach it, and it sits on a pale band there so it does not lie directly on the row
+behind it. Once you reach the end of the table it settles underneath, drops the band, and leaves a
+gap above the page controls.
 
 **Short fields sit side by side on the longer forms now.** New item puts value beside quantity and
 the two on-hand thresholds beside each other; product drives puts start date beside end date. The
