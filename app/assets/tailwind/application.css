@@ -217,6 +217,20 @@
   }
 
   /*
+   * An inline token. The email hints name four substitutions -- `%{partner_name}` and friends --
+   * and `<code>` had no style at all in this design system, so they rendered as bare monospace in
+   * the middle of a sentence and read as a templating bug that had leaked into the page rather
+   * than as something you are meant to type. A tinted chip is what every documentation UI uses to
+   * say "this is a literal".
+   *
+   * `text-[0.8125rem]` rather than `text-xs`: the hint is 12px, and monospace at 12px beside
+   * proportional 12px looks smaller than it is, because monospace has a shorter x-height.
+   */
+  code {
+    @apply rounded bg-slate-100 px-1 py-0.5 font-mono text-[0.8125rem] text-slate-700;
+  }
+
+  /*
    * A banded section of a form, so a long form is sectioned the same way a long detail card is.
    *
    * The organization settings form used `border-t` on the `<fieldset>`, and a `<legend>` is
@@ -1216,9 +1230,24 @@ trix-toolbar .trix-button:disabled {
   color: var(--color-slate-300);
 }
 
-/* Trix's own SVG icons, replaced by the Bootstrap Icons glyph the controller adds. */
+/*
+ * Trix's own SVG icons, removed in favour of the `<i class="bi-…">` the controller appends.
+ *
+ * `content: none`, not `background-image: none`: Trix sets `content: ""` on this pseudo-element at
+ * `trix-toolbar .trix-button--icon` specificity, which outranks `.bi-type-bold::before`. Adding the
+ * `bi-` class to the *button* therefore drew nothing at all -- fourteen empty squares, which is
+ * what got reported. The glyph is a child element now and the pseudo-element is gone entirely.
+ */
 trix-toolbar .trix-button--icon::before {
-  background-image: none;
+  content: none;
+}
+
+/*
+ * The glyph. `text-indent: 0` because Trix pushes the button's text off-screen with
+ * `text-indent: -9999px` to hide the label while keeping it as the accessible name, and a child
+ * inherits that.
+ */
+trix-toolbar .trix-button--icon > i {
   position: absolute;
   inset: 0;
   display: flex;
@@ -1226,7 +1255,7 @@ trix-toolbar .trix-button--icon::before {
   justify-content: center;
   text-indent: 0;
   font-size: 1rem;
-  opacity: 1;
+  line-height: 1;
 }
 
 trix-toolbar .trix-button:focus-visible {

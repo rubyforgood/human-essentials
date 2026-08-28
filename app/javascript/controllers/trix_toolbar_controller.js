@@ -70,10 +70,19 @@ export default class extends Controller {
       if (title && !button.getAttribute("aria-label")) button.setAttribute("aria-label", title);
     });
 
+    // An `<i>` element, which is how design.md says an icon is written -- not a class on the
+    // button. Trix styles its own `.trix-button--icon::before` at `trix-toolbar .trix-button--icon`
+    // specificity and sets `content: ""` there, which outranks `.bi-x::before` and blanked every
+    // glyph: fourteen empty boxes. A child element has no such rule competing with it.
+    //
     // Every button, not only the enabled ones `buttons()` returns: undo and redo start disabled.
     toolbar.querySelectorAll("button").forEach((button) => {
       const icon = [...button.classList].map((c) => ICONS[c]).find(Boolean);
-      if (icon) button.classList.add(icon);
+      if (!icon || button.querySelector("i")) return;
+      const glyph = document.createElement("i");
+      glyph.className = icon;
+      glyph.setAttribute("aria-hidden", "true");
+      button.appendChild(glyph);
     });
 
     this.setTabStop(toolbar, 0);

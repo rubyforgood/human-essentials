@@ -24,7 +24,7 @@
         Tuesday")?
       </legend>
       <div>
-        <div class="mb-2 flex min-h-8 items-center gap-2 last:mb-0">
+        <div class="mb-2 flex min-h-6 items-center gap-2 last:mb-0">
           <%= f.radio_button :by_month_or_week, "day_of_month",
                 class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
                 data: {"deadline-day-target": "byDayOfMonth",
@@ -32,7 +32,7 @@
           <%= f.label :by_month_or_week_day_of_month, "Day of the month",
                 class: "py-0.5 text-sm text-slate-700" %>
         </div>
-        <div class="mb-2 flex min-h-8 items-center gap-2 last:mb-0">
+        <div class="mb-2 flex min-h-6 items-center gap-2 last:mb-0">
           <%= f.radio_button :by_month_or_week, "day_of_week",
                 class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
                 data: {"deadline-day-target": "byDayOfWeek",

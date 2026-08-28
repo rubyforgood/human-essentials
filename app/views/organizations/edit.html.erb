@@ -37,19 +37,23 @@
         <%= f.input :url, label: "URL", placeholder: "http://www.example.com" %>
         <%= f.input :email %>
 
-        <div class="mb-4">
-          <span class="block text-sm font-medium text-slate-700">Address</span>
-          <div class="mt-1.5 space-y-2">
-            <%= f.input_field :street, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                  placeholder: "Street", aria: {label: "Street"} %>
-            <%= f.input_field :city, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                  placeholder: "City", aria: {label: "City"} %>
-            <%= f.input_field :state, collection: us_states,
-                  class: EssentialsUiHelper::SELECT_CLASSES, aria: {label: "State"} %>
-            <%= f.input_field :zipcode, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                  placeholder: "Zipcode", aria: {label: "Zipcode"} %>
-          </div>
-        </div>
+        <%#
+          The address, laid out the way every other address in this app is: one visible label per
+          field. It was four `input_field`s under a single "Address" span, each carrying its name
+          only as a `placeholder` and an `aria-label` -- and a placeholder is not a label, because
+          it disappears the moment anything is typed, which is exactly when you want to check what
+          the box is for.
+
+          State and Zip share a row. Each of the four used to run the full 726px width of the card,
+          which is a lot of box for a two-letter state code, and city/state/zip on one line is how
+          a US address is written anyway.
+        %>
+        <%= f.input :street, label: "Street address" %>
+        <%= f.input :city, label: "City" %>
+        <%= essentials_field_row do %>
+          <%= f.input :state, label: "State", collection: us_states, include_blank: true %>
+          <%= f.input :zipcode, label: "Zip code" %>
+        <% end %>
 
         <div class="mb-4">
           <%= f.label :logo, "Logo", class: "block text-sm font-medium text-slate-700" %>
