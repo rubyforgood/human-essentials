@@ -592,21 +592,19 @@
    * the last row and, being a control, took the pointer with it -- the hover on the bottom row's
    * comment cell went to the rail and the tooltip never opened.
    *
-   * 44px for a 24px rail, so 20px of it is clear space and the visible bar clears the footer by 29.
+   * 24px: the rail exactly fills it, which is the smallest it can be without the rail's own box
+   * reaching past it and into the footer, where the pager's controls are.
    *
-   * This has been wrong twice. At 24 the strip was exactly the height of the thing that goes in it
-   * and the rail's bottom edge landed 0.14px above the footer's border. At 32 the bar still read as
-   * stuck to it, and the reason is proximity rather than arithmetic: scanning every full-width line
-   * painted in the card, the row dividers run on a 53px rhythm, and the bar -- the darkest and
-   * thickest line of the lot at 6px and rgb(122,140,166) against the dividers' 1px slate-200 -- sat
-   * 62px below the last divider and only 18px above the footer's rule. It groups with whichever is
-   * nearer, and that was the footer.
+   * The number went 24 -> 32 -> 44 -> 24 before landing, and the round trip is the point. 24 and 32
+   * were both too tight *because the footer drew a rule*, which the bar then paired with; 44 gave
+   * that pair room but left the pager badly off centre once the rule was gone. Removing the rule is
+   * what made a small strip correct, so the two changes only make sense together.
    *
-   * 44 and not more: a table row here is 53px, and a strip that reaches a row's height starts to
-   * read as an empty row. Padding alone cannot finish this, which is what the rule below is for.
+   * What the card looks like now, measured: 18px of white between the table's last row and the bar,
+   * 13px between the bar and the pager's controls, 12px between those and the foot of the card.
    */
   [data-railed] {
-    padding-bottom: calc(var(--spacing) * 11);
+    padding-bottom: calc(var(--spacing) * 6);
   }
 
   /*
@@ -690,6 +688,27 @@
      * so keep the ramp monotonic.
      */
     background-color: oklch(0.636 0.044 257.1);
+  }
+
+  /*
+   * Settled, the bar sits at the bottom of its track rather than centred in it.
+   *
+   * The track has to stay 24px for 2.5.8, so it carries 9px of dead space under a centred 6px bar --
+   * and that dead space is what decides how close the bar can get to the pager. Centred, the closest
+   * it reaches without the track's own box overlapping the pager's controls is 22px, against the
+   * 12px of air below them: visibly lopsided, which is what "too much padding" described. Sitting
+   * the bar on the track's bottom edge spends the dead space upward instead, where there is nothing
+   * but the strip, and the gap above the pager becomes 13px against 12px below.
+   *
+   * Only when settled. While the rail rides the fold its bottom edge *is* the bottom of the window,
+   * so a bar sitting there would be jammed against the edge of the screen and awkward to grab; it
+   * stays centred, 9px clear, which is where it has always been.
+   */
+  .table-rail:not([data-floating]) .table-rail-track::before,
+  .table-rail:not([data-floating]) .table-rail-thumb {
+    top: auto;
+    bottom: 0;
+    translate: none;
   }
 
   .table-rail-track:hover .table-rail-thumb {

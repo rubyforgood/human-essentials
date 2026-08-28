@@ -5277,3 +5277,54 @@ and a utility beats a rule in `@layer components` whatever its specificity — t
 `.modal-surface` carries one. `design.md` already records this at the stacked-table rules, where the
 same cascade behaviour silently ate a `font-weight` on a card title earlier on this branch.
 
+
+## 2026-08-28 — Four goes at one gap, and the unit I kept measuring was the wrong one
+
+*"Now there is too much padding between the pagination component and the scroll, it needs to be the
+same as the padding below pagination."* The fourth report of the same 30 vertical pixels, and this
+time in the opposite direction from the previous three.
+
+**The through-line: I kept adjusting the strip, and nobody can see the strip.** The reserved strip
+went 24 → 32 → 44 → 24. Each time I reasoned about its height, and each time the thing being
+reported was the distance from the *visible bar* to the *pager's controls* — which differs from the
+strip by a constant 9px, because the rail carries 24px of pointer target with a 6px bar centred in
+it. Three fixes in a row were aimed at a number that is not the number anyone was looking at. The
+general lesson, and the reason this entry exists: **when a report and a measurement disagree four
+times, the measurement is of the wrong object.** The specs now assert the gap above the pager against
+the gap below it, so the thing under test is the thing being complained about.
+
+**The reference was stated for me and it made the target exact.** "The same as the padding below
+pagination" — the footer's `py-3`, **12px**, from the pager's controls to the foot of the card. So:
+above the controls, 12px. Measured before: **42px**.
+
+**Getting there ran into a floor I had to design around.** The strip cannot go below 24px without the
+rail's box reaching past it into the footer, and the rail's box is a pointer target — the track jumps
+the scroll when clicked, so overlapping the pager means a click meant for *Next* scrolls the table
+sideways instead. With the bar centred, that floor puts the closest possible gap at **22px** against
+12px below. Still lopsided, and no amount of strip arithmetic gets past it.
+
+**So the bar moves within its track instead.** The 24px is required by 2.5.8 and stays; what is
+negotiable is where the 6px bar sits inside it. Bottom-aligned, the dead space is spent *upward*
+into the strip, where there is nothing — and the gap becomes **13px above against 12px below**, with
+the full 13px of clearance still between the rail's box and the pager's controls. Measured on the
+painted pixels: 23px of white above the pager's text, 21px below it.
+
+**Only when settled**, because while the rail rides the fold its bottom edge is the bottom of the
+window, and a bar sitting there would be pinned to the edge of the screen and awkward to grab. It
+stays centred and 9px clear while floating, exactly where it has always been. The cost is that the
+bar shifts 9px within its track at the moment of settling; that happens at the window's bottom edge
+mid-scroll, and it is the price of the two states wanting different things.
+
+**The three changes only make sense together.** 24px of strip was *wrong* two days ago and is right
+now, and nothing about the strip changed — what changed is that the footer no longer draws a rule for
+the bar to pair with. A smaller strip was untenable while that rule existed and is correct without
+it. Recording this because the strip's history reads like indecision otherwise: 24 → 32 → 44 → 24 is
+not a round trip, it is the same number meaning different things either side of the rule's removal.
+
+**One invariant fell out of it that is worth keeping.** The strip is now exactly the rail's height,
+which makes "the rail's bottom is at the fold" and "the footer's top is at the foot of the window"
+the same boundary. So the footer is provably never on screen without the bar directly above it —
+which is what the `data-railed="settled"` gate on the removed rule depends on. It is exact rather
+than comfortable now (the margin can be a fraction of a pixel), so it stays asserted rather than
+assumed: 0 bad positions across four pages × four viewport heights × every scroll offset.
+

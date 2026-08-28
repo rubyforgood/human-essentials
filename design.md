@@ -478,9 +478,22 @@ places the rail. The hairline is an **inset shadow rather than a border**: `box-
 exactly the state where the control is hardest to hit.
 
 <a id="rail-strip"></a>
-**The reserved strip is 44px for a 24px rail**, and where the rail settles **the card footer drops
-its own rule**. This took three attempts, and the first two failed the same way — by treating a
-question of proximity as one of arithmetic.
+**The reserved strip is 24px — the rail exactly fills it — the card footer drops its own rule where
+the rail settles, and the settled bar sits at the bottom of its track rather than centred in it.**
+Those three go together, and the spacing below a table is wrong without all of them. It took four
+attempts to land, reported each time, so the failures are worth keeping:
+
+| Strip | What was wrong |
+| --- | --- |
+| 24px | Rail's bottom edge **0.14px** above the footer's rule. |
+| 32px | Still read as stuck: the bar sat **18px** from the rule where the card's other lines are 53–62px apart. |
+| 44px | Rule gone, but the pager now had **42px** of air above it and **12px** below. |
+| **24px + bottom-aligned bar** | **13px above the pager, 12px below.** |
+
+**The unit that matters is the pager, not the strip.** Every one of the first three tried to fix
+this by changing the strip's height, and the strip is not what anyone is looking at: the rail carries
+**9px of dead space** beneath a centred 6px bar, so the strip's height and the visible gap differ by
+a constant nobody can see. Measure from the bar to the pager's controls.
 
 At 24px the strip was exactly the height of the thing that goes in it, leaving the rail's bottom edge
 **0.14px** above the footer's border. Widening it to 32 was still reported as stuck, and scanning
@@ -499,18 +512,39 @@ so it read as belonging to the pagination rather than to the table it scrolls. P
 fix that: closing the ratio would need a strip near a **row's height**, and a strip that tall reads
 as an empty row.
 
-So the strip goes to 44 — clear space without reaching the 53px row — and **the duplicated line
-goes**. One boundary gets one line, and the bar is the heavier of the two. This app had already made
-exactly this call: `shared/essentials/_pagination` draws no border of its own because doing so *"put
-the pager inside two stacked hairlines twelve pixels apart"*.
+So **the duplicated line goes**. One boundary gets one line, and the bar is the heavier of the two.
+This app had already made exactly this call: `shared/essentials/_pagination` draws no border of its
+own because doing so *"put the pager inside two stacked hairlines twelve pixels apart"*.
+
+Removing the rule is also what lets the strip come back down to 24. The strip was widened to 44 to
+separate the bar from a line that no longer exists, and with the pair gone that width was simply air
+above the pager — **42px of it, against 12px below**. So the strip returns to 24, and the last 9px
+come from the bar's own placement.
+
+<a id="rail-bar-alignment"></a>
+**Settled, the bar sits on the bottom edge of its track.** The track must stay 24px for
+[2.5.8](#target-size), and a centred 6px bar leaves 9px of dead space under it — dead space that is
+still a pointer target, so it cannot be allowed to reach the pager's controls or a click meant for
+*Next* jumps the table sideways. That sets a floor: with the bar centred, the closest it gets to the
+pager without the track overlapping a control is **22px**, against 12px below. Sitting the bar on the
+track's bottom edge spends the dead space *upward* into the strip, where there is nothing, and the
+gap becomes **13px against 12px** with 13px of clearance left.
+
+Only when settled. While the rail rides the fold its bottom edge is the bottom of the window, so a
+bar sitting there would be jammed against the screen edge; floating, it stays centred and 9px clear.
 
 Gated on **`[data-railed="settled"]`**, not on `[data-railed]`: while the rail rides the fold it is
-not above the footer, and the footer would lose its separator with nothing replacing it. That cannot
-happen today — floating means the table's bottom is below the fold, which puts the footer at least
-20px below the viewport — but the rule should not rest on the placement arithmetic continuing to hold.
-Verified across four pages × four viewport heights at every scroll position: **0** positions where the
-footer has neither a rule nor a bar above it. It carries `!important`, because the border is a
-Tailwind utility and a utility beats a rule in `@layer components` whatever its specificity.
+not above the footer, and the footer would lose its separator with nothing replacing it.
+
+That cannot happen, and now for an exact reason rather than a comfortable margin. **The strip and the
+rail are both 24px**, so "the rail's bottom sits at the fold" and "the footer's top sits at the foot
+of the window" are the same boundary: floating means `region.bottom > innerHeight - 24`, and the
+footer's top is `region.bottom + 24`, therefore always below `innerHeight`. The footer is never on
+screen without the bar directly above it. The margin is *strictly* positive but can be a fraction of
+a pixel, which is exactly why the gate is written down rather than relied on — verified across four
+pages × four viewport heights at every scroll position: **0** positions where the footer has neither
+a rule nor a bar above it. It carries `!important`, because the border is a Tailwind utility and a
+utility beats a rule in `@layer components` whatever its specificity.
 
 <a id="rail-radius"></a>
 **The track and the thumb are pills, written as `calc(infinity * 1px)`.** Not `var(--radius-full)`:
@@ -2108,8 +2142,9 @@ of the *table*, which on **five of the seven** overflowing tables is below the f
 - **It rides the fold, then settles *below* the table.** Not over it: at `bottom - height` the rail
   overlaid the last row and, being a control, took the pointer with it — the hover on the bottom
   row's comment cell went to the rail and the tooltip never opened. Three passing specs caught that.
-  The card reserves a strip (`[data-railed]`, 44px for a 24px rail) so at rest it covers nothing, and
-  the footer drops its own rule where the rail has settled — see [the strip](#rail-strip).
+  The card reserves a strip (`[data-railed]`) exactly the rail's own 24px, so at rest it covers
+  nothing; the footer drops its own rule where the rail has settled, and the settled bar sits on the
+  bottom edge of its track — see [the strip](#rail-strip).
 - **It has two states and they are styled differently.** `data-floating` while it rides the fold,
   where it lies on live rows and needs a backdrop to be read against them; bare while settled, where
   nothing is behind it. That is the majority state, not the exception — 73% of the scroll on
