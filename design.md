@@ -961,6 +961,17 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+<a id="radio-spacing"></a>
+**Radio and checkbox options are 32px rows with 8px between them** — a 40px pitch, set once on
+`:essentials_collection`'s `item_wrapper_class`, so no page decides this for itself.
+
+They were **24px rows with a 0px gap**, flush against each other, in all 14 groups on the settings
+page and every other group in the app. That passes [2.5.8](#target-size) on size alone — the row is
+exactly the 24px minimum — and it is the floor of it with no separation at all, which is not where
+anyone else sits: **GOV.UK** pairs a 40px control with a 10px gap, **Material 3** asks for 48dp
+rows, **Apple's HIG** for 44pt. 32 and 8 clears the AA minimum in both dimensions and matches
+GOV.UK's rhythm without the density change a full 48px row would mean in this app.
+
 <a id="one-page-wrapper"></a>
 **One `px-4 py-6 sm:px-6 lg:px-8` per page, and the header goes inside it.** The gap between the
 heading and the first card is **24px** — the header's own `mb-6`, and nothing else. Do not override
@@ -1495,6 +1506,7 @@ the wrapper mappings explicitly.
 | `:essentials` | Everything by default |
 | `:essentials_boolean` | A single checkbox — control and label on one line |
 | `:essentials_collection` | Radio/checkbox groups — a real `<fieldset>`/`<legend>` |
+
 | `:essentials_file` | File inputs, styled through `::file-selector-button` |
 
 ```erb
@@ -1541,6 +1553,46 @@ the wrapper mappings explicitly.
 
   Free text — a name, an address line, an item, a comment — has no known length and simply takes
   its column.
+
+### Rich text editor
+
+Four screens have one: organization settings (two), the admin organization form, and the admin
+question editor. It is Action Text on Trix.
+
+The **editor body** was already styled to match a text input. The **toolbar** was not — it shipped
+as Trix draws it, and that is the whole defect: the field looked like the design system and the
+fourteen controls sitting directly above it did not. Measured before: `#bbb` borders, a **3px**
+radius against the app's 8, `1.5vw` group margins, **42x26** buttons with no radius, and a
+`#cbeefa` active state that appears nowhere else in this app.
+
+| | Trix's default | Here |
+| --- | --- | --- |
+| Button | 42x26, no radius | **32x32**, ghost surface |
+| Group | 3px radius, `#bbb` | `rounded-lg`, slate-300 |
+| Active | `#cbeefa` | `bg-brand-50 text-brand-700` |
+| Icons | 14 SVG data-URIs | **Bootstrap Icons** |
+| Below 768px | shrinks to 19px wide | 32px, row scrolls |
+
+**The icons were a second icon set.** Trix draws each button with an SVG data-URI background image.
+This app retired Font Awesome specifically so it would have one icon set, and then carried fourteen
+icons from another one on four screens. They are Bootstrap Icons now, added as `bi-*` classes by
+`trix_toolbar_controller.js` rather than written as CSS `content` codepoints — so the name is the
+same one any view would write, and a missing glyph fails the way it would anywhere else instead of
+silently drawing nothing. The toolbar does not exist until Trix has run, so nothing is lost by
+doing it in JavaScript.
+
+<a id="toolbar-buttons-shrink"></a>
+**The phone bug was flex, not width.** Below 768px Trix narrows the buttons with
+`max-width: calc(0.8em + 3.5vw)` — about 22px at 375, under [2.5.8](#target-size)'s 24. Overriding
+the width changed nothing, because width was never what was being ignored: the buttons are flex
+children of `.trix-button-group` inside `.trix-button-row`, and fourteen 32px buttons do not fit a
+375px row, so every one of them **shrank**. `flex: none` is the fix; the row is already
+`overflow-x: auto`, so the toolbar scrolls sideways on a phone like every other editor toolbar.
+
+Trix hides each button's label with `text-indent: -9999px`, which keeps the accessible name, so the
+glyph is placed absolutely with the indent undone and the label stays where a screen reader reads
+it. `trix_toolbar_controller.js` makes the toolbar an ARIA toolbar — one tab stop, arrow keys
+within — because Trix ships all fourteen buttons as `tabindex="-1"`.
 
 ### Line item rows
 
@@ -2221,6 +2273,22 @@ The card is rendered `padded: false` so its body supplies no padding of its own,
 that drops to `pt-4` leaves its final field **1px** from the card's bottom edge against the 16px
 every band above it has. If a container's padding is the reason a child can skip its own, check
 that the container actually has some.
+
+<a id="form-section"></a>
+**A long form is banded the same way a long record is.** `shared/essentials/form_section` is the
+detail band's counterpart: a full-bleed tinted `<legend>` and the fields under it, in a card
+rendered `padded: false`. So the organization page and the settings form that edits it are
+sectioned identically.
+
+It is a real `<fieldset>` with a real `<legend>`, so the group is still announced.
+
+<a id="never-border-a-fieldset"></a>
+**Never put a border on a `<fieldset>` that has a `<legend>`.** A legend is rendered *in* its
+fieldset's top border and the browser cuts a gap for it, so `border-t` on the fieldset draws a rule
+that **starts where the legend text ends** and runs to the right edge. That is a fieldset rendering
+artefact, and the settings page carried seven of them. A legend also shrink-wraps, which is why it
+looks unstylable — `display: block; width: 100%` makes it an ordinary block, and then it can be the
+band. Both are in `.form-section`.
 
 <a id="shell-first-audit"></a>
 **`bin/design/shell-first-audit.rb` is the check for this.** Every other audit in `bin/design`

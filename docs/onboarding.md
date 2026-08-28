@@ -266,16 +266,24 @@ during this work reported 19 non-`.data-table` tables on a page with one table, 
 profiler's. Exclude `.profiler-results, .profiler-result` and bullet's notice before believing a
 count.
 
-**One `px-4 py-6 sm:px-6 lg:px-8` per page**, with the page header inside it, is the layout rule
-most often got wrong -- 14 templates closed the wrapper after the header and opened a second one for
-the content, which stacks two paddings and puts 72px under the heading where the design system's
-number is 24. Nothing catches it but counting:
+**One page gutter per page**, with the page header inside it, is the layout rule most often got
+wrong -- 31 templates closed the wrapper after the header and opened a second one for the content,
+which stacks two paddings and puts 48 or 72px under the heading where the design system's number is
+24. `shell-first-audit.rb` checks for it now.
 
-```bash
-for f in $(grep -rl 'px-4 py-6 sm:px-6 lg:px-8' app/views --include=*.erb); do
-  n=$(grep -c 'px-4 py-6 sm:px-6 lg:px-8' "$f"); [ "$n" -ge 2 ] && echo "$n  $f"
-done
-```
+**Match the gutter, not the whole class string.** The first version of that check looked for two
+occurrences of `px-4 py-6 sm:px-6 lg:px-8` and missed 17 of the 31, because they open the header
+wrapper with `pt-6`. The stable part is `px-4 sm:px-6 lg:px-8`.
+
+**A field rendered inside `f.input ... do` has none of the design system's behaviour.** The block
+*replaces* the wrapper's input, so it skips the whole `:essentials` pipeline: no classes, no width,
+no `aria-required`, no `aria-invalid`, no inline error. That is how a 44px number field ended up
+with a 92px placeholder cut off mid-word, and how three partner profile fields lost their error
+handling earlier. Check every one of them.
+
+**Never put a border on a `<fieldset>` that has a `<legend>`.** The legend is rendered *in* the top
+border and the browser cuts a gap for it, so the rule starts where the legend text ends. Use
+`shared/essentials/form_section`, which bands a long form the way a long record is banded.
 
 `dead-code.rb` is the mirror of `dead-routes.rb` and reports 118 findings today — six controllers
 no route reaches, 24 helper methods nothing calls, 81 files in `public/` nothing links to. They
@@ -583,6 +591,30 @@ blank lines.
 *Media information*, *Contacts* and the rest were uneven, because they were made of blank lines
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
+
+### Organization settings looks different
+
+**The sections are banded now.** Each heading -- *Basic information*, *Storage*, *Emails* and the
+rest -- sits on a pale strip running the full width of the card, the same way the sections on your
+organization page do. Before, each one had a grey line that started halfway across, level with the
+end of the heading text. That was a browser quirk rather than a design, and it is gone.
+
+**Yes/No options have room to breathe.** They were stacked flush against each other, 24px each with
+nothing between. They are 32px now with 8px between, which makes them easier to hit and much easier
+to hit correctly on a phone.
+
+**"Deadline day" is readable again.** The box under *Deadline day in reminder email* was too narrow
+for its own placeholder, so the words were cut off mid-way. Same for the reminder day box. Both are
+wide enough now. The reminder options above them were also rebuilt: they are a proper labelled group
+instead of a stack of loose labels and line breaks.
+
+**The buttons above the email text boxes match the rest of the app.** The bold, italic, link, list
+and other controls were the text editor's own styling -- smaller, squarer, with a pale blue
+highlight this app uses nowhere else, and icons from a different icon set. They are now the same
+size, shape and icons as every other button here, and the highlight is the app's indigo. On a phone
+the row of them scrolls sideways rather than squeezing each button too small to press.
+
+**The gap under the heading is smaller**, on this page and thirty others.
 
 ### Some buttons are shorter
 

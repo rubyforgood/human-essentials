@@ -1,65 +1,92 @@
-<div data-controller="deadline-day">
+<%#
+  When the monthly reminder goes out, and what deadline it quotes.
+
+  Rebuilt: the group was a `<label>`, a `<br>`, a radio, a *second* `<label>` for the same radio and
+  another `<br>` -- design.md's own example of what a radio group must not be. It is a `<fieldset>`
+  with a `<legend>` now, and each radio has exactly one label. The `label:` passed to
+  `f.radio_button` was never a label at all: `radio_button` has no such option, so it rendered as an
+  HTML attribute `label="Day of Month"` on the input and named nothing.
+
+  **The truncation.** Both number fields were rendered inside `f.input ... do` blocks, and a block
+  replaces the wrapper's input -- so they came out as bare browser number fields. The deadline one
+  measured **44px wide against a 92px placeholder**, cutting "Deadline day" off mid-word. They take
+  the design system's input classes now, at a width that fits the placeholder.
+
+  `wrapper_html: {min: 0, max: 28}` put `min` and `max` on the wrapping div, where they mean
+  nothing. The real bounds are on the field, from ReminderScheduleService.
+%>
+<div data-controller="deadline-day" class="space-y-4">
 
   <%= parent_form.simple_fields_for parent_object.reminder_schedule do |f| %>
-    <%= f.label :by_month_or_week, 'Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?' %>
-    <br>
-    <%= f.radio_button :by_month_or_week,
-      'day_of_month',
-      label: 'Day of Month',
-      data: { 'deadline-day-target': 'byDayOfMonth', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
-    <%= f.label :by_month_or_week_day_of_month, 'Day of Month' %>
-    <br>
-    <%= f.radio_button :by_month_or_week,
-      'day_of_week',
-      label: 'Day of the Week',
-      data: { 'deadline-day-target': 'byDayOfWeek', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
-    <%= f.label :by_month_or_week_day_of_week, 'Day of the Week' %>
+    <fieldset class="mb-4">
+      <legend class="mb-1.5 block text-sm font-medium text-slate-700">
+        Send reminders on a day of the month (e.g. "the 5th") or a day of the week (e.g. "the first
+        Tuesday")?
+      </legend>
+      <div>
+        <div class="mb-2 flex min-h-8 items-center gap-2 last:mb-0">
+          <%= f.radio_button :by_month_or_week, "day_of_month",
+                class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                data: {"deadline-day-target": "byDayOfMonth",
+                       action: "deadline-day#monthOrWeekChanged deadline-day#sourceChange"} %>
+          <%= f.label :by_month_or_week_day_of_month, "Day of the month",
+                class: "py-0.5 text-sm text-slate-700" %>
+        </div>
+        <div class="mb-2 flex min-h-8 items-center gap-2 last:mb-0">
+          <%= f.radio_button :by_month_or_week, "day_of_week",
+                class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                data: {"deadline-day-target": "byDayOfWeek",
+                       action: "deadline-day#monthOrWeekChanged deadline-day#sourceChange"} %>
+          <%= f.label :by_month_or_week_day_of_week, "Day of the week",
+                class: "py-0.5 text-sm text-slate-700" %>
+        </div>
+      </div>
+    </fieldset>
 
-    <div data-deadline-day-target="dayOfMonthFields">
-      <%= f.input :day_of_month, as: :integer, label: 'Reminder day of month' do %>
-        <%= f.number_field :day_of_month,
-          min: ReminderScheduleService::MIN_DAY_OF_MONTH,
-          max: ReminderScheduleService::MAX_DAY_OF_MONTH,
-          placeholder: "Reminder day",
-          data: { 'deadline-day-target': 'dayOfMonth', 'action': 'deadline-day#sourceChange' } %>
-      <% end %>
+    <div data-deadline-day-target="dayOfMonthFields" class="mb-4">
+      <%= f.label :day_of_month, "Reminder day of month",
+            class: "block text-sm font-medium text-slate-700" %>
+      <%= f.number_field :day_of_month,
+            min: ReminderScheduleService::MIN_DAY_OF_MONTH,
+            max: ReminderScheduleService::MAX_DAY_OF_MONTH,
+            placeholder: "Reminder day",
+            class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5 max-w-48",
+            data: {"deadline-day-target": "dayOfMonth", action: "deadline-day#sourceChange"} %>
     </div>
 
-    <div data-deadline-day-target="dayOfWeekFields">
-      <%= f.label :every_nth_day, 'Reminder day of the week' %>
-      <div class="flex flex-wrap items-end gap-3">
+    <div data-deadline-day-target="dayOfWeekFields" class="mb-4">
+      <span class="block text-sm font-medium text-slate-700">Reminder day of the week</span>
+      <div class="mt-1.5 flex flex-wrap items-end gap-3">
+        <%# label: false leaves a select with no accessible name, and these two sit side by side,
+            so position alone does not identify either. Named explicitly. %>
         <%= f.input :every_nth_day,
-          collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
-          label: false,
-          input_html: {
-            "aria-label" => "Which week of the month",
-            "data-deadline-day-target" => "everyNthDay",
-            "data-action" => "deadline-day#sourceChange"
-          } %>
-
-        <%# label: false leaves this select with no accessible name, and it sits beside
-            another select so position alone does not identify it. Named explicitly. %>
+              collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
+              label: false, wrapper_html: {class: "mb-0"},
+              input_html: {"aria-label" => "Which week of the month",
+                           "data-deadline-day-target" => "everyNthDay",
+                           "data-action" => "deadline-day#sourceChange"} %>
         <%= f.input :day_of_week,
-          collection: ReminderScheduleService::DAY_OF_WEEK_COLLECTION,
-          label: false,
-          show_blank: true,
-          default: 1,
-          input_html: {
-            "aria-label" => "Day of the week",
-            "data-deadline-day-target" => "dayOfWeek",
-            "data-action" => "deadline-day#sourceChange"
-          } %>
+              collection: ReminderScheduleService::DAY_OF_WEEK_COLLECTION,
+              label: false, show_blank: true, default: 1, wrapper_html: {class: "mb-0"},
+              input_html: {"aria-label" => "Day of the week",
+                           "data-deadline-day-target" => "dayOfWeek",
+                           "data-action" => "deadline-day#sourceChange"} %>
       </div>
     </div>
-    <small class="mb-3 block text-slate-500" data-deadline-day-target="reminderText"></small>
+
+    <p class="mt-1 mb-4 block text-xs text-slate-500" data-deadline-day-target="reminderText"></p>
   <% end %>
 
-  <%= parent_form.input :deadline_day, wrapper_html: { min: 0, max: 28 }, label: 'Deadline day in reminder email' do %>
-      <%= parent_form.number_field :deadline_day,
-        min: ReminderScheduleService::MIN_DAY_OF_MONTH,
-        max: ReminderScheduleService::MAX_DAY_OF_MONTH,
-        placeholder: "Deadline day",
-        data: {"deadline-day-target": "deadlineDay", "action": "deadline-day#sourceChange"} %>
-    <% end %>
-    <small class="mb-3 block text-slate-500" data-deadline-day-target="deadlineText"></small>
+  <div class="mb-4">
+    <%= parent_form.label :deadline_day, "Deadline day in reminder email",
+          class: "block text-sm font-medium text-slate-700" %>
+    <%= parent_form.number_field :deadline_day,
+          min: ReminderScheduleService::MIN_DAY_OF_MONTH,
+          max: ReminderScheduleService::MAX_DAY_OF_MONTH,
+          placeholder: "Deadline day",
+          class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5 max-w-48",
+          data: {"deadline-day-target": "deadlineDay", action: "deadline-day#sourceChange"} %>
+  </div>
+
+  <p class="mt-1 block text-xs text-slate-500" data-deadline-day-target="deadlineText"></p>
 </div>

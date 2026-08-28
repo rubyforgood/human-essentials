@@ -1,6 +1,6 @@
 <% content_for :title, "Authorized family member - #{current_partner.name}" %>
 
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Authorized family member",
         subtitle: "#{@authorized_family_member.first_name} #{@authorized_family_member.last_name}".strip.presence,
@@ -9,9 +9,7 @@
           concat essentials_link_button("Edit", edit_partners_authorized_family_member_path(@authorized_family_member),
                    variant: :primary, icon: "bi-pencil")
         } %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/card", title: "Member information" do %>
     <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
       <% [

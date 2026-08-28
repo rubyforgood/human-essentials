@@ -136,7 +136,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_name", with: admin_user_params[:name]
         fill_in "organization_user_email", with: admin_user_params[:email]
 
-        choose 'Day of Month'
+        choose 'Day of the month'
         fill_in "organization_reminder_schedule_service_day_of_month", with: 1
 
         click_on "Save"

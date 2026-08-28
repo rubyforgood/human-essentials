@@ -5,7 +5,7 @@
   them. The page header owns the only h1; each section is an h2. Spacing was <br> tags and the
   actions were float-right inside a bordered strip.
 %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "#{params[:year]} NDBN annual report",
         subtitle: current_organization.name,
@@ -16,9 +16,8 @@
           concat download_button_to(reports_annual_report_path(@year, format: :csv),
                    text: "Export report")
         } %>
-</div>
 
-<div class="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+<div class="space-y-6">
   <% @report.each_report do |section_name, entries| %>
     <%= render "shared/essentials/card", title: section_name, padded: false do %>
       <% if entries.blank? %>
@@ -42,4 +41,5 @@
       <% end %>
     <% end %>
   <% end %>
+</div>
 </div>

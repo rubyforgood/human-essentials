@@ -5,14 +5,12 @@
   larger than the thing it labelled. They are a description list now. `text-gray-400` was also
   the only use of the gray scale in the app, which is slate everywhere else.
 %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Request",
         subtitle: "Submitted #{@partner_request.created_at.localtime.strftime("%d %b %Y at %H:%M")}",
         back: {path: partners_requests_path, label: "Back to requests"} %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
   <% if flash[:success] %>
     <%= render partial: "partners/requests/success" %>
   <% end %>

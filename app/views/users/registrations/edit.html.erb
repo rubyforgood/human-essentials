@@ -1,20 +1,19 @@
 <% content_for :title, "Edit - Users" %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Account",
         subtitle: "Your name, email and password.",
         back: {path: dashboard_path_from_current_role, label: "Back to dashboard"} %>
-</div>
 
-<%#
+  <%#
   Fixed here: a `collapsed-card` class AdminLTE defined and nothing does now, and the empty
   <button> that used to collapse it -- a control with no label, no icon and no handler. The
   password fields are a fieldset instead, which is what that card was trying to be.
 
   Every `f.input ... do` block pasted the input classes by hand, which is what the :essentials
   wrapper already does.
-%>
-<div class="max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+  %>
+  <div class="max-w-2xl">
   <% if Rails.env.staging? %>
     <%= render "shared/essentials/callout", tone: :warning, wrapper_class: "staging-warning mb-4" do %>
       This is a demo version. Changes to the demo account credentials are not allowed.
@@ -47,4 +46,5 @@
       <%= essentials_link_button "Cancel", dashboard_path_from_current_role, variant: :ghost, size: :md %>
     <% end %>
   <% end %>
+</div>
 </div>

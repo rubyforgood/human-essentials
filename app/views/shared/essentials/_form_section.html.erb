@@ -1,0 +1,23 @@
+<%#
+  One banded section of a long form. The counterpart to `organizations/_details_band` on the page
+  this form edits, so a record and the form that edits it are sectioned the same way.
+
+  Call it with `title:` and a block of fields. `body_class` overrides the default padding.
+
+  (No example markup in this comment: an ERB tag inside an ERB comment closes the comment, which
+  is a syntax error, and it has been one three times on this branch.)
+
+  It is a real `<fieldset>` with a real `<legend>`, so the group is announced -- see design.md.
+  `.form-section` is what makes the legend layout-able. A `<legend>` shrink-wraps and is rendered
+  *in* its fieldset's top border, which is why a `border-t` on the fieldset came out as a rule
+  starting where the legend text ended -- a fieldset rendering artefact, not a pattern.
+
+  The card holding these must be `padded: false`: the bands are full-bleed and each section
+  supplies its own padding.
+%>
+<fieldset class="form-section">
+  <legend><%= title %></legend>
+  <div class="<%= local_assigns.fetch(:body_class, "px-5 pb-1 pt-4") %>">
+    <%= yield %>
+  </div>
+</fieldset>

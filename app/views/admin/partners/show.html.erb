@@ -4,7 +4,7 @@
   Same shape as the barcode page: one row of a table doing a description list's job. It also had
   an empty <h2> as the card header.
 %>
-<div class="px-4 pt-6 sm:px-6 lg:px-8">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Partner",
         subtitle: @partner.name,
@@ -13,9 +13,7 @@
           concat essentials_link_button("Edit", edit_admin_partner_path(@partner),
                    variant: :primary, icon: "bi-pencil")
         } %>
-</div>
 
-<div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/card", title: "Partner information" do %>
     <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
       <div>

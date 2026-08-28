@@ -15,9 +15,8 @@
   <%= render "shared/essentials/page_header",
         title: title,
         subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind." %>
-</div>
 
-<div class="space-y-6 px-4 pb-6 sm:px-6 lg:px-8">
+<div class="space-y-6">
   <%= render "shared/essentials/card" do %>
     <%
       config = {
@@ -72,4 +71,5 @@
       </div>
     <% end %>
   <% end %>
+</div>
 </div>
