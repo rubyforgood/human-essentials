@@ -457,26 +457,67 @@ The native one is hidden under **`[data-railed]`**, which the controller sets on
 a rail. No JavaScript, or a table that does not overflow, and the native scrollbar is untouched —
 this hides a scrollbar only after its replacement is on the page.
 
-**The rail is a track and a thumb, and nothing else.** It carried a 25px bar, a 92%-white backdrop
-over a table row, and a hairline border — six elements including the native bar, for a control that
-needs two. All three are gone. The height stays **24px and transparent**, because the track is the
-pointer target and 2.5.8 asks for 24; the bar you see is 6px of it, and at rest the visible bar
-covers **no rows** (measured: 0.1px of sub-pixel contact with the 24px band, none with the 6px bar).
+**The rail is a track and a thumb — plus a ground, but only while it floats.** It carried a 25px
+bar, a 92%-white backdrop over a table row, and a hairline border permanently: six elements
+including the native bar, for a control that needs two. The bar is gone for good. The height stays
+**24px**, because the track is the pointer target and 2.5.8 asks for 24; the bar you see is 6px of
+it, and at rest the visible bar covers **no rows** (measured: 0.1px of sub-pixel contact with the
+24px band, none with the 6px bar).
+
+<a id="rail-backdrop"></a>
+The backdrop and hairline came off entirely first, and that was **right for one of the rail's two
+states and wrong for the other**. At rest the rail sits in a strip the card reserves for it with
+nothing behind it, so a backdrop there only washes out the card. But it is at rest for the minority
+of the scroll: traced down `/distributions`, which scrolls 611px, the rail rides the fold for **448
+of them — 73%** — lying across live table rows the whole way. A 6px bar on row text with nothing
+between them is what was reported as *"it hovers in an odd way"*.
+
+So they come back **gated on `data-floating`**, which the controller sets from the same test that
+places the rail. The hairline is an **inset shadow rather than a border**: `box-sizing` is
+`border-box` here, so a border would take the track from 24px to 23 and put 2.5.8 a pixel short in
+exactly the state where the control is hardest to hit.
+
+<a id="rail-strip"></a>
+**The reserved strip is 32px for a 24px rail**, so 8px of it is clear space. At 24 the strip was
+exactly the height of the thing that goes in it, which left the rail's bottom edge **0.14px** above
+the pagination's top border — two rules a hair apart, one of them a control. 8 rather than 12
+because the pagination adds its own 12px below that border, and the eye reads 8 + rule + 12 as one
+gap.
+
+<a id="rail-radius"></a>
+**The track and the thumb are pills, written as `calc(infinity * 1px)`.** Not `var(--radius-full)`:
+**that token does not exist**. Tailwind v4's radius scale stops at `--radius-2xl` and `rounded-full`
+compiles to the literal, not to a variable — so the declaration was invalid, the browser dropped it,
+and both parts rendered as sharp rectangles from `015da3b36` until it was written out. Measured 0px
+on each. Resolving every custom property `application.css` references against the running app,
+**30 referenced, 28 resolve**, and the other unresolved one is `--pin-width`, which the controller
+sets per element at runtime and is correct. One bad token, not a pattern — but a `var()` naming a
+token that does not exist fails **silently**, so a value that must render is worth measuring once.
 
 <a id="scrollbar-contrast"></a>
-**The thumb is `slate-500`, and this is a contrast requirement rather than a preference.** A custom
-scrollbar thumb is author content, so 1.4.11 applies and asks 3:1 against what it sits on. Against
-the `slate-100` track:
+**The thumb has a contrast floor, and it is not a preference.** A custom scrollbar thumb is author
+content, so 1.4.11 applies and asks 3:1 against what it sits on. Against the `slate-100` track:
 
 | Thumb | Ratio | |
 | --- | --- | --- |
 | `slate-300` | 1.36:1 | fails — and this is what "match the app's resting weight" would suggest |
-| `slate-400` | 2.34:1 | fails — what the bar shipped with |
-| `slate-500` | **4.34:1** | passes, and 4.76:1 against the white card |
+| `slate-400` | 2.40:1 | fails — what the bar shipped with first |
+| `oklch(0.636 0.044 257.1)` | **3.13:1** | **what it is now**, painting `rgb(122, 140, 166)` |
+| `slate-500` | 4.35:1 | passes, and was reported as very dark |
 
-**axe cannot catch this.** Nothing in the markup says that div is a control, so no automated check
-knows to hold it to 1.4.11. It was found by computing the ratio, which is the only way it was going
-to be.
+The floor decides which values are *available*; it does not pick one. slate-500 cleared 3:1 by 1.35
+and was chosen only because the Tailwind scale **has no step between slate-400 and slate-500** — so
+the value above is that missing step, solved for rather than picked: the lightest slate-hued value
+that still clears the floor. Hover and drag stay on the scale at `slate-600` and `slate-700`, which
+are darker, so the ramp stays monotonic.
+
+The ratios above are sampled off **painted pixels**, not computed from the declarations, which is
+why slate-400 reads 2.40 here against the 2.34 recorded when this table was first written — that
+figure came from Tailwind v3's hex for slate-400, and this app is on v4.
+
+**axe cannot catch any of it.** Nothing in the markup says that div is a control, so no automated
+check knows to hold it to 1.4.11. It was found by computing the ratio, which is the only way it was
+going to be.
 
 <a id="modal-centring"></a>
 **A modal keeps `margin: auto` whatever it is rendered inside.** `.modal-surface` on the dialog,
@@ -2039,7 +2080,12 @@ of the *table*, which on **five of the seven** overflowing tables is below the f
 - **It rides the fold, then settles *below* the table.** Not over it: at `bottom - height` the rail
   overlaid the last row and, being a control, took the pointer with it — the hover on the bottom
   row's comment cell went to the rail and the tooltip never opened. Three passing specs caught that.
-  The card reserves a strip (`[data-railed]`) so at rest it covers nothing.
+  The card reserves a strip (`[data-railed]`, 32px for a 24px rail) so at rest it covers nothing and
+  does not crowd the pagination.
+- **It has two states and they are styled differently.** `data-floating` while it rides the fold,
+  where it lies on live rows and needs a backdrop to be read against them; bare while settled, where
+  nothing is behind it. That is the majority state, not the exception — 73% of the scroll on
+  `/distributions`. See [the rail's ground](#rail-backdrop).
 - **`aria-hidden`, exactly as a native scrollbar is.** The region is already a focusable named
   `role="region"` that the arrow keys scroll, so a focusable rail would be a second tab stop per
   table duplicating a path that already works and is already announced. This is the pointer

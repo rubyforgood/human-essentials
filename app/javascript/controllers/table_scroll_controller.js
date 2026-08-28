@@ -175,12 +175,25 @@ export default class extends Controller {
      * While the table does run past the fold the rail does float over a row, as Ant Design's and
      * Confluence's both do. That row is the one already cut in half by the bottom of the window.
      */
-    const top = Math.min(window.innerHeight - height, box.bottom);
+    const fold = window.innerHeight - height;
+    const top = Math.min(fold, box.bottom);
     if (region.parentElement) region.parentElement.dataset.railed = "";
     const onScreen = box.bottom > 0 && top + height > 0 && box.top < window.innerHeight;
 
     if (onScreen) rail.dataset.visible = "";
     else delete rail.dataset.visible;
+
+    /*
+     * Whether it is riding the fold or settled at the table's end, which is the same test that just
+     * placed it: the clamp bit, so there is table below the rail and it is lying on rows.
+     *
+     * Only the CSS cares -- it puts the backdrop and hairline back for that state and takes them off
+     * again at rest. Settled, the rail sits in the strip the card reserves with nothing behind it,
+     * and a backdrop there washes out the card for no reason. This is the majority state rather than
+     * the exception: on `/distributions` the rail floats for 448 of the page's 611 scrollable pixels.
+     */
+    if (box.bottom > fold) rail.dataset.floating = "";
+    else delete rail.dataset.floating;
 
     rail.style.left = `${Math.round(box.left)}px`;
     rail.style.width = `${Math.round(box.width)}px`;

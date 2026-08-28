@@ -555,14 +555,8 @@
     display: flex;
     align-items: center;
     /*
-     * 24px, and transparent. The track is the pointer target and 2.5.8 asks for 24, so the height
-     * stays; the bar you can see is 6px of it.
-     *
-     * The 92%-white backdrop and the hairline above it are gone. With the native scrollbar hidden
-     * this is the only bar on screen, and it no longer has to hold its own against one -- it was
-     * six elements for a scrollbar (bar, backdrop, border, track, thumb, and the native bar under
-     * it) and is now two. Transparent also means it stops washing out the row it floats over while
-     * the table runs past the fold.
+     * 24px. The track is the pointer target and 2.5.8 asks for 24, so the height stays; the bar you
+     * can see is 6px of it.
      */
     height: calc(var(--spacing) * 6);
     padding-inline: calc(var(--spacing) * 2);
@@ -571,12 +565,40 @@
   }
 
   /*
+   * A ground, but only while it floats.
+   *
+   * At rest the rail sits in a strip the card reserves for it with nothing behind it, so it is
+   * transparent and needs to be: a backdrop there only washes out the card. But it is at rest for
+   * the minority of the scroll. Traced down `/distributions`, which scrolls 611px, it rides the fold
+   * for 448 of them -- 73% -- lying across live table rows the whole way, and a 6px bar on top of
+   * row text with nothing between them is what "hovers in an odd way" describes.
+   *
+   * Removing the backdrop outright was right for the settled state and wrong for this one. It comes
+   * back gated on `data-floating`, which the controller sets from the same test it uses to place the
+   * rail -- so the tidy version is what you see at rest, and the row underneath keeps its contrast
+   * only when there is a row underneath.
+   *
+   * The hairline is an inset shadow rather than a border because a border is inside the box under
+   * `box-sizing: border-box`: it would take the track from 24px to 23 and put 2.5.8 a pixel short in
+   * exactly the state where the control is hardest to hit. A shadow paints without occupying.
+   */
+  .table-rail[data-floating] {
+    background-color: color-mix(in oklch, var(--color-white) 92%, transparent);
+    box-shadow: inset 0 1px 0 var(--color-slate-200);
+  }
+
+  /*
    * The strip the rail settles into once the table's end is on screen. Without it the rail overlaid
    * the last row and, being a control, took the pointer with it -- the hover on the bottom row's
    * comment cell went to the rail and the tooltip never opened.
+   *
+   * 32px for a 24px rail, so 8px of it is clear space. At 24 the strip was exactly the height of the
+   * thing that goes in it, which left the rail's bottom edge 0.14px above the pagination's top
+   * border: two rules a hair apart, one of them a control. 8 rather than 12 because the pagination
+   * adds its own 12px below that border, and the eye reads 8 + rule + 12 as one gap.
    */
   [data-railed] {
-    padding-bottom: calc(var(--spacing) * 6);
+    padding-bottom: calc(var(--spacing) * 8);
   }
 
   .table-rail[data-visible] {
@@ -601,7 +623,14 @@
     top: 50%;
     height: calc(var(--spacing) * 1.5);
     translate: 0 -50%;
-    border-radius: var(--radius-full);
+    /*
+     * `calc(infinity * 1px)`, which is what `rounded-full` compiles to, and NOT
+     * `var(--radius-full)`: that token does not exist. Tailwind v4's radius scale stops at
+     * `--radius-2xl` and `rounded-full` is a literal, not a variable -- so the declaration this
+     * replaces was invalid, the browser dropped it, and both the track and the thumb had been
+     * rendering as sharp rectangles since 015da3b36 first built the rail. Measured 0px on each.
+     */
+    border-radius: calc(infinity * 1px);
     background-color: var(--color-slate-100);
   }
 
@@ -611,15 +640,27 @@
     height: calc(var(--spacing) * 1.5);
     min-width: calc(var(--spacing) * 6);
     translate: 0 -50%;
-    border-radius: var(--radius-full);
+    /* See the track: `--radius-full` is not a token, and this was square until it was written out. */
+    border-radius: calc(infinity * 1px);
     /*
-     * slate-500, not the slate-400 this had, and not the slate-300 that "match the resting weight"
-     * would suggest. A custom scrollbar thumb is author content, so 1.4.11 applies to it and asks
-     * 3:1 against what it sits on. Measured against the slate-100 track: slate-300 **1.36:1**,
-     * slate-400 **2.34:1**, slate-500 **4.34:1**. The bar shipped below the threshold and axe
-     * cannot see it -- nothing in the markup says this div is a control.
+     * A custom scrollbar thumb is author content, so 1.4.11 applies to it and asks 3:1 against what
+     * it sits on. Measured against the slate-100 track: slate-300 1.36:1, slate-400 2.40:1,
+     * slate-500 4.35:1. Two of those fail, and axe cannot see it either way -- nothing in the markup
+     * says this div is a control.
+     *
+     * So not slate-400, which is what shipped first and is under the threshold. But not slate-500
+     * either: it cleared 3:1 by 1.35 and was reported as very dark, and it was only ever chosen
+     * because the scale has no step between the two. This is that missing step, solved for rather
+     * than picked -- the lightest slate-hued value that still clears the floor.
+     *
+     * It paints rgb(122, 140, 166) and measures 3.13:1, sampled off the rendered pixels rather than
+     * computed from the declaration. The preview quoted 3.10 for a hex stand-in one unit off in
+     * green; that is the gap between the two figures, and the painted one is the one that counts.
+     *
+     * Hover and drag stay on the scale at slate-600 and slate-700, which are darker than this and
+     * so keep the ramp monotonic.
      */
-    background-color: var(--color-slate-500);
+    background-color: oklch(0.636 0.044 257.1);
   }
 
   .table-rail-track:hover .table-rail-thumb {

@@ -295,6 +295,75 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
     expect(height).to be >= 24
   end
 
+  # `border-radius: var(--radius-full)` was set on both the track and the thumb, and --radius-full is
+  # not a Tailwind v4 token -- the scale stops at --radius-2xl and `rounded-full` compiles to a
+  # literal. The declaration was invalid, the browser dropped it, and the rail rendered as sharp
+  # rectangles for weeks without anything noticing, because a var() naming a token that does not
+  # exist fails silently. Assert the computed value, which is the only thing that would have caught
+  # it.
+  it "draws the track and the thumb as pills, not rectangles" do
+    create_list(:distribution, 2, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+    radii = page.evaluate_script(<<~JS)
+      [
+        getComputedStyle(document.querySelector('.table-rail-thumb')).borderRadius,
+        getComputedStyle(document.querySelector('.table-rail-track'), '::before').borderRadius
+      ].map(parseFloat)
+    JS
+
+    expect(radii).to all(be > 100)
+  end
+
+  # The rail has two states: riding the fold, where it lies over live rows and needs a backdrop to be
+  # read against them, and settled in the card's reserved strip, where nothing is behind it and a
+  # backdrop only washes out the card. Taking the backdrop off both is what was reported as "it
+  # hovers in an odd way".
+  it "carries a backdrop only while it floats over the table" do
+    create_list(:distribution, 20, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+
+    page.execute_script("window.scrollTo(0, 0)")
+    expect(page).to have_css(".table-rail[data-floating]")
+    floating_background = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-rail')).backgroundColor"
+    )
+    expect(floating_background).not_to eq("rgba(0, 0, 0, 0)")
+
+    page.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
+    expect(page).to have_no_css(".table-rail[data-floating]")
+    settled_background = page.evaluate_script(
+      "getComputedStyle(document.querySelector('.table-rail')).backgroundColor"
+    )
+    expect(settled_background).to eq("rgba(0, 0, 0, 0)")
+  end
+
+  # The reserved strip used to be exactly the height of the rail that goes in it, which left the
+  # rail's bottom edge 0.14px above the pagination's top border: two rules a hair apart, one of them
+  # a control.
+  it "leaves the settled rail clear of the pagination" do
+    create_list(:distribution, 20, organization: organization)
+    visit distributions_path
+
+    expect(page).to have_css(".table-rail[data-visible]")
+    page.execute_script("window.scrollTo(0, document.documentElement.scrollHeight)")
+    expect(page).to have_no_css(".table-rail[data-floating]")
+
+    gap = page.evaluate_script(<<~JS)
+      (() => {
+        const region = document.querySelector('.table-scroll');
+        const rail = document.querySelector('.table-rail');
+        const below = region.parentElement.nextElementSibling;
+        return below.getBoundingClientRect().top - rail.getBoundingClientRect().bottom;
+      })()
+    JS
+
+    expect(gap).to be >= 7.5
+  end
+
   # Every table in the app scrolled sideways at 320px and at 375 before this: 15 of 15, the worst
   # hiding 80% of its width. A table too narrow to be a table becomes a list of labelled fields.
   context "when the container is too narrow to be a table" do
