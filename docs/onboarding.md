@@ -613,6 +613,14 @@ It is an invitation now, the same one the *Invite user* button on your organizat
 give a name and an email, they get an email, and they choose their own password. There is no
 password box, because you do not set it for them.
 
+### No more field flashing on load
+
+**On New distribution, a Shipping cost box used to appear for a moment on every refresh** and then
+vanish. It only applies when the delivery method is *Shipped*, but the page drew it first and
+removed it a fraction of a second later. It now starts hidden and appears when you choose *Shipped*.
+
+The reminder day fields on **Organization settings** did the same thing and no longer do.
+
 ### A purchase can start a distribution, and can be printed
 
 **Open any purchase and the header now has two buttons**, the same two a donation has always had.

@@ -116,6 +116,20 @@ The only way to see one is to listen for the `dialog` event the browser raises, 
 `checkNativeConfirms` does. Clicking is safe — the handler dismisses, so nothing is submitted. It
 reports **2** today, both on `/transfers`, from the 44 `confirm:` call sites in the app.
 
+`flash-of-hidden-audit.js` finds content that is **painted and then hidden by JavaScript**.
+
+```bash
+pw bin/design/flash-of-hidden-audit.js
+```
+
+It loads each page with `waitUntil: "commit"` -- before scripts run -- lists everything visible,
+then lists it again once the page has settled, and reports what disappeared. A controller that
+hides something in `connect()` has already let the reader see it.
+
+Found the reported "ghost button that appears for a second" on `/distributions/new` (the shipping
+cost field) and the same defect on `/manage/edit` (the reminder day fields). `<select>` is excluded
+because select2 *replaces* one with its own container, which is a swap rather than a hide.
+
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
 ```bash
