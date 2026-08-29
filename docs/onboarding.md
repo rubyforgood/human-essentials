@@ -594,6 +594,16 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### The warning on New kit is where you can see it
+
+**"The items in a kit are fixed once you save" now appears at the top of the page**, under the
+heading, instead of below both cards where you had to scroll to find it — which was after you had
+already chosen the contents it was warning you about.
+
+It also says where to go afterwards: the name, value and partner visibility can still be edited from
+**Items & inventory**, and the callout links there. It used to say "via the kit's item", which is
+true internally but not something the screen explains.
+
 ### The account menu is shorter
 
 **"Organization" is no longer in the avatar menu.** It is still pinned to the bottom of the left
