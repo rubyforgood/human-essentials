@@ -283,7 +283,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         end
         expect(page).to have_content("Audit is submitted for final approval.")
         expect(page).to have_content(quantity)
-        expect(page).to have_content("submitted for final approval")
+        expect(page).to have_content("Pending Finalization")
         expect(page).not_to have_content("Resume Audit")
         expect(page).to have_content("Delete Audit")
         expect(page).to have_content("Finalize Audit")
@@ -292,7 +292,7 @@ RSpec.describe "Audit management", type: :system, js: true do
 
     context "with a confirmed audit" do
       subject { audit_path(audit) }
-      let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :confirmed) }
+      let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :pending_finalization) }
 
       it "should be able to edit the audit that is submitted for final approval" do
         visit subject
