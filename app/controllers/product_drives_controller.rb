@@ -74,6 +74,14 @@ class ProductDrivesController < ApplicationController
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
     @product_drive = current_organization.product_drives.includes(:donations).find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data Exports::ExportProductDriveParticipantsCSVService.generate_csv(@product_drive),
+          filename: "Product-Drive-Participants-#{@product_drive.name}-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   def update

@@ -1,8 +1,9 @@
 RSpec.describe RequestDestroyService, type: :service do
   describe '#call' do
-    subject { described_class.new(request_id: request_id).call }
+    subject { described_class.new(request_id: request_id, reason: reason).call }
     let(:request_id) { request.id }
     let(:request) { create(:request) }
+    let(:reason) { 'Partner no longer needs these items' }
 
     it 'should return an instance of itself' do
       expect(subject).to be_a_kind_of(RequestDestroyService)
@@ -16,13 +17,37 @@ RSpec.describe RequestDestroyService, type: :service do
       end
     end
 
-    context 'when the request is already discarded' do
+    context 'when the request is already cancelled' do
       before do
         request.discard!
       end
 
       it 'should not be successful and have errors' do
-        expect(subject.errors.full_messages).to eq(['request already discarded'])
+        expect(subject.errors.full_messages).to eq(['request already cancelled'])
+      end
+    end
+
+    context 'when the cancellation reason is blank' do
+      let(:reason) { '   ' }
+
+      it 'should not be successful and have errors indicating a reason is required' do
+        expect(subject.errors.full_messages).to eq(['a cancellation reason is required'])
+      end
+
+      it 'should have the same errors when no reason is given at all' do
+        svc = described_class.new(request_id: request_id).call
+
+        expect(svc.errors.full_messages).to eq(['a cancellation reason is required'])
+      end
+
+      it 'should not cancel the request' do
+        expect { subject }.not_to change { request.reload.discarded? }
+        expect(request.reload).to be_status_pending
+      end
+
+      it 'should not send an email notification to the partner' do
+        expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
+        subject
       end
     end
 
@@ -37,10 +62,14 @@ RSpec.describe RequestDestroyService, type: :service do
       end
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
-      it 'should send a email notification to the partner' do
+      it 'should store the cancellation reason on the request' do
+        expect { subject }.to change { request.reload.discard_reason }.from(nil).to(reason)
+      end
+
+      it 'should send an email notification to the partner' do
         subject
         expect(fake_mailer).to have_received(:deliver_later)
       end
@@ -51,10 +80,10 @@ RSpec.describe RequestDestroyService, type: :service do
       let(:request) { create(:request, partner: partner) }
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
-      it 'should not send a email notification to the partner' do
+      it 'should not send an email notification to the partner' do
         expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
         subject
       end

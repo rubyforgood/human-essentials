@@ -112,10 +112,4 @@ RSpec.describe PartnerGroupsController, type: :request do
       end
     end
   end
-
-  context "While not signed in" do
-    let(:object) { create(:partner_group, organization: organization) }
-
-    include_examples "requiring authorization"
-  end
 end

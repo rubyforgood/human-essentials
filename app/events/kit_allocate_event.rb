@@ -11,8 +11,8 @@ class KitAllocateEvent < Event
     end
     items.push(EventTypes::EventLineItem.new(
       quantity: quantity,
-      item_id: kit.item.id,
-      item_value_in_cents: kit.item.value_in_cents,
+      item_id: kit.id,
+      item_value_in_cents: kit.value_in_cents,
       to_storage_location: storage_location,
       from_storage_location: nil
     ))

@@ -135,6 +135,18 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "Filters by item" do
+        item_1 = create(:item, name: "Good item", organization: organization)
+        item_2 = create(:item, name: "Bad item", organization: organization)
+        create(:donation, :with_items, item: item_1)
+        create(:donation, :with_items, item: item_2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select item_1.name, from: "filters[by_item_id]"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
       it "Filters by category" do
         category_1 = create(:item_category, name: "Category 1", organization: organization)
         category_2 = create(:item_category, name: "Category 2", organization: organization)
@@ -147,6 +159,15 @@ RSpec.describe "Donations", type: :system, js: true do
         select organization.item_categories.first.name, from: "filters[by_category]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
+      end
+
+      it "lists item categories alphabetically in the filter" do
+        names = ["Zebra supplies", "Apple goods", "Mango wares"]
+        names.each { |name| create(:item_category, name: name, organization: organization) }
+        visit subject
+        rendered = find("select[name='filters[by_category]']").all("option").map(&:text)
+        ours = rendered.select { |option| names.include?(option) }
+        expect(ours).to eq(names.sort)
       end
 
       it_behaves_like "Date Range Picker", Donation, "issued_at"
@@ -746,7 +767,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "allows deletion of a donation" do
-        expect(page).to have_link("Delete")
+        expect(page).to have_button("Delete")
 
         accept_confirm do
           click_on "Delete", match: :first

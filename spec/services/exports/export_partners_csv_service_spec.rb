@@ -104,6 +104,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         agency_information: [
           "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
+          "Agency Phone Number",
           "Notes",
           "Agency Type", # Columns from the agency_information partial
           "Other Agency Type",
@@ -201,6 +202,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         agency_information: [
           "Jane Doe", # Technically not part of the agency_information partial, but come at the start of the export
           "jane@doe.com",
+          "",
           "Some notes",
           I18n.t("partners_profile.other"), # Columns from the agency_information partial
           "Another Agency Name",
@@ -303,9 +305,15 @@ RSpec.describe Exports::ExportPartnersCSVService do
     end
 
     it "should handle a partner with missing profile info" do
-      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields
+      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields.
+      # Destroy the existing profile first; otherwise the factory's `partner { Partner.first || create(:partner) }`
+      # default attaches the new profile to the same partner, briefly leaving two partner_profiles rows with the
+      # same partner_id and making the has_one lookup nondeterministic on CI.
+      partners.first.profile.destroy!
+      partners.first.reload
       partners.first.update(profile: create(
         :partner_profile,
+        partner: partners.first,
         no_social_media_presence: nil,
         primary_contact_name: nil,
         primary_contact_email: nil
@@ -316,7 +324,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         # profile, so they won't be completely empty
         expected_values += case partial
         when :agency_information
-          ["Jane Doe", "jane@doe.com", "Some notes", "", "", "", "", "", "", "", "", "", "", ""]
+          ["Jane Doe", "jane@doe.com", "", "Some notes", "", "", "", "", "", "", "", "", "", "", ""]
         when :partner_settings
           [
             "true",

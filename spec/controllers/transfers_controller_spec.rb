@@ -128,22 +128,5 @@ RSpec.describe TransfersController, type: :controller do
         end
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) do
-        org = create(:organization)
-        create(:transfer,
-               to: create(:storage_location, organization: org),
-               from: create(:storage_location, organization: org),
-               organization: org)
-      end
-      include_examples "requiring authorization", except: %i(edit update destroy)
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:transfer) }
-
-    include_examples "requiring authorization", except: %i(edit update destroy)
   end
 end

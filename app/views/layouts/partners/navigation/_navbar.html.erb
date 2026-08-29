@@ -22,7 +22,7 @@
       <% end %>
     <% end %>
     <div class="dropdown-divider"></div>
-    <%= link_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
+    <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item", data: {disable_with: "Please wait..."} do %>
       <i class="fa fa-sign-out fa-lg"></i> Logout
     <% end %>
   </div>

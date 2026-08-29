@@ -31,8 +31,8 @@ KnapsackPro::Adapters::RSpecAdapter.bind
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }
-Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].sort.each { |f| require f }
+Rails.root.glob("spec/support/**/*.rb").sort.each { |f| require f }
+Rails.root.glob("spec/controllers/shared_examples/*.rb").sort.each { |f| require f }
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.

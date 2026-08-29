@@ -15,6 +15,7 @@
 #  hide_package_column_on_receipt           :boolean          default(FALSE)
 #  hide_value_columns_on_receipt            :boolean          default(FALSE)
 #  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  include_packages_in_distribution_export  :boolean          default(FALSE), not null
 #  intake_location                          :integer
 #  invitation_text                          :text
 #  latitude                                 :float
@@ -84,6 +85,7 @@ class Organization < ApplicationRecord
     has_many :product_drive_tags, -> { by_type("ProductDrive") },
       class_name: "Tag", inverse_of: false
     has_many :inventory_items, through: :storage_locations
+    has_many :concrete_items
     has_many :kits
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
@@ -166,8 +168,8 @@ class Organization < ApplicationRecord
 
   # Computes full address string based on street, city, state, and zip, adding ', ' and ' ' separators
   def address
-    state_and_zip = [state, zipcode].select(&:present?).join(' ')
-    [street, city, state_and_zip].select(&:present?).join(', ')
+    state_and_zip = [state, zipcode].compact_blank.join(' ')
+    [street, city, state_and_zip].compact_blank.join(', ')
   end
 
   def address_changed?
@@ -297,6 +299,6 @@ class Organization < ApplicationRecord
   end
 
   def logo_size_check
-    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabytes
+    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabyte
   end
 end

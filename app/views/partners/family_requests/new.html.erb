@@ -25,16 +25,16 @@
             <%= form_for_filterrific @filterrific do |f| %>
               <div class="row">
                 <div class="col-3">
-                  <%= f.label :search_names, "Search By Child Name" %>
+                  <%= f.label :search_families, "Search By Guardian Name" %>
                   <%= f.text_field(
-                          :search_names,
+                          :search_families,
                           class: 'filterrific-periodically-observed form-control'
                       ) %>
                 </div>
                 <div class="col-3">
-                  <%= f.label :search_families, "Search By Guardian Name" %>
+                  <%= f.label :search_names, "Search By Child Name" %>
                   <%= f.text_field(
-                          :search_families,
+                          :search_names,
                           class: 'filterrific-periodically-observed form-control'
                       ) %>
                 </div>

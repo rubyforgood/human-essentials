@@ -404,7 +404,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 4, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 2, storage_location_id: storage_location1.id)
+              kit.id => EventTypes::EventItem.new(item_id: kit.id, quantity: 2, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
@@ -430,7 +430,7 @@ RSpec.describe InventoryAggregate do
             item1.id => 30,
             item2.id => 10,
             item3.id => 40,
-            kit.item.id => 3
+            kit.id => 3
           },
           storage_location2.id => {
             item2.id => 10,
@@ -456,7 +456,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 1, storage_location_id: storage_location1.id)
+              kit.id => EventTypes::EventItem.new(item_id: kit.id, quantity: 1, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(

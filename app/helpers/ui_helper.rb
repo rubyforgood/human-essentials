@@ -80,20 +80,6 @@ module UiHelper
     _link_to link, { icon: "check", type: "success", text: "Restore", size: "xs" }.merge(options), properties
   end
 
-  def dropdown_button(id, options = {})
-    options[:type] = (options[:type] || "primary").prepend("btn-dropdown btn-")
-    options[:id] = id
-    additional_properties = {
-      data: {
-        "bs-toggle": "dropdown"
-      },
-      "aria-haspopup": true,
-      "aria-expanded": true
-    }
-
-    _button_to({ submit_type: "button", text: "Set the 'text' property", size: "md", icon: "caret-down" }.merge(options), additional_properties)
-  end
-
   def cancel_button_to(link, options = {})
     _link_to link, { icon: "ban", type: "outline-primary", text: "Cancel", size: "md" }.merge(options)
   end
@@ -121,7 +107,13 @@ module UiHelper
 
   def modal_button_to(target_id, options = {})
     properties = { data: { "bs-toggle": "modal" } }
-    _link_to target_id, { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options), properties
+    options = { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options)
+    # A modal-toggle button only opens a Bootstrap modal client-side; it never navigates or
+    # submits a form. rails-ujs' `data-disable-with` disables the link on click and only re-enables
+    # it on the next page load, so without opting out the button stays stuck showing "Please wait..."
+    # after the modal is dismissed (see #5632).
+    options[:data] = { disable_with: nil }.merge(options[:data] || {})
+    _link_to target_id, options, properties
   end
 
   def new_button_to(link, options = {})
@@ -185,8 +177,16 @@ module UiHelper
 
     klass = "#{options[:class] || ""} btn btn-#{type} btn-#{size} #{center} #{disabled}"
 
-    link_to link, properties.merge(class: klass) do
-      fa_icon icon, text: text
+    form_klass = "#{options[:form_class] || ""} d-inline-block"
+
+    if properties[:method].blank? || properties[:method] == "get"
+      link_to link, properties.merge(class: klass) do
+        fa_icon icon, text: text
+      end
+    else
+      button_to link, properties.merge(class: klass, form_class: form_klass) do
+        fa_icon icon, text: text
+      end
     end
   end
 

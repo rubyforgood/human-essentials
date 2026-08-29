@@ -24,7 +24,7 @@ class Admin::UsersController < AdminController
       redirect_to admin_users_path
     else
       flash[:error] = "Something didn't work quite right -- try again?"
-      redirect_back(fallback_location: edit_admin_user_path)
+      redirect_back_or_to(edit_admin_user_path)
     end
   end
 
@@ -65,7 +65,7 @@ class Admin::UsersController < AdminController
       raise "Unknown resource type #{params[:resource_type]}"
     end
 
-    objects = klass.where("name LIKE ?", "%#{params[:q]}%").select(:id, :name)
+    objects = klass.where("name ILIKE ?", "%#{params[:q]}%").order("lower(name)").select(:id, :name)
     object_json = objects.map do |obj|
       {
         id: obj.id,
@@ -81,23 +81,23 @@ class Admin::UsersController < AdminController
         resource_type: params[:resource_type],
         resource_id: params[:resource_id])
     rescue => e
-      redirect_back(fallback_location: admin_users_path, alert: e.message)
+      redirect_back_or_to(admin_users_path, alert: e.message)
       return
     end
-    redirect_back(fallback_location: admin_users_path, notice: "Role added!")
+    redirect_back_or_to(admin_users_path, notice: "Role added!")
   end
 
   def resend_invitation
     user = User.find(params[:user_id])
     user.invite!
-    redirect_back(fallback_location: admin_users_path, notice: "#{user.name} reinvited!")
+    redirect_back_or_to(admin_users_path, notice: "#{user.name} reinvited!")
   end
 
   def remove_role
     RemoveRoleService.call(user_id: params[:user_id], role_id: params[:role_id])
-    redirect_back(fallback_location: admin_users_path, notice: "Role removed!")
+    redirect_back_or_to(admin_users_path, notice: "Role removed!")
   rescue => e
-    redirect_back(fallback_location: admin_users_path, alert: e.message)
+    redirect_back_or_to(admin_users_path, alert: e.message)
   end
 
   private

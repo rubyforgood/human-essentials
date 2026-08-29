@@ -1,15 +1,13 @@
 <% num_locations = event.data.storage_locations.length %>
-<% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
-  <tr style="background-color: #e9e4f3;">
-    <% if loc_index == 0 %>
-      <td rowspan="<%= num_locations %>"><%= event.id %></td>
-      <td rowspan="<%= num_locations %>">Snapshot</td>
-      <td rowspan="<%= num_locations %>"></td>
-      <td rowspan="<%= num_locations %>"><%= event.event_time.to_s %></td>
-    <% end %>
-    <td colspan="2">
+
+<tr style="background-color: #e9e4f3;">
+  <td><%= event.user&.name || "No Name Provided" %></td>
+  <td>Snapshot</td>
+  <td>&nbsp;</td>
+  <td><%= event.event_time.to_s %></td>
+  <td>
+    <% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
       <%= link_to storage_locs.find { |i| i.id == loc.id}.name, storage_location_path(loc.id) %>
-    <td>
       <% loc.items.values.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id} %>
         <% if item %>
@@ -17,8 +15,11 @@
         <% else %>
           Item <%= entry.item_id %> (deleted)
         <% end %>
-        <%= entry.quantity %><br>
+        <%= entry.quantity %>
       <% end %>
-    </td>
-  </tr>
-<% end %>
+      <br>
+    <% end %>
+  </td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>

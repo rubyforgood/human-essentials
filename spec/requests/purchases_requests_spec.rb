@@ -429,7 +429,7 @@ RSpec.describe "Purchases", type: :request do
           get purchase_path(purchase.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_purchase_path(purchase.id)}']")
-          delete = page.at_css("a.btn-danger[href='#{purchase_path(purchase.id)}']")
+          delete = page.at_css("form[action='#{purchase_path(purchase.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(delete.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)

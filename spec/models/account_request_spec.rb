@@ -61,6 +61,40 @@ RSpec.describe AccountRequest, type: :model do
         expect(subject.valid?).to eq(false)
         expect(subject.errors.messages[:email]).to match_array(["already used by an existing User"])
       end
+
+      [:rejected, :admin_closed].each do |status|
+        context "when the status is #{status}" do
+          before { subject.status = status }
+
+          it 'allows the email' do
+            expect(subject).to be_valid
+          end
+        end
+      end
+    end
+  end
+
+  describe '#status' do
+    it "does not regress from rejected to another status" do
+      rejected_request = create(:account_request, status: 'rejected')
+
+      expect { rejected_request.confirm! }
+        .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once rejected/)
+    end
+
+    it "does not regress from admin_closed to another status" do
+      rejected_request = create(:account_request, status: 'admin_closed')
+
+      expect { rejected_request.confirm! }
+        .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once closed by an admin/)
+    end
+
+    it "allows normal transitions" do
+      started_request = create(:account_request, status: 'started')
+      user_confirmed_request = create(:account_request, status: 'user_confirmed')
+
+      expect { started_request.confirm! }.not_to raise_error
+      expect { user_confirmed_request.reject!('rejectable request') }.not_to raise_error
     end
   end
 

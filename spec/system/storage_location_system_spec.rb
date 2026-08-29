@@ -156,7 +156,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location1 = create(:storage_location, :with_items)
       visit subject
 
-      expect(page).to have_link('Deactivate', class: "disabled", href: "/storage_locations/#{location1.id}/deactivate")
+      within "form[action='/storage_locations/#{location1.id}/deactivate']" do
+        expect(page).to have_button('Deactivate', class: "disabled")
+      end
     end
 
     it "Allows user to deactivate and reactivate storage locations" do
@@ -183,8 +185,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
       visit subject
 
-      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).to eq(expected_order)
-      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).to eq(expected_order)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).not_to eq(expected_order.reverse)
     end
   end
 

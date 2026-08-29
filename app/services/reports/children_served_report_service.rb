@@ -39,22 +39,24 @@ module Reports
       .distributions
       .for_year(year)
       .joins(line_items: :item)
-      .merge(Item.loose.disposable_diapers)
+      .merge(ConcreteItem.disposable_diapers)
       .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 50)))"))
       .to_i
     end
 
-    # These joins look circular but are needed due to polymorphic relationships.
-    # A distribution has many line_items and  items, but kits also
-    # have the same relationships and we want to perform calculations on the
-    # items in the kits not the kit items themselves.
+    # A distribution line item can reference a Kit. The kit's contents are its own
+    # line items, so we join from the distributed Kit to its contents to find the kits that
+    # contain disposable diapers, then count children served based on the kit's distribution_quantity.
     def children_served_with_kits_containing_disposables
       kits_subquery = organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: { kit: { line_items: :item} }})
-        .where("items_line_items.reporting_category = 'disposable_diapers'")
-        .select("DISTINCT ON (distributions.id, line_items.id, kits.id) line_items.quantity, items.distribution_quantity")
+        .joins(line_items: :item)
+        .joins("INNER JOIN line_items kit_contents ON kit_contents.itemizable_type = 'Item' AND kit_contents.itemizable_id = items.id")
+        .joins("INNER JOIN items kit_content_items ON kit_content_items.id = kit_contents.item_id")
+        .where(items: { type: 'Kit' })
+        .where("kit_content_items.reporting_category = 'disposable_diapers'")
+        .select("DISTINCT ON (distributions.id, line_items.id, items.id) line_items.quantity, items.distribution_quantity")
         .to_sql
 
       Distribution

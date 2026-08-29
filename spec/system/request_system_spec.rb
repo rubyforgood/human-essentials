@@ -4,8 +4,8 @@ RSpec.describe "Requests", type: :system, js: true do
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
-  let(:partner1) { create(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
-  let(:partner2) { create(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
+  let(:partner1) { build(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
+  let(:partner2) { build(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
   let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
@@ -114,6 +114,7 @@ RSpec.describe "Requests", type: :system, js: true do
         end
       end
     end
+
     it_behaves_like "Date Range Picker", Request, :created_at
 
     it "doesn't display New Quantity Request link" do
@@ -142,6 +143,15 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
 
+        it "keeps its label after the modal is dismissed" do
+          expect(page).to have_select("partner_id")
+          within("#newRequest") { find("button[aria-label='Close']").click }
+
+          trigger = find("a[href='#newRequest']")
+          expect(trigger).to have_text("New Quantity Request")
+          expect(trigger).to have_no_text("Please wait...")
+        end
+
         context "selecting a partner" do
           it "redirects to new partner request page" do
             select(partner1.name, from: "partner_id")
@@ -162,7 +172,7 @@ RSpec.describe "Requests", type: :system, js: true do
         { item_id: item2.id, quantity: 100}
       ]
     }
-    let!(:request) { create(:request, request_items: request_items, organization: organization) }
+    let!(:request) { create(:request, :with_item_requests, request_items: request_items, organization: organization) }
 
     it "should show the request with a request sender if a partner user is set" do
       visit subject
@@ -253,13 +263,31 @@ RSpec.describe "Requests", type: :system, js: true do
         visit requests_path
       end
 
-      it 'should set the request as canceled/discarded and contain the reason' do
+      it 'should set the request as canceled and contain the reason' do
         click_on 'Cancel'
         fill_in 'Cancellation reason *', with: reason
         click_on 'Yes. Cancel Request'
 
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)
+        expect(request.reload.discard_reason).to eq(reason)
+      end
+
+      it 'should not submit the form until a reason is given' do
+        click_on 'Cancel'
+
+        # the browser blocks the submission while the required reason is empty
+        expect(page).to have_field('Cancellation reason *', valid: false)
+
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_field('Cancellation reason *')
+        expect(request.reload.discarded_at).to eq(nil)
+
+        fill_in 'Cancellation reason *', with: reason
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discard_reason).to eq(reason)
       end
 

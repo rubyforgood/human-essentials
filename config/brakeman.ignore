@@ -3,18 +3,18 @@
     {
       "warning_type": "Command Injection",
       "warning_code": 14,
-      "fingerprint": "5dd8c58cca239b1a2527f25255c49c8800a31e5ec8cb8e31e14003fc435dd677",
+      "fingerprint": "39737ba6e95438831a89d919ed74a3e4d522d94a9993f7a6bc8d1cff9e699132",
       "check_name": "Execute",
       "message": "Possible command injection",
       "file": "app/jobs/backup_db_rds.rb",
-      "line": 11,
+      "line": 13,
       "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
       "code": "system(\"PGPASSWORD='#{ENV[\"DIAPER_DB_PASSWORD\"]}' pg_dump -Fc -v --host=#{ENV[\"DIAPER_DB_HOST\"]} --username=#{ENV[\"DIAPER_DB_USERNAME\"]} --dbname=#{ENV[\"DIAPER_DB_DATABASE\"]} -f #{\"#{Time.current.strftime(\"%Y%m%d%H%M%S\")}.rds.dump\"}\")",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "BackupDbRds",
-        "method": "s(:self).run"
+        "method": "self.run"
       },
       "user_input": "ENV[\"DIAPER_DB_PASSWORD\"]",
       "confidence": "Medium",
@@ -30,7 +30,7 @@
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/controllers/static_controller.rb",
-      "line": 20,
+      "line": 21,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
       "code": "render(template => \"static/#{params[:name]}\", {})",
       "render_path": null,
@@ -47,6 +47,5 @@
       "note": ""
     }
   ],
-  "updated": "2024-11-24 10:40:00 -0500",
-  "brakeman_version": "6.2.1"
+  "brakeman_version": "8.0.2"
 }

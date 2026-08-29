@@ -198,12 +198,22 @@ Only take multiple issues if they are related and you can solve all of them at t
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
 
 ## Debugging
-If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, or running `bundle exec rspec path/to/spec.rb:line_no`, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
+If starting server directly, via `rails s` or `rails console`, or built-in debugger in RubyMine, or running `bundle exec rspec path/to/spec.rb:line_no`, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
 
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
 
 If you want to connect via Shopify Ruby LSP VSCode extension or rdbg, start the server with `bundle exec rdbg -O -n -c -- bin/rails server -p 3000`
+
+### Running delayed jobs
+
+Run delayed jobs locally with the `rake jobs:work` command. This is necessary to view any emails in your browser. Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+
+```ruby
+Delayed::Job.last.invoke_job
+```
+
+You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
 
 ### Codespaces
 When running tests in browser, visit the forwarded port 6080 URL to see the browser in Codespaces. You can also visit this port to access the GUI desktop in Codespaces.
@@ -275,3 +285,28 @@ Before submitting a pull request, run all tests and lints. Fix any broken tests 
     expect(my_code).to be_valid
   end
 ```
+
+# Deployment Process
+The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
+
+## Requirements
+- SSH access to our servers (usually granted to core maintainers)
+- Login credentials to our [Mailchimp](https://mailchimp.com/) account
+
+## Steps
+### 1. Merge main into production branch
+All deploys deploy from the production branch, which keeps track of what is currently in production.
+
+```sh
+git checkout production
+git merge main
+```
+
+### 2. Tag & Release
+1. Push a tag with the appropriate date versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if you are deploying on June 23, 2024:
+
+    ```sh
+    git tag 2024.06.23
+    git push origin tag 2024.06.23
+    ```
+2. Publish a release, associated to that tag pushed up in the previous step, [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).

@@ -3,7 +3,7 @@ class DonationsController < ApplicationController
   before_action :authorize_admin, only: [:destroy]
 
   def print
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     respond_to do |format|
       format.any do
         pdf = DonationPdf.new(current_organization, @donation)
@@ -53,7 +53,7 @@ class DonationsController < ApplicationController
   end
 
   def edit
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @donation.line_items.build
     @changes_disallowed = SnapshotEvent.intervening(@donation).present?
     @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id) &&
@@ -63,12 +63,12 @@ class DonationsController < ApplicationController
   end
 
   def show
-    @donation = Donation.includes(line_items: :item).find(params[:id])
+    @donation = current_organization.donations.includes(line_items: :item).find(params[:id])
     @line_items = @donation.line_items
   end
 
   def update
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @original_source = @donation.source
     ItemizableUpdateService.call(itemizable: @donation,
       params: donation_params,
@@ -134,7 +134,7 @@ class DonationsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_category)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_item_id, :by_category)
   end
 
   # Omits donation_site_id or product_drive_participant_id if those aren't selected as source

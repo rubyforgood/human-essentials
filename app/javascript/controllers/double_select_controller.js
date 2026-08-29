@@ -12,6 +12,7 @@ export default class extends Controller {
     const val = $(this.sourceTarget).val()
     const url = new URL(this.urlValue)
     url.searchParams.append('resource_type', val);
+    $(this.destinationTarget).empty().val(null).trigger('change');
     $(this.destinationTarget).select2({
       ajax: {
         url: url.toString(),
