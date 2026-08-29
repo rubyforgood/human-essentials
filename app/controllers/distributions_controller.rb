@@ -267,7 +267,7 @@ class DistributionsController < ApplicationController
   def picked_up
     distribution = current_organization.distributions.find(params[:id])
 
-    if !distribution.complete? && distribution.complete!
+    if DistributionCompleteService.new(distribution.id).call.success?
       flash[:notice] = 'This distribution has been marked as being completed!'
     else
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
