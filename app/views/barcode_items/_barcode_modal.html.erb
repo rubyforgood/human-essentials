@@ -23,20 +23,9 @@
     <div class="px-5 py-4">
       <%= f.input :quantity, label: "Quantity in the box" %>
       <%= f.association :barcodeable, collection: @items, label: "Item" %>
-      <div data-barcode-scan>
-        <div class="relative">
-          <%= f.input :value, label: "Barcode", input_html: {class: "pr-10"} %>
-          <%# No id. Three partials carried `id="barcode-scanner-btn"` and a donation form renders
-              two of them, so the camera drew itself into whichever came first in the document.
-              The scanner finds its input and its viewport through [data-barcode-scan] instead. %>
-          <button type="button"
-                  class="barcode-scanner absolute right-2 top-8 rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                  aria-label="Scan a barcode with the camera" aria-expanded="false">
-            <i class="bi-upc-scan" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="mt-2 hidden overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-2 text-xs text-white [&_canvas]:hidden [&_canvas.drawingBuffer]:block [&_video]:w-full" data-barcode-viewport role="status"></div>
-      </div>
+      <%= render "shared/essentials/barcode_scan_field", f: f,
+            hint: "Scan the barcode on the box, or type the digits printed under the bars. " \
+                  "Saving links it to the item and quantity above." %>
       <%# utils/barcode_items.js writes the id of the field that opened this dialog here, so
           it knows which one to fill in on save. %>
       <input type="hidden" value="" id="trigger-field-id">

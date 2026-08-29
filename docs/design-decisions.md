@@ -6489,3 +6489,51 @@ name inside another.
 The spec asserts the wiring — input name, viewport present, hidden at rest, `aria-expanded` false —
 rather than driving the camera, and it is verified to fail when the region attribute is renamed.
 
+## 2026-08-29 — The scan field is joined, and there is one of it
+
+Two criticisms, both right, and the second explains the first.
+
+**I matched the wrong existing thing.** There were two renderings of a barcode scan field in the
+app: the line item table's, used by the inventory audit, donations, purchases and distributions;
+and the barcode modals'. I copied the modal. `design.md` had already settled which was correct, in
+the line items section — *"the scan field and its button are joined — one rounded rectangle sharing
+a border — rather than two controls with a gap between them. That is what keeps them the same
+height by construction; as separate boxes they had drifted to 38px and 42px."*
+
+**And the one I copied was broken in exactly the way that rule predicts.** `absolute right-2 top-8`
+over a `pr-10` field: a 38px field, a 36px button, 4px below the field's bottom edge, not centred.
+The offset is tuned to one form's label height, so it broke the moment I pasted it onto a form with
+different spacing. Three of the four scan regions had it; only the line item table did not.
+
+**Extracted rather than fixed in place.** Three identical copies is how the two renderings came to
+exist, and fixing three copies leaves three copies. It is
+`shared/essentials/_barcode_scan_field` now, and measured against the audit's bar afterwards the
+two are identical: input `1px` on four sides, button `1px` with `border-left: 0`, **0px** seam,
+both 38px. The tap target went from 28×36 to 38×38.
+
+**Hand-rolled rather than `f.input`, and that is a real cost worth naming.** simple_form renders
+label, input and error as three stacked blocks, and the button must sit *inside* the row with the
+input, so the wrapper cannot be used. Everything it supplies is reproduced by hand — label,
+`field-error` paragraph in the wrapper's own classes, `aria-invalid`, `aria-describedby` — which
+means a change to the `:essentials` wrapper will not reach this partial. That is written at the top
+of the file rather than left to be discovered.
+
+### Why it is not identical to the audit's, and should not be
+
+Asked directly, and the answer is that the *pattern* is identical and the *words* are not, because
+the two do different things:
+
+- On the **inventory audit**, scanning is a lookup: it finds the item that barcode belongs to and
+  adds a row. Its label is "Scan a barcode" and its hint is "Each scan adds a row, or adds to the
+  row that item is already on."
+- On the **barcode form**, scanning is data entry: you are teaching the app that this number means
+  this item at this quantity. Its label is "Barcode" — it is the field being saved — and its hint
+  is "Scan the barcode on the box, or type the digits printed under the bars. Saving links it to
+  the item and quantity above."
+
+Same control, same geometry, same behaviour. Different sentence, because a hint that described
+adding rows would be wrong on a form that adds none.
+
+**A leftover the audits caught:** `form-validation-audit.js` still opened its "Invite a new user"
+modal check at `/users`, deleted earlier today. Pointed at `/organization`.
+

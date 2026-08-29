@@ -1,0 +1,59 @@
+<%#
+  A barcode field with the camera scanner joined to it.
+
+  Locals: `f` (the form builder), and optionally `attribute` (default `:value`), `label`, `hint`.
+
+  **Joined, not an overlay.** The field and the button are one rounded rectangle sharing a border,
+  which is design.md's rule for this pair and the reason it holds: as separate boxes they cannot
+  come out different heights. The three copies of this markup used an absolutely positioned icon
+  instead -- `absolute right-2 top-8` over a `pr-10` field -- and it measured a **38px field against
+  a 36px button, sitting 4px below the field's bottom edge**. That offset is tuned to one particular
+  label height, so it broke the moment the markup was pasted onto a form with different spacing.
+
+  Hand-rolled rather than `f.input`, because simple_form's wrapper renders label, input and error as
+  three stacked blocks and the button has to sit *inside* the row with the input. Everything the
+  `:essentials` wrapper supplies is reproduced here on purpose: the label, the `field-error`
+  paragraph in the wrapper's own classes, `aria-invalid` and `aria-describedby`.
+
+  The scanner needs all three parts inside `[data-barcode-scan]` -- input, button and viewport. It
+  finds them by walking up from the button, so a button outside the region does nothing.
+%>
+<%
+  attribute ||= :value
+  label ||= "Barcode"
+  hint ||= "Scan it with the camera, or type the digits printed under the bars."
+  object = f.object
+  errors = object.respond_to?(:errors) ? object.errors[attribute] : []
+  field_id = "#{f.object_name}_#{attribute}".parameterize.underscore
+  described_by = [("#{field_id}_hint" if hint.present?), ("#{field_id}_error" if errors.any?)].compact.join(" ")
+%>
+<div class="mb-4" data-barcode-scan>
+  <%= f.label attribute, label, class: "block text-sm font-medium text-slate-700" %>
+
+  <div class="mt-1.5 flex">
+    <%= f.text_field attribute, autocomplete: "off",
+          "aria-invalid": (errors.any? ? "true" : nil),
+          "aria-describedby": described_by.presence,
+          class: "block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 " \
+                 "text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 " \
+                 "focus:ring-brand-500/30 focus:outline-none" %>
+    <button type="button"
+            class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-label="Scan a barcode with the camera" aria-expanded="false">
+      <i class="bi-upc-scan" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <% if errors.any? %>
+    <p class="field-error mt-1 flex items-center text-xs font-medium text-slate-700" id="<%= field_id %>_error">
+      <%= errors.first %>
+    </p>
+  <% end %>
+
+  <% if hint.present? %>
+    <p class="mt-1 block text-xs text-slate-500" id="<%= field_id %>_hint"><%= hint %></p>
+  <% end %>
+
+  <div class="mt-2 hidden overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-2 text-xs text-white [&_canvas]:hidden [&_canvas.drawingBuffer]:block [&_video]:w-full"
+       data-barcode-viewport role="status"></div>
+</div>
