@@ -174,37 +174,51 @@
 
             <h4>Other emails</h4>
             <div>
-              <h6 class="font-weight-bold">Reminder emails are sent</h6>
+              <h6 class="font-weight-bold">Send monthly deadline reminder emails to partners?</h6>
               <p>
-                <%= fa_icon "calendar" %>
-                <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
-                <% if @organization.reminder_schedule.valid? %>
-                  <small class="mb-3 d-block text-muted">
-                    <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
-                  </small>
-                <% end %>
+                <%= humanize_boolean(@organization.deadline_reminders_enabled) %>
               </p>
             </div>
             <div>
-              <h6 class="font-weight-bold">Deadline day in reminder email</h6>
+              <h6 class="font-weight-bold">Send day-before distribution reminder emails to partners?</h6>
               <p>
-                <%= fa_icon "calendar" %>
-                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
-                <small class="mb-3 d-block text-muted">
-                  <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
-                    <%= "The deadline on your next reminder email will be #{DeadlineService.new(
-                      deadline_day: @organization.deadline_day,
-                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
+                <%= humanize_boolean(@organization.distribution_reminders_enabled) %>
+              </p>
+            </div>
+            <% if @organization.deadline_reminders_enabled %>
+              <div>
+                <h6 class="font-weight-bold">Reminder emails are sent</h6>
+                <p>
+                  <%= fa_icon "calendar" %>
+                  <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
+                  <% if @organization.reminder_schedule.valid? %>
+                    <small class="mb-3 d-block text-muted">
+                      <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
+                    </small>
                   <% end %>
-                </small>
-              </p>
-            </div>
-            <div>
-              <h6 class="font-weight-bold">Additional text for reminder email</h6>
-              <div class="border rounded p-2 mb-3">
-                <%= @organization.reminder_email_text.presence || 'Not defined' %>
+                </p>
               </div>
-            </div>
+              <div>
+                <h6 class="font-weight-bold">Deadline day in reminder email</h6>
+                <p>
+                  <%= fa_icon "calendar" %>
+                  <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
+                  <small class="mb-3 d-block text-muted">
+                    <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
+                      <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                        deadline_day: @organization.deadline_day,
+                        today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
+                    <% end %>
+                  </small>
+                </p>
+              </div>
+              <div>
+                <h6 class="font-weight-bold">Additional text for reminder email</h6>
+                <div class="border rounded p-2 mb-3">
+                  <%= @organization.reminder_email_text.presence || 'Not defined' %>
+                </div>
+              </div>
+            <% end %>
             <div>
               <h6 class="font-weight-bold">Distribution email content</h6>
               <div class="border rounded p-2 mb-3">

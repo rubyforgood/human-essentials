@@ -152,7 +152,7 @@ RSpec.describe "Organizations", type: :request do
             every_nth_month: 1,
             day_of_month: 20
           }).to_ical
-          organization.update(reminder_schedule_definition: valid_reminder_schedule)
+          organization.update(reminder_schedule_definition: valid_reminder_schedule, deadline_reminders_enabled: true)
         end
 
         it "reports the next date a reminder email will be sent" do
@@ -166,6 +166,19 @@ RSpec.describe "Organizations", type: :request do
           get organization_path
           expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
           expect(response.body).to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+        end
+
+        context "but monthly deadline reminders are disabled" do
+          before do
+            organization.update!(deadline_day: 25, deadline_reminders_enabled: false)
+            get organization_path
+          end
+
+          it "hides the reminder schedule details" do
+            expect(response.body).not_to include "Reminder emails are sent"
+            expect(response.body).not_to include "Deadline day in reminder email"
+            expect(response.body).not_to include "Additional text for reminder email"
+          end
         end
       end
 
@@ -312,6 +325,19 @@ RSpec.describe "Organizations", type: :request do
           expect(response).to redirect_to(organization_path)
           follow_redirect!
           expect(response.body).to include("Updated")
+        end
+      end
+
+      context "toggles the reminder email settings" do
+        let(:update_param) do
+          { organization: { deadline_reminders_enabled: true, distribution_reminders_enabled: false } }
+        end
+
+        it "persists both flags" do
+          subject
+          organization.reload
+          expect(organization.deadline_reminders_enabled).to be true
+          expect(organization.distribution_reminders_enabled).to be false
         end
       end
 

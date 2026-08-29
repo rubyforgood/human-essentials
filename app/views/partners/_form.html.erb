@@ -41,6 +41,9 @@
                    <h5 class='text-uppercase font-weight-bold'>Reminder</h5>
                    <p>Please note that reminders will be sent out according to the settings of their partner group OR organization. This won't work unless you've set up at least one.</p>
                  </div>
+                 <% unless current_organization.deadline_reminders_enabled || current_organization.distribution_reminders_enabled %>
+                   <%= render 'shared/reminders_disabled_notice', reminder_type: :all %>
+                 <% end %>
               </div>
 
               <%= f.input :quota, label: "Quota", wrapper: :input_group do %>
