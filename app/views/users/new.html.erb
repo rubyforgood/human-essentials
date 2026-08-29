@@ -8,9 +8,21 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Add a user to #{current_organization.name}",
-        back: {path: users_path, label: "Back to users"} %>
+        back: {path: organization_path, label: "Back to organization"} %>
 
-  <%= essentials_form_for(@user) do |f| %>
+  <%#
+    The URL is explicit now. It was inferred from the model, which for a `User` is `users_path` --
+    and that helper existed only because `resources :users` declared `:index`. Removing the index
+    took the helper with it and this form stopped rendering at all.
+
+    `user_registration_path` is the same `/users`, and `POST /users` resolves to
+    `devise_invitable/registrations#create`, which is where this form has always submitted. Naming
+    it changes nothing and makes the dependency visible rather than incidental.
+
+    Worth knowing: there is no `UsersController#create`. This form posts to Devise's registration
+    create, not to a bank-side "add a user to my organization" action -- see docs/design-decisions.md.
+  %>
+  <%= essentials_form_for(@user, url: user_registration_path) do |f| %>
     <%= render "shared/essentials/card", footer: capture { submit_button } do %>
       <%= essentials_error_summary(@user) %>
 

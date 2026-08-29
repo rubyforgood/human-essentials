@@ -5,10 +5,6 @@ class UsersController < ApplicationController
 
   skip_before_action :require_organization, only: [:switch_to_role]
 
-  def index
-    @users = current_organization.users
-  end
-
   def new
     @user = User.new
   end

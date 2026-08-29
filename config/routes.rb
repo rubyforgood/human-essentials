@@ -78,7 +78,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: %i[index new] do
+  # No `:index`. The bank's users list lived at /users showing name and email, which the
+  # organization page's own table already shows alongside role, last sign in, status, reinvite and
+  # the row actions -- a strictly weaker view of a list one click away. See docs/design-decisions.md.
+  resources :users, only: %i[new] do
     get :switch_to_role, on: :collection
     post :partner_user_reset_password, on: :collection
   end
