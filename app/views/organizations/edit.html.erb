@@ -151,13 +151,17 @@
                 <hr>
 
                 <h4>Other emails</h4>
-                <%= f.input :deadline_reminders_enabled, label: 'Send monthly deadline reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
-                <%= f.input :distribution_reminders_enabled, label: 'Send day-before distribution reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
-                <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: current_organization %>
-                <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
-                <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>
-                  <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
-                <% end %>
+                <div data-controller="reminder-toggle">
+                  <%= f.input :deadline_reminders_enabled, label: 'Send monthly deadline reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first, input_html: { data: { 'reminder-toggle-target': 'source', action: 'change->reminder-toggle#toggle' } } %>
+                  <%= f.input :distribution_reminders_enabled, label: 'Send day-before distribution reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                  <div data-reminder-toggle-target="dependentField">
+                    <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: current_organization %>
+                    <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
+                    <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>
+                      <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
+                    <% end %>
+                  </div>
+                </div>
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution email content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text, placeholder: 'Enter distribution email content...' %>

@@ -71,10 +71,24 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      # Monthly deadline reminders are off by default; opt in before exercising
-      # the reminder schedule. A page refresh resets the radio, so re-select Yes.
+      # The reminder-schedule fields only render when monthly deadline reminders
+      # are enabled, and the page re-hides them after a refresh, so re-select Yes.
       def choose_deadline_reminders_yes
         choose('organization[deadline_reminders_enabled]', option: true)
+      end
+
+      it "shows the reminder schedule fields only when monthly deadline reminders are enabled" do
+        expect(page).to have_content("Send monthly deadline reminder emails to partners?")
+        expect(page).not_to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).not_to have_content("Additional text for reminder email")
+
+        choose_deadline_reminders_yes
+        expect(page).to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).to have_content("Additional text for reminder email")
+
+        choose('organization[deadline_reminders_enabled]', option: false)
+        expect(page).not_to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).not_to have_content("Additional text for reminder email")
       end
 
       context "with monthly deadline reminders enabled" do
