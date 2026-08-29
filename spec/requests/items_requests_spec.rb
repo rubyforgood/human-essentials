@@ -80,7 +80,6 @@ RSpec.describe "Items", type: :request do
 
     describe "GET #new" do
       it "shows the organization request_units options if they exist" do
-        Flipper.enable(:enable_packs)
         organization_units = create_list(:unit, 3, organization: organization)
         get new_item_path
         organization_units.each do |unit|
@@ -91,7 +90,6 @@ RSpec.describe "Items", type: :request do
 
     describe "GET #edit" do
       it "shows the selected request_units" do
-        Flipper.enable(:enable_packs)
         organization_units = create_list(:unit, 3, organization: organization)
         selected_unit = organization_units.first
         item = create(:item, organization: organization)
@@ -122,8 +120,7 @@ RSpec.describe "Items", type: :request do
       end
 
       context "when item is housing a kit" do
-        let(:kit) { create(:kit, organization:) }
-        let(:item) { create(:item, organization: organization, kit:) }
+        let(:item) { create(:kit, organization: organization) }
 
         it "shows the NDBN reporting category field disabled" do
           get edit_item_path(item)
@@ -320,8 +317,6 @@ RSpec.describe "Items", type: :request do
       end
 
       context "custom request items" do
-        before(:each) { Flipper.enable(:enable_packs) }
-
         it "does not show the column if the organization does not use custom request units" do
           get items_path
           expect(response.body).not_to include("Custom Request Units")
@@ -346,8 +341,7 @@ RSpec.describe "Items", type: :request do
       let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", reporting_category: :adult_incontinence, item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
       let!(:item_unit_1) { create(:item_unit, item: item, name: 'ITEM1') }
       let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
-      let!(:kit) { create(:kit, organization:) }
-      let!(:item_containing_kit) { create(:item, organization: organization, kit:) }
+      let!(:item_containing_kit) { create(:kit, organization: organization) }
 
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)
@@ -367,14 +361,13 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('2348')
         expect(response.body).to include('Package Size')
         expect(response.body).to include('100')
-        expect(response.body).not_to include('Custom Units')
+        expect(response.body).to include('Custom Units')
         expect(response.body).not_to include("#ITEM1; ITEM2")
         expect(response.body).to include('Item is visible to partners')
         expect(response.body).to include('Yes')
       end
 
-      it 'shows custom request units when flipper enabled' do
-        Flipper.enable(:enable_packs)
+      it 'shows custom request units' do
         get item_path(id: item.id)
 
         expect(response.body).to include('Custom Units')

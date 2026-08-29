@@ -9,6 +9,7 @@ class DistributionsController < ApplicationController
   include Validatable
 
   before_action :enable_turbo!, only: %i[new show]
+  before_action :handle_csv_export, only: [:index]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
   skip_before_action :require_organization, only: %i(calendar)
@@ -292,7 +293,7 @@ class DistributionsController < ApplicationController
   end
 
   def schedule_reminder_email(distribution)
-    return if distribution.past? || !distribution.partner.send_reminders
+    return if distribution.past? || !distribution.partner.send_reminders || !distribution.organization.distribution_reminders_enabled
 
     DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
   end

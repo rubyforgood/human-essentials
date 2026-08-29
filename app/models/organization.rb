@@ -6,8 +6,10 @@
 #  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
+#  deadline_reminders_enabled               :boolean          default(FALSE), not null
 #  default_storage_location                 :integer
 #  distribute_monthly                       :boolean          default(FALSE), not null
+#  distribution_reminders_enabled           :boolean          default(FALSE), not null
 #  email                                    :string
 #  enable_child_based_requests              :boolean          default(TRUE), not null
 #  enable_individual_requests               :boolean          default(TRUE), not null
@@ -85,6 +87,7 @@ class Organization < ApplicationRecord
     has_many :product_drive_tags, -> { by_type("ProductDrive") },
       class_name: "Tag", inverse_of: false
     has_many :inventory_items, through: :storage_locations
+    has_many :concrete_items
     has_many :kits
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles

@@ -71,37 +71,62 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
+      # The reminder-schedule fields only render when monthly deadline reminders
+      # are enabled, and the page re-hides them after a refresh, so re-select Yes.
+      def choose_deadline_reminders_yes
+        choose('organization[deadline_reminders_enabled]', option: true)
+      end
 
-      it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
-        travel_to Time.zone.local(2025, 9, 30)
-        refresh
-        choose "Day of Month"
-        fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
-        fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
+      it "shows the reminder schedule fields only when monthly deadline reminders are enabled" do
+        expect(page).to have_content("Send monthly deadline reminder emails to partners?")
+        expect(page).not_to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).not_to have_content("Additional text for reminder email")
 
-        reminder_text = find('small[data-deadline-day-target="reminderText"]').text
-        reminder_text.slice!("Your next reminder date is ")
-        reminder_text.slice!(".")
-        shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
+        choose_deadline_reminders_yes
+        expect(page).to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).to have_content("Additional text for reminder email")
 
-        deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
-        deadline_text.slice!("The deadline on your next reminder email will be ")
-        deadline_text.slice!(".")
-        shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+        choose('organization[deadline_reminders_enabled]', option: false)
+        expect(page).not_to have_field("Deadline day in reminder email", visible: :visible)
+        expect(page).not_to have_content("Additional text for reminder email")
+      end
 
-        click_on "Save"
-        organization.reload
+      context "with monthly deadline reminders enabled" do
+        before { choose_deadline_reminders_yes }
 
-        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
+        it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit, :choose_deadline_reminders_yes
 
-        travel_to shown_recurrence_date
+        it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+          travel_to Time.zone.local(2025, 9, 30)
+          refresh
+          choose_deadline_reminders_yes
+          choose "Day of Month"
+          fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
+          fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
 
-        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
-        expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+          reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+          reminder_text.slice!("Your next reminder date is ")
+          reminder_text.slice!(".")
+          shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
 
-        expect(page).to have_content("Your next reminder date is #{reminder_text}.")
-        expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
+          deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+          deadline_text.slice!("The deadline on your next reminder email will be ")
+          deadline_text.slice!(".")
+          shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+
+          click_on "Save"
+          organization.reload
+
+          expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
+
+          travel_to shown_recurrence_date
+
+          expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
+          expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+
+          expect(page).to have_content("Your next reminder date is #{reminder_text}.")
+          expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
+        end
       end
 
       it 'can select if the org repackages essentials' do
@@ -123,6 +148,16 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         click_on "Save"
         expect(page).to have_content("No")
+      end
+
+      it 'can toggle the monthly deadline and day-before distribution reminder emails' do
+        choose('organization[deadline_reminders_enabled]', option: true)
+        choose('organization[distribution_reminders_enabled]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Updated your organization!")
+        expect(organization.reload.deadline_reminders_enabled).to be true
+        expect(organization.distribution_reminders_enabled).to be true
       end
 
       it 'can set a default storage location on the organization' do

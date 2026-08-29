@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
     @role = if !current_user
       nil
     else
-      Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+      current_user.roles.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
     end
   end
 
@@ -144,6 +144,15 @@ class ApplicationController < ActionController::Base
     @selected_date_interval = helpers.selected_interval
     @selected_date_range = helpers.selected_interval.map { |d| d.to_fs(:long) }.join(" - ")
     @selected_date_range_label = helpers.date_range_label
+  end
+
+  def handle_csv_export
+    return unless params[:export_csv]
+
+    flash[:trigger_csv_download] = true
+    clean_params = request.query_parameters.except("export_csv")
+    redirect_url = clean_params.any? ? "#{request.path}?#{clean_params.to_query}" : request.path
+    redirect_to redirect_url
   end
 
   def configure_permitted_parameters
