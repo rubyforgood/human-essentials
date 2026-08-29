@@ -73,6 +73,7 @@ class Admin::OrganizationsController < AdminController
     params.require(:organization)
           .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :bank_is_set_up,
                   :reminder_schedule_definition, :deadline_day,
+                  :deadline_reminders_enabled, :distribution_reminders_enabled,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
   end
 
