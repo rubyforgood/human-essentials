@@ -2598,6 +2598,25 @@ cannot drift into different shades of amber. The role follows the same rule — 
 warning and danger, `status` otherwise — and `role: nil` is honoured for a callout that is
 plain page furniture and wants no live region at all.
 
+<a id="callout-placement"></a>
+**Where it goes follows its scope, and the scope is the only question worth asking.**
+
+- **A callout about the whole task goes directly under the page header**, above the first card --
+  before the work it qualifies, not after it. Polaris says the same of banners: place them at the
+  top of the page or section they refer to.
+- **A callout about one section sits with that section.** The two reminder notices on the partner
+  and partner-group forms are correct where they are: both are hidden until a checkbox reveals
+  them, and both sit directly above the fields they describe.
+
+The new-kit form had this wrong in the way that matters. Its warning -- *the items in a kit are
+fixed once you save* -- sat below both cards, measured at **y=922 on a 720px viewport**, 765px
+under the `h1`. You had to scroll past the thing you were composing to be told composing it was
+final. A warning that arrives after the decision is not a warning. Now y=205, 48px under the
+heading.
+
+Of 26 callouts in the app, four sat below a card and **one** was a defect; the other three are
+section-scoped. Position alone does not decide it.
+
 **`wrapper_class` is for the margin only.** A callout does not know where it sits, so spacing
 stays with the page that places it.
 

@@ -6368,3 +6368,29 @@ carries a breadcrumb, and is not deleted here — deleting a page is a decision 
 rather than as a side effect of tidying a menu. It is written down so it is not rediscovered as a
 mystery.
 
+## 2026-08-29 — A warning that arrives after the decision is not a warning
+
+Asked what triggered the callout on `/kits/new` and why it was at the bottom. **Nothing triggers
+it** — it is unconditional on that form, and the form is new-only (`resources :kits, except: %i[edit
+update destroy]`), so the claim it makes is true: a kit's contents genuinely cannot be changed once
+saved. `design.md` even cites this exact case in its callout section.
+
+So the content was right and the **placement** was wrong, and there was no placement rule to be
+wrong against. Measured: **y=922 on a 720px viewport**, 765px below the `h1`, under both cards. You
+had to scroll past the thing you were composing to be told composing it was final. That is the same
+shape as the toastr message earlier on this branch — correct content, delivered where nobody looks.
+Now y=205, 48px under the heading.
+
+**The rule is scope, not position.** A callout about the whole task goes under the page header,
+before the work it qualifies; a callout about one section sits with that section. Auditing all 26
+callouts, four sat below a card and only **one** was a defect — the other three are section-scoped:
+two are hidden until a checkbox reveals them and sit directly above the fields they describe, and
+the third follows the sentence it qualifies on a 17-line confirmation page. Had I written the rule
+as "callouts go at the top" I would have moved three correct ones.
+
+**The copy leaked an implementation detail.** "Partner visibility and name can be changed later via
+the kit's item" is accurate — `Kit < Item` by STI, and `/items/:id/edit` is where you go — and it is
+accurate in a vocabulary the user has no access to. It names the *Items & inventory* screen now, in
+the same words the sidebar uses, and links there. Verified the link resolves and that a kit really
+does appear in the items index.
+

@@ -2,6 +2,27 @@
   <div class="max-w-2xl space-y-6">
     <%= essentials_error_summary(@kit) %>
 
+    <%#
+      Above the form, not below it. This warns about something that cannot be undone -- and it sat
+      under both cards, measured at **y=922 on a 720px viewport**, 765px below the `h1`. You had to
+      scroll past the thing you were composing to be told composing it was final.
+
+      A callout that qualifies the *whole task* belongs directly under the page header. One that
+      qualifies a single section sits with that section -- which is why the two reminder callouts on
+      the partner forms stay where they are, next to the fields they describe. See design.md.
+
+      "via the kit's item" was the wording, and it leaked an implementation detail: a kit *is* an
+      item by STI, which is true and not something a user knows. It names the screen instead.
+    %>
+    <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
+      <p class="font-semibold">The items in a kit are fixed once you save.</p>
+      <p class="mt-1">
+        Get the contents right before saving — they cannot be changed afterwards. The name, value
+        and partner visibility can be edited later from
+        <%= link_to "Items &amp; inventory".html_safe, items_path, class: "font-medium underline" %>.
+      </p>
+    <% end %>
+
     <%= render "shared/essentials/card", title: "Kit details" do %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :visible_to_partners, label: "Kit is visible to partners?", as: :boolean %>
@@ -13,11 +34,6 @@
         record left to open a scope for. %>
     <%= render "shared/essentials/card", title: "Items in this kit", padded: false do %>
       <%= render "line_items/line_item_table", form: f, id: "kit_line_items", noun: "kit" %>
-    <% end %>
-
-    <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
-      You will not be able to change the composition of the kit once it is saved.
-      Partner visibility and name can be changed later via the kit’s item.
     <% end %>
 
     <%= essentials_form_actions do %>
