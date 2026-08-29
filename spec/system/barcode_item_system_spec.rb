@@ -193,5 +193,19 @@ RSpec.describe "Barcode management", type: :system, js: true do
       visit new_barcode_item_path
       expect(page).to have_no_css("#barcode-scanner-btn")
     end
+    # Reported as "clicking it does not trigger the camera", and that is what it looked like: on a
+    # failure Quagga's callback did `console.log(err); stop()`, and `stop()` hides the viewport
+    # again -- so the panel opened and shut in one frame and the only trace was in the console.
+    #
+    # The test browser has no camera, which is the failing case, so this exercises it directly.
+    it "says why when the camera will not start, instead of appearing dead" do
+      visit new_barcode_item_path
+
+      find("button.barcode-scanner").click
+
+      viewport = find("[data-barcode-viewport]", visible: true, wait: 5)
+      expect(viewport.text).to be_present
+      expect(viewport.text).to match(/camera|barcode/i)
+    end
   end
 end

@@ -615,6 +615,11 @@ password box, because you do not set it for them.
 
 ### You can scan a barcode when adding one
 
+**If the camera cannot start, the app now tells you why** instead of looking like a broken button.
+The commonest reason in day-to-day use is the address: browsers only allow camera access on
+`https` or on `localhost`, so if you reach the app through a forwarded port or a tunnel on a plain
+`http://` address, the camera is not offered at all. It says so, and you can still type the number.
+
 **The scan button now looks and behaves exactly like the one on the inventory audit** — joined to
 the right-hand end of the box rather than floating inside it, and the same size. It used to sit
 slightly low and slightly outside the field, on the barcode pages and in the barcode pop-up on

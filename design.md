@@ -1105,6 +1105,28 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="a-camera-that-will-not-start-says-so"></a>
+**A camera that will not start says so, in the viewport.** Quagga's init callback used to do
+`console.log(err); stop()` — and `stop()` hides the viewport, so a refused camera opened and shut
+the panel in one frame and left nothing on screen. Reported as *"clicking it does not trigger the
+camera"*, which is exactly what it looked like.
+
+Each failure now writes a sentence where the picture would have been, and each says what to do
+rather than naming the exception:
+
+| Cause | What it says |
+| --- | --- |
+| `NotFoundError` | No camera found on this device. Type the barcode instead. |
+| `NotAllowedError` | The browser blocked the camera. Allow camera access for this site… |
+| `NotSupportedError` | …usually a blocked permission, or a plain http address — the camera needs https. |
+| `NotReadableError` | The camera is in use by another application. |
+| no `mediaDevices` at all | branches on `window.isSecureContext`, because that is the difference between "this browser cannot" and "this address cannot". |
+
+**The insecure-origin case is the one to expect in development.** Browsers only expose
+`navigator.mediaDevices` on `https` or `localhost`, so reaching the app through a port forward or a
+tunnel on plain `http` removes the camera API entirely — see
+[the tunnel note](#behind-a-proxy-or-tunnel).
+
 <a id="barcode-scan-field"></a>
 **A barcode field is `shared/essentials/barcode_scan_field`.** One partial, used by the barcode
 form and both barcode modals. The field and the button are **joined** — one rounded rectangle

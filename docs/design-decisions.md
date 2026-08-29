@@ -6537,3 +6537,35 @@ adding rows would be wrong on a form that adds none.
 **A leftover the audits caught:** `form-validation-audit.js` still opened its "Invite a new user"
 modal check at `/users`, deleted earlier today. Pointed at `/organization`.
 
+## 2026-08-29 — A camera that will not start said nothing
+
+Reported as "clicking the button does not trigger the camera". It was not the wiring — with a fake
+camera the viewport opens and a 612×459 `<video>` appears. The failure was in a path my test never
+took.
+
+Quagga's init callback did `console.log(err); stop()`, and `stop()` hides the viewport. So on any
+failure the panel opened and shut within a frame, `aria-expanded` went back to `false`, and the only
+record was in the console. **From the outside, a button that does nothing.**
+
+Reproduced both real causes in Chromium rather than reasoning about them: **no camera device**
+(`NotFoundError`) and **blocked permission** (`NotSupportedError`). Both ended with the viewport
+hidden and empty.
+
+Each failure now writes a sentence where the picture would have been, and each says what to *do*
+rather than naming the exception — a reader who sees `NotReadableError` learns nothing; "the camera
+is in use by another application" tells them to close Zoom.
+
+**The insecure-origin case is worth separating**, and it is the one to expect here. Browsers expose
+`navigator.mediaDevices` only on `https` or `localhost`, so reaching the app through a port forward
+or a tunnel on plain `http` removes the camera API entirely. That branch already existed but said
+"this browser will not give the page a camera", which points at the wrong thing — it is the
+*address*, not the browser. It branches on `window.isSecureContext` now.
+
+**The general shape, which this branch keeps meeting:** a failure handled only by `console.log` is a
+failure the user experiences as nothing happening. The no-`mediaDevices` branch three lines above
+already had a message, written for exactly this reason — the init failure simply never got the same
+treatment.
+
+Pinned by a system spec, and the test browser has no camera, so it exercises the real failing path
+rather than a simulation of it. Verified to fail against the old `console.log` version.
+
