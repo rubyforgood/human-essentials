@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The row menu: alignment, unavailable actions, and the confirm dialog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--line2:#F1F5F9;--ink:#0F172A;--mid:#475569;
+    --soft:#64748B;--brand:#4F46E5;--brand50:#EEF2FF;--brand700:#4338CA;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--warn:#92400E;--warnsoft:#FEF3C7;--amber50:#FFFBEB;--amber200:#FDE68A;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 100px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:80ch;margin:0 0 24px}
+  h2{font-size:20px;margin:42px 0 4px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:22px 0 6px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--warnsoft);color:var(--warn)} .t-fix{background:var(--oksoft);color:var(--ok)}
+  p.note{color:var(--mid);max-width:82ch;margin:0 0 14px;font-size:14px}
+  .menu{width:250px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    box-shadow:0 10px 30px -12px rgba(15,23,42,.3);padding:4px;margin:10px 0 4px}
+  .mi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;color:#334155;cursor:pointer;width:100%}
+  .mi:hover{background:#F8FAFC}
+  .mi.bad{display:inline-flex;width:auto;justify-content:center;margin-left:112px;border:1px dashed var(--bad);background:var(--badsoft)}
+  .mi.dis{cursor:default;align-items:flex-start}
+  .mi.dis:hover{background:transparent}
+  .mi.dis .lbl{opacity:.6}
+  .mi .why{display:block;font-size:12px;color:var(--soft);margin-top:2px;line-height:1.35}
+  .glyph{width:16px;text-align:center;flex:0 0 16px}
+  .measure{font-size:12px;color:var(--soft);margin:4px 0 0}
+  .grid{display:grid;gap:20px;grid-template-columns:1fr 1fr}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .cmp{border-collapse:collapse;width:100%;max-width:1000px;margin-top:12px;font-size:14px}
+  .cmp th,.cmp td{border-bottom:1px solid var(--line);padding:8px 12px;vertical-align:top}
+  .cmp th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);text-align:left}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:13px}
+  .banner{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--amber200);background:var(--amber50);
+    border-radius:12px;padding:12px 14px;max-width:620px;font-size:14px;color:#78350F}
+  .native{width:440px;border:1px solid #b9b9b9;border-radius:8px;background:#f4f4f4;
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 6px 24px -8px rgba(0,0,0,.35)}
+  .native .t{padding:16px 18px 6px;font-size:14px;color:#111}
+  .native .u{padding:0 18px 12px;font-size:12px;color:#555}
+  .native .r{display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid #ddd}
+  .native button{font:13px system-ui;padding:5px 14px;border-radius:5px;border:1px solid #aaa;background:#fdfdfd}
+  .dlg{width:460px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 24px 60px -20px rgba(15,23,42,.4)}
+  .dlg .h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .dlg .h h4{margin:0;font-size:16px}
+  .dlg .b{padding:16px 20px;font-size:14px;color:var(--mid)}
+  .dlg .f{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line)}
+  .btn{border-radius:8px;padding:8px 14px;font-size:14px;font-weight:500;border:1px solid transparent;font-family:inherit;cursor:pointer}
+  .btn-sec{border-color:#CBD5E1;background:#fff;color:#334155}
+  .btn-dgr{background:#E11D48;color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>The row menu: three things</h1>
+<p class="lede">One was a plain bug and is already fixed. Two are open questions.</p>
+
+<h2>1. Why the menu looked wrong <span class="tag t-fix">fixed</span></h2>
+<p class="note">Not a spacing choice — a layout bug, and you were right that it made no sense.
+An enabled action was rendered through the <i>button</i> helper, which applies
+<code>inline-flex justify-center</code> and wraps the form in <code>inline-block</code>. The actions
+cell is <code>text-right</code>, and an inline-block inherits that — so the item shrank to its own
+width and floated to the right edge, inside a menu sized by everything else.</p>
+<p class="note">Measured on <code>/vendors</code>: <b>Edit</b> at x=1 across the full 222px;
+<b>Deactivate</b> at <b>x=117, 106px wide</b>. Every enabled action in every row menu was like that.
+It is a plain <code>button_to</code> with the menu item's own classes now — all items x=1, 222px
+wide, glyphs at x=13, across all nine menus.</p>
+<div class="grid">
+  <div><h3>Before</h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi bad"><span class="glyph">⊘</span><span>Deactivate</span></div>
+    </div>
+    <p class="measure">x=117, 106px — half width, hard right.</p></div>
+  <div><h3>After</h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi"><span class="glyph">⊘</span><span>Deactivate</span></div>
+    </div>
+    <p class="measure">Both x=1, 222px, glyphs aligned.</p></div>
+</div>
+
+<h2>2. Unavailable actions: keep the help text, or click and explain?</h2>
+<p class="note">You asked whether a click with a banner would work better. Both shown. Note that a
+lot of the "this menu is odd" feeling was the alignment bug above — worth deciding this against the
+fixed version rather than the broken one.</p>
+<div class="grid">
+  <div>
+    <h3>A — disabled, reason under it <span class="tag t-rec">recommended</span></h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi dis"><span class="glyph" style="opacity:.6">⊘</span>
+        <span><span class="lbl">Deactivate</span><span class="why">Still in inventory or used by a kit</span></span></div>
+    </div>
+    <p class="measure">Answer before the click. Menu is taller by ~16px.</p>
+  </div>
+  <div>
+    <h3>B — enabled, banner on click <span class="tag t-alt">alternative</span></h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi"><span class="glyph">⊘</span><span>Deactivate</span></div>
+    </div>
+    <div class="banner" style="margin-top:12px">
+      <span>⚠</span>
+      <span><b>Held item cannot be deactivated yet.</b><br>
+      It is still in inventory or used by a kit. Move or use its stock first.</span>
+    </div>
+    <p class="measure">Menu stays one line per item. Costs a click and a page load.</p>
+  </div>
+</div>
+<table class="cmp">
+  <tr><th></th><th>A — disabled + help text</th><th>B — enabled + banner</th></tr>
+  <tr><td>Answer arrives</td><td>before you click</td><td>after a click and a reload</td></tr>
+  <tr><td>Menu height</td><td>+16px on affected rows</td><td>unchanged</td></tr>
+  <tr><td>Every row the same</td><td>yes</td><td>yes</td></tr>
+  <tr><td>Offers something that will not work</td><td>no</td><td><b>yes</b> — the action looks available</td></tr>
+  <tr><td>Room for a longer explanation</td><td>one short line</td><td><b>a sentence and a next step</b></td></tr>
+  <tr><td>Precedent</td><td>Polaris <code>helpText</code>, Carbon, Material</td><td>GOV.UK — they avoid disabled controls entirely</td></tr>
+</table>
+<p class="note" style="margin-top:12px"><b>A, still — but B is a fair choice and here is the honest
+trade.</b> A tells you before you spend the click; B has room to say <i>what to do about it</i>,
+which one line under a label does not. GOV.UK's position is that a disabled control is never the
+answer because the user cannot tell "not allowed" from "broken". This app is a back-office tool
+where users repeat the same task, so learning "greyed out means still in stock" once is cheap —
+that is the case for A. If you would rather never grey anything out, B is coherent and I would take
+the banner text further than the line above.</p>
+
+<h2>3. The confirm dialog is the browser's <span class="tag t-now">confirmed</span></h2>
+<p class="note">Correct, and it is every row action: <b>44</b> <code>confirm:</code> call sites render
+Rails' <code>data-confirm</code>, which is <code>window.confirm()</code> — browser chrome, unstyled,
+unbranded, and it says the page's URL above the message.</p>
+<div class="grid">
+  <div><h3>What appears now</h3>
+    <div class="native">
+      <div class="t">Are you sure you want to deactivate Lynch, Blick and Schoen?</div>
+      <div class="u">localhost:3000 says</div>
+      <div class="r"><button>Cancel</button><button>OK</button></div>
+    </div>
+    <p class="measure">System font, system buttons, no tone, no icon.</p></div>
+  <div><h3>The app's own dialog <span class="tag t-rec">recommended</span></h3>
+    <div class="dlg">
+      <div class="h"><h4>Deactivate this vendor?</h4><span style="color:#94A3B8">✕</span></div>
+      <div class="b">Lynch, Blick and Schoen will stop appearing in new purchases. Existing
+        purchases keep their record of it, and you can reactivate later.</div>
+      <div class="f"><button class="btn btn-sec">Cancel</button><button class="btn btn-dgr">Deactivate</button></div>
+    </div>
+    <p class="measure">The same <code>&lt;dialog&gt;</code> the app already uses for distributions.</p></div>
+</div>
+
+<h3>How it missed every audit — three reasons, all of them real</h3>
+<table class="cmp">
+  <tr><th>Audit</th><th>Why it could not see this</th></tr>
+  <tr><td><code>overlay-audit.js</code></td>
+      <td>It finds triggers with <code>[data-action*='dialog#open']</code> and opens
+          <code>&lt;dialog&gt;</code> elements. <b>A native confirm is not in the DOM at all</b> —
+          it is browser chrome. There is no element to query, so the audit that exists precisely to
+          open dialogs cannot open this one.</td></tr>
+  <tr><td><code>wcag-audit.js</code> / axe</td>
+      <td>axe scans the document. Same reason: nothing to scan.</td></tr>
+  <tr><td>The system suite</td>
+      <td><b>It depends on it.</b> These specs use Capybara's <code>accept_confirm</code>, which
+          drives a <i>native</i> dialog. So a green suite is evidence <i>for</i> the browser dialog,
+          not against it — the same shape as the toastr message and the frozen-column shadow
+          earlier on this branch: the assertion pins the thing that is wrong.</td></tr>
+</table>
+<p class="note" style="margin-top:12px"><b>The check that would have caught it</b> is not a DOM
+query — it is asking Playwright whether a <code>dialog</code> <i>event</i> fires when a destructive
+control is clicked. That is a handful of lines and it is the missing audit.</p>
+<p class="note"><b>Scope, honestly:</b> 44 call sites, and every <code>accept_confirm</code> in the
+suite has to become a click on a real button. It is the largest of the three changes here and worth
+doing on its own rather than folded into this one.</p>
+
+</div>
+</body>
+</html>

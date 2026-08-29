@@ -596,6 +596,10 @@ reader can jump to it.
 
 ### Table actions look the same on every table now
 
+**The items in the "..." menu line up now.** An action that submits a form — *Deactivate*,
+*Delete*, *Reactivate* — was rendered half-width and pushed to the right edge of the menu, while
+*Edit* beside it ran the full width. A layout bug, not a choice, and it affected every row menu.
+
 **Tables have a visible "Actions" heading** over the last column. It used to be there only for
 screen readers, which was fine when the column held buttons labelled *Edit* and *Delete* — now that
 most of them hold a single "..." it is worth naming.

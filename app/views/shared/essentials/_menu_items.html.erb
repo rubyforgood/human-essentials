@@ -62,9 +62,26 @@
       <span class="<%= disabled_classes %>" role="menuitem" aria-disabled="true"><%= body %></span>
     <% end %>
   <% elsif item[:method] %>
-    <%= essentials_action_button item[:label], item[:path], method: item[:method],
-          variant: :ghost, size: :sm, icon: item[:icon], confirm: item[:confirm],
-          class: item_classes, role: "menuitem", form: {role: "none"} %>
+    <%#
+      A plain `button_to` rather than `essentials_action_button`, because that helper is for a
+      button and these are menu items.
+
+      It applied `essentials_button_classes` -- `inline-flex justify-center` plus the size's own
+      padding -- and wrapped the form in `form_class: "inline-block"`. Inside a menu that is bad
+      twice: `inline-flex` beat the item's `flex w-full`, and an inline-block form in a cell that
+      is `text-right` shrink-wraps and floats to the right edge. Measured on /vendors: *Edit* sat
+      at x=1 across the full 222px, and *Deactivate* at **x=117, 106px wide** -- half width, hard
+      right, in the same menu. Every enabled action in every row menu looked like that.
+
+      `data-turbo=false` is kept and matters: these sit inside a results turbo-frame, and Turbo
+      intercepting the submit is what made Reactivate silently do nothing about half the time.
+      See `essentials_action_button` for the full account.
+    %>
+    <%= button_to item[:path], method: item[:method],
+          form_class: "block", form: {role: "none"}, role: "menuitem", class: item_classes,
+          data: {turbo: false, disable_with: "Please wait...", confirm: item[:confirm]}.compact do %>
+      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
+    <% end %>
   <% else %>
     <%= link_to item[:path], class: item_classes, role: "menuitem", **(item[:link_options] || {}) do %>
       <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>

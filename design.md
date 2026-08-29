@@ -382,6 +382,20 @@ Salesforce Lightning calls it *row-level actions*, Polaris renders them as an `A
   and moving with the page is the better default.
 - **`size-7`, not the 38px control height.** A row action is `sm` everywhere else; a 38px trigger
   made every distribution row 10px taller. 28px still clears WCAG 2.5.8's 24×24 floor.
+<a id="a-menu-item-is-not-a-button"></a>
+**A menu item is not a button — do not render one through `essentials_action_button`.** That helper
+applies `essentials_button_classes`, which is `inline-flex justify-center` plus the size's own
+padding, and wraps the form in `form_class: "inline-block"`. In a menu that is wrong twice:
+`inline-flex` beats the item's `flex w-full`, and an inline-block form inside the actions cell —
+which is `text-right` — shrink-wraps and floats to the right edge.
+
+Measured on `/vendors` before the fix: *Edit* at **x=1 across 222px**, *Deactivate* at **x=117,
+106px wide**, in the same 224px menu. Every enabled action in every row menu looked like that. A
+menu item is a plain `button_to` carrying `item_classes` and `form_class: "block"`.
+
+Keep `data-turbo=false` when you do: these submit from inside a results turbo-frame, and Turbo
+intercepting them is what made *Reactivate* silently do nothing about half the time.
+
 <a id="say-why-visibly"></a>
 - **An unavailable action stays in the menu, disabled, and says why in text anyone can read.** A
   form action gets a genuinely `disabled` `<button>` and a link action a `<span aria-disabled>` —
