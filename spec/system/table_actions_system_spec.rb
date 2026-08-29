@@ -50,7 +50,11 @@ RSpec.describe "Table actions", type: :system, js: true do
       menu = open_row_menu(row: "Held item")
       expect(menu).to have_button("Deactivate", disabled: false)
 
-      accept_confirm_dialog { menu.click_on "Deactivate" }
+      # Straight through -- an action that cannot succeed asks nothing first. Confirming
+      # something that will not happen, and only then being told it never could, is two steps to
+      # a dead end.
+      menu.click_on "Deactivate"
+      expect(page.document).to have_no_css("dialog[open]")
 
       expect(page).to have_content("Held item still has stock in a storage location")
       expect(page).to have_content("Move or distribute the remaining stock")

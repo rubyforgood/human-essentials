@@ -79,10 +79,10 @@
                        {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
                         method: :delete, tone: :danger, confirm: confirm_delete_msg(pg.name)}
                      else
-                       # Offered even when it will fail; the server answers with the reason and
-                       # the next step, which is more than a disabled item can carry.
+                       # Offered even when it will fail, and with no `confirm:`: a confirmation
+                       # guards something about to happen, and nothing is. The server answers.
                        {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
-                        method: :delete, tone: :danger, confirm: confirm_delete_msg(pg.name)}
+                        method: :delete, tone: :danger}
                      end)
                   ] %>
             </td>

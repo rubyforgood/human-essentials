@@ -6304,3 +6304,24 @@ confirm — they passed while never confirming anything, and a real dialog expos
 `overlay-audit.js` reports native confirms by listening for the browser's `dialog` event, since
 there is no element to query. It found 2 before this change and reports **0** after.
 
+## 2026-08-29 — Do not confirm what cannot happen
+
+A follow-up to option B, and a mistake in how I first built it. Every branch of the three converted
+actions kept its `confirm:`, including the branch that **cannot succeed**. So deactivating an item
+still held in stock went: open the menu, click *Deactivate*, confirm "are you sure you want to
+deactivate this?", and only then read that it was never possible.
+
+**Two steps to a dead end, and the second step asks you to affirm something that will not occur.**
+Reported, and obviously right.
+
+The rule is narrow and worth stating on its own: **a confirmation guards a destructive act that is
+about to happen.** Where nothing is about to happen there is nothing to guard, so the `confirm:`
+belongs on the branch that can succeed and is omitted from the one that cannot. Same button, same
+label — one asks because something will happen, the other goes straight through because nothing
+will.
+
+Worth noticing *why* I got it wrong: converting from "disabled" to "offered" I kept every attribute
+the working branch had, because they looked like the same action. They are not — one destroys
+something and one is going to be refused. **A branch that exists because an action is impossible
+should be read as its own case, not as a copy of the possible one with the disabling removed.**
+

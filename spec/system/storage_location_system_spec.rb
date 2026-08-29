@@ -163,7 +163,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       # The action is offered even though it will fail: the server checks and answers with the
       # reason *and* the next step, which is more than a disabled menu item can carry.
-      accept_confirm_dialog { click_row_action "Deactivate", row: location1.name }
+      # No confirmation on this one: there is nothing to confirm when nothing can happen.
+      click_row_action "Deactivate", row: location1.name
 
       expect(page).to have_content("still holds inventory, so it cannot be deactivated")
       expect(page).to have_content("Move or distribute everything in it")

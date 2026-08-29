@@ -26,11 +26,11 @@
               icon: "bi-slash-circle", method: :put,
               confirm: confirm_deactivate_msg(storage_location.name)}
            else
-             # Offered even when it will fail: the server checks and explains, and the explanation
-             # has room for the next step. See design.md.
+             # Offered even when it will fail, and with no `confirm:` -- there is nothing to
+             # confirm when nothing will happen. The server answers with the reason and the next
+             # step. See design.md.
              {label: "Deactivate", path: storage_location_deactivate_path(storage_location),
-              icon: "bi-slash-circle", method: :put,
-              confirm: confirm_deactivate_msg(storage_location.name)}
+              icon: "bi-slash-circle", method: :put}
            end)
         ] %>
   </td>

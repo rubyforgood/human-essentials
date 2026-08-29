@@ -31,13 +31,15 @@
            {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
             method: :delete, confirm: confirm_deactivate_msg(item_row.name)}]
         else
-          # An item still held in inventory or used by a kit cannot be deactivated -- and the
-          # action is offered anyway, because the server already checks and answers. A disabled
-          # item has room for a phrase; a flash has room for the reason *and* what to do about it,
-          # which is the part a user actually needs. See design.md and the decision log.
+          # Offered even though it will fail: the server checks and answers with the reason and the
+          # next step, which is more than a disabled item can carry.
+          #
+          # **And no `confirm:` on this branch.** A confirmation guards a destructive act that is
+          # about to happen; nothing is about to happen here. Asking "are you sure?" about something
+          # that cannot occur, and only revealing that after the answer, is two steps to a dead end.
           [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
            {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
-            method: :delete, confirm: confirm_deactivate_msg(item_row.name)}]
+            method: :delete}]
         end
     %>
     <%# No visible View: the item's name in this row already links to it. %>
