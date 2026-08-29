@@ -35,9 +35,9 @@ RSpec.describe "Table actions", type: :system, js: true do
     end
   end
 
-  # The reason an action is unavailable used to be sr-only: a screen reader heard it and a sighted
-  # user saw a greyed-out word and nothing else. Reported as confusing, and it was.
-  describe "an action that is unavailable" do
+  # An action that cannot succeed is still offered: the server checks and answers with the reason
+  # and the next step. A disabled item had room for a phrase; a flash has room for what to do.
+  describe "an action that cannot succeed" do
     let!(:item) { create(:item, organization: organization, name: "Held item") }
 
     before do
@@ -46,42 +46,45 @@ RSpec.describe "Table actions", type: :system, js: true do
       visit items_path
     end
 
-    it "says why, in text anyone can read" do
+    it "is offered, and explains itself when it fails" do
       menu = open_row_menu(row: "Held item")
+      expect(menu).to have_button("Deactivate", disabled: false)
 
-      expect(menu).to have_button("Deactivate", disabled: true)
-      expect(menu).to have_text("Still in inventory or used by a kit")
+      accept_confirm_dialog { menu.click_on "Deactivate" }
 
-      reason = page.evaluate_script(<<~JS)
-        (() => {
-          const panel = document.querySelector("[data-popover-target=panel]:not([hidden])");
-          const btn = panel.querySelector("button[disabled]");
-          const help = btn.querySelector("span span:last-child");
-          if (!help) return null;
-          // every opacity between the reason and the document -- `opacity-60` on the whole item
-          // painted it at 2.32:1, and the point of showing a reason is that it gets read.
-          const chain = [];
-          let n = help;
-          while (n && n !== document.documentElement) {
-            const o = getComputedStyle(n).opacity;
-            if (o !== "1") chain.push(o);
-            n = n.parentElement;
-          }
-          return { text: help.textContent.trim(), srOnly: help.className.includes("sr-only"),
-                   visible: help.offsetParent !== null, dimmedBy: chain,
-                   colour: getComputedStyle(help).color };
-        })()
-      JS
+      expect(page).to have_content("Held item still has stock in a storage location")
+      expect(page).to have_content("Move or distribute the remaining stock")
+      expect(item.reload).to be_active
+    end
+  end
 
-      expect(reason).not_to be_nil
-      expect(reason["srOnly"]).to be(false)
-      expect(reason["visible"]).to be(true)
-      expect(reason["dimmedBy"]).to be_empty
-      # Still in the accessible name, so nothing was taken from a screen reader to give to the eye.
-      expect(page.evaluate_script(<<~JS)).to include("Still in inventory")
-        document.querySelector("[data-popover-target=panel]:not([hidden]) button[disabled]")
-          .textContent.replace(/\\s+/g, " ").trim()
-      JS
+  # The confirmation is the app's own <dialog>, not window.confirm -- which is browser chrome, and
+  # the one overlay no DOM audit can see.
+  describe "the confirmation" do
+    let!(:vendor) { create(:vendor, organization: organization, business_name: "Acme Supplies") }
+
+    before { visit vendors_path }
+
+    # A vendor with no purchases offers Delete, which is also the destructive tone.
+    it "is the design system's dialog, and cancelling does nothing" do
+      click_row_action "Delete", row: "Acme Supplies"
+
+      dialog = page.document.find("dialog[open]")
+      expect(dialog).to have_text("Acme Supplies")
+      expect(dialog).to have_button("Cancel")
+
+      dialog.find("button", text: "Cancel").click
+      expect(page.document).to have_no_css("dialog[open]")
+      expect(Vendor.where(id: vendor.id)).to exist
+    end
+
+    it "names the action on its confirm button and reddens a destructive one" do
+      click_row_action "Delete", row: "Acme Supplies"
+
+      accept = page.document.find("dialog[open] [data-confirm-dialog-target='accept']")
+      expect(accept.text).to eq("Delete")
+      # rose-600, the danger variant -- not the indigo a harmless action gets.
+      expect(accept[:class]).to include("bg-rose-600")
     end
   end
 end

@@ -56,12 +56,12 @@ RSpec.describe "Vendor", type: :system, js: true do
     end
 
     it "should deactivate a vendor when the deactivate button is clicked" do
-      expect { click_row_action "Deactivate", row: @first.business_name }
+      expect { accept_confirm_dialog { click_row_action "Deactivate", row: @first.business_name } }
         .to change { @first.reload.active }.to(false)
     end
 
     it "should reactivate a vendor when the reactivate button is clicked" do
-      expect { click_row_action "Deactivate", row: @first.business_name }
+      expect { accept_confirm_dialog { click_row_action "Deactivate", row: @first.business_name } }
         .to change { @first.reload.active }.to(false)
 
       open_filters
@@ -69,12 +69,13 @@ RSpec.describe "Vendor", type: :system, js: true do
       wait_for_filters
       expect(page).to have_content(@first.business_name)
 
-      expect { click_row_action "Reactivate", row: @first.business_name }
+      expect { accept_confirm_dialog { click_row_action "Reactivate", row: @first.business_name } }
         .to change { @first.reload.active }.to(true)
     end
 
     it "should delete when vendor does not have purchases items" do
-      expect { click_row_action "Delete", row: @last.business_name }.to change(Vendor, :count).by(-1)
+      expect { accept_confirm_dialog { click_row_action "Delete", row: @last.business_name } }
+        .to change(Vendor, :count).by(-1)
       expect(page).to have_content("#{@last.business_name} has been removed.")
     end
 

@@ -31,13 +31,13 @@
            {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
             method: :delete, confirm: confirm_deactivate_msg(item_row.name)}]
         else
-          # An item still held in inventory or used by a kit cannot be deactivated. The action
-          # stays in the menu, disabled, with the reason as sr-only text rather than a hover-only
-          # title -- so the state and the why both reach assistive tech.
+          # An item still held in inventory or used by a kit cannot be deactivated -- and the
+          # action is offered anyway, because the server already checks and answers. A disabled
+          # item has room for a phrase; a flash has room for the reason *and* what to do about it,
+          # which is the part a user actually needs. See design.md and the decision log.
           [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
            {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
-            method: :delete, disabled: true,
-            reason: "Still in inventory or used by a kit"}]
+            method: :delete, confirm: confirm_deactivate_msg(item_row.name)}]
         end
     %>
     <%# No visible View: the item's name in this row already links to it. %>

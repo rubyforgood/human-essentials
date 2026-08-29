@@ -88,11 +88,15 @@ RSpec.describe "StorageLocations", type: :request do
               { storage_location.id => { create(:item, name: "A").id => 1 } })
           end
 
-          it "shows a disabled deactivate button" do
+          it "offers deactivate, and lets the server explain why it cannot" do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
-            deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
-            expect(deactivate_link).to have_attribute("disabled")
+            button = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
+            expect(button.attr("disabled")).to be_nil
+
+            put storage_location_deactivate_path(storage_location)
+            expect(flash[:error]).to include("still holds inventory, so it cannot be deactivated")
+            expect(flash[:error]).to include("Move or distribute everything in it")
           end
         end
       end

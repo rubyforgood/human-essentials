@@ -322,7 +322,7 @@ RSpec.describe Item, type: :model do
         it "should not succeed" do
           allow(item).to receive(:can_deactivate_or_delete?).and_return(false)
           expect { item.deactivate! }
-            .to raise_error("Cannot deactivate item - it is in a storage location or kit!")
+            .to raise_error(/still has stock in a storage location, or belongs to a kit/)
             .and not_change { item.active }
         end
       end

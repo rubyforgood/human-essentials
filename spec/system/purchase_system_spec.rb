@@ -365,7 +365,7 @@ RSpec.describe "Purchases", type: :system, js: true do
       it "allows deletion of a purchase" do
         visit "#{subject}/#{purchase.id}"
         expect(page).to have_button("Delete")
-        accept_confirm do
+        accept_confirm_dialog do
           click_on "Delete"
         end
         expect(page).to have_content "Purchase #{purchase.id} has been removed!"
@@ -381,7 +381,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         visit "#{subject}/#{purchase.id}"
         expect(page).to have_button("Delete")
-        accept_confirm do
+        accept_confirm_dialog do
           click_on "Delete"
         end
 

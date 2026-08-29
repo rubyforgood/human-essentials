@@ -120,7 +120,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       it "removes a role", :aggregate_failures do
         visit edit_admin_user_path(user_to_modify)
         expect(page).to have_content('User to modify')
-        accept_confirm do
+        accept_confirm_dialog do
           click_on 'Delete', match: :first # For users that have multiple roles
         end
         expect(page.find('[data-flash]')).to have_content('Role removed!')

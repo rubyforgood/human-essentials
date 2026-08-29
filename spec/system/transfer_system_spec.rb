@@ -79,7 +79,7 @@ RSpec.describe "Transfer management", type: :system do
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).not_to eq(original_from_storage_item_count)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
-    accept_confirm do
+    accept_confirm_dialog do
       click_button 'Delete'
     end
 
@@ -108,7 +108,7 @@ RSpec.describe "Transfer management", type: :system do
 
     allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
 
-    accept_confirm do
+    accept_confirm_dialog do
       click_button 'Delete'
     end
 

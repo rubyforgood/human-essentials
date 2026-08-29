@@ -80,7 +80,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       visit subject
       expect(page).to have_content("barcode_to_delete")
-      click_button "Delete"
+      accept_confirm_dialog { click_button "Delete" }
       expect(page).to have_content("Barcode deleted!")
       expect(page).not_to have_content("barcode_to_delete")
     end
@@ -91,7 +91,10 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       visit subject
       expect(page).to have_content(b_item.value)
-      ferrum_double_click('form[action*="/barcode_items/"] button')
+      # The delete goes through the confirmation dialog now, so the double click that matters is
+      # on its confirm button -- clicking Delete twice just opens the dialog.
+      click_button "Delete"
+      ferrum_double_click("dialog[open] [data-confirm-dialog-target='accept']")
       expect(page).to have_content("Barcode deleted!")
       expect(page).not_to have_content("barcode_to_delete")
       expect(page).not_to have_content("Sorry, you don't have permission to delete this barcode.")

@@ -6242,3 +6242,65 @@ Clicking is safe because the handler dismisses.
 click on a real button, and that is a change worth making on its own rather than buried under a
 layout fix.
 
+## 2026-08-29 — Option B, and the app's own confirmation
+
+### Offer the action and let the server explain
+
+Chosen after two earlier shapes were both worse. **Omitting** an action that would fail made the
+column ragged and answered nothing. **Disabling** it with an `sr-only` reason told screen readers and
+nobody else. Making that reason *visible* fixed the silence but not the shape: a line under a label
+has room for a phrase, and what someone needs is what to do about it.
+
+So the action is offered, the request is made, and the server answers with both. The three messages
+were rewritten from scratch — they had been written for a log, not a person:
+
+| Before | After |
+| --- | --- |
+| `Cannot deactivate item - it is in a storage location or kit!` | *Adult Briefs still has stock in a storage location, or belongs to a kit. Move or distribute the remaining stock and remove it from any kits, then deactivate it.* |
+| `Cannot deactivate storage location containing inventory items with non-zero quantities` | *Pawnee Main Bank still holds inventory, so it cannot be deactivated. Move or distribute everything in it, then deactivate it.* |
+| `Partner Group cannot be deleted.` | *Group A still has partners, so it cannot be deleted. Move them to another group or remove them from this one, then delete it.* |
+
+Each names the record, gives the reason in plain words, and ends with the next step.
+
+**The cost, stated:** the click is spent before the answer arrives. It buys a menu whose items are
+all live and one line, and an explanation with room to be useful. GOV.UK take the same position.
+
+**One exception kept.** Your own row on the organization's users table stays a disabled item: the
+action is unavailable because of *who you are*, not the record's state, so there is no request to
+make and nothing for a flash to answer. That is the line — **disable only when there is no attempt
+to send.**
+
+### The confirmation dialog, and why interception rather than an override
+
+All 44 `confirm:` call sites rendered `window.confirm`. Replacing it needed a decision about *how*,
+because **rails-ujs's confirm hook is synchronous** — it must return true or false there and then —
+and a `<dialog>` resolves when somebody presses a button. There is no way to answer synchronously
+from one.
+
+**Chosen: intercept the click in the capture phase and replay it.** Two details had to be found the
+hard way:
+
+- **`stopImmediatePropagation`, not just `preventDefault`.** rails-ujs binds on `document`, so
+  preventing the default still lets its handler run and raise its own native confirm on top.
+- **The replay must remove `data-confirm` from the element.** Marking it as already-answered was not
+  enough: rails-ujs still saw the attribute and asked again. First attempt did exactly that, and the
+  native dialog fired on the replay while the action never completed.
+
+**No call site changed.** All 44 keep the attribute they always had, which is the point of doing it
+centrally.
+
+**One place could not use the attribute**: `utils/donations.js` guards a large donation from inside
+its own click handler with a raw `confirm()` — the only one in the app, and invisible to any
+attribute-based fix. It takes a promise API, `window.essentialsConfirm`, and the handler had to be
+restructured: always prevent, ask, and `requestSubmit` if yes.
+
+**35 spec call sites moved off `accept_confirm`,** which only drives a native dialog. Two things
+that caught me: `page.find` inside a `within` block is still scoped to the block, so the helper needs
+`page.document`; and several specs were relying on Capybara *auto-accepting* an unhandled native
+confirm — they passed while never confirming anything, and a real dialog exposed that.
+
+### The audit that now exists
+
+`overlay-audit.js` reports native confirms by listening for the browser's `dialog` event, since
+there is no element to query. It found 2 before this change and reports **0** after.
+

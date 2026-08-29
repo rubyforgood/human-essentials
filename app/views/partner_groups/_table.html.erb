@@ -79,9 +79,10 @@
                        {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
                         method: :delete, tone: :danger, confirm: confirm_delete_msg(pg.name)}
                      else
+                       # Offered even when it will fail; the server answers with the reason and
+                       # the next step, which is more than a disabled item can carry.
                        {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
-                        method: :delete, tone: :danger, disabled: true,
-                        reason: "Partners still belong to this group"}
+                        method: :delete, tone: :danger, confirm: confirm_delete_msg(pg.name)}
                      end)
                   ] %>
             </td>

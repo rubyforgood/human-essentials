@@ -26,9 +26,11 @@
               icon: "bi-slash-circle", method: :put,
               confirm: confirm_deactivate_msg(storage_location.name)}
            else
+             # Offered even when it will fail: the server checks and explains, and the explanation
+             # has room for the next step. See design.md.
              {label: "Deactivate", path: storage_location_deactivate_path(storage_location),
-              icon: "bi-slash-circle", method: :put, disabled: true,
-              reason: "This location still holds inventory"}
+              icon: "bi-slash-circle", method: :put,
+              confirm: confirm_deactivate_msg(storage_location.name)}
            end)
         ] %>
   </td>

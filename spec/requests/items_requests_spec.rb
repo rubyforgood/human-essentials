@@ -176,7 +176,8 @@ RSpec.describe "Items", type: :request do
           }
         )
         delete deactivate_item_path(params)
-        expect(flash[:error]).to eq("Cannot deactivate item - it is in a storage location or kit!")
+        expect(flash[:error]).to include("still has stock in a storage location, or belongs to a kit")
+        expect(flash[:error]).to include("Move or distribute the remaining stock")
         expect(item.reload.active).to eq(true)
       end
     end
@@ -314,10 +315,11 @@ RSpec.describe "Items", type: :request do
         button2 = page.at_css("form[action='/items/#{non_delete_item.id}/deactivate'] button")
         expect(button2.text.strip).to eq("Deactivate")
         expect(button2.attr("disabled")).to be_nil
+        # An item that cannot be deactivated is offered the action anyway: the server checks and
+        # answers with the reason and the next step, which a disabled control cannot carry.
         button3 = page.at_css("form[action='/items/#{non_deactivate_item.id}/deactivate'] button")
-        # The unavailable control keeps the visible word and appends an sr-only reason.
         expect(button3.text.strip).to start_with("Deactivate")
-        expect(button3.attr("disabled")).to eq("disabled")
+        expect(button3.attr("disabled")).to be_nil
       end
 
       context "when filtering by reporting category" do

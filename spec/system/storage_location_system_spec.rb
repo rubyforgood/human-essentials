@@ -161,27 +161,27 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location1 = create(:storage_location, :with_items)
       visit subject
 
-      # The action is in the row's overflow menu now, still a real disabled <button> so the
-      # state reaches assistive tech, with the reason as sr-only text.
-      menu = open_row_menu(row: location1.name)
-      expect(menu).to have_button("Deactivate", disabled: true)
-      # Visible help text now, not sr-only -- and its own sentence, because it is no longer read
-      # after the label by a screen reader.
-      expect(menu).to have_text("This location still holds inventory")
+      # The action is offered even though it will fail: the server checks and answers with the
+      # reason *and* the next step, which is more than a disabled menu item can carry.
+      accept_confirm_dialog { click_row_action "Deactivate", row: location1.name }
+
+      expect(page).to have_content("still holds inventory, so it cannot be deactivated")
+      expect(page).to have_content("Move or distribute everything in it")
+      expect(location1.reload).not_to be_discarded
     end
 
     it "Allows user to deactivate and reactivate storage locations" do
       location1 = create(:storage_location)
       visit subject
 
-      expect(accept_confirm { click_row_action "Deactivate", row: location1.name }).to include "Are you sure you want to deactivate #{location1.name}"
+      expect(accept_confirm_dialog { click_row_action "Deactivate", row: location1.name }).to include "Are you sure you want to deactivate #{location1.name}"
       expect(page.find("[data-flash]")).to have_content "Storage Location deactivated successfully"
 
       open_filters
       check "include_inactive_storage_locations"
       wait_for_filters
 
-      expect(accept_confirm { click_row_action "Reactivate", row: location1.name }).to include "Are you sure you want to reactivate #{location1.name}"
+      expect(accept_confirm_dialog { click_row_action "Reactivate", row: location1.name }).to include "Are you sure you want to reactivate #{location1.name}"
 
       # Wait for the reactivation itself before looking at the message. Filtering leaves the
       # previous flash in place -- it describes something that did happen -- so a bare check for

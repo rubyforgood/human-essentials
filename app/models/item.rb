@@ -132,7 +132,10 @@ class Item < ApplicationRecord
 
   def deactivate!
     unless can_deactivate_or_delete?
-      raise "Cannot deactivate item - it is in a storage location or kit!"
+      # Read by a person, in a flash, immediately after they asked for this -- so it names the
+      # item, says why in plain words, and ends with the thing to do next. See design.md, Copy.
+      raise "#{name} still has stock in a storage location, or belongs to a kit. " \
+            "Move or distribute the remaining stock and remove it from any kits, then deactivate it."
     end
     update!(active: false)
   end

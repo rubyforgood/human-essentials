@@ -382,6 +382,33 @@ Salesforce Lightning calls it *row-level actions*, Polaris renders them as an `A
   and moving with the page is the better default.
 - **`size-7`, not the 38px control height.** A row action is `sm` everywhere else; a 38px trigger
   made every distribution row 10px taller. 28px still clears WCAG 2.5.8's 24×24 floor.
+<a id="the-app-confirms-not-the-browser"></a>
+**The app confirms, not the browser.** `data-confirm` on any control opens the design system's
+`<dialog>` — `shared/essentials/confirm_dialog`, one per shell, filled in by
+`confirm_dialog_controller.js`. No call site changed: all 44 carry `data-confirm` and always did.
+
+The dialog names the action on its confirm button — **Delete**, not "Continue" — and reddens it for
+a destructive variant. Both are derived from the control's own tone, so a call site cannot put a red
+button on a harmless action.
+
+<a id="why-intercept-the-click"></a>
+**It intercepts the click rather than overriding `Rails.confirm`.** rails-ujs's confirm hook is
+**synchronous** — it must return true or false immediately — and a `<dialog>` resolves when someone
+presses a button. There is no way to answer synchronously from one. So the click is caught in the
+*capture* phase before rails-ujs sees it, and replayed if the answer is yes.
+
+Two details that are easy to get wrong and were:
+
+- **`stopImmediatePropagation`, not just `preventDefault`.** rails-ujs binds on `document`; merely
+  preventing the default still lets its handler run and raise its own native confirm.
+- **The replay removes `data-confirm` from the element first.** Marking it as already-answered is
+  not enough — rails-ujs still sees the attribute on the way past. It goes back afterwards so the
+  next click asks again.
+
+`window.essentialsConfirm({message:, title:, label:, tone:})` returns a promise, for the one place
+that cannot use `data-confirm`: `utils/donations.js` guards a large donation from inside its own
+click handler. Anything else should use the attribute.
+
 <a id="a-menu-item-is-not-a-button"></a>
 **A menu item is not a button — do not render one through `essentials_action_button`.** That helper
 applies `essentials_button_classes`, which is `inline-flex justify-center` plus the size's own
@@ -396,28 +423,39 @@ menu item is a plain `button_to` carrying `item_classes` and `form_class: "block
 Keep `data-turbo=false` when you do: these submit from inside a results turbo-frame, and Turbo
 intercepting them is what made *Reactivate* silently do nothing about half the time.
 
-<a id="say-why-visibly"></a>
-- **An unavailable action stays in the menu, disabled, and says why in text anyone can read.** A
-  form action gets a genuinely `disabled` `<button>` and a link action a `<span aria-disabled>` —
-  only a form control can be `disabled`. The `reason:` is a **second line under the label**, 12px
-  slate-500, which is Polaris's `helpText` on an action list item.
+<a id="offer-it-and-explain"></a>
+- **An action that will fail is offered anyway, and the server explains.** Do not disable a row
+  action because of the record's *state* — offer it, let the request be made, and answer with a
+  flash that gives the reason **and the next step**.
 
-  It was `sr-only` first, and that was wrong in a way worth remembering: a screen reader heard
-  *"Deactivate, unavailable while this item is still in inventory or used by a kit"* and everyone
-  else saw a greyed-out word and no explanation at all. Reported as confusing. **Optimising an
-  affordance for assistive technology is not a reason to withhold it from everyone else.**
+  ```
+  Adult Briefs (Medium/Large) still has stock in a storage location, or belongs to a kit.
+  Move or distribute the remaining stock and remove it from any kits, then deactivate it.
+  ```
 
-  Not a tooltip: a `disabled` control fires no pointer events, so a tooltip on one needs a wrapper
-  element to work at all, and there is no hover on a phone.
+  This went through two earlier shapes and both were worse. **Omitting** the action made the column
+  ragged and answered nothing. **Disabling** it with the reason as `sr-only` text meant a screen
+  reader heard the explanation and everyone else saw a greyed-out word — reported as confusing, and
+  worth remembering as a rule: *optimising an affordance for assistive technology is not a reason to
+  withhold it from everyone else.* Making that reason visible fixed the silence but not the shape: a
+  line under a label has room for a phrase, and what a user needs is **what to do about it**.
+
+  The cost is honest: the click is spent before the answer arrives. It buys a menu whose items are
+  all live, all one line, and a reason with room to be useful. GOV.UK take the same position and
+  avoid disabled controls entirely.
+
+<a id="disable-only-for-who-you-are"></a>
+- **Disable only when there is no request to make.** The exception is an action unavailable because
+  of *who you are* rather than the record's state — you cannot change your own membership on the
+  organization's users table. There is no attempt to send and therefore nothing for a flash to
+  answer, so it stays a disabled item with a visible reason under the label. A form action gets a
+  genuinely `disabled` `<button>` and a link action a `<span aria-disabled>`; only a form control
+  can be `disabled`.
 
   **Dim the label, not the item.** `opacity-60` on the whole row painted the reason at **2.32:1**
-  measured against white. [1.4.3](#contrast) exempts an inactive control from contrast, and that
-  exemption is no argument here — the entire point of showing a reason is that it gets read. The
-  label carries the opacity; the reason stays slate-500 at **4.75:1**.
-
-  **Write it as its own sentence.** "— unavailable while this item is still in inventory or used by
-  a kit" was phrased to be read *after* the label, hence the dash. Visible, it is "Still in
-  inventory or used by a kit".
+  against white. [1.4.3](#contrast) exempts an inactive control, and that exemption is no argument
+  here — the point of showing a reason is that it gets read. The reason stays slate-500 at
+  **4.75:1**.
 - **The honest cost:** every action but the first becomes two clicks, and which one deserves to stay
   visible differs by who uses the page. A warehouse user printing picklists all afternoon will feel
   *Print* moving behind a menu.

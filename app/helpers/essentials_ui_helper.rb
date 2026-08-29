@@ -218,7 +218,14 @@ module EssentialsUiHelper
     data = {disable_with: "Please wait...", turbo: false}.merge(html_attrs.delete(:data) || {})
     # data-confirm, not data-turbo-confirm: rails-ujs is what this app loads, and Turbo would
     # only act on its own attribute where Turbo Drive is enabled -- which is per-action here.
-    data[:confirm] = confirm if confirm
+    if confirm
+      data[:confirm] = confirm
+      # The dialog's confirm button says what it will do -- "Deactivate", not "Continue" -- and
+      # turns red for a destructive variant. Derived here so a call site cannot set a red button
+      # on a harmless action or a grey one on a delete.
+      data[:confirm_label] ||= label
+      data[:confirm_tone] ||= "danger" if %i[danger ghost_danger].include?(variant.to_sym)
+    end
 
     button_to path, method: method, class: classes, form_class: "inline-block",
       data: data, **html_attrs do
