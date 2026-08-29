@@ -138,6 +138,26 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("invited")
     end
 
+    it "can create an organization with reminders left disabled" do
+      visit new_admin_organization_path
+      admin_user_params = attributes_for(:organization_admin)
+      within "form#new_organization" do
+        fill_in "organization_name", with: "No Reminders Org"
+        fill_in "organization_email", with: "no-reminders@example.com"
+        fill_in "organization_user_name", with: admin_user_params[:name]
+        fill_in "organization_user_email", with: admin_user_params[:email]
+
+        choose('organization[deadline_reminders_enabled]', option: false)
+        choose('organization[distribution_reminders_enabled]', option: false)
+        click_on "Save"
+      end
+
+      expect(page).to have_content("All Human Essentials Organizations")
+      org = Organization.find_by(name: "No Reminders Org")
+      expect(org.deadline_reminders_enabled).to be false
+      expect(org.distribution_reminders_enabled).to be false
+    end
+
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
@@ -160,6 +180,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         visit new_admin_organization_path
         within "form#new_organization" do
           fill_in "organization_name", with: "aaa" # So the new org will be on the first page
+          choose('organization[deadline_reminders_enabled]', option: true)
         end
       end
 
