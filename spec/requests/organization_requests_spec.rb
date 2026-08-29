@@ -139,20 +139,9 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include("Default Center")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       context "with a reminder schedule" do
@@ -244,20 +233,9 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Include packages in distribution export:")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       it "can see 'Demote to User' button for admins" do
@@ -291,6 +269,7 @@ RSpec.describe "Organizations", type: :request do
 
       it { is_expected.to render_template(:edit) }
       it { expect(response).to be_successful }
+
       it 'initializing the given organization' do
         expect(assigns(:organization)).to be_a(Organization) &
                                           have_attributes(
@@ -300,22 +279,10 @@ RSpec.describe "Organizations", type: :request do
                                           )
       end
 
-      context "when enable_packs flipper is on" do
-        it "should display custom units and units form" do
-          Flipper.enable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to include("Custom request units used")
-          expect(response.body).to include "WolfPack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "should not display custom units and units form" do
-          Flipper.disable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to_not include("Custom request units used")
-          expect(response.body).to_not include "WolfPack"
-        end
+      it "displays custom units and units form" do
+        get edit_organization_path
+        expect(response.body).to include("Custom request units used")
+        expect(response.body).to include "WolfPack"
       end
     end
 

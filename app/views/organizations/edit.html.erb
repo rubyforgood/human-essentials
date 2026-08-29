@@ -129,25 +129,23 @@
                 <%= f.input :enable_child_based_requests, label: 'Enable Partners to make child-based Requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_individual_requests, label: 'Enable Partners to make Requests by indicating number of individuals needing each Item?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_quantity_based_requests, label: 'Enable Partners to make quantity-based Requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
-                <% if Flipper.enabled?(:enable_packs) %>
-                  <%= label_tag "organization[request_unit_names]", 'Custom request units used. Please use singular form -- e.g. pack, not packs. There will be a default "unit" entry provided.' %>
-                  <%= select_tag(
-                    "organization[request_unit_names]",
-                    options_from_collection_for_select(
-                        current_organization.request_units,
-                        'name',
-                        'name',
-                        ->(_) { true } # Select all of the current request units
-                    ),
-                    {
-                      multiple: true,
-                      class: 'form-control custom-select',
-                      'data-controller': 'select2',
-                      'data-select2-hide-dropdown-value': true,
-                      'data-select2-config-value': '{"selectOnClose": "true", "tags": "true", "tokenSeparators": [",", "\t"]}'
-                    }
-                  ) %>
-                <% end %>
+                <%= label_tag "organization[request_unit_names]", 'Custom request units used. Please use singular form -- e.g. pack, not packs. There will be a default "unit" entry provided.' %>
+                <%= select_tag(
+                  "organization[request_unit_names]",
+                  options_from_collection_for_select(
+                      current_organization.request_units,
+                      'name',
+                      'name',
+                      ->(_) { true } # Select all of the current request units
+                  ),
+                  {
+                    multiple: true,
+                    class: 'form-control custom-select',
+                    'data-controller': 'select2',
+                    'data-select2-hide-dropdown-value': true,
+                    'data-select2-config-value': '{"selectOnClose": "true", "tags": "true", "tokenSeparators": [",", "\t"]}'
+                  }
+                ) %>
                 <hr>
 
                 <h4>Other emails</h4>
