@@ -15,7 +15,7 @@ class ProductDrivesController < ApplicationController
     @paginated_product_drives = @product_drives.page(params[:page])
 
     # to be used in the name filter to sort product drives in alpha order
-    @product_drives_alphabetical = @product_drives.natural_sort_by { |pd| pd.name.downcase }
+    @product_drives_alphabetical = @product_drives.natural_sort
     @item_categories = current_organization.item_categories
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
