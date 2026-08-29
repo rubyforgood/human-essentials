@@ -157,6 +157,9 @@ class DistributionsController < ApplicationController
     if params[:request_id]
       @request = Request.find(request_id)
       @distribution.copy_from_request(@request)
+    elsif params[:purchase_id]
+      @distribution.line_items.build
+      @distribution.copy_from_purchase(params[:purchase_id], params[:storage_location_id])
     else
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])

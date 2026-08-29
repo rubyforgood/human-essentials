@@ -349,4 +349,40 @@ RSpec.describe Distribution, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
+
+  # `copy_line_items` hardcoded `itemizable_type: "Donation"`, which is the only reason a purchase
+  # could not seed a distribution -- the line items are polymorphic and only the query was not.
+  describe "#copy_from_purchase" do
+    let(:organization) { create(:organization) }
+    let(:storage_location) { create(:storage_location, organization: organization) }
+    let(:item) { create(:item, organization: organization) }
+    let!(:purchase) do
+      create(:purchase, :with_items, item: item, item_quantity: 17,
+        organization: organization, storage_location: storage_location)
+    end
+
+    it "copies the purchase's line items and storage location" do
+      distribution = Distribution.new
+      distribution.copy_from_purchase(purchase.id, storage_location.id)
+
+      expect(distribution.line_items.size).to eq(purchase.line_items.size)
+      expect(distribution.line_items.map(&:item_id)).to eq(purchase.line_items.map(&:item_id))
+      expect(distribution.line_items.map(&:quantity)).to eq(purchase.line_items.map(&:quantity))
+      expect(distribution.storage_location).to eq(storage_location)
+    end
+
+    # The bug the generalisation had to avoid: a donation and a purchase can share an id, and the
+    # old query would have matched the donation's line items for a purchase's id.
+    it "does not pick up a donation that happens to share the id" do
+      donation = create(:donation, :with_items, item: item, organization: organization)
+      allow(LineItem).to receive(:where).and_call_original
+
+      distribution = Distribution.new
+      distribution.copy_from_purchase(purchase.id, storage_location.id)
+
+      expect(LineItem).to have_received(:where)
+        .with(itemizable_id: purchase.id, itemizable_type: "Purchase")
+      expect(donation).to be_present
+    end
+  end
 end

@@ -6569,3 +6569,43 @@ treatment.
 Pinned by a system spec, and the test browser has no camera, so it exercises the real failing path
 rather than a simulation of it. Verified to fail against the old `console.log` version.
 
+## 2026-08-29 — A purchase can start a distribution, and can be printed
+
+Reported as a missing CTA on the purchase page. **It was not missing — it had never existed**,
+which is worth separating from a regression before fixing anything. Checked against `origin/main`:
+the pre-migration purchase page carried exactly two actions, *Make a correction* and a delete
+button, and both are still there. No spec expected the distribution button. The donation page has
+had it since long before the migration.
+
+**And it could not have been added as a link alone.** `Distribution#copy_line_items` hardcoded
+`itemizable_type: "Donation"`, and `DistributionsController#new` understood only `request_id` and
+`donation_id`. A `purchase_id` on the URL would have been read by nothing: the button would have
+opened an empty distribution form and silently dropped the purchase. That is why I asked rather
+than shipping the link — it is the version that looks right and is wrong.
+
+**Generalised rather than duplicated.** `copy_line_items(itemizable_id, itemizable_type)` takes the
+type now, defaulting to `"Donation"` so the existing caller is untouched, and `copy_from_purchase`
+sits beside `copy_from_donation`. The line items were always polymorphic; only the query was not.
+A spec asserts the query is made with `itemizable_type: "Purchase"`, because the failure mode of
+getting that wrong is silent: a donation and a purchase can share an id, and the old query would
+have copied the wrong record's items.
+
+**The print gap needed a document, not a route.** `PurchasePdf` is deliberately the same shape as
+`DonationPdf` — same logo block, same organization block, same table, same footer — because it is
+the same kind of document and two receipts that differ by accident is worse than one duplicated
+file. What differs is what a purchase *is*: money going out to a vendor rather than goods coming in
+from a donor, so "Donation from" becomes "Purchased from" and "Money Raised" becomes "Amount
+spent". It honours `hide_value_columns_on_receipt`, because a bank that does not print values does
+not want them printed here either.
+
+**Verified end to end rather than asserted.** Clicking *Start a distribution* on purchase 21 lands
+on `/distributions/new?purchase_id=21&storage_location_id=1` with *Kids (Preemie)* and quantity
+**976** pre-filled — matching that purchase exactly — and the storage location set to *Bulk Storage
+Location*. `/purchases/21/print.pdf` returns 200, `application/pdf`, 30,024 bytes beginning
+`%PDF-1.4`, with the vendor and date in the filename.
+
+**What was deliberately not done:** `PurchasePdf` duplicates roughly 110 lines of layout from
+`DonationPdf`. Extracting a shared base is the obvious follow-up and is not this change — the two
+have never diverged, so there is nothing yet to reconcile, and a premature base class would have to
+guess which parts are common.
+

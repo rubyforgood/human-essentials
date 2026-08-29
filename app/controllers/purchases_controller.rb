@@ -5,6 +5,21 @@ class PurchasesController < ApplicationController
 
   before_action :authorize_admin, only: [:destroy]
 
+  # Mirrors DonationsController#print. `format.any` rather than `format.pdf`, so a bare
+  # /purchases/:id/print with no extension still returns the document.
+  def print
+    @purchase = current_organization.purchases.find(params[:id])
+    respond_to do |format|
+      format.any do
+        pdf = PurchasePdf.new(current_organization, @purchase)
+        send_data pdf.compute_and_render,
+          filename: format("%s %s.pdf", @purchase.purchased_from_view, sortable_date(@purchase.issued_at)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
+  end
+
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
