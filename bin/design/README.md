@@ -103,6 +103,19 @@ mode that looks like success. To exercise it end to end, add
 re-run: that file should appear under `debt`. Debt does not change the exit code — only defects
 do.
 
+`overlay-audit.js` also looks for **native browser confirms**, which is the one overlay no DOM
+query can find.
+
+`window.confirm` is browser chrome, not an element: this audit opens `<dialog>`s and reports
+nothing, axe scans the document and has nothing to scan, and the system suite drives it with
+Capybara's `accept_confirm`, **which only works on a native dialog** — so a green suite is evidence
+*for* it. The same shape as the toastr message below the fold and the frozen-column shadow that drew
+nothing: the assertion pins the thing that is wrong.
+
+The only way to see one is to listen for the `dialog` event the browser raises, which is what
+`checkNativeConfirms` does. Clicking is safe — the handler dismisses, so nothing is submitted. It
+reports **2** today, both on `/transfers`, from the 44 `confirm:` call sites in the app.
+
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
 ```bash

@@ -155,10 +155,40 @@ const VIEWPORTS = [
   { width: 320, height: 640, label: "320x640" },
 ];
 
+// A native `window.confirm` is the one overlay nothing else here can see, and that is not a gap in
+// the checks so much as a gap in what a DOM query *can* answer: it is browser chrome, not an
+// element. `overlay-audit` opens `<dialog>`s and finds nothing wrong; axe scans the document and
+// finds nothing to scan; and the system suite drives it with Capybara's `accept_confirm`, which
+// only works on a native dialog -- so a green suite is evidence *for* it, the same shape as the
+// toastr message and the frozen-column shadow earlier on this branch.
+//
+// The only way to see one is to listen for the event the browser raises. Clicking is safe: the
+// handler dismisses, so nothing is submitted.
+async function checkNativeConfirms(page, label, findings) {
+  const triggers = await page.$$("[data-confirm], [data-turbo-confirm]");
+  if (!triggers.length) return 0;
+
+  let seen = 0;
+  const onDialog = async (dialog) => {
+    seen += 1;
+    findings.push(`${label} — native browser confirm, not the design system's dialog: ` +
+                  `"${dialog.message().slice(0, 60)}"`);
+    await dialog.dismiss();
+  };
+  page.on("dialog", onDialog);
+
+  // One is enough to prove the mechanism; they all go through the same Rails attribute.
+  await triggers[0].click().catch(() => {});
+  await page.waitForTimeout(300);
+
+  page.off("dialog", onDialog);
+  return seen;
+}
+
 (async () => {
   const browser = await chromium.launch();
   const findings = [];
-  let dialogs = 0;
+  let dialogs = 0, natives = 0;
   let popovers = 0;
 
   for (const viewport of VIEWPORTS) {
@@ -179,11 +209,13 @@ const VIEWPORTS = [
       popovers += await checkPopovers(page, `${path} @${viewport.label}`, findings);
       await page.goto(BASE + path, { waitUntil: "networkidle" });
       dialogs += await checkDialogs(page, `${path} @${viewport.label}`, findings);
+      natives += await checkNativeConfirms(page, `${path} @${viewport.label}`, findings);
     }
     await page.close();
   }
 
-  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages at ${VIEWPORTS.map((v) => v.label).join(" and ")}\n`);
+  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages at ${VIEWPORTS.map((v) => v.label).join(" and ")}`);
+  console.log(`${natives} native browser confirm(s) found\n`);
   if (findings.length === 0) {
     console.log("no findings");
   } else {

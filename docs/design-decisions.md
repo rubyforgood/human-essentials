@@ -6191,3 +6191,54 @@ declared colour is what 1.4.3 measures. Painted pixels are the right tool for an
 gradient or a scrim changing what reaches the eye — and the wrong one for plain text on a plain
 background.
 
+## 2026-08-29 — A menu item is not a button, and the confirm nothing could audit
+
+### The menu was misaligned, and it was a bug rather than a choice
+
+Reported as "this menu is really odd, I have never seen it used anywhere else", and the odd part was
+not the pattern — it was that the items did not line up. `_menu_items` rendered an enabled action
+through `essentials_action_button`, which applies `essentials_button_classes`
+(`inline-flex justify-center` plus the size's padding) and `form_class: "inline-block"`. The actions
+cell is `text-right`, an inline-block inherits that, and the form shrink-wraps — so the item ended
+up half width against the right edge of a menu sized by everything else.
+
+Measured on `/vendors`: *Edit* at x=1 across 222px, *Deactivate* at **x=117, 106px**. Every enabled
+action in every row menu. Now a plain `button_to` with the item's own classes: all nine menus report
+identical lefts, widths and glyph positions.
+
+**The general rule, now in design.md: a menu item is not a button.** Reaching for the button helper
+because the thing is clickable imports a whole set of layout decisions made for a different context.
+
+### The disabled-action question stays open, and the fair way to judge it
+
+Asked whether an enabled action plus a banner on click would be better than a disabled item with
+help text. It might be, and the honest note is that **a lot of the "odd" was the alignment bug** —
+so the comparison should be against the fixed menu, which is what
+`docs/mockups/row-menu-followups.html` shows. The trade is real either way: help text answers before
+the click; a banner has room to say what to *do* about it, which one line under a label does not.
+GOV.UK avoid disabled controls entirely for exactly that reason.
+
+### The native confirm, and why three audits missed it
+
+Correctly spotted: the deactivate confirmation is `window.confirm`, unstyled browser chrome that
+announces the page's hostname. All **44** `confirm:` call sites are like that.
+
+**Why nothing caught it is the interesting part, and it is three separate reasons:**
+
+- `overlay-audit.js` exists *specifically* to open dialogs, and finds triggers with
+  `[data-action*='dialog#open']`. A native confirm **is not in the DOM** — there is no element to
+  query. The audit built for this class of bug is structurally unable to see this instance of it.
+- axe scans the document. Same reason.
+- **The system suite depends on it.** These specs use Capybara's `accept_confirm`, which only drives
+  a *native* dialog. A green suite is therefore evidence *for* the browser dialog. That is the third
+  time this branch has hit the shape — the toastr message nobody could see, the frozen-column shadow
+  that drew nothing — and each time the assertion pinned the defect rather than catching it.
+
+**The check that finds it is not a DOM query**: listen for the `dialog` event Playwright surfaces
+when a control with `data-confirm` is clicked. Added to `overlay-audit.js`; it reports 2 today.
+Clicking is safe because the handler dismisses.
+
+**Converting the 44 is not folded into this change.** Every `accept_confirm` in the suite becomes a
+click on a real button, and that is a change worth making on its own rather than buried under a
+layout fix.
+
