@@ -115,8 +115,20 @@ kebab on the next, 349px of actions column on one page and 60px on another, and 
 reported — a column whose shape changes as you read *down* it, because the actions are picked by a
 `case` on the row's status.
 
-It reports four shapes: `3+ inline, no menu`, `varies row to row`, `mixed control heights`, and
-`menu for 2 or fewer`. Across 31 tables it finds **10**.
+It reports three failures — `3+ inline, no menu`, `varies row to row`, `mixed control heights` —
+and one **advisory**, `menu for 2 or fewer`.
+
+**The advisory is advisory on purpose.** design.md collapses a table when three or more actions are
+possible *or* when which actions exist depends on state. This reads one render of one seed, so it
+sees the count and not the variance: `/items` builds Delete, Deactivate or a disabled Deactivate from
+the item's state, and on seed data every row lands in the same branch. Reported as a failure it said
+`/items` was wrong, and `/items` is right. Six tables sit in that bucket and all six are correct;
+the `case` in the row partial is what settles it.
+
+**It keys off the actions column header**, now that all 43 are the identical
+`<th scope="col" class="text-right"><span class="sr-only">Actions</span></th>`. Reading the last cell
+of every table instead treats a data cell of conditional links as a ragged actions column, which is
+how `/events` — which has no actions at all — was reported as varying row to row.
 
 **It counts the actions inside a closed menu, not just the visible ones.** The panel is in the DOM
 while hidden, so it can be read without opening it — and without that a kebab row reads as "1

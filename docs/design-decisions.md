@@ -6086,3 +6086,52 @@ region, so the arrow keys do nothing and there is no edge shadow to say content 
 the four report tables were like that, with unscoped `<th>` in Title Case and `text-right` instead
 of the `.numeric` column class the design system defines.
 
+## 2026-08-29 — Row actions: option A, and the two things measurement got wrong
+
+Chosen from `docs/mockups/row-actions.html` after the treatment was reported as inconsistent. The
+design system already had the rule — `:ghost` for every row action, three or more collapse into a
+menu, `size-7` trigger — so most of this was conformance. What was genuinely missing was two
+sentences and a header.
+
+**Amendment 1: the threshold is per table, not per row.** Applied per row, one table ends up with
+three inline buttons on some rows and one on others.
+
+**Amendment 2: a varying action set collapses whatever the count.** This is the case that produced
+the complaint and the rule did not cover it. `/partners` picked from a five-branch `case` on status,
+so the column measured **170, 120, 170, 241, 0 and 170px** down one screen.
+
+**Amendment 3: every control in the column is 28px.** A new `essentials_row_icon_link` renders a
+visible action icon-only at `size-7`, because a labelled `sm` ghost is 30px and the 2px step showed
+on `/vendors` and `/requests`. One helper so two callers cannot drift and a third cannot invent a
+size.
+
+**Amendment 4: one actions column header.** Asked about directly, and it was worth asking: four
+variants across 43 tables — 33 hidden and plural, **8 visible**, one `<th>Action` with no `scope` and
+no alignment, one hidden and singular. Now always
+`<th scope="col" class="text-right"><span class="sr-only">Actions</span></th>`. Hidden, because the
+column holds icon buttons that carry their own names and a visible label widens a 60px column to
+state the obvious — Carbon and Salesforce both use assistive text here. Present, because a column
+with no accessible name is announced as nothing when a screen reader crosses the header row.
+
+### Two things the measurement got wrong, both worth keeping
+
+**`/items` was not a defect.** The audit reported it as "a menu holding two actions", which the rule
+says to open up. But `/items` builds *Delete*, *Deactivate* or a **disabled** *Deactivate* from the
+item's state — a varying set, which amendment 2 says to collapse. On seed data every row lands in the
+same branch, so one render cannot tell a settled pair from a varying one. **The check is advisory
+now, not a failure**, and design.md says to judge that question from the row partial rather than
+from a screen. Six tables sit in that bucket; all six are correct.
+
+**`/events` has no actions column at all.** The audit read the *last cell* of every table, which
+there is a data cell of conditional links — so a table with no actions was reported as having ragged
+ones. It keys off the actions column header now, which is reliable precisely because amendment 4
+made all 43 identical. A rule and the tool that checks it improving each other is worth noting.
+
+### And one thing I got wrong
+
+I collapsed `/barcode_items` into a menu because it showed three inline. But the third was **View**,
+which comes out anyway — design.md keeps a visible View only where the row does not already link to
+its record, and that row's first cell does. That leaves Edit and Delete, always both present: a
+settled pair, which the rule says stays inline. Reverted. **Remove the redundant action before
+counting**, or the count argues for a menu that the rule does not want.
+

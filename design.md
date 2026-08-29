@@ -307,6 +307,47 @@ confirmation is what protects the user, not the colour.
 `:primary` belongs in the page header, once. If a row action looks like the page's main action,
 the page has as many main actions as it has rows.
 
+<a id="collapse-by-table"></a>
+**The threshold is per table, not per row — and a varying action set is itself a reason to
+collapse.** Both halves were learned the hard way, from a column that was reported as jarring:
+
+- **If any row in a table can reach three actions, every row in that table gets the menu.** Applied
+  per row, one table ends up with three inline buttons on some rows and one on others.
+- **If *which* actions exist depends on status, role or state, use the menu whatever the count.**
+  `/partners` chose its actions from a five-branch `case` on partner status, so reading down one
+  screen the column measured **170, 120, 170, 241, 0 and 170px** — a different label, a different
+  width, and sometimes nothing at all. The trigger is the same 28px on every row whatever sits
+  inside it, which is the entire point: the column stops moving. `/organization`'s users table did
+  the same thing by role.
+- **Below that, actions stay inline.** A table with a settled one or two keeps them visible and one
+  click away. `/barcode_items` showed **View, Edit and Delete** inline for **349px** — the widest
+  actions column in the app; dropping the View (its first cell links to the record) leaves a pair
+  that is always both present, so those stay visible.
+
+<a id="varies-in-code-not-in-a-seed"></a>
+**Judge "does the set vary?" from the code, not from one screen.** `bin/design/row-actions-audit.js`
+reports a menu holding two or fewer as **advisory**, not a failure, and this is why: `/items` builds
+*Delete*, *Deactivate* or a **disabled** *Deactivate* from the item's state, and on seed data every
+row happens to land in the same branch. Rendered once it looks like a settled pair inside a menu —
+the shape the rule says to open up — and it is correctly collapsed. The audit sees one render; the
+`case` in the row partial is the answer.
+
+<a id="row-action-heights"></a>
+**Every control in an actions column is the same height.** A visible action beside a kebab is
+**icon-only at `size-7`**, named by `aria-label` and `title`. A labelled `sm` ghost button is 30px
+and the trigger is 28, and the 2px step was visible on `/vendors` and `/requests` where the two sat
+side by side. Uniform 28px icon buttons is also what Carbon and Salesforce ship for this column.
+
+<a id="actions-column-header"></a>
+**The actions column header is `<th scope="col" class="text-right"><span class="sr-only">Actions</span></th>`.**
+Always present, always `scope="col"`, always hidden. Hidden because the column holds icon buttons
+whose names are already on them, and a visible "Actions" label widens a 60px column to state the
+obvious — Carbon and Salesforce both use assistive text here. Present because a column with no
+accessible name is announced as nothing when a screen reader moves across the header row.
+
+Four variants were in use across 43 tables: 33 hidden and plural, **8 visible**, one `<th>Action`
+with no `scope` and no alignment, and one hidden and singular.
+
 **Three or more row actions collapse into a menu.** `shared/essentials/row_actions`. Five labelled
 buttons made the actions column **331px** on `/distributions` — wider than Total items, Total value
 and Status together, and the second-widest column in the table. Collapsed it is **60px**. This is a

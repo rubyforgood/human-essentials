@@ -58,6 +58,21 @@ module EssentialsUiHelper
     ].compact.join(" ")
   end
 
+  # A visible row action sitting beside a kebab. Icon-only at `size-7`, so it is the same 28px as
+  # the trigger next to it -- a labelled `sm` ghost button is 30px, and that 2px step was visible on
+  # /vendors and /requests where the two sat side by side. The label is the accessible name and the
+  # tooltip, so nothing is lost to a sighted user hovering or a screen reader reading.
+  #
+  # Uniform icon buttons in this column is also what Carbon and Salesforce ship. See design.md.
+  def essentials_row_icon_link(label, path, icon:)
+    link_to path, title: label, "aria-label": label,
+      class: "inline-flex size-7 items-center justify-center rounded-lg text-slate-500 " \
+             "transition-colors hover:bg-slate-100 hover:text-slate-900 " \
+             "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do
+      tag.i(nil, class: icon, aria: {hidden: true})
+    end
+  end
+
   # One segment of a segmented toggle -- the calendar's range and layout switchers. Its state is
   # `aria-pressed`, and the styling hangs off the attribute so markup and appearance cannot
   # disagree. `first:` drops the divider, which belongs between segments rather than before them.

@@ -8,18 +8,19 @@
   <td><%= donation_site_row.email %></td>
   <td><%= donation_site_row.phone %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", donation_site_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Edit", edit_donation_site_path(donation_site_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-      <% if donation_site_row.active? %>
-        <%= essentials_action_button "Deactivate", deactivate_donation_site_path(donation_site_row), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-slash-circle",
-              confirm: confirm_deactivate_msg(donation_site_row.name) %>
-      <% else %>
-        <%= essentials_action_button "Restore", reactivate_donation_site_path(donation_site_row), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: confirm_reactivate_msg(donation_site_row.name) %>
-      <% end %>
-    </div>
+    <%# Three inline, and the third changed between Deactivate and Restore depending on the row --
+        both reasons to collapse. No visible View: the name in the first cell links to it. %>
+    <%= render "shared/essentials/row_actions", label: donation_site_row.name, items: [
+          {label: "Edit", path: edit_donation_site_path(donation_site_row), icon: "bi-pencil"},
+          (if donation_site_row.active?
+             {label: "Deactivate", path: deactivate_donation_site_path(donation_site_row),
+              icon: "bi-slash-circle", method: :put,
+              confirm: confirm_deactivate_msg(donation_site_row.name)}
+           else
+             {label: "Restore", path: reactivate_donation_site_path(donation_site_row),
+              icon: "bi-arrow-counterclockwise", method: :put,
+              confirm: confirm_reactivate_msg(donation_site_row.name)}
+           end)
+        ] %>
   </td>
 </tr>
