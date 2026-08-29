@@ -607,6 +607,10 @@ the app says why and what to do about it:
 > Adult Briefs still has stock in a storage location, or belongs to a kit. Move or distribute the
 > remaining stock and remove it from any kits, then deactivate it.
 
+**It does not ask you to confirm first, either.** Clicking *Deactivate* on something that cannot be
+deactivated takes you straight to the explanation — it does not ask "are you sure?" about something
+that was never going to happen. Where the action *can* be done, the confirmation still appears.
+
 The one exception is your own row on the organization's Users table, which stays greyed out — there
 is nothing to attempt there, so there is nothing to explain afterwards.
 

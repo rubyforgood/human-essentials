@@ -440,6 +440,13 @@ intercepting them is what made *Reactivate* silently do nothing about half the t
   withhold it from everyone else.* Making that reason visible fixed the silence but not the shape: a
   line under a label has room for a phrase, and what a user needs is **what to do about it**.
 
+  **And it does not confirm first.** A confirmation guards a destructive act that is about to
+  happen; nothing is about to happen on this branch, so there is nothing to guard. Asking "are you
+  sure you want to deactivate this?" about something that cannot occur — and only revealing that
+  it never could *after* the answer — is two steps to a dead end. The `confirm:` goes on the branch
+  that can succeed and is omitted from the one that cannot. Same button, same label; one asks
+  because something will happen, the other does not because nothing will.
+
   The cost is honest: the click is spent before the answer arrives. It buys a menu whose items are
   all live, all one line, and a reason with room to be useful. GOV.UK take the same position and
   avoid disabled controls entirely.
