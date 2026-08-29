@@ -475,7 +475,7 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
 
           expect do
-            accept_confirm do
+            accept_confirm_dialog do
               click_button "Save"
             end
             # wait for the next page to load
@@ -489,7 +489,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
 
-          dismiss_confirm do
+          dismiss_confirm_dialog do
             click_button "Save"
           end
 
@@ -513,7 +513,7 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "donation_line_items_attributes_0_quantity", with: "10000000000000000000000"
 
           expect do
-            accept_confirm do
+            accept_confirm_dialog do
               click_button "Save"
             end
             expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
@@ -774,7 +774,7 @@ RSpec.describe "Donations", type: :system, js: true do
       it "allows deletion of a donation" do
         expect(page).to have_button("Delete")
 
-        accept_confirm do
+        accept_confirm_dialog do
           click_on "Delete", match: :first
         end
 

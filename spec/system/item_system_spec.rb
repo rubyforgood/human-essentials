@@ -89,7 +89,7 @@ RSpec.describe "Item management", type: :system do
         end
 
         within "tr[data-item-id='#{item.id}']" do
-          accept_confirm do
+          accept_confirm_dialog do
             click_row_action "Restore"
           end
         end

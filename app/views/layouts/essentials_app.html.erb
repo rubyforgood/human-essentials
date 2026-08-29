@@ -52,5 +52,10 @@
 
   <%# Container that the *_modal.js.erb responses inject a native <dialog> into. %>
   <div id="modal_new"></div>
+  <%# Its own controller scope: it sits outside the shell's controller div, and it listens on
+      `document` for clicks rather than containing the triggers, so it does not need to wrap them. %>
+  <div data-controller="confirm-dialog">
+    <%= render "shared/essentials/confirm_dialog" %>
+  </div>
 </body>
 </html>

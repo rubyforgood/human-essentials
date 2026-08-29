@@ -594,6 +594,22 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### Confirmations look like the app now
+
+**"Are you sure?" is the app's own dialog**, not the grey browser box that used to say
+*localhost:3000 says* above the question. The button says what it will do — *Delete*, *Deactivate* —
+and turns red when the action destroys something.
+
+**An action that cannot be done is no longer greyed out.** *Deactivate* on Items, on Storage
+locations, and *Delete* on a partner group are all clickable, and if the action cannot be completed
+the app says why and what to do about it:
+
+> Adult Briefs still has stock in a storage location, or belongs to a kit. Move or distribute the
+> remaining stock and remove it from any kits, then deactivate it.
+
+The one exception is your own row on the organization's Users table, which stays greyed out — there
+is nothing to attempt there, so there is nothing to explain afterwards.
+
 ### Table actions look the same on every table now
 
 **The items in the "..." menu line up now.** An action that submits a form — *Deactivate*,

@@ -99,16 +99,32 @@ $(function() {
   // A handler that renumbered each inserted row's own barcode field used to live here. There is
   // one scan field per card now, outside the rows, so there is nothing per row to renumber.
 
+  // A large donation asks first. This was a raw `window.confirm` -- the only one in the app that
+  // is not `data-confirm`, and therefore the only one the click interceptor cannot reach.
+  //
+  // `confirm()` is synchronous and a <dialog> is not, so the shape changes: always prevent the
+  // submit, ask, and submit again if the answer is yes. `requestSubmit` rather than `submit`, so
+  // the form's own validation and submit handlers still run.
   const large_donation_boundary = 100000;
-  $(document).on("click", "form#new_donation button[type='submit']", (e, _) =>
-    $(".quantity").each(function(_, q) {
-      const quantity = parseInt(q.value, 10);
-      if (quantity > large_donation_boundary) {
-        const answer_confirm = confirm(
-          `${quantity} items is a large donation! Are you sure you want to submit?`
-        )
-        answer_confirm === false && e.preventDefault();
-      }
-    })
-  );
+  $(document).on("click", "form#new_donation button[type='submit']", function (e) {
+    const form = e.target.closest("form");
+    if (form.dataset.largeDonationConfirmed === "true") return;
+
+    const large = $(".quantity").toArray()
+      .map((q) => parseInt(q.value, 10))
+      .find((quantity) => quantity > large_donation_boundary);
+    if (large === undefined) return;
+
+    e.preventDefault();
+    window.essentialsConfirm({
+      message: `${large} items is a large donation! Are you sure you want to submit?`,
+      title: "That is a lot of items",
+      label: "Submit donation"
+    }).then((ok) => {
+      if (!ok) return;
+      form.dataset.largeDonationConfirmed = "true";
+      form.requestSubmit(e.target);
+      delete form.dataset.largeDonationConfirmed;
+    });
+  });
 });

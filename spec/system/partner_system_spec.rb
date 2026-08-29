@@ -102,7 +102,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
-          accept_confirm do
+          accept_confirm_dialog do
             click_row_action "Invite", row: partner_attributes[:name]
           end
 
@@ -157,7 +157,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           menu = open_row_menu(row: uninvited_partner.name)
           assert menu.has_content?("Invite and approve")
           expect do
-            menu.click_on "Invite and approve"
+            accept_confirm_dialog { menu.click_on "Invite and approve" }
           end.to change { uninvited_partner.reload.status }.from("uninvited").to("approved")
         end
       end
@@ -183,7 +183,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         it 'should notify the user that its been successful and change the partner status' do
-          accept_confirm do
+          accept_confirm_dialog do
             click_row_action "Request recertification"
           end
 
@@ -218,9 +218,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         visit partners_path
 
-        accept_alert("Send an invitation to #{partner.name} to create their profile for approval?") do
-          click_row_action "Invite", row: partner.name
-        end
+        expect(accept_confirm_dialog { click_row_action "Invite", row: partner.name })
+          .to include("Send an invitation to #{partner.name}")
 
         expect(page).to have_content "Partner #{partner.name} invited!", wait: page_content_wait
         expect(page.find("[data-flash]")).to have_content "invited!", wait: page_content_wait

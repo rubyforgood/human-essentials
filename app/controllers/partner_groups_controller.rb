@@ -47,7 +47,11 @@ class PartnerGroupsController < ApplicationController
 
   def destroy
     if @partner_group.partners.any?
-      redirect_to partners_path + "#nav-partner-groups", alert: "Partner Group cannot be deleted."
+      # The old message said only that it could not be deleted, and pointed at a `#nav-partner-groups`
+      # anchor from when the groups list was a tab rather than its own page.
+      redirect_to partner_groups_path,
+        alert: "#{@partner_group.name} still has partners, so it cannot be deleted. " \
+               "Move them to another group or remove them from this one, then delete it."
     else
       @partner_group.destroy
       respond_to do |format|

@@ -114,7 +114,9 @@ class StorageLocationsController < ApplicationController
     if svc.call
       redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
     else
-      redirect_back_or_to(storage_locations_path, error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
+      redirect_back_or_to(storage_locations_path,
+        error: "#{@storage_location.name} still holds inventory, so it cannot be deactivated. " \
+               "Move or distribute everything in it, then deactivate it.")
     end
   end
 

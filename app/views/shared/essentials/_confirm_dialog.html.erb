@@ -1,0 +1,39 @@
+<%#
+  The app's confirmation dialog, replacing rails-ujs's `window.confirm`.
+
+  One of these lives in each shell, and `confirm_dialog_controller.js` fills it in from whichever
+  `data-confirm` was clicked. It is not per-call-site: 44 controls carry `data-confirm` and none of
+  them had to change.
+
+  A native confirm is browser chrome -- unstyled, unbranded, and it announces the page's hostname
+  above the message. It is also the one overlay no DOM audit can see, which is how it survived
+  `overlay-audit.js` and axe; see bin/design/README.md.
+%>
+<dialog data-confirm-dialog-target="dialog"
+        aria-labelledby="confirm-dialog-title"
+        data-action="close->confirm-dialog#cancel"
+        class="modal-surface w-full max-w-md rounded-2xl border border-slate-200 bg-white p-0 shadow-xl backdrop:bg-slate-900/40 open:flex open:flex-col">
+  <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+    <h2 id="confirm-dialog-title" class="text-base font-semibold text-slate-900"
+        data-confirm-dialog-target="title">Are you sure?</h2>
+    <button type="button" aria-label="Close"
+            data-action="click->confirm-dialog#cancel"
+            class="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+      <i class="bi-x-lg text-xs" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <p class="px-5 py-4 text-sm text-slate-600" data-confirm-dialog-target="message"></p>
+
+  <div class="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-slate-200 px-5 py-3">
+    <button type="button" data-action="click->confirm-dialog#cancel"
+            class="<%= essentials_button_classes(variant: :secondary) %>">Cancel</button>
+    <%# The two variants are handed to the controller rather than written in it, so the button
+        keeps matching every other button when the helper changes. %>
+    <button type="button" data-action="click->confirm-dialog#accept"
+            data-confirm-dialog-target="accept"
+            data-primary-class="<%= essentials_button_classes(variant: :primary) %>"
+            data-danger-class="<%= essentials_button_classes(variant: :danger) %>"
+            class="<%= essentials_button_classes(variant: :primary) %>">Continue</button>
+  </div>
+</dialog>

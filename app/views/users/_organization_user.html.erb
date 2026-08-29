@@ -31,6 +31,10 @@
                       icon: "bi-arrow-down-circle", method: :post,
                       confirm: "This will demote the admin to user status. Are you sure that you want to submit this?"}
       end
+      # Nothing to offer on your own row, and nothing the server could usefully be asked -- so
+      # this one stays a disabled item. It is the exception design.md names: an action that is
+      # unavailable because of *who you are* rather than because of the record's state, where
+      # there is no attempt to make and therefore nothing for a flash to answer.
       if row_items.empty?
         row_items << {label: "Change this account", path: "#", icon: "bi-person-gear", disabled: true,
                       reason: "You cannot change your own membership"}

@@ -752,7 +752,7 @@ RSpec.feature "Distributions", type: :system do
 
     it "the user can reclaim it" do
       expect do
-        accept_confirm do
+        accept_confirm_dialog do
           click_row_action "Reclaim"
         end
         expect(page).to have_content "reclaimed"
@@ -790,7 +790,7 @@ RSpec.feature "Distributions", type: :system do
         item = distribution.line_items.first.item
         item.destroy
         expect do
-          accept_confirm do
+          accept_confirm_dialog do
             click_row_action "Reclaim"
           end
           page.find "[data-flash]"

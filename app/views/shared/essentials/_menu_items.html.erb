@@ -79,7 +79,9 @@
     %>
     <%= button_to item[:path], method: item[:method],
           form_class: "block", form: {role: "none"}, role: "menuitem", class: item_classes,
-          data: {turbo: false, disable_with: "Please wait...", confirm: item[:confirm]}.compact do %>
+          data: {turbo: false, disable_with: "Please wait...", confirm: item[:confirm],
+                 confirm_tone: (item[:tone] == :danger ? "danger" : nil),
+                 confirm_label: item[:confirm] ? item[:label] : nil}.compact do %>
       <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
     <% end %>
   <% else %>
