@@ -125,6 +125,16 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("No")
       end
 
+      it 'can toggle the monthly deadline and day-before distribution reminder emails' do
+        choose('organization[deadline_reminders_enabled]', option: true)
+        choose('organization[distribution_reminders_enabled]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Updated your organization!")
+        expect(organization.reload.deadline_reminders_enabled).to be true
+        expect(organization.distribution_reminders_enabled).to be true
+      end
+
       it 'can set a default storage location on the organization' do
         select(storage_location.name, from: 'Default Storage Location')
 

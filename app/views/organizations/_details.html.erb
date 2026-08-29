@@ -176,6 +176,18 @@
 
             <h4>Other emails</h4>
             <div>
+              <h6 class="font-weight-bold">Send monthly deadline reminder emails to partners?</h6>
+              <p>
+                <%= humanize_boolean(@organization.deadline_reminders_enabled) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Send day-before distribution reminder emails to partners?</h6>
+              <p>
+                <%= humanize_boolean(@organization.distribution_reminders_enabled) %>
+              </p>
+            </div>
+            <div>
               <h6 class="font-weight-bold">Reminder emails are sent</h6>
               <p>
                 <%= fa_icon "calendar" %>

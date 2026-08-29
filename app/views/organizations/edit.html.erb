@@ -151,6 +151,8 @@
                 <hr>
 
                 <h4>Other emails</h4>
+                <%= f.input :deadline_reminders_enabled, label: 'Send monthly deadline reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :distribution_reminders_enabled, label: 'Send day-before distribution reminder emails to partners?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: current_organization %>
                 <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
                 <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>

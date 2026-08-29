@@ -348,6 +348,19 @@ RSpec.describe "Organizations", type: :request do
         end
       end
 
+      context "toggles the reminder email settings" do
+        let(:update_param) do
+          { organization: { deadline_reminders_enabled: true, distribution_reminders_enabled: false } }
+        end
+
+        it "persists both flags" do
+          subject
+          organization.reload
+          expect(organization.deadline_reminders_enabled).to be true
+          expect(organization.distribution_reminders_enabled).to be false
+        end
+      end
+
       context "updates repackage essentials setting" do
         let(:update_param) { { organization: { repackage_essentials: true } } }
         it "works" do
