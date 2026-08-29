@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actions header, and why an action is disabled</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--line2:#F1F5F9;--ink:#0F172A;--mid:#475569;
+    --soft:#64748B;--brand:#4F46E5;--brand50:#EEF2FF;--brand700:#4338CA;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--warn:#92400E;--warnsoft:#FEF3C7;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 100px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:78ch;margin:0 0 26px}
+  h2{font-size:20px;margin:44px 0 4px;letter-spacing:-.01em;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:24px 0 6px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--warnsoft);color:var(--warn)}
+  p.note{color:var(--mid);max-width:82ch;margin:0 0 14px;font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:10px 0 4px}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line2)}
+  th{font-size:12px;font-weight:600;color:var(--soft);background:#F8FAFC}
+  tr:last-child td{border-bottom:0}
+  td.act,th.act{text-align:right;white-space:nowrap}
+  .kebab{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;
+    border:1px solid transparent;background:transparent;color:#475569;font-size:15px;line-height:1;cursor:pointer}
+  .kebab:hover{background:#F1F5F9;color:#0F172A}
+  .menu{width:290px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    box-shadow:0 10px 30px -12px rgba(15,23,42,.3);padding:4px;margin:10px 0 4px}
+  .mi{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;color:#334155;cursor:pointer}
+  .mi:hover{background:#F8FAFC}
+  .mi.dis{opacity:.6;cursor:default}
+  .mi.dis:hover{background:transparent}
+  .mi .why{display:block;font-size:12px;color:var(--soft);margin-top:2px;line-height:1.35}
+  .mi.blank .why{display:none}
+  .glyph{width:16px;text-align:center;flex:0 0 16px;padding-top:1px}
+  .measure{font-size:12px;color:var(--soft);margin:4px 0 0}
+  .flag{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--badsoft);color:var(--bad);margin-left:8px}
+  .flag.ok{background:var(--oksoft);color:var(--ok)}
+  .cmp{border-collapse:collapse;width:100%;max-width:1000px;margin-top:14px;font-size:14px}
+  .cmp th,.cmp td{border-bottom:1px solid var(--line);padding:8px 12px;vertical-align:top;background:transparent}
+  .cmp th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  .grid{display:grid;gap:20px;grid-template-columns:1fr 1fr}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:13px}
+  .srhint{font-size:11px;color:#94A3B8;font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Two follow-ups on table actions</h1>
+<p class="lede">The actions column header, and why a disabled action gives no reason. Both measured
+on the running app after the row-actions change.</p>
+
+<h2>1. The actions column header</h2>
+<p class="note"><b>Industry practice is genuinely split</b>, and it splits along what the column
+contains. <b>Salesforce Lightning</b> uses assistive text; <b>GOV.UK</b> uses
+<code>govuk-visually-hidden</code>; <b>Carbon</b> and <b>Atlassian</b> render the header empty with an
+accessible name. <b>Ant Design</b> — the most table-heavy of them — shows a visible <i>Action</i>
+column. The W3C tables tutorial only requires that every column <i>have</i> a header, visible or not.</p>
+<p class="note"><b>A correction to what I said last time.</b> I justified hiding it partly on width —
+"a visible label widens a 60px column". Measured, it costs <b>15px</b> on <code>/partners</code> and
+<code>/items</code> and <b>18px</b> on <code>/donation_sites</code>. That is not a real cost and I
+should not have leaned on it.</p>
+
+<div class="grid">
+  <div>
+    <h3>A — visually hidden <span class="tag t-now">shipped now</span></h3>
+    <div class="card"><table>
+      <tr><th>Partner</th><th>Status</th><th class="act"><span class="srhint">(Actions, hidden)</span></th></tr>
+      <tr><td>Pawnee Parent Service</td><td>Approved</td><td class="act"><button class="kebab">⋯</button></td></tr>
+      <tr><td>Pawnee Homeless Shelter</td><td>Awaiting review</td><td class="act"><button class="kebab">⋯</button></td></tr>
+    </table></div>
+    <p class="measure">60px. Salesforce, GOV.UK, Carbon, Atlassian.</p>
+  </div>
+  <div>
+    <h3>B — visible <span class="tag t-rec">recommended</span></h3>
+    <div class="card"><table>
+      <tr><th>Partner</th><th>Status</th><th class="act">Actions</th></tr>
+      <tr><td>Pawnee Parent Service</td><td>Approved</td><td class="act"><button class="kebab">⋯</button></td></tr>
+      <tr><td>Pawnee Homeless Shelter</td><td>Awaiting review</td><td class="act"><button class="kebab">⋯</button></td></tr>
+    </table></div>
+    <p class="measure">75px, +15. Ant Design.</p>
+  </div>
+</div>
+
+<p class="note" style="margin-top:16px"><b>Why I now recommend B, having recommended A a commit
+ago: the facts changed.</b> When the column held labelled buttons — <i>Edit</i>, <i>Delete</i> —
+it described itself and a header was redundant. Collapsing nine tables turned most of these columns
+into a <b>single unlabelled glyph</b>. A column whose entire visible content is "⋯" is exactly the
+case where the header is doing work, and 15px is a fair price for naming it. Hidden headers suit
+columns of labelled controls; this is no longer that.</p>
+
+<h2>2. Why is Deactivate greyed out? <span class="tag t-now">confusing today</span></h2>
+<p class="note">Reported on Items, and it is a real defect I introduced. The reason exists — it is
+just <b>invisible to the person looking at it</b>. It is <code>sr-only</code> text, so a screen
+reader reads "Deactivate, unavailable while this item is still in inventory or used by a kit" and a
+sighted user sees a grey word and nothing else. There is no tooltip either.</p>
+
+<div class="grid">
+  <div>
+    <h3>What it looks like now</h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi dis blank"><span class="glyph">⊘</span><span>Deactivate<span class="why">…</span></span></div>
+    </div>
+    <p class="measure">Greyed, no explanation, no hover target. <span class="flag">why?</span></p>
+  </div>
+  <div>
+    <h3>A — the reason, visible <span class="tag t-rec">recommended</span></h3>
+    <div class="menu">
+      <div class="mi"><span class="glyph">✎</span><span>Edit</span></div>
+      <div class="mi dis"><span class="glyph">⊘</span><span>Deactivate<span class="why">Still in inventory or used by a kit</span></span></div>
+    </div>
+    <p class="measure">Readable by everyone, no hover, no click. <span class="flag ok">answers it</span></p>
+  </div>
+</div>
+
+<h3>The alternatives, and why not</h3>
+<table class="cmp">
+  <tr><th>Option</th><th>What happens</th><th>Verdict</th></tr>
+  <tr><td><b>A. Visible help text</b> under the label</td>
+      <td>The reason is a second line in the menu item, always on screen. This is Polaris's
+          <code>helpText</code> on an ActionList item.</td>
+      <td><b>Recommended.</b> No hover, no touch problem, one place for the sentence, and the
+          screen-reader text it already has becomes the visible text.</td></tr>
+  <tr><td>B. Tooltip on hover</td>
+      <td>The reason appears when you point at the item.</td>
+      <td>No. A <code>disabled</code> control fires no pointer events, so the tooltip needs a
+          wrapper element to work at all — and there is no hover on a phone.</td></tr>
+  <tr><td>C. Do not disable; explain on click</td>
+      <td>GOV.UK's position: no disabled controls. Clicking shows why it cannot be done.</td>
+      <td>Honest, and it spends a click and a page load to deliver one sentence that would fit
+          on the row.</td></tr>
+  <tr><td>D. Omit the action entirely</td>
+      <td>What this did before the row-actions change.</td>
+      <td>No. It is what made the column ragged, and "the button is missing" answers nothing.</td></tr>
+</table>
+
+<p class="note" style="margin-top:14px"><b>The wording changes too.</b> "— unavailable while this
+item is still in inventory or used by a kit" was written to be read <i>after</i> the label by a
+screen reader, which is why it starts with a dash. As visible text it becomes its own sentence:
+<b>"Still in inventory or used by a kit"</b>. Every reason gets the same treatment — a storage
+location that still holds stock, a partner group that still has partners.</p>
+
+<h2>3. What the rule did to the tables you flagged</h2>
+<p class="note">Measured before and after, same seed, same viewport.</p>
+<table class="cmp">
+  <tr><th>Table</th><th>Before</th><th>After</th></tr>
+  <tr><td><code>/partners</code></td>
+      <td>0, 1 or 2 buttons per row; widths <b>170, 120, 170, 241, 0, 170px</b>; column <b>279px</b></td>
+      <td>one 28×28 trigger on every row; column <b>60px</b></td></tr>
+  <tr><td><code>/organization</code> users</td>
+      <td>0, 1 or 2 buttons; column <b>288px</b>; nothing at all on your own row</td>
+      <td>one trigger on every row; column <b>75px</b>; your own row explains why it is empty</td></tr>
+  <tr><td><code>/vendors</code>, <code>/requests</code></td>
+      <td>a 68×<b>30</b> labelled button beside a 28×<b>28</b> kebab</td>
+      <td>both <b>28×28</b></td></tr>
+  <tr><td><code>/donation_sites</code></td>
+      <td>three inline, third alternating <i>Deactivate</i>/<i>Restore</i>; <b>274px</b></td>
+      <td>one trigger; <b>76px</b></td></tr>
+  <tr><td><code>/barcode_items</code></td>
+      <td><i>View</i>, <i>Edit</i>, <i>Delete</i> inline; <b>349px</b></td>
+      <td><i>Edit</i>, <i>Delete</i> inline, both always present; <b>275px</b></td></tr>
+</table>
+
+</div>
+</body>
+</html>
