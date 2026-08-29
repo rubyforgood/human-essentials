@@ -83,20 +83,12 @@ RSpec.describe "Page layout", type: :system, js: true do
     end
   end
 
-  describe "the users page" do
-    before { visit users_path }
-
-    it "has one page wrapper and a 24px gap under the heading" do
-      expect(page_wrappers).to eq(1)
-      expect(gap_below_heading).to eq(24)
-    end
-
-    # `.pin-col` freezes a column so that a table which scrolls sideways keeps its identifying
-    # column in view. Two columns never scroll, and pinned, Name held 417px of a 740px phone.
-    it "does not freeze a column on a table that cannot scroll sideways" do
-      expect(page).to have_css("table.data-table")
-      expect(page).to have_no_css("table.data-table .pin-col")
-    end
+  # The /users page is gone -- it listed name and email where the organization page's table shows
+  # those plus role, last sign in, status, reinvite and the row actions. Its wrapper and gap
+  # assertions are covered by the organization page above; the `.pin-col` one went with the
+  # two-column table it was about.
+  describe "the organization page's card headers" do
+    before { visit organization_path }
 
     # The card opened with an empty `border-b` strip: a hand-written header holding nothing, drawing
     # a hairline across the top of the card for no reason.
@@ -111,6 +103,7 @@ RSpec.describe "Page layout", type: :system, js: true do
       expect(empties).to eq(0)
     end
   end
+
   describe "the organization settings form" do
     before { visit edit_organization_path }
 

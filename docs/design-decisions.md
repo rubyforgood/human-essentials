@@ -6394,3 +6394,38 @@ accurate in a vocabulary the user has no access to. It names the *Items & invent
 the same words the sidebar uses, and links there. Verified the link resolves and that a kit really
 does appear in the items index.
 
+## 2026-08-29 — /users deleted, and the dependency it was hiding
+
+Removed as redundant, which it was: name and email against the organization page's name, email,
+role, last sign in, status, reinvite and row actions. The previous change had already left it with
+no inbound link.
+
+Gone: the `:index` route, `UsersController#index`, `users/index.html.erb`, and
+`users/shared/_account_management_menu.html.erb` — the last of which was rendered by nothing and
+linked to both `users_path` and `new_user_path`, so it would have broken anyway. `/users/new` stays;
+the dashboard's getting-started prompt links to it, and its back link now points at the organization
+page.
+
+### Deleting a route broke a form on a different page
+
+`users/new.html.erb` called `essentials_form_for(@user)` with no URL. Rails infers one from the
+model, and for a `User` that is `users_path` — a helper that existed **only because
+`resources :users` declared `:index`**. Removing the index removed the helper, and the form stopped
+rendering: `undefined method 'users_path'`. The page 500'd, and its request spec caught it.
+
+The URL is explicit now. `user_registration_path` is the same `/users`, so nothing about the
+behaviour changed — but the dependency is visible instead of incidental. **A `form_for` with no
+`url:` is coupled to a route you cannot see from the template**, and deleting an apparently unused
+index is exactly when that bites.
+
+### And the finding underneath it, not fixed here
+
+`POST /users` resolves to `devise_invitable/registrations#create`. There is no
+`UsersController#create` at all. So *Add other users at your bank* — linked from the dashboard's
+getting-started prompt — renders a form that submits to Devise's **registration** create, not to any
+bank-side "add this person to my organization" action. The organization page's own *Invite user*
+button posts to `invite_user_organization_path`, which is a different mechanism entirely.
+
+Whether `/users/new` should exist at all, given that, is a real question and not one to answer as a
+side effect of deleting a list. Written down rather than guessed at.
+

@@ -604,6 +604,16 @@ It also says where to go afterwards: the name, value and partner visibility can 
 **Items & inventory**, and the callout links there. It used to say "via the kit's item", which is
 true internally but not something the screen explains.
 
+### The separate Users page is gone
+
+**Your organization page is the one place users are listed now.** There used to be a second page at
+`/users` showing just names and email addresses; the table on your organization page shows the same
+people with their role, last sign-in, status, whether they need re-inviting, and the actions you can
+take. Nothing has been lost — it was the smaller of two lists of the same thing, and after the
+account-menu tidy-up nothing linked to it.
+
+*Add a user* still works and now returns you to the organization page.
+
 ### The account menu is shorter
 
 **"Organization" is no longer in the avatar menu.** It is still pinned to the bottom of the left
