@@ -14,7 +14,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     it 'can remove that user from the organization' do
       visit organization_path
       accept_confirm do
-        click_button "Remove user"
+        click_row_action "Remove user", row: managed_user.display_name
       end
 
       expect(page).to have_content("User has been removed!")
@@ -24,7 +24,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can promote that user from the organization" do
       visit organization_path
       accept_confirm do
-        click_button "Promote to admin"
+        click_row_action "Promote to admin", row: managed_user.display_name
       end
 
       expect(page).to have_content("User has been promoted!")
@@ -35,7 +35,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       managed_user.add_role(Role::ORG_ADMIN, organization)
       visit organization_path
       accept_confirm do
-        click_button "Demote to user"
+        click_row_action "Demote to user", row: managed_user.display_name
       end
 
       expect(page).to have_content("User has been demoted!")

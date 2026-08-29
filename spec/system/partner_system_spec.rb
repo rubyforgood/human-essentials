@@ -22,7 +22,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on "Review profile"
+          click_row_action "Review profile"
 
           assert page.has_content?('Partner profile')
           click_on 'Approve partner'
@@ -35,7 +35,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on "Review profile"
+          click_row_action "Review profile"
 
           # Make sure the button is there before trying to double click it
           expect(page.find('a[href*="/approve_application"]')).to have_content("Approve partner")
@@ -67,7 +67,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           assert page.has_content? partner_awaiting_approval.name
 
-          click_on "Review profile"
+          click_row_action "Review profile"
           click_on 'Approve partner'
           assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
@@ -103,7 +103,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
           accept_confirm do
-            find('tr', text: partner_attributes[:name]).find_button('Invite').click
+            click_row_action "Invite", row: partner_attributes[:name]
           end
 
           assert page.has_content? "Partner #{partner_attributes[:name]} invited!"
@@ -152,9 +152,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           organization.update!(one_step_partner_invite: true)
           visit partners_path
 
-          assert page.has_content? "Invite and approve"
+          # One menu, opened once. Asserting through `open_row_menu` and then calling
+          # `click_row_action` clicks the trigger a second time, which closes it again.
+          menu = open_row_menu(row: uninvited_partner.name)
+          assert menu.has_content?("Invite and approve")
           expect do
-            click_on "Invite and approve"
+            menu.click_on "Invite and approve"
           end.to change { uninvited_partner.reload.status }.from("uninvited").to("approved")
         end
       end
@@ -181,7 +184,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it 'should notify the user that its been successful and change the partner status' do
           accept_confirm do
-            find_button('Request recertification').click
+            click_row_action "Request recertification"
           end
 
           expect(page).to have_content "#{partner_to_request_recertification.name} recertification successfully requested!"
@@ -216,8 +219,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         visit partners_path
 
         accept_alert("Send an invitation to #{partner.name} to create their profile for approval?") do
-          ele = find('tr', text: partner.name)
-          within(ele) { click_on "Invite" }
+          click_row_action "Invite", row: partner.name
         end
 
         expect(page).to have_content "Partner #{partner.name} invited!", wait: page_content_wait
@@ -226,7 +228,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       it "shows invite button only for unapproved partners" do
         expect(page.find('tr', text: 'Abc')).to have_content('Invited')
-        expect(page.find('tr', text: 'Bcd')).to have_content('Invite')
+        expect(open_row_menu(row: "Bcd")).to have_content("Invite")
         expect(page.find('tr', text: 'Cde')).to have_no_content('Invite')
       end
 
@@ -746,7 +748,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? existing_partner_group.name, wait: page_content_wait
           assert page.has_content? item_category_1.name
 
-          click_on 'Edit'
+          click_row_action "Edit"
           fill_in 'Name *', with: 'New Group Name'
 
           # Unset the existing category
@@ -785,7 +787,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             # Edit on it, and the panel it named does not exist.
             assert page.has_content? existing_partner_group.name, wait: page_content_wait
 
-            click_on 'Edit'
+            click_row_action "Edit"
             post_refresh
           end
 
@@ -831,6 +833,5 @@ end
 
 def visit_approval_page(partner_name:)
   visit partners_path
-  ele = find('tr', text: partner_name)
-  within(ele) { click_on "Review profile" }
+  click_row_action "Review profile", row: partner_name
 end

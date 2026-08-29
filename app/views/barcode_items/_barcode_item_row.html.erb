@@ -5,8 +5,11 @@
   <td class="quantity"><%= number_with_delimiter(barcode_item_row.quantity) %></td>
   <td class="font-mono text-xs"><%= barcode_item_row.value %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
+    <%# Was View, Edit and Delete inline -- 349px, the widest actions column in the app. The View
+        goes because the barcode's name in the first cell already links to it, which leaves a
+        settled pair that is always both present, so they stay inline: two clicks saved over a
+        menu, and the column does not move because nothing here is conditional. %>
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <%= essentials_link_button "Edit", edit_barcode_item_path(barcode_item_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
       <%= essentials_action_button "Delete", barcode_item_path(barcode_item_row), method: :delete,
             variant: :ghost_danger, size: :sm, icon: "bi-trash",

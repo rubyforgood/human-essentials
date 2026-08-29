@@ -69,14 +69,21 @@
               <% end %>
             </td>
             <td class="text-right">
-              <div class="flex justify-end gap-1.5">
-                <%= essentials_link_button "Edit", edit_partner_group_path(pg), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-                <% if pg.partners.none? %>
-                  <%= essentials_action_button "Delete", partner_group_path(pg), method: :delete,
-                        variant: :ghost_danger, size: :sm, icon: "bi-trash",
-                        confirm: confirm_delete_msg(pg.name) %>
-                <% end %>
-              </div>
+              <%# Delete appeared only on a group with no partners, so the column alternated between
+                  two controls and one. Collapsed, and Delete stays in the menu disabled with the
+                  reason -- which also answers "why can I not delete this one?", which the row
+                  vanishing the button never did. %>
+              <%= render "shared/essentials/row_actions", label: pg.name, items: [
+                    {label: "Edit", path: edit_partner_group_path(pg), icon: "bi-pencil"},
+                    (if pg.partners.none?
+                       {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
+                        method: :delete, tone: :danger, confirm: confirm_delete_msg(pg.name)}
+                     else
+                       {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
+                        method: :delete, tone: :danger, disabled: true,
+                        reason: "unavailable while partners still belong to this group"}
+                     end)
+                  ] %>
             </td>
           </tr>
         <% end %>

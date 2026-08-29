@@ -7,25 +7,35 @@
   <td class="whitespace-nowrap"><%= reinvite_user_link(user) %></td>
   <td class="text-right">
     <%#
-      The AdminLTE version hid these behind a Bootstrap dropdown, whose JS is not on a design
-      system page -- the menu would never have opened. There are at most two actions, so they
-      are shown inline instead of behind a menu that has to be built and named.
+      Which actions exist depends on the user's role and on whether they are you, so inline the
+      column showed two controls, then one, then nothing, row after row. That is the case
+      design.md now says to collapse whatever the count -- the trigger is 28px on every row.
+
+      A row with nothing available still gets the menu, holding the reason: you cannot act on your
+      own membership. Better than an empty cell, which says nothing at all.
     %>
-    <div class="flex justify-end gap-1.5 whitespace-nowrap">
-      <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-        <%= essentials_action_button "Promote to admin", promote_to_org_admin_organization_path(user_id: user.id), method: :post,
-              variant: :ghost, size: :sm, icon: "bi-arrow-up-circle",
-              confirm: "This will promote the user to admin status. Are you sure that you want to submit this?" %>
-        <%= essentials_action_button "Remove user", remove_user_organization_path(user_id: user.id), method: :post,
-              variant: :ghost_danger, size: :sm, icon: "bi-person-dash",
-              class: "deactivate", id: dom_id(user),
-              confirm: "This will revoke the user's organization permissions. Are you sure that you want to submit this?" %>
-      <% end %>
-      <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) && user.id != current_user.id %>
-        <%= essentials_action_button "Demote to user", demote_to_user_organization_path(user_id: user.id, organization_id: current_organization.id), method: :post,
-              variant: :ghost, size: :sm, icon: "bi-arrow-down-circle",
-              confirm: "This will demote the admin to user status. Are you sure that you want to submit this?" %>
-      <% end %>
-    </div>
+    <%
+      is_admin = user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+      row_items = []
+      unless is_admin
+        row_items << {label: "Promote to admin", path: promote_to_org_admin_organization_path(user_id: user.id),
+                      icon: "bi-arrow-up-circle", method: :post,
+                      confirm: "This will promote the user to admin status. Are you sure that you want to submit this?"}
+        row_items << {label: "Remove user", path: remove_user_organization_path(user_id: user.id),
+                      icon: "bi-person-dash", method: :post, tone: :danger,
+                      confirm: "This will revoke the user's organization permissions. Are you sure that you want to submit this?"}
+      end
+      if current_user.is_admin?(current_organization) && is_admin && user.id != current_user.id
+        row_items << {label: "Demote to user",
+                      path: demote_to_user_organization_path(user_id: user.id, organization_id: current_organization.id),
+                      icon: "bi-arrow-down-circle", method: :post,
+                      confirm: "This will demote the admin to user status. Are you sure that you want to submit this?"}
+      end
+      if row_items.empty?
+        row_items << {label: "Change this account", path: "#", icon: "bi-person-gear", disabled: true,
+                      reason: "you cannot change your own membership here"}
+      end
+    %>
+    <%= render "shared/essentials/row_actions", label: user.display_name, items: row_items %>
   </td>
 </tr>

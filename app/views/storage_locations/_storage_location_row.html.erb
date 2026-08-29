@@ -12,28 +12,24 @@
   <td class="quantity"><%= quantity %></td>
   <td class="numeric"><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", storage_location, variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Edit", edit_storage_location_path(storage_location), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-      <% if storage_location.discarded? %>
-        <%= essentials_action_button "Reactivate", storage_location_reactivate_path(storage_location), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: confirm_reactivate_msg(storage_location.name) %>
-      <% elsif quantity.zero? %>
-        <%= essentials_action_button "Deactivate", storage_location_deactivate_path(storage_location), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-slash-circle",
-              confirm: confirm_deactivate_msg(storage_location.name) %>
-      <% else %>
-        <%# A location that still holds stock cannot be deactivated. This stays a real
-            <button disabled> inside its form rather than becoming a styled <span>: the
-            disabled state is then exposed to assistive tech, and the reason is given as
-            sr-only text so it is not carried by a hover-only title. %>
-        <%= button_to storage_location_deactivate_path(storage_location), method: :put,
-              disabled: true, form_class: "inline-block",
-              class: essentials_button_classes(variant: :ghost, size: :sm) do %>
-          <i class="bi-slash-circle" aria-hidden="true"></i>Deactivate<span class="sr-only">&nbsp;— unavailable while this location still holds inventory</span>
-        <% end %>
-      <% end %>
-    </div>
+    <%# Three inline, and a third action that was Reactivate, Deactivate or a disabled Deactivate
+        depending on the row. The menu keeps `disabled:` and `reason:`, so a location that still
+        holds stock still says why -- as sr-only text rather than a hover-only title. %>
+    <%= render "shared/essentials/row_actions", label: storage_location.name, items: [
+          {label: "Edit", path: edit_storage_location_path(storage_location), icon: "bi-pencil"},
+          (if storage_location.discarded?
+             {label: "Reactivate", path: storage_location_reactivate_path(storage_location),
+              icon: "bi-arrow-counterclockwise", method: :put,
+              confirm: confirm_reactivate_msg(storage_location.name)}
+           elsif quantity.zero?
+             {label: "Deactivate", path: storage_location_deactivate_path(storage_location),
+              icon: "bi-slash-circle", method: :put,
+              confirm: confirm_deactivate_msg(storage_location.name)}
+           else
+             {label: "Deactivate", path: storage_location_deactivate_path(storage_location),
+              icon: "bi-slash-circle", method: :put, disabled: true,
+              reason: "unavailable while this location still holds inventory"}
+           end)
+        ] %>
   </td>
 </tr>

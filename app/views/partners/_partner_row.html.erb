@@ -9,36 +9,44 @@
   <td class="quantity"><%= partner_row.quota %></td>
   <td><%= essentials_partner_status_pill(status) %></td>
   <td class="text-right">
-    <div class="flex justify-end gap-1.5 whitespace-nowrap">
-      <% case status %>
-      <% when "uninvited" %>
-        <% if one_step %>
-          <%= essentials_action_button "Invite and approve", invite_and_approve_partner_path(partner_row), method: :post,
-                variant: :ghost, size: :sm, icon: "bi-envelope",
-                confirm: "Send an invitation to #{partner_row.name} to begin making requests in the application?" %>
-        <% else %>
-          <%= essentials_action_button "Invite", invite_partner_path(partner_row), method: :post,
-                variant: :ghost, size: :sm, icon: "bi-envelope",
-                confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?" %>
-        <% end %>
-      <% when "invited" %>
-        <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
-              variant: :ghost, size: :sm, icon: "bi-check2" %>
-        <%= essentials_action_button "Re-send invite", invite_partner_path(partner_row), method: :post,
-              variant: :ghost, size: :sm, icon: "bi-envelope",
-              confirm: "Re-send an invitation to #{partner_row.name}?" %>
-      <% when "awaiting_review" %>
-        <%= essentials_link_button "Review profile", partner_path(partner_row, anchor: "partner-information"),
-              variant: :ghost, size: :sm, icon: "bi-check2" %>
-      <% when "approved" %>
-        <%= essentials_action_button "Request recertification", recertify_partner_partner_path(partner_row), method: :post,
-              variant: :ghost, size: :sm, icon: "bi-arrow-repeat",
-              confirm: "Recertify partner #{partner_row.name}?" %>
-      <% when "deactivated" %>
-        <%= essentials_action_button "Reactivate", reactivate_partner_path(partner_row), method: :put,
-              variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-              confirm: confirm_reactivate_msg(partner_row.name) %>
-      <% end %>
-    </div>
+    <%#
+      The column this replaced was the clearest case for collapsing by table rather than by row: a
+      five-branch `case` on status, so the label, the width and the *number* of controls all changed
+      as you read down. Measured across one screen: 170, 120, 170, 241, 0 and 170px. The trigger is
+      28px on every row now whatever is inside it.
+
+      A status with no action still gets the menu, holding the one action that always applies --
+      viewing the partner -- so the column never goes empty.
+    %>
+    <%
+      row_items =
+        case status
+        when "uninvited"
+          if one_step
+            [{label: "Invite and approve", path: invite_and_approve_partner_path(partner_row),
+              icon: "bi-envelope", method: :post,
+              confirm: "Send an invitation to #{partner_row.name} to begin making requests in the application?"}]
+          else
+            [{label: "Invite", path: invite_partner_path(partner_row), icon: "bi-envelope", method: :post,
+              confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?"}]
+          end
+        when "invited"
+          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-check2"},
+           {label: "Re-send invite", path: invite_partner_path(partner_row), icon: "bi-envelope", method: :post,
+            confirm: "Re-send an invitation to #{partner_row.name}?"}]
+        when "awaiting_review"
+          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-check2"}]
+        when "approved"
+          [{label: "Request recertification", path: recertify_partner_partner_path(partner_row),
+            icon: "bi-arrow-repeat", method: :post, confirm: "Recertify partner #{partner_row.name}?"}]
+        when "deactivated"
+          [{label: "Reactivate", path: reactivate_partner_path(partner_row), icon: "bi-arrow-counterclockwise",
+            method: :put, confirm: confirm_reactivate_msg(partner_row.name)}]
+        else
+          []
+        end
+      row_items += [{label: "View partner", path: partner_path(partner_row), icon: "bi-eye"}] if row_items.empty?
+    %>
+    <%= render "shared/essentials/row_actions", label: partner_row.name, items: row_items %>
   </td>
 </tr>

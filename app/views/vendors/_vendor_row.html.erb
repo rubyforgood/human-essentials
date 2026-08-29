@@ -29,7 +29,7 @@
     <%# A visible View: nothing else in this row links to the vendor. %>
     <%= render "shared/essentials/row_actions",
           label: vendor_row.business_name.presence || "this vendor",
-          primary: essentials_link_button("View", vendor_row, variant: :ghost, size: :sm, icon: "bi-eye"),
+          primary: essentials_row_icon_link("View", vendor_row, icon: "bi-eye"),
           items: row_items %>
   </td>
 </tr>

@@ -97,7 +97,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       visit subject
 
-      click_on "View", match: :first
+      # The View button is gone: the location's name in the first cell already links to it, and
+      # design.md keeps a visible View only where the row does not link to its own record.
+      click_on location1.name
 
       click_on "Coming in"
 
@@ -159,23 +161,25 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location1 = create(:storage_location, :with_items)
       visit subject
 
-      within "form[action='/storage_locations/#{location1.id}/deactivate']" do
-        expect(page).to have_button('Deactivate', disabled: true)
-      end
+      # The action is in the row's overflow menu now, still a real disabled <button> so the
+      # state reaches assistive tech, with the reason as sr-only text.
+      menu = open_row_menu(row: location1.name)
+      expect(menu).to have_button("Deactivate", disabled: true)
+      expect(menu).to have_text("unavailable while this location still holds inventory")
     end
 
     it "Allows user to deactivate and reactivate storage locations" do
       location1 = create(:storage_location)
       visit subject
 
-      expect(accept_confirm { click_on "Deactivate", match: :first }).to include "Are you sure you want to deactivate #{location1.name}"
+      expect(accept_confirm { click_row_action "Deactivate", row: location1.name }).to include "Are you sure you want to deactivate #{location1.name}"
       expect(page.find("[data-flash]")).to have_content "Storage Location deactivated successfully"
 
       open_filters
       check "include_inactive_storage_locations"
       wait_for_filters
 
-      expect(accept_confirm { click_on "Reactivate", match: :first }).to include "Are you sure you want to reactivate #{location1.name}"
+      expect(accept_confirm { click_row_action "Reactivate", row: location1.name }).to include "Are you sure you want to reactivate #{location1.name}"
 
       # Wait for the reactivation itself before looking at the message. Filtering leaves the
       # previous flash in place -- it describes something that did happen -- so a bare check for

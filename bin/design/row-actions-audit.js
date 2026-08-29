@@ -42,6 +42,14 @@ const PROBE = () => {
   const rows = [...table.querySelectorAll("tbody tr")].slice(0, 40);
   if (!rows.length) return { empty: true };
 
+  // Only tables that *have* an actions column. Reading the last cell of every table treats a data
+  // cell of conditional links as a ragged actions column -- /events has no actions at all and was
+  // reported as varying row to row. The header is the reliable marker now that all 43 are
+  // identical: `<th scope="col" class="text-right"><span class="sr-only">Actions</span></th>`.
+  const headers = [...table.querySelectorAll("thead th")];
+  const last = headers[headers.length - 1];
+  if (!last || last.textContent.trim() !== "Actions") return { noActionsColumn: true };
+
   const per = rows.map((tr) => {
     const cell = tr.lastElementChild;
     if (!cell) return null;
@@ -93,7 +101,7 @@ const PROBE = () => {
       const resp = await page.goto(BASE + t.path, { waitUntil: "networkidle", timeout: 45000 }).catch(() => null);
       if (!resp || resp.status() !== 200) continue;
       const r = await page.evaluate(PROBE);
-      if (r && !r.empty) seen.push({ path: t.path, ...r });
+      if (r && !r.empty && !r.noActionsColumn) seen.push({ path: t.path, ...r });
     }
     await context.close();
   }
@@ -112,8 +120,17 @@ const PROBE = () => {
   add("3+ inline, no menu", withActions.filter((t) => !t.menu && Math.max(...t.counts) >= 3));
   add("varies row to row", withActions.filter((t) => t.counts.length > 1));
   add("mixed control heights", withActions.filter((t) => t.heights.length > 1));
-  // Judged on the real number of actions, menu contents included -- not on what is visible.
-  add("menu for 2 or fewer", withActions.filter((t) => t.menu && Math.max(...t.totals) <= 2));
+
+  // Advisory, not a failure, and the distinction is the point.
+  //
+  // design.md says a table collapses when three or more actions are possible OR when *which*
+  // actions exist depends on status, role or state. This audit sees one render of one seed, so it
+  // can see the count but not the variance: /items builds Delete, Deactivate or a disabled
+  // Deactivate from the item's state, and on seed data every row happens to land in the same
+  // branch. Reported as a failure it said /items was wrong, and /items is right.
+  //
+  // So: a menu holding two or fewer is worth a look at the row partial, and nothing more.
+  const advisory = withActions.filter((t) => t.menu && Math.max(...t.totals) <= 2);
 
   console.log("");
   if (!findings.length) {
@@ -121,6 +138,12 @@ const PROBE = () => {
   } else {
     findings.forEach((f) => console.log(`  ${f.why.padEnd(22)} ${f.path.padEnd(32)} ${f.detail}`));
     console.log(`\n${findings.length} finding(s) across ${new Set(findings.map((f) => f.path)).size} table(s)`);
+  }
+
+  if (advisory.length) {
+    console.log("\nadvisory -- a menu holding 2 or fewer actions. Correct when the *set* varies by");
+    console.log("row state, which this cannot see from one render. Check the row partial:");
+    advisory.forEach((t) => console.log(`  ${t.path}`));
   }
   process.exit(findings.length ? 1 : 0);
 })();

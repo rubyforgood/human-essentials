@@ -594,6 +594,26 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### Table actions look the same on every table now
+
+**Where a row had three or more things you could do, they moved into the "..." menu** at the end of
+the row — barcode items, donation sites and storage locations. Nothing was removed; the actions are
+one click further in, and the tables got a lot of width back.
+
+**Where the available actions changed from row to row, they also moved into the menu.** On Partner
+agencies the buttons used to change label, change width, and sometimes disappear as you read down —
+because which action applies depends on the partner's status. Same on the Users table on your
+organization page, where it depends on the person's role. Both now show one "..." on every row.
+
+**An action you cannot use is now listed and greyed out with the reason**, instead of simply not
+being there. So "why can I not delete this group?" has an answer on screen.
+
+**Where a table has one or two actions that are always available, they stay as buttons** — nothing
+moved behind a menu unnecessarily.
+
+**The View button is gone from a few tables** where the row's first column was already a link to the
+same page.
+
 ### Every page tells you where you are, and gets you back
 
 **There is a breadcrumb above every page title now** — *Reports › Itemized donations*, *Items ›
