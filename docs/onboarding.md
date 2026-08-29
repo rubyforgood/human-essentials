@@ -621,6 +621,30 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### Fields that only apply to one answer now sit under that answer
+
+**On New distribution, Shipping cost used to sit off to the right of the delivery method options**,
+in a box half again as wide as every other field on the card, and *above* the *Shipped* option that
+brings it up. It now appears directly underneath *Shipped*, indented, with a short grey rule down
+its left side — the rule is there to say the field belongs to that one option and not to the other
+two.
+
+The same treatment is now on every question in the app that only appears once you have answered
+something else:
+
+| Where | What appears, and when |
+| --- | --- |
+| New / edit distribution | **Shipping cost**, when the delivery method is *Shipped* |
+| Organization settings, Partner group | **Reminder day of month** or **day of the week**, under whichever you pick |
+| New / edit partner group | The whole **reminder schedule**, when you tick *Yes, send reminders* |
+| New / edit partner | A note about **where reminder settings come from**, when you tick the reminders box |
+| Partner profile, Agency information | **Other agency type**, when the agency type is *Other* |
+| Admin, New user | **Resource**, for every role type except *Super admin* |
+
+Two of those never worked before. The note on the partner form **could not appear at all** — the
+page had a wiring fault that stopped it, so ticking the box did nothing. *Other agency type* was
+drawn and then removed on every load, so it flickered.
+
 ### A purchase can start a distribution, and can be printed
 
 **Open any purchase and the header now has two buttons**, the same two a donation has always had.

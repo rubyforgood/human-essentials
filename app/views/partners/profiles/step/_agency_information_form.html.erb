@@ -10,12 +10,19 @@
         collection: Partners::Profile.agency_types_for_selection,
         label: "Agency type",
         class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-        input_html: { data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
+        input_html: { "aria-controls": "other_agency_type_field",
+                      data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
     </div>
 
-    <div class="mb-4" data-hide-by-source-val-target="destination">
-      <%= pf.input :other_agency_type, label: "Other agency type", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
-    </div>
+    <%# Only asked for when the agency type is Other, so it is revealed under the question that
+        makes it necessary. It also used to render visible and be hidden by the controller on
+        `connect()`, so it flashed on every load; `shown` is read on the server now. %>
+    <%= render "shared/essentials/conditional_reveal", id: "other_agency_type_field",
+          shown: profile.agency_type == "other",
+          data: {"hide-by-source-val-target": "destination"} do %>
+      <%= pf.input :other_agency_type, label: "Other agency type", wrapper_html: {class: "mb-0"},
+            class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <% end %>
   </div>
 
   <%= render "shared/custom_file_input",

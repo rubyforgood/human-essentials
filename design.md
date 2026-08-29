@@ -1125,6 +1125,54 @@ matching neither branch is the correct initial state.
 `bin/design/flash-of-hidden-audit.js` checks for it: everything visible at `commit` that is gone
 once the page settles.
 
+<a id="conditional-reveal"></a>
+### Conditional reveal
+
+A field that only applies to **one answer** is revealed under the answer that needs it.
+
+```erb
+<%= render "shared/essentials/conditional_reveal", id: "shipping_cost_div",
+      shown: f.object.delivery_method.to_s == "shipped",
+      data: {distribution_delivery_target: "shippingCost"} do %>
+  <%= f.input :shipping_cost, wrapper_html: {class: "mb-0"} %>
+<% end %>
+```
+
+Locals: `id` and `shown` are required; `data`, `class` and `marked` are optional.
+
+- **It goes below the control that reveals it, never beside it.** GOV.UK ("Conditionally revealing
+  a question"), NHS and USWDS all put it there; Carbon, Material and Polaris have no named
+  component but place dependent fields after their trigger in reading order. **None of the five
+  puts a dependent field in a parallel column.** The shipping cost field on `/distributions/new`
+  was in a second grid beside the radios: **529px** where every other field on the card was
+  **346px**, a left edge at x=858 that landed on no column line, and **94px above** the *Shipped*
+  radio that produces it — so a keyboard user tabbing off *Shipped* was thrown back up the page.
+- **The indent and the 4px left rule are what say *this belongs to that one option*.** Flush under
+  a three-option group, a field reads as belonging to all three.
+- **The numbers are derived from our own control, not copied.** GOV.UK's 18/4/33 is sized to a
+  40px radio. Ours is 16px with a `gap-2` to its label, so the rule is centred under it at
+  `ml-1.5` (6px = 16/2 − 4/2) and `pl-3.5` (14px) lands the content at 24px — exactly the left
+  edge of the label above it. Copying 55px would have indented it to nowhere.
+- **The trigger gets `aria-controls` and never `aria-expanded`.** Measured with axe: `aria-controls`
+  alone is clean, and adding `aria-expanded` to three radios raises `aria-allowed-attr` ×3, because
+  ARIA 1.2 does not list it for `role=radio`. It *is* allowed on a checkbox — also measured — but
+  using it on some triggers and not others would split the pattern for no gain, and on a `<select>`
+  it would be wrong outright: on a combobox `aria-expanded` means the listbox is open. What
+  actually carries the behaviour is that the revealed field **follows its trigger in the DOM**, so
+  Tab reaches it next.
+- **It is server-rendered hidden**, per [the rule above](#render-the-state-do-not-correct-it).
+- `marked: false` for content that **already carries its own box** — a callout. Two markings for
+  one relationship is noise. It still sits under its trigger and still starts in the right state.
+- **A table cell is exempt.** The unit select on a partner request is shown or hidden by the item
+  chosen beside it, but a column's position *is* the relationship, and there is nothing to indent
+  from.
+- **When the trigger is a `<select>`** there is no single option to hang the rule under, so the
+  6px is simply an indent — carried over so the app has one number rather than two shapes.
+
+`pw bin/design/disclosure-audit.js` checks every reveal on every form: below its trigger, after it
+in the DOM, marked, and hanging 6px off its left edge. It exits non-zero on a defect. **10 reveals,
+0 defects.**
+
 <a id="a-camera-that-will-not-start-says-so"></a>
 **A camera that will not start says so, in the viewport.** Quagga's init callback used to do
 `console.log(err); stop()` — and `stop()` hides the viewport, so a refused camera opened and shut

@@ -14,10 +14,15 @@
 
     <% if Flipper.enabled?(:enable_packs) && (current_partner ? current_partner.organization.request_units.any? : current_organization.request_units.any?) %>
       <td>
+        <%# Only the items that have custom units get this select, so it starts hidden for the ones
+            that do not -- rendered on the server rather than removed by the controller after paint.
+            No indent or rule: this is a fixed table column, and its position is the relationship.
+            See "Conditional reveal" in design.md. %>
+        <% item_has_units = item_units[field.object.item_id].present? %>
         <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
         <%= field.select :request_unit, [], {include_blank: 'units'},
-                         { :'data-item-units-target' => 'requestSelect', class: EssentialsUiHelper::SELECT_CLASSES} %>
-
+                         { :'data-item-units-target' => 'requestSelect',
+                           class: "#{EssentialsUiHelper::SELECT_CLASSES}#{" hidden" unless item_has_units}"} %>
       </td>
     <% end %>
     <td>

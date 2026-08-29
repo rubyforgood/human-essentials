@@ -6638,3 +6638,63 @@ neither branch is the answer.
 `<select>` is excluded from the audit: select2 replaces one with its own container, which is a swap
 rather than a hide, and reporting it would bury the real findings.
 
+## 2026-08-29 — A conditionally revealed field goes under the answer that reveals it
+
+Reported on `/distributions/new`: *"the location and size of the shipping cost field does not make
+any sense... shouldn't it be below the shipping cost radio button? What is industry standard for
+progressive disclosure like this one?"*
+
+**Measured first.** At 1440px: every field on the card is **346px** on a three column grid at
+x = 309 / 675 / 1041. Shipping cost opened a *second*, two column grid, so it was **529px** with a
+left edge at **x = 858** — on no column line at all. Its label sat at y = 503 and the **Shipped**
+radio that reveals it at y = 597, so the field was **94px above its own trigger**. Three faults,
+not one: wrong width, aligned to nothing, and cause below effect. For Pick up and Delivery — two of
+three options, including the default — the right half of the band was simply empty.
+
+**What the industry does.** GOV.UK ("Conditionally revealing a question"), NHS and USWDS all put
+the revealed content directly below the triggering radio, indented, with a left rule. Carbon,
+Material and Polaris ship no named component but place dependent fields after their trigger in
+reading order. **None of the five puts a dependent field in a parallel column.** GOV.UK is the only
+one with published usability testing, and the indent-plus-rule is what that testing produced.
+
+Three options were previewed (`docs/mockups/shipping-cost-reveal.html`). **Reveal under the
+trigger** was chosen. The two rejected:
+
+- **Beside the group, on the three column grid** — the literal reading of "match the three column
+  width". Fixes width and alignment, but leaves a visible hole in column two for the default
+  option, and still separates the field from its cause.
+- **Flush under the whole group, full column width** — correct order, but with three options it
+  reads as belonging to all of them. The indent and rule exist precisely to say *this one*.
+
+**The numbers are derived, not copied.** GOV.UK's 18px margin / 4px rule / 33px padding is sized to
+a 40px radio. Ours is 16px with a `gap-2` to its label, so the rule centres at `ml-1.5` (6px =
+16/2 − 4/2) and `pl-3.5` (14px) lands the content at 24px — exactly the left edge of the label
+above it, verified in the browser (both at x = 333). Copying 55px would have indented it to nowhere.
+
+**`aria-expanded` is where we depart from govuk-frontend, and it was measured rather than
+reasoned.** axe on `/distributions/new`: `aria-controls` alone is clean; adding `aria-expanded` to
+the three radios raises `aria-allowed-attr` ×3, because ARIA 1.2 does not list it for `role=radio`.
+It *is* allowed on a checkbox — also measured — but using it on some triggers and not others splits
+the pattern for no gain, and on a `<select>` it would be wrong outright: on a combobox
+`aria-expanded` means the listbox is open. So `aria-controls` everywhere, `aria-expanded` nowhere.
+
+**Two documented exemptions**, both read from `data-conditional-reveal` rather than inferred. A
+**table cell** — the unit select on a partner request — gets no indent, because a column's position
+*is* the relationship. And a **callout** gets no indent or rule, because it already carries its own
+tinted box and marking one relationship twice is noise.
+
+**The audit found the interesting bug, not the fix.** Auditing the other five reveals turned up one
+that could never have worked: the reminder note on the partner form passed its Stimulus target to
+the callout as `data:`, and the callout splatted `**data` at the *top* level, so it rendered as a
+literal `checkbox_with_nested_element_target` attribute naming nothing. Stimulus threw
+`Missing target element` on connect **and on every click of the checkbox**, and that callout had
+never once appeared. It is `data: data` now. In the same sweep, `item_units_controller` was setting
+`style.display = 'inline'`, which both flashed on load and overrode the `block w-full` every other
+select in the app has.
+
+**And a caution about `public/`.** The suite failed once on an unrelated CSV export spec — 3 rows
+where 1 was expected. Cause: a workspace reset had resurrected `public/product_drive_participants.csv`
+and `public/vendors.csv`, the pre-rename names of two template files, and Rails serves `public/`
+ahead of the router. The request never reached the controller. This is the same mechanism
+`bin/design/serve-mockup` relies on, which is worth remembering in both directions.
+

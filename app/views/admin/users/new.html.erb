@@ -23,6 +23,7 @@
           <%= label_tag :resource_type, "Role type", class: "block text-sm font-medium text-slate-700" %>
           <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
                 class: EssentialsUiHelper::SELECT_CLASSES,
+                "aria-controls": "admin_user_resource_field",
                 data: {
                   "double-select-target": "source",
                   "hide-by-source-val-target": "source",
@@ -30,12 +31,17 @@
                 } %>
         </div>
 
-        <div class="mb-4" data-hide-by-source-val-target="destination">
+        <%# A super admin has no resource to be scoped to, so this question only applies to the
+            other three role types -- revealed under the one that decides it. `shown` is read from
+            the same constant the controller is handed, so the two cannot disagree. %>
+        <%= render "shared/essentials/conditional_reveal", id: "admin_user_resource_field",
+              shown: Role::ROLES_WITHOUT_RESOURCE.exclude?(Role::TITLES.invert.values.first),
+              data: {"hide-by-source-val-target": "destination"} do %>
           <%= label_tag :resource_id, "Resource", class: "block text-sm font-medium text-slate-700" %>
           <%= select_tag :resource_id, [],
                 class: EssentialsUiHelper::SELECT_CLASSES,
                 data: {"double-select-target": "destination"} %>
-        </div>
+        <% end %>
       </div>
     <% end %>
   <% end %>
