@@ -6458,3 +6458,34 @@ justified rather than assumed. The invitee sets their own, which is what the mod
 Pinned by a system spec that fills the form and asserts the role, the pending invitation and the
 redirect. Verified to fail when the form is pointed back at `user_registration_path`.
 
+## 2026-08-29 — The barcode form gets the scanner it already had
+
+Asked for a camera scan button on the new-barcode page. **The scanner already existed** — quagga is
+pinned, `utils/barcode_scan` is imported by `application.js` on every page, and the glyph appears on
+the line-item tables and both barcode modals. The form for *creating* a barcode was the one place it
+was missing, which is the page where typing a number off a box is least defensible.
+
+So this adds no dependency and no JavaScript. It is the modal's markup, unchanged: a
+`[data-barcode-scan]` region holding the input, the button and a `[data-barcode-viewport]`.
+
+**Copied the region rather than just the button, and that is the whole point.** The scanner resolves
+its input and its viewport by walking up to the region — `button.closest('[data-barcode-scan]')` —
+so a button pasted on its own is inert. The comment in `barcode_scan.js` explains why it works that
+way: three partials once carried `id="barcode-scanner-btn"`, a donation form renders two of them,
+and pressing the dialog's button drew the camera inside the scan bar's button instead.
+
+**Verified with a fake camera** rather than assumed: Chromium with
+`--use-fake-device-for-media-stream`, and the viewport goes from hidden to a 612×459 `<video>` with
+`aria-expanded` flipping to `true`, then back to hidden and emptied on a second click. No console
+errors.
+
+**A measurement mistake worth recording**, because it looked like a real bug for a minute: the first
+probe reported the viewport still hidden after the camera started. It was not — the check was
+`className.includes("hidden")`, and the viewport's class list contains `[&_canvas]:hidden`, a
+Tailwind arbitrary variant. `classList.contains("hidden")` is the correct test. **Substring matching
+against a Tailwind class attribute is unsafe** now that arbitrary variants can embed any utility
+name inside another.
+
+The spec asserts the wiring — input name, viewport present, hidden at rest, `aria-expanded` false —
+rather than driving the camera, and it is verified to fail when the region attribute is renamed.
+
