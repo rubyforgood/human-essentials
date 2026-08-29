@@ -613,6 +613,18 @@ It is an invitation now, the same one the *Invite user* button on your organizat
 give a name and an email, they get an email, and they choose their own password. There is no
 password box, because you do not set it for them.
 
+### A purchase can start a distribution, and can be printed
+
+**Open any purchase and the header now has two buttons**, the same two a donation has always had.
+
+*Start a distribution* opens a new distribution with that purchase's items, quantities and storage
+location already filled in — so buying stock and sending it out is one step rather than re-typing
+the list.
+
+*Print* gives you a PDF of the purchase, laid out like the donation receipt: your logo and address,
+who you bought from, the amount spent, the storage location, your comments and the items. If your
+organization has *Hide value columns on receipts* switched on, the values are left out here too.
+
 ### You can scan a barcode when adding one
 
 **If the camera cannot start, the app now tells you why** instead of looking like a broken button.

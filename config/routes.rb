@@ -248,7 +248,11 @@ Rails.application.routes.draw do
     # Implicit rendering meant PATCH /donations/:id/add_item served that text to a real user.
   end
 
-  resources :purchases
+  resources :purchases do
+    # Donations have had a printable receipt since long before the migration and purchases have
+    # not, which is half of an asymmetry between two pages that are otherwise the same shape.
+    get :print, on: :member
+  end
 
   # One declaration, not two. There were two `resources :requests`, and the first one's
   # /requests/:id swallowed the second's collection route: /requests/partner_requests resolved to

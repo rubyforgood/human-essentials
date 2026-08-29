@@ -90,8 +90,10 @@ class Distribution < ApplicationRecord
     line_items.combine!
   end
 
-  def copy_line_items(donation_id)
-    line_items = LineItem.where(itemizable_id: donation_id, itemizable_type: "Donation")
+  # `itemizable_type` was hardcoded to "Donation", which is the whole reason a purchase could not
+  # seed a distribution: the line items are polymorphic and only the query was not.
+  def copy_line_items(itemizable_id, itemizable_type = "Donation")
+    line_items = LineItem.where(itemizable_id: itemizable_id, itemizable_type: itemizable_type)
     line_items.each do |line_item|
       self.line_items.new(line_item.attributes)
     end
@@ -99,6 +101,13 @@ class Distribution < ApplicationRecord
 
   def copy_from_donation(donation_id, storage_location_id)
     copy_line_items(donation_id) if donation_id
+    self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
+  end
+
+  # The purchase equivalent. Stock bought is stock that can go out, and the page for a purchase had
+  # no way to act on it -- see docs/design-decisions.md.
+  def copy_from_purchase(purchase_id, storage_location_id)
+    copy_line_items(purchase_id, "Purchase") if purchase_id
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
 

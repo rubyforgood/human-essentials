@@ -494,5 +494,40 @@ RSpec.describe "Purchases", type: :request do
         expect(response).to have_error("Purchases entered before #{1.day.ago.to_date} cannot be deleted.")
       end
     end
+    # Donations have had a printable receipt since long before the design system migration and
+    # purchases have not -- half of an asymmetry between two pages that are otherwise the same
+    # shape. See docs/design-decisions.md.
+    describe "GET #print" do
+      let(:item) { create(:item, organization: organization) }
+      let!(:purchase) { create(:purchase, :with_items, item: item, organization: organization) }
+
+      it "returns a PDF" do
+        get print_purchase_path(id: purchase.id)
+
+        expect(response).to be_successful
+        expect(response.media_type).to eq("application/pdf")
+        expect(response.body[0, 5]).to eq("%PDF-")
+      end
+    end
+
+    describe "GET #show" do
+      let(:item) { create(:item, organization: organization) }
+      let!(:purchase) { create(:purchase, :with_items, item: item, organization: organization) }
+
+      it "offers Print and Start a distribution in the header" do
+        get purchase_path(id: purchase.id)
+        page = Nokogiri::HTML(response.body)
+
+        print_link = page.at_css("a[href*='#{print_purchase_path(id: purchase.id)}']")
+        expect(print_link).to be_present
+        expect(print_link.text).to include("Print")
+
+        # `purchase_id`, which distributions#new now understands -- the button could not exist
+        # before, because copy_line_items hardcoded a donation.
+        distribute = page.at_css("a[href*='purchase_id=#{purchase.id}']")
+        expect(distribute).to be_present
+        expect(distribute.text).to include("Start a distribution")
+      end
+    end
   end
 end

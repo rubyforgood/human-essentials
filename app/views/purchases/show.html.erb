@@ -2,10 +2,21 @@
 <% inactive = @purchase.has_inactive_item? %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The same two actions the donation page has carried for years, and this one never did -- stock
+    bought is stock that can go out, and a purchase receipt is the same document as a donation
+    receipt. "Start a distribution" copies this purchase's line items and its storage location into
+    a new distribution, through `Distribution#copy_from_purchase`; before this the button could not
+    exist, because `copy_line_items` hardcoded a donation.
+  %>
   <%= render "shared/essentials/page_header",
         title: "Purchase",
         subtitle: "From #{@purchase.purchased_from_view} on #{@purchase.issued_at.to_fs(:distribution_date)}.",
-        back: {path: purchases_path, label: "Back to purchases"} %>
+        back: {path: purchases_path, label: "Back to purchases"},
+        actions: capture {
+          concat essentials_link_button("Print", print_purchase_path(@purchase, format: :pdf), variant: :secondary, icon: "bi-printer")
+          concat essentials_link_button("Start a distribution", new_distribution_path(purchase_id: @purchase.id, storage_location_id: @purchase.storage_location_id), variant: :primary, icon: "bi-plus-lg")
+        } %>
 
   <div class="space-y-6">
     <% if inactive %>

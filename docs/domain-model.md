@@ -175,6 +175,19 @@ The workflow the app exists for.
 fulfilment, and `validate_request_not_yet_processed!` is what stops a request being fulfilled
 twice.
 
+**Three things can seed a distribution**, and each has its own copier on `Distribution`:
+
+| Seed | Method | What it copies |
+| --- | --- | --- |
+| `Request` | `copy_from_request` | the requested items and their quantities |
+| `Donation` | `copy_from_donation` | the donation's line items and storage location |
+| `Purchase` | `copy_from_purchase` | the purchase's line items and storage location |
+
+All three go through `copy_line_items(itemizable_id, itemizable_type)`. That second argument used
+to be hardcoded to `"Donation"`, which is the whole reason a purchase could not seed one — line
+items are polymorphic and only the query was not. `DistributionsController#new` branches on
+`request_id`, `purchase_id` and `donation_id` in that order.
+
 ## Where the code for each of these lives
 
 | Concern | Where |
