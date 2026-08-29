@@ -103,6 +103,30 @@ mode that looks like success. To exercise it end to end, add
 re-run: that file should appear under `debt`. Debt does not change the exit code — only defects
 do.
 
+`wayfinding-audit.js` asks whether a screen can be **left**, not just reached.
+
+```bash
+pw bin/design/wayfinding-audit.js
+```
+
+Every screen, in three roles, must be one of: a link in the sidebar or top bar, a page carrying a
+breadcrumb, or a page whose tabs link a sibling section. Anything else has exactly one way out --
+the browser's back button -- and nothing else in this repo checks for that. It found ten, of which
+five were the entire reports section: every report is reached from the hub, none is in the sidebar,
+and none of them linked back.
+
+Three things it had to learn, each of which produced a wrong answer first:
+
+- **Judge the URL it landed on, not the one asked for.** Several sweep targets redirect, because
+  `route-targets.rb` fills `:family_id` and friends with approximations. Comparing against the
+  requested path reported `/partners/authorized_family_members/new` as orphaned when it had
+  redirected to the families index, which is a nav root.
+- **Page tabs count.** They are lateral rather than up, but a tab strip linking a sibling section is
+  still a way out -- `/item_categories` and `/partner_groups` are reached and left that way.
+- **Signed-out and standalone screens are excluded**, listed with reasons at the top of the file:
+  the landing page, the legal documents (`layout false`), the account-request flow and Devise's
+  invitation acceptance have no app chrome for a breadcrumb to sit in.
+
 `shell-first-audit.rb` asks the question none of the others do. Every audit above answers *is
 anything from the old system still present?* This one answers *is this built the way the new system
 builds things?* — which is what a **shell-first** page fails: page header, card, no Bootstrap class,

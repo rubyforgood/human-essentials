@@ -20,7 +20,7 @@ RSpec.describe "Reports::ItemizedDonations", type: :request do
     context "without any donations" do
       it "can load the page" do
         get reports_itemized_donations_path
-        expect(response.body).to include("Itemized Donations")
+        expect(response.body).to include("Itemized donations")
       end
 
       it "has no items" do

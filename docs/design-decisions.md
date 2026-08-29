@@ -6029,3 +6029,60 @@ selector.**
 `Flipper.enable(:enable_packs)` was set in the development database so the field is visible;
 `Flipper.disable(:enable_packs)` puts it back.
 
+## 2026-08-29 — Breadcrumbs replace the back link, and the reports section could not be left
+
+### One pattern, not two
+
+Asked for breadcrumbs on every page, using the design system and the industry standard. The design
+system had **no breadcrumb at all** — `design.md` did not mention the word. What it had was a
+`back:` local on `page_header` rendering a "Back to X" link, 99 call sites of it.
+
+**Chosen: the breadcrumb replaces the back link rather than joining it.** A breadcrumb subsumes one
+— the first ancestor is the same destination — and it also answers "where am I", which a back link
+never did. Shipping both would have put two wayfinding devices in the same 8px of page.
+
+**No call site changed.** The parent's name is derived from the `back:` label, which is `Back to
+<noun>` at every one of the 99, verified before relying on it. `breadcrumb:` takes an explicit trail
+where one is deeper. The alternative — editing 99 templates to pass a trail — is the same
+information typed twice.
+
+**The structure is the W3C ARIA APG pattern**, which GOV.UK, Carbon, Material and Bootstrap 5 all
+implement identically, so "industry standard" here is not a judgement call: named `<nav>`, ordered
+list, ancestors as links, current page as plain text with `aria-current="page"`, and the separator
+generated and `aria-hidden` because a literal `/` between links is announced as "slash".
+
+### The real finding was that ten screens could not be left
+
+The reports complaint generalised. Every report is listed on the hub, **none is in the sidebar, and
+none linked back** — so for all five reports plus the by-county report and three trend pages, the
+browser's back button was the only exit. `/events`, `/help` and `/users` were the same; `/users` is
+reached from the account menu's "Co-workers", which is a menu rather than a nav landmark, so nothing
+on the page said where it sat.
+
+`bin/design/wayfinding-audit.js` now checks the property: every screen must be a nav root, carry a
+breadcrumb, or have tabs to a sibling. **Three things it got wrong first**, each worth keeping:
+
+- **It judged the requested URL rather than the one it landed on.** Several sweep targets redirect,
+  and `/partners/authorized_family_members/new` was reported as orphaned when it had redirected to
+  the families index — a nav root.
+- **Page tabs count as a way out.** Lateral rather than up, but `/item_categories` and
+  `/partner_groups` are reached and left through them and neither is a defect.
+- **Signed-out screens have no chrome to put a breadcrumb in.** The landing page, the legal
+  documents, the account-request flow and Devise's invitation acceptance are excluded by name, with
+  the reason at the top of the file.
+
+### Two bugs the audit surfaced on the way
+
+`partners/authorized_family_members/new` rendered its form **outside the page wrapper**, so it had
+no gutter — and its `page_header` call had **two `back:` keys**. A duplicate key in a Ruby hash
+literal is not an error; the last wins silently. Worth knowing as a class: a duplicated keyword in a
+long `render` call is invisible to review and to the linter.
+
+### The reports tables had the class and not the component
+
+`.data-table` without `.table-scroll` is the table equivalent of a migrated shell around an
+unmigrated body — it looks right until the table is wider than the card, and it has no focusable
+region, so the arrow keys do nothing and there is no edge shadow to say content continues. Three of
+the four report tables were like that, with unscoped `<th>` in Title Case and `text-right` instead
+of the `.numeric` column class the design system defines.
+

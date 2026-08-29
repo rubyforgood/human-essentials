@@ -7,7 +7,9 @@
   class that no longer exists. It was also the last page still rendering a Filter button.
 %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# Reached from a record's history, and in no menu. %>
   <%= render "shared/essentials/page_header",
+        back: {path: dashboard_path, label: "Back to dashboard"},
         title: "History",
         subtitle: "Every event that changed inventory, most recent first." %>
 

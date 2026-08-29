@@ -1,35 +1,40 @@
 <%= render(
   "shared/filtered_card",
   id: "purchases",
-  title: "Itemized Donations",
+  title: "Itemized donations",
   subtitle: @selected_date_range,
+  padded: false,
   filter_url: reports_itemized_donations_path
 ) do %>
 
 <% if @itemized_donation_data.empty? %>
-  <%= render "shared/essentials/empty_state", kind: :no_results,
+  <div class="p-5">
+    <%= render "shared/essentials/empty_state", kind: :no_results,
         title: "No itemized donations found",
-        body: "Nothing matched the selected date range. Try widening it." %>
+          body: "Nothing matched the selected date range. Try widening it." %>
+  </div>
 <% else %>
-  <table class="data-table striped text-left">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th class="text-right">Total Donated</th>
-        <th class="text-right">Total On Hand</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @itemized_donation_data.each do |item| %>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+    <table class="data-table striped">
+      <thead>
         <tr>
-          <td><%= item[:name] %></td>
-          <td class="text-right"><%= item[:donated] %></td>
-          <td class="text-right"><%= item[:current_onhand] %></td>
+          <th scope="col">Item</th>
+          <th scope="col" class="numeric">Total donated</th>
+          <th scope="col" class="numeric">Total on hand</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        <% @itemized_donation_data.each do |item| %>
+          <tr>
+            <td><%= item[:name] %></td>
+            <td class="numeric"><%= item[:donated] %></td>
+            <td class="numeric"><%= item[:current_onhand] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% end %>
 
 <% end %>

@@ -8,7 +8,8 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Estimated distributions by county",
-        subtitle: "Counties are estimated from the served areas your partner agencies declared, so a distribution is spread across the counties its partner covers." %>
+        subtitle: "Counties are estimated from the served areas your partner agencies declared, so a distribution is spread across the counties its partner covers.",
+        back: {path: reports_path, label: "Back to reports"} %>
 
   <%= render "shared/essentials/filter_bar",
         url: distributions_by_county_report_path(current_organization),

@@ -977,6 +977,39 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="breadcrumbs"></a>
+**Every page that is not a nav root carries a breadcrumb.** It sits above the `<h1>`, 8px clear of
+it, and `page_header` renders it — no page draws its own.
+
+```erb
+<%= render "shared/essentials/page_header",
+      title: "Itemized donations",
+      back: {path: reports_path, label: "Back to reports"} %>
+<%# => Reports › Itemized donations %>
+```
+
+The `back:` local is unchanged at all 99 call sites: the parent's name is derived from the label,
+which is `Back to <noun>` everywhere in the app — checked before relying on it. `breadcrumb:` takes
+an explicit `[[label, path], …]` when a trail is deeper than one level.
+
+**The structure is the W3C ARIA APG pattern**, which GOV.UK, Carbon, Material and Bootstrap all
+render identically: a `<nav>` with an accessible name, an **ordered** list because the order is the
+hierarchy, links for the ancestors, and the current page as **plain text** carrying
+`aria-current="page"`. The separator is a generated `aria-hidden` glyph — a literal `/` between two
+links is announced as "slash". 14px, slate-500 for the trail and slate-700 for the current item,
+each link 24px tall.
+
+**It replaced a "Back to X" link, and subsumes it.** The first ancestor is the same destination, and
+the trail also says *where you are*, which the back link never did. That is why there is one pattern
+here rather than two.
+
+<a id="every-page-is-leavable"></a>
+**A page is finished when it can be left.** `bin/design/wayfinding-audit.js` checks every screen in
+three roles: it must be a nav root, carry a breadcrumb, or have page tabs linking a sibling. It
+found **10 real orphans**, of which the whole reports section was five — every report is reached
+from the hub, none is in the sidebar, and none linked back, so the browser button was the only way
+out.
+
 <a id="one-page-wrapper"></a>
 **One `px-4 py-6 sm:px-6 lg:px-8` per page, and the header goes inside it.** The gap between the
 heading and the first card is **24px** — the header's own `mb-6`, and nothing else. Do not override

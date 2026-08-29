@@ -9,8 +9,11 @@
   do. Pinned, "Name" held 417px of a 740px landscape phone for no benefit.
 %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# Reached from the account menu's "Co-workers", which is a menu rather than a nav landmark,
+      so nothing on the page itself said where it sat. %>
   <%= render "shared/essentials/page_header",
         title: "Users",
+        back: {path: dashboard_path, label: "Back to dashboard"},
         subtitle: "Invite someone to help run #{current_organization.name}, or remove their access." %>
 
   <%= render "shared/essentials/card", padded: false,

@@ -20,7 +20,7 @@ RSpec.describe "Reports::ItemizedDistributions", type: :request do
     context "without any distributions" do
       it "can load the page" do
         get reports_itemized_distributions_path
-        expect(response.body).to include("Itemized Distributions")
+        expect(response.body).to include("Itemized distributions")
       end
 
       it "has no items" do

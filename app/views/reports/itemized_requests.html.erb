@@ -1,22 +1,26 @@
 <%= render(
   "shared/filtered_card",
   id: "purchases",
-  title: "Itemized Requests",
+  title: "Itemized requests",
   subtitle: @selected_date_range,
+  padded: false,
   filter_url: reports_itemized_requests_path
 ) do %>
 
   <% if @itemized_request_data.empty? %>
+    <div class="p-5">
     <%= render "shared/essentials/empty_state", kind: :no_results,
           title: "No itemized requests found",
-          body: "Nothing matched the selected date range. Try widening it." %>
+            body: "Nothing matched the selected date range. Try widening it." %>
+  </div>
   <% else %>
-    <table class="data-table striped text-left">
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+    <table class="data-table striped">
       <thead>
         <tr>
-          <th>Item</th>
-          <th class="text-right">Total Requested</th>
-          <th class="text-right">Total On Hand</th>
+          <th scope="col">Item</th>
+          <th scope="col" class="numeric">Total requested</th>
+          <th scope="col" class="numeric">Total on hand</th>
         </tr>
       </thead>
       <tbody>
@@ -28,13 +32,14 @@
                 (<%= h(item[:unit]) %>)
               <% end %>
             </td>
-            <td class="text-right"><%= item[:quantity] %></td>
+            <td class="numeric"><%= item[:quantity] %></td>
             <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
               <%= item[:on_hand] || 0 %>
             </td>
           </tr>
         <% end %>
       </tbody>
-    </table>
+      </table>
+  </div>
   <% end %>
 <% end %>

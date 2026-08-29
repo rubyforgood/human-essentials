@@ -74,6 +74,7 @@ RSpec.describe "Custom request units", type: :system, js: true do
   # The <select multiple> is the field; the chips are a view of it. Hiding it is gated on the
   # controller having run, the same way the table rail gates hiding the native scrollbar.
   it "keeps the native select as the thing that submits" do
+    expect(page).to have_css("[data-tag-input-target='chips'] span", count: 2)
     select_state = page.evaluate_script(<<~JS)
       (() => {
         const wrap = document.querySelector('[data-controller="tag-input"]');
