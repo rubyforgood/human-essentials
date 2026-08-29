@@ -339,14 +339,23 @@ and the trigger is 28, and the 2px step was visible on `/vendors` and `/requests
 side by side. Uniform 28px icon buttons is also what Carbon and Salesforce ship for this column.
 
 <a id="actions-column-header"></a>
-**The actions column header is `<th scope="col" class="text-right"><span class="sr-only">Actions</span></th>`.**
-Always present, always `scope="col"`, always hidden. Hidden because the column holds icon buttons
-whose names are already on them, and a visible "Actions" label widens a 60px column to state the
-obvious — Carbon and Salesforce both use assistive text here. Present because a column with no
-accessible name is announced as nothing when a screen reader moves across the header row.
+**The actions column header is `<th scope="col" class="text-right">Actions</th>` — visible.**
+Always present, always `scope="col"`, always right-aligned, on all 43 tables. Four variants were in
+use before: 33 hidden and plural, **8 visible**, one `<th>Action` with no `scope` and no alignment,
+and one hidden and singular.
 
-Four variants were in use across 43 tables: 33 hidden and plural, **8 visible**, one `<th>Action`
-with no `scope` and no alignment, and one hidden and singular.
+**Industry is split, and it splits on what the column holds.** Salesforce Lightning uses assistive
+text, GOV.UK uses `govuk-visually-hidden`, Carbon and Atlassian render it empty with an accessible
+name; **Ant Design shows it**. The W3C tables tutorial only requires that every column *have* a
+header, visible or not.
+
+**Visible, because most of these columns are now a single unlabelled glyph.** When a column held
+labelled buttons — *Edit*, *Delete* — it described itself and the header was redundant, which is the
+case the hidden convention is built for. Collapsing nine tables turned most of them into one "⋯".
+A column whose entire visible content is one glyph is where the header does real work.
+
+It costs **15px** on `/partners` and `/items` and 18px on `/donation_sites` — measured, after an
+earlier version of this rule justified hiding it on width and overstated that.
 
 **Three or more row actions collapse into a menu.** `shared/essentials/row_actions`. Five labelled
 buttons made the actions column **331px** on `/distributions` — wider than Total items, Total value
@@ -373,9 +382,28 @@ Salesforce Lightning calls it *row-level actions*, Polaris renders them as an `A
   and moving with the page is the better default.
 - **`size-7`, not the 38px control height.** A row action is `sm` everywhere else; a 38px trigger
   made every distribution row 10px taller. 28px still clears WCAG 2.5.8's 24×24 floor.
-- **An unavailable action stays in the menu**, disabled, with the reason as sr-only text. A form
-  action gets a genuinely `disabled` `<button>` and a link action a `<span aria-disabled>` — see
-  [Interaction](#interaction), and note that only a form control can be `disabled`.
+<a id="say-why-visibly"></a>
+- **An unavailable action stays in the menu, disabled, and says why in text anyone can read.** A
+  form action gets a genuinely `disabled` `<button>` and a link action a `<span aria-disabled>` —
+  only a form control can be `disabled`. The `reason:` is a **second line under the label**, 12px
+  slate-500, which is Polaris's `helpText` on an action list item.
+
+  It was `sr-only` first, and that was wrong in a way worth remembering: a screen reader heard
+  *"Deactivate, unavailable while this item is still in inventory or used by a kit"* and everyone
+  else saw a greyed-out word and no explanation at all. Reported as confusing. **Optimising an
+  affordance for assistive technology is not a reason to withhold it from everyone else.**
+
+  Not a tooltip: a `disabled` control fires no pointer events, so a tooltip on one needs a wrapper
+  element to work at all, and there is no hover on a phone.
+
+  **Dim the label, not the item.** `opacity-60` on the whole row painted the reason at **2.32:1**
+  measured against white. [1.4.3](#contrast) exempts an inactive control from contrast, and that
+  exemption is no argument here — the entire point of showing a reason is that it gets read. The
+  label carries the opacity; the reason stays slate-500 at **4.75:1**.
+
+  **Write it as its own sentence.** "— unavailable while this item is still in inventory or used by
+  a kit" was phrased to be read *after* the label, hence the dash. Visible, it is "Still in
+  inventory or used by a kit".
 - **The honest cost:** every action but the first becomes two clicks, and which one deserves to stay
   visible differs by who uses the page. A warehouse user printing picklists all afternoon will feel
   *Print* moving behind a menu.

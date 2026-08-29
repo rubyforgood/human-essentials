@@ -15,25 +15,52 @@
     item_classes = "flex w-full items-center gap-2 px-3 py-2 text-left text-sm #{tone_classes} " \
                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
   %>
-  <% if item[:disabled] && item[:method] %>
-    <%# An unavailable *form* action is a genuinely `disabled` <button>, and an unavailable *link*
-        action is a non-interactive <span> with `aria-disabled` -- design.md draws that line and it
-        matters: `disabled` is only a thing a form control can be. The reason is sr-only text, not a
-        title, so it reaches a screen reader without needing hover. %>
-    <%# `form: {role: "none"}` on the wrapper: `role="menu"` must own its `menuitem`s, and a <form>
-        in between is a third thing in the tree that is neither. `none` makes it transparent, which
-        is the same trick an <li> wrapper needs in a menu. %>
-    <%= button_to item[:path], method: item[:method], disabled: true,
-          form_class: "block", form: {role: "none"}, role: "menuitem",
-          class: "#{item_classes} opacity-60" do %>
-      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
-      <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
+  <% if item[:disabled] %>
+    <%#
+      An unavailable *form* action is a genuinely `disabled` <button>, and an unavailable *link*
+      action is a non-interactive <span> with `aria-disabled` -- design.md draws that line and it
+      matters: `disabled` is only a thing a form control can be.
+
+      **The reason is visible.** It used to be `sr-only`, which meant a screen reader heard
+      "Deactivate, unavailable while this item is still in inventory or used by a kit" and everyone
+      else saw a greyed-out word and nothing at all -- reported as confusing, and rightly. It is a
+      second line under the label now: read by everyone, no hover, no click. Polaris calls this
+      `helpText` on an action list item.
+
+      Not a tooltip: a `disabled` control fires no pointer events, so a tooltip on one needs a
+      wrapper element to work at all, and there is no hover on a phone.
+
+      `items-start` because the item is two lines now and the glyph belongs beside the first.
+    %>
+    <%#
+      The dimming is on the *label*, not on the whole item, so the reason is not dimmed with it.
+      `opacity-60` on the container painted the help text at **2.32:1** measured against white --
+      WCAG 1.4.3 exempts an inactive control from contrast, but the entire point of showing the
+      reason is that it gets read, and a rule that lets you dim it does not make dimming it right.
+      At full opacity slate-500 is 4.8:1.
+    %>
+    <% body = capture do %>
+      <i class="<%= item[:icon] %> mt-0.5 opacity-60" aria-hidden="true"></i>
+      <span class="min-w-0">
+        <span class="opacity-60"><%= item[:label] %></span>
+        <% if item[:reason] %>
+          <span class="mt-0.5 block text-xs font-normal text-slate-500"><%= item[:reason] %></span>
+        <% end %>
+      </span>
     <% end %>
-  <% elsif item[:disabled] %>
-    <span class="<%= item_classes %> opacity-60" role="menuitem" aria-disabled="true">
-      <i class="<%= item[:icon] %>" aria-hidden="true"></i><%= item[:label] %>
-      <% if item[:reason] %><span class="sr-only"> — <%= item[:reason] %></span><% end %>
-    </span>
+    <% disabled_classes = "#{item_classes} items-start" %>
+    <% if item[:method] %>
+      <%# `form: {role: "none"}` on the wrapper: `role="menu"` must own its `menuitem`s, and a
+          <form> in between is a third thing in the tree that is neither. `none` makes it
+          transparent, the same trick an <li> wrapper needs in a menu. %>
+      <%= button_to item[:path], method: item[:method], disabled: true,
+            form_class: "block", form: {role: "none"}, role: "menuitem",
+            class: disabled_classes do %>
+        <%= body %>
+      <% end %>
+    <% else %>
+      <span class="<%= disabled_classes %>" role="menuitem" aria-disabled="true"><%= body %></span>
+    <% end %>
   <% elsif item[:method] %>
     <%= essentials_action_button item[:label], item[:path], method: item[:method],
           variant: :ghost, size: :sm, icon: item[:icon], confirm: item[:confirm],

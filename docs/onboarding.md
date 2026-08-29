@@ -596,6 +596,14 @@ reader can jump to it.
 
 ### Table actions look the same on every table now
 
+**Tables have a visible "Actions" heading** over the last column. It used to be there only for
+screen readers, which was fine when the column held buttons labelled *Edit* and *Delete* — now that
+most of them hold a single "..." it is worth naming.
+
+**An action you cannot use tells you why, on screen.** Under *Deactivate* on Items you will now read
+"Still in inventory or used by a kit". That sentence existed before but only screen readers got it;
+everyone else saw a greyed-out word with no explanation.
+
 **Where a row had three or more things you could do, they moved into the "..." menu** at the end of
 the row — barcode items, donation sites and storage locations. Nothing was removed; the actions are
 one click further in, and the tables got a lot of width back.

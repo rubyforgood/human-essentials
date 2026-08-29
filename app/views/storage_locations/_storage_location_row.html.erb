@@ -28,7 +28,7 @@
            else
              {label: "Deactivate", path: storage_location_deactivate_path(storage_location),
               icon: "bi-slash-circle", method: :put, disabled: true,
-              reason: "unavailable while this location still holds inventory"}
+              reason: "This location still holds inventory"}
            end)
         ] %>
   </td>

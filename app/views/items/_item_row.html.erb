@@ -37,7 +37,7 @@
           [{label: "Edit", path: edit_item_path(item_row), icon: "bi-pencil"},
            {label: "Deactivate", path: deactivate_item_path(item_row), icon: "bi-slash-circle",
             method: :delete, disabled: true,
-            reason: "unavailable while this item is still in inventory or used by a kit"}]
+            reason: "Still in inventory or used by a kit"}]
         end
     %>
     <%# No visible View: the item's name in this row already links to it. %>
