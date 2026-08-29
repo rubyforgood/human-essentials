@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Row actions — consistency across tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--line2:#F1F5F9;--ink:#0F172A;--mid:#475569;
+    --soft:#64748B;--brand:#4F46E5;--brand50:#EEF2FF;--brand700:#4338CA;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--warn:#92400E;--warnsoft:#FEF3C7;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 100px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:76ch;margin:0 0 26px}
+  h2{font-size:19px;margin:40px 0 4px;letter-spacing:-.01em}
+  h3{font-size:15px;margin:22px 0 6px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--warnsoft);color:var(--warn)}
+  p.note{color:var(--mid);max-width:80ch;margin:0 0 14px;font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 6px}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line2)}
+  th{font-size:12px;font-weight:600;color:var(--soft);background:#F8FAFC;text-transform:none}
+  tr:last-child td{border-bottom:0}
+  td.act{text-align:right;white-space:nowrap}
+  .row{display:inline-flex;gap:6px;justify-content:flex-end;align-items:center}
+  .ghost{display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-radius:8px;
+    padding:6px 10px;font-size:12px;font-weight:500;color:#475569;background:transparent;cursor:pointer;font-family:inherit;height:30px}
+  .ghost:hover{background:#F1F5F9;color:#0F172A}
+  .ghost.dgr:hover{background:#FFF1F2;color:#9F1239}
+  .kebab{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;
+    border:1px solid transparent;background:transparent;color:#475569;cursor:pointer;font-size:15px;line-height:1}
+  .kebab.k30{width:30px;height:30px}
+  .kebab:hover{background:#F1F5F9;color:#0F172A}
+  .measure{font-size:12px;color:var(--soft);margin:2px 0 0}
+  .flag{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--badsoft);color:var(--bad);margin-left:8px}
+  .ok{background:var(--oksoft);color:var(--ok)}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:13px}
+  .cmp{border-collapse:collapse;width:100%;max-width:980px;margin-top:14px;font-size:14px}
+  .cmp th,.cmp td{border-bottom:1px solid var(--line);padding:8px 12px;vertical-align:top}
+  .cmp th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);background:transparent}
+  .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  ul.rules{max-width:80ch;color:var(--mid);font-size:14px;padding-left:20px}
+  ul.rules li{margin:6px 0}
+  ul.rules b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Row actions: one treatment for every table</h1>
+<p class="lede">Measured across <b>31 tables</b> in two roles on the running app. design.md already
+settles most of this — <i>every row action is <code>:ghost</code></i>, <i>three or more collapse into
+a menu</i>, <i>the trigger is <code>size-7</code></i>. The problem is that the rule is applied per
+<i>row</i> rather than per <i>table</i>, and it says nothing about a column whose action set changes
+from row to row. Both gaps are visible below.</p>
+
+<h2>What is shipping <span class="tag t-now">measured</span></h2>
+
+<h3>1. Three actions inline, where the rule says collapse</h3>
+<p class="note">design.md: <i>"Three or more row actions collapse into a menu."</i> Three tables do
+not. <code>/barcode_items</code> spends <b>349px</b> on its actions column, <code>/donation_sites</code>
+<b>274px</b>, <code>/storage_locations</code> the same shape.</p>
+<div class="card"><table>
+  <tr><th>Barcode</th><th>Item</th><th style="text-align:right">Actions <span class="flag">349px</span></th></tr>
+  <tr><td>0123456789012</td><td>Adult Briefs (XXS)</td><td class="act"><span class="row">
+    <button class="ghost">👁 View</button><button class="ghost">✎ Edit</button><button class="ghost dgr">🗑 Delete</button></span></td></tr>
+  <tr><td>0123456789013</td><td>Kids (Size 3)</td><td class="act"><span class="row">
+    <button class="ghost">👁 View</button><button class="ghost">✎ Edit</button><button class="ghost dgr">🗑 Delete</button></span></td></tr>
+</table></div>
+
+<h3>2. A column whose shape changes every row</h3>
+<p class="note">This is the one reported as jarring, and it is the worst of the two.
+<code>/partners</code> picks its actions from a five-branch <code>case</code> on the partner's status,
+so the label, the width and the <i>number</i> of controls all change as you read down. Measured widths
+on one screen: <b>170px, 120px, 170px, 241px, 0px, 170px</b>. <code>/organization</code>'s users table
+does the same thing by role.</p>
+<div class="card"><table>
+  <tr><th>Partner</th><th>Status</th><th style="text-align:right">Actions <span class="flag">279px, ragged</span></th></tr>
+  <tr><td>Pawnee Parent Service</td><td>Approved</td><td class="act"><span class="row"><button class="ghost">🔁 Request recertification</button></span></td></tr>
+  <tr><td>Pawnee Homeless Shelter</td><td>Awaiting review</td><td class="act"><span class="row"><button class="ghost">✓ Review profile</button></span></td></tr>
+  <tr><td>Second Street Outreach</td><td>Invited</td><td class="act"><span class="row"><button class="ghost">✓ Review profile</button><button class="ghost">✉ Re-send invite</button></span></td></tr>
+  <tr><td>Eagleton Country Club</td><td>Deactivated</td><td class="act"><span class="measure">— nothing at all —</span></td></tr>
+</table></div>
+
+<h3>3. Two actions behind a menu, where the rule says inline</h3>
+<p class="note">The mirror of the first problem. <code>/items</code> has exactly <b>two</b> actions —
+<i>Edit</i> and <i>Deactivate</i> — and puts both behind a kebab, so every one of them costs two
+clicks on the app's most-used table. Meanwhile <code>/barcode_items</code> shows three inline. Two
+tables, opposite treatments, and neither follows the rule.</p>
+<div class="card"><table>
+  <tr><th>Item</th><th>Category</th><th style="text-align:right">Actions <span class="flag">2 behind a menu</span></th></tr>
+  <tr><td>Adult Briefs (XXS)</td><td>Adult incontinence</td><td class="act"><button class="kebab">⋯</button></td></tr>
+  <tr><td>Kids (Size 3)</td><td>Diapers</td><td class="act"><button class="kebab">⋯</button></td></tr>
+</table></div>
+
+<h3>4. A 2px height mismatch where both treatments meet</h3>
+<p class="note"><code>/vendors</code> and <code>/requests</code> keep a visible <b>View</b> beside the
+kebab. The button is <b>30px</b> and the kebab <b>28px</b>, because design.md sized the trigger
+<code>size-7</code> to keep rows short and never said what happens when a labelled button sits next to
+one.</p>
+<div class="card"><table>
+  <tr><th>Vendor</th><th style="text-align:right">Actions</th></tr>
+  <tr><td>Lynch, Blick and Schoen</td><td class="act"><span class="row">
+    <button class="ghost">👁 View <span class="measure">30px</span></button><button class="kebab">⋯<span class="measure" style="margin-left:4px">28px</span></button></span></td></tr>
+</table></div>
+
+<h2>Option A — collapse by table, not by row <span class="tag t-rec">recommended</span></h2>
+<p class="note">Two amendments to the rule that already exists, and nothing else changes:</p>
+<ul class="rules">
+  <li><b>The threshold is per table.</b> If <i>any</i> row in a table can reach three actions, every
+    row in that table gets the menu. Tables with a fixed set of one or two keep them inline.</li>
+  <li><b>A varying action set is itself a reason to collapse.</b> If which actions exist depends on
+    status, role or state, use the menu — the trigger is the same 28px on every row whatever is
+    inside it, so the column stops moving.</li>
+  <li><b>An unavailable action stays in the menu, disabled</b>, with the reason as sr-only text.
+    design.md already says this; it only ever applied to tables that had a menu.</li>
+  <li><b>A visible action beside a kebab matches its height</b> — both 28px.</li>
+</ul>
+<div class="grid">
+  <div>
+    <div class="card"><table>
+      <tr><th>Partner</th><th>Status</th><th style="text-align:right">Actions <span class="flag ok">60px, stable</span></th></tr>
+      <tr><td>Pawnee Parent Service</td><td>Approved</td><td class="act"><button class="kebab">⋯</button></td></tr>
+      <tr><td>Pawnee Homeless Shelter</td><td>Awaiting review</td><td class="act"><button class="kebab">⋯</button></td></tr>
+      <tr><td>Second Street Outreach</td><td>Invited</td><td class="act"><button class="kebab">⋯</button></td></tr>
+      <tr><td>Eagleton Country Club</td><td>Deactivated</td><td class="act"><button class="kebab">⋯</button></td></tr>
+    </table></div>
+    <p class="measure">Every row the same shape. 279px of column back.</p>
+  </div>
+  <div>
+    <div class="card"><table>
+      <tr><th>Vendor</th><th style="text-align:right">Actions</th></tr>
+      <tr><td>Lynch, Blick and Schoen</td><td class="act"><span class="row">
+        <button class="kebab">👁</button><button class="kebab">⋯</button></span></td></tr>
+      <tr><td>White, Heidenreich and Nicolas</td><td class="act"><span class="row">
+        <button class="kebab">👁</button><button class="kebab">⋯</button></span></td></tr>
+    </table></div>
+    <p class="measure">Visible action and kebab both 28px. Row height unchanged.</p>
+  </div>
+</div>
+
+<h2>Option B — a kebab on every table, always <span class="tag t-alt">most uniform</span></h2>
+<p class="note">Total consistency: the actions column is one 28px control on every row of every table
+in the app, with no exceptions to remember. The cost is real and design.md already names it — every
+action becomes two clicks, and <i>"a warehouse user printing picklists all afternoon will feel Print
+moving behind a menu"</i>. Tables like <code>/kits</code> and <code>/manufacturers</code> have a
+settled pair of actions that work fine inline today.</p>
+<div class="card"><table>
+  <tr><th>Kit</th><th>Items</th><th style="text-align:right">Actions</th></tr>
+  <tr><td>Baby Care Essentials Kit</td><td>4</td><td class="act"><button class="kebab">⋯</button></td></tr>
+  <tr><td>Adult Incontinence Kit</td><td>3</td><td class="act"><button class="kebab">⋯</button></td></tr>
+</table></div>
+
+<h2>Option C — one visible action plus a kebab, everywhere <span class="tag t-alt">alternative</span></h2>
+<p class="note">Every table shows exactly one visible control — the row's most common action — with the
+rest behind a kebab. The column is a stable 96px everywhere and the common case stays one click. The
+difficulty is that <i>"the most common action"</i> is a judgement per table, and on
+<code>/partners</code> there is no single answer: the row that wants <b>Review profile</b> and the row
+that wants <b>Request recertification</b> are different rows.</p>
+<div class="card"><table>
+  <tr><th>Donation site</th><th style="text-align:right">Actions</th></tr>
+  <tr><td>Pawnee Middle School</td><td class="act"><span class="row"><button class="kebab">👁</button><button class="kebab">⋯</button></span></td></tr>
+  <tr><td>Pawnee Parks Department</td><td class="act"><span class="row"><button class="kebab">👁</button><button class="kebab">⋯</button></span></td></tr>
+</table></div>
+
+<h2>How they compare</h2>
+<table class="cmp">
+  <tr><th></th><th>Now</th><th>A — collapse by table</th><th>B — always a kebab</th><th>C — one visible + kebab</th></tr>
+  <tr><td>Tables changed</td><td>—</td><td><b>10</b> of 31</td><td><b>22</b> of 31</td><td><b>26</b> of 31</td></tr>
+  <tr><td>Column shape within a table</td><td>varies on 3</td><td>stable</td><td>stable</td><td>stable</td></tr>
+  <tr><td>Column shape across tables</td><td>0–349px</td><td>60px or inline</td><td>60px everywhere</td><td>96px everywhere</td></tr>
+  <tr><td>Clicks for the common action</td><td>1</td><td>1 where inline, else 2</td><td><b>2</b></td><td>1</td></tr>
+  <tr><td>Needs a per-table judgement</td><td>—</td><td>no — count and variance decide</td><td>no</td><td><b>yes</b>, on every table</td></tr>
+  <tr><td>Follows the existing rule</td><td>partly</td><td>extends it</td><td>replaces it</td><td>replaces it</td></tr>
+</table>
+
+<p class="note" style="margin-top:20px"><b>Recommendation: A.</b> It is the rule design.md already
+has, with the threshold moved from the row to the table and one sentence added about a varying action
+set — which is exactly the case that produced the complaint. It fixes all three measured problems,
+changes 10 tables rather than 22, and keeps one click on the tables where the actions are settled and
+the column is already stable. B is defensible if uniformity matters more than the click, and is the
+smaller rule to hold in your head. C reads well but needs someone to nominate a primary action for
+26 tables, and <code>/partners</code> shows that is not always answerable.</p>
+
+</div>
+</body>
+</html>
