@@ -49,6 +49,12 @@ module Exports
         "Requestor" => ->(request) {
           request.partner.name
         },
+        "Request Sender" => ->(request) {
+          request.partner.email
+        },
+        "Comments" => ->(request) {
+          request.comments
+        },
         "Type" => ->(request) {
           request.request_type&.humanize
         },
