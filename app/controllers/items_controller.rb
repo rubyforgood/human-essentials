@@ -31,11 +31,7 @@ class ItemsController < ApplicationController
   end
 
   def create
-    create = if Flipper.enabled?(:enable_packs)
-      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
-    else
-      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
-    end
+    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
     result = create.call
 
     if result.success?
@@ -81,7 +77,7 @@ class ItemsController < ApplicationController
       return
     end
 
-    if update_item
+    if update_item_and_request_units
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
@@ -183,15 +179,6 @@ class ItemsController < ApplicationController
 
   def request_unit_ids
     params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
-  end
-
-  # We need to update both the item and the request_units together and fail together
-  def update_item
-    if Flipper.enabled?(:enable_packs)
-      update_item_and_request_units
-    else
-      @item.save
-    end
   end
 
   def update_item_and_request_units

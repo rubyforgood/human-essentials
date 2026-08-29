@@ -108,8 +108,8 @@ class AuditsController < ApplicationController
   end
 
   def save_audit_status_and_redirect(params)
-    notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
-    params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
+    notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is submitted for final approval."
+    params.key?(:save_progress) ? @audit.in_progress! : @audit.pending_finalization!
     redirect_to audit_path(@audit), notice: notice
   end
 

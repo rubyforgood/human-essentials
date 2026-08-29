@@ -293,7 +293,7 @@ class DistributionsController < ApplicationController
   end
 
   def schedule_reminder_email(distribution)
-    return if distribution.past? || !distribution.partner.send_reminders
+    return if distribution.past? || !distribution.partner.send_reminders || !distribution.organization.distribution_reminders_enabled
 
     DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
   end
