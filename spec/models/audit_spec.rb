@@ -135,7 +135,7 @@ RSpec.describe Audit, type: :model do
 
       create(:audit, storage_location: storage_location1, status: "finalized", line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 5}])
       create(:audit, storage_location: storage_location3, status: "finalized", line_items_attributes: [{item_id: storage_location3.items.first.id, quantity: 10}])
-      create(:audit, storage_location: storage_location5, status: "confirmed", line_items_attributes: [{item_id: storage_location5.items.first.id, quantity: 10}])
+      create(:audit, storage_location: storage_location5, status: "pending_finalization", line_items_attributes: [{item_id: storage_location5.items.first.id, quantity: 10}])
 
       expect(Audit.finalized_since?(xfer1, storage_location1.id)).to be true # match items and location and occurs after
       expect(Audit.finalized_since?(xfer1, storage_location1.id, storage_location2.id)).to be true # handles multiple locations
@@ -167,7 +167,7 @@ RSpec.describe Audit, type: :model do
         expect(csv_data).to eq(
           <<~CSV
             Audit Date,Audit Status,Storage Location Name,Baby Diapers,Adult Diapers
-            October 02 2025,confirmed,Diaperhaus,150,0
+            October 02 2025,pending_finalization,Diaperhaus,150,0
             October 03 2025,finalized,Pawnee Diaper Bank,0,250
           CSV
         )
