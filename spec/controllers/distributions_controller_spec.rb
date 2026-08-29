@@ -240,6 +240,7 @@ RSpec.describe DistributionsController, type: :controller do
         context "when partner has enabled send_reminders" do
           before(:each) do
             partner.send_reminders = true
+            organization.update!(distribution_reminders_enabled: true)
           end
           it "should schedule the reminder email" do
             subject
@@ -259,6 +260,18 @@ RSpec.describe DistributionsController, type: :controller do
           it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
             expect(enqueued_jobs.size).to eq(0)
+          end
+        end
+
+        context "when the partner has send_reminders enabled but the organization has disabled distribution reminders" do
+          before do
+            partner.update!(send_reminders: true)
+            organization.update!(distribution_reminders_enabled: false)
+          end
+
+          it "should not schedule an email reminder" do
+            subject
+            expect(enqueued_jobs.map { |job| job["arguments"][1] }).not_to include("reminder_email")
           end
         end
       end
@@ -416,6 +429,7 @@ RSpec.describe DistributionsController, type: :controller do
         context "when partner has enabled send_reminders" do
           before(:each) do
             partner.send_reminders = true
+            organization.update!(distribution_reminders_enabled: true)
           end
           it "should schedule the reminder email" do
             subject

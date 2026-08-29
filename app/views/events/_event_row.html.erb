@@ -1,8 +1,7 @@
 <% if event.is_a?(SnapshotEvent) %>
   <%= render partial: "snapshot_event_row", object: event, as: :event, locals: { items: items, storage_locs: storage_locs } %>
 <% else %>
-  <% from_loc = event.data.items.first&.from_storage_location %>
-  <% to_loc = event.data.items.first&.to_storage_location %>
+  <% from_loc, to_loc = event_direction_locations(event) %>
   <tr>
     <td>
       <%= event.user&.name || "No Name Provided" %>
@@ -34,12 +33,12 @@
         end %>
       <% sorted_entries.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id } %>
+        <% quantity = entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %>
         <% if item %>
-          <%= link_to item.name, item_path(item.id) %>:
+          <%= link_to item.name, item_path(item.id) %>: <%= quantity %><br>
         <% else %>
-          Item <%= entry.item_id %> (deleted)
+          Item <%= entry.item_id %> (deleted): <%= quantity %><br>
         <% end %>
-        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
       <% end %>
     </td>
   </tr>

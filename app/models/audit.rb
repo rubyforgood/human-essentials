@@ -27,11 +27,12 @@ class Audit < ApplicationRecord
 
   accepts_nested_attributes_for :adjustment
 
-  enum :status, { in_progress: 0, confirmed: 1, finalized: 2 }
+  enum :status, { in_progress: 0, pending_finalization: 1, finalized: 2 }
 
   validate :line_items_quantity_is_not_negative
   validate :line_items_unique_by_item_id
   validate :user_is_organization_admin_of_the_organization
+  validate :cannot_change_status_once_finalized, on: :update
 
   def self.finalized_since?(itemizable, *location_ids)
     item_ids = itemizable.line_items.pluck(:item_id)
@@ -85,5 +86,11 @@ class Audit < ApplicationRecord
 
   def line_items_quantity_is_not_negative
     line_items_quantity_is_at_least(0)
+  end
+
+  def cannot_change_status_once_finalized
+    if status_changed? && status_was == "finalized"
+      errors.add(:status, "cannot be changed once finalized")
+    end
   end
 end
