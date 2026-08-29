@@ -1,36 +1,54 @@
-<% content_for :title, "New - Users - #{current_organization.name}" %>
+<% content_for :title, "Invite a user - #{current_organization.name}" %>
 
 <%#
-  Each field wrapped its own input in a block, which tells simple_form to skip the wrapper --
-  so the class string had to be copied in by hand, four times. Without the block the
-  :essentials wrapper supplies it.
+  Inviting someone to the organization, which is what this app means by adding a user: the person
+  gets an invitation email and sets their own password. `UserInviteService` is the one place that
+  happens, and the organization page's modal posts to the same action -- two entry points, one code
+  path, so they cannot drift.
+
+  It used to be a registration form. It asked for a name, an email, a **password** and a
+  confirmation, and had no `create` action behind it: `essentials_form_for(@user)` inferred
+  `users_path`, and `POST /users` resolves to `devise_invitable/registrations#create`. So the one
+  link to this page -- "Add other users at your bank" on the dashboard -- led to a form that either
+  registered an account outside the invitation flow or did nothing useful with it. The password
+  fields are gone because an invited user chooses their own, and because the users table records an
+  `invitation_status` that a directly-created account would never have.
+
+  `form_tag` with flat params, not `form_for @user`: `invite_user` reads `params[:name]`,
+  `params[:email]` and `params[:org]`, and matching it here is what keeps this on the existing
+  action rather than adding a second one that does the same thing.
 %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
-        title: "Add a user to #{current_organization.name}",
+        title: "Invite a user",
+        subtitle: "They will get an email inviting them to #{current_organization.name}, and choose their own password.",
         back: {path: organization_path, label: "Back to organization"} %>
 
-  <%#
-    The URL is explicit now. It was inferred from the model, which for a `User` is `users_path` --
-    and that helper existed only because `resources :users` declared `:index`. Removing the index
-    took the helper with it and this form stopped rendering at all.
+  <div class="max-w-2xl">
+    <%= form_tag invite_user_organization_path do %>
+      <%= render "shared/essentials/card",
+            footer: capture {
+              concat submit_tag("Send invitation", class: essentials_button_classes(variant: :primary),
+                data: {disable_with: "Sending..."})
+              concat essentials_link_button("Cancel", organization_path, variant: :ghost, size: :md)
+            } do %>
+        <div class="mb-4">
+          <%= label_tag :name, "Name", class: "block text-sm font-medium text-slate-700" %>
+          <%= text_field_tag :name, nil, required: true, autofocus: true, autocomplete: "off",
+                class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5" %>
+        </div>
 
-    `user_registration_path` is the same `/users`, and `POST /users` resolves to
-    `devise_invitable/registrations#create`, which is where this form has always submitted. Naming
-    it changes nothing and makes the dependency visible rather than incidental.
+        <div class="mb-4">
+          <%= label_tag :email, "Email", class: "block text-sm font-medium text-slate-700" %>
+          <%# `off`: this names a colleague, so the browser offering the signed-in user's own
+              name and address would be exactly the wrong suggestion. %>
+          <%= email_field_tag :email, nil, required: true, autocomplete: "off",
+                class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5" %>
+          <p class="mt-1 block text-xs text-slate-500">The invitation is sent here.</p>
+        </div>
 
-    Worth knowing: there is no `UsersController#create`. This form posts to Devise's registration
-    create, not to a bank-side "add a user to my organization" action -- see docs/design-decisions.md.
-  %>
-  <%= essentials_form_for(@user, url: user_registration_path) do |f| %>
-    <%= render "shared/essentials/card", footer: capture { submit_button } do %>
-      <%= essentials_error_summary(@user) %>
-
-      <%= f.input :name, label: "Name", required: true, autofocus: true %>
-      <%= f.input :email, label: "Email", required: true %>
-      <%= f.input :password, label: "Password", required: true,
-            hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
-      <%= f.input :password_confirmation, label: "Confirm password", required: true %>
+        <%= hidden_field_tag :org, current_organization.id %>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
 </div>

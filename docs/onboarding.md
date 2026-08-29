@@ -604,6 +604,15 @@ It also says where to go afterwards: the name, value and partner visibility can 
 **Items & inventory**, and the callout links there. It used to say "via the kit's item", which is
 true internally but not something the screen explains.
 
+### "Add other users at your bank" works now
+
+**That link on your dashboard used to lead nowhere useful.** The form asked for a name, an email and
+a password, and submitting it simply returned you to the dashboard without adding anybody.
+
+It is an invitation now, the same one the *Invite user* button on your organization page sends: you
+give a name and an email, they get an email, and they choose their own password. There is no
+password box, because you do not set it for them.
+
 ### The separate Users page is gone
 
 **Your organization page is the one place users are listed now.** There used to be a second page at
