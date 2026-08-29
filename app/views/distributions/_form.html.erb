@@ -31,20 +31,33 @@
       <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false,
             label: "Send email reminder the day before?" %>
 
-      <div class="grid gap-x-5 sm:grid-cols-2" data-controller="distribution-delivery">
-        <%= f.input :delivery_method, as: :radio_buttons,
-              input_html: {data: {action: "distribution-delivery#toggleShippingCost"}},
-              collection: Distribution.delivery_methods.keys, label_method: :humanize,
-              label: "Delivery method" %>
-        <%# Hidden on the server when it does not apply, not by the controller after paint.
-            `distribution_delivery_controller` hides this on `connect()`, and a new distribution
-            defaults to `pick_up` -- so the field was drawn and then removed, and on a refresh you
-            saw it flash. Reported as "a ghost button that appears for a second". The controller
-            still owns it from then on; it just no longer has to undo the first render. %>
-        <div id="shipping_cost_div" data-distribution-delivery-target="shippingCost"
-             class="<%= "hidden" unless f.object.delivery_method.to_s == "shipped" %>">
-          <%= f.input :shipping_cost, label: "Shipping cost", placeholder: "Shipping cost",
-                value: number_to_currency(f.object.shipping_cost.to_f, delimiter: "", unit: "") %>
+      <%#
+        Shipping cost only applies to one of the three delivery methods, so it is revealed under
+        that one -- see "Conditional reveal" in design.md.
+
+        It used to open a *second*, two column grid beside the radios, which made it 529px where
+        every other field on the card is 346px, with a left edge at x=858 that landed on no column
+        line; and it sat 94px *above* the Shipped radio that produces it. Same grid as the rest of
+        the card now, and the field follows its trigger.
+
+        Shipped is the last of the three options, so "after the fieldset" is "under the trigger".
+        The fieldset drops its own `mb-4` and the reveal owns the gap.
+      %>
+      <div class="mb-4 grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3" data-controller="distribution-delivery">
+        <div>
+          <%= f.input :delivery_method, as: :radio_buttons, wrapper_html: {class: "mb-0"},
+                input_html: {data: {action: "distribution-delivery#toggleShippingCost"},
+                             aria: {controls: "shipping_cost_div"}},
+                collection: Distribution.delivery_methods.keys, label_method: :humanize,
+                label: "Delivery method" %>
+          <%= render "shared/essentials/conditional_reveal", id: "shipping_cost_div",
+                shown: f.object.delivery_method.to_s == "shipped",
+                data: {distribution_delivery_target: "shippingCost"} do %>
+            <%= f.input :shipping_cost, label: "Shipping cost", placeholder: "0.00",
+                  wrapper_html: {class: "mb-0"},
+                  hint: "What it cost to ship this distribution.",
+                  value: number_to_currency(f.object.shipping_cost.to_f, delimiter: "", unit: "") %>
+          <% end %>
         </div>
       </div>
 

@@ -331,6 +331,12 @@ findings that belong to this migration rather than to the app's own history:
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
 
+A pattern that had no shared component until August 2026: **a field revealed by another answer**.
+Six of them existed, each built its own way -- a parallel grid column on the distribution form, a
+bare `pl-5` on the partner group form, nothing at all on three others -- and one had a wiring fault
+that meant it could never appear. They are all `shared/essentials/conditional_reveal` now; see
+"Conditional reveal" in design.md, and `pw bin/design/disclosure-audit.js` to check them.
+
 One known inert leftover, so you do not have to work it out again: `class: 'form-horizontal'`
 survives on 12 forms. Bootstrap 5 had already dropped it, so it was doing nothing before this
 work either. It is left alone because removing it means editing option hashes rather than

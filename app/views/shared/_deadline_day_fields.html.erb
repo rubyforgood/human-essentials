@@ -33,60 +33,65 @@
         Tuesday")?
       </legend>
       <div>
-        <div class="mb-2 flex min-h-6 items-center gap-2 last:mb-0">
+        <%# Each branch is revealed under the radio that asks for it, rather than both sitting
+            below the whole group where they read as belonging to either. See "Conditional
+            reveal" in design.md. %>
+        <div class="mb-2 flex min-h-6 items-center gap-2">
           <%= f.radio_button :by_month_or_week, "day_of_month",
                 class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                "aria-controls": "reminder_day_of_month_fields",
                 data: {"deadline-day-target": "byDayOfMonth",
                        action: "deadline-day#monthOrWeekChanged deadline-day#sourceChange"} %>
           <%= f.label :by_month_or_week_day_of_month, "Day of the month",
                 class: "py-0.5 text-sm text-slate-700" %>
         </div>
-        <div class="mb-2 flex min-h-6 items-center gap-2 last:mb-0">
+
+        <%= render "shared/essentials/conditional_reveal", id: "reminder_day_of_month_fields",
+              shown: by_month_or_week == "day_of_month",
+              data: {"deadline-day-target": "dayOfMonthFields"} do %>
+          <%= f.label :day_of_month, "Reminder day of month",
+                class: "block text-sm font-medium text-slate-700" %>
+          <%= f.number_field :day_of_month,
+                min: ReminderScheduleService::MIN_DAY_OF_MONTH,
+                max: ReminderScheduleService::MAX_DAY_OF_MONTH,
+                placeholder: "Reminder day",
+                class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5 max-w-48",
+                data: {"deadline-day-target": "dayOfMonth", action: "deadline-day#sourceChange"} %>
+        <% end %>
+
+        <div class="mb-2 flex min-h-6 items-center gap-2">
           <%= f.radio_button :by_month_or_week, "day_of_week",
                 class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                "aria-controls": "reminder_day_of_week_fields",
                 data: {"deadline-day-target": "byDayOfWeek",
                        action: "deadline-day#monthOrWeekChanged deadline-day#sourceChange"} %>
           <%= f.label :by_month_or_week_day_of_week, "Day of the week",
                 class: "py-0.5 text-sm text-slate-700" %>
         </div>
+
+        <%= render "shared/essentials/conditional_reveal", id: "reminder_day_of_week_fields",
+              shown: by_month_or_week == "day_of_week",
+              data: {"deadline-day-target": "dayOfWeekFields"} do %>
+          <span class="block text-sm font-medium text-slate-700">Reminder day of the week</span>
+          <div class="mt-1.5 flex flex-wrap items-end gap-3">
+            <%# label: false leaves a select with no accessible name, and these two sit side by
+                side, so position alone does not identify either. Named explicitly. %>
+            <%= f.input :every_nth_day,
+                  collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
+                  label: false, wrapper_html: {class: "mb-0"},
+                  input_html: {"aria-label" => "Which week of the month",
+                               "data-deadline-day-target" => "everyNthDay",
+                               "data-action" => "deadline-day#sourceChange"} %>
+            <%= f.input :day_of_week,
+                  collection: ReminderScheduleService::DAY_OF_WEEK_COLLECTION,
+                  label: false, show_blank: true, default: 1, wrapper_html: {class: "mb-0"},
+                  input_html: {"aria-label" => "Day of the week",
+                               "data-deadline-day-target" => "dayOfWeek",
+                               "data-action" => "deadline-day#sourceChange"} %>
+          </div>
+        <% end %>
       </div>
     </fieldset>
-
-    <%# Both branches render their correct initial state here, rather than both painting and
-        `deadline_day_controller` hiding one on `connect()` -- which showed the day-of-month field
-        for a frame on every load. Same defect as the shipping cost field on a distribution. %>
-    <div data-deadline-day-target="dayOfMonthFields"
-         class="mb-4 <%= "hidden" unless by_month_or_week == "day_of_month" %>">
-      <%= f.label :day_of_month, "Reminder day of month",
-            class: "block text-sm font-medium text-slate-700" %>
-      <%= f.number_field :day_of_month,
-            min: ReminderScheduleService::MIN_DAY_OF_MONTH,
-            max: ReminderScheduleService::MAX_DAY_OF_MONTH,
-            placeholder: "Reminder day",
-            class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mt-1.5 max-w-48",
-            data: {"deadline-day-target": "dayOfMonth", action: "deadline-day#sourceChange"} %>
-    </div>
-
-    <div data-deadline-day-target="dayOfWeekFields"
-         class="mb-4 <%= "hidden" unless by_month_or_week == "day_of_week" %>">
-      <span class="block text-sm font-medium text-slate-700">Reminder day of the week</span>
-      <div class="mt-1.5 flex flex-wrap items-end gap-3">
-        <%# label: false leaves a select with no accessible name, and these two sit side by side,
-            so position alone does not identify either. Named explicitly. %>
-        <%= f.input :every_nth_day,
-              collection: ReminderScheduleService::EVERY_NTH_COLLECTION,
-              label: false, wrapper_html: {class: "mb-0"},
-              input_html: {"aria-label" => "Which week of the month",
-                           "data-deadline-day-target" => "everyNthDay",
-                           "data-action" => "deadline-day#sourceChange"} %>
-        <%= f.input :day_of_week,
-              collection: ReminderScheduleService::DAY_OF_WEEK_COLLECTION,
-              label: false, show_blank: true, default: 1, wrapper_html: {class: "mb-0"},
-              input_html: {"aria-label" => "Day of the week",
-                           "data-deadline-day-target" => "dayOfWeek",
-                           "data-action" => "deadline-day#sourceChange"} %>
-      </div>
-    </div>
 
     <p class="mt-1 mb-4 block text-xs text-slate-500" data-deadline-day-target="reminderText"></p>
   <% end %>

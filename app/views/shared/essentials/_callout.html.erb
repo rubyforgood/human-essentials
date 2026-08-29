@@ -35,8 +35,14 @@
   # and does not want a live region at all.
   role = local_assigns.key?(:role) ? local_assigns[:role] : ([:warning, :danger].include?(tone) ? "alert" : "status")
 %>
+<%#
+  `data: data`, not `**data`. Splatting put the keys at the top level, so the one caller that
+  passed a Stimulus target got a literal `checkbox_with_nested_element_target="nestedElement"`
+  attribute -- which names nothing. The controller then threw `Missing target element` on connect
+  *and* on every click, and the callout it was meant to reveal could never appear.
+%>
 <div class="flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm <%= style[:bar] %> <%= wrapper_class %>"
-     <%= tag.attributes(id: callout_id, role: role, **data) %>>
+     <%= tag.attributes(id: callout_id, role: role, data: data) %>>
   <i class="<%= icon %> mt-0.5 shrink-0" aria-hidden="true"></i>
   <div class="min-w-0 flex-1">
     <% if title %><p class="font-semibold"><%= title %></p><% end %>

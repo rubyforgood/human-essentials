@@ -20,7 +20,7 @@ const PASSWORD = process.env.SEED_PASSWORD || "password!";
 const PAGES = {
   bank: ["/distributions/new", "/donations/new", "/purchases/new", "/manage/edit",
          "/partners/new", "/partner_groups/new", "/audits/new"],
-  super: ["/admin/users/1/edit"]
+  super: ["/admin/users/1/edit", "/admin/users/new"]
 };
 
 const ROLES = { bank: "org_admin1@example.com", super: "superadmin@example.com" };

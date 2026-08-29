@@ -22,19 +22,30 @@
               label: "Do you want this partner to receive emails for distributions and reminders from the system?",
               input_html: {
                 id: "send_reminders",
+                "aria-controls": "partner_reminder_note",
                 data: {
                   action: "click->checkbox-with-nested-element#toggleNestedElementVisibility",
                   "checkbox-with-nested-element-target": "checkbox"
                 }
               } %>
-        <%= render "shared/essentials/callout", tone: :info, role: nil, wrapper_class: "mb-4 hidden",
-              data: {checkbox_with_nested_element_target: "nestedElement"} do %>
-          <p class="font-semibold">Reminder</p>
-          <p class="mt-1">
-          Reminders are sent according to the settings of the partner's group or of your
-          organization. This won't work unless you have set up at least one.
-          </p>
+        <%# `marked: false`: the caveat only applies once reminders are on, so it is revealed under
+            the checkbox that turns them on -- but it is a callout, which already carries its own
+            tinted box, and an indent and rule on top of that would mark one relationship twice.
 
+            This never actually appeared before. The target was passed to the callout as `data:`,
+            which the partial splatted at the top level, so it rendered as a literal
+            `checkbox_with_nested_element_target` attribute and Stimulus never found the target --
+            it threw `Missing target element` on connect and on every click of the checkbox. %>
+        <%= render "shared/essentials/conditional_reveal", id: "partner_reminder_note",
+              shown: f.object.send_reminders, marked: false,
+              data: {"checkbox-with-nested-element-target": "nestedElement"} do %>
+          <%= render "shared/essentials/callout", tone: :info, role: nil do %>
+            <p class="font-semibold">Reminder</p>
+            <p class="mt-1">
+              Reminders are sent according to the settings of the partner's group or of your
+              organization. This won't work unless you have set up at least one.
+            </p>
+          <% end %>
         <% end %>
       </div>
 

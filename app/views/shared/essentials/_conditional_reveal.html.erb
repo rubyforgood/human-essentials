@@ -1,0 +1,47 @@
+<%#
+  A field that only applies to one answer, revealed under the answer that needs it.
+
+  Locals: `id` and `shown` are required; `data` and `class` are optional. `shown` is computed on
+  the server -- the controller that owns the toggle may reveal, but must never have to un-draw
+  (see design.md, "Render the state, do not correct it").
+
+  **The indent and the rule are the whole point.** They say *this belongs to that one option*,
+  which nothing else on the page says: a field sitting flush under a three-option radio group
+  reads as belonging to all three. GOV.UK, NHS and USWDS all mark a conditional reveal this way
+  and it is the only part of the pattern any of them have usability-tested.
+
+  **The numbers are ours, not GOV.UK's.** Theirs -- 18px margin, 4px rule, 33px padding -- are
+  sized to a 40px radio. Ours is 16px with a `gap-2` to its label, so: the rule is centred under
+  the radio at `ml-1.5` (6px, which is 16/2 - 4/2), and `pl-3.5` (14px) puts the revealed content
+  at 24px, exactly the left edge of the label above it. Copying 55px would have indented it to
+  nowhere.
+
+  No `aria-expanded` on the trigger, which is where this departs from govuk-frontend. Measured
+  with axe on /distributions/new: `aria-controls` alone is clean, and adding `aria-expanded` to
+  the three radios raises `aria-allowed-attr` x3 -- ARIA 1.2 does not list it for `role=radio`.
+  It *is* allowed on a checkbox (also measured, clean), but using it there and not on the radios
+  would make the pattern differ by trigger type for no gain, and on a `<select>` it would be
+  actively wrong: on a combobox `aria-expanded` means the listbox is open, not that the
+  conditional content is showing. So `aria-controls` everywhere and `aria-expanded` nowhere. The
+  behaviour that actually matters is that the revealed field follows its trigger in the DOM, so
+  Tab reaches it next.
+
+  The reveal owns 12px above and below (`my-3`), so a single field inside it takes
+  `wrapper_html: {class: "mb-0"}` rather than adding its own 16px on top.
+
+  `marked: false` drops the indent and the rule, for content that already carries its own box --
+  a callout. Two markings for one relationship is noise, and the callout's tint says "this is a
+  distinct block" on its own. It still sits under its trigger, still starts in the right state,
+  and still gets audited: `data-conditional-reveal` says which kind it is so the audit does not
+  have to infer it.
+%>
+<%
+  marked = local_assigns.fetch(:marked, true)
+  reveal_classes = marked ? "my-3 ml-1.5 border-l-4 border-slate-300 pl-3.5" : "my-3"
+%>
+<div id="<%= id %>"
+     class="<%= reveal_classes %> <%= "hidden" unless shown %> <%= local_assigns[:class] %>"
+     data-conditional-reveal="<%= marked ? "marked" : "plain" %>"
+     <%= tag.attributes(data: local_assigns[:data]) if local_assigns[:data].present? %>>
+  <%= yield %>
+</div>

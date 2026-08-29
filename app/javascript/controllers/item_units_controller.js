@@ -35,12 +35,17 @@ export default class extends Controller {
     }
     let option = this.itemSelectTarget.options[this.itemSelectTarget.selectedIndex]
     let units = this.itemUnitsValue[option.value]
+    // `hidden`, not `style.display`. Two reasons: an inline style set in `connect()` meant the
+    // select was painted and then removed on every load, and the value it set -- `inline` --
+    // overrode the `block w-full` every other select in the app has, so the one time it *was*
+    // visible it was laid out differently from its neighbours. The server renders the right
+    // state; this only ever changes it in response to a choice.
     if (!units || Object.keys(units).length === 0) {
-      this.requestSelectTarget.style.display = 'none';
+      this.requestSelectTarget.classList.add('hidden');
       this.requestSelectTarget.selectedIndex = -1;
     }
     else {
-      this.requestSelectTarget.style.display = 'inline';
+      this.requestSelectTarget.classList.remove('hidden');
       this.clearOptions()
       this.addOption('-1', 'Please select a unit')
       this.addOption('', 'units')

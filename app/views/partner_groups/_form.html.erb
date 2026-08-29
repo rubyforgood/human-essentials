@@ -31,10 +31,16 @@
           Send deadline reminders every month?
         </legend>
         <%= f.input :send_reminders, as: :boolean, label: "Yes, send reminders",
-              input_html: {data: {action: "click->checkbox-with-nested-element#toggleNestedElementVisibility",
+              input_html: {"aria-controls": "partner_group_reminder_fields",
+                           data: {action: "click->checkbox-with-nested-element#toggleNestedElementVisibility",
                                   "checkbox-with-nested-element-target": "checkbox"}} %>
 
-        <div class="hidden pl-5" data-checkbox-with-nested-element-target="nestedElement">
+        <%# The schedule only applies if reminders are on, so it is revealed under the checkbox
+            that turns them on -- the same treatment as every other conditional field in the app.
+            It used to be a bare `pl-5`, which indented it without saying why. %>
+        <%= render "shared/essentials/conditional_reveal", id: "partner_group_reminder_fields",
+              shown: @partner_group.send_reminders,
+              data: {"checkbox-with-nested-element-target": "nestedElement"} do %>
           <%= render "shared/essentials/callout", tone: :info, role: "note" do %>
             Reminders need a schedule and a deadline day. Fill in both below.
           <% end %>
@@ -42,7 +48,7 @@
           <div class="mt-4">
             <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @partner_group %>
           </div>
-        </div>
+        <% end %>
       </fieldset>
     <% end %>
 

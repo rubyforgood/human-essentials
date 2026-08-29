@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipping cost — where a conditionally revealed field goes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;--rule:#94A3B8;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 96px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:80ch;margin:0 0 26px}
+  h2{font-size:19px;margin:44px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h2 .tag{vertical-align:middle}
+  p.note{color:var(--mid);max-width:86ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:#EEF2FF;color:#4338CA}
+
+  /* ---- a faithful slice of the Distribution details card ---- */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin:14px 0 6px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);column-gap:20px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px}
+  .field{margin-bottom:18px}
+  label,.lab{display:block;font-size:14px;font-weight:500;color:#334155;margin-bottom:6px}
+  .fld{width:100%;height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:8px 12px;
+    font:14px Figtree,sans-serif;background:#fff;color:#334155}
+  .fld.ghost{color:#94A3B8}
+  legend{font-size:14px;font-weight:500;color:#334155;margin-bottom:6px;padding:0}
+  fieldset{border:0;margin:0;padding:0}
+  .radio{display:flex;align-items:center;gap:8px;min-height:24px;margin-bottom:8px;font-size:14px;color:#334155}
+  .radio:last-child{margin-bottom:0}
+  .radio input{width:16px;height:16px;accent-color:var(--brand);margin:0}
+  .req{color:var(--bad)}
+
+  /* ---- the conditional reveal ---- */
+  .reveal{margin-left:8px;padding-left:31px;border-left:4px solid var(--rule);margin-top:12px;margin-bottom:4px}
+  .reveal.plain{margin-left:0;padding-left:0;border-left:0}
+  .hint{font-size:12px;color:var(--soft);margin:6px 0 0}
+
+  /* ---- measurement overlays ---- */
+  .measured{position:relative}
+  .colline{position:absolute;top:-8px;bottom:-8px;width:0;border-left:1px dashed #CBD5E1}
+  .callout{position:absolute;font-size:11px;font-weight:600;color:var(--bad);white-space:nowrap}
+  .brace{position:absolute;height:0;border-top:1px solid var(--bad)}
+  .brace::before,.brace::after{content:"";position:absolute;top:-4px;height:9px;border-left:1px solid var(--bad)}
+  .brace::before{left:0} .brace::after{right:0}
+  .braceok{border-color:var(--ok)}
+  .braceok::before,.braceok::after{border-color:var(--ok)}
+  .callout.ok{color:var(--ok)}
+  .empty{border:1px dashed #E2E8F0;border-radius:8px;background:repeating-linear-gradient(45deg,#FAFAFC,#FAFAFC 6px,#F1F5F9 6px,#F1F5F9 12px)}
+
+  table{border-collapse:collapse;width:100%;margin:14px 0 6px;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:86ch}
+  ul.tight li{margin-bottom:5px}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:86ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Shipping cost — where a conditionally revealed field goes</h1>
+<p class="lede">The Shipping cost field on <code>/distributions/new</code> only applies when the delivery
+method is <b>Shipped</b>. Right now it is a different width from every other field on the card, and it
+is drawn <b>above and to the right of</b> the option that produces it. Numbers below are measured from
+the running app at a 1440px viewport.</p>
+
+<!-- =============================== NOW =============================== -->
+<h2>What is there now<span class="tag t-now">measured</span></h2>
+<p class="note">The card's fields sit on a three column grid: <b>346px</b> each, at x&nbsp;=&nbsp;309, 675 and 1041.
+The delivery block opens a <i>second</i>, two column grid, so Shipping cost is <b>529px</b> — 183px wider than
+every other field, with a left edge at x&nbsp;=&nbsp;858 that lands on no column line. Its label sits at
+y&nbsp;=&nbsp;503; the <b>Shipped</b> radio that reveals it is at y&nbsp;=&nbsp;597, <b>94px below it</b>.</p>
+
+<div class="card measured" style="padding-bottom:34px">
+  <div class="grid3" style="margin-bottom:2px">
+    <div class="field"><label>Partner <span class="req">*</span></label><div class="fld ghost">Pawnee Parks Dept</div></div>
+    <div class="field"><label>Distribution date and time <span class="req">*</span></label><div class="fld ghost">2026-08-29 10:00 AM</div></div>
+    <div class="field"><label>Agency representative</label><div class="fld ghost">&nbsp;</div></div>
+  </div>
+  <div class="grid2 measured">
+    <fieldset class="field">
+      <legend>Delivery method <span class="req">*</span></legend>
+      <div class="radio"><input type="radio" name="n1" checked><span>Pick up</span></div>
+      <div class="radio"><input type="radio" name="n1"><span>Delivery</span></div>
+      <div class="radio"><input type="radio" name="n1"><span>Shipped</span></div>
+    </fieldset>
+    <div class="field measured">
+      <label>Shipping cost</label><div class="fld ghost">0.00</div>
+      <div class="brace" style="left:0;right:0;top:78px"></div>
+      <div class="callout" style="left:50%;transform:translateX(-50%);top:84px">529px &mdash; every other field is 346px</div>
+    </div>
+    <div class="callout" style="left:0;top:112px">↑ the option that reveals it is 94px <i>below</i> the field</div>
+  </div>
+</div>
+<div class="verdict bad"><b>Three separate problems.</b> The width matches nothing; the left edge aligns to
+nothing; and cause sits below effect, so a keyboard user tabbing off <b>Shipped</b> is thrown 94px back up
+the page. When the method is Pick up or Delivery — two of the three options, and the default — the right
+half of the band is simply empty.</div>
+
+<!-- =============================== A =============================== -->
+<h2>Option A &mdash; reveal it under the option that triggers it<span class="tag t-rec">recommended</span></h2>
+<p class="note">The field appears <b>directly beneath “Shipped”</b>, indented and marked with a left rule that
+runs from the radio it belongs to. This is the GOV.UK / NHS / USWDS conditional reveal, the most
+heavily tested pattern of the three. The delivery block joins the same three column grid as the rest of
+the card, so the fieldset is <b>346px</b> — and the revealed field fills the band inside it.
+<b>Click the radios; this one works.</b></p>
+
+<div class="card">
+  <div class="grid3">
+    <fieldset class="field">
+      <legend>Delivery method <span class="req">*</span></legend>
+      <div class="radio"><input type="radio" name="a" value="pick" checked><span>Pick up</span></div>
+      <div class="radio"><input type="radio" name="a" value="del"><span>Delivery</span></div>
+      <div class="radio"><input type="radio" name="a" value="ship" aria-controls="aRev" aria-expanded="false"><span>Shipped</span></div>
+      <div class="reveal" id="aRev" hidden>
+        <label>Shipping cost</label>
+        <input class="fld" placeholder="0.00">
+        <p class="hint">What it cost to ship this distribution.</p>
+      </div>
+    </fieldset>
+    <div class="field"><label>Agency representative</label><div class="fld ghost">&nbsp;</div></div>
+    <div class="field"><label>Source inventory <span class="req">*</span></label><div class="fld ghost">Pawnee Main Warehouse</div></div>
+  </div>
+</div>
+<ul class="tight">
+  <li><b>Cause and effect are adjacent.</b> The field is attached to the one option that needs it, not parked beside the group.</li>
+  <li><b>Reading order, visual order and tab order finally agree.</b> Today only the first and third do.</li>
+  <li><b>Nothing reserves empty space.</b> The row does not hold a gap open for a field that is usually absent.</li>
+  <li><b>The radio can say it expands something</b> — <code>aria-controls</code> and <code>aria-expanded</code>, which it carries neither of now.</li>
+  <li><b>Cost:</b> the field is 291px, not 346px — the indent takes 55px. The left rule is what makes that read as deliberate.</li>
+</ul>
+
+<!-- =============================== B =============================== -->
+<h2>Option B &mdash; keep it beside the group, on the three column grid<span class="tag t-alt">alternative</span></h2>
+<p class="note">The literal reading of “match the three column width”: the delivery block uses the same grid as
+the rest of the card, the fieldset takes column one and Shipping cost takes column two. Width and
+alignment are fixed — <b>346px</b>, landing on x&nbsp;=&nbsp;675 like everything above it. Position is not.</p>
+
+<div class="card">
+  <div class="grid3">
+    <fieldset class="field">
+      <legend>Delivery method <span class="req">*</span></legend>
+      <div class="radio"><input type="radio" name="b" checked><span>Pick up</span></div>
+      <div class="radio"><input type="radio" name="b"><span>Delivery</span></div>
+      <div class="radio"><input type="radio" name="b"><span>Shipped</span></div>
+    </fieldset>
+    <div class="field"><label>Shipping cost</label><input class="fld" placeholder="0.00"></div>
+    <div class="field"></div>
+  </div>
+</div>
+<p class="note" style="margin-top:2px">And the same card in its <b>default</b> state — Pick up — which is what a
+new distribution actually opens on:</p>
+<div class="card">
+  <div class="grid3">
+    <fieldset class="field">
+      <legend>Delivery method <span class="req">*</span></legend>
+      <div class="radio"><input type="radio" name="b2" checked><span>Pick up</span></div>
+      <div class="radio"><input type="radio" name="b2"><span>Delivery</span></div>
+      <div class="radio"><input type="radio" name="b2"><span>Shipped</span></div>
+    </fieldset>
+    <div class="field empty" style="height:64px"></div>
+    <div class="field"></div>
+  </div>
+</div>
+<div class="verdict bad"><b>The hole is the problem.</b> Column two is empty for two of the three options,
+including the default, and an empty cell beside a filled one reads as something failing to load rather
+than as nothing being needed. It also still separates the field from the option that causes it.</div>
+
+<!-- =============================== C =============================== -->
+<h2>Option C &mdash; reveal below the whole group, no indent<span class="tag t-alt">alternative</span></h2>
+<p class="note">Correct order, one column wide, but attached to the fieldset rather than to the option. The
+field gets the full <b>346px</b> column.</p>
+
+<div class="card">
+  <div class="grid3">
+    <div>
+      <fieldset class="field" style="margin-bottom:14px">
+        <legend>Delivery method <span class="req">*</span></legend>
+        <div class="radio"><input type="radio" name="c" checked><span>Pick up</span></div>
+        <div class="radio"><input type="radio" name="c"><span>Delivery</span></div>
+        <div class="radio"><input type="radio" name="c"><span>Shipped</span></div>
+      </fieldset>
+      <div class="reveal plain">
+        <label>Shipping cost</label>
+        <input class="fld" placeholder="0.00">
+      </div>
+    </div>
+    <div class="field"><label>Agency representative</label><div class="fld ghost">&nbsp;</div></div>
+    <div class="field"><label>Source inventory <span class="req">*</span></label><div class="fld ghost">Pawnee Main Warehouse</div></div>
+  </div>
+</div>
+<div class="verdict bad"><b>Ambiguous with three options.</b> Sitting flush under the fieldset, the field
+reads as belonging to the group — so it looks like it applies to Pick up and Delivery too. The indent and
+rule in Option A exist precisely to say <i>this belongs to that one option</i>.</div>
+
+<!-- =============================== INDUSTRY =============================== -->
+<h2>What the industry does</h2>
+<table>
+  <tr><th>System</th><th>Pattern</th><th>Where the revealed field goes</th></tr>
+  <tr class="rec"><td><b>GOV.UK</b></td><td>Radios — “Conditionally revealing a question”</td>
+    <td>Directly below the triggering radio; <code>margin-left 18px</code>, <code>padding-left 33px</code>, <b>4px left rule</b>. Guidance: only one or two questions per reveal.</td></tr>
+  <tr class="rec"><td><b>NHS</b></td><td>Radios with conditional content</td><td>Same shape — forked from GOV.UK, same indent and rule.</td></tr>
+  <tr class="rec"><td><b>USWDS</b></td><td>Radio buttons — conditional reveal</td><td>Below the trigger, indented, tied by an indent rule.</td></tr>
+  <tr><td>Carbon</td><td>Progressive disclosure guidance</td><td>No named component; guidance is that revealed content follows its trigger in reading order.</td></tr>
+  <tr><td>Material / Polaris</td><td>—</td><td>Nothing formal; both place dependent fields after the control they depend on.</td></tr>
+</table>
+<p class="note"><b>None of the five puts a dependent field in a parallel column.</b> The consistent rule is
+that a conditionally revealed field follows its trigger in the reading order and is visually attached to it.
+GOV.UK is the only one that has published usability testing on it, and the indent plus rule is what that
+testing produced.</p>
+
+<h2>One implementation note</h2>
+<p class="note">GOV.UK renders the conditional content <b>visible</b> and hides it with CSS keyed off a class
+set by an inline script in <code>&lt;head&gt;</code> — not with JavaScript after paint. That is the same
+conclusion as <a href="#">the fix landed yesterday</a>: whichever way round, the field must never be painted
+and then removed. Here the server already knows the delivery method, so it just renders the right state.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>Option A.</b> It is the only one of the three that fixes the position as well as the
+width, it is the pattern three government design systems converged on independently, and it lets the radio
+announce that it expands something. The 291px field is narrower than a full column, and that is the
+pattern working as intended — the rule down the left is what tells you why.</div>
+
+</div>
+<script>
+  // Option A actually reveals, so the pattern can be judged by clicking rather than by description.
+  document.querySelectorAll('input[name="a"]').forEach((r) => {
+    r.addEventListener("change", () => {
+      const on = document.querySelector('input[name="a"]:checked').value === "ship";
+      document.getElementById("aRev").hidden = !on;
+      document.querySelector('input[name="a"][value="ship"]').setAttribute("aria-expanded", String(on));
+    });
+  });
+</script>
+</body>
+</html>

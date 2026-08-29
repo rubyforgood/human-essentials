@@ -130,6 +130,28 @@ Found the reported "ghost button that appears for a second" on `/distributions/n
 cost field) and the same defect on `/manage/edit` (the reminder day fields). `<select>` is excluded
 because select2 *replaces* one with its own container, which is a swap rather than a hide.
 
+`disclosure-audit.js` checks every **conditionally revealed field** against the rule in design.md.
+
+```bash
+pw bin/design/disclosure-audit.js
+```
+
+Per reveal: it starts **below** the control that reveals it, **follows** it in the DOM so Tab
+reaches it next, is **marked** with the indent and the 4px left rule, and **hangs 6px off** its
+trigger's left edge -- which is the check that catches a field parked in a column of its own. It
+exits non-zero on a defect.
+
+Reveals are found by asking the page, not the source: anything a control points at with
+`aria-controls`, plus the two pre-component target names, so a reveal that has *not* been migrated
+still appears in the report rather than dropping out of it. A nested reveal is measured with its
+whole ancestor chain un-hidden and then put back -- otherwise it measures 0x0 inside a collapsed
+parent and reads as a defect that is not there. Two exemptions, both read from
+`data-conditional-reveal` rather than guessed: a **table cell**, whose column *is* the
+relationship, and a **plain** reveal, whose content already carries its own box.
+
+Reported as "the location and size of the shipping cost field does not make any sense". Currently
+**10 reveals, 0 defects**.
+
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
 ```bash
