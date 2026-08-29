@@ -701,6 +701,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       describe 'creating a new partner group' do
         it 'should allow creating a new partner group with item categories' do
+          organization.update!(deadline_reminders_enabled: true)
           travel_to Time.zone.local(2020, 10, 10)
           visit partners_path
 
@@ -724,6 +725,28 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? item_category_2.name
           expect(page).to have_content("Your next reminder date is Sun Nov 01 2020.")
           expect(page).to have_content("The deadline on your next reminder email will be Wed Nov 25 2020.")
+        end
+      end
+
+      describe 'when the organization has disabled monthly deadline reminders' do
+        before { organization.update!(deadline_reminders_enabled: false) }
+
+        it 'replaces the reminder schedule fields with a notice linking an admin to settings' do
+          sign_in(organization_admin)
+          visit new_partner_group_path
+
+          expect(page).to have_content('Do you want to send deadline reminders to them every month?')
+          expect(page).not_to have_field('partner_group_reminder_schedule_service_day_of_month')
+          expect(page).to have_content('Monthly deadline reminder emails are turned off')
+          expect(page).to have_link('Change this in your organization settings', href: edit_organization_path)
+        end
+
+        it 'tells a non-admin user to contact their administrator' do
+          visit new_partner_group_path
+
+          expect(page).to have_content('Monthly deadline reminder emails are turned off')
+          expect(page).to have_content('Contact your organization administrator')
+          expect(page).not_to have_link('Change this in your organization settings')
         end
       end
 
@@ -762,6 +785,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           end
 
           before do
+            organization.update!(deadline_reminders_enabled: true)
             partner.update!(partner_group: existing_partner_group)
             visit partners_path
 
@@ -776,7 +800,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", nil, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
-            partner.organization.update!(deadline_reminders_enabled: true)
             travel_to Time.zone.local(2025, 9, 30)
             refresh
             post_refresh
