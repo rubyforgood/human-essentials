@@ -21,8 +21,7 @@ describe DistributionPdf do
       PDFComparisonTestFactory.create_line_items_request(distribution: distribution, partner: partner, storage_creation: storage_creation)
     end
 
-    specify "#request_data with custom units feature" do
-      Flipper.enable(:enable_packs)
+    specify "#request_data" do
       results = described_class.new(organization, distribution).request_data
       expect(results).to eq([
         ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
@@ -48,49 +47,7 @@ describe DistributionPdf do
 
     context "with request data" do
       describe "#hide_columns" do
-        context "when enable_packs is enabled" do
-          it "hides value and package columns when true on organization, and includes the request unit info" do
-            Flipper.enable(:enable_packs)
-
-            pdf = described_class.new(org_hiding_packages_and_values, distribution)
-            data = pdf.request_data
-            pdf.hide_columns(data)
-            expect(data).to eq([
-              ["Items Received", "Requested", "Received"],
-              ["Item 1", "", 50],
-              ["Item 2", "30", 100],
-              ["Item 3", "50", ""],
-              ["Item 4", "120 packs", ""],
-              ["", "", ""],
-              ["Total Items Received", 200, 150]
-            ])
-          end
-
-          it "hides value columns when true on organization" do
-            Flipper.enable(:enable_packs)
-
-            pdf = described_class.new(org_hiding_values, distribution)
-            data = pdf.request_data
-            pdf.hide_columns(data)
-            expect(data).to eq([
-              ["Items Received", "Requested", "Received", "Packages"],
-              ["Item 1", "", 50, "1"],
-              ["Item 2", "30", 100, nil],
-              ["Item 3", "50", "", nil],
-              ["Item 4", "120 packs", "", nil],
-              ["", "", ""],
-              ["Total Items Received", 200, 150, ""]
-            ])
-          end
-        end
-      end
-    end
-
-    context "with non request data" do
-      context "when enable_packs is enabled" do
-        it "hides value and package columns when true on organization, and includes request unit info" do
-          Flipper.enable(:enable_packs)
-
+        it "hides value and package columns when true on organization, and includes the request unit info" do
           pdf = described_class.new(org_hiding_packages_and_values, distribution)
           data = pdf.request_data
           pdf.hide_columns(data)
@@ -105,9 +62,7 @@ describe DistributionPdf do
           ])
         end
 
-        it "hides value columns when true on organization, and includes request unit info" do
-          Flipper.enable(:enable_packs)
-
+        it "hides value columns when true on organization" do
           pdf = described_class.new(org_hiding_values, distribution)
           data = pdf.request_data
           pdf.hide_columns(data)
@@ -124,25 +79,53 @@ describe DistributionPdf do
       end
     end
 
+    context "with non request data" do
+      it "hides value and package columns when true on organization, and includes request unit info" do
+        pdf = described_class.new(org_hiding_packages_and_values, distribution)
+        data = pdf.request_data
+        pdf.hide_columns(data)
+        expect(data).to eq([
+          ["Items Received", "Requested", "Received"],
+          ["Item 1", "", 50],
+          ["Item 2", "30", 100],
+          ["Item 3", "50", ""],
+          ["Item 4", "120 packs", ""],
+          ["", "", ""],
+          ["Total Items Received", 200, 150]
+        ])
+      end
+
+      it "hides value columns when true on organization, and includes request unit info" do
+        pdf = described_class.new(org_hiding_values, distribution)
+        data = pdf.request_data
+        pdf.hide_columns(data)
+        expect(data).to eq([
+          ["Items Received", "Requested", "Received", "Packages"],
+          ["Item 1", "", 50, "1"],
+          ["Item 2", "30", 100, nil],
+          ["Item 3", "50", "", nil],
+          ["Item 4", "120 packs", "", nil],
+          ["", "", ""],
+          ["Total Items Received", 200, 150, ""]
+        ])
+      end
+    end
+
     context "regardless of request data" do
       describe "#hide_columns" do
-        context "when enable_packs is enabled" do
-          it "hides package column when true on organization, and includes request unit info" do
-            Flipper.enable(:enable_packs)
-
-            pdf = described_class.new(org_hiding_packages, distribution)
-            data = pdf.request_data
-            pdf.hide_columns(data)
-            expect(data).to eq([
-              ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
-              ["Item 1", "", 50, "$1.00", "$50.00"],
-              ["Item 2", "30", 100, "$2.00", "$200.00"],
-              ["Item 3", "50", "", "$3.00", nil],
-              ["Item 4", "120 packs", "", "$4.00", nil],
-              ["", "", "", "", ""],
-              ["Total Items Received", 200, 150, "", "$250.00"]
-            ])
-          end
+        it "hides package column when true on organization, and includes request unit info" do
+          pdf = described_class.new(org_hiding_packages, distribution)
+          data = pdf.request_data
+          pdf.hide_columns(data)
+          expect(data).to eq([
+            ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
+            ["Item 1", "", 50, "$1.00", "$50.00"],
+            ["Item 2", "30", 100, "$2.00", "$200.00"],
+            ["Item 3", "50", "", "$3.00", nil],
+            ["Item 4", "120 packs", "", "$4.00", nil],
+            ["", "", "", "", ""],
+            ["Total Items Received", 200, 150, "", "$250.00"]
+          ])
         end
       end
     end
@@ -154,18 +137,12 @@ describe DistributionPdf do
       begin
         # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
-        # => Flipper.enable(:enable_packs)
         # => PDFComparisonTestFactory.create_comparison_pdfs
         expect(pdf_file).to eq(IO.binread(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
         Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
         raise e.class, "PDF does not match, written to tmp/", cause: nil
       end
-    end
-
-    # The generated PDFs (PDFs to use for comparison) are expecting the packs feature to be enabled.
-    before(:each) do
-      Flipper.enable(:enable_packs)
     end
 
     let(:partner) { PDFComparisonTestFactory.create_partner(organization) }

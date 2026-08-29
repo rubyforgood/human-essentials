@@ -56,7 +56,7 @@
                 <% @partner_request.item_requests.each do |item| %>
                   <li>
                     <%= item.name %> - <%= item.quantity %>
-                    <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
+                    <% if item.request_unit %>
                       <%= item.request_unit.pluralize(item.quantity.to_i) %>
                     <% end %>
                   </li>
