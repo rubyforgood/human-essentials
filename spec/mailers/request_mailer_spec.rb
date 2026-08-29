@@ -31,5 +31,17 @@ RSpec.describe RequestMailer, type: :mailer do
         expect(subject.to).to eq(["partner@example.com"])
       end
     end
+
+    context "when the partner user who sent the request has since been discarded" do
+      let(:partner_user) { create(:partner_user, email: "requester@example.com", partner: partner) }
+      let(:request) { create(:request, partner: partner, partner_user: partner_user) }
+
+      it "is still sent to the partner main email" do
+        request
+        partner_user.discard
+
+        expect(subject.to).to eq(["partner@example.com"])
+      end
+    end
   end
 end

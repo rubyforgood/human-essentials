@@ -177,6 +177,38 @@ RSpec.describe Request, type: :model do
     end
   end
 
+  describe "requester" do
+    let(:partner) { create(:partner) }
+
+    context "when a partner user submitted the request" do
+      let(:partner_user) { create(:partner_user, partner: partner) }
+
+      it "returns the partner user" do
+        request = create(:request, partner: partner, partner_user: partner_user)
+        expect(request.requester).to eq(partner_user)
+      end
+    end
+
+    context "when no partner user is recorded" do
+      it "returns the partner" do
+        request = create(:request, partner: partner, partner_user: nil)
+        expect(request.requester).to eq(partner)
+      end
+    end
+
+    context "when the partner user has since been discarded" do
+      let(:partner_user) { create(:partner_user, partner: partner) }
+
+      it "falls back to the partner" do
+        request = create(:request, partner: partner, partner_user: partner_user)
+        partner_user.discard
+
+        expect(request.reload.partner_user_id).to eq(partner_user.id)
+        expect(request.requester).to eq(partner)
+      end
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
