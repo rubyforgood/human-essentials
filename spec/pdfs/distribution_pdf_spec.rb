@@ -48,7 +48,49 @@ describe DistributionPdf do
 
     context "with request data" do
       describe "#hide_columns" do
-        it "hides value and package columns when true on organization" do
+        context "when enable_packs is enabled" do
+          it "hides value and package columns when true on organization, and includes the request unit info" do
+            Flipper.enable(:enable_packs)
+
+            pdf = described_class.new(org_hiding_packages_and_values, distribution)
+            data = pdf.request_data
+            pdf.hide_columns(data)
+            expect(data).to eq([
+              ["Items Received", "Requested", "Received"],
+              ["Item 1", "", 50],
+              ["Item 2", "30", 100],
+              ["Item 3", "50", ""],
+              ["Item 4", "120 packs", ""],
+              ["", "", ""],
+              ["Total Items Received", 200, 150]
+            ])
+          end
+
+          it "hides value columns when true on organization" do
+            Flipper.enable(:enable_packs)
+
+            pdf = described_class.new(org_hiding_values, distribution)
+            data = pdf.request_data
+            pdf.hide_columns(data)
+            expect(data).to eq([
+              ["Items Received", "Requested", "Received", "Packages"],
+              ["Item 1", "", 50, "1"],
+              ["Item 2", "30", 100, nil],
+              ["Item 3", "50", "", nil],
+              ["Item 4", "120 packs", "", nil],
+              ["", "", ""],
+              ["Total Items Received", 200, 150, ""]
+            ])
+          end
+        end
+      end
+    end
+
+    context "with non request data" do
+      context "when enable_packs is enabled" do
+        it "hides value and package columns when true on organization, and includes request unit info" do
+          Flipper.enable(:enable_packs)
+
           pdf = described_class.new(org_hiding_packages_and_values, distribution)
           data = pdf.request_data
           pdf.hide_columns(data)
@@ -57,13 +99,15 @@ describe DistributionPdf do
             ["Item 1", "", 50],
             ["Item 2", "30", 100],
             ["Item 3", "50", ""],
-            ["Item 4", "120", ""],
+            ["Item 4", "120 packs", ""],
             ["", "", ""],
             ["Total Items Received", 200, 150]
           ])
         end
 
-        it "hides value columns when true on organization" do
+        it "hides value columns when true on organization, and includes request unit info" do
+          Flipper.enable(:enable_packs)
+
           pdf = described_class.new(org_hiding_values, distribution)
           data = pdf.request_data
           pdf.hide_columns(data)
@@ -72,7 +116,7 @@ describe DistributionPdf do
             ["Item 1", "", 50, "1"],
             ["Item 2", "30", 100, nil],
             ["Item 3", "50", "", nil],
-            ["Item 4", "120", "", nil],
+            ["Item 4", "120 packs", "", nil],
             ["", "", ""],
             ["Total Items Received", 200, 150, ""]
           ])
@@ -80,53 +124,25 @@ describe DistributionPdf do
       end
     end
 
-    context "with non request data" do
-      it "hides value and package columns when true on organization" do
-        pdf = described_class.new(org_hiding_packages_and_values, distribution)
-        data = pdf.request_data
-        pdf.hide_columns(data)
-        expect(data).to eq([
-          ["Items Received", "Requested", "Received"],
-          ["Item 1", "", 50],
-          ["Item 2", "30", 100],
-          ["Item 3", "50", ""],
-          ["Item 4", "120", ""],
-          ["", "", ""],
-          ["Total Items Received", 200, 150]
-        ])
-      end
-
-      it "hides value columns when true on organization" do
-        pdf = described_class.new(org_hiding_values, distribution)
-        data = pdf.request_data
-        pdf.hide_columns(data)
-        expect(data).to eq([
-          ["Items Received", "Requested", "Received", "Packages"],
-          ["Item 1", "", 50, "1"],
-          ["Item 2", "30", 100, nil],
-          ["Item 3", "50", "", nil],
-          ["Item 4", "120", "", nil],
-          ["", "", ""],
-          ["Total Items Received", 200, 150, ""]
-        ])
-      end
-    end
-
     context "regardless of request data" do
       describe "#hide_columns" do
-        it "hides package column when true on organization" do
-          pdf = described_class.new(org_hiding_packages, distribution)
-          data = pdf.request_data
-          pdf.hide_columns(data)
-          expect(data).to eq([
-            ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
-            ["Item 1", "", 50, "$1.00", "$50.00"],
-            ["Item 2", "30", 100, "$2.00", "$200.00"],
-            ["Item 3", "50", "", "$3.00", nil],
-            ["Item 4", "120", "", "$4.00", nil],
-            ["", "", "", "", ""],
-            ["Total Items Received", 200, 150, "", "$250.00"]
-          ])
+        context "when enable_packs is enabled" do
+          it "hides package column when true on organization, and includes request unit info" do
+            Flipper.enable(:enable_packs)
+
+            pdf = described_class.new(org_hiding_packages, distribution)
+            data = pdf.request_data
+            pdf.hide_columns(data)
+            expect(data).to eq([
+              ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
+              ["Item 1", "", 50, "$1.00", "$50.00"],
+              ["Item 2", "30", 100, "$2.00", "$200.00"],
+              ["Item 3", "50", "", "$3.00", nil],
+              ["Item 4", "120 packs", "", "$4.00", nil],
+              ["", "", "", "", ""],
+              ["Total Items Received", 200, 150, "", "$250.00"]
+            ])
+          end
         end
       end
     end

@@ -14,7 +14,7 @@ gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.0"
 
 ###### MODELS / DATABASE #######
 
@@ -160,7 +160,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.54"
+  gem "standard", "~> 1.56"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.

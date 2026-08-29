@@ -48,6 +48,66 @@ RSpec.describe Partners::ItemRequest, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
+
+  describe '#quantity_with_units' do
+    context 'when enable_packs is enabled' do
+      context 'when there is a request unit' do
+        it 'returns the quantity with the request unit' do
+          Flipper.enable(:enable_packs)
+
+          item = create(:item, organization: organization)
+          create(:item_unit, item:, name: 'flat')
+          request = create(:request, organization: organization)
+          item_request = create(:item_request, request:, item: item, request_unit: 'flat', name: "Item 1", quantity: 10)
+
+          expect(item_request.quantity_with_units).to eq('10 flats')
+        end
+      end
+
+      context 'when there is no request unit' do
+        it 'returns only the quantity' do
+          Flipper.enable(:enable_packs)
+
+          item = create(:item, organization: organization)
+          create(:item_unit, item:, name: 'flat')
+          request = create(:request, organization: organization)
+          item_request = create(:item_request, request:, item: item, name: 'Item 1', quantity: 10)
+
+          expect(item_request.quantity_with_units).to eq('10')
+        end
+      end
+    end
+  end
+
+  describe '#name_with_unit' do
+    context 'when enable_packs is enabled' do
+      context 'when there is a request unit' do
+        it 'returns the item name with the request unit' do
+          Flipper.enable(:enable_packs)
+
+          item = create(:item, organization: organization, name: 'Item name')
+          create(:item_unit, item:, name: 'flat')
+          request = create(:request, organization: organization)
+          item_request = create(:item_request, request:, item: item, request_unit: 'flat', name: "Item 1", quantity: 10)
+
+          expect(item_request.name_with_unit).to eq('Item name - flats')
+        end
+      end
+
+      context 'when there is no request unit' do
+        it 'returns only the item name' do
+          Flipper.enable(:enable_packs)
+
+          item = create(:item, organization: organization, name: 'Item name')
+          create(:item_unit, item:, name: 'flat')
+          request = create(:request, organization: organization)
+          item_request = create(:item_request, request:, item: item, name: 'Item 1', quantity: 10)
+
+          expect(item_request.name_with_unit).to eq('Item name')
+        end
+      end
+    end
+  end
 end
 
 

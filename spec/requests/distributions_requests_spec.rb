@@ -665,7 +665,7 @@ RSpec.describe "Distributions", type: :request do
               storage_location_id: location.id,
               'issued_at(1i)' => issued_at.to_date.year,
               'issued_at(2i)' => issued_at.to_date.month,
-              'issued_at(3i)' => nil # day part of date missing
+              'issued_at(3i)' => '' # day part of date missing
             }}
         end
 
