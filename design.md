@@ -1105,6 +1105,23 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="one-destination-one-place"></a>
+**A destination appears in one navigation surface, not two.** "Organization" was pinned to the foot
+of the sidebar *and* listed in the account menu, behind the identical `can_administrate?` gate — the
+same link, for the same people, in two places. Neither entry was wrong on its own, which is why
+nothing caught it; `wayfinding-audit.js` checks for it now.
+
+<a id="the-avatar-menu-is-personal"></a>
+**The account menu is about the person; the sidebar is about the work.** Account settings, the roles
+you can switch to, and sign out. Not the organization's settings, not a list of your co-workers.
+
+This is the closest thing to a universal convention in the products this app resembles: **Slack,
+GitHub, Linear, Notion, Stripe, Atlassian and Shopify all keep workspace or organization settings
+out of the avatar menu.** Where those settings *do* live splits two ways — pinned to the foot of the
+sidebar (Shopify, and this app), or under the workspace name at the top where that name is also a
+switcher (Slack, Notion, Linear). This app's sidebar header already shows the organization's name,
+so the pinned footer entry is the one that fits.
+
 <a id="breadcrumbs"></a>
 **Every page that is not a nav root carries a breadcrumb.** It sits above the `<h1>`, 8px clear of
 it, and `page_header` renders it — no page draws its own.

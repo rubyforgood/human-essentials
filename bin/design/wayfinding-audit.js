@@ -64,6 +64,26 @@ async function signIn(page, email) {
         .map((a) => new URL(a.href).pathname));
     const roots = new Set(nav);
 
+    // A destination should appear in one navigation surface, not two. "Organization" sat in the
+    // sidebar's pinned footer *and* the account menu behind the identical `can_administrate?`
+    // gate -- the same link, for the same people, in two places. Neither is wrong on its own,
+    // which is exactly why nothing caught it.
+    const duplicates = await page.evaluate(() => {
+      const surface = (a) => (a.closest("aside") ? "sidebar" : a.closest("header") ? "account menu" : "other");
+      const seen = new Map();
+      document.querySelectorAll("aside a[href], header a[href]").forEach((a) => {
+        const path = new URL(a.href).pathname;
+        const where = surface(a);
+        if (!seen.has(path)) seen.set(path, new Set());
+        seen.get(path).add(where);
+      });
+      return [...seen.entries()]
+        .filter(([, places]) => places.size > 1)
+        .map(([path, places]) => ({ path, places: [...places] }));
+    });
+    duplicates.forEach((d) =>
+      findings.push({ role, path: d.path, why: `in two nav surfaces: ${d.places.join(" and ")}` }));
+
     for (const t of targets.filter((t) => roleFor(t.controller) === role)) {
       const resp = await page.goto(BASE + t.path, { waitUntil: "domcontentloaded", timeout: 45000 }).catch(() => null);
       if (!resp || resp.status() !== 200) continue;

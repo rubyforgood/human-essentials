@@ -52,14 +52,24 @@
           <%= link_to "Account settings", edit_user_registration_path, role: "menuitem",
                 class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
 
-          <% if can_administrate? %>
-            <%= link_to "Organization", organization_path, role: "menuitem",
-                  class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
-            <% if current_user.has_cached_role?(:partner) %>
-              <%= link_to "Co-workers", users_path, role: "menuitem",
-                    class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
-            <% end %>
-          <% end %>
+          <%#
+            No "Organization" here. It was in this menu *and* pinned to the foot of the sidebar,
+            behind the identical `can_administrate?` gate -- the same link, for the same people, in
+            two places. This menu is about the *person*: their account, the roles they can switch
+            to, and signing out. Where an organization's settings live is a question about
+            navigation; putting them in both is not an answer to it.
+
+            The near-universal convention is that an avatar menu holds personal things. Slack,
+            GitHub, Linear, Notion, Stripe and Atlassian all keep workspace or organization
+            settings out of it, and the sidebar is where this app puts destinations. See design.md.
+
+            The "Co-workers" link that used to sit here is gone too, and it is worth saying why
+            rather than quietly dropping it: it was gated on `can_administrate?` *and*
+            `has_cached_role?(:partner)`, and a bank admin has no partner role -- so it rendered
+            for nobody in this shell. The page it pointed at, /users, lists name and email, which
+            the organization page's own users table already shows alongside role, last sign in,
+            status and the actions. See docs/design-decisions.md.
+          %>
 
           <% current_user.switchable_roles.each do |role| %>
             <% next if role == current_role %>

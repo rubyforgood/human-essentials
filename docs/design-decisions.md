@@ -6325,3 +6325,46 @@ the working branch had, because they looked like the same action. They are not �
 something and one is going to be refused. **A branch that exists because an action is impossible
 should be read as its own case, not as a copy of the possible one with the disabling removed.**
 
+## 2026-08-29 — One destination, one place in the navigation
+
+Asked why "Organization" is in the sidebar footer *and* the account menu, and what the industry
+standard is. Measured: both link to `organization_path`, both behind the identical
+`can_administrate?` gate. Same link, same audience, two places — duplication rather than coverage.
+It was the only such pair: of 22 sidebar destinations and 3 account-menu entries, exactly one
+overlapped.
+
+**The standard is clearer than I expected on one half and split on the other.**
+
+The near-universal half: **an avatar menu is for the person.** Slack, GitHub, Linear, Notion,
+Stripe, Atlassian and Shopify all keep workspace or organization settings out of it — it holds your
+profile, your preferences, sign out.
+
+The split half is *where* org settings go. Two conventions: pinned to the foot of the sidebar
+(Shopify, and most admin tools where settings is a destination like any other), or under the
+workspace name at the top, where that name doubles as a switcher (Slack, Notion, Linear). This app
+already does the first, and its sidebar header already shows the organization's name, so the pinned
+footer entry is the one that fits and the account-menu one is the one that goes.
+
+**`wayfinding-audit.js` checks for it now**, and the reason it never surfaced is worth keeping:
+every check this app has asks whether a page can be *reached*. None asked whether it can be reached
+**twice**. Neither entry was wrong on its own.
+
+### The mirror-image finding: a page linked zero times
+
+Removing the duplicate surfaced its opposite in the same menu. "Co-workers" pointed at `/users` and
+was gated on `can_administrate?` **and** `has_cached_role?(:partner)` — and a bank admin has no
+partner role, so **it rendered for nobody in that shell**. Confirmed against the seeded admin: the
+gate evaluates false. It has been that way since the shell was built (`6a01113ea`), and reads like a
+gate copied from the partner top bar, where the same label points at `partners_users_path`.
+
+The link is removed rather than repaired, and the reason is the principle this whole change is
+about. `/users` shows **name and email**; the organization page's users table shows **name, email,
+role, last sign in, status, reinvite and the actions**. It is a strictly weaker view of a list that
+already exists one click away, so fixing the gate would have added a second users page rather than
+restored access to a missing one.
+
+**What that leaves, said plainly:** `/users` now has no inbound link at all. It still renders, still
+carries a breadcrumb, and is not deleted here — deleting a page is a decision to take deliberately
+rather than as a side effect of tidying a menu. It is written down so it is not rediscovered as a
+mystery.
+

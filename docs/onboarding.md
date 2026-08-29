@@ -594,6 +594,18 @@ blank lines.
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
 
+### The account menu is shorter
+
+**"Organization" is no longer in the avatar menu.** It is still pinned to the bottom of the left
+sidebar, where it always was — it was simply in both places, linking to the same page for the same
+people. The account menu is for you: your account settings, any roles you can switch to, and
+signing out.
+
+**"Co-workers" has gone from that menu too.** It never actually appeared for bank administrators —
+it required a partner role that a bank admin does not have — and the page it pointed at showed only
+names and email addresses. Your organization page already lists the same people with their role,
+last sign-in, status and the actions you can take.
+
 ### Confirmations look like the app now
 
 **"Are you sure?" is the app's own dialog**, not the grey browser box that used to say
