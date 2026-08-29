@@ -16,16 +16,25 @@
 %>
 <%
   back ||= nil
+  breadcrumb ||= nil
   subtitle ||= nil
   actions ||= nil
   status ||= nil
   wrapper_class ||= "mb-6"
+
+  # `back:` used to render a "Back to X" link. A breadcrumb subsumes it -- the first ancestor is
+  # the same destination, and the trail also says where you are, which the back link never did --
+  # so it is derived rather than asked for again at 99 call sites. Every label in the app is
+  # "Back to <noun>", checked before relying on it; `upcase_first` because a trail reads as titles
+  # and "dashboard" mid-trail does not.
+  #
+  # `breadcrumb:` takes precedence and carries a deeper trail: [[label, path], ...] of ancestors.
+  trail = breadcrumb
+  trail ||= [[back[:label].sub(/\ABack to /, "").upcase_first, back[:path]]] if back
 %>
 <div class="<%= wrapper_class %>">
-  <% if back %>
-    <%= link_to back[:path], class: "mb-2 inline-flex min-h-6 items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do %>
-      <i class="bi-chevron-left text-xs" aria-hidden="true"></i><%= back[:label] %>
-    <% end %>
+  <% if trail.present? %>
+    <%= render "shared/essentials/breadcrumb", trail: trail, current: title %>
   <% end %>
 
   <div class="flex flex-wrap justify-between gap-3 <%= subtitle ? "items-start" : "items-end" %>">

@@ -12,9 +12,12 @@
 <% content_for :title, "#{title} - #{current_organization.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# These three are listed in the reports catalogue and are in no menu, so the hub was the only
+      way in and there was no way out. %>
   <%= render "shared/essentials/page_header",
         title: title,
-        subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind." %>
+        subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind.",
+        back: {path: reports_path, label: "Back to reports"} %>
 
 <div class="space-y-6">
   <%= render "shared/essentials/card" do %>

@@ -1,9 +1,13 @@
 <% content_for :title, "New authorized family member - #{current_partner.name}" %>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# One `back:`. It carried two, and a duplicate key in a Ruby hash literal is not an error --
+      the last silently wins -- so the first was doing nothing. %>
   <%= render "shared/essentials/page_header",
         title: "New authorized family member",
         subtitle: "Someone else who may collect essentials for this family.",
         back: {path: partners_family_path(@authorized_family_member.family), label: "Back to family"} %>
+
+  <%# The form sat outside the page wrapper, so it had no gutter at all on the left or right. %>
+  <%= render "form", authorized_family_member: @authorized_family_member, submit_label: "Add family member" %>
 </div>
-<%= render "form", authorized_family_member: @authorized_family_member, submit_label: "Add family member" %>

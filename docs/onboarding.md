@@ -240,6 +240,7 @@ page exactly one `<h1>`, name every control, and never let colour be the only si
 ruby bin/design/status.rb            # which controllers are on a design system layout
 ruby bin/design/page-audit.rb        # defects and debt, per view
 ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
+pw bin/design/wayfinding-audit.js    # screens that can be reached but not left
 bin/design/serve-mockup <name>       # serve a design preview and print its URL
 python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
@@ -592,6 +593,24 @@ blank lines.
 *Media information*, *Contacts* and the rest were uneven, because they were made of blank lines
 rather than spacing. *Primary Contact Person* is now a real sub-heading under *Contacts*, so a screen
 reader can jump to it.
+
+### Every page tells you where you are, and gets you back
+
+**There is a breadcrumb above every page title now** — *Reports › Itemized donations*, *Items ›
+Edit item*. It replaces the "Back to …" link that used to sit there: the first part of the trail
+goes to the same place, and the trail also says where you are, which the old link did not.
+
+**The reports had no way back at all.** None of the eleven reports is in the left menu — you reach
+them from the Reports page, and until now nothing on a report linked back to it, so the only way out
+was your browser's back button. That is fixed for all of them, including the trend charts and the
+by-county report.
+
+Also fixed the same way: **History**, **Help**, and the **Users** page you reach from *Co-workers*
+in the account menu.
+
+**The tables on the itemized reports scroll properly now.** They looked like the app's other tables
+but were missing the part that makes them work — you can focus one and use the arrow keys, it shows
+a shadow at the edge when there is more to see, and a wide one scrolls instead of overflowing.
 
 ### Custom request units is a proper tag box
 

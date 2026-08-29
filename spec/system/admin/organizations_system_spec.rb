@@ -166,7 +166,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       end
 
       expect(page.find("h1")).to have_text(bar_org.name)
-      expect(page).to have_link("Back to dashboard", href: admin_dashboard_path)
+      expect(page).to have_link("Dashboard", href: admin_dashboard_path)
 
       expect(page).to have_content("Organization info")
       expect(page).to have_content("Address")

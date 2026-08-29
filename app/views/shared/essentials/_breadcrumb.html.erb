@@ -1,0 +1,35 @@
+<%#
+  Breadcrumb. Where you are, and one click to everything above it.
+
+  Locals: `trail`, an array of [label, path] pairs for the ancestors, and `current`, the label for
+  the page you are on.
+
+  The structure is the W3C ARIA APG pattern, which GOV.UK, Carbon, Material and Bootstrap all
+  render the same way: a `<nav>` with an accessible name, an ordered list because the order is the
+  hierarchy, links for the ancestors, and the current page as plain text carrying
+  `aria-current="page"`. The separator is generated and `aria-hidden`, so it is never read out --
+  a literal "/" between two links is announced as "slash" by some screen readers.
+
+  It replaced a "Back to X" link. A breadcrumb subsumes one: the first ancestor is the same
+  destination, and the trail also says where you are, which the back link never did. `page_header`
+  derives the trail from the `back:` local it already took, so no caller had to change.
+%>
+<nav aria-label="Breadcrumb" class="mb-2">
+  <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-slate-500">
+    <% Array(trail).each do |label, path| %>
+      <li class="flex items-center gap-x-1.5">
+        <%= link_to label, path,
+              class: "inline-flex min-h-6 items-center rounded font-medium hover:text-slate-700 " \
+                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+        <i class="bi-chevron-right text-[0.625rem] text-slate-400" aria-hidden="true"></i>
+      </li>
+    <% end %>
+    <li>
+      <%# Plain text, not a link to the page you are already on. `aria-current="page"` is what
+          tells a screen reader which item is the current one. %>
+      <span class="inline-flex min-h-6 items-center font-medium text-slate-700" aria-current="page">
+        <%= current %>
+      </span>
+    </li>
+  </ol>
+</nav>

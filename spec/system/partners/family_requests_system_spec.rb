@@ -80,7 +80,7 @@ RSpec.describe "Family requests", type: :system, js: true do
 
       expect(page).to have_text("Request details")
       # The bottom-of-page link was replaced by the page header's back link.
-      click_link "Back to requests"
+      click_link "Requests"
       expect(page).to have_text("Request history")
     end
 
