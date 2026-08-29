@@ -103,6 +103,26 @@ mode that looks like success. To exercise it end to end, add
 re-run: that file should appear under `debt`. Debt does not change the exit code — only defects
 do.
 
+`row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
+
+```bash
+pw bin/design/row-actions-audit.js
+```
+
+`table-audit.js` checks the visual weight of a row action and how many badges a row carries. Both
+can be perfect while the column itself is a mess: three buttons inline on one table and two behind a
+kebab on the next, 349px of actions column on one page and 60px on another, and — the case that gets
+reported — a column whose shape changes as you read *down* it, because the actions are picked by a
+`case` on the row's status.
+
+It reports four shapes: `3+ inline, no menu`, `varies row to row`, `mixed control heights`, and
+`menu for 2 or fewer`. Across 31 tables it finds **10**.
+
+**It counts the actions inside a closed menu, not just the visible ones.** The panel is in the DOM
+while hidden, so it can be read without opening it — and without that a kebab row reads as "1
+action", which made `/distributions` (three behind the menu, correct) indistinguishable from
+`/items` (two behind the menu, which is the defect).
+
 `wayfinding-audit.js` asks whether a screen can be **left**, not just reached.
 
 ```bash
