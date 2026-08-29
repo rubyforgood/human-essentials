@@ -178,6 +178,29 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page).to have_content("invited to organization")
     end
 
+    # /users/new is the other entry point to the same invitation -- linked from the dashboard's
+    # getting-started prompt. It used to be a registration form with password fields and no
+    # `create` action behind it, so it posted to Devise's registration create; it goes through
+    # `UserInviteService` like the modal now.
+    it "can invite a user from the standalone page" do
+      visit new_user_path
+
+      expect(page).to have_css("h1", text: "Invite a user")
+      expect(page).to have_no_css("input[type=password]")
+
+      fill_in "name", with: "Standalone Invitee"
+      fill_in "email", with: "standalone@website.com"
+      click_on "Send invitation"
+
+      expect(page).to have_content("User invited to organization!")
+      expect(page).to have_current_path(organization_path)
+
+      invited = User.find_by(email: "standalone@website.com")
+      expect(invited).to be_present
+      expect(invited.has_role?(Role::ORG_USER, organization)).to be true
+      expect(invited.invitation_accepted_at).to be_nil
+    end
+
     context "managing a user from the organization" do
       include_examples "organization role management checks", :user
     end

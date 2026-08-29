@@ -6429,3 +6429,32 @@ button posts to `invite_user_organization_path`, which is a different mechanism 
 Whether `/users/new` should exist at all, given that, is a real question and not one to answer as a
 side effect of deleting a list. Written down rather than guessed at.
 
+## 2026-08-29 — /users/new adds a user now, which it never did
+
+The finding recorded in the previous entry, fixed. It was worse than "posts to the wrong action":
+**the form did nothing at all.** `POST /users` resolves to `devise_invitable/registrations#create`,
+and for an already-signed-in admin — the only person who can reach this page — that responds *"You
+are already signed in."* and redirects to the dashboard. Confirmed by reverting the fix and reading
+the response: the dashboard, that sentence, and no user created. The one link to the page is the
+getting-started prompt's *Add other users at your bank*, so the step the app suggests to a new bank
+was a dead end.
+
+**Chosen: invitation, through the existing action.** `UserInviteService.invite` is what this app
+means by adding a user, and the evidence is in the domain rather than in taste — the users table has
+an `invitation_status` column and a *Reinvite* row action, and `resend_user_invitation` exists.
+A directly-created account with an admin-chosen password would have neither.
+
+**Posted to `invite_user_organization_path` rather than a new `UsersController#create`.** A second
+action calling the same service is the duplication this app has been removing all week; two entry
+points into one code path is not. That is also why the form is a `form_tag` with flat `name`,
+`email` and `org` params rather than `form_for @user` — matching what the existing action reads is
+what keeps it on that action.
+
+**The password fields are gone**, and that is a behaviour change worth being explicit about: an
+admin can no longer set someone's initial password from this screen. They never could — the form
+did not work — but a reader comparing the old template to the new one should see the removal
+justified rather than assumed. The invitee sets their own, which is what the modal has always done.
+
+Pinned by a system spec that fills the form and asserts the role, the pending invitation and the
+redirect. Verified to fail when the form is pointed back at `user_registration_path`.
+
