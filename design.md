@@ -1105,6 +1105,31 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="barcode-scanner"></a>
+**A barcode field gets the camera scanner.** Wrap the input in a `[data-barcode-scan]` region with
+the button and a `[data-barcode-viewport]`:
+
+```erb
+<div data-barcode-scan>
+  <div class="relative">
+    <%= f.input :value, label: "Barcode", input_html: {class: "pr-10"} %>
+    <button type="button" class="barcode-scanner absolute right-2 top-8 …"
+            aria-label="Scan a barcode with the camera" aria-expanded="false">
+      <i class="bi-upc-scan" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div class="mt-2 hidden …" data-barcode-viewport role="status"></div>
+</div>
+```
+
+`utils/barcode_scan` is imported by `application.js` on every page and quagga is pinned, so nothing
+else is needed. The scanner finds its input and its viewport **through the region** — there is no
+id, deliberately: three partials once carried `id="barcode-scanner-btn"` and a donation form renders
+two of them, so pressing one button drew the camera inside another.
+
+A button outside a `[data-barcode-scan]` region does nothing at all, which is what makes this worth
+asserting in a spec rather than eyeballing.
+
 <a id="one-destination-one-place"></a>
 **A destination appears in one navigation surface, not two.** "Organization" was pinned to the foot
 of the sidebar *and* listed in the account menu, behind the identical `can_administrate?` gate — the

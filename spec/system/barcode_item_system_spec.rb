@@ -155,4 +155,43 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
     expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
   end
+
+  # The camera scanner existed -- `utils/barcode_scan` is imported on every page and quagga is
+  # pinned -- and the form for *creating* a barcode was the one place it was missing, so the only
+  # way to enter a barcode there was to read it off the box and type it.
+  #
+  # This asserts the region the scanner needs rather than driving the camera: `barcode_scan.js`
+  # finds its input and its viewport through `[data-barcode-scan]`, and a button outside one is a
+  # button that does nothing.
+  describe "the camera scanner on the barcode form" do
+    it "gives the barcode field a scan button wired to a viewport" do
+      visit new_barcode_item_path
+
+      region = find("[data-barcode-scan]")
+      expect(region).to have_css("button.barcode-scanner[aria-label='Scan a barcode with the camera']")
+      expect(region).to have_css("i.bi-upc-scan", visible: :all)
+
+      # The three parts the scanner joins up, all inside one region.
+      wiring = page.evaluate_script(<<~JS)
+        (() => {
+          const r = document.querySelector("[data-barcode-scan]");
+          return { input: r.querySelector("input:not([type=hidden])")?.name,
+                   viewport: !!r.querySelector("[data-barcode-viewport]"),
+                   hiddenAtRest: r.querySelector("[data-barcode-viewport]").classList.contains("hidden"),
+                   expanded: r.querySelector("button.barcode-scanner").getAttribute("aria-expanded") };
+        })()
+      JS
+      expect(wiring["input"]).to eq("barcode_item[value]")
+      expect(wiring["viewport"]).to be true
+      expect(wiring["hiddenAtRest"]).to be true
+      expect(wiring["expanded"]).to eq("false")
+    end
+
+    # No id on the button. Three partials once carried `id="barcode-scanner-btn"`, and a donation
+    # form renders two of them, so the camera drew itself into whichever came first.
+    it "identifies the scanner by region rather than by id" do
+      visit new_barcode_item_path
+      expect(page).to have_no_css("#barcode-scanner-btn")
+    end
+  end
 end

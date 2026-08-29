@@ -613,6 +613,15 @@ It is an invitation now, the same one the *Invite user* button on your organizat
 give a name and an email, they get an email, and they choose their own password. There is no
 password box, because you do not set it for them.
 
+### You can scan a barcode when adding one
+
+**New barcode** and **Edit barcode** now have the scan icon at the right-hand end of the Barcode
+box, the same one you already use on donations and purchases. Click it and the camera opens below
+the field; hold the barcode up and it fills itself in. Click the icon again to close the camera.
+
+If your browser will not give the page a camera — which is normal on an insecure connection — it
+says so under the field instead of doing nothing, and you can still type the number.
+
 ### The separate Users page is gone
 
 **Your organization page is the one place users are listed now.** There used to be a second page at

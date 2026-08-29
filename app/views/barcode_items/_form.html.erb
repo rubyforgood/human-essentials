@@ -5,7 +5,31 @@
     <%= render "shared/essentials/card" do %>
       <%= f.association :barcodeable, collection: @items, label: "Item" %>
       <%= f.input :quantity, label: "Quantity in the box" %>
-      <%= f.input :value, label: "Barcode" %>
+
+      <%#
+        The camera scanner, which this page did not have. Typing a barcode by hand is the one thing
+        a barcode is meant to save you from, and the scanner already existed -- `utils/barcode_scan`
+        is imported by `application.js` on every page, and quagga is pinned -- it was simply never
+        put on the form for creating a barcode.
+
+        The markup is the modal's, unchanged: a `[data-barcode-scan]` region holding the input, the
+        button and a `[data-barcode-viewport]` for the picture. **No id.** Three partials once
+        carried `id="barcode-scanner-btn"` and a donation form renders two of them, so the camera
+        drew itself into whichever came first in the document; the scanner finds its own input and
+        viewport through the region instead. `pr-10` keeps the typed value clear of the glyph.
+      %>
+      <div data-barcode-scan>
+        <div class="relative">
+          <%= f.input :value, label: "Barcode", input_html: {class: "pr-10"} %>
+          <button type="button"
+                  class="barcode-scanner absolute right-2 top-8 rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  aria-label="Scan a barcode with the camera" aria-expanded="false">
+            <i class="bi-upc-scan" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="mt-2 hidden overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-2 text-xs text-white [&_canvas]:hidden [&_canvas.drawingBuffer]:block [&_video]:w-full"
+             data-barcode-viewport role="status"></div>
+      </div>
     <% end %>
 
     <%= essentials_form_actions do %>
