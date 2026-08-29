@@ -47,6 +47,76 @@ RSpec.describe PartnerCreateService do
       end
     end
 
+    context 'when a default storage location name is provided' do
+      let(:partner_attrs) do
+        FactoryBot.attributes_for(:partner).except(:organization_id).stringify_keys
+          .merge('default_storage_location' => provided_name)
+      end
+
+      context 'and it matches a storage location regardless of case' do
+        let!(:storage_location) do
+          create(:storage_location, organization: organization, name: 'SF Bay Warehouse')
+        end
+
+        ['SF Bay Warehouse', 'sf bay warehouse', 'SF BAY WAREHOUSE', '  SF Bay Warehouse  '].each do |name|
+          context "when given #{name.inspect}" do
+            let(:provided_name) { name }
+
+            it 'assigns the storage location without warning' do
+              result = subject
+
+              expect(result.warnings).to be_empty
+              expect(result.partner.default_storage_location_id).to eq(storage_location.id)
+            end
+          end
+        end
+      end
+
+      context 'and the matching storage location has been discarded' do
+        let(:provided_name) { 'Closed Depot' }
+        let!(:storage_location) do
+          create(:storage_location, organization: organization, name: provided_name).tap(&:discard)
+        end
+
+        it 'does not assign it and warns instead' do
+          result = subject
+
+          expect(result.partner.default_storage_location_id).to be_nil
+          expect(result.warnings[:default_storage_location])
+            .to include("is not a storage location for this partner's organization")
+        end
+      end
+
+      context 'and it belongs to a different organization' do
+        let(:provided_name) { 'Other Org Warehouse' }
+        let!(:storage_location) do
+          create(:storage_location, organization: create(:organization), name: provided_name)
+        end
+
+        it 'does not assign it and warns instead' do
+          result = subject
+
+          expect(result.partner.default_storage_location_id).to be_nil
+          expect(result.warnings[:default_storage_location])
+            .to include("is not a storage location for this partner's organization")
+        end
+      end
+
+      context 'and no such storage location exists' do
+        let(:provided_name) { 'Nonexistent Depot' }
+
+        it 'creates the partner and warns' do
+          result = subject
+
+          expect(result.errors).to be_empty
+          expect(result.partner).to be_persisted
+          expect(result.partner.default_storage_location_id).to be_nil
+          expect(result.warnings[:default_storage_location])
+            .to include("is not a storage location for this partner's organization")
+        end
+      end
+    end
+
     context 'when the arguments are valid' do
       it 'should create a new partner record with the organization provided' do
         expect { subject }.to change { organization.partners.count }.by(1)

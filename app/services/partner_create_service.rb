@@ -45,11 +45,10 @@ class PartnerCreateService
     if partner_attrs["default_storage_location"].blank?
       partner_attrs.delete("default_storage_location")
     else
-      default_storage_location_name = partner_attrs["default_storage_location"]&.titlecase
-      default_storage_location_id = StorageLocation.find_by(
-        name: default_storage_location_name,
-        organization: organization.id
-      )&.id
+      default_storage_location_name = partner_attrs["default_storage_location"].to_s.strip
+      default_storage_location_id = organization.storage_locations.active
+        .where("LOWER(name) = ?", default_storage_location_name.downcase)
+        .first&.id
 
       if default_storage_location_id.nil?
         add_warning(:default_storage_location,
