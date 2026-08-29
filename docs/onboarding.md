@@ -615,6 +615,11 @@ password box, because you do not set it for them.
 
 ### You can scan a barcode when adding one
 
+**The scan button now looks and behaves exactly like the one on the inventory audit** — joined to
+the right-hand end of the box rather than floating inside it, and the same size. It used to sit
+slightly low and slightly outside the field, on the barcode pages and in the barcode pop-up on
+donations and purchases.
+
 **New barcode** and **Edit barcode** now have the scan icon at the right-hand end of the Barcode
 box, the same one you already use on donations and purchases. Click it and the camera opens below
 the field; hold the barcode up and it fills itself in. Click the icon again to close the camera.

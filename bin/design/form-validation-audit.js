@@ -161,7 +161,9 @@ const MODALS = [
   // nothing to derive them from.
   { role: "bank", path: "/donations/new", name: "New product drive participant",
     open: (page) => page.evaluate(() => document.getElementById("new_participant").click()) },
-  { role: "bank", path: "/users", name: "Invite a new user",
+  // The modal lives on the organization page. It used to be reachable from /users as well; that
+  // page was deleted as a weaker duplicate of the organization page's own users table.
+  { role: "bank", path: "/organization", name: "Invite a new user",
     open: (page) => page.click("[data-dialog-id-param='add-user-modal']") },
   { role: "bank", path: "/requests", name: "New quantity request",
     open: (page) => page.click("[data-dialog-id-param='new-request']") },

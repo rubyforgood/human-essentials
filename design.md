@@ -1105,6 +1105,31 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="barcode-scan-field"></a>
+**A barcode field is `shared/essentials/barcode_scan_field`.** One partial, used by the barcode
+form and both barcode modals. The field and the button are **joined** — one rounded rectangle
+sharing a border — which is the same rule the [line item scan bar](#line-item-rows) follows, and
+for the same reason: as separate boxes they cannot come out different heights.
+
+```erb
+<%= render "shared/essentials/barcode_scan_field", f: f,
+      hint: "Scan the barcode on the box, or type the digits printed under the bars." %>
+```
+
+Measured against the inventory audit's bar after the change, the two are identical: input `1px`
+on all four sides, button `1px` with `border-left: 0`, a **0px** seam, both **38px** tall.
+
+**The overlay it replaced was broken, and broken in the way the joined rule predicts.** Three
+copies rendered the button `absolute right-2 top-8` over a `pr-10` field: a 38px field, a **36px**
+button, sitting **4px below** the field's bottom edge and not vertically centred. The offset was
+tuned to one form's label height, so it drifted the moment the markup was pasted onto a form with
+different spacing. The tap target was 28×36; it is 38×38 now.
+
+**It is hand-rolled rather than `f.input`**, because simple_form stacks label, input and error as
+three blocks and the button has to sit *inside* the row. Everything the `:essentials` wrapper
+supplies is reproduced deliberately: the label, the `field-error` paragraph in the wrapper's own
+classes, `aria-invalid` and `aria-describedby`. If you change the wrapper, change this too.
+
 <a id="barcode-scanner"></a>
 **A barcode field gets the camera scanner.** Wrap the input in a `[data-barcode-scan]` region with
 the button and a `[data-barcode-viewport]`:
