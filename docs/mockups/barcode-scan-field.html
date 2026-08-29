@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The barcode scan field — matching the pattern audits already uses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 96px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:78ch;margin:0 0 26px}
+  h2{font-size:19px;margin:40px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:20px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:80ch;margin:0 0 14px;font-size:14px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:520px;margin:10px 0 6px}
+  label{display:block;font-size:14px;font-weight:500;color:#334155;margin-bottom:6px}
+  .rel{position:relative}
+  .fld{width:100%;height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:8px 40px 8px 12px;font:14px Figtree,sans-serif}
+  /* the shipped overlay: 36px button, absolutely placed, 4px low */
+  .overlay-btn{position:absolute;right:8px;top:32px;height:36px;width:28px;display:inline-flex;
+    align-items:center;justify-content:center;border:0;background:transparent;color:#64748B;
+    border-radius:8px;cursor:pointer;font-size:15px}
+  .marker{position:absolute;pointer-events:none}
+  .m-in{left:-2px;right:-2px;top:26px;height:38px;border:1px dashed #94A3B8;border-radius:8px}
+  .m-btn{right:6px;top:32px;height:36px;width:32px;border:1px dashed var(--bad);border-radius:8px;background:rgba(180,35,46,.06)}
+  .spill{position:absolute;right:-104px;top:60px;font-size:11px;color:var(--bad);font-weight:600}
+  /* the joined pattern */
+  .join{display:flex}
+  .join input{flex:1;height:38px;border:1px solid #CBD5E1;border-right:0;border-radius:8px 0 0 8px;padding:8px 12px;font:14px Figtree,sans-serif}
+  .join button{width:38px;height:38px;flex:0 0 38px;display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid #CBD5E1;border-radius:0 8px 8px 0;background:#fff;color:#475569;cursor:pointer;font-size:15px}
+  .join button:hover{background:#F1F5F9}
+  .hint{font-size:12px;color:var(--soft);margin-top:6px}
+  .cam{margin-top:8px;border:1px solid var(--line);border-radius:8px;background:#0F172A;color:#fff;
+    font-size:12px;padding:10px;text-align:center}
+  table{border-collapse:collapse;width:100%;max-width:900px;margin-top:14px;font-size:14px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:13px}
+  .files{font-size:13px;color:var(--mid)}
+  .files li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>The barcode scan field</h1>
+<p class="lede">You are right on both counts: the design system already settles this, and what I
+added does not match it. Measured on the running app.</p>
+
+<h2>1. What I put on the page <span class="tag t-now">wrong, and it spills</span></h2>
+<p class="note">An icon floated <em>inside</em> the field with <code>absolute right-2 top-8</code>.
+The field is <strong>38px</strong> tall, the button <strong>36px</strong>, and the absolute offset
+is tuned to one particular label height — so on this form it sits <strong>4px below</strong> the
+field's bottom edge and is not vertically centred. That is the spill you saw.</p>
+<div class="card">
+  <div class="rel">
+    <label for="a">Barcode</label>
+    <input class="fld" id="a" value="0123456789012">
+    <button class="overlay-btn" aria-label="Scan">▤</button>
+    <span class="marker m-in"></span>
+    <span class="marker m-btn"></span>
+    <span class="spill">4px low →</span>
+  </div>
+</div>
+<p class="note"><strong>I did not invent this bug — I copied it.</strong> The two barcode modals
+have the same markup and the same 4px spill, measured: input 38px, button 36px, not centred.</p>
+
+<h2>2. What audits already does <span class="tag t-rec">the design system's answer</span></h2>
+<p class="note">The scan bar on the inventory audit — and on donations, purchases and distributions,
+since they share <code>line_items/_line_item_table</code> — <strong>joins</strong> the field and the
+button into one rounded rectangle sharing a border. Measured there: both exactly 38px, both
+<code>700→738</code>, perfectly centred, no spill possible.</p>
+<p class="note">And <code>design.md</code> already says so, in the line items section:
+<em>"The scan field and its button are <strong>joined</strong> — one rounded rectangle sharing a
+border — rather than two controls with a gap between them. That is what keeps them the same height
+by construction; as separate boxes they had drifted to 38px and 42px."</em></p>
+<div class="card">
+  <label for="b">Barcode</label>
+  <div class="join">
+    <input id="b" value="0123456789012">
+    <button aria-label="Scan a barcode with the camera">▤</button>
+  </div>
+  <p class="hint">Scan it, or type it in.</p>
+</div>
+
+<h3>With the camera open</h3>
+<div class="card">
+  <label for="c">Barcode</label>
+  <div class="join">
+    <input id="c" placeholder="Barcode">
+    <button aria-label="Scan a barcode with the camera" style="background:#EEF2FF;color:#4338CA;border-color:#A5B4FC">▤</button>
+  </div>
+  <div class="cam">▦ camera view — hold the barcode up to it</div>
+</div>
+
+<h2>3. Recommendation</h2>
+<p class="note"><strong>Use the joined pattern, and use it in all three places</strong> — the new
+barcode form I just changed, and the two barcode modals that have carried the same 4px spill all
+along. One pattern, one rendering, and the height cannot drift because the two controls share a
+border rather than being positioned against each other.</p>
+<table>
+  <tr><th></th><th>Overlay (shipped)</th><th>Joined (recommended)</th></tr>
+  <tr><td>Field / button height</td><td>38px / <strong>36px</strong></td><td>38px / 38px</td></tr>
+  <tr><td>Vertically centred</td><td><strong>no — 4px low</strong></td><td>yes, by construction</td></tr>
+  <tr><td>Depends on label height</td><td><strong>yes</strong> — <code>top-8</code> is tuned to one form</td><td>no</td></tr>
+  <tr><td>Tap target</td><td>28&times;36</td><td>38&times;38</td></tr>
+  <tr><td>Matches inventory audit</td><td>no</td><td>yes</td></tr>
+  <tr><td>In design.md</td><td>no</td><td><strong>yes, already</strong></td></tr>
+</table>
+<p class="note" style="margin-top:16px">Files it would change:</p>
+<ul class="files">
+  <li><code>app/views/barcode_items/_form.html.erb</code> — new &amp; edit barcode</li>
+  <li><code>app/views/barcode_items/_barcode_modal.html.erb</code> — the modal on donations and purchases</li>
+  <li><code>app/views/admin/barcode_items/_barcode_modal.html.erb</code> — the admin one</li>
+</ul>
+<p class="note"><code>line_items/_line_item_table.html.erb</code> is already correct and would not
+change. Nothing about the scanner's behaviour changes — it still finds its input and viewport
+through <code>[data-barcode-scan]</code>.</p>
+
+</div>
+</body>
+</html>
