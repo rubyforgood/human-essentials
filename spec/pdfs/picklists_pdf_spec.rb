@@ -108,6 +108,20 @@ describe PicklistsPdf do
     end
   end
 
+  specify "#data_no_units" do
+    request = create(:request, :pending, organization: organization)
+    create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5)
+    create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
+    pdf = described_class.new(organization, [request])
+    data = pdf.data_no_units(request.item_requests)
+
+    expect(data).to eq([
+      ["Items Requested", "Quantity", "[X]", "Differences / Comments"],
+      ["Item 1", "5", "[  ]", ""],
+      ["Item 2", "10", "[  ]", ""]
+    ])
+  end
+
   specify "#data_with_units" do
     item_with_units = create(:item, name: "Item with units", organization: organization)
     create(:item_unit, item: item_with_units, name: "Pack")

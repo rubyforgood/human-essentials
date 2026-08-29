@@ -59,16 +59,16 @@ RSpec.describe Partners::ItemRequest, type: :model do
 
         expect(item_request.quantity_with_units).to eq('10 flats')
       end
+    end
 
-      context 'when there is no request unit' do
-        it 'returns only the quantity' do
-          item = create(:item, organization: organization)
-          create(:item_unit, item:, name: 'flat')
-          request = create(:request, organization: organization)
-          item_request = create(:item_request, request:, item: item, name: 'Item 1', quantity: 10)
+    context 'when there is no request unit' do
+      it 'returns only the quantity' do
+        item = create(:item, organization: organization)
+        create(:item_unit, item:, name: 'flat')
+        request = create(:request, organization: organization)
+        item_request = create(:item_request, request:, item: item, name: 'Item 1', quantity: 10)
 
-          expect(item_request.quantity_with_units).to eq('10')
-        end
+        expect(item_request.quantity_with_units).to eq('10')
       end
     end
   end
