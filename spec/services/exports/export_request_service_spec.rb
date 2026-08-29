@@ -11,8 +11,26 @@ RSpec.describe Exports::ExportRequestService do
 
   let(:item_deleted1) { create :item, :inactive, name: "Inactive Diapers1" }
   let(:item_deleted2) { create :item, :inactive, name: "Inactive Diapers2" }
+  let!(:unrequested_item) { create :item, name: "Unrequested Item", organization: org }
+  let!(:inactive_item) { create :item, name: "Inactive Item", active: false, organization: org }
 
-  let!(:partner) { create :partner, organization: org, name: "Howdy Partner" }
+  # Added to ensure sorting is working correctly, otherwise is duplicate behavior
+  let!(:apple_item) { create :item, name: "apple", organization: org }
+  let!(:banana_item) { create :item, name: "Banana", organization: org }
+  let!(:zebra_item) { create :item, name: "Zebra", organization: org }
+
+  let!(:partner) { create :partner, organization: org, name: "Howdy Partner", email: "test@rfg.com" }
+
+  let!(:inactive_item_request) do
+    create(:request,
+           :started,
+           :child,
+           :with_item_requests,
+           organization: org,
+           partner: partner,
+           request_items: [{ item_id: inactive_item.id, quantity: 777 }])
+  end
+
   let!(:request_3t) do
     create(:request,
            :started,
@@ -91,7 +109,7 @@ RSpec.describe Exports::ExportRequestService do
   end
 
   subject do
-    described_class.new(Request.all).generate_csv_data
+    described_class.new(Request.all, org).generate_csv_data
   end
 
   context "with custom units feature enabled" do
@@ -104,30 +122,44 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Request Sender",
+          "Comments",
           "Type",
           "Status",
           "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
           "4T Diapers - packs",
+          "apple",
+          "Banana",
+          "Inactive Item",
+          "Unrequested Item",
+          "Zebra",
           "<DELETED_ITEMS>"
         ])
       end
 
       it "includes rows for each request" do
-        expect(subject.count).to eq(7)
+        expect(subject.count).to eq(8)
       end
 
       it "has expected data for the 3T Diapers request" do
         expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Child",
           "Started",
           0,   # 2T Diapers
           150, # 3T Diapers
           0,   # 4T Diapers
           0,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -136,12 +168,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Individual",
           "Fulfilled",
           100, # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
           0,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -150,12 +189,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           nil,
           "Fulfilled",
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
           0,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           400  # <DELETED_ITEMS>
         ])
       end
@@ -164,12 +210,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           nil,
           "Started",
           3,   # 2T Diapers
           2,   # 3T Diapers
           0,   # 4T Diapers
           4,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -178,12 +231,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
           77,  # 4T Diapers
           0,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -192,12 +252,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
           1,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -207,12 +274,19 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
           1, # 4T Diapers - packs
+          0, # apple
+          0, # Banana
+          0, # Inactive Item
+          0, # Unrequested Item
+          0, # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -229,28 +303,42 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Request Sender",
+          "Comments",
           "Type",
           "Status",
           "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
+          "apple",
+          "Banana",
+          "Inactive Item",
+          "Unrequested Item",
+          "Zebra",
           "<DELETED_ITEMS>"
         ])
       end
 
       it "includes rows for each request" do
-        expect(subject.count).to eq(7)
+        expect(subject.count).to eq(8)
       end
 
       it "has expected data for the 3T Diapers request" do
         expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Child",
           request_3t.status.humanize,
           0,   # 2T Diapers
           150, # 3T Diapers
           0,   # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -259,11 +347,18 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Individual",
           "Fulfilled",
           100, # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -272,11 +367,18 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           nil,
           "Fulfilled",
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           400  # <DELETED_ITEMS>
         ])
       end
@@ -285,11 +387,18 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           nil,
           "Started",
           3,   # 2T Diapers
           2,   # 3T Diapers
           4,   # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -298,11 +407,18 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
           77,  # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -311,11 +427,18 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "test@rfg.com",
+          "Urgent",
           "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
           1,   # 4T Diapers
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end

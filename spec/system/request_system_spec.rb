@@ -143,6 +143,15 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
 
+        it "keeps its label after the modal is dismissed" do
+          expect(page).to have_select("partner_id")
+          within("#newRequest") { find("button[aria-label='Close']").click }
+
+          trigger = find("a[href='#newRequest']")
+          expect(trigger).to have_text("New Quantity Request")
+          expect(trigger).to have_no_text("Please wait...")
+        end
+
         context "selecting a partner" do
           it "redirects to new partner request page" do
             select(partner1.name, from: "partner_id")
@@ -261,6 +270,24 @@ RSpec.describe "Requests", type: :system, js: true do
 
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)
+        expect(request.reload.discard_reason).to eq(reason)
+      end
+
+      it 'should not submit the form until a reason is given' do
+        click_on 'Cancel'
+
+        # the browser blocks the submission while the required reason is empty
+        expect(page).to have_field('Cancellation reason *', valid: false)
+
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_field('Cancellation reason *')
+        expect(request.reload.discarded_at).to eq(nil)
+
+        fill_in 'Cancellation reason *', with: reason
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discard_reason).to eq(reason)
       end
 

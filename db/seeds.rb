@@ -10,10 +10,9 @@ end
 # Random Record Generators
 # ----------------------------------------------------------------------------
 load "lib/dispersed_past_dates_generator.rb"
+load "lib/seeds.rb"
 
-def random_record_for_org(org, klass)
-  klass.where(organization: org).all.sample
-end
+puts "\033[1;33m 🌱 Seeding data...";
 
 # ----------------------------------------------------------------------------
 # Script-Global Variables
@@ -23,8 +22,24 @@ end
 # Base Items
 # ----------------------------------------------------------------------------
 
-require "seeds"
-Seeds.seed_base_items
+# Initial starting qty for our test organizations
+base_items = Rails.root.join("db", "base_items.json").read
+items_by_category = JSON.parse(base_items)
+
+items_by_category.each do |category, entries|
+  Seeds.skip_dupes_and_seed(entries) do |entry|
+    BaseItem.find_or_create_by!(
+      name: entry["name"],
+      category: category,
+      partner_key: entry["key"]
+    ) do |base_item|
+      base_item.created_at = Time.zone.now
+      base_item.updated_at = Time.zone.now
+    end
+  end
+end
+# Create global 'Kit' base item
+KitCreateService.find_or_create_kit_base_item!
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -75,18 +90,10 @@ Organization.all.find_each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
 end
 
-def seed_random_item_with_name(organization, name)
-  # Once we break the link between BaseItem and Item, we can remove the 'kit' BaseItem, and change this to BaseItem.all CLF 20251202
-  base_items = BaseItem.where.not(reporting_category: nil).map(&:to_h)
-  base_item = Array.wrap(base_items).sample
-  base_item[:name] = name
-  organization.seed_items(base_item)
-end
-
 # Add a couple unique items based on random base items named after the sc_bank
 # so it will be clear if they are showing up where they aren't supposed to be
 4.times do |index|
-  seed_random_item_with_name(sc_org, "Second City Item ##{index + 1}")
+  Seeds.seed_random_item_with_name(sc_org, "Second City Item ##{index + 1}")
 end
 
 # Keep a list of these unique items so its easy to use them for later records
@@ -105,17 +112,17 @@ end
 
 complete_orgs.each do |org|
   %w[pack box flat].each do |name|
-    Unit.create!(organization: org, name: name)
+    Unit.find_or_create_by!(organization: org, name: name)
   end
 
   org.items.each_with_index do |item, i|
     if item.name == "Pads"
-      %w[box pack].each { |name| item.request_units.create!(name: name) }
+      %w[box pack].each { |name| item.request_units.find_or_create_by!(name: name) }
     elsif item.name == "Wipes (Baby)"
-      item.request_units.create!(name: "pack")
+      item.request_units.find_or_create_by!(name: "pack")
     elsif item.name == "Kids Pull-Ups (5T-6T)"
       %w[pack flat].each do |name|
-        item.request_units.create!(name: name)
+        item.request_units.find_or_create_by!(name: name)
       end
     end
   end
@@ -127,7 +134,9 @@ end
 
 Organization.all.find_each do |org|
   ["One", "Two", "Three"].each do |letter|
-    FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
+    ItemCategory.find_or_create_by!(organization: org, name: "Category #{letter}") do |item_category|
+      item_category.assign_attributes(FactoryBot.attributes_for(:item_category).except(:name))
+    end
   end
 end
 
@@ -147,18 +156,23 @@ end
 # ----------------------------------------------------------------------------
 # Partner Group & Item Categories
 # ----------------------------------------------------------------------------
+
 Organization.all.find_each do |org|
   # Setup the Partner Group & their item categories
-  partner_group_one = FactoryBot.create(:partner_group, organization: org)
+  partner_group_one = PartnerGroup.find_or_create_by!(organization: org, name: "Group 1") do |partner_group|
+    partner_group.assign_attributes(FactoryBot.attributes_for(:partner_group).except(:name, :organization))
+  end
 
   total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
-    partner_group_one.item_categories << item_category
+    partner_group_one.item_categories << item_category unless partner_group_one.item_categories.include?(item_category)
   end
   next unless org.name== pdx_org.name
-  partner_group_two=FactoryBot.create(:partner_group, organization: org)
+  partner_group_two = PartnerGroup.find_or_create_by!(organization: org, name: "Group 2") do |partner_group|
+    partner_group.assign_attributes(FactoryBot.attributes_for(:partner_group).except(:name, :organization))
+  end
   org.item_categories.each do |item_category|
-    partner_group_two.item_categories << item_category
+    partner_group_two.item_categories << item_category unless partner_group_two.item_categories.include?(item_category)
   end
 end
 
@@ -282,6 +296,10 @@ note = [
       partner.organization.partner_groups.first
     end
   end
+
+  # Partner's profile, users, families, and requests are all set up once when
+  # the partner is first created; skip re-creating them on subsequent seed runs.
+  next unless p.previously_new_record?
 
   # Base profile information all partners should have
   # Includes fields in the agency_information, contacts, and pick_up_person partial
@@ -629,11 +647,9 @@ inactive_storage.discard
 #
 StorageLocation.active.each do |sl|
   sl.organization.items.active.each do |item|
-    InventoryItem.create!(
-      storage_location: sl,
-      item: item,
-      quantity: Faker::Number.within(range: 500..2000)
-    )
+    InventoryItem.find_or_create_by!(storage_location: sl, item: item) do |inventory_item|
+      inventory_item.quantity = Faker::Number.within(range: 500..2000)
+    end
   end
 end
 Organization.all.find_each { |org| SnapshotEvent.publish(org) }
@@ -643,13 +659,13 @@ Organization.all.find_each { |org| SnapshotEvent.publish(org) }
 complete_orgs.each do |org|
   half_items_count = (org.items.count / 2).to_i
   low_items = org.items.left_joins(:inventory_items)
-    .select("items.*, SUM(inventory_items.quantity) AS total_quantity")
+    .select("items.*, SUM(inventory_items.quantity) AS inventory_quantity")
     .group("items.id")
-    .order("total_quantity")
+    .order("inventory_quantity")
     .limit(half_items_count).to_a
 
-  min_qty = low_items.first.total_quantity
-  max_qty = low_items.last.total_quantity
+  min_qty = low_items.first.inventory_quantity
+  max_qty = low_items.last.inventory_quantity
 
   # Ensure at least one of the items unique to the Second City Bank has minimum
   # and recommended quantities set
@@ -716,24 +732,10 @@ end
 # Line Items
 # ----------------------------------------------------------------------------
 
-def seed_quantity(item_name, organization, storage_location, quantity)
-  return if quantity.zero?
-
-  item = Item.find_by(name: item_name, organization: organization)
-
-  adjustment = organization.adjustments.create!(
-    comment: "Starting inventory",
-    storage_location: storage_location,
-    user: User.with_role(:org_admin, organization).first
-  )
-  adjustment.line_items = [LineItem.new(quantity: quantity, item: item, itemizable: adjustment)]
-  AdjustmentCreateService.new(adjustment).call
-end
-
 JSON.parse(Rails.root.join("db", "base_items.json").read).each do |_category, entries|
   entries.each do |entry|
-    seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
-    seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
+    Seeds.seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
+    Seeds.seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
   end
 end
 
@@ -855,14 +857,10 @@ end
 complete_orgs.each do |org|
   org.storage_locations.active.each do |storage_location|
     org.kits.active.each do |kit|
-      next unless kit.kit_item # Ensure kit has an associated item
-
       # Create inventory for each kit
-      InventoryItem.create!(
-        storage_location: storage_location,
-        item: kit.kit_item,
-        quantity: Faker::Number.within(range: 10..50)
-      )
+      InventoryItem.find_or_create_by!(storage_location: storage_location, item: kit) do |inventory_item|
+        inventory_item.quantity = Faker::Number.within(range: 10..50)
+      end
     end
   end
 end
@@ -886,15 +884,15 @@ complete_orgs.each do |org|
     case source
     when Donation::SOURCES[:product_drive]
       donation.product_drive = org.product_drives.find_by(name: "Best Product Drive")
-      donation.product_drive_participant = random_record_for_org(org, ProductDriveParticipant)
+      donation.product_drive_participant = Seeds.random_record_for_org(org, ProductDriveParticipant)
     when Donation::SOURCES[:donation_site]
-      donation.donation_site = random_record_for_org(org, DonationSite)
+      donation.donation_site = Seeds.random_record_for_org(org, DonationSite)
     when Donation::SOURCES[:manufacturer]
-      donation.manufacturer = random_record_for_org(org, Manufacturer)
+      donation.manufacturer = Seeds.random_record_for_org(org, Manufacturer)
     end
 
     rand(1..5).times.each do
-      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(org, Item)))
+      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: Seeds.random_record_for_org(org, Item)))
     end
 
     # Guarantee that there are at least a few donations for the items unique to the Second City Bank
@@ -920,7 +918,7 @@ complete_orgs.each do |org|
     shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
     distribution = Distribution.new(
       storage_location: storage_location,
-      partner: random_record_for_org(org, Partner),
+      partner: Seeds.random_record_for_org(org, Partner),
       organization: org,
       issued_at: issued_at,
       created_at: 3.days.ago(issued_at),
@@ -953,15 +951,15 @@ complete_orgs.each do |org|
   end
 
   # Create some distributions that use kits instead of individual items
-  kit_items = org.items.joins(:kit).where(kits: {active: true})
-  if kit_items.any?
+  kits = org.kits.active
+  if kits.any?
     5.times do |index|
       issued_at = dates_generator.next
       storage_location = org.storage_locations.active.sample
-      kit_item = kit_items.sample
+      kit = kits.sample
 
       # Check if there's inventory for this kit
-      kit_inventory_qty = storage_location.item_total(kit_item.id)
+      kit_inventory_qty = storage_location.item_total(kit.id)
       next if kit_inventory_qty.zero?
 
       delivery_method = Distribution.delivery_methods.keys.sample
@@ -969,7 +967,7 @@ complete_orgs.each do |org|
 
       kit_distribution = Distribution.new(
         storage_location: storage_location,
-        partner: random_record_for_org(org, Partner),
+        partner: Seeds.random_record_for_org(org, Partner),
         organization: org,
         issued_at: issued_at,
         created_at: 3.days.ago(issued_at),
@@ -983,7 +981,7 @@ complete_orgs.each do |org|
         kit_distribution.line_items.push(
           LineItem.new(
             quantity: distribution_qty,
-            item_id: kit_item.id
+            item_id: kit.id
           )
         )
 
@@ -1067,7 +1065,7 @@ complete_orgs.each do |org|
   25.times do |index|
     purchase_date = dates_generator.next
     storage_location = org.storage_locations.active.sample
-    vendor = random_record_for_org(org, Vendor)
+    vendor = Seeds.random_record_for_org(org, Vendor)
     purchase = Purchase.new(
       purchased_from: suppliers.sample,
       comment: comments.sample,

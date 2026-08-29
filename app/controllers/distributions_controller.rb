@@ -9,6 +9,7 @@ class DistributionsController < ApplicationController
   include Validatable
 
   before_action :enable_turbo!, only: %i[new show]
+  before_action :handle_csv_export, only: [:index]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
   skip_before_action :require_organization, only: %i(calendar)

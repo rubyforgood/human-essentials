@@ -7,10 +7,11 @@ RSpec.describe Exports::ExportDonationsCSVService do
     let(:donation_ids) { donations.map(&:id) }
     let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization) }
 
-    let(:donation_items_and_quantities) {
+    let(:donation_definitions) {
       [
         {
-          source: :product_drive_donation,
+          factory: :product_drive_donation,
+          attributes: {product_drive: create(:product_drive, name: "Test Product Drive", organization: organization)},
           items: [
             [duplicate_item, 5],
             [create(:item, name: "A Item", value_in_cents: 1000, organization: organization), 7],
@@ -18,73 +19,93 @@ RSpec.describe Exports::ExportDonationsCSVService do
           ]
         },
         {
-          source: :manufacturer_donation,
+          factory: :manufacturer_donation,
+          attributes: {manufacturer: create(:manufacturer, name: "Test Manufacturer", organization: organization)},
           items: [[create(:item, name: "B Item", value_in_cents: 2000, organization: organization), 1]]
         },
         {
-          source: :donation_site_donation,
+          factory: :donation_site_donation,
+          attributes: {donation_site: create(:donation_site, name: "Test Donation Site", organization: organization)},
           items: [[create(:item, name: "C Item", value_in_cents: 3000, organization: organization), 2]]
         },
         {
-          source: :donation,
+          factory: :donation,
+          attributes: {},
           items: [[create(:item, name: "E Item", value_in_cents: 4000, organization: organization), 3]]
         }
       ]
     }
 
     let(:donations) do
-      donation_items_and_quantities.each_with_index.map do |items_quantities, i|
+      donation_definitions.map do |definition|
         donation = create(
-          items_quantities[:source],
+          definition[:factory],
           storage_location: storage_location,
           organization: organization,
           issued_at: "2025-01-01",
-          comment: "It's a fine day for diapers."
+          comment: "It's a fine day for diapers.",
+          **definition[:attributes]
         )
 
-        items_quantities[:items].each do |line_item|
-          donation.line_items << create(:line_item, item: line_item[0], quantity: line_item[1])
+        definition[:items].each do |(item, quantity)|
+          donation.line_items << create(:line_item, item: item, quantity: quantity)
         end
 
         donation
       end
     end
 
-    def source_name(donation)
-      if !donation.product_drive.nil?
-        donation.product_drive.name
-      elsif !donation.manufacturer.nil?
-        donation.manufacturer.name
-      elsif !donation.donation_site.nil?
-        donation.donation_site.name
-      end
+    def expected_csv(fixture_name)
+      Rails.root.join("spec/fixtures/files", fixture_name).read
     end
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
       it 'should match the expected content without in-kind value of each item for the csv' do
-        csv = <<~CSV
-          Source,Date,Details,Storage Location,Quantity of Items,Variety of Items,In-Kind Total,Comments,A Item,B Item,C Item,Dupe Item,E Item
-          Product Drive,2025-01-01,#{source_name(donations[0])},Test Storage Location,15,2,94.0,It's a fine day for diapers.,7,0,0,8,0
-          Manufacturer,2025-01-01,#{source_name(donations[1])},Test Storage Location,1,1,20.0,It's a fine day for diapers.,0,1,0,0,0
-          Donation Site,2025-01-01,#{source_name(donations[2])},Test Storage Location,2,1,60.0,It's a fine day for diapers.,0,0,2,0,0
-          Misc. Donation,2025-01-01,It's a fine day for...,Test Storage Location,3,1,120.0,It's a fine day for diapers.,0,0,0,0,3
-        CSV
-        expect(subject).to eq(csv)
+        expect(subject).to eq(expected_csv("donations_export.csv"))
       end
     end
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to yes' do
-      it 'should match the expected content with in-kind value of each item for the csv' do
+      before do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
+      end
 
-        csv = <<~CSV
-          Source,Date,Details,Storage Location,Quantity of Items,Variety of Items,In-Kind Total,Comments,A Item,A Item In-Kind Value,B Item,B Item In-Kind Value,C Item,C Item In-Kind Value,Dupe Item,Dupe Item In-Kind Value,E Item,E Item In-Kind Value
-          Product Drive,2025-01-01,#{source_name(donations[0])},Test Storage Location,15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
-          Manufacturer,2025-01-01,#{source_name(donations[1])},Test Storage Location,1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
-          Donation Site,2025-01-01,#{source_name(donations[2])},Test Storage Location,2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
-          Misc. Donation,2025-01-01,It's a fine day for...,Test Storage Location,3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
-        CSV
-        expect(subject).to eq(csv)
+      it 'should match the expected content with in-kind value of each item for the csv' do
+        expect(subject).to eq(expected_csv("donations_export_with_in_kind_values.csv"))
+      end
+
+      it 'should include inactive items in the export with zero quantities' do
+        create(:item, :inactive, name: "Inactive Item", organization: organization)
+
+        expect(subject).to eq(expected_csv("donations_export_with_inactive_item.csv"))
+      end
+
+      it 'should include items that are not in any donation with zero quantities' do
+        create(:item, name: "Unused Item", organization: organization)
+
+        expect(subject).to eq(expected_csv("donations_export_with_unused_item.csv"))
+      end
+    end
+
+    context 'when item names differ only by case' do
+      let(:donation_definitions) {
+        [
+          {
+            factory: :donation,
+            attributes: {},
+            items: [[create(:item, name: "Banana", value_in_cents: 150, organization: organization), 2]]
+          }
+        ]
+      }
+
+      it 'should sort item columns case-insensitively, ASC' do
+        # Create the other items in reverse-ASCII order to prove the sort is
+        # case-insensitive rather than relying on creation order or ASCII order
+        # (which would put "Zebra" before "apple").
+        create(:item, name: "apple", organization: organization)
+        create(:item, name: "Zebra", organization: organization)
+
+        expect(subject).to eq(expected_csv("donations_export_case_insensitive_sort.csv"))
       end
     end
   end
