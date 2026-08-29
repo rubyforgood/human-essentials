@@ -365,6 +365,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "sends an email if reminders are enabled" do
+      user.organization.update!(distribution_reminders_enabled: true)
       job = double('fake_job')
       allow(DistributionMailer).to receive(:reminder_email).and_return(job)
       allow(job).to receive(:deliver_later)

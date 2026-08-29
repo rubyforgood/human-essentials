@@ -776,6 +776,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", nil, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+            partner.organization.update!(deadline_reminders_enabled: true)
             travel_to Time.zone.local(2025, 9, 30)
             refresh
             post_refresh

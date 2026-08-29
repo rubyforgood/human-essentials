@@ -71,37 +71,48 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
+      # Monthly deadline reminders are off by default; opt in before exercising
+      # the reminder schedule. A page refresh resets the radio, so re-select Yes.
+      def choose_deadline_reminders_yes
+        choose('organization[deadline_reminders_enabled]', option: true)
+      end
 
-      it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
-        travel_to Time.zone.local(2025, 9, 30)
-        refresh
-        choose "Day of Month"
-        fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
-        fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
+      context "with monthly deadline reminders enabled" do
+        before { choose_deadline_reminders_yes }
 
-        reminder_text = find('small[data-deadline-day-target="reminderText"]').text
-        reminder_text.slice!("Your next reminder date is ")
-        reminder_text.slice!(".")
-        shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
+        it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit, :choose_deadline_reminders_yes
 
-        deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
-        deadline_text.slice!("The deadline on your next reminder email will be ")
-        deadline_text.slice!(".")
-        shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+        it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+          travel_to Time.zone.local(2025, 9, 30)
+          refresh
+          choose_deadline_reminders_yes
+          choose "Day of Month"
+          fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
+          fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
 
-        click_on "Save"
-        organization.reload
+          reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+          reminder_text.slice!("Your next reminder date is ")
+          reminder_text.slice!(".")
+          shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
 
-        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
+          deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+          deadline_text.slice!("The deadline on your next reminder email will be ")
+          deadline_text.slice!(".")
+          shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 
-        travel_to shown_recurrence_date
+          click_on "Save"
+          organization.reload
 
-        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
-        expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+          expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
 
-        expect(page).to have_content("Your next reminder date is #{reminder_text}.")
-        expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
+          travel_to shown_recurrence_date
+
+          expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
+          expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+
+          expect(page).to have_content("Your next reminder date is #{reminder_text}.")
+          expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
+        end
       end
 
       it 'can select if the org repackages essentials' do
