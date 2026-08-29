@@ -6,10 +6,10 @@ export default class extends Controller {
   connect() {
     this.boundHandleSubmit = this.handleSubmit.bind(this)
     this.element.addEventListener("submit", this.boundHandleSubmit)
-    
+
     // Disable Rails UJS for this form to prevent "Saving" state
     this.element.removeAttribute('data-remote')
-    
+
     // Remove data-disable-with from all submit buttons
     const buttons = this.element.querySelectorAll('input[type="submit"], button[type="submit"]')
     buttons.forEach(button => {
@@ -23,9 +23,9 @@ export default class extends Controller {
     if (!this.itemSubmitButtonTargets.includes(submitter)) return
 
     event.preventDefault()
-    
+
     const duplicates = this.findDuplicates()
-    
+
     if (duplicates.length > 0) {
       this.showModal(duplicates, submitter.name)
     } else {
@@ -100,10 +100,10 @@ export default class extends Controller {
 
     document.getElementById('duplicateItemsModal')?.remove()
     document.body.insertAdjacentHTML('beforeend', modalHtml)
-    
+
     const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
     modal.show()
-    
+
     document.getElementById('confirmMerge').addEventListener('click', () => {
       this.mergeAndSubmit(duplicates, buttonName)
     })
@@ -115,29 +115,29 @@ export default class extends Controller {
 
       // Separate the first entry from remaining entries
       const [firstEntry, ...remainingEntries] = item.entries
-      
+
       // Update the first entry with the merged total
       firstEntry.section.querySelector('input[name*="[quantity]"]').value = total
-      
+
       // Remove all duplicate entries from the form submission
       remainingEntries.forEach(entry => entry.section.remove())
     })
 
     const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
     modal.hide()
-    
+
     this.submitForm(buttonName)
   }
 
   submitForm(buttonName) {
     this.element.removeEventListener('submit', this.boundHandleSubmit)
-    
+
     const input = document.createElement('input')
     input.type = 'hidden'
     input.name = buttonName
     input.value = '1'
     this.element.appendChild(input)
-    
+
     this.element.submit()
   }
 }

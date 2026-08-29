@@ -1,4 +1,4 @@
-<%= simple_form_for @kit, remote: request.xhr?, data: { controller: "form-input duplicate-items" }, html: { class: 'form-horizontal' } do |f| %>
+<%= simple_form_for @kit, remote: request.xhr?, data: { controller: "form-input duplicate-items", confirmation_target: "form" }, html: { class: 'form-horizontal' } do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -34,7 +34,10 @@
             </div>
             <div class="card-footer">
               <p><b>NB: You will not be able to change the composition of the kit once saved. Partner visibility and name can be changed via the kit's item.</b></p>
-              <%= submit_button({}, {"duplicate-items-target": "itemSubmitButton"}) %>
+              <%= submit_button({}, {
+                "duplicate-items-target": "itemSubmitButton",
+                action: "click->confirmation#openModal"
+              }) %>
             </div>
           </div>
         </div>
@@ -42,3 +45,14 @@
     </div>
   </section>
 <% end %>
+
+<%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+<%# and app/controllers/kits_controller.rb#validate for how it gets populated. %>
+<div id="kitConfirmationModal"
+  class="modal confirm"
+  aria-labelledby="kitConfirmationModal"
+  aria-hidden="true"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  data-confirmation-target="modal">
+</div>
