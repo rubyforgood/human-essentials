@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_12_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -469,8 +469,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_130000) do
     t.string "city"
     t.datetime "created_at", precision: nil, null: false
     t.integer "deadline_day"
+    t.boolean "deadline_reminders_enabled", default: false, null: false
     t.integer "default_storage_location"
     t.boolean "distribute_monthly", default: false, null: false
+    t.boolean "distribution_reminders_enabled", default: false, null: false
     t.string "email"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
