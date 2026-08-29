@@ -160,6 +160,11 @@ the browser's back button -- and nothing else in this repo checks for that. It f
 five were the entire reports section: every report is reached from the hub, none is in the sidebar,
 and none of them linked back.
 
+It also reports a **destination in two navigation surfaces**. "Organization" sat in the sidebar's
+pinned footer and in the account menu behind the identical gate. Neither entry looks wrong on its
+own, which is precisely why it survived: every check the app has asks whether a page is reachable,
+and none asked whether it is reachable *twice*.
+
 Three things it had to learn, each of which produced a wrong answer first:
 
 - **Judge the URL it landed on, not the one asked for.** Several sweep targets redirect, because
