@@ -49,10 +49,15 @@ $(document).ready(function () {
     if (!scope) return;
 
     if (!(navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function')) {
-      // Silence here read as a dead button. It is not one -- the browser has no camera API,
-      // which is normal over plain HTTP on anything but localhost.
-      scope.viewport.textContent = 'This browser will not give the page a camera. Type the barcode instead.';
-      scope.viewport.classList.remove('hidden');
+      // Silence here read as a dead button. It is not one -- the browser has no camera API.
+      //
+      // Almost always this is an insecure origin: browsers only expose `mediaDevices` over https
+      // or on localhost, so reaching the app through a port forward or a tunnel on plain http
+      // removes it. Saying which of the two it is saves the reader guessing.
+      say(scope, window.isSecureContext
+        ? 'This browser will not give the page a camera. Type the barcode instead.'
+        : 'The camera needs a secure (https) connection. On a plain http address the browser ' +
+          'will not offer it. Type the barcode instead.');
       return;
     }
 
@@ -72,10 +77,42 @@ $(document).ready(function () {
       },
       decoder: { readers: READERS }
     }, function (err) {
-      if (err) { console.log(err); stop(); return; }
+      if (err) {
+        // This was `console.log(err); stop();` -- and `stop()` hides the viewport again, so a
+        // camera that refuses to start looked exactly like a button that does nothing. Reported
+        // as "clicking it does not trigger the camera", and the only trace was in the console.
+        //
+        // Every one of these is something the reader can act on, so each says what to do rather
+        // than reporting the exception name.
+        const message = {
+          NotAllowedError: 'The browser blocked the camera. Allow camera access for this site in ' +
+            'your browser settings, then try again.',
+          NotFoundError: 'No camera found on this device. Type the barcode instead.',
+          NotReadableError: 'The camera is in use by another application. Close it and try again.',
+          OverconstrainedError: 'No camera on this device can be used for scanning. Type the ' +
+            'barcode instead.',
+          SecurityError: 'The camera needs a secure (https) connection. Type the barcode instead.',
+          // Chromium reports a refused permission as NotSupportedError as often as NotAllowedError,
+          // depending on whether the refusal came from the prompt or from the origin being
+          // insecure. Both mean the same thing to the reader, so both get the same sentence.
+          NotSupportedError: 'The browser will not give this page the camera. That is usually a ' +
+            'blocked permission, or a plain http address -- the camera needs https.'
+        }[err.name] || 'The camera could not be started. Type the barcode instead.';
+
+        stop();
+        say(scope, message);
+        return;
+      }
       Quagga.initialized = true;
       Quagga.start();
     });
+  }
+
+  // Show a sentence where the picture would have been. `role="status"` is already on the viewport,
+  // so this is announced without stealing focus.
+  function say(scope, message) {
+    scope.viewport.textContent = message;
+    scope.viewport.classList.remove('hidden');
   }
 
   function stop() {
