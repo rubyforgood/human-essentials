@@ -33,7 +33,7 @@
       end
       if row_items.empty?
         row_items << {label: "Change this account", path: "#", icon: "bi-person-gear", disabled: true,
-                      reason: "you cannot change your own membership here"}
+                      reason: "You cannot change your own membership"}
       end
     %>
     <%= render "shared/essentials/row_actions", label: user.display_name, items: row_items %>

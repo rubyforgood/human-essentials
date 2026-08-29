@@ -6135,3 +6135,59 @@ its record, and that row's first cell does. That leaves Edit and Delete, always 
 settled pair, which the rule says stays inline. Reverted. **Remove the redundant action before
 counting**, or the count argues for a menu that the rule does not want.
 
+## 2026-08-29 — A visible actions header, and saying why out loud
+
+Both chosen from `docs/mockups/actions-header-and-disabled.html`.
+
+### The header: I changed my own recommendation, because the facts changed
+
+A commit earlier I made it `sr-only` and justified that partly on width — "a visible label widens a
+60px column". **Measured, it costs 15px** on `/partners` and `/items` and 18px on
+`/donation_sites`. That is not a real cost and leaning on it was sloppy.
+
+The better argument is about what the column *holds*, and it had just changed underneath me.
+Hidden headers suit a column of labelled controls, which describes itself — that is why Salesforce,
+GOV.UK, Carbon and Atlassian hide theirs. Collapsing nine tables in the previous commit turned most
+of these columns into **one unlabelled glyph**. A column whose entire visible content is "⋯" is
+exactly where a header earns its place, and Ant Design — the most table-heavy of the systems
+surveyed — shows one.
+
+Worth naming the general shape: **a decision can be right when made and wrong an hour later, because
+the thing it was about moved.** The fix is to re-derive it, not to defend it.
+
+### The disabled reason: optimising for one group is not a reason to withhold from another
+
+Reported as confusing on `/items`, and it was a defect I introduced. `reason:` rendered as `sr-only`
+text, so a screen reader heard *"Deactivate, unavailable while this item is still in inventory or
+used by a kit"* and everyone else saw a greyed-out word and nothing at all. There was no `title`
+either.
+
+The comment I wrote at the time said the reason was sr-only "so it reaches a screen reader without
+needing hover" — which is true, and it silently traded away every sighted user to get there. The
+rule now: **if an explanation is worth giving to assistive technology, it is worth showing.**
+
+**Chosen: visible help text under the label**, which is Polaris's `helpText` on an action list item.
+
+**Rejected: a tooltip.** A `disabled` control fires no pointer events, so a tooltip on one needs a
+wrapper element to work at all — and there is no hover on a phone.
+
+**Rejected: not disabling at all** (GOV.UK's position, explain on click). Honest, and it spends a
+click and a page load to deliver one sentence that fits on the row.
+
+**Rejected: omitting the action.** That is what it did before, and it is what made the column
+ragged. "The button is missing" answers nothing.
+
+### The contrast trap inside the fix
+
+Making the reason visible was not enough: `opacity-60` sat on the whole menu item, so the new
+sentence painted at **2.32:1** against white. WCAG 1.4.3 exempts an inactive component from
+contrast, and **that exemption is not an argument here** — the entire point of showing a reason is
+that it gets read, and a rule permitting you to dim it does not make dimming it right. The opacity
+moved onto the label alone; the reason is slate-500 at **4.75:1**.
+
+One measurement note for whoever checks this next: the painted-pixel minimum for the reason reads
+**3.40:1**, not 4.75. That is antialiasing at 12px, which affects all small text equally, and the
+declared colour is what 1.4.3 measures. Painted pixels are the right tool for an *overlay* — a
+gradient or a scrim changing what reaches the eye — and the wrong one for plain text on a plain
+background.
+

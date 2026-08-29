@@ -13,7 +13,7 @@
           <th scope="col">Members</th>
           <th scope="col">Requestable item categories</th>
           <th scope="col">Send reminders?</th>
-          <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
+          <th scope="col" class="text-right">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -81,7 +81,7 @@
                      else
                        {label: "Delete", path: partner_group_path(pg), icon: "bi-trash",
                         method: :delete, tone: :danger, disabled: true,
-                        reason: "unavailable while partners still belong to this group"}
+                        reason: "Partners still belong to this group"}
                      end)
                   ] %>
             </td>

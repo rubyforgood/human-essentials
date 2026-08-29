@@ -165,7 +165,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       # state reaches assistive tech, with the reason as sr-only text.
       menu = open_row_menu(row: location1.name)
       expect(menu).to have_button("Deactivate", disabled: true)
-      expect(menu).to have_text("unavailable while this location still holds inventory")
+      # Visible help text now, not sr-only -- and its own sentence, because it is no longer read
+      # after the label by a screen reader.
+      expect(menu).to have_text("This location still holds inventory")
     end
 
     it "Allows user to deactivate and reactivate storage locations" do
