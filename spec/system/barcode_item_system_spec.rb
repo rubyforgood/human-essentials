@@ -144,4 +144,16 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
+
+  # The new/edit forms only offered a static icon -- the camera scanner (utils/barcode_scan.js,
+  # triggered by clicking a `.barcode-scanner` element) was never wired up here, so the only way
+  # to enter a barcode was to read it off the box and type it.
+  it "offers the camera scanner on the new and edit forms" do
+    visit new_barcode_item_path
+    expect(page).to have_css("input#barcode_item_value + .barcode-scanner")
+
+    barcode = create(:barcode_item, organization_id: organization.id)
+    visit edit_barcode_item_path(barcode.id)
+    expect(page).to have_css("input#barcode_item_value + .barcode-scanner")
+  end
 end

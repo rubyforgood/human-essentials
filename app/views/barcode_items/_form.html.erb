@@ -15,8 +15,8 @@
               <% end %>
               <%= f.association :barcodeable, collection: @items, label: "Item", wrapper: :input_group %>
               <%= f.input :value, label: "Barcode", wrapper: :input_group do %>
-                <span class="input-group-text"><i class="fa fa-barcode"></i></span>
                 <%= f.input_field :value, class: "form-control" %>
+                <div class="fa fa-barcode barcode-scanner input-group-text"></div>
               <% end %>
             </div>
             <!-- /.card-body -->

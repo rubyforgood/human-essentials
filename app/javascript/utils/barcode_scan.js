@@ -3,7 +3,9 @@ import Quagga from 'quagga';
 
 $(document).ready(function () {
   $(document).on('click', '.barcode-scanner',function(e) {
-    var target = $(e.target)
+    // currentTarget, not target: the click can land on a child of the button, and load_quagga
+    // needs the button itself so it can render the camera there and reach the field beside it.
+    var target = $(e.currentTarget)
     load_quagga(target);
 
   });
@@ -29,7 +31,7 @@ $(document).ready(function () {
         // last_result = [];
         Quagga.stop();
         Quagga.offDetected(startScan);
-        $("#barcode-scanner-btn").empty()
+        last_target.empty()
         last_target.prev().val(upc_code)
         }
 
@@ -45,7 +47,10 @@ $(document).ready(function () {
           name : "Live",
           type : "LiveStream",
           numOfWorkers: navigator.hardwareConcurrency,
-          target: "#barcode-scanner-btn"
+          // The button that was clicked, not a shared id. `#barcode-scanner-btn` was hard-coded on
+          // every line-item row and in the barcode modal, so it was never unique and Quagga always
+          // drew the camera into the first one on the page -- never the modal's.
+          target: target[0]
         },
         decoder: {
             readers : ['ean_reader','ean_8_reader','code_39_reader','code_39_vin_reader','codabar_reader','upc_reader','upc_e_reader']
