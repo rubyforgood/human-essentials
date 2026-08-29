@@ -1105,6 +1105,26 @@ service form and Material for a touch list. The systems this app resembles agree
 **Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
 gap was missing.
 
+<a id="render-the-state-do-not-correct-it"></a>
+**The server renders the correct initial state; JavaScript may reveal, never un-draw.** A
+controller that hides something in `connect()` is a controller that has already let the reader see
+it — between first paint and Stimulus booting, it is on screen. Reported as *"a ghost button that
+appears for a second when you refresh"* on `/distributions/new`: the shipping cost field, which
+`distribution_delivery_controller` hides unless the delivery method is `shipped`, and a new
+distribution defaults to `pick_up`.
+
+This is the rule [`[data-railed]`](#the-rail) and [`[data-tag-input="ready"]`](#tag-input) already
+follow, stated for the general case. Give the wrapper its `hidden` class in the template, from the
+same value the controller reads.
+
+**Match the controller's logic exactly, including "neither".** The deadline fields had the same
+flash, and the first fix defaulted the unset case to `day_of_month` — which put the field back for a
+frame, because with nothing set *neither* radio is checked and the controller hides *both*. `nil`
+matching neither branch is the correct initial state.
+
+`bin/design/flash-of-hidden-audit.js` checks for it: everything visible at `commit` that is gone
+once the page settles.
+
 <a id="a-camera-that-will-not-start-says-so"></a>
 **A camera that will not start says so, in the viewport.** Quagga's init callback used to do
 `console.log(err); stop()` — and `stop()` hides the viewport, so a refused camera opened and shut

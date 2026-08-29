@@ -6609,3 +6609,32 @@ Location*. `/purchases/21/print.pdf` returns 200, `application/pdf`, 30,024 byte
 have never diverged, so there is nothing yet to reconcile, and a premature base class would have to
 guess which parts are common.
 
+## 2026-08-29 — Render the state, do not correct it
+
+Reported as "a strange ghost button that appears for a second when you click refresh" on
+`/distributions/new`, looking like a control with an input. It was the **shipping cost** field.
+
+The server rendered it visible; `distribution_delivery_controller` hides it on `connect()` unless
+the delivery method is `shipped`, and a new distribution defaults to `pick_up`. So on every load it
+was drawn, painted, and then removed — visible for exactly as long as it took Stimulus to boot.
+
+**The rule, now general:** the server renders the correct initial state, and JavaScript may reveal
+but never un-draw. `[data-railed]` on the table rail and `[data-tag-input="ready"]` on the tag input
+already worked this way; this states it for the whole app rather than leaving it as two local
+precedents.
+
+**The audit is the deliverable more than the fix.** `flash-of-hidden-audit.js` loads each page with
+`waitUntil: "commit"` — before scripts run — lists what is visible, lists it again once settled, and
+reports the difference. That found a second instance immediately, in the reminder day fields on
+`/manage/edit`, which I had rebuilt myself two days earlier and not noticed.
+
+**And the first fix was wrong in an instructive way.** I defaulted the unset schedule to
+`day_of_month`, reasoning that it is the first radio. But with nothing set, *neither* radio is
+checked, and the controller's `monthOrWeekChanged` hides *both* — so my "correct initial state" put
+the field back on screen for a frame and the audit still reported it. **The server's guess has to
+match what the controller actually does, including the case where it does nothing.** `nil` matching
+neither branch is the answer.
+
+`<select>` is excluded from the audit: select2 replaces one with its own container, which is a swap
+rather than a hide, and reporting it would bury the real findings.
+

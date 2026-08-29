@@ -36,7 +36,13 @@
               input_html: {data: {action: "distribution-delivery#toggleShippingCost"}},
               collection: Distribution.delivery_methods.keys, label_method: :humanize,
               label: "Delivery method" %>
-        <div id="shipping_cost_div" data-distribution-delivery-target="shippingCost">
+        <%# Hidden on the server when it does not apply, not by the controller after paint.
+            `distribution_delivery_controller` hides this on `connect()`, and a new distribution
+            defaults to `pick_up` -- so the field was drawn and then removed, and on a refresh you
+            saw it flash. Reported as "a ghost button that appears for a second". The controller
+            still owns it from then on; it just no longer has to undo the first render. %>
+        <div id="shipping_cost_div" data-distribution-delivery-target="shippingCost"
+             class="<%= "hidden" unless f.object.delivery_method.to_s == "shipped" %>">
           <%= f.input :shipping_cost, label: "Shipping cost", placeholder: "Shipping cost",
                 value: number_to_currency(f.object.shipping_cost.to_f, delimiter: "", unit: "") %>
         </div>
