@@ -152,6 +152,28 @@ relationship, and a **plain** reveal, whose content already carries its own box.
 Reported as "the location and size of the shipping cost field does not make any sense". Currently
 **10 reveals, 0 defects**.
 
+`template-compile-audit.rb` compiles **every view template**, and says which ones will not.
+
+```bash
+bin/rails runner bin/design/template-compile-audit.rb
+```
+
+One second, and it closes a gap four other checks left open. A sweep that rewrote 55 row actions
+interpolated Python's `None` into one of them -- `icon: "bi-check-circle"None` in
+`distributions/_pickup_day_row`. `erb_lint` passed, because the ERB *tags* are well formed and it
+does not compile the Ruby inside them. `rubocop` passed, because it does not read templates. All
+**3,159 specs** passed. And `/distributions/pickup_day` returned **200**, because Rails skips a
+partial rendered through `collection:` when the collection is empty and never compiles it -- the page
+500s the moment a pick-up exists for the day being looked at, which no spec sets up. Brakeman found
+it, as a parse error under a heading nobody reads.
+
+`spec/views/every_template_compiles_spec.rb` runs the same check in CI. Verified to fail: putting the
+`None` back reports the file and the line.
+
+A compiled template is a *method body*, so the source is wrapped before compiling -- `<%= yield %>`
+is legal there, and treating "Invalid yield" at the top level as a defect reported four healthy
+partials on the first run.
+
 `citation-audit.py` classifies the **industry citations** in `design.md` and the decision log.
 
 ```bash

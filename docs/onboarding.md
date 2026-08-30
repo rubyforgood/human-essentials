@@ -652,6 +652,12 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### Pick ups & deliveries: a day with a pick-up on it no longer errors
+
+**`/distributions/pickup_day` raised an error whenever there was actually a pick-up scheduled for
+the day you were looking at.** An empty day loaded fine, which is why it went unnoticed. Fixed, and
+there is now a check that compiles every page template so a typo like it cannot reach a page again.
+
 ### For maintainers: citing another design system
 
 `design.md` argues many decisions partly from what Carbon, GOV.UK, Linear and others do. There is now

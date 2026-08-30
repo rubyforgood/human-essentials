@@ -14,7 +14,7 @@
     <div class="flex justify-end gap-1.5">
       <%= essentials_row_icon_link "View", distribution_path(pickup_day_row), icon: "bi-eye" %>
       <% unless pickup_day_row.complete? %>
-        <%= essentials_row_icon_action "Distribution complete", picked_up_distribution_path(pickup_day_row), method: :patch, icon: "bi-check-circle"None %>
+        <%= essentials_row_icon_action "Distribution complete", picked_up_distribution_path(pickup_day_row), method: :patch, icon: "bi-check-circle" %>
       <% end %>
     </div>
   </td>
