@@ -6954,3 +6954,39 @@ to hit.
 "good" CLS threshold at both widths, and the responsive audit is clean across 1,562 page/width
 combinations.
 
+## 2026-08-30 — The selection bar replaces the toolbar, and the totals button joins the filters
+
+Two things reported on `/requests`, and they turned out to be one change.
+
+**The bar was "the blue background and no padding".** It was `brand-50` with a **16px corner
+radius** and no side margin, so a rounded tinted box sat hard against the card's edges with nothing
+between them — a floating box in a system otherwise built from full-bleed bands. It also **pushed
+the table down 68px on every tick**, on a page whose whole day had been spent stopping things from
+jumping.
+
+**"Show product totals" pushed the table down by a lot.** Measured: a **63px** card header band,
+rule and all, for one 30px button. Removing it moved the table from y=291 to y=228.
+
+**Previewed three bars** (`docs/mockups/selection-bar-and-totals.html`), all of which replace the
+table's toolbar rather than adding a row to it — Carbon's `TableBatchActions`, Material's contextual
+toolbar, GitHub and Gmail. **Three of the four keep it in the toolbar, and the reason is layout: an
+inserted row moves the table and a replaced one does not.** Brand tint chosen over neutral (a bar you
+can miss is a bar you do not use) and over Carbon's inverse (this app has no other inverse surface,
+so it would be the loudest thing on any page it appeared on).
+
+**Then a question worth more than the options: "is the row with the helper text necessary?"** The
+mockup had an idle band reading *"Tick a row to select it."* It is not necessary and nothing does it
+— not Carbon, Gmail, GitHub or Material. **A checkbox already says it can be ticked.** Asking that
+removed the last of the design: there is no third band at all. The **filter row is the toolbar**, the
+bar replaces it, and "Show product totals" lives on it. Nothing is ever empty and nothing ever moves.
+
+**Covering the filters while a selection is live is the right behaviour, not just the tidy one.**
+Filtering with rows selected is ambiguous — does the selection survive rows leaving the page? —
+and Carbon answers it the same way, by putting the filters out of reach until you are done.
+
+Measured after: the table head is at **y=228 whether the toolbar or the bar is showing**, and 63px
+higher than it was. `filter_bar` grew an `actions:` slot for the right end of its button row, which
+is where a control belonging to *this table* goes from now on — that row had **1,011px** of empty
+space at 1440, and the totals are "across every request matching the current filters", so they
+belong beside the filters that decide them.
+

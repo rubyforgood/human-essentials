@@ -98,6 +98,7 @@ out/
 
 # Ad-hoc design preview, served at /design-preview.html in development
 /public/design-preview.html
+/public/selection-bar-and-totals.html
 /public/tab-filter-placement.html
 /public/icon-action-tooltip.html
 /public/row-actions-reach.html

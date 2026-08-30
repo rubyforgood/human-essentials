@@ -658,9 +658,15 @@ open with its entry highlighted, wherever you are inside it.
 
 ### Requests: pick several, print their picklists in one go
 
+**Show product totals** has moved up onto the filter row, beside the Filters button — it always
+reported on "every request matching the current filters", so that is where it belongs, and the table
+now starts about 50px higher than it did.
+
+
 **On the Requests page every row now has a checkbox.** Tick a few — or tick the box in the header to
-take the whole page — and a bar appears above the table saying how many you have chosen, with
+take the whole page — and the filter row is replaced by a bar saying how many you have chosen, with
 **Print picklists**. That gives you one PDF for the lot, instead of opening each row's menu in turn.
+Nothing on the page moves when it appears, and the filters come back when you press **Cancel**.
 
 Three things that work the way you would expect from email or a file browser:
 
