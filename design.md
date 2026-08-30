@@ -349,9 +349,13 @@ menu-or-not on its own terms.
 <a id="tooltips"></a>
 **An icon-only control is named by `aria-label` and `data-tooltip`, never `title`.** The `title`
 attribute is browser chrome: unstyleable, different on every OS, silent on keyboard focus, gone on a
-timer, and neither hoverable nor dismissible — three failures of WCAG 1.4.13. Carbon, Primer, MUI,
-Ant Design, Salesforce and Atlassian all pair an icon-only button with a component tooltip and **not
-one of them uses `title`**.
+timer, and neither hoverable nor dismissible — three failures of WCAG 1.4.13, which is the argument
+and is checkable on its own. Each of these ships a component for naming an icon-only control rather
+than leaving it to `title`: Carbon's `Button` with `hasIconOnly` and `iconDescription`, Primer's
+`IconButton`, MUI's `Tooltip` around an `IconButton`, Ant Design's `Tooltip`, Salesforce's
+`lightning-button-icon` with `alternativeText`, Atlassian's `Tooltip`. Naming the components is the
+evidence; "not one of them uses `title`" was a claim about six products I had not checked
+exhaustively.
 
 `tooltip_controller` is mounted on both shells and shows `.tip-bubble` on **hover and focus**,
 dismissible with Escape, hoverable, persistent. Three rules:
@@ -1335,9 +1339,10 @@ nothing caught it; `wayfinding-audit.js` checks for it now.
 **The account menu is about the person; the sidebar is about the work.** Account settings, the roles
 you can switch to, and sign out. Not the organization's settings, not a list of your co-workers.
 
-This is the closest thing to a universal convention in the products this app resembles: **Slack,
-GitHub, Linear, Notion, Stripe, Atlassian and Shopify all keep workspace or organization settings
-out of the avatar menu.** Where those settings *do* live splits two ways — pinned to the foot of the
+**Observed, not published**: Slack, GitHub, Linear, Notion, Stripe, Atlassian and Shopify each keep
+workspace or organization settings out of the avatar menu. I have found no published rule for it in
+any of them, so this is a description of seven interfaces rather than a convention anyone states — and one
+counter-example would not overturn the decision, which rests on the duplication measured here. Where those settings *do* live splits two ways — pinned to the foot of the
 sidebar (Shopify, and this app), or under the workspace name at the top where that name is also a
 switcher (Slack, Notion, Linear). This app's sidebar header already shows the organization's name,
 so the pinned footer entry is the one that fits.
@@ -1357,11 +1362,12 @@ The `back:` local is unchanged at all 99 call sites: the parent's name is derive
 which is `Back to <noun>` everywhere in the app — checked before relying on it. `breadcrumb:` takes
 an explicit `[[label, path], …]` when a trail is deeper than one level.
 
-**The structure is the W3C ARIA APG pattern.** The APG is the source; GOV.UK, Carbon, Material and
-Bootstrap all follow it, which is a weaker and truer claim than the "render identically" this said
-before — they differ in separator, spacing and whether the current page is a link: a `<nav>` with an accessible name, an **ordered** list because the order is the
-hierarchy, links for the ancestors, and the current page as **plain text** carrying
-`aria-current="page"`. The separator is a generated `aria-hidden` glyph — a literal `/` between two
+**The structure is the W3C ARIA APG "Breadcrumb" pattern**, which is the source and is
+normative: a `<nav>` with an accessible name, an **ordered** list because the order is the hierarchy,
+links for the ancestors, and the current page as **plain text** carrying `aria-current="page"`.
+GOV.UK, Carbon, Material and Bootstrap each ship a breadcrumb built on it; they differ in separator,
+spacing and whether the current page is a link, so they illustrate the pattern rather than evidence
+a single rendering. The separator is a generated `aria-hidden` glyph — a literal `/` between two
 links is announced as "slash". 14px, slate-500 for the trail and slate-700 for the current item,
 each link 24px tall.
 
@@ -1432,9 +1438,10 @@ it: **144px** at `max-w-4xl`, **256px** at `max-w-2xl`. Clicking "New item" from
 slide the page title a quarter of the screen sideways, between two views of the same resource.
 
 It is also not the convention it is assumed to be. Centring belongs to **standalone** pages — sign
-in, checkout, onboarding — which have no surrounding furniture to align against. An in-app form
-under a page heading is left-aligned in GOV.UK, GitHub, Stripe, Shopify and Atlassian alike, sharing
-its heading's edge. This app's own auth screens are not centred either: a split panel, form at
+in, checkout, onboarding — which have no surrounding furniture to align against. GOV.UK publishes this — its form pages left-align a
+one-column form under the heading — and GitHub, Stripe, Shopify and Atlassian are observed doing the
+same. The argument that decides it is the one below: this app's own auth screens are not centred
+either. This app's own auth screens are not centred either: a split panel, form at
 `left 888`.
 
 <a id="field-row"></a>
@@ -1651,8 +1658,10 @@ tab without at **y=174** — a **54px jump** on every switch, on two tab sets.
 
 `in_card: true` puts the bar inside the card, under the strip, and the **frame goes around the table
 alone**. Then the strip is at the same height on every tab and only the table changes, which is what
-a tab is for. That is what GitHub, Jira, Linear, Notion and the Ant, Material and Carbon tab
-components all do: **the tablist is chrome; everything that varies goes in the panel.**
+a tab is for. Ant Design, Material and Carbon each ship a `Tabs` component built that way — the tablist is
+chrome and the content goes in the panel — and GitHub, Jira, Linear and Notion are observed keeping
+per-view controls below a fixed strip. The measurement is what decides it: a 54px jump between two
+tabs of the same set.
 
 - **Do not give every tab a filter for symmetry.** None of those systems does. Groups has 2 rows
   and Item categories has 3 — measured — and a filter over three rows is furniture every reader
@@ -1673,8 +1682,9 @@ person was on.
 from the current *controller*, and `active_on` listed only the first tab's — so `/partner_groups`
 and `/item_categories` had **nothing** active and the whole section shut underneath the reader,
 reported as *"when the user clicks on groups, it automatically collapses the side nav."* Every tab's
-controller goes in `active_on`. GitHub, GitLab, Jira and Linear all keep the section open while you
-are anywhere inside it.
+controller goes in `active_on`. GitHub, GitLab, Jira and Linear are each observed keeping the
+section open while you are inside it, and I have found no published rule for it in any of them. It
+is a bug fix here either way: the rail was claiming the reader was nowhere.
 
 `pw bin/design/tab-set-audit.js` checks both — the strip's height across a set, and the rail still
 marking where you are. **7 tabs across 3 sets, no findings.** The item catalogue had this on
@@ -1755,9 +1765,10 @@ pushing its column past its share.
 
 **Every cell is one column, including the date range**, which is a popover: one trigger showing
 the current range, opening a panel with the presets on one side and a custom range on the other.
-That is what Stripe, Shopify, Google Analytics, Metabase and Linear all do, and the reason is
-layout — a panel is over the page, so it costs nothing below it. Inline, choosing *Custom* turned
-a 64px cell into a 216px one and added 152px to the bar at every width.
+Stripe, Shopify, Google Analytics, Metabase and Linear are each observed doing this, and the reason
+that decides it here is measured rather than counted: inline, choosing *Custom* turned a 64px cell
+into a 216px one and added **152px** to the bar at every width. A panel is over the page, so it
+costs nothing under it.
 
 The actions are an ordinary cell with `self-end`, so they follow the last filter. On
 `col-span-full` they took a row of their own on every page, including the ones with a single
@@ -1871,8 +1882,9 @@ dependency: it is built from the same `FILTER_CONTROL_CLASSES` as every other fi
 matches the rest of the bar by construction rather than by being re-themed.
 
 **No Apply button.** The dates apply themselves. An Apply is a second click for something the
-user has already said, and Stripe, Shopify, Linear and Notion all commit on selection; Google
-Analytics is the well-known exception and the one people complain about. Three things make that
+user has already said. Stripe, Shopify, Linear and Notion are observed committing on selection, and
+Google Analytics is the counter-example that proves it is a choice rather than a law — it keeps an
+Apply, and is the one people complain about. Three things make that
 work with two fields rather than a calendar:
 
 - **The panel stays open** while custom dates are edited, so the range can be adjusted without
@@ -2008,9 +2020,9 @@ can be done to them — which is what Gmail, GitHub, Linear, Jira and Airtable a
 
 <a id="the-bar-floats-over-the-list"></a>
 **The bar floats over the list. It covers nothing and it moves nothing.** `position: fixed`, centred
-at the bottom of the viewport, above the [scroll rail](#a-scrolling-table-says-so). Linear, Notion,
-Airtable and Google Drive all do this, and the reason all four do is the one that decides it here:
-**selecting happens while scrolling.** `/requests` is 1,289px against a 900px viewport, so a bar
+at the bottom of the viewport, above the [scroll rail](#a-scrolling-table-says-so). Linear, Notion, Airtable and Google Drive are each observed doing
+this. What decides it here is a measurement rather than the count: **selecting happens while
+scrolling.** `/requests` is 1,289px against a 900px viewport, so a bar
 pinned to the top of the list is out of reach exactly when you have finished choosing.
 
 **The filters stay put and stay usable.** An earlier version replaced the filter row, on the strength
@@ -2406,9 +2418,10 @@ this item". Not "OK", not "Submit".
 **The app speaks to the reader as "you".** Never "my", and never third person. Counted before this
 rule existed: **49 strings second person, 8 first, one using both at once**, and no third person at
 all — which was correct rather than an omission, since third person ("the user should…") is
-documentation voice. GOV.UK, Polaris, Mailchimp and Apple all say second person, and Apple warns
-specifically against mixing "my" and "your"; Nielsen Norman tested both and found consistency
-matters more than the choice. It is **52 second person and nothing else** now.
+documentation voice. GOV.UK's style guide, Shopify Polaris's content guidelines and Apple's Human
+Interface Guidelines each specify second person, and Apple's warns specifically against mixing "my"
+and "your"; Mailchimp's is observed doing the same. The count is what decides it: the app was already
+49 to 8. It is **52 second person and nothing else** now.
 
 Three cases, because the eight outliers were not one problem:
 
@@ -2737,8 +2750,9 @@ condition stated there still counts as marked.
   the GOV.UK pattern -- and inside a red box they read as blue underlined links, a third colour
   in a component that already has two. Two rules were being broken at once: the underline,
   because [Interaction](#interaction) says a link that is its own block takes none, and the
-  tone, because brand blue on a danger surface points at nothing the reader can act on. A plain
-  bulleted list under a bold line is also what Polaris, Carbon and Atlassian show. The jump is
+  tone, because brand blue on a danger surface points at nothing the reader can act on. A plain bulleted
+  list under a bold line is what Polaris, Carbon and Atlassian are each observed showing for the
+  same component. The jump is
   not missed: every message is repeated at its own field and tied to the input by
   `aria-describedby`, so the summary says **what** is wrong and the field says **where**.
 - **The glyph sits in its own column, and the heading and list share the next**, so the bullets
@@ -3278,8 +3292,9 @@ was 37% shorter — see `docs/mockups/table-stacking.html`.
 
 <a id="table-rows-are-one-line"></a>
 **A table row is one line — while it is still a table.** `.data-table td` is `nowrap`. A wide table
-can have short rows or fit the screen, not both, and every system that ships data tables picks the
-short row — Carbon, Material, Stripe and Linear all scroll sideways instead. A table is read *down* a
+can have short rows or fit the screen, not both. Carbon, Material, Stripe and Linear are each
+observed picking the short row and scrolling sideways; "every system that ships data tables" was a
+claim I had no way to make. A table is read *down* a
 column, and a ragged row height breaks that; a sideways scroll is a deliberate act you take once.
 **WCAG 1.4.10 Reflow exempts data tables** from the no-sideways-scroll rule for this reason, and a
 table sits in a focusable `.table-scroll` region. Measured: `/distributions` went **1,339px tall with
@@ -3573,13 +3588,14 @@ Groups collapse and the one containing the current page opens on load.
 Rule 5 was added after Dashboard, Reports and My organization were found sitting at the *child*
 weight beside Operations and Inventory at the parent weight — all four at the same indent. A
 top-level destination read as a child that had lost its parent, which is what "the nav looks odd"
-turned out to mean. This is the convention in GitHub, Linear, Notion, Jira, Stripe and Vercel:
-disclosure is marked by an affordance, hierarchy by type.
+turned out to mean. GitHub, Linear, Notion, Jira, Stripe and Vercel are each observed
+marking disclosure by an affordance and hierarchy by type. What decides it is the defect above: four
+destinations at one indent, two of them children and two not.
 
 **Ordering.** Home first; then the work, grouped by the thing it acts on; then read-only views of
-that work; then the pinned account item. Stripe, Shopify, Xero and QuickBooks all order a rail
-this way, and the reason is frequency: you visit a report about what you did less often than you
-do the thing. So: *Dashboard*, the three working groups, *Reports*, and *My organization* pinned.
+that work; then the pinned account item. Stripe, Shopify, Xero and QuickBooks are each observed ordering a
+rail this way. The reason is frequency, which stands without them: you visit a report about what you
+did less often than you do the thing. So: *Dashboard*, the three working groups, *Reports*, and *My organization* pinned.
 
 **Spacing follows the same idea as weight.** One `space-y-4` between every top-level entry —
 group or lone destination — and `space-y-0.5` between items inside a group, `mt-1` under a group
@@ -3823,15 +3839,22 @@ Known gaps, in rough priority order:
   question"), which a reader can look up and disagree with; 24 **attribute numbers**; 34 **assert
   unanimity** ("all", "none", "not one", "identically"); 10 are plainly **observational**.
 
-  **32 assert unanimity across four or more systems without naming anything checkable.** That is
-  the form the selection-bar error took: *"three of the four keep it in the toolbar"* was true of
-  the category and false of the specific behaviour, and one counter-example was enough to fall
-  over. Four have been corrected already — an arithmetic slip ("none of the five", naming six), an
-  "identically" that four systems do not, a 28px of ours attributed to two of them, and four
-  recalled spacing figures now marked as recalled.
+  **All 32 that asserted unanimity across four or more systems have been dealt with**, in the two
+  ways available without the products in front of you:
 
-  The rest are not known to be wrong; they are **unevidenced in a way that one counter-example
-  would falsify**. Rechecking them needs the products in front of you, which no tool here can do.
+  - **15 rewritten in this document**, which is normative and should say what is true now. Where a
+    system publishes something, it is named — Carbon's `Button` with `hasIconOnly`, Primer's
+    `IconButton`, Salesforce's `lightning-button-icon`, the ARIA APG's "Breadcrumb". Where it does
+    not, the claim now says **observed** and the decision leans on the measurement of this app that
+    was doing the real work anyway.
+  - **17 annotated in the decision log**, not rewritten. That log records what was reasoned at the
+    time; editing it to look better reasoned than it was is the same fault one level up. Each
+    carries a dated correction line instead.
+
+  Two entries still flag and both are the tool's limit rather than a fault: an absolute about *this
+  app* sitting within 90 characters of a system's name. "Every tab's controller goes in `active_on`"
+  is measured and belongs absolute.
+
   The standard going forward: **name the component, or say what you observed** — and when systems
   are cited as agreeing, check what each does with the specific thing, not with the category it
   belongs to.

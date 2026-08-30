@@ -950,6 +950,8 @@ answering: six index pages carry exactly three actions, always two secondary and
 and eleven carry two. The app is consistent, and consistent with what Polaris, Carbon, Material
 and Atlassian all specify — one primary, at most three, primary last.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 The rule simply was not in design.md, whose page header section covered spacing and the back
 link and said nothing about actions. That is why a fourth button had nowhere to go and ended up
 inside a table: there was no rule to violate, so nobody noticed it was being violated.
@@ -1321,6 +1323,8 @@ had hand-rolled their own form.
 was an extra click on every filter. The app already did both — five bars applied on change,
 eleven did not — so the inconsistency was the real defect.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 But the button was not an oversight. `application.js` sets `Turbo.session.drive = false`, so a
 plain submit reloads the whole document: sidebar, assets, scroll position, focus. Auto-applying
 nine filters that way is up to nine reloads while someone is still deciding. The frame is what
@@ -1462,6 +1466,8 @@ every width, with an empty column beside it above 1360px. A panel is over the pa
 nothing. It also lets both dates be applied together, which removes the intermediate request the
 inline version fired after the first field.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 **Popovers now share one controller**, and the account menu moved onto it from `shell`. The
 contract is written down in `design.md` because each clause is something a hand-rolled version
 gets wrong: Escape closes and returns focus; an outside click closes but does *not* pull focus
@@ -1505,6 +1511,8 @@ than **hierarchy** (how deep is this?). GitHub, Linear, Notion, Jira, Stripe and
 opposite, and the reason is that a rail is scanned by indentation and weight: an affordance marks
 what a thing does, type marks where it sits. Dashboard only ever looked right because it was the
 active page and picked up the active weight by accident.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 **Rationale, on the strips.** The rail's pinned item and the page footer both sit at the bottom of
 the screen, 12px apart — their rules at y=831 and y=843. Twelve pixels is too little to read as a
@@ -1914,6 +1922,8 @@ Three changes to the date range filter, all of them removing something.
 **The Apply button is gone.** It was a second click for something the user had already said.
 Stripe, Shopify, Linear and Notion all commit a date range on selection; Google Analytics is the
 well-known exception, and the Apply button is the thing people complain about in it.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 The argument for keeping it was real and is recorded in the old comment: with two separate date
 fields rather than a calendar, committing on `change` means setting From and then To costs two
@@ -2435,6 +2445,8 @@ below as a secondary. Deleting those two was the whole fix for them: no decision
 GitHub, Linear, Stripe and Shopify all put the tab-scoped action in the page header and make the
 tabs URLs. Atlassian and Material are the only mainstream systems that sanction a trailing action
 on the tab row itself. Nobody puts a band between the strip and the first row.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 The tab-row variant was the tempting cheap option — no routing, panel tabs stay — and it was
 rejected on measurement rather than taste. The five labels are **598px** at every width. The
@@ -3413,6 +3425,8 @@ that says nothing new. For a **one-off** action, no — a single destructive con
 header gets its words. That distinction is now in `design.md`, because "use icon buttons" without
 it is how a page ends up with an unlabelled glyph nobody can identify.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 **Should they have a visible label?** No, and the row is the reason. **A hover label?** Also no,
 and this was the closer call. Material, Fluent and Carbon all pair icon buttons with tooltips, and
 the argument for one here is real: a sighted mouse user meeting a trash glyph has nothing but the
@@ -3523,6 +3537,8 @@ and `.date`. The app already types its columns; free text of unbounded length is
 Stripe, Linear and GitHub all clip to one line; Polaris and Notion allow two. Two lines was the
 near miss — it gives the column two row heights, which is the original problem in miniature.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 **Two exceptions, and the test between them.** `partners/requests/_history` and the partner
 dashboard already used a `<details>` disclosure, with a comment saying it had replaced a Bootstrap
 tooltip because tooltips are hover-only. **I did not show that option in the preview and should
@@ -3623,6 +3639,8 @@ height breaks that, while a sideways scroll is a deliberate act you take once �
 Reflow exempts data tables from the no-sideways-scroll rule for the same reason. Measured:
 `/distributions` **1,339px tall with three row heights → 943px with one**, `/purchases` 1,111 → 783.
 Four tables were already single-line and did not move.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 **Why nowrap alone was not enough, which the user found before I did.** It hands the layout to
 whoever typed the longest value. Measured on `/distributions`: one 72-character partner name took
@@ -3837,6 +3855,8 @@ CSS keys off it. Cheap — one `querySelector` per region, and it is set once.
 - **Making the fade weaker.** Any opacity over text costs contrast, and the column is the one that
   must stay readable. There is no value that is both visible and safe.
 - **Dropping the frozen column.** It is doing its job; the fade was the mistake.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 **Left open.** The fade tells you there is more and gives you nothing to act on: the scrollbar is an
 overlay taking **0px**, and on **five of the seven** overflowing tables it is *below the fold* —
@@ -6051,6 +6071,8 @@ implement identically, so "industry standard" here is not a judgement call: name
 list, ancestors as links, current page as plain text with `aria-current="page"`, and the separator
 generated and `aria-hidden` because a literal `/` between links is announced as "slash".
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 ### The real finding was that ten screens could not be left
 
 The reports complaint generalised. Every report is listed on the hub, **none is in the sidebar, and
@@ -6338,6 +6360,8 @@ overlapped.
 The near-universal half: **an avatar menu is for the person.** Slack, GitHub, Linear, Notion,
 Stripe, Atlassian and Shopify all keep workspace or organization settings out of it — it holds your
 profile, your preferences, sign out.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 The split half is *where* org settings go. Two conventions: pinned to the foot of the sidebar
 (Shopify, and most admin tools where settings is a destination like any other), or under the
@@ -6715,6 +6739,8 @@ It was specifically the pointer that paid.
 column to the right edge** was chosen. Ant Design (`fixed: 'right'`), AG Grid (`pinned: 'right'`),
 Material React Table, Salesforce Lightning and Excel/Sheets/Handsontable all do this. The rejected:
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 - **Actions on the left**, beside the pinned name. Zero-scroll and needs no stickiness, but the
   first thing in every row becomes a control rather than the record it acts on, and it pushes the
   identifying column off the left edge. **Nobody does this.**
@@ -6752,6 +6778,8 @@ the app's own bubble on hover *and* focus; the bubble is `aria-hidden` because `
 carries the name and describing the control with it too would announce the action twice; and `title`
 is **removed rather than kept alongside**, since two tooltips is worse than one. Below the stacking
 breakpoint the labels come back as words, because touch has no hover.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 **The bug this uncovered is the most reusable part.** Making the cell `position: sticky` trapped the
 row menu: `position: fixed` escapes an ancestor's overflow but **not its stacking context**, so the
@@ -6827,6 +6855,8 @@ as chrome and put everything that varies in the panel**. So: `in_card: true` ren
 the card under the strip, and the results frame goes around **the table alone** — which also means
 applying a filter cannot re-render the strip with whichever tab the *server* thought was current.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 Two alternatives rejected, both of which "fix" the jump by paying for it:
 
 - **Give every tab a filter bar so they match.** None of those systems does this. Groups has **2
@@ -6842,6 +6872,8 @@ named only the first tab's — so on `/partner_groups` and `/item_categories` **
 and the whole section shut underneath the reader. GitHub, GitLab, Jira and Linear all keep the
 section open while you are anywhere inside it. Measured before: no open group at all on either page;
 after: Network and Inventory stay open with their entry marked.
+
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
 
 **One definition, not six.** `storage_locations/show` had already been built this way by hand — a
 `border-b border-slate-200 px-5 pt-4` wrapper at the call site — and design.md named it "the one
@@ -7095,6 +7127,8 @@ keeps everything in the flow, and it was rejected on a measurement rather than a
 screen exactly when you have scrolled to the bottom to finish choosing. That is why Linear, Notion,
 Airtable and Drive all float theirs.
 
+> *Corrected 2026-08-30: the citation above asserts agreement across several systems without naming a component any of them publishes. Read it as **observed**, not published. The original wording is left as written — see "Auditing the industry citations" at the end of this log.*
+
 Measured after: the filters and *Show product totals* are reachable with a selection live, the table
 head does not move (`y=228` either way), the pill sits **798–852** clear of the scroll rail at
 **876–900**, and it stays put when the page is scrolled to the bottom.
@@ -7160,4 +7194,43 @@ falsify**, and rechecking them needs the products in front of you, which no tool
 the finding is recorded in the backlog rather than quietly fixed. The standard going forward:
 **name the component, or say what you observed**; and when systems are cited as agreeing, check what
 each does with the specific thing, not with the category it belongs to.
+
+## 2026-08-30 — Auditing the industry citations
+
+Asked to fix the remaining unevidenced citations after the selection-bar error, where design.md
+justified covering the filter row with *"three of the four keep it in the toolbar"* — true of the
+category, false of the specific behaviour, and false the moment you check what each of the four
+actually does.
+
+`bin/design/citation-audit.py` classifies every claim in `design.md` and this log that names two or
+more systems. **97 of them**, and **32 asserted unanimity across four or more without naming
+anything a reader could look up.** All 32 are now dealt with, in the two ways available to someone
+who cannot open the products:
+
+**15 were rewritten in design.md**, because that document is normative and should say what is true
+now. Where a system publishes something, it is named: Carbon's `Button` with `hasIconOnly` and
+`iconDescription`, Primer's `IconButton`, MUI's `Tooltip`, Ant Design's `Tooltip`, Salesforce's
+`lightning-button-icon` with `alternativeText`, Atlassian's `Tooltip`, the ARIA APG's "Breadcrumb"
+pattern, GOV.UK's style guide, Apple's Human Interface Guidelines. Where nothing is published — the
+avatar menu, the floating selection bar, rail ordering, applying filters on change — the claim now
+says **observed**, names the products as a description of seven or four interfaces rather than a
+convention, and the decision leans on the measurement of this app that was doing the real work
+anyway. Four had been corrected the day before: an arithmetic slip ("none of the five", naming six),
+an "identically" that four systems do not manage, a 28px of ours attributed to Carbon and Salesforce,
+and four recalled spacing figures now marked as recalled.
+
+**17 were annotated rather than rewritten**, and that distinction is the point. This log records
+what was reasoned at the time. Editing the citations inside past entries would make the record claim
+better reasoning than actually happened — which is the same fault as the original error, one level
+up. Each now carries a dated correction line under it, with the original wording intact.
+
+**The tool has a known limit, stated in its own output.** It flags an absolute within 90 characters
+of a system's name, so *"every tab's controller goes in `active_on`"* reads as an overreach when it
+is a measured claim about our own code. Two entries flag for that reason and are correct as written.
+A tool that cannot tell a claim about someone else's product from a claim about yours is worth
+having anyway, as long as it says so.
+
+**What it cannot do is check whether any of this is true**, and that is worth being plain about. It
+checks the *form*: whether the claim names something falsifiable. The standard it enforces is not
+"be right about Carbon" but **"give the reader enough to catch you being wrong"**.
 
