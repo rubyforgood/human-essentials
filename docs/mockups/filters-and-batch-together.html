@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filters and batch actions at the same time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand200:#C7D2FE;--brand800:#3730A3;--slate900:#0F172A;
+    --bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 140px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 6px}
+  .fbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .selbar{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:#fff}
+  .chipcount{display:inline-flex;align-items:center;background:var(--brand50);color:var(--brand800);
+    border-radius:8px;padding:6px 12px;font-size:14px;font-weight:600}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghost{border-color:transparent;background:transparent}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 20px;border-bottom:1px solid var(--line)}
+  thead th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700;background:#F8FAFC}
+  tbody tr:last-child td{border-bottom:0}
+  .cbx{width:16px;height:16px;accent-color:var(--brand);margin:0}
+  td.sel,th.sel{width:1px;padding-right:0}
+  .scroller{position:relative;max-height:300px;overflow-y:auto;border-radius:0 0 14px 14px}
+  .float{position:sticky;bottom:14px;margin:0 auto -46px;width:max-content;display:flex;align-items:center;gap:12px;
+    background:var(--slate900);color:#fff;border-radius:999px;padding:10px 16px;font-size:14px;
+    box-shadow:0 12px 32px rgb(15 23 42 /.32);z-index:5}
+  .float .btn{background:transparent;border-color:#475569;color:#E2E8F0}
+  .float .btn:hover{background:#1E293B}
+  .floatcount{font-weight:600}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .try{display:inline-block;background:var(--brand50);color:var(--brand800);font-weight:600;font-size:12.5px;
+    padding:3px 10px;border-radius:999px;margin:0 0 8px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Filters and batch actions at the same time</h1>
+<p class="lede">Reported: <i>"the print pick lists batch action makes the filter disappear... They
+should not be mutually exclusive."</i> That is correct, and the reasoning I recorded for it does not
+survive checking.</p>
+
+<h2>What I got wrong<span class="tag t-now">my error</span></h2>
+<p class="note">design.md currently says the bar replaces the filter row because <i>"three of the four
+keep it in the toolbar"</i> and <i>"covering the filters while a selection is live is the right
+behaviour... Carbon answers it the same way"</i>. Both claims are weaker than I made them:</p>
+<table class="mini">
+  <tr><th>System</th><th>On selection</th><th>Are the filters still reachable?</th></tr>
+  <tr><td><b>Carbon</b> (IBM)</td><td>The batch bar covers the table toolbar</td><td><b style="color:var(--bad)">No</b> &mdash; the one system that does this</td></tr>
+  <tr class="rec"><td><b>GitHub</b></td><td>The <i>list header</i> becomes batch actions</td><td><b>Yes</b> &mdash; the filter bar above it is untouched</td></tr>
+  <tr class="rec"><td><b>Gmail</b></td><td>The action toolbar gains archive, delete, labels</td><td><b>Yes</b> &mdash; search is a separate bar and stays</td></tr>
+  <tr class="rec"><td><b>Linear</b>, <b>Notion</b>, <b>Airtable</b>, <b>Drive</b></td><td>A floating bar near the bottom</td><td><b>Yes</b> &mdash; nothing above is covered</td></tr>
+</table>
+<p class="note"><b>I generalised from Carbon.</b> Gmail's toolbar is its <i>action</i> toolbar, not its
+search; GitHub's batch header replaces a list header that sits <i>below</i> the filters. Only Carbon
+actually takes the filters away, and I cited the other three as agreeing with it.</p>
+<div class="verdict bad"><b>And the layout argument contradicted my own rule.</b> I wrote that "an
+inserted row moves the table and a replaced one does not" &mdash; but
+<code>bin/design/layout-shift-audit.js</code>, written the day before, skips shifts the reader caused:
+<i>"opening a disclosure or applying a filter is supposed to move what is below it"</i>. Ticking a
+checkbox is exactly that. Chrome excludes it from CLS for the same reason.</div>
+
+<h2>Option A &mdash; the bar sits under the filters<span class="tag t-alt">alternative</span></h2>
+<p class="note">Both present, in the flow, nothing covered. This is GitHub's shape: persistent
+filters, and a row below them that becomes the batch actions. <span class="try">Tick a row.</span></p>
+<div class="card" data-demo="a">
+  <div class="fbar">
+    <button class="btn"><i class="bi bi-funnel"></i>Filters<i class="bi bi-chevron-down" style="color:#94A3B8;font-size:12px"></i></button>
+    <button class="btn" style="margin-left:auto"><i class="bi bi-calculator"></i>Show product totals</button>
+  </div>
+  <div class="selbar" data-bar hidden>
+    <span class="chipcount"><span data-n>0</span> selected</span>
+    <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+    <button class="btn ghost" data-cancel style="margin-left:auto">Cancel</button>
+  </div>
+  <table><thead><tr><th class="sel"><input type="checkbox" class="cbx" data-all></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+    <tbody data-rows></tbody></table>
+</div>
+<ul class="tight">
+  <li><b>Cost:</b> the table moves down about 70px when you tick. That is a shift you caused, which is the kind this app already accepts everywhere &mdash; the filter panel does the same when it opens.</li>
+  <li><b>Risk:</b> the bar is pinned to the top of the list. This page is <b>1,289px</b> against a 900px viewport, so if you scroll down to tick a row near the bottom, the bar &mdash; and the action &mdash; is off screen.</li>
+</ul>
+
+<h2>Option B &mdash; the bar floats over the list<span class="tag t-rec">recommended</span></h2>
+<p class="note">Nothing is covered, nothing moves, and the actions stay with you as you scroll. This
+is Linear, Notion, Airtable and Google Drive, and the reason all four use it is exactly the risk
+above: <b>selecting happens while scrolling.</b>
+<span class="try">Tick a few, then scroll the list.</span></p>
+<div class="card" data-demo="b">
+  <div class="fbar">
+    <button class="btn"><i class="bi bi-funnel"></i>Filters<i class="bi bi-chevron-down" style="color:#94A3B8;font-size:12px"></i></button>
+    <button class="btn" style="margin-left:auto"><i class="bi bi-calculator"></i>Show product totals</button>
+  </div>
+  <div class="scroller">
+    <table><thead><tr><th class="sel"><input type="checkbox" class="cbx" data-all></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+      <tbody data-rows></tbody></table>
+    <div class="float" data-bar hidden>
+      <span class="floatcount"><span data-n>0</span> selected</span>
+      <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+      <button class="btn ghost" data-cancel style="color:#CBD5E1">Cancel</button>
+    </div>
+  </div>
+</div>
+<ul class="tight">
+  <li><b>The filters never move and are never covered.</b> Neither is the totals button.</li>
+  <li><b>Nothing in the page shifts</b> &mdash; the bar is over the content, not in it.</li>
+  <li><b>It follows you down the list</b>, which is the whole point: on a 15-row page you are usually scrolled when you finish choosing.</li>
+  <li><b>Cost:</b> it covers a sliver of the last row while it is up, and it is a dark surface the app does not otherwise have. It only exists while something is selected, which is the argument for letting it be distinct.</li>
+</ul>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>Option B.</b> It is the only one that keeps the filters, the totals button and
+the batch action all reachable at once <i>and</i> stays reachable itself when you have scrolled to the
+bottom of the list to make the selection. A is a fair second and simpler to build; the reason to
+prefer B is the 1,289px page, not fashion.</div>
+
+</div>
+<script>
+  const DATA = [
+    ["2026-08-24","Pawnee Parks Dept",420],["2026-08-23","Eagleton Family Services",180],
+    ["2026-08-22","Snerling Community Aid",96],["2026-08-21","Harvest Food Bank",1240],
+    ["2026-08-20","Indiana Mutual Aid",64],["2026-08-19","Pawnee Senior Centre",310],
+    ["2026-08-18","Second Street Outreach",88]
+  ];
+  document.querySelectorAll("[data-demo]").forEach((demo) => {
+    demo.querySelector("[data-rows]").innerHTML = DATA.map((r) => `<tr>
+      <td class="sel"><input type="checkbox" class="cbx" data-row></td>
+      <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+    const rows = [...demo.querySelectorAll("[data-row]")];
+    const all = demo.querySelector("[data-all]");
+    const bar = demo.querySelector("[data-bar]");
+    const n = demo.querySelector("[data-n]");
+    const sync = () => {
+      const c = rows.filter((r) => r.checked).length;
+      bar.hidden = c === 0; n.textContent = c;
+      all.checked = c === rows.length && c > 0;
+      all.indeterminate = c > 0 && c < rows.length;
+    };
+    rows.forEach((r) => r.addEventListener("change", sync));
+    all.addEventListener("change", () => { rows.forEach((r) => { r.checked = all.checked; }); sync(); });
+    demo.querySelector("[data-cancel]").addEventListener("click", () => {
+      rows.forEach((r) => { r.checked = false; }); sync();
+    });
+    sync();
+  });
+</script>
+</body>
+</html>

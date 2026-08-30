@@ -24,7 +24,7 @@ import { Controller } from "@hotwired/stimulus";
  * the Cancel button.
  */
 export default class extends Controller {
-  static targets = ["all", "row", "bar", "count", "action", "toolbar"];
+  static targets = ["all", "row", "bar", "count", "action"];
 
   connect() {
     this.lastClicked = null;
@@ -84,15 +84,13 @@ export default class extends Controller {
     }
 
     /*
-     * The bar *replaces* the filter row rather than joining it: an inserted row moves the table and
-     * a replaced one does not. Both are `min-h-9`, so the swap is invisible in the layout.
+     * The bar floats over the list, so nothing else has to move or be covered for it: the filters
+     * and the totals button stay exactly where they were and stay usable. It used to replace the
+     * filter row, which made the two mutually exclusive -- reported, and wrong.
      *
      * Rendered hidden by the server and revealed here: JavaScript may reveal, never un-draw.
      */
-    if (this.hasBarTarget) {
-      this.barTarget.hidden = count === 0;
-    }
-    if (this.hasToolbarTarget) this.toolbarTarget.hidden = count > 0;
+    if (this.hasBarTarget) this.barTarget.hidden = count === 0;
     if (this.hasCountTarget) {
       this.countTarget.textContent = count === 1 ? "1 selected" : `${count} selected`;
     }

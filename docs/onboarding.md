@@ -675,9 +675,13 @@ now starts about 50px higher than it did.
 
 
 **On the Requests page every row now has a checkbox.** Tick a few — or tick the box in the header to
-take the whole page — and the filter row is replaced by a bar saying how many you have chosen, with
-**Print picklists**. That gives you one PDF for the lot, instead of opening each row's menu in turn.
-Nothing on the page moves when it appears, and the filters come back when you press **Cancel**.
+take the whole page — and a dark bar appears at the bottom of the window saying how many you have
+chosen, with **Print picklists**. That gives you one PDF for the lot, instead of opening each row's
+menu in turn.
+
+The bar floats over the page, so **the filters and Show product totals stay where they are and keep
+working**, nothing moves when it appears, and it stays with you as you scroll down the list. Press
+**Cancel**, or Escape, to clear the selection.
 
 Three things that work the way you would expect from email or a file browser:
 

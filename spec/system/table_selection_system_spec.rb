@@ -28,34 +28,43 @@ RSpec.describe "Selecting rows", type: :system, js: true do
     expect(page).to have_css("[data-table-selection-target='count']", text: "1 selected")
   end
 
-  it "replaces the filter row rather than pushing the table down" do
-    # An inserted row moves the table and a replaced one does not -- Carbon, Gmail, GitHub and
-    # Material all put batch actions *in* the toolbar for this reason. The first version was a
-    # tinted box above the table and cost 68px on every tick, on a page whose whole job that day
-    # had been to stop things jumping.
-    head_y = -> {
+  it "leaves the filters and the totals button reachable while a selection is live" do
+    # They are not mutually exclusive. The first version replaced the filter row on the strength of
+    # Carbon's TableBatchActions -- but Carbon is the only one of those systems that does that:
+    # GitHub's batch header replaces a *list header* below its filters, and Gmail's action toolbar
+    # is not its search bar. Reported as "the filter and the picklist action are not simultaneously
+    # present... they should not be mutually exclusive".
+    boxes.first.check
+
+    expect(page).to have_css("[data-table-selection-target='bar']", visible: :visible)
+    expect(page).to have_css("[data-filter-toggle]", visible: :visible)
+    expect(page).to have_button("Show product totals", visible: :visible)
+  end
+
+  it "floats over the list rather than moving it" do
+    # /requests is 1,289px against a 900px viewport, so a bar pinned to the top of the list scrolls
+    # out of reach exactly when you have finished choosing. Linear, Notion, Airtable and Drive all
+    # float one for that reason.
+    head_y = lambda {
       page.evaluate_script(
-          "Math.round(document.querySelector('main table.data-table thead').getBoundingClientRect().top + scrollY)"
-        )
+        "Math.round(document.querySelector('main table.data-table thead').getBoundingClientRect().top + scrollY)"
+      )
     }
 
     at_rest = head_y.call
-    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :visible)
-
     boxes.first.check
 
-    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :hidden)
+    expect(page).to have_css("[data-table-selection-target='bar']", visible: :visible)
     expect(head_y.call).to eq(at_rest)
-
-    click_on "Cancel"
-    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :visible)
-    expect(head_y.call).to eq(at_rest)
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector(\"[data-table-selection-target='bar']\")).position"
+    )).to eq("fixed")
   end
 
   it "keeps the totals button on the filter row, not in a band of its own" do
     # That band was 63px of card, rule and all, for one 30px button. The totals are "across every
     # request matching the current filters", so they belong beside the filters that decide them.
-    expect(page).to have_css("[data-table-selection-target='toolbar']", text: "Show product totals")
+    expect(page).to have_css("main form[data-controller~='auto-submit']", text: "Show product totals")
   end
 
   it "extends a range with shift-click" do
