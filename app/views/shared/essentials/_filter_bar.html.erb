@@ -1,6 +1,7 @@
 <%#
-  Filter bar. Collapsed behind a Filters button, with the filters that are set shown beside it as
-  chips. A plain (borderless) bar sits 16px above the results it filters.
+  Filter bar. Two or more filters collapse behind a Filters button, with the ones that are set shown
+  beside it as chips; **a single filter is simply shown**. A plain (borderless) bar sits 16px above
+  the results it filters.
 
     render "shared/essentials/filter_bar", url: donations_path, frame: "donations-results" do
       <div class="min-w-0"> ... one filter ... </div>
@@ -53,7 +54,23 @@
   controls = capture { yield }
   panel_id = "filter-panel-#{SecureRandom.uuid}"
 
-  controllers = ["disclosure", "filter-summary"]
+  #
+  # **One filter is shown, never hidden.** A disclosure in front of a single control is a click that
+  # buys nothing, and on `/vendors` and `/donation_sites` the single control is a *checkbox* -- so
+  # the button, the chevron and the panel existed to conceal one tick box. Measured across the
+  # eighteen filtered pages: **4 have one control**, 6 have two, 3 have three, and 5 have four or
+  # more, up to **9 on /donations**.
+  #
+  # This is still one rule rather than two -- the objection recorded when the old five-filter
+  # threshold was removed. *The bar shows its filters; when there are enough to be worth folding
+  # away, it folds them.* Nothing is hidden that a reader has to learn to look for; the opposite.
+  #
+  # Counted from the rendered cells rather than asked of the caller, so a page that gains or loses a
+  # filter cannot forget to say so.
+  #
+  single = Nokogiri::HTML::DocumentFragment.parse(controls).element_children.size == 1
+
+  controllers = single ? ["filter-summary"] : ["disclosure", "filter-summary"]
   form_data = {}
   if auto_submit
     controllers.unshift("auto-submit")
@@ -104,6 +121,27 @@
     beside the button already say what is applied, and opening automatically would give the space
     back on exactly the pages where it was worth saving.
   %>
+  <% if single %>
+    <%#
+      The control is the bar. No chips either: a chip repeating a filter you can already see and
+      change is duplication, and "Clear all" still appears the moment something is applied.
+    %>
+    <div class="mb-3 flex min-h-9 flex-wrap items-end gap-3" data-filter-bar-row>
+      <div class="w-full sm:w-72"><%= controls %></div>
+      <%= link_to "Clear all", clear_path,
+            class: "self-center text-sm font-medium text-brand-700 hover:underline",
+            data: {filter_summary_target: "clear"}, hidden: true %>
+      <%# Only for the no-JS case, exactly as in the panel below. %>
+      <button type="submit"
+              class="filter-bar-submit <%= essentials_button_classes(variant: :primary, size: :md) %>"
+              <%= tag.attributes(style: "display:none") if auto_submit %>>
+        <i class="bi-funnel" aria-hidden="true"></i>Filter
+      </button>
+      <% if local_assigns[:actions].present? %>
+        <div class="ms-auto flex flex-wrap items-center gap-2"><%= local_assigns[:actions] %></div>
+      <% end %>
+    </div>
+  <% else %>
   <div class="mb-3 flex min-h-9 flex-wrap items-center gap-2" data-filter-bar-row>
     <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
             data-action="click->disclosure#toggle" data-filter-toggle
@@ -147,4 +185,5 @@
       </button>
     </div>
   </div>
+  <% end %>
 <% end %>

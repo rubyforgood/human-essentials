@@ -337,6 +337,9 @@ findings that belong to this migration rather than to the app's own history:
 measurement. The controller still runs, for the roles and the scroll region's tab stop, but it no
 longer decides the layout. Anything selecting on `[data-stack]` will match nothing.
 
+**`filter_checkbox` is the grid cell now**, so the four views that wrapped it in
+`<div class="pb-2">` to nudge it into line no longer do. If you add one, do not wrap it.
+
 **A filter bar belonging to a tab now renders `in_card: true`**, inside the card under the strip,
 with the results frame around the table alone. Five pages moved: `/partners`, `/items`,
 `/items/quantity_and_location`, `/items/inventory` and `/kits`. `storage_locations/show` had already

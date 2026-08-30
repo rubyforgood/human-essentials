@@ -1694,6 +1694,29 @@ Filters submit with **GET**, so a filtered view stays a shareable, bookmarkable 
 (borderless) bar sits 16px above the table it filters; wrap it in a card only when it is a
 section in its own right.
 
+<a id="a-single-filter-is-shown"></a>
+**Two or more filters collapse behind the button; a single one is shown.** A disclosure in front of
+one control is a click that buys nothing, and on `/vendors` and `/donation_sites` that control is a
+*checkbox* — a button, a chevron and a panel to conceal one tick box. Measured across the eighteen
+filtered pages: **4 have one control**, 6 have two, 3 have three, and 5 have four or more, up to
+**9 on `/donations`**.
+
+This is still one rule, which is what the objection was when the old five-filter threshold went:
+*the bar shows its filters; when there are enough to be worth folding away, it folds them.* Nothing
+is hidden that a reader has to learn to look for. The count is taken from the rendered cells, so a
+page that gains or loses a filter cannot forget to say so, and **no chips** are drawn in the single
+case — a chip repeating a filter you can already see and change is duplication. "Clear all" still
+appears the moment something is applied.
+
+<a id="a-checkbox-sits-on-the-control-line"></a>
+**A filter checkbox sits on the line of the control beside it, not at the top of its cell.** A
+labelled filter brings 26px of label above a 38px control, so in a stretched grid cell its control
+lands at the bottom; a checkbox has none and landed at the top. Measured on `/items`: the select's
+centre at **y=327** and the checkbox's at **y=292** — 35px apart, which read as a ragged row and as
+padding missing above the checkbox. `filter_checkbox` is now the grid cell itself and bottom-aligns
+a 38px row inside it, so it lands on its neighbour's centre line whatever the cell's height. Four
+views had been closing the gap with a hand-tuned `pb-2`; they no longer need it.
+
 **The bar is a grid, not a flex row**, and every cell is `min-w-0`:
 
 ```
