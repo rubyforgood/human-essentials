@@ -25,6 +25,23 @@ RSpec.describe "Annual Reports", type: :request do
 
         expect(response.body).to include("available on January 1, 2027")
       end
+
+      it "offers the range export when there is at least one complete year" do
+        get reports_annual_reports_path(default_params)
+
+        expect(response.body).to include("Export Yearly Reports")
+      end
+
+      it "does not offer the range export when no year is complete yet" do
+        # A bank that started this year has nothing complete to export.
+        organization.update!(created_at: Time.current)
+        organization.donations.destroy_all
+        organization.purchases.destroy_all
+
+        get reports_annual_reports_path(default_params)
+
+        expect(response.body).not_to include("Export Yearly Reports")
+      end
     end
 
     describe "GET /show" do
@@ -100,14 +117,14 @@ RSpec.describe "Annual Reports", type: :request do
           .to raise_error(ActionController::UrlGenerationError)
       end
 
-      it "uses the earliest(smallest) year between year_start and organization's earliest_reporting_year" do
+      it "does not start earlier than the organization's earliest_reporting_year" do
         get range_reports_annual_reports_path(year_start: 2004, year_end: 2008, format: :csv)
         # the organization was created in 2006 (created_at_2006)
         # so the below years should not be in the output
         expect(response.body).not_to include("2004")
         expect(response.body).not_to include("2005")
-        response.body.split("\n")
       end
+
       it "orders the years in ascending order" do
         get range_reports_annual_reports_path(year_start: 2018, year_end: 2016, format: :csv)
         csv_array = response.body.split("\n")
@@ -115,6 +132,42 @@ RSpec.describe "Annual Reports", type: :request do
         expect(csv_array[1]).to include("2016")
         expect(csv_array[2]).to include("2017")
         expect(csv_array[3]).to include("2018")
+      end
+
+      it "does not include the current year, which is still in progress" do
+        get range_reports_annual_reports_path(year_start: Time.current.year - 1, year_end: Time.current.year, format: :csv)
+        years = response.body.split("\n").drop(1).map { |row| row.split(",").first }
+
+        expect(years).to include((Time.current.year - 1).to_s)
+        expect(years).not_to include(Time.current.year.to_s)
+      end
+
+      context "when the requested range falls entirely outside the reportable years" do
+        it "is not found for a range before the organization existed" do
+          get range_reports_annual_reports_path(year_start: 1990, year_end: 1995, format: :csv)
+
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "is not found for a range in the future" do
+          get range_reports_annual_reports_path(year_start: Time.current.year + 4,
+            year_end: Time.current.year + 9, format: :csv)
+
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "is not found for a reversed range in the future" do
+          get range_reports_annual_reports_path(year_start: Time.current.year + 9,
+            year_end: Time.current.year + 4, format: :csv)
+
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "does not create annual reports for years outside the range" do
+          expect {
+            get range_reports_annual_reports_path(year_start: 1990, year_end: 1995, format: :csv)
+          }.not_to change { AnnualReport.count }
+        end
       end
     end
   end

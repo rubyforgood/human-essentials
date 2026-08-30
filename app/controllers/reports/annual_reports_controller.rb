@@ -5,10 +5,10 @@ class Reports::AnnualReportsController < ApplicationController
   def index
     # 2813_update_annual_report -- changed to earliest_reporting_year
     # so that we can do system tests and staging
-    @foundation_year = current_organization.earliest_reporting_year
+    foundation_year = current_organization.earliest_reporting_year
     @actual_year = Time.current.year
 
-    @years = (@foundation_year...@actual_year).to_a
+    @years = (foundation_year...@actual_year).to_a
   end
 
   def show
@@ -31,14 +31,20 @@ class Reports::AnnualReportsController < ApplicationController
   end
 
   def range
-    # Set range to be within valid reporting bounds
-    # Start year cannot be before org founding year
-    # End year cannot be after current year
-    year_start = [range_params[:year_start].to_i, current_organization.earliest_reporting_year].max
-    year_end = [range_params[:year_end].to_i, Time.current.year].min
+    # Sort the requested years first, then clamp. Clamping each end before
+    # sorting lets the sort put back what the clamps just excluded, so a range
+    # entirely outside the reportable years comes back inverted and spanning it
+    # (2030-2035 becoming 2026-2030, say).
+    year_start, year_end = [range_params[:year_start].to_i, range_params[:year_end].to_i].minmax
 
-    # Sort years if out of order
-    year_start, year_end = [year_start, year_end].minmax
+    # Reports only exist from the org's first reporting year through the last
+    # complete year -- the current year is still in progress.
+    year_start = [year_start, current_organization.earliest_reporting_year].max
+    year_end = [year_end, Time.current.year - 1].min
+
+    # Nothing reportable overlaps the requested range. not_found! only responds
+    # to html and json, so answer the csv request directly.
+    return head :not_found if year_start > year_end
 
     reports = get_range_report(year_start, year_end)
 
