@@ -621,6 +621,21 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### Requests: pick several, print their picklists in one go
+
+**On the Requests page every row now has a checkbox.** Tick a few — or tick the box in the header to
+take the whole page — and a bar appears above the table saying how many you have chosen, with
+**Print picklists**. That gives you one PDF for the lot, instead of opening each row's menu in turn.
+
+Three things that work the way you would expect from email or a file browser:
+
+- **Shift-click** a second checkbox to take everything between it and the last one you clicked.
+- The header checkbox shows a **dash** rather than a tick when only some rows are selected.
+- **Escape** clears the selection, or use *Cancel* on the bar.
+
+Only Requests has this so far, because it is the only list where doing something to several rows at
+once is a real operation. Most row actions — View, Edit, Deactivate — happen to one record.
+
 ### A row's actions no longer run away to the right
 
 **On a wide table you had to scroll sideways to reach a row's actions, and after you used one the

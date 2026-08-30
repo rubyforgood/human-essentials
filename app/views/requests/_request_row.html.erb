@@ -1,5 +1,7 @@
 <% over_quota = request_row.partner.quota.present? && request_row.total_items.to_i >= request_row.partner.quota %>
 <tr>
+  <%= render "shared/essentials/selection_cell", record: request_row,
+        label: "the request from #{request_row.partner.name} on #{request_row.created_at.strftime("%m/%d/%Y")}" %>
   <td class="pin-col date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
   <td class="name font-medium text-slate-900"><%= request_row.partner.name %></td>
   <td>

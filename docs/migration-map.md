@@ -331,6 +331,11 @@ findings that belong to this migration rather than to the app's own history:
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
 
+**Row selection is new rather than migrated.** There was no bulk operation in the app before
+August 2026 -- every action was per-record, and `print_unfulfilled` was the one thing that acted on
+a set, chosen by filter rather than by hand. `/requests` is the only table with selection, because
+it is the only one where a batch endpoint exists; the component is ready for others when one does.
+
 **`title` is not a tooltip in this app any more.** Every icon-only row action carries `aria-label`
 plus `data-tooltip`, read by `tooltip_controller`; `title` was removed from all of them, because the
 browser's tooltip would draw on top of ours and it shows nothing at all on keyboard focus.

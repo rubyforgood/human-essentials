@@ -1,0 +1,17 @@
+<%#
+  One row's selection checkbox. `record` is required; `label` names it.
+
+  A checkbox with no label is a control a screen reader announces as "checkbox, unchecked" and
+  nothing else, in a column of fifteen identical ones. The row's own identifier is the name.
+
+  `click->`, not Stimulus's default `change` for a checkbox: **a `change` event carries no
+  `shiftKey`**, so shift-click selected the two ends of the range and nothing in between. A
+  keyboard Space on a checkbox dispatches a click too, so nothing is lost by listening for it.
+%>
+<td class="select-col">
+  <%= check_box_tag "ids[]", record.id, false,
+        id: "select-#{record.class.name.underscore}-#{record.id}",
+        "aria-label": "Select #{label}",
+        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+        data: {table_selection_target: "row", action: "click->table-selection#toggleRow"} %>
+</td>
