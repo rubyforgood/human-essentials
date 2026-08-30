@@ -234,6 +234,29 @@ RSpec.describe "/partners/requests", type: :request do
       end
     end
 
+    context "when the quantity exceeds the item's request limit" do
+      let(:limited_item) do
+        create(:item, name: "Kids (Size 1)", organization: organization, unit_request_limit: 50)
+      end
+
+      it "flashes the limit message with the item name's capitalization intact" do
+        expect {
+          post partners_requests_path, params: {
+            request: {
+              comments: "over the limit",
+              item_requests_attributes: {
+                "0" => { item_id: limited_item.id, quantity: 100 }
+              }
+            }
+          }
+        }.not_to change { Request.count }
+
+        expect(response).to be_unprocessable
+        expect(flash[:error]).to include("Kids (Size 1): You requested 100, but are limited to 50")
+        expect(flash[:error]).not_to include("Kids (size 1)")
+      end
+    end
+
     context "after invalid submission" do
       let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
       before do

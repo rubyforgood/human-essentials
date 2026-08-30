@@ -44,7 +44,9 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        flash[:error] = @errors.full_messages.join("; ").capitalize + "." if @errors.present?
+        # upcase_first, not capitalize: capitalize downcases the rest of the
+        # string, which mangles item names and pluralized units in the messages.
+        flash[:error] = @errors.full_messages.join("; ").upcase_first + "." if @errors.present?
 
         fetch_items
 
