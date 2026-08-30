@@ -7033,3 +7033,36 @@ disclosure, and "Clear all" still doing the clearing.
 filters are the common ones on each page with more than two, plus a responsive rule for what drops at
 narrow widths. Worth doing on its own, not as part of fixing an alignment.
 
+## 2026-08-30 — Two is what fits, and the row had a margin it did not need
+
+Both halves of the previous entry were reported again, which is the useful kind of correction: the
+rule was right and the numbers were wrong.
+
+**"The padding is still not equal above and below the filter dropdown."** It was not. The inline row
+kept the `mb-3` it uses to separate itself from the panel below it — and inline there is no panel.
+Measured on `/partners`: **16px above the row and 29px below it**. The band's own padding was 16/16
+all along; the extra 13 was a margin doing a job that no longer existed. Inline the row has no
+bottom margin now, and the band measures **16 above, 16 below**.
+
+**"The filter dropdown still exists where there is only one filter... on the item list page."** And
+then, exactly: *"the only filter is NDBN reporting category."* `/items` has two controls by my count
+and one by the reader's, and the reader is right — the second is *Also include inactive items*, a
+**modifier of the first filter** rather than a second filter. Every one of these checkboxes in the
+app is that same species: `include inactive items`, `show inactive kits`,
+`include inactive storage locations`, `include inactive vendors`, `include inactive donation sites`.
+
+Rather than classify controls by species, the threshold moved to **what fits on a line**, which is
+two: the panel is a four column grid whose cells are 261px at 1440, so two plus a gap is ~530px
+against 1078px of card, and it still fits at 656px of card — the narrowest the table stays a table.
+Ten of the eighteen filtered pages now show their filters; eight fold them.
+
+**And the fix reintroduced the fault it was fixing, sideways.** Wrapping all the inline controls in
+one `sm:w-72` box put two of them in a *column*, one under the other: measured on `/items`, a select
+and a checkbox **38px apart vertically** — the same 35px misalignment from the day before, rotated.
+The inline controls use the panel's own grid now, so a control is the same width whether the bar
+folds or not, and the two centres measure **equal**.
+
+**A Ruby note worth keeping.** The first version wrote `INLINE_LIMIT = 2` in the template. An ERB
+template compiles to a *method body*, where that is a dynamic constant assignment and a SyntaxError
+— and the symptom was not an error page but **no filter bar at all, on every page**. A local.
+

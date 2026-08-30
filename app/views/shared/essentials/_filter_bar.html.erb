@@ -55,22 +55,34 @@
   panel_id = "filter-panel-#{SecureRandom.uuid}"
 
   #
-  # **One filter is shown, never hidden.** A disclosure in front of a single control is a click that
-  # buys nothing, and on `/vendors` and `/donation_sites` the single control is a *checkbox* -- so
-  # the button, the chevron and the panel existed to conceal one tick box. Measured across the
-  # eighteen filtered pages: **4 have one control**, 6 have two, 3 have three, and 5 have four or
-  # more, up to **9 on /donations**.
+  # **A bar whose controls fit on one line shows them; only a bar that does not fold.** A disclosure
+  # in front of one or two controls is a click that buys nothing -- on `/vendors` the single control
+  # is a checkbox, and on `/items` it is one select plus an *include inactive* toggle, which is not a
+  # second filter so much as a modifier of the first. Reported twice, and the second time exactly:
+  # "the only filter is NDBN reporting category".
   #
-  # This is still one rule rather than two -- the objection recorded when the old five-filter
-  # threshold was removed. *The bar shows its filters; when there are enough to be worth folding
-  # away, it folds them.* Nothing is hidden that a reader has to learn to look for; the opposite.
+  # Two is the threshold because two is what fits. The panel is a four column grid whose cells are
+  # 261px at 1440; two of them plus the gap is ~530px against 1078px of card, and it still fits at
+  # the narrowest width the table stays a table (656px of card at a 690px viewport). Three would not.
+  #
+  # Measured across the eighteen filtered pages: **4 have one control**, 6 have two, 3 have three,
+  # and 5 have four or more, up to **9 on /donations** -- so ten pages show their filters and eight
+  # fold them.
+  #
+  # This is still one rule rather than two, which is what the objection was when the old five-filter
+  # threshold went: *the bar shows its filters; when there are more than fit on a line, it folds
+  # them.* That objection was about a reader learning where things are **hidden**, and a filter that
+  # is simply visible teaches nothing wrong.
   #
   # Counted from the rendered cells rather than asked of the caller, so a page that gains or loses a
   # filter cannot forget to say so.
   #
-  single = Nokogiri::HTML::DocumentFragment.parse(controls).element_children.size == 1
+  # A local, not a constant: an ERB template compiles to a method body, where `FOO = 2` is a
+  # dynamic constant assignment and a SyntaxError -- which renders as no filter bar at all.
+  inline_limit = 2
+  inline = Nokogiri::HTML::DocumentFragment.parse(controls).element_children.size <= inline_limit
 
-  controllers = single ? ["filter-summary"] : ["disclosure", "filter-summary"]
+  controllers = inline ? ["filter-summary"] : ["disclosure", "filter-summary"]
   form_data = {}
   if auto_submit
     controllers.unshift("auto-submit")
@@ -121,15 +133,27 @@
     beside the button already say what is applied, and opening automatically would give the space
     back on exactly the pages where it was worth saving.
   %>
-  <% if single %>
+  <% if inline %>
     <%#
-      The control is the bar. No chips either: a chip repeating a filter you can already see and
+      The controls are the bar. No chips either: a chip repeating a filter you can already see and
       change is duplication, and "Clear all" still appears the moment something is applied.
+
+      **No bottom margin.** The row's `mb-3` exists to separate it from the panel below it, and
+      there is no panel here -- it made the band bottom-heavy, measured at 16px above and 29px
+      below on /partners, and reported as the padding not being equal.
     %>
-    <div class="mb-3 flex min-h-9 flex-wrap items-end gap-3" data-filter-bar-row>
-      <div class="w-full sm:w-72"><%= controls %></div>
+    <div class="flex min-h-9 flex-wrap items-end gap-3" data-filter-bar-row>
+      <%#
+        The same grid the panel uses, so a control is the same width whether the bar folds or not.
+        Wrapping all the controls in one fixed-width box instead put two of them in a column, one
+        under the other -- measured on /items as a select and a checkbox 38px apart vertically, which
+        is the fault this was meant to fix, reintroduced sideways.
+      %>
+      <div class="grid min-w-0 flex-1 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <%= controls %>
+      </div>
       <%= link_to "Clear all", clear_path,
-            class: "self-center text-sm font-medium text-brand-700 hover:underline",
+            class: "text-sm font-medium text-brand-700 hover:underline",
             data: {filter_summary_target: "clear"}, hidden: true %>
       <%# Only for the no-JS case, exactly as in the panel below. %>
       <button type="submit"
