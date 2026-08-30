@@ -152,6 +152,23 @@ relationship, and a **plain** reveal, whose content already carries its own box.
 Reported as "the location and size of the shipping cost field does not make any sense". Currently
 **10 reveals, 0 defects**.
 
+`tab-set-audit.js` checks that a **set of page tabs behaves as one place**.
+
+```bash
+pw bin/design/tab-set-audit.js
+```
+
+Two invariants, neither of which any other check here asks about. **The strip does not move**: every
+tab in a set puts its tab strip at the same height, so arriving somewhere does not shift the thing
+you just clicked. **The rail still says where you are**: a tab living under a sidebar entry keeps
+that entry marked and its group open.
+
+Both were broken. Measured before: `/partners` at y=228 against `/partner_groups` at y=174, a 54px
+jump, because the filter bar sat above the card holding the strip; and on `/partner_groups` and
+`/item_categories` *no sidebar group was open at all*, because `active_on` named only the first
+tab's controller. Currently **7 tabs across 3 sets, no findings** -- and verified to report the 54px
+spread when a filter bar is moved back above its card.
+
 `tooltip-audit.js` checks that an **icon-only control says what it is, the app's way**.
 
 ```bash

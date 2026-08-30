@@ -19,6 +19,15 @@
 
     clear_path:         Where "Clear all" goes. Defaults to the current path.
 
+    in_card: true       The bar belongs to a tab rather than to the page: it renders inside the
+                        card, under the tab strip, with the card's own padding and a rule under
+                        it. **This is what keeps a tab strip still.** With the bar above the card,
+                        a tab that has filters and a tab that does not put the strip at two
+                        different heights -- measured at 228 and 174 on Partner agencies, a 54px
+                        jump on every switch, reported as "the card jumps up and down". Put the
+                        frame around the *table* rather than around the card, so applying a filter
+                        does not re-render the strip.
+
   Every cell inside the block is `min-w-0` and holds one filter: the grid gives them equal
   columns, and a long option truncates rather than pushing its column past its share.
 
@@ -54,7 +63,12 @@
     form_data[:turbo] = true
   end
 %>
-<%= form_tag url, method: :get, class: "mb-4", data: form_data do %>
+<%
+  # A bar above a card is spaced from it; a bar inside one is bounded by it.
+  in_card = local_assigns.fetch(:in_card, false)
+  bar_class = in_card ? "border-b border-slate-200 px-5 py-4" : "mb-4"
+%>
+<%= form_tag url, method: :get, class: bar_class, data: form_data do %>
   <% if frame.present? %>
     <%#
       Applying into a frame changes nothing a screen reader notices -- no navigation, no focus

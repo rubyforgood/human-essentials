@@ -6,20 +6,24 @@
         subtitle: "Items bundled to go out as one. Allocate a kit to change how many you have.",
         actions: essentials_link_button("New kit", new_kit_path, variant: :primary, icon: "bi-plus-lg") %>
 
-  <%= render "shared/essentials/filter_bar", url: kits_path, frame: "kits-results" do %>
-    <div class="min-w-0"><%= filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
-    <div class="pb-2"><%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
-  <% end %>
-  <%= turbo_frame_tag "kits-results", target: "_top", data: {turbo_action: "advance"} do %>
+  <%= render "shared/essentials/card", padded: false do %>
+    <%#
+      Kits is the fifth tab of the item catalogue. It keeps its own title and subtitle rather
+      than borrowing the items header, because it is also a destination in its own right in the
+      sidebar -- clicking "Kits" there and landing on a page headed "Items & inventory" would
+      make the sidebar lie. The strip is here so the tab is a way in and a way back out.
+    %>
+    <%= render "items/catalogue_tabs", current: :kits %>
 
-    <%= render "shared/essentials/card", padded: false do %>
-      <%#
-        Kits is the fifth tab of the item catalogue. It keeps its own title and subtitle rather
-        than borrowing the items header, because it is also a destination in its own right in the
-        sidebar -- clicking "Kits" there and landing on a page headed "Items & inventory" would
-        make the sidebar lie. The strip is here so the tab is a way in and a way back out.
-      %>
-      <%= render "items/catalogue_tabs", current: :kits %>
+    <%# Filters under the strip and the frame around the table alone, so the strip is at the same
+        height on every catalogue tab and applying a filter cannot re-render it. See design.md. %>
+    <%= render "shared/essentials/filter_bar", url: kits_path, in_card: true,
+          frame: "kits-results" do %>
+      <div class="min-w-0"><%= filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
+      <div class="pb-2"><%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
+    <% end %>
+
+    <%= turbo_frame_tag "kits-results", target: "_top", data: {turbo_action: "advance"} do %>
       <%= render partial: "kits/table" %>
     <% end %>
   <% end %>

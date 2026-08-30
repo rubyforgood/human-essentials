@@ -621,6 +621,21 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### Tabs stay put, and the sidebar stops collapsing
+
+**Switching between Partners and Groups used to shift the whole card up or down by about 50px**,
+because the filter row sat above it and Groups has no filters. The filters now sit *inside* the card,
+just under the tabs, so **the tabs are in the same place on every tab** and only the table below them
+changes. The same was true across the item catalogue, where Item categories is the one tab without
+filters.
+
+Groups and Item categories still have no filter row, deliberately — they are short lists, and a
+filter over three rows is clutter. If either grows, one can be added without anything moving.
+
+**And opening Groups no longer collapses the sidebar.** The rail was only treating the first tab as
+"you are here", so landing on Groups or Item categories shut the whole section. Now the section stays
+open with its entry highlighted, wherever you are inside it.
+
 ### Requests: pick several, print their picklists in one go
 
 **On the Requests page every row now has a checkbox.** Tick a few — or tick the box in the header to

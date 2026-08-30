@@ -1616,12 +1616,42 @@ if the tab is a URL — which is how "New partner group" stopped being a fourth 
 above a table. It is also how a tab becomes something you can link to, bookmark and go back
 from.
 
+<a id="the-strip-does-not-move"></a>
+**The tab strip does not move between tabs, so its filters live under it.** A tab is a place, and a
+place that shifts when you arrive reads as broken. Reported on Partner agencies: *"the group tab
+does not have a filter so the card jumps up and down. It is very odd visual experience."* The filter
+bar sat **above** the card holding the strip, so a tab with filters put the strip at **y=228** and a
+tab without at **y=174** — a **54px jump** on every switch, on two tab sets.
+
+`in_card: true` puts the bar inside the card, under the strip, and the **frame goes around the table
+alone**. Then the strip is at the same height on every tab and only the table changes, which is what
+a tab is for. That is what GitHub, Jira, Linear, Notion and the Ant, Material and Carbon tab
+components all do: **the tablist is chrome; everything that varies goes in the panel.**
+
+- **Do not give every tab a filter for symmetry.** None of those systems does. Groups has 2 rows
+  and Item categories has 3 — measured — and a filter over three rows is furniture every reader
+  pays for. If one of them grows enough to need filtering it gets one on its own merits, and under
+  this arrangement adding it moves nothing.
+- **Do not reserve the space either.** A blank 54px band on a page whose job is to show a list pays
+  the cost permanently to hide the symptom.
+
 **Nothing sits between a tab strip and the first row of its table except that table's own
 filters.** A filter earns the space because it changes the rows underneath it; an action does
 not, and an action there is the signal to use page tabs instead. A filter that lives there is
 still the `filter_bar` component, and it **must apply into a frame**: a full reload re-renders
 the tab strip with whichever tab the server marked selected, which throws away the tab the
-person was on. `storage_locations/show` is the one instance. The item catalogue had this on
+person was on.
+
+<a id="a-tab-keeps-the-rail-honest"></a>
+**A tab under a sidebar entry keeps that entry marked and its group open.** The rail decides both
+from the current *controller*, and `active_on` listed only the first tab's — so `/partner_groups`
+and `/item_categories` had **nothing** active and the whole section shut underneath the reader,
+reported as *"when the user clicks on groups, it automatically collapses the side nav."* Every tab's
+controller goes in `active_on`. GitHub, GitLab, Jira and Linear all keep the section open while you
+are anywhere inside it.
+
+`pw bin/design/tab-set-audit.js` checks both — the strip's height across a set, and the rail still
+marking where you are. **7 tabs across 3 sets, no findings.** The item catalogue had this on
 four of five tabs — a 55px strip holding one secondary button, and on two of them that button
 was the page header's own "New item" a second time. It is five page tabs now: `/items`,
 `/item_categories`, `/items/quantity_and_location`, `/items/inventory`, `/kits`, each with the

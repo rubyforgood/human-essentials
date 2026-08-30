@@ -11,14 +11,18 @@
           concat essentials_link_button("New item", new_item_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: inventory_items_path, frame: "items-results" do %>
-    <div class="min-w-0"><%= filter_select(label: "NDBN reporting category", scope: :by_reporting_category, collection: Item.reporting_categories_for_select, selected: @selected_reporting_category) %></div>
-    <div class="pb-2"><%= filter_checkbox(label: "Also include inactive items", scope: "include_inactive_items", selected: @include_inactive_items) %></div>
-  <% end %>
-  <%= turbo_frame_tag "items-results", target: "_top", data: {turbo_action: "advance"} do %>
+  <%# Filters under the strip and the frame around the table alone, so the strip is at the same
+      height on every catalogue tab and applying a filter cannot re-render it. See design.md. %>
+  <%= render "shared/essentials/card", padded: false do %>
+    <%= render "items/catalogue_tabs", current: :inventory %>
 
-    <%= render "shared/essentials/card", padded: false do %>
-      <%= render "items/catalogue_tabs", current: :inventory %>
+    <%= render "shared/essentials/filter_bar", url: inventory_items_path, in_card: true,
+          frame: "items-results" do %>
+      <div class="min-w-0"><%= filter_select(label: "NDBN reporting category", scope: :by_reporting_category, collection: Item.reporting_categories_for_select, selected: @selected_reporting_category) %></div>
+      <div class="pb-2"><%= filter_checkbox(label: "Also include inactive items", scope: "include_inactive_items", selected: @include_inactive_items) %></div>
+    <% end %>
+
+    <%= turbo_frame_tag "items-results", target: "_top", data: {turbo_action: "advance"} do %>
       <%= render partial: "items_inventory" %>
     <% end %>
   <% end %>
