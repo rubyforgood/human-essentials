@@ -31,7 +31,20 @@
           end
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: requests_path, frame: "requests-results" do %>
+  <%#
+    Selecting rows so several can be acted on at once -- see "Selection" in design.md. The
+    controller wraps the toolbar *and* the table, because the bar replaces the filter row rather
+    than joining it: an inserted row moves the table and a replaced one does not.
+  %>
+  <div data-controller="table-selection">
+  <div data-table-selection-target="toolbar">
+  <%= render "shared/essentials/filter_bar", url: requests_path, frame: "requests-results",
+        actions: (info.requests.any? ? capture {
+          concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
+            concat tag.i(nil, class: "bi-calculator", aria: {hidden: true})
+            concat " Show product totals"
+          end)
+        } : nil) do %>
     <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_request_item_id, collection: info.items, selected: info.selected_request_item) %></div>
     <div class="min-w-0"><%= filter_select(label: "Partner", scope: :by_partner, collection: info.partners, selected: info.selected_partner) %></div>
     <div class="min-w-0"><%= filter_select(label: "Request type", scope: :by_request_type, collection: info.request_types, key: :last, value: :first, selected: info.selected_request_type) %></div>
@@ -40,19 +53,23 @@
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
+  </div>
+
+  <%= render "shared/essentials/selection_bar",
+        actions: [{label: "Print picklists", icon: "bi-printer",
+                   path: print_picklists_requests_path(format: :pdf)}] %>
+
   <%= turbo_frame_tag "requests-results", target: "_top", data: {turbo_action: "advance"} do %>
 
-    <%# The totals are a summary of *these rows*, so the control sits on their card rather than in
-        the page header, where it was the fourth action. `:secondary, size: :sm` is what a card
-        action is everywhere else in the app.
-        No card title: the page `h1` is already "Requests", and a card repeating it says nothing. %>
+    <%#
+      No card title: the page `h1` is already "Requests", and a card repeating it says nothing.
+
+      And no card *actions* either. "Show product totals" had a band of its own here -- **63px** of
+      card, rule and all, for one 30px button -- and it is on the filter row now, where there were
+      **1,011px** of empty space at 1440. It belongs there twice over: the totals are "across every
+      request matching the current filters", so they sit beside the filters that decide them.
+    %>
     <%= render "shared/essentials/card", padded: false,
-          actions: (info.requests.any? ? capture {
-            concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary, size: :sm), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
-              concat tag.i(nil, class: "bi-calculator", aria: {hidden: true})
-              concat " Show product totals"
-            end)
-          } : nil),
           footer: essentials_pagination_footer(info.paginated_requests) do %>
       <% if info.paginated_requests.blank? %>
         <%= render "shared/essentials/empty_state",
@@ -66,12 +83,7 @@
           *repetition*, for the one thing here that can genuinely be done to a set. `PicklistsPdf`
           already takes a collection, so the picking is the only new part.
         %>
-        <div data-controller="table-selection">
-          <%= render "shared/essentials/selection_bar",
-                actions: [{label: "Print picklists", icon: "bi-printer",
-                           path: print_picklists_requests_path(format: :pdf)}] %>
-
-          <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Requests from partner agencies</caption>
             <thead>
@@ -97,7 +109,6 @@
             </thead>
             <tbody><%= render partial: "request_row", collection: info.paginated_requests %></tbody>
           </table>
-          </div>
         </div>
       <% end %>
     <% end %>
@@ -105,4 +116,5 @@
     <%= render "calculate_product_totals" %>
     <%= render "new" if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
   <% end %>
+  </div>
 </div>

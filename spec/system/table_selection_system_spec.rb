@@ -28,6 +28,36 @@ RSpec.describe "Selecting rows", type: :system, js: true do
     expect(page).to have_css("[data-table-selection-target='count']", text: "1 selected")
   end
 
+  it "replaces the filter row rather than pushing the table down" do
+    # An inserted row moves the table and a replaced one does not -- Carbon, Gmail, GitHub and
+    # Material all put batch actions *in* the toolbar for this reason. The first version was a
+    # tinted box above the table and cost 68px on every tick, on a page whose whole job that day
+    # had been to stop things jumping.
+    head_y = -> {
+      page.evaluate_script(
+          "Math.round(document.querySelector('main table.data-table thead').getBoundingClientRect().top + scrollY)"
+        )
+    }
+
+    at_rest = head_y.call
+    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :visible)
+
+    boxes.first.check
+
+    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :hidden)
+    expect(head_y.call).to eq(at_rest)
+
+    click_on "Cancel"
+    expect(page).to have_css("[data-table-selection-target='toolbar']", visible: :visible)
+    expect(head_y.call).to eq(at_rest)
+  end
+
+  it "keeps the totals button on the filter row, not in a band of its own" do
+    # That band was 63px of card, rule and all, for one 30px button. The totals are "across every
+    # request matching the current filters", so they belong beside the filters that decide them.
+    expect(page).to have_css("[data-table-selection-target='toolbar']", text: "Show product totals")
+  end
+
   it "extends a range with shift-click" do
     # Bound to `click`, not `change`: a change event carries no `shiftKey`, and the first version
     # selected the two ends of the range and nothing in between.

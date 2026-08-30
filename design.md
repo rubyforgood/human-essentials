@@ -1959,6 +1959,33 @@ can be done to them — which is what Gmail, GitHub, Linear, Jira and Airtable a
 - **The bar is server-rendered `hidden`** and revealed, per
   [render the state](#render-the-state-do-not-correct-it).
 
+<a id="the-bar-replaces-the-toolbar"></a>
+**The bar replaces the table's toolbar; it is never a row of its own.** Carbon's
+`TableBatchActions`, Material's contextual toolbar, GitHub and Gmail all swap the toolbar's contents
+— three of the four keep it in place, and the reason is layout: **an inserted row moves the table
+and a replaced one does not.** The first version here was a rounded `brand-50` box wedged against
+the card's edges with no gap around it, and it pushed everything below down **68px** on every tick.
+The bar and the filter row share `mb-4`, `mb-3` and `min-h-9`, so the table head stays at y=228
+either way — measured.
+
+- **No idle state and no hint.** Nothing in Carbon, Gmail, GitHub or Material tells you a checkbox
+  can be ticked; the checkbox says that. When nothing is selected the bar is not there and the
+  filter row is.
+- **Covering the filters while a selection is live is the right behaviour, not just the tidy one.**
+  Filtering with rows selected is ambiguous — does the selection survive rows leaving the page? —
+  and Carbon answers it the same way. Cancel is one click away.
+- **The count is a `brand-50` chip**, the indigo the app already uses for a current tab, a focus
+  ring and a selected row: it means *this is what you are on*. Carbon uses an inverse surface; this
+  app has no other one, so it would be the loudest thing on any page it appeared on.
+
+<a id="a-table-control-goes-on-the-filter-row"></a>
+**A control that belongs to the table goes on the filter row, not in a band of its own.**
+`filter_bar` takes `actions:` for the right end of its button row. On `/requests`, "Show product
+totals" had a card header band to itself — **63px** of card, rule and all, for one 30px button —
+while that row had **1,011px** of empty space at 1440. It belongs there twice over: the totals are
+*"across every request matching the current filters"*, so they sit beside the filters that decide
+them. The table starts 63px higher for it.
+
 <a id="the-actions-column-is-frozen"></a>
 **The actions column is frozen to the right edge**, as `.pin-col` freezes the first to the left.
 Mark it `.cell-actions` on both the `<th>` and the `<td>` — 43 tables do — and the CSS does the rest.
@@ -3729,6 +3756,15 @@ It cannot check the two assertions above.
 ## Backlog
 
 Known gaps, in rough priority order:
+
+- **A pre-existing order-dependent spec failure.**
+  `spec/requests/admin/organizations_requests_spec.rb:126` ("displays the correct organization
+  details") fails when the full system-and-request suite runs at **seed 29928**, and passes in
+  isolation, with its neighbours, across the whole `spec/requests` folder, and at other seeds.
+  Verified on 2026-08-30 to fail identically with that day's changes stashed, so it is not from
+  them — something earlier in that ordering leaks state the spec depends on. Two others behave the
+  same way and have not been pinned to a seed: `distribution_system_spec:115` and
+  `request_system_spec:119`.
 
 - **Review the Brakeman warning on every release.** It currently reports one: Rails 8.0.2.1
   reaches end of support on 2026-10-07 (`Gemfile.lock:539`, weak confidence, unmaintained

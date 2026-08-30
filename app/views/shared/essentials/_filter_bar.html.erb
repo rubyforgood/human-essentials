@@ -19,6 +19,12 @@
 
     clear_path:         Where "Clear all" goes. Defaults to the current path.
 
+    actions:            Markup for the right end of the button row -- a control that belongs to
+                        this table rather than to the page. It goes here rather than in a card
+                        header band of its own: on /requests that band was **63px** of card, rule
+                        and all, holding one 30px button, and this row had **1,011px** of empty
+                        space at 1440.
+
     in_card: true       The bar belongs to a tab rather than to the page: it renders inside the
                         card, under the tab strip, with the card's own padding and a rule under
                         it. **This is what keeps a tab strip still.** With the bar above the card,
@@ -98,7 +104,7 @@
     beside the button already say what is applied, and opening automatically would give the space
     back on exactly the pages where it was worth saving.
   %>
-  <div class="mb-3 flex flex-wrap items-center gap-2">
+  <div class="mb-3 flex min-h-9 flex-wrap items-center gap-2" data-filter-bar-row>
     <button type="button" aria-expanded="false" aria-controls="<%= panel_id %>"
             data-action="click->disclosure#toggle" data-filter-toggle
             <%# A secondary button, and it had drifted from one: `font-semibold` and a `shadow-sm`
@@ -115,6 +121,9 @@
     <%= link_to "Clear all", clear_path,
           class: "text-sm font-medium text-brand-700 hover:underline",
           data: {filter_summary_target: "clear"}, hidden: true %>
+    <% if local_assigns[:actions].present? %>
+      <div class="ms-auto flex flex-wrap items-center gap-2"><%= local_assigns[:actions] %></div>
+    <% end %>
   </div>
 
   <div id="<%= panel_id %>"

@@ -1,43 +1,54 @@
 <%#
   The bar that appears when rows are selected, naming the count and offering what can be done to
-  them. Carbon's `TableBatchActions`, and the shape Gmail, GitHub, Linear and Jira all use.
+  them. Carbon's `TableBatchActions`, and the shape Gmail, GitHub, Jira and Material all use.
 
-  Locals: `actions` is required -- an array of {label:, path:, icon:}. `noun` and `noun_plural`
-  name what is being counted; without them it says "selected", which is true but says nothing about
-  what of.
+  Locals: `actions` is required -- an array of {label:, path:, icon:}.
 
-  It sits **above the table and below the page header**, so it appears where the reader is already
-  looking rather than at the foot of the list. The count is `aria-live="polite"`: the bar appearing
-  is a visual event, and this is what makes it an audible one. It is rendered `hidden` by the server
-  and revealed by the controller -- JavaScript may reveal, never un-draw.
+  **It replaces the filter row rather than being inserted above it**, which is the whole point.
+  Three of the four systems above put batch actions *in* the toolbar, and the reason is layout: an
+  inserted row moves the table and a replaced one does not. The first version was a rounded,
+  `brand-50` box wedged against the card's edges with no gap around it, and it pushed everything
+  below it down 68px on every tick -- reported as "the blue background and no padding".
+
+  There is no idle state and no hint. Nothing in Carbon, Gmail, GitHub or Material tells you that a
+  checkbox can be ticked; the checkbox says that. When nothing is selected this is simply not there
+  and the filter row is.
+
+  **Replacing the filter row is also the right behaviour, not only the tidy one.** Filtering with a
+  selection live is ambiguous -- does the selection survive rows leaving the page? -- and Carbon
+  answers it the same way, by putting the filters out of reach until you are done. Cancel is one
+  click away.
+
+  The outer `mb-4` and the inner row's `mb-3` and `min-h-9` are the filter form's own, so the two
+  occupy the same height to the pixel: measured, the table head stays at y=228 whether the toolbar
+  or the bar is showing.
 %>
-<%
-  noun = local_assigns.fetch(:noun, "selected")
-  noun_plural = local_assigns.fetch(:noun_plural, noun)
-%>
-<div class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-2.5"
-     hidden
-     data-table-selection-target="bar">
-  <p class="text-sm font-medium text-brand-800"
-     aria-live="polite"
-     data-table-selection-target="count">0 selected</p>
-
-  <span class="text-brand-300" aria-hidden="true">|</span>
-
-  <% actions.each do |action| %>
+<div class="mb-4" hidden data-table-selection-target="bar">
+  <div class="mb-3 flex min-h-9 flex-wrap items-center gap-3">
     <%#
-      An ordinary link. The chosen ids are appended to its query string by the controller, so a
-      batch action is a navigation like any other -- no fetch, no form, and it opens in a new tab
-      if that is what the reader asks for.
+      `brand-50`, the same indigo the app already uses for a current tab, a focus ring and a
+      selected row -- it means "this is what you are on". Carbon uses an inverse surface here; this
+      app has no other one, so it would be the loudest thing on any page it appeared on.
     %>
-    <%= link_to action[:path],
-          class: "#{essentials_button_classes(variant: :secondary, size: :sm)} aria-disabled:pointer-events-none aria-disabled:opacity-60",
-          data: {table_selection_target: "action"} do %>
-      <i class="<%= action[:icon] %>" aria-hidden="true"></i><%= action[:label] %>
-    <% end %>
-  <% end %>
+    <p class="inline-flex items-center rounded-lg bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-800"
+       aria-live="polite"
+       data-table-selection-target="count">0 selected</p>
 
-  <button type="button"
-          class="<%= essentials_button_classes(variant: :ghost, size: :sm) %> ms-auto"
-          data-action="table-selection#clear">Cancel</button>
+    <% actions.each do |action| %>
+      <%#
+        An ordinary link. The chosen ids are appended to its query string by the controller, so a
+        batch action is a navigation like any other -- no fetch, no form, and it opens in a new tab
+        if that is what the reader asks for.
+      %>
+      <%= link_to action[:path],
+            class: "#{essentials_button_classes(variant: :secondary)} aria-disabled:pointer-events-none aria-disabled:opacity-60",
+            data: {table_selection_target: "action"} do %>
+        <i class="<%= action[:icon] %>" aria-hidden="true"></i><%= action[:label] %>
+      <% end %>
+    <% end %>
+
+    <button type="button"
+            class="<%= essentials_button_classes(variant: :ghost) %> ms-auto"
+            data-action="table-selection#clear">Cancel</button>
+  </div>
 </div>

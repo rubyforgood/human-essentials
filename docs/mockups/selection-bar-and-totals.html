@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The selection bar, and where the totals button goes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand100:#E0E7FF;--brand200:#C7D2FE;--brand800:#3730A3;
+    --bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;--slate50:#F8FAFC;--slate900:#0F172A;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:26px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  /* a slice of the page */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 6px}
+  .strip{display:flex;gap:2px;padding:0 14px;border-bottom:1px solid var(--line)}
+  .strip a{padding:11px 12px;font-size:13.5px;color:var(--soft);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .strip a.on{color:var(--brand800);border-bottom-color:var(--brand);font-weight:600}
+  .filterrow{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line)}
+  .band{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:5px 11px;font:500 13px Figtree;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:#F1F5F9}
+  .btn-ghost{border-color:transparent;background:transparent}
+  .chip{font-size:12px;background:#F1F5F9;color:#475569;border-radius:999px;padding:3px 10px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 20px;border-bottom:1px solid var(--line)}
+  thead th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700;background:#F8FAFC}
+  tbody tr:last-child td{border-bottom:0}
+  .cbx{width:16px;height:16px;accent-color:var(--brand);margin:0;vertical-align:middle}
+  td.sel,th.sel{width:1px;padding-right:0}
+  /* the current bar */
+  .bar-now{display:flex;align-items:center;gap:12px;background:var(--brand50);border:1px solid var(--brand200);
+    border-radius:16px;padding:10px 16px;margin:0 0 16px}
+  /* option bars */
+  .bar-tint{background:var(--brand50);border-bottom:1px solid var(--brand200)}
+  .bar-neutral{background:var(--slate50)}
+  .bar-inverse{background:var(--slate900);color:#fff;border-bottom-color:var(--slate900)}
+  .bar-inverse .btn{background:transparent;border-color:#475569;color:#E2E8F0}
+  .bar-inverse .btn:hover{background:#1E293B}
+  .count{font-size:13.5px;font-weight:600;color:var(--brand800)}
+  .bar-neutral .count{color:var(--ink)} .bar-inverse .count{color:#fff}
+  .rule{color:var(--brand200)} .bar-neutral .rule{color:#CBD5E1} .bar-inverse .rule{color:#475569}
+  .pill{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;display:flex;align-items:center;gap:12px;
+    background:var(--slate900);color:#fff;border-radius:999px;padding:9px 16px;box-shadow:0 10px 30px rgb(15 23 42 /.28);font-size:13.5px}
+  .pill .btn{background:transparent;border-color:#475569;color:#E2E8F0}
+  .rel{position:relative}
+  .measure{position:absolute;right:-2px;border-left:2px solid var(--bad);padding-left:8px;font-size:11px;font-weight:700;color:var(--bad)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .try{display:inline-block;background:var(--brand50);color:var(--brand800);font-weight:600;font-size:12.5px;
+    padding:3px 10px;border-radius:999px;margin:0 0 8px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>The selection bar, and where the totals button goes</h1>
+<p class="lede">Two things reported on Requests: the bar that appears when you tick rows is <i>"blue
+background and no padding"</i>, and <i>"Show product totals pushes the table down by a lot"</i>. Both
+measured from the running app at 1440.</p>
+
+<h2>What is there now<span class="tag t-now">measured</span></h2>
+<p class="note">The bar is <code>brand-50</code> with a <b>16px corner radius</b> and no margin at its
+sides — so a rounded, tinted box sits hard against the card's edges with nothing between them. That is
+the "no padding": not the bar's own (it has 10&times;16), but the absence of any gap around it.
+Underneath, a <b>63px</b> card header band exists to hold one 30px button.</p>
+
+<div class="card rel">
+  <div class="strip"><a>Partners</a><a class="on">Requests</a></div>
+  <div class="filterrow"><button class="btn"><i class="bi bi-funnel"></i>Filters</button><span class="chip">Last 12 months</span></div>
+  <div class="band"><button class="btn"><i class="bi bi-calculator"></i>Show product totals</button>
+    <span class="measure" style="top:0;height:63px">63px band<br>for one button</span></div>
+  <div style="padding:0 20px"><div class="bar-now">
+    <span class="count">2 selected</span><span class="rule">|</span>
+    <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+    <button class="btn btn-ghost" style="margin-left:auto">Cancel</button>
+  </div></div>
+  <table><thead><tr><th class="sel"><input type="checkbox" class="cbx"></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+    <tbody><tr><td class="sel"><input type="checkbox" class="cbx" checked></td><td>2026-08-24</td><td>Pawnee Parks Dept</td><td>420</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" checked></td><td>2026-08-23</td><td>Eagleton Family Services</td><td>180</td></tr></tbody></table>
+</div>
+<div class="verdict bad"><b>It also moves the table.</b> The bar is 52px plus a 16px margin, so ticking
+a row pushes everything below it down 68px — on a page whose whole job today was to stop things
+jumping.</div>
+
+<h2>Part one: the selection bar</h2>
+<p class="note">Every option below <b>replaces the card's header band</b> rather than adding a row to
+it, which is Carbon's <code>TableBatchActions</code> and Material's contextual toolbar: the bar and the
+button it displaces occupy the same 63px, so <b>the table does not move at all</b>. Full bleed, no
+corner radius, a rule underneath like every other band on this card. <span class="try">Tick a
+checkbox in any of them.</span></p>
+
+<h3>A1 &mdash; brand tint<span class="tag t-rec">recommended</span></h3>
+<div class="card" data-demo>
+  <div class="strip"><a>Partners</a><a class="on">Requests</a></div>
+  <div class="filterrow"><button class="btn"><i class="bi bi-funnel"></i>Filters</button><span class="chip">Last 12 months</span>
+    <button class="btn" style="margin-left:auto"><i class="bi bi-calculator"></i>Show product totals</button></div>
+  <div class="band" data-idle><span style="color:var(--soft);font-size:13px">Tick a row to select it.</span></div>
+  <div class="band bar-tint" data-active hidden>
+    <span class="count"><span data-n>0</span> selected</span><span class="rule">|</span>
+    <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+    <button class="btn btn-ghost" data-cancel style="margin-left:auto">Cancel</button>
+  </div>
+  <table><thead><tr><th class="sel"><input type="checkbox" class="cbx" data-all></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+    <tbody><tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-24</td><td>Pawnee Parks Dept</td><td>420</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-23</td><td>Eagleton Family Services</td><td>180</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-22</td><td>Snerling Community Aid</td><td>96</td></tr></tbody></table>
+</div>
+<p class="cap">The same indigo the app uses for a current tab and a focus ring, at its lightest step, full bleed.</p>
+
+<h3>A2 &mdash; neutral<span class="tag t-alt">alternative</span></h3>
+<div class="card" data-demo>
+  <div class="strip"><a>Partners</a><a class="on">Requests</a></div>
+  <div class="filterrow"><button class="btn"><i class="bi bi-funnel"></i>Filters</button><span class="chip">Last 12 months</span>
+    <button class="btn" style="margin-left:auto"><i class="bi bi-calculator"></i>Show product totals</button></div>
+  <div class="band" data-idle><span style="color:var(--soft);font-size:13px">Tick a row to select it.</span></div>
+  <div class="band bar-neutral" data-active hidden>
+    <span class="count"><span data-n>0</span> selected</span><span class="rule">|</span>
+    <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+    <button class="btn btn-ghost" data-cancel style="margin-left:auto">Cancel</button>
+  </div>
+  <table><thead><tr><th class="sel"><input type="checkbox" class="cbx" data-all></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+    <tbody><tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-24</td><td>Pawnee Parks Dept</td><td>420</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-23</td><td>Eagleton Family Services</td><td>180</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-22</td><td>Snerling Community Aid</td><td>96</td></tr></tbody></table>
+</div>
+<p class="cap">GitHub and Gmail do this: nothing changes colour, the controls just swap. Quietest &mdash; and easiest to miss.</p>
+
+<h3>A3 &mdash; inverse<span class="tag t-alt">alternative</span></h3>
+<div class="card" data-demo>
+  <div class="strip"><a>Partners</a><a class="on">Requests</a></div>
+  <div class="filterrow"><button class="btn"><i class="bi bi-funnel"></i>Filters</button><span class="chip">Last 12 months</span>
+    <button class="btn" style="margin-left:auto"><i class="bi bi-calculator"></i>Show product totals</button></div>
+  <div class="band" data-idle><span style="color:var(--soft);font-size:13px">Tick a row to select it.</span></div>
+  <div class="band bar-inverse" data-active hidden>
+    <span class="count"><span data-n>0</span> selected</span><span class="rule">|</span>
+    <button class="btn"><i class="bi bi-printer"></i>Print picklists</button>
+    <button class="btn btn-ghost" data-cancel style="margin-left:auto;color:#CBD5E1">Cancel</button>
+  </div>
+  <table><thead><tr><th class="sel"><input type="checkbox" class="cbx" data-all></th><th>Date</th><th>Partner</th><th>Items</th></tr></thead>
+    <tbody><tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-24</td><td>Pawnee Parks Dept</td><td>420</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-23</td><td>Eagleton Family Services</td><td>180</td></tr>
+      <tr><td class="sel"><input type="checkbox" class="cbx" data-row></td><td>2026-08-22</td><td>Snerling Community Aid</td><td>96</td></tr></tbody></table>
+</div>
+<p class="cap">Carbon's own choice, and unmistakable. The app has no other inverse surface, so it would be the loudest thing on any page it appears on.</p>
+
+<div class="verdict"><b>A1.</b> Loud enough to notice against a white card, quiet enough not to be the
+only dark object in the app, and the indigo already means "this is the thing you are on" &mdash; a
+current tab, a focus ring, a selected row. A2 is defensible and the risk is real: a bar you can miss
+is a bar you do not use. A3 is not wrong, it is just louder than anything else here.</div>
+
+<h2>Part two: where "Show product totals" goes</h2>
+<table class="mini">
+  <tr><th>Placement</th><th class="n">Vertical cost</th><th>Notes</th></tr>
+  <tr class="rec"><td><b>Right end of the filter row</b></td><td class="n">0px</td>
+    <td>The totals are "across every request matching the current filters" &mdash; so they belong beside the filters. The row has <b>1,011px</b> of empty space at 1440.</td></tr>
+  <tr><td>Its own card band <i>(now)</i></td><td class="n">63px</td>
+    <td>A whole band, rule and all, for one 30px button.</td></tr>
+  <tr><td>Page header</td><td class="n">0px</td>
+    <td>Where it used to be, and where it was a fourth action &mdash; one past what design.md allows.</td></tr>
+</table>
+<p class="note">Every option above already shows it on the filter row, so you have been looking at it.
+Moving it there is what frees the band for the selection bar &mdash; the two changes are the same
+change: <b>the table starts 63px higher and never moves again.</b></p>
+
+<h2>What the industry does</h2>
+<table class="mini">
+  <tr><th>System</th><th>Selection bar</th></tr>
+  <tr class="rec"><td><b>Carbon</b> (IBM)</td><td><code>TableBatchActions</code> replaces the table toolbar in place, full bleed, inverse background</td></tr>
+  <tr class="rec"><td><b>Material</b></td><td>The toolbar enters a "contextual" state with a tinted container, full bleed</td></tr>
+  <tr><td><b>GitHub</b>, <b>Gmail</b></td><td>The list header's controls swap; no colour change</td></tr>
+  <tr><td><b>Linear</b>, <b>Notion</b>, <b>Drive</b></td><td>A floating dark pill near the bottom of the viewport</td></tr>
+</table>
+<p class="note"><b>Three of the four keep it in the toolbar</b> rather than inserting a new row, which
+is the part that matters here: an inserted row moves the table, and a replaced one does not. The
+floating pill is the odd one out and suits an app whose list fills the window; this one has a page
+header, tabs and filters above it already.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>A1, with the totals button on the filter row.</b> The bar takes the band the
+button vacates, so selecting a row moves nothing; the table starts 63px higher than it does today; and
+the bar is a full-bleed band with the card's own rule under it rather than a rounded box wedged
+against its edges.</div>
+
+</div>
+<script>
+  document.querySelectorAll("[data-demo]").forEach((demo) => {
+    const rows = [...demo.querySelectorAll("[data-row]")];
+    const all = demo.querySelector("[data-all]");
+    const idle = demo.querySelector("[data-idle]");
+    const active = demo.querySelector("[data-active]");
+    const n = demo.querySelector("[data-n]");
+    const sync = () => {
+      const c = rows.filter((r) => r.checked).length;
+      idle.hidden = c > 0; active.hidden = c === 0; n.textContent = c;
+      all.checked = c === rows.length && c > 0;
+      all.indeterminate = c > 0 && c < rows.length;
+    };
+    rows.forEach((r) => r.addEventListener("change", sync));
+    all.addEventListener("change", () => { rows.forEach((r) => { r.checked = all.checked; }); sync(); });
+    demo.querySelector("[data-cancel]").addEventListener("click", () => {
+      rows.forEach((r) => { r.checked = false; }); sync();
+    });
+    sync();
+  });
+</script>
+</body>
+</html>
