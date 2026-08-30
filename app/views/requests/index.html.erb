@@ -32,12 +32,10 @@
         } %>
 
   <%#
-    Selecting rows so several can be acted on at once -- see "Selection" in design.md. The
-    controller wraps the toolbar *and* the table, because the bar replaces the filter row rather
-    than joining it: an inserted row moves the table and a replaced one does not.
+    Selecting rows so several can be acted on at once -- see "Selection" in design.md. The bar
+    floats over the list, so the filters and the totals button above it stay put and stay usable.
   %>
   <div data-controller="table-selection">
-  <div data-table-selection-target="toolbar">
   <%= render "shared/essentials/filter_bar", url: requests_path, frame: "requests-results",
         actions: (info.requests.any? ? capture {
           concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "calculate-totals"}) do
@@ -53,7 +51,6 @@
       <%= render partial: "shared/date_range_picker" %>
     </div>
   <% end %>
-  </div>
 
   <%= render "shared/essentials/selection_bar",
         actions: [{label: "Print picklists", icon: "bi-printer",

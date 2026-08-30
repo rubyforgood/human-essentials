@@ -7066,3 +7066,45 @@ folds or not, and the two centres measure **equal**.
 template compiles to a *method body*, where that is a dynamic constant assignment and a SyntaxError
 — and the symptom was not an error page but **no filter bar at all, on every page**. A local.
 
+## 2026-08-30 — The selection bar floats, and I had generalised from one system
+
+Reported: *"the print pick lists batch action makes the filter disappear. The filter and the picklist
+action are not simultaneously present. Why is this the case? They should not be mutually exclusive."*
+
+Correct on both counts, and the reasoning I recorded yesterday does not survive checking.
+
+**I generalised from Carbon.** design.md said the bar replaces the filter row because *"three of the
+four keep it in the toolbar"*, citing Carbon, Material, GitHub and Gmail. Only **Carbon** actually
+takes the filters away. **GitHub's** batch header replaces a *list header* that sits below its
+filter bar, which is untouched. **Gmail's** toolbar is its *action* toolbar; search is a separate bar
+and stays. **Linear, Notion, Airtable and Drive** float a bar and cover nothing at all. I counted
+three systems as agreeing with a fourth by describing them all as "keeping it in the toolbar", which
+is true and not the point — the point is whether the filters survive, and in three of four they do.
+
+**And the layout argument was wrong on its own terms.** I wrote *"an inserted row moves the table and
+a replaced one does not"* — treating a shift the reader **caused** as if it were an unprompted one.
+`bin/design/layout-shift-audit.js`, written the day before, skips exactly those: *"opening a
+disclosure or applying a filter is supposed to move what is below it"*, and Chrome excludes them from
+CLS for the same reason. The argument I used to justify covering the filters contradicted a rule I
+had written twenty-four hours earlier.
+
+**Two options were previewed** (`docs/mockups/filters-and-batch-together.html`) and the floating bar
+was chosen. The alternative — a bar inserted under the filter row, GitHub's shape — is simpler and
+keeps everything in the flow, and it was rejected on a measurement rather than a preference:
+`/requests` is **1,289px against a 900px viewport**, so a bar pinned to the top of the list is off
+screen exactly when you have scrolled to the bottom to finish choosing. That is why Linear, Notion,
+Airtable and Drive all float theirs.
+
+Measured after: the filters and *Show product totals* are reachable with a selection live, the table
+head does not move (`y=228` either way), the pill sits **798–852** clear of the scroll rail at
+**876–900**, and it stays put when the page is scrolled to the bottom.
+
+**Dark, and the only inverse surface in the app.** Yesterday I rejected an inverse bar for being the
+loudest thing on the page — that was right for a band *in* the card and wrong for one *over* it. A
+floating bar has to read as over the page, it exists only while something is selected, and every
+system that floats one makes it dark.
+
+The lesson worth keeping is not about toolbars. **When four systems are cited as agreeing, check what
+each of them actually does with the specific thing in question**, rather than with the category it
+belongs to.
+

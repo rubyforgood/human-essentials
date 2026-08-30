@@ -1,38 +1,42 @@
 <%#
   The bar that appears when rows are selected, naming the count and offering what can be done to
-  them. Carbon's `TableBatchActions`, and the shape Gmail, GitHub, Jira and Material all use.
+  them. It **floats over the list** rather than sitting in it: Linear, Notion, Airtable and Google
+  Drive all do this, and the reason all four do is the one that matters here -- selecting happens
+  while scrolling.
 
   Locals: `actions` is required -- an array of {label:, path:, icon:}.
 
-  **It replaces the filter row rather than being inserted above it**, which is the whole point.
-  Three of the four systems above put batch actions *in* the toolbar, and the reason is layout: an
-  inserted row moves the table and a replaced one does not. The first version was a rounded,
-  `brand-50` box wedged against the card's edges with no gap around it, and it pushed everything
-  below it down 68px on every tick -- reported as "the blue background and no padding".
+  **The filters stay put and stay reachable.** The first version replaced the filter row, on the
+  strength of Carbon's `TableBatchActions` -- but Carbon is the only one of the systems above that
+  takes the filters away. GitHub's batch header replaces a *list header* that sits below its
+  filters; Gmail's action toolbar is not its search bar. Reported, correctly: "the filter and the
+  picklist action are not simultaneously present... they should not be mutually exclusive."
 
-  There is no idle state and no hint. Nothing in Carbon, Gmail, GitHub or Material tells you that a
-  checkbox can be ticked; the checkbox says that. When nothing is selected this is simply not there
-  and the filter row is.
+  **And it floats rather than being inserted.** `/requests` is 1,289px against a 900px viewport, so
+  a bar pinned to the top of the list scrolls out of reach exactly when you finish choosing. The
+  argument originally given against inserting a row -- that it moves the table -- was wrong on its
+  own terms: `bin/design/layout-shift-audit.js` skips shifts the reader caused, because opening a
+  disclosure is supposed to move what is below it.
 
-  **Replacing the filter row is also the right behaviour, not only the tidy one.** Filtering with a
-  selection live is ambiguous -- does the selection survive rows leaving the page? -- and Carbon
-  answers it the same way, by putting the filters out of reach until you are done. Cancel is one
-  click away.
+  `bottom-12`, not `bottom-6`: the table rail occupies the bottom 24px of the viewport on an
+  overflowing table -- measured at 876-900 in a 900px window -- and at `bottom-6` the pill's own
+  bottom edge landed on exactly 876, sitting on the rail. `z-40` clears the rail's `z-20` as well.
 
-  The outer `mb-4` and the inner row's `mb-3` and `min-h-9` are the filter form's own, so the two
-  occupy the same height to the pixel: measured, the table head stays at y=228 whether the toolbar
-  or the bar is showing.
+  Dark, which is the one place this app uses an inverse surface. A floating bar has to read as
+  *over* the page rather than part of it, it exists only while something is selected, and every
+  system that floats one makes it dark for the same reason.
 %>
-<div class="mb-4" hidden data-table-selection-target="bar">
-  <div class="mb-3 flex min-h-9 flex-wrap items-center gap-3">
-    <%#
-      `brand-50`, the same indigo the app already uses for a current tab, a focus ring and a
-      selected row -- it means "this is what you are on". Carbon uses an inverse surface here; this
-      app has no other one, so it would be the loudest thing on any page it appeared on.
-    %>
-    <p class="inline-flex items-center rounded-lg bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-800"
+<div class="pointer-events-none fixed inset-x-0 bottom-12 z-40 flex justify-center px-4"
+     hidden
+     data-table-selection-target="bar">
+  <div class="pointer-events-auto flex flex-wrap items-center gap-3 rounded-full bg-slate-900 px-4 py-2.5 shadow-xl"
+       role="toolbar"
+       aria-label="Actions for the selected rows">
+    <p class="text-sm font-semibold text-white"
        aria-live="polite"
        data-table-selection-target="count">0 selected</p>
+
+    <span class="text-slate-600" aria-hidden="true">|</span>
 
     <% actions.each do |action| %>
       <%#
@@ -41,14 +45,17 @@
         if that is what the reader asks for.
       %>
       <%= link_to action[:path],
-            class: "#{essentials_button_classes(variant: :secondary)} aria-disabled:pointer-events-none aria-disabled:opacity-60",
+            class: "inline-flex items-center gap-2 rounded-full border border-slate-600 px-3.5 py-1.5 " \
+                   "text-sm font-medium text-slate-100 transition-colors hover:bg-slate-800 " \
+                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white " \
+                   "aria-disabled:pointer-events-none aria-disabled:opacity-60",
             data: {table_selection_target: "action"} do %>
         <i class="<%= action[:icon] %>" aria-hidden="true"></i><%= action[:label] %>
       <% end %>
     <% end %>
 
     <button type="button"
-            class="<%= essentials_button_classes(variant: :ghost) %> ms-auto"
+            class="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             data-action="table-selection#clear">Cancel</button>
   </div>
 </div>

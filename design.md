@@ -1999,24 +1999,36 @@ can be done to them — which is what Gmail, GitHub, Linear, Jira and Airtable a
 - **The bar is server-rendered `hidden`** and revealed, per
   [render the state](#render-the-state-do-not-correct-it).
 
-<a id="the-bar-replaces-the-toolbar"></a>
-**The bar replaces the table's toolbar; it is never a row of its own.** Carbon's
-`TableBatchActions`, Material's contextual toolbar, GitHub and Gmail all swap the toolbar's contents
-— three of the four keep it in place, and the reason is layout: **an inserted row moves the table
-and a replaced one does not.** The first version here was a rounded `brand-50` box wedged against
-the card's edges with no gap around it, and it pushed everything below down **68px** on every tick.
-The bar and the filter row share `mb-4`, `mb-3` and `min-h-9`, so the table head stays at y=228
-either way — measured.
+<a id="the-bar-floats-over-the-list"></a>
+**The bar floats over the list. It covers nothing and it moves nothing.** `position: fixed`, centred
+at the bottom of the viewport, above the [scroll rail](#a-scrolling-table-says-so). Linear, Notion,
+Airtable and Google Drive all do this, and the reason all four do is the one that decides it here:
+**selecting happens while scrolling.** `/requests` is 1,289px against a 900px viewport, so a bar
+pinned to the top of the list is out of reach exactly when you have finished choosing.
 
-- **No idle state and no hint.** Nothing in Carbon, Gmail, GitHub or Material tells you a checkbox
-  can be ticked; the checkbox says that. When nothing is selected the bar is not there and the
-  filter row is.
-- **Covering the filters while a selection is live is the right behaviour, not just the tidy one.**
-  Filtering with rows selected is ambiguous — does the selection survive rows leaving the page? —
-  and Carbon answers it the same way. Cancel is one click away.
-- **The count is a `brand-50` chip**, the indigo the app already uses for a current tab, a focus
-  ring and a selected row: it means *this is what you are on*. Carbon uses an inverse surface; this
-  app has no other one, so it would be the loudest thing on any page it appeared on.
+**The filters stay put and stay usable.** An earlier version replaced the filter row, on the strength
+of Carbon's `TableBatchActions` — and that generalised from the one system that does it. GitHub's
+batch header replaces a *list header* that sits below its filters; Gmail's action toolbar is not its
+search bar; Linear and the rest cover nothing at all. Reported, and correctly: *"the filter and the
+picklist action are not simultaneously present... they should not be mutually exclusive."*
+
+**The layout argument for replacing was wrong on its own terms**, and is recorded here so it is not
+made again: "an inserted row moves the table and a replaced one does not" treats a shift the reader
+*caused* as if it were an unprompted one.
+[`layout-shift-audit.js`](#reserve-the-space-for-what-arrives-late) skips those, because opening a
+disclosure is supposed to move what is below it, and Chrome excludes them from CLS for the same
+reason.
+
+- **No idle state and no hint.** Nothing in Carbon, Gmail, GitHub or Linear tells you a checkbox can
+  be ticked; the checkbox says that. When nothing is selected the bar is not there.
+- **Dark, and it is the only inverse surface in the app.** A floating bar has to read as *over* the
+  page rather than part of it, and it exists only while something is selected. Every system that
+  floats one makes it dark for the same reason.
+- **`bottom-12`, not `bottom-6`.** The scroll rail occupies the bottom 24px of the viewport on an
+  overflowing table — measured at 876–900 in a 900px window — and at `bottom-6` the pill's own
+  bottom edge landed on exactly 876, sitting on it. `z-40` clears the rail's `z-20`.
+- **`role="toolbar"` with a name**, and the count is `aria-live="polite"`: the bar appearing is a
+  visual event, and that is what makes it an audible one.
 
 <a id="a-table-control-goes-on-the-filter-row"></a>
 **A control that belongs to the table goes on the filter row, not in a band of its own.**
