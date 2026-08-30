@@ -31,6 +31,14 @@ module ServiceObjectErrorsMixin
     @errors ||= ActiveModel::Errors.new(self)
   end
 
+  def warnings
+    @warnings ||= ActiveModel::Errors.new(self)
+  end
+
+  def add_warning(attribute, message)
+    warnings.add(attribute, message)
+  end
+
   def read_attribute_for_validation(attr)
     send(attr)
   end
@@ -45,4 +53,3 @@ module ServiceObjectErrorsMixin
     end
   end
 end
-
