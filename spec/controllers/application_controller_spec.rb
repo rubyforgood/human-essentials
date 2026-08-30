@@ -71,6 +71,25 @@ RSpec.describe ApplicationController do
     end
   end
 
+  describe "current_role" do
+    let(:user) { create(:user, organization: organization) }
+    let(:other_user) { create(:user, organization: create(:organization)) }
+
+    before(:each) do
+      allow(controller).to receive(:current_user).and_return(user)
+    end
+
+    it "uses the session role when it belongs to the current user" do
+      session[:current_role] = user.roles.first.id.to_s
+      expect(controller.current_role).to eq(user.roles.first)
+    end
+
+    it "ignores a session role that belongs to another user" do
+      session[:current_role] = other_user.roles.first.id.to_s
+      expect(controller.current_role).to eq(user.roles.first)
+    end
+  end
+
   describe "dashboard_path_from_current_role" do
     before(:each) do
       allow(controller).to receive(:current_user).and_return(user)

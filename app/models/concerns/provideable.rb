@@ -15,7 +15,8 @@ module Provideable
 
         loc.save!
       end
-      []
+
+      {errors: [], warnings: []}
     end
 
     def self.csv_export_headers

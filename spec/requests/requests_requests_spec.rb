@@ -153,40 +153,28 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
-      context 'When packs are enabled' do
-        before { Flipper.enable(:enable_packs) }
-        let(:item) { create(:item, name: "Item", organization: organization) }
-        let(:request) { create(:request, organization: organization) }
+      it 'shows a units column and custom unit if any item has custom units' do
+        item = create(:item, name: "Item", organization: organization)
+        request = create(:request, organization: organization)
+        create(:item_unit, item: item, name: "Pack")
+        create(:item_request, request: request, request_unit: "Pack", item: item)
 
-        it 'shows a units column and custom unit if any item has custom units' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: "Pack", item: item)
+        get request_path(request)
 
-          get request_path(request)
-
-          expect(response.body).to include('Units (if applicable)')
-          expect(response.body).to include('<td>Packs</td>')
-        end
-
-        it 'does not show a units column or any unit if no items have custom units' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: nil, item: item)
-
-          get request_path(request)
-
-          expect(response.body).to_not include('Units (if applicable)')
-          expect(response.body).to_not include('<td>Packs</td>')
-        end
+        expect(response.body).to include('Units (if applicable)')
+        expect(response.body).to include('<td>Packs</td>')
       end
 
-      context 'When packs are not enabled' do
-        let(:request) { create(:request, organization: organization) }
+      it 'does not show a units column or any unit if no items have custom units' do
+        item = create(:item, name: "Item", organization: organization)
+        request = create(:request, organization: organization)
+        create(:item_unit, item: item, name: "Pack")
+        create(:item_request, request: request, request_unit: nil, item: item)
 
-        it 'does not show a units column' do
-          get request_path(request)
+        get request_path(request)
 
-          expect(response.body).not_to include('Units (if applicable)')
-        end
+        expect(response.body).to_not include('Units (if applicable)')
+        expect(response.body).to_not include('<td>Packs</td>')
       end
 
       context 'when the request has a Fulfilled status' do

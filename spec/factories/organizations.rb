@@ -6,8 +6,10 @@
 #  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
+#  deadline_reminders_enabled               :boolean          default(FALSE), not null
 #  default_storage_location                 :integer
 #  distribute_monthly                       :boolean          default(FALSE), not null
+#  distribution_reminders_enabled           :boolean          default(FALSE), not null
 #  email                                    :string
 #  enable_child_based_requests              :boolean          default(TRUE), not null
 #  enable_individual_requests               :boolean          default(TRUE), not null
@@ -48,6 +50,12 @@ FactoryBot.define do
       after(:create) do |instance, evaluator|
         Seeds.seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
         Organization.seed_items(instance) # creates 1 item for each base item
+      end
+    end
+
+    trait :created_at_2006 do
+      after(:create) do |instance|
+        instance.update(created_at: Time.zone.local(2006, 1, 1))
       end
     end
   end

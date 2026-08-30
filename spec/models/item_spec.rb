@@ -13,8 +13,8 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
-#  unit_request_limit           :integer
 #  type                         :string           default("ConcreteItem"), not null
+#  unit_request_limit           :integer
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null

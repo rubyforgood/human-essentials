@@ -59,8 +59,10 @@ class Request < ApplicationRecord
   end
 
   def requester
-    # Despite the field being called "partner_user_id", it can refer to both a partner user or an organization admin
-    partner_user_id ? partner_user : partner
+    # Despite the field being called "partner_user_id", it can refer to both a partner user or an organization admin.
+    # Keyed off the association rather than the id: User is default-scoped to kept records, so a discarded
+    # user leaves partner_user_id set while partner_user resolves to nil.
+    partner_user || partner
   end
 
   def request_type_label

@@ -97,7 +97,7 @@ RSpec.describe "Audits", type: :request do
       end
 
       it "redirects to #index if the status of audit is not `in_progress`" do
-        audit = create(:audit, organization: organization, status: :confirmed)
+        audit = create(:audit, organization: organization, status: :pending_finalization)
         get edit_audit_path(id: audit.to_param)
         expect(response).to redirect_to(audits_path)
 
@@ -119,8 +119,8 @@ RSpec.describe "Audits", type: :request do
         })
 
         expect(response).to redirect_to(audit_path(audit))
-        expect(flash[:notice]).to include("Audit is confirmed.")
-        expect(audit.reload).to be_confirmed
+        expect(flash[:notice]).to include("Audit is submitted for final approval.")
+        expect(audit.reload).to be_pending_finalization
       end
 
       context "when the audit has already been finalized" do
@@ -160,8 +160,8 @@ RSpec.describe "Audits", type: :request do
         it "creates a new Audit with status as `confirmed` if `confirm_audit` is passed as a param" do
           expect do
             post audits_path(audit: valid_attributes, confirm_audit: '')
-            expect(Audit.last.confirmed?).to be_truthy
-          end.to change(Audit.confirmed, :count).by(1)
+            expect(Audit.last.pending_finalization?).to be_truthy
+          end.to change(Audit.pending_finalization, :count).by(1)
         end
 
         it "assigns a newly created audit as @audit" do
@@ -228,7 +228,7 @@ RSpec.describe "Audits", type: :request do
         end
 
         it "destroys the audit if the audit's status is `confirms`" do
-          audit = create(:audit, organization: organization, status: :confirmed)
+          audit = create(:audit, organization: organization, status: :pending_finalization)
           expect do
             delete audit_path(id: audit.to_param)
           end.to change(Audit, :count).by(-1)
