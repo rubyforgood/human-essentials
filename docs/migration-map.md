@@ -331,6 +331,12 @@ findings that belong to this migration rather than to the app's own history:
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
 
+**`data-stack` is gone.** A narrow table became a list of cards from an attribute
+`table_stack_controller` wrote after measuring the container; it is a media query now, at
+`max-width: 689px` and `max-width: 449px`, which are the old container thresholds translated by
+measurement. The controller still runs, for the roles and the scroll region's tab stop, but it no
+longer decides the layout. Anything selecting on `[data-stack]` will match nothing.
+
 **A filter bar belonging to a tab now renders `in_card: true`**, inside the card under the strip,
 with the results frame around the table alone. Five pages moved: `/partners`, `/items`,
 `/items/quantity_and_location`, `/items/inventory` and `/kits`. `storage_locations/show` had already

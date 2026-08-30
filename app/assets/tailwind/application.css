@@ -848,129 +848,219 @@
   /*
    * A table too narrow to be a table becomes a list of labelled fields.
    *
-   * Measured before this: all fifteen tables scrolled sideways at 320px and at 375; the worst hid
-   * 80% of its width. `data-stack` is put on the table by `table_stack_controller` and carries the
-   * number of field columns -- "1" very narrow, "2" when there is room. See design.md.
+   * Measured before this existed: all fifteen tables scrolled sideways at 320px and at 375; the
+   * worst hid 80% of its width. See design.md.
    *
-   * Driven by an attribute rather than a `@container` query for one reason:
-   * `container-type: inline-size` computes to `contain: layout`, which makes the element a containing
-   * block for fixed descendants, and the row action menus are fixed precisely to escape this card.
+   * **A media query, not an attribute set from JavaScript.** It used to be `data-stack`, written by
+   * `table_stack_controller` after measuring the container -- so the browser laid the page out as a
+   * table, painted it, and *then* rebuilt it as cards. Measured with Chrome's own `layout-shift`
+   * entries at 390px: **CLS 0.658** on /admin/base_items, 0.616 on /admin/partners, 0.512 on
+   * /admin/users, six screens past the 0.25 "poor" threshold, and the blame every time was `tbody`,
+   * `tr`, `td`. A media query is applied before the first paint, so there is nothing to rebuild.
+   *
+   * The reason recorded for using JavaScript was about `@container`, not `@media`:
+   * `container-type: inline-size` computes to `contain: layout`, which would make the card a
+   * containing block for the fixed row-action menus. A media query has no such effect.
+   *
+   * The numbers are the old thresholds translated, and translated exactly. The old ones were on the
+   * *container*: stack below 640px of it, one column below 416. Measured across four pages and
+   * twelve widths, the container is the viewport less 34px at these sizes and identical on every
+   * page, and a 1px scan put the transitions at **450** and **690** -- so `max-width: 689px` and
+   * `max-width: 449px` reproduce the previous behaviour to the pixel.
    */
   .cell-label {
     display: none;
   }
 
-  .data-table[data-stack] {
-    display: block;
+  @media (max-width: 689px) {
+    .data-table {
+      display: block;
+    }
+
+    .data-table caption {
+      display: block;
+      text-align: start;
+    }
+
+    /* The heading row has nothing to head once the columns are gone. */
+    .data-table thead {
+      display: none;
+    }
+
+    .data-table tbody {
+      display: grid;
+      gap: calc(var(--spacing) * 3);
+      padding: calc(var(--spacing) * 3);
+    }
+
+    /* Each record becomes a card. */
+    .data-table tbody tr {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+      padding: calc(var(--spacing) * 3);
+      border: 1px solid var(--color-slate-200);
+      border-radius: var(--radius-xl);
+      background-color: var(--color-white);
+    }
+
+    /*
+     * A cell becomes a field. Every column rule has to be undone here: `nowrap`, the `.name` and
+     * `.notes` width caps and their ellipsis all exist to keep *columns* in order, and there are no
+     * columns any more. A capped, clipped field in a stack would hide text for no reason at all.
+     */
+    .data-table tbody td,
+    .data-table tbody th {
+      display: block;
+      padding: 0;
+      border: 0;
+      max-width: none;
+      min-width: 0;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+    }
+
+    /*
+     * The label sits *beside* its value rather than above it, in a two column field.
+     *
+     * That is not decoration: it is what makes the card's height independent of whether the label
+     * has arrived. The labels are copied out of `<thead>` by JavaScript -- 299 headings across 71
+     * views, which is the one part of this that cannot be server-rendered without writing each of
+     * them by hand -- so above the value they added a line per field *after* first paint, and the
+     * shift this whole rule exists to remove came back at about half strength. Beside it, the row
+     * is as tall as the value either way and the label drops into space already reserved.
+     *
+     * It is also how the app already presents a record's details: `<dl>` at `auto 1fr`. Two
+     * presentations of "a field and its value" was one too many.
+     */
+    .data-table tbody td:not(.pin-col):not(.cell-actions):not(.select-col),
+    .data-table tbody th:not(.pin-col) {
+      display: grid;
+      grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+      gap: calc(var(--spacing) * 3);
+      align-items: baseline;
+    }
+
+    /*
+     * The value sits in column two **whether or not the label has arrived**, which is the whole
+     * point of gridding every field rather than only `:has(> .cell-label)`.
+     *
+     * With `:has()` the cell was a plain block until the label landed, so the value had the full
+     * width, and gridding it afterwards narrowed the value's column and wrapped long ones -- the
+     * shift came back at 0.163. Gridding unconditionally means the value's width, and therefore the
+     * row's height, is the same before and after. Column one is simply empty for the frame or two
+     * before the label drops into it.
+     */
+    .data-table tbody td:not(.pin-col):not(.cell-actions):not(.select-col) > *:not(.cell-label),
+    .data-table tbody th:not(.pin-col) > *:not(.cell-label) {
+      grid-column: 2;
+    }
+
+    /* A label is one line, always: wrapping one would take the row's height with it. */
+    .data-table tbody .cell-label {
+      grid-column: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-table tbody .cell-label {
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      line-height: 1.45;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-slate-500);
+    }
+
+    /*
+     * The identifying column is the card's title: no label, a size up, and the full width.
+     *
+     * No `font-weight` here. The views put `font-medium` on that cell, and a utility beats a rule in
+     * `@layer components` whatever its specificity -- so a `font-weight: 600` would have sat in the
+     * stylesheet doing nothing. The title is already distinguished by 16px against 14 and slate-900
+     * against slate-600.
+     */
+    .data-table tbody .pin-col {
+      position: static;
+      box-shadow: none;
+      font-size: var(--text-base);
+      grid-column: 1 / -2;
+    }
+
+    /* An empty cell would otherwise leave a labelled gap. */
+    .data-table tbody td:empty {
+      display: none;
+    }
+
+    /*
+     * A table with a selection column gives its card an explicit title line: checkbox, title,
+     * actions. Everything else spans all three, one field per line.
+     */
+    .data-table:has(.select-col) tbody tr {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .data-table tbody .select-col {
+      grid-row: 1;
+      grid-column: 1;
+      width: auto;
+      padding-right: 0;
+      align-self: center;
+    }
+
+    .data-table:has(.select-col) tbody .pin-col {
+      grid-column: 2;
+    }
+
+    .data-table:has(.select-col) tbody .cell-actions {
+      grid-column: 3;
+    }
+
+    .data-table:has(.select-col) tbody td:not(.select-col):not(.pin-col):not(.cell-actions),
+    .data-table:has(.select-col) tbody th:not(.select-col):not(.pin-col) {
+      grid-column: 1 / -1;
+    }
+
+    /* The row's actions sit on the title line rather than at the foot of the card. */
+    .data-table tbody .cell-actions {
+      grid-row: 1;
+      grid-column: -2 / -1;
+      justify-self: end;
+      /* A card does not scroll sideways, so there is nothing to freeze against or separate from. */
+      position: static;
+      border-left: 0;
+      text-align: end;
+    }
+
+    /* A stacked table does not scroll, so nothing about scrolling should be drawn around it. */
+    div:has(> .table-scroll .data-table)::before,
+    div:has(> .table-scroll .data-table)::after {
+      content: none;
+    }
+
+    .table-scroll:has(.data-table) {
+      overflow-x: visible;
+    }
   }
 
-  .data-table[data-stack] caption {
-    display: block;
-    text-align: start;
-  }
+  /* Very narrow: one field per line, and the title has the row to itself. */
+  @media (max-width: 449px) {
+    .data-table tbody tr {
+      grid-template-columns: minmax(0, 1fr);
+    }
 
-  /* The heading row has nothing to head once the columns are gone. */
-  .data-table[data-stack] thead {
-    display: none;
-  }
+    .data-table tbody .pin-col {
+      grid-column: auto;
+    }
 
-  .data-table[data-stack] tbody {
-    display: grid;
-    gap: calc(var(--spacing) * 3);
-    padding: calc(var(--spacing) * 3);
-  }
-
-  /* Each record becomes a card. */
-  .data-table[data-stack] tbody tr {
-    display: grid;
-    gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
-    padding: calc(var(--spacing) * 3);
-    border: 1px solid var(--color-slate-200);
-    border-radius: var(--radius-xl);
-    background-color: var(--color-white);
-  }
-
-  .data-table[data-stack="1"] tbody tr {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .data-table[data-stack="2"] tbody tr {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /*
-   * A cell becomes a field. Every column rule has to be undone here: `nowrap`, the `.name` and
-   * `.notes` width caps and their ellipsis all exist to keep *columns* in order, and there are no
-   * columns any more. A capped, clipped field in a stack would hide text for no reason at all.
-   */
-  .data-table[data-stack] tbody td,
-  .data-table[data-stack] tbody th {
-    display: block;
-    padding: 0;
-    border: 0;
-    max-width: none;
-    min-width: 0;
-    overflow: visible;
-    text-overflow: clip;
-    white-space: normal;
-  }
-
-  .data-table[data-stack] tbody .cell-label {
-    display: block;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    line-height: 1.4;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-slate-500);
-  }
-
-  /*
-   * The identifying column is the card's title: no label, a size up, and the full width.
-   *
-   * No `font-weight` here. The views put `font-medium` on that cell, and a utility beats a rule in
-   * `@layer components` whatever its specificity -- so a `font-weight: 600` would have sat in the
-   * stylesheet doing nothing. The title is already distinguished by 16px against 14 and slate-900
-   * against slate-600.
-   */
-  .data-table[data-stack] tbody .pin-col {
-    position: static;
-    box-shadow: none;
-    font-size: var(--text-base);
-  }
-
-  .data-table[data-stack="2"] tbody .pin-col {
-    grid-column: 1 / -1;
-  }
-
-  /* An empty cell would otherwise leave a labelled gap. */
-  .data-table[data-stack] tbody td:empty {
-    display: none;
-  }
-
-  /* The row's actions sit on the title line rather than at the foot of the card. */
-  .data-table[data-stack] tbody .cell-actions {
-    grid-row: 1;
-    grid-column: -2 / -1;
-    justify-self: end;
-    /* A card does not scroll sideways, so there is nothing to freeze against or separate from. */
-    position: static;
-    border-left: 0;
-    text-align: end;
-  }
-
-  .data-table[data-stack="2"] tbody .pin-col {
-    grid-column: 1 / -2;
-  }
-
-  /* A stacked table does not scroll, so nothing about scrolling should be drawn around it. */
-  div:has(> .table-scroll [data-stack])::before,
-  div:has(> .table-scroll [data-stack])::after {
-    content: none;
-  }
-
-  .table-scroll:has([data-stack]) {
-    overflow-x: visible;
+    .data-table tbody td:has(> .cell-label),
+    .data-table tbody th:has(> .cell-label) {
+      grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr);
+      gap: calc(var(--spacing) * 2);
+    }
   }
 
   /* Someone who has asked for less motion gets the fade, just not the cross-fade. */

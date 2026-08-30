@@ -160,14 +160,18 @@ pw bin/design/layout-shift-audit.js --width=390   # a phone, where tables stack 
 ```
 
 It reads Chrome's own `layout-shift` performance entries -- the same ones Cumulative Layout Shift is
-scored from, thresholds **0.1 good, 0.25 poor** -- and names the elements that moved. Shifts the
+scored from, thresholds **0.1 good, 0.25 poor** -- and names the elements that moved. **Run it at a phone
+width as well as a desktop one**: the biggest shift in the app was only visible at 390px, where
+tables stack into cards. Shifts the
 reader *caused* are excluded by the browser (`hadRecentInput`), so opening a disclosure or applying a
 filter does not count; the dev-only profiler and Bullet badges are filtered out here, because they
 are not in production and have fooled a DOM-reading audit on this project before.
 
-Found two things no other audit could see: the historical trend charts at **CLS 0.352**, because an
-empty container was inflated to 850px on connect, and the donation form's four source selects, drawn
-and then hidden for **100px** of reflow. The second was invisible to `flash-of-hidden-audit.js`
+Found three things no other audit could see: the historical trend charts at **CLS 0.352**, because an
+empty container was inflated to 850px on connect; the donation form's four source selects, drawn and
+then hidden for **100px** of reflow; and, at 390px, **six screens past "poor"** -- `/admin/base_items`
+at **0.658** -- because tables were restacked into cards by JavaScript after paint. All three are
+fixed; the worst score in the app is now **0.068** at 390 and **0.007** at 1400. The second was invisible to `flash-of-hidden-audit.js`
 because that audit excused every `<select>` for select2's sake -- it now recognises the actual swap
 instead.
 

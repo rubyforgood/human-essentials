@@ -77,10 +77,13 @@
             <thead>
               <tr>
                 <th scope="col" class="select-col">
-                  <%= check_box_tag "select_all_requests", "1", false,
-                        "aria-label": "Select all requests on this page",
-                        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
-                        data: {table_selection_target: "all", action: "table-selection#toggleAll"} %>
+                  <%# A 24x24 label around a 16x16 box, for the same reason as the row cells. %>
+                  <%= label_tag "select_all_requests", class: "flex size-6 cursor-pointer items-center justify-center" do %>
+                    <%= check_box_tag "select_all_requests", "1", false,
+                          class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                          data: {table_selection_target: "all", action: "table-selection#toggleAll"} %>
+                    <span class="sr-only">Select all requests on this page</span>
+                  <% end %>
                 </th>
                 <th scope="col" class="date pin-col">Date</th>
                 <th scope="col" class="name">Request was sent by</th>
