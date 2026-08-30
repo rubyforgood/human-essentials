@@ -53,11 +53,16 @@
 <%# `popover-fixed-value`: the panel is placed against the viewport and clamped to it. At 320px the
     header's actions wrap, which puts this trigger near the left edge -- and a panel right-aligned
     to a trigger there starts at a negative x. The overlay audit caught it at 320x640. %>
+<%# `aria-controls` and an id, as `row_actions` has: the ARIA menu-button pattern recommends the
+    pairing, and it is what makes the panel findable once `popover_controller` moves it to `<body>`
+    while it is open. Random rather than derived, because a page may hold more than one of these. %>
+<% panel_id = "menu-#{SecureRandom.hex(4)}" %>
 <div class="relative" data-controller="popover" data-popover-fixed-value="true">
   <button type="button"
           class="<%= essentials_button_classes(variant: variant, size: size) %>"
           aria-haspopup="true"
           aria-expanded="false"
+          aria-controls="<%= panel_id %>"
           data-popover-target="trigger"
           data-action="click->popover#toggle">
     <% if icon %><i class="<%= icon %>" aria-hidden="true"></i><% end %>
@@ -71,6 +76,7 @@
       arrow-key movement that role promises. The overlay audit requires a panel to declare what it
       is. %>
   <div class="absolute <%= align == :start ? "left-0" : "right-0" %> z-30 mt-1 w-64 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
+       id="<%= panel_id %>"
        hidden
        role="menu"
        data-popover-target="panel">

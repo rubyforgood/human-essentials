@@ -107,7 +107,12 @@ async function checkPopovers(page, path, findings) {
     // popover, and checking it instead reported every date range as broken.
     const state = await trigger.evaluate((t) => {
       if (t.getAttribute("aria-expanded") !== "true") return null;
-      const panel = t.closest("[data-controller~='popover']").querySelector("[data-popover-target='panel']");
+      // By id first: an open `fixed` panel is moved to <body>, so it is no longer a descendant of
+      // its controller -- see popover_controller, which does that to escape the stacking context
+      // of the frozen actions column.
+      const panel = document.getElementById(t.getAttribute("aria-controls")) ||
+        t.closest("[data-controller~='popover']").querySelector("[data-popover-target='panel']");
+      if (!panel) return null;
       const r = panel.getBoundingClientRect();
       return {
         onScreen: r.left >= -1 && r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1,

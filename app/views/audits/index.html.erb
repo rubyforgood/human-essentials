@@ -33,7 +33,7 @@
                 <th scope="col">Storage location</th>
                 <th scope="col">Summary</th>
                 <th scope="col">Status</th>
-                <th scope="col" class="text-right">Actions</th>
+                <th scope="col" class="cell-actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -55,8 +55,8 @@
                   <td class="font-medium text-slate-900"><%= audit.storage_location.name %></td>
                   <td><%= pluralize(audit.line_items.count, "item") %></td>
                   <td><%= essentials_status_pill(audit.status.titleize, tone: tone, icon: icon) %></td>
-                  <td class="text-right">
-                    <%= essentials_link_button "View", audit, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  <td class="cell-actions">
+                    <%= essentials_row_icon_link "View", audit, icon: "bi-eye" %>
                   </td>
                 </tr>
               <% end %>

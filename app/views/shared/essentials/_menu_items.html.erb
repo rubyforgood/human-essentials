@@ -5,7 +5,11 @@
 
   Locals:
     items  required; each {label:, path:, icon:, method:, confirm:, tone:, disabled:, reason:,
-           link_options:}
+           link_options:, class:}
+
+  `class:` is appended to the item's own classes, for a call site that needs a hook on a specific
+  action -- `/kits` identifies its Deactivate and Reactivate items that way, and its specs assert
+  on those classes.
 %>
 <% items.compact.each do |item| %>
   <%
@@ -13,7 +17,8 @@
       "text-slate-700 hover:bg-rose-50 hover:text-rose-700" :
       "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
     item_classes = "flex w-full items-center gap-2 px-3 py-2 text-left text-sm #{tone_classes} " \
-                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 " \
+                   "#{item[:class]}"
   %>
   <% if item[:disabled] %>
     <%#

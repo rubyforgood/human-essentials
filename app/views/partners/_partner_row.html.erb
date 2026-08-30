@@ -8,7 +8,7 @@
   <td><%= partner_row.partner_group&.name %></td>
   <td class="quantity"><%= partner_row.quota %></td>
   <td><%= essentials_partner_status_pill(status) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <%#
       The column this replaced was the clearest case for collapsing by table rather than by row: a
       five-branch `case` on status, so the label, the width and the *number* of controls all changed

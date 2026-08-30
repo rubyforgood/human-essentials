@@ -427,6 +427,53 @@
     background-color: white;
   }
 
+  /*
+   * The actions column, frozen to the right edge -- the mirror of `.pin-col` at the other end.
+   *
+   * Reported: "having the action all the way at the end of a horizontal scroll for a user who is
+   * processing multiple rows is a very frustrating experience." Measured on `/distributions`: the
+   * Actions header started **327px past** the right edge at 1440 and the cell needed **402px** of
+   * scrolling; at 1024 it was **818px**. And it did not stay scrolled -- acting on a row reloads
+   * the page, and a reload puts `scrollLeft` back to 0 (measured, 402 -> 0), so a page of 15 rows
+   * cost 402 x 15 = **6,030px** of dragging. Pinning both ends means the reader keeps both anchors:
+   * which row it is, and what can be done with it.
+   *
+   * Sticky is **inert where nothing overflows**, so this costs the twelve tables that fit exactly
+   * nothing -- including the widest actions columns in the app (`/manufacturers` at 428px), whose
+   * width is the table stretching its last column rather than the buttons needing the room.
+   */
+  .data-table .cell-actions {
+    text-align: right;
+    position: sticky;
+    right: 0;
+    background-color: inherit;
+  }
+
+  /*
+   * **No `z-index` on the body cell**, unlike `.pin-col`, and this is load-bearing rather than an
+   * omission. A `z-index` on a sticky element creates a stacking context, and the row action menu
+   * is a DOM descendant of this cell -- so its `z-30` was resolved *inside* a context sitting at
+   * 2, which put the open menu underneath the scroll rail at `z-index: 20`. Cuprite caught it as
+   * "another element ... at this position" on /storage_locations.
+   *
+   * It does not need one. A sticky cell is a positioned element, so it already paints above the
+   * non-positioned cells it slides over, and nothing else in the row is positioned. The frozen
+   * column at the other edge is `.pin-col`, and the two never meet.
+   */
+
+  .data-table thead .cell-actions {
+    z-index: 3;
+  }
+
+  /*
+   * The separator only while something is actually behind the column. Same discipline as the edge
+   * shadows: a line always on is decoration, a line only where content is hidden is information --
+   * and on a table that fits, this leaves the appearance unchanged.
+   */
+  .table-scroll[data-overflow~="end"] .data-table .cell-actions {
+    border-left: 1px solid var(--color-slate-200);
+  }
+
   .data-table .notes {
     max-width: 16rem;
     overflow: hidden;
@@ -558,8 +605,14 @@
     box-shadow: inset 10px 0 8px -8px rgb(5 5 5 / 0.06);
   }
 
+  /*
+   * Moved clear of the frozen actions column, for the same reason the start shadow is moved clear
+   * of `.pin-col`: painting a gradient over a frozen column was a WCAG 1.4.3 failure the first
+   * time, taking the ink on `/distributions` from 9.59:1 to 3.19:1. `--pin-right-width` is
+   * measured and set by `table_scroll_controller`, and is 0 where nothing is frozen.
+   */
   div:has(> .table-scroll)::after {
-    right: 0;
+    right: var(--pin-right-width, 0px);
     box-shadow: inset -10px 0 8px -8px rgb(5 5 5 / 0.06);
   }
 
@@ -879,6 +932,9 @@
     grid-row: 1;
     grid-column: -2 / -1;
     justify-self: end;
+    /* A card does not scroll sideways, so there is nothing to freeze against or separate from. */
+    position: static;
+    border-left: 0;
     text-align: end;
   }
 

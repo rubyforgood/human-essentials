@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaching a row's actions in a wide table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 96px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0 8px}
+  .scroller{overflow-x:auto;position:relative}
+  table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:13.5px}
+  th,td{padding:10px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line);background:#fff}
+  thead th{background:#F8FAFC;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700;position:sticky;top:0}
+  tbody tr:last-child td{border-bottom:0}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pin-l{position:sticky;left:0;z-index:2;border-right:1px solid var(--line);font-weight:500;color:var(--ink)}
+  thead .pin-l{z-index:3;background:#F8FAFC}
+  /* Option A: the actions column pinned to the right edge. */
+  .pin-r{position:sticky;right:0;z-index:2;border-left:1px solid var(--line);text-align:right}
+  thead .pin-r{z-index:3;background:#F8FAFC}
+  .scroller.more-right .pin-r::before{content:"";position:absolute;left:-13px;top:0;bottom:0;width:12px;
+    background:linear-gradient(to left,rgba(15,23,42,.10),transparent);pointer-events:none}
+  .kebab{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;
+    border:0;background:transparent;color:var(--soft);cursor:pointer;font-size:16px;line-height:1}
+  .kebab:hover{background:#F1F5F9;color:var(--ink)}
+  .lnk{color:#3730A3;text-decoration:none;font-weight:500}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:var(--oksoft);color:var(--ok)}
+  /* Option C: batch bar */
+  .batch{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--brand50);
+    border-bottom:1px solid #C7D2FE;font-size:13.5px;color:#3730A3;font-weight:500}
+  .batch button{border:1px solid #C7D2FE;background:#fff;color:#3730A3;border-radius:8px;padding:5px 11px;font:500 13px Figtree;cursor:pointer}
+  .cbx{width:16px;height:16px;accent-color:var(--brand);margin:0;vertical-align:middle}
+  table.sel th:first-child,table.sel td:first-child{width:1px;padding-right:0}
+  /* measurement callouts */
+  .ruler{position:relative;height:26px;margin:0 0 4px}
+  .ruler .bar{position:absolute;top:12px;height:0;border-top:2px solid var(--bad)}
+  .ruler .bar::before,.ruler .bar::after{content:"";position:absolute;top:-5px;height:11px;border-left:2px solid var(--bad)}
+  .ruler .bar::before{left:0}.ruler .bar::after{right:0}
+  .ruler span{position:absolute;top:-3px;font-size:11.5px;font-weight:700;color:var(--bad);background:var(--ground);padding:0 6px}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{white-space:normal;border-bottom:1px solid var(--line);background:transparent;padding:9px 12px;vertical-align:top}
+  table.mini th{font-size:12px}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px}
+  ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .hint{font-size:12.5px;color:var(--soft);margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Reaching a row's actions in a wide table</h1>
+<p class="lede">Reported: <i>"having the action all the way at the end of a horizontal scroll for a user
+who is processing multiple rows is a very frustrating experience."</i> Every table below scrolls &mdash;
+<b>drag them sideways</b> to feel the difference. Numbers are measured from the running app.</p>
+
+<h2>What it costs today<span class="tag t-now">measured</span></h2>
+<table class="mini">
+  <tr><th>Viewport</th><th>Tables that scroll</th><th>Worst case</th><th>How far the Actions column sits past the right edge</th></tr>
+  <tr><td>1440</td><td class="n">5 of 16</td><td>/distributions</td><td><b>327px past the edge</b>; 402px of scrolling to reach the cell</td></tr>
+  <tr><td>1280</td><td class="n">10 of 16</td><td>/distributions</td><td>562px of scrolling</td></tr>
+  <tr><td>1024</td><td class="n">13 of 16</td><td>/distributions</td><td><b>818px of scrolling</b></td></tr>
+</table>
+<p class="note"><b>And it does not stay scrolled.</b> Acting on a row reloads the page, and a reload puts
+<code>scrollLeft</code> back to <b>0</b> &mdash; measured: 402 &rarr; 0. So processing a page of 15
+distributions at 1440 is <b>402px &times; 15 = 6,030px</b> of horizontal dragging, re-done from scratch
+after every single action. That is the frustration, and it is not a feeling &mdash; it is arithmetic.</p>
+<p class="note"><b>One group is unaffected: keyboard users.</b> Measured &mdash; one Tab from the row's
+first link jumps straight to "More actions" and the browser scrolls it into view for free. The person
+paying for this layout is specifically the one using a mouse.</p>
+
+<div class="card">
+  <div class="scroller" id="s-now">
+    <table>
+      <thead><tr><th class="pin-l">Distribution</th><th>Partner</th><th>Date</th><th>Source</th>
+        <th class="num">Items</th><th class="num">Value</th><th>Delivery</th><th>Shipping cost</th>
+        <th>Comments</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+      <tbody id="rows-now"></tbody>
+    </table>
+  </div>
+</div>
+<div class="ruler"><div class="bar" style="left:56%;right:2%"></div><span style="left:63%">Actions live out here</span></div>
+<div class="verdict bad"><b>The first column is already pinned</b> &mdash; you always know <i>which</i> row you
+are on. Nothing is pinned at the other end, so you never know what you can <i>do</i> with it without going
+to look.</div>
+
+<h2>Option A &mdash; pin the actions column to the right edge<span class="tag t-rec">recommended</span></h2>
+<p class="note">The actions column stops scrolling and stays against the right edge, exactly as the first
+column already stays against the left. The reader keeps <b>both</b> anchors: what the row is, and what they
+can do with it. A shadow appears on its left while there is still content hidden behind it, and goes when
+there is not. <b>Scroll this one.</b></p>
+<div class="card">
+  <div class="scroller" id="s-a">
+    <table>
+      <thead><tr><th class="pin-l">Distribution</th><th>Partner</th><th>Date</th><th>Source</th>
+        <th class="num">Items</th><th class="num">Value</th><th>Delivery</th><th>Shipping cost</th>
+        <th>Comments</th><th>Status</th><th class="pin-r">Actions</th></tr></thead>
+      <tbody id="rows-a"></tbody>
+    </table>
+  </div>
+</div>
+<ul class="tight">
+  <li><b>Zero scrolling to act, at every viewport.</b> 818px becomes 0px on the worst table.</li>
+  <li><b>It survives the reload.</b> The actions never move, so resetting <code>scrollLeft</code> costs nothing.</li>
+  <li><b>Nothing new to learn</b>, and it is symmetric with the pinned first column the app already ships.</li>
+  <li><b>It composes with everything else here</b> &mdash; you can pin the column and still add selection later.</li>
+  <li><b>Cost:</b> the pinned column covers ~90px of the table while you scroll. It is the narrowest column, and the shadow says something is behind it.</li>
+</ul>
+
+<h2>Option B &mdash; move actions to the left, beside the name<span class="tag t-alt">alternative</span></h2>
+<p class="note">Also zero-scroll, and no stickiness needed at all.</p>
+<div class="card">
+  <div class="scroller" id="s-b">
+    <table>
+      <thead><tr><th class="pin-l" style="text-align:left">Actions</th><th>Distribution</th><th>Partner</th><th>Date</th>
+        <th>Source</th><th class="num">Items</th><th class="num">Value</th><th>Delivery</th>
+        <th>Shipping cost</th><th>Comments</th><th>Status</th></tr></thead>
+      <tbody id="rows-b"></tbody>
+    </table>
+  </div>
+</div>
+<div class="verdict bad"><b>It reads backwards.</b> The first thing in every row becomes a control rather than
+the record it acts on &mdash; you are offered a menu before you are told what it belongs to. It also breaks
+the convention every one of the systems below follows, and pushes the identifying column off the left edge,
+which is the one place a scanning eye reliably returns to.</div>
+
+<h2>Option C &mdash; select rows, act on them together<span class="tag t-alt">complement, not a replacement</span></h2>
+<p class="note">The direct answer to <i>processing multiple rows</i>: tick several, act once. This is Carbon's
+<code>TableBatchActions</code>, and the pattern in Gmail, GitHub, Linear, Airtable and Jira. <b>Tick a box.</b></p>
+<div class="card">
+  <div class="batch" id="batch" hidden><span id="batch-n">0 selected</span>
+    <button type="button">Print picklists</button><button type="button">Export</button>
+    <button type="button" id="batch-clear">Cancel</button></div>
+  <div class="scroller" id="s-c">
+    <table class="sel">
+      <thead><tr><th><input type="checkbox" class="cbx" id="all"></th><th class="pin-l">Distribution</th>
+        <th>Partner</th><th>Date</th><th>Source</th><th class="num">Items</th><th class="num">Value</th>
+        <th>Delivery</th><th>Shipping cost</th><th>Comments</th><th>Status</th><th class="pin-r">Actions</th></tr></thead>
+      <tbody id="rows-c"></tbody>
+    </table>
+  </div>
+</div>
+<div class="verdict"><b>Worth doing, but it does not replace A.</b> Most row actions in this app are
+per-record &mdash; View, Edit, Deactivate &mdash; and cannot be batched meaningfully. Selection helps the few
+that can (print, export). Note this preview <i>already</i> has the pinned column from A: the two compose,
+and selection without pinning still leaves single-row actions out of reach.</div>
+
+<h2>Option D &mdash; show fewer columns, and let the reader choose<span class="tag t-alt">fixes the cause</span></h2>
+<p class="note">Nothing scrolls, so nothing is out of reach. <code>/distributions</code> carries <b>12
+columns</b>; roughly 8 fit at 1440. This drops it to the ones a list is actually scanned by, with the rest
+behind a chooser.</p>
+<div class="card">
+  <div class="scroller">
+    <table>
+      <thead><tr><th class="pin-l">Distribution</th><th>Partner</th><th>Date</th>
+        <th class="num">Items</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+      <tbody id="rows-d"></tbody>
+    </table>
+  </div>
+</div>
+<div class="verdict bad"><b>The most effective and the most disruptive.</b> It is a real answer &mdash; and
+it is somebody's data being taken away. Which columns matter differs by bank, so it needs a chooser, a
+per-user preference to store it in, and a decision on defaults for 200+ organisations. Worth doing; not
+worth blocking this fix on.</div>
+
+<h2>What pinning costs a table with visible buttons<span class="tag t-now">measured</span></h2>
+<p class="note"><b>Nothing at all, unless the table scrolls.</b> <code>position: sticky</code> is inert in a
+container that does not overflow, so the widest actions columns in the app &mdash; <code>/manufacturers</code>
+at <b>428px</b>, <code>/barcode_items</code> 321px, <code>/item_categories</code> 284px &mdash; cost nothing,
+because none of those three scroll. Those numbers are the table <i>stretching</i> its last column to fill the
+row, not the buttons needing the room. The separator and shadow will only be drawn while something is
+actually hidden behind the column, so on a table that fits, nothing changes visually either.</p>
+<table class="mini">
+  <tr><th>At 1024, where 13 of 16 tables scroll</th><th>Actions column</th><th>Shape</th><th>If it were icon-only</th></tr>
+  <tr><td>/kits <b>&mdash; breaks the existing rule</b></td><td class="n">273px</td><td>inline, <b>varies</b> on <code>kit.active</code></td><td class="n">94px</td></tr>
+  <tr><td>/transfers</td><td class="n">183px</td><td>inline pair (View, Delete)</td><td class="n">94px</td></tr>
+  <tr><td>/donations</td><td class="n">172px</td><td>inline pair (View, Print)</td><td class="n">94px</td></tr>
+  <tr><td>/product_drive_participants</td><td class="n">168px</td><td>inline pair (View, Edit)</td><td class="n">94px</td></tr>
+  <tr><td>/purchases, /product_drives</td><td class="n">100px</td><td>single View</td><td class="n">&mdash;</td></tr>
+  <tr class="rec"><td>/distributions, /items, /partners, /storage_locations, /donation_sites</td><td class="n">75px</td><td>kebab menu</td><td class="n">already 75px</td></tr>
+</table>
+<p class="note"><b>Should they all collapse into the menu? No &mdash; design.md already settles this</b>, and
+collapsing a settled pair would hide a one-click action behind two clicks on every row, forever, to save
+width that only costs anything at some viewports. The existing rule is: three or more on any row, or a set
+that <i>varies</i> by status, role or state, gets the menu; a settled one or two stays visible.</p>
+<p class="note">Checked against that rule, <b>exactly one of the six is wrong today</b>:
+<code>/kits</code> branches on <code>kit.active</code> to show <i>Deactivate</i> or <i>Reactivate</i>, which
+is the varying-set case, and it is also the widest at 273px. That is a bug against a rule already written,
+not a new decision.</p>
+<p class="note"><b>The better lever is one design.md already contains.</b> It says a visible action beside a
+kebab is <b>icon-only at 28px</b>, named by <code>aria-label</code> and <code>title</code>. Extending that to
+any inline actions column takes every labelled pair to a uniform <b>94px</b> &mdash; measured, by stripping
+the labels in the live page &mdash; which is <i>narrower than three of the five kebab columns</i>, and costs
+<b>no extra click at all</b>.</p>
+<div class="card">
+  <div class="scroller">
+    <table>
+      <thead><tr><th class="pin-l">Donation</th><th>Source</th><th>Date</th><th>Site</th>
+        <th class="num">Items</th><th class="num">Value</th><th>Comment</th><th class="pin-r">Actions</th></tr></thead>
+      <tbody>
+        <tr><td class="pin-l"><a class="lnk" href="#">#4021</a></td><td>Misc. Donation</td><td>2026-08-24</td>
+          <td>Community Centre</td><td class="num">420</td><td class="num">$1,204.00</td><td>&mdash;</td>
+          <td class="pin-r"><span style="white-space:nowrap"><button class="kebab" title="View">&#128065;</button><button class="kebab" title="Print">&#128424;</button></span></td></tr>
+        <tr><td class="pin-l"><a class="lnk" href="#">#4020</a></td><td>Purchased Supplies</td><td>2026-08-23</td>
+          <td>North Annex</td><td class="num">180</td><td class="num">$540.00</td><td>Two pallets</td>
+          <td class="pin-r"><span style="white-space:nowrap"><button class="kebab" title="View">&#128065;</button><button class="kebab" title="Print">&#128424;</button></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="hint">/donations with both changes: actions pinned, and the pair icon-only at 94px instead of 172px.
+Both controls are still one click, and both still carry a name for a screen reader and a tooltip for everyone else.</p>
+
+<h2>What the industry does</h2>
+<table class="mini">
+  <tr><th>System</th><th>What it offers</th><th>Which option</th></tr>
+  <tr class="rec"><td><b>Ant Design</b> Table</td><td><code>column.fixed: 'right'</code> &mdash; their own docs demo it on an action column</td><td>A</td></tr>
+  <tr class="rec"><td><b>AG Grid</b></td><td><code>pinned: 'right'</code>, named in their docs as the place for action buttons</td><td>A</td></tr>
+  <tr class="rec"><td><b>Material React Table</b></td><td>Row-actions column, pinnable, <code>positionActionsColumn</code></td><td>A</td></tr>
+  <tr class="rec"><td><b>Salesforce Lightning</b></td><td>Data table with a row-action column that stays reachable</td><td>A</td></tr>
+  <tr class="rec"><td><b>Excel, Google Sheets, Handsontable</b></td><td>Freeze panes, either edge</td><td>A</td></tr>
+  <tr><td><b>Carbon</b> (IBM)</td><td><code>TableBatchActions</code> &mdash; selecting rows swaps the toolbar for batch actions</td><td>C</td></tr>
+  <tr><td><b>Gmail, GitHub, Linear, Jira, Airtable</b></td><td>Select rows, then act on the set</td><td>C</td></tr>
+  <tr><td><b>Airtable, AG Grid, Ant Design</b></td><td>Hide-fields / column tool panel / column setting</td><td>D</td></tr>
+</table>
+<p class="note"><b>Nobody moves actions to the left</b> (Option B). Pinning the action column to the right is
+the settled answer, and the systems that also offer batch selection offer it <i>in addition</i>, never instead.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>Option A now</b> &mdash; it removes up to 818px of scrolling per action, survives the
+reload that currently throws the reader back to the left, costs nothing to learn, and is symmetric with the
+pinned first column already in the app. <b>Option C next</b>, on the tables where a batch action genuinely
+exists; it composes with A rather than competing. <b>Option D</b> is the real fix for
+<code>/distributions</code>' twelve columns, but it needs a column chooser and a stored preference, so it is
+its own piece of work rather than part of this one.</div>
+
+</div>
+<script>
+  const DATA = [
+    ["#236","Pawnee Parks Dept","2026-08-24","Main Warehouse",420,"$1,204.00","Shipped","$42.00","Left at the loading dock","Complete"],
+    ["#235","Eagleton Family Services","2026-08-23","Main Warehouse",180,"$540.00","Pick up","&mdash;","","Complete"],
+    ["#234","Snerling Community Aid","2026-08-22","North Annex",96,"$288.00","Delivery","&mdash;","Call ahead","Scheduled"],
+    ["#233","Harvest Food Bank","2026-08-21","Main Warehouse",1240,"$3,720.00","Shipped","$88.50","Two pallets","Complete"],
+    ["#232","Indiana Mutual Aid","2026-08-20","North Annex",64,"$192.00","Pick up","&mdash;","","Scheduled"]
+  ];
+  const acts = '<button class="kebab" type="button" aria-label="More actions">&#8942;</button>';
+  const cells = (r) => `<td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="num">${r[4]}</td>` +
+    `<td class="num">${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]||"&mdash;"}</td>` +
+    `<td><span class="pill">${r[9]}</span></td>`;
+
+  const fill = (id, fn) => document.getElementById(id).innerHTML = DATA.map(fn).join("");
+  fill("rows-now", (r) => `<tr><td class="pin-l"><a class="lnk" href="#">${r[0]}</a></td>${cells(r)}<td style="text-align:right">${acts}</td></tr>`);
+  fill("rows-a",   (r) => `<tr><td class="pin-l"><a class="lnk" href="#">${r[0]}</a></td>${cells(r)}<td class="pin-r">${acts}</td></tr>`);
+  fill("rows-b",   (r) => `<tr><td class="pin-l" style="text-align:left">${acts}</td><td><a class="lnk" href="#">${r[0]}</a></td>${cells(r)}</tr>`);
+  fill("rows-c",   (r) => `<tr><td><input type="checkbox" class="cbx pick"></td><td class="pin-l"><a class="lnk" href="#">${r[0]}</a></td>${cells(r)}<td class="pin-r">${acts}</td></tr>`);
+  fill("rows-d",   (r) => `<tr><td class="pin-l"><a class="lnk" href="#">${r[0]}</a></td><td>${r[1]}</td><td>${r[2]}</td>` +
+                          `<td class="num">${r[4]}</td><td><span class="pill">${r[9]}</span></td><td style="text-align:right">${acts}</td></tr>`);
+
+  // The shadow on the pinned column means "there is still something behind me", so it has to go
+  // when you reach the end -- otherwise it is decoration that lies.
+  const shadow = (el) => {
+    const f = () => el.classList.toggle("more-right",
+      Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 1);
+    el.addEventListener("scroll", f); f();
+  };
+  ["s-a", "s-c"].forEach((id) => shadow(document.getElementById(id)));
+
+  // Batch bar
+  const bar = document.getElementById("batch"), n = document.getElementById("batch-n");
+  const sync = () => {
+    const c = document.querySelectorAll("#rows-c .pick:checked").length;
+    bar.hidden = c === 0; n.textContent = c + (c === 1 ? " distribution selected" : " distributions selected");
+  };
+  document.getElementById("s-c").addEventListener("change", sync);
+  document.getElementById("all").addEventListener("change", (e) => {
+    document.querySelectorAll("#rows-c .pick").forEach((b) => b.checked = e.target.checked); sync();
+  });
+  document.getElementById("batch-clear").addEventListener("click", () => {
+    document.querySelectorAll("#rows-c .pick, #all").forEach((b) => b.checked = false); sync();
+  });
+</script>
+</body>
+</html>

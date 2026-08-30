@@ -58,19 +58,44 @@ module EssentialsUiHelper
     ].compact.join(" ")
   end
 
-  # A visible row action sitting beside a kebab. Icon-only at `size-7`, so it is the same 28px as
-  # the trigger next to it -- a labelled `sm` ghost button is 30px, and that 2px step was visible on
-  # /vendors and /requests where the two sat side by side. The label is the accessible name and the
-  # tooltip, so nothing is lost to a sighted user hovering or a screen reader reading.
+  # An action in a table row, icon-only at `size-7`.
   #
-  # Uniform icon buttons in this column is also what Carbon and Salesforce ship. See design.md.
-  def essentials_row_icon_link(label, path, icon:)
-    link_to path, title: label, "aria-label": label,
-      class: "inline-flex size-7 items-center justify-center rounded-lg text-slate-500 " \
-             "transition-colors hover:bg-slate-100 hover:text-slate-900 " \
-             "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" do
+  # 28px, which is the kebab trigger's height, so a column mixing the two does not step by 2px --
+  # that was visible on /vendors and /requests. Uniform icon buttons in this column is what Carbon
+  # and Salesforce ship.
+  #
+  # **Icon-only is what makes a frozen actions column affordable.** The column is pinned to the
+  # right edge so it can be reached without scrolling, which means it occupies its width
+  # permanently. Measured at 1024: a labelled pair ran 168-273px and the same pair as icons is a
+  # uniform **94px** -- narrower than three of the five kebab columns, and unlike collapsing into a
+  # menu it costs no extra click.
+  #
+  # **`data-tooltip`, never `title`.** A `title` is browser chrome: unstyleable, silent on keyboard
+  # focus, and failing WCAG 1.4.13 three ways. `tooltip_controller` shows the same string on hover
+  # *and* focus, dismissible with Escape and hoverable. `aria-label` remains the accessible name and
+  # the bubble is `aria-hidden`, so the action is announced once rather than twice.
+  ROW_ICON_CLASSES = "inline-flex size-7 items-center justify-center rounded-lg transition-colors " \
+                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+  ROW_ICON_TONES = {
+    ghost: "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
+    danger: "text-slate-600 hover:bg-rose-50 hover:text-rose-700"
+  }.freeze
+
+  def essentials_row_icon_classes(tone: :ghost)
+    "#{ROW_ICON_CLASSES} #{ROW_ICON_TONES.fetch(tone.to_sym)}"
+  end
+
+  def essentials_row_icon_link(label, path, icon:, tone: :ghost, **html_attrs)
+    link_to path, "aria-label": label, data: {tooltip: label}.merge(html_attrs.delete(:data) || {}),
+      class: essentials_row_icon_classes(tone: tone), **html_attrs do
       tag.i(nil, class: icon, aria: {hidden: true})
     end
+  end
+
+  # The same control for an action that is not a GET.
+  def essentials_row_icon_action(label, path, method:, icon:, tone: :ghost, confirm: nil)
+    essentials_action_button(label, path, method: method, icon: icon, confirm: confirm,
+      icon_only: true, variant: ((tone.to_sym == :danger) ? :ghost_danger : :ghost))
   end
 
   # One segment of a segmented toggle -- the calendar's range and layout switchers. Its state is
@@ -200,8 +225,17 @@ module EssentialsUiHelper
 
   # A real button that submits or mutates. `method:` routes it through button_to so the
   # verb, CSRF token and disable_with guard are all handled.
-  def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil, confirm: nil, **html_attrs)
-    classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
+  # `icon_only: true` renders the same control as `essentials_row_icon_link` -- 28px, the label as
+  # `aria-label` and `data-tooltip` rather than as text. It is an option here rather than a second
+  # helper because everything below this line (the `turbo: false`, the confirm wiring, the derived
+  # confirm label and tone) was hard enough to get right once.
+  def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil,
+    confirm: nil, icon_only: false, **html_attrs)
+    classes = if icon_only
+      essentials_row_icon_classes(tone: (%i[danger ghost_danger].include?(variant.to_sym) ? :danger : :ghost))
+    else
+      essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
+    end
     # `turbo: false`, so the browser submits the form itself.
     #
     # These buttons sit in table rows, and the tables sit inside a results turbo-frame. Turbo's
@@ -227,9 +261,18 @@ module EssentialsUiHelper
       data[:confirm_tone] ||= "danger" if %i[danger ghost_danger].include?(variant.to_sym)
     end
 
+    if icon_only
+      html_attrs["aria-label"] ||= label
+      data[:tooltip] ||= label
+    end
+
     button_to path, method: method, class: classes, form_class: "inline-block",
       data: data, **html_attrs do
-      safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+      if icon_only
+        tag.i(nil, class: icon, aria: {hidden: true})
+      else
+        safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+      end
     end
   end
 

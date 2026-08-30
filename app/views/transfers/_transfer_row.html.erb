@@ -4,11 +4,10 @@
   <td class="date"><%= transfer_row.created_at.strftime("%F") %></td>
   <td class="notes text-slate-600"><%= transfer_row.comment.presence || "none" %></td>
   <td class="quantity"><%= number_with_delimiter(transfer_row.line_items.total) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", transfer_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_action_button "Delete", transfer_path(transfer_row.id), method: :delete,
-            variant: :ghost_danger, size: :sm, icon: "bi-trash",
+      <%= essentials_row_icon_link "View", transfer_row, icon: "bi-eye" %>
+      <%= essentials_row_icon_action "Delete", transfer_path(transfer_row.id), method: :delete, icon: "bi-trash", tone: :danger,
             confirm: "Are you sure you want to permanently remove this transfer?" %>
     </div>
   </td>

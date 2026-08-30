@@ -58,7 +58,7 @@
               <th scope="col">Last name</th>
               <th scope="col">Date of birth</th>
               <th scope="col">Gender</th>
-              <th scope="col" class="text-right">Actions</th>
+              <th scope="col" class="cell-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -68,12 +68,10 @@
                 <td><%= child.last_name %></td>
                 <td class="date"><%= child.date_of_birth %></td>
                 <td><%= child.gender %></td>
-                <td class="text-right">
+                <td class="cell-actions">
                   <div class="flex justify-end gap-1.5">
-                    <%= essentials_link_button "View", partners_child_path(child),
-                          variant: :ghost, size: :sm, icon: "bi-eye" %>
-                    <%= essentials_link_button "Edit", edit_partners_child_path(child),
-                          variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    <%= essentials_row_icon_link "View", partners_child_path(child), icon: "bi-eye" %>
+                    <%= essentials_row_icon_link "Edit", edit_partners_child_path(child), icon: "bi-pencil" %>
                   </div>
                 </td>
               </tr>
@@ -103,7 +101,7 @@
               <th scope="col">Last name</th>
               <th scope="col">Date of birth</th>
               <th scope="col" class="notes">Comments</th>
-              <th scope="col" class="text-right">Actions</th>
+              <th scope="col" class="cell-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -113,14 +111,11 @@
                 <td><%= member.last_name %></td>
                 <td class="date"><%= member.date_of_birth %></td>
                 <td class="notes"><%= member.comments %></td>
-                <td class="text-right">
+                <td class="cell-actions">
                   <div class="flex justify-end gap-1.5">
-                    <%= essentials_link_button "View", partners_authorized_family_member_path(member),
-                          variant: :ghost, size: :sm, icon: "bi-eye" %>
-                    <%= essentials_link_button "Edit", edit_partners_authorized_family_member_path(member),
-                          variant: :ghost, size: :sm, icon: "bi-pencil" %>
-                    <%= essentials_action_button "Delete", partners_authorized_family_member_path(member),
-                          method: :delete, variant: :ghost_danger, size: :sm, icon: "bi-trash",
+                    <%= essentials_row_icon_link "View", partners_authorized_family_member_path(member), icon: "bi-eye" %>
+                    <%= essentials_row_icon_link "Edit", edit_partners_authorized_family_member_path(member), icon: "bi-pencil" %>
+                    <%= essentials_row_icon_action "Delete", partners_authorized_family_member_path(member), method: :delete, icon: "bi-trash", tone: :danger,
                            confirm: "Are you sure?" %>
                   </div>
                 </td>

@@ -333,10 +333,65 @@ the shape the rule says to open up — and it is correctly collapsed. The audit 
 `case` in the row partial is the answer.
 
 <a id="row-action-heights"></a>
-**Every control in an actions column is the same height.** A visible action beside a kebab is
-**icon-only at `size-7`**, named by `aria-label` and `title`. A labelled `sm` ghost button is 30px
-and the trigger is 28, and the 2px step was visible on `/vendors` and `/requests` where the two sat
-side by side. Uniform 28px icon buttons is also what Carbon and Salesforce ship for this column.
+**Every visible control in an actions column is an icon at `size-7`.** `essentials_row_icon_link`
+and `essentials_row_icon_action`, or `icon_only: true`. 28px is the kebab trigger's height, so a
+column mixing the two does not step by 2px — that was visible on `/vendors` and `/requests`. Uniform
+28px icon buttons is what Carbon and Salesforce ship for this column.
+
+**Icon-only is what makes the frozen column affordable.** A pinned column occupies its width
+permanently, so the labels had to go somewhere. Measured at 1024, a labelled pair ran **168–273px**
+and the same pair as icons is a uniform **94px** — narrower than three of the five kebab columns.
+The alternative, collapsing everything into a menu, would have hidden a one-click action behind two
+clicks on every row forever; [the collapse rule](#collapse-by-table) is unchanged and still decides
+menu-or-not on its own terms.
+
+<a id="tooltips"></a>
+**An icon-only control is named by `aria-label` and `data-tooltip`, never `title`.** The `title`
+attribute is browser chrome: unstyleable, different on every OS, silent on keyboard focus, gone on a
+timer, and neither hoverable nor dismissible — three failures of WCAG 1.4.13. Carbon, Primer, MUI,
+Ant Design, Salesforce and Atlassian all pair an icon-only button with a component tooltip and **not
+one of them uses `title`**.
+
+`tooltip_controller` is mounted on both shells and shows `.tip-bubble` on **hover and focus**,
+dismissible with Escape, hoverable, persistent. Three rules:
+
+- **The bubble is `aria-hidden` and the control keeps its `aria-label`.** They carry the same
+  string; describing the control with the bubble as well would announce the action twice. The same
+  rule, for the same reason, as [the clipped-cell bubble](#clipped-cell-bubble).
+- **`title` is removed, not left alongside** — two tooltips for one control, ours immediately and
+  the browser's a second later on top of it.
+- **It opens below and flips left** when the window would clip it, which the frozen actions column
+  makes routine. On scroll it is re-placed rather than dropped: moving focus to a control below the
+  fold *scrolls*, and hiding then would starve the one case that most needs a name.
+
+<a id="a-fixed-panel-is-portalled"></a>
+**An open `fixed` popover panel is moved to `<body>`, and put back when it closes.**
+`position: fixed` escapes an ancestor's *overflow* — which is what `popover-fixed-value` was added
+for — but **not its stacking context**. The actions column is a `position: sticky` cell now, and
+trapped inside it the panel's `z-30` resolved below the scroll rail's `z-index: 20`: measured in the
+test environment, the rail spanned y=417–441, the *Deactivate* item's centre was y=423, and
+`elementFromPoint` returned `.table-rail-track`. The click never reached the menu.
+
+This is the same move `table_scroll_controller` already makes for the rail itself, and for the same
+reason: **the only reliable escape from an ancestor you do not control is not to be inside it.** A
+comment node holds the panel's place so it returns exactly where it was, and `disconnect` removes a
+still-portalled panel so a Turbo render cannot strand one on the body.
+
+Two consequences worth knowing. The trigger carries **`aria-controls`** and the panel an **`id`** —
+recommended by the ARIA menu-button pattern anyway, and now the only reliable way to pair them.
+And a spec finds the trigger in the row but **the panel on the page**: `open_row_menu` does this
+for you.
+
+**The kebab trigger gets no tooltip.** It is a menu opener rather than an action, `aria-haspopup`
+already identifies it, and "More actions for <this row>" repeated down every row is noise — the menu
+it opens carries the labels.
+
+**Touch has no hover, so below the stacking breakpoint the labels come back as words.** A card has
+room the row never had.
+
+`pw bin/design/tooltip-audit.js` checks all of it — named, tooltipped, no `title`, tooltip agrees
+with the name — and then, once in a real browser, that the bubble appears on keyboard focus, is
+`aria-hidden`, and goes on Escape. **364 row-action controls, 301 icon-only, 0 defects.**
 
 <a id="actions-column-header"></a>
 **The actions column header is `<th scope="col" class="text-right">Actions</th>` — visible.**
@@ -1818,6 +1873,30 @@ its meaning instead of re-deciding alignment cell by cell:
 Every table gets a `<caption>` (visually hidden) saying what it lists. `.table-scroll` is the
 horizontal scroll container — a wide table scrolls, it does not squeeze.
 
+<a id="the-actions-column-is-frozen"></a>
+**The actions column is frozen to the right edge**, as `.pin-col` freezes the first to the left.
+Mark it `.cell-actions` on both the `<th>` and the `<td>` — 43 tables do — and the CSS does the rest.
+
+Reported: *"having the action all the way at the end of a horizontal scroll for a user who is
+processing multiple rows is a very frustrating experience."* Measured on `/distributions`: the
+Actions header started **327px past** the right edge at 1440 and the cell needed **402px** of
+scrolling; at 1024 it was **818px**. And it did not stay scrolled — acting on a row reloads the page
+and a reload puts `scrollLeft` back to **0**, so a page of 15 rows cost **402 × 15 = 6,030px** of
+dragging. Keyboard users never had this problem: one Tab from the row's first link reaches the menu
+and the browser scrolls it into view. It was the pointer that paid. **0px off screen now, at every
+viewport.**
+
+- **Sticky is inert where nothing overflows**, so this costs the eleven tables that fit exactly
+  nothing — including the widest actions columns in the app, whose width is the table stretching its
+  last column rather than the buttons needing the room.
+- **The separator is drawn only while something is hidden behind it**, keyed off
+  `[data-overflow~="end"]`. Same discipline as the edge shadows: always-on is decoration, only-where-
+  hidden is information.
+- **The end-of-scroll shadow stops where the frozen column begins**, from `--pin-right-width`, which
+  `table_scroll_controller` measures. Painting a gradient *over* a frozen column was a WCAG 1.4.3
+  failure the first time it was tried at the start edge.
+- **A card does not scroll sideways**, so `[data-stack]` returns the cell to `position: static`.
+
 ### Forms
 
 `simple_form`, with `:essentials` as the **default wrapper** — a plain `simple_form_for`
@@ -3065,6 +3144,7 @@ Three things about it:
 - **The text is not lost, and that is what makes clipping safe.** CSS clipping leaves the whole
   string in the DOM, so a screen reader reads all of it, and every row carrying one has a **View**
   action to a page that shows it in full.
+<a id="clipped-cell-bubble"></a>
 - **A clipped cell reveals its text on hover and focus**, from `clipped_text_controller`. This is
   the second half of the pattern and the systems ship both: Carbon has a documented tooltip for
   truncated table text, Ant Design pairs `ellipsis` with a Tooltip, AG Grid has `tooltipField`.
@@ -3081,7 +3161,10 @@ Three things about it:
     which is why this is a controller. Touch has no hover; the detail page is the answer there.
 
   **Not a general tooltip component.** It reveals text that is present and clipped. A control that
-  needs a *name* gets a visible label or an `aria-label` — see [Icons](#icons).
+  needs a *name* gets a visible label or an `aria-label`, and where it is icon-only it also gets
+  `data-tooltip` and [`tooltip_controller`](#tooltips) — a separate controller sharing this bubble,
+  because "show me the text I cannot fit" and "tell me what this button does" are different jobs
+  with the same appearance.
 - **Not where the row leads nowhere.** `partners/requests/_history` and the partner dashboard have
   no detail page, so a clipped comment would be unreadable rather than one click away. Those use a
   `<details>` disclosure — bounded when collapsed, full text in place, keyboard reachable. That is

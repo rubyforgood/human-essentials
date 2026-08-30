@@ -12,7 +12,7 @@
           <th scope="col">Name</th>
           <th scope="col">Items</th>
           <th scope="col">Allocations</th>
-          <th scope="col" class="text-right">Actions</th>
+          <th scope="col" class="cell-actions">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -44,18 +44,40 @@
                 </ul>
               <% end %>
             </td>
-            <td class="text-right">
-              <div class="flex justify-end gap-1.5 whitespace-nowrap">
-                <%= essentials_link_button "Modify allocation", allocations_kit_path(kit), variant: :ghost, size: :sm, icon: "bi-sliders" %>
-                <% if kit.active %>
-                  <%= deactivate_kit_button(kit, @inventory) %>
-                <% else %>
-                  <%= essentials_action_button "Reactivate", reactivate_kit_path(kit), method: :put,
-                        variant: :ghost, size: :sm, icon: "bi-arrow-counterclockwise",
-                        class: "reactivate-kit-button",
-                        confirm: confirm_reactivate_msg(kit.name) %>
-                <% end %>
-              </div>
+            <td class="cell-actions">
+              <%#
+                A menu, because *which* actions exist depends on `kit.active` -- Deactivate on some
+                rows and Reactivate on others, with different labels and different widths. That is
+                the varying-set case design.md already says to collapse whatever the count, and this
+                table was the last place in the app still breaking it: measured at 1024 its actions
+                column was **273px**, the widest of any table that scrolls.
+
+                A kit still allocated to a storage location cannot be deactivated. That action is
+                still offered: the server checks and answers with the reason and the next step,
+                which is more than a greyed-out item can carry. The pattern from `/items`.
+              %>
+              <%
+                kit_items = [{label: "Modify allocation", path: allocations_kit_path(kit), icon: "bi-sliders"}]
+                if kit.active
+                  if kit.can_deactivate_or_delete?(@inventory)
+                    kit_items << {label: "Deactivate", path: deactivate_kit_path(kit), method: :put,
+                                  icon: "bi-slash-circle", tone: :danger, class: "deactivate-kit-button",
+                                  confirm: confirm_deactivate_msg(kit.name)}
+                  else
+                    # Offered even though it will fail, and with no `confirm:` -- the server checks
+                    # and answers with the reason and the next step, which is more than a disabled
+                    # item can carry. Exactly what `/items` does in the same situation; kits was
+                    # the last table still greying the action out instead.
+                    kit_items << {label: "Deactivate", path: deactivate_kit_path(kit), method: :put,
+                                  icon: "bi-slash-circle", class: "deactivate-kit-button"}
+                  end
+                else
+                  kit_items << {label: "Reactivate", path: reactivate_kit_path(kit), method: :put,
+                                icon: "bi-arrow-counterclockwise", class: "reactivate-kit-button",
+                                confirm: confirm_reactivate_msg(kit.name)}
+                end
+              %>
+              <%= render "shared/essentials/row_actions", label: kit.name, items: kit_items %>
             </td>
           </tr>
         <% end %>

@@ -14,7 +14,7 @@
             <th scope="col">Primary contact</th>
             <th scope="col">Primary contact email</th>
             <th scope="col" class="date">Review requested</th>
-            <th scope="col" class="text-right">Actions</th>
+            <th scope="col" class="cell-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -24,10 +24,9 @@
               <td><%= partner.profile.primary_contact_name %></td>
               <td><%= partner.profile.primary_contact_email %></td>
               <td class="date"><%= partner.updated_at.strftime("%B %-d %Y") %></td>
-              <td class="text-right">
-                <%= essentials_link_button "Review profile",
-                      partner_path(partner, anchor: "partner-information"),
-                      variant: :ghost, size: :sm, icon: "bi-check2" %>
+              <td class="cell-actions">
+                <%= essentials_row_icon_link "Review profile",
+                      partner_path(partner, anchor: "partner-information"), icon: "bi-check2" %>
               </td>
             </tr>
           <% end %>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming an icon-only row action</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 140px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:visible;margin:14px 0 8px}
+  .scroller{overflow-x:auto;overflow-y:visible;position:relative;border-radius:14px}
+  table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:13.5px}
+  th,td{padding:10px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line);background:#fff}
+  thead th{background:#F8FAFC;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700}
+  tbody tr:last-child td{border-bottom:0}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pin-l{position:sticky;left:0;z-index:2;border-right:1px solid var(--line);font-weight:500}
+  thead .pin-l{z-index:3;background:#F8FAFC}
+  .pin-r{position:sticky;right:0;z-index:2;border-left:1px solid var(--line);text-align:right}
+  thead .pin-r{z-index:3;background:#F8FAFC}
+  .lnk{color:#3730A3;text-decoration:none;font-weight:500}
+  /* the 28px icon control design.md already specifies */
+  .ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;
+    border:0;background:transparent;color:var(--soft);cursor:pointer;font-size:14px;line-height:1;padding:0;
+    text-decoration:none;position:relative}
+  .ico:hover{background:#F1F5F9;color:var(--ink)}
+  .ico:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .ico.danger:hover{background:var(--badsoft);color:var(--bad)}
+  .lab{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:8px;
+    border:0;background:transparent;color:var(--soft);font:500 13px Figtree;cursor:pointer;text-decoration:none}
+  .lab:hover{background:#F1F5F9;color:var(--ink)}
+  .acts{display:inline-flex;gap:6px;justify-content:flex-end}
+  /* the design-system bubble */
+  .tip{position:absolute;z-index:60;background:#0F172A;color:#fff;font:500 12px Figtree;padding:5px 9px;
+    border-radius:7px;white-space:nowrap;box-shadow:0 6px 18px rgb(15 23 42 / .22);pointer-events:auto}
+  .tip::after{content:"";position:absolute;width:8px;height:8px;background:#0F172A;transform:rotate(45deg)}
+  .tip[data-place="bottom"]::after{top:-3px;left:calc(50% - 4px)}
+  .tip[data-place="left"]::after{right:-3px;top:calc(50% - 4px)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{white-space:normal;border-bottom:1px solid var(--line);background:transparent;padding:9px 12px;vertical-align:top}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  .yes{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px}ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .hint{font-size:12.5px;color:var(--soft);margin:6px 0 0}
+  .try{display:inline-block;background:var(--brand50);color:#3730A3;font-weight:600;font-size:12.5px;
+    padding:3px 10px;border-radius:999px;margin:0 0 8px}
+  .stack{display:grid;gap:10px;padding:14px}
+  .stackcard{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+  .stackcard .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .stackcard dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:13px}
+  .stackcard dt{color:var(--soft)}.stackcard dd{margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Naming an icon-only row action</h1>
+<p class="lede">Once an inline pair becomes two 28px icons, the label has to come back somehow. design.md
+already says these are <i>"named by <code>aria-label</code> and <code>title</code>"</i> &mdash; so the
+question is whether <code>title</code> is good enough. It is not, and this is what to use instead.</p>
+
+<h2>Option A &mdash; the native <code>title</code> attribute<span class="tag t-now">what design.md says today</span></h2>
+<p class="note">Costs nothing and is already there. <span class="try">Hover one and wait about a second.</span></p>
+<div class="card"><div style="padding:16px">
+  <span class="acts">
+    <button class="ico" title="View" aria-label="View"><i class="bi bi-eye"></i></button>
+    <button class="ico" title="Print" aria-label="Print"><i class="bi bi-printer"></i></button>
+    <button class="ico danger" title="Delete" aria-label="Delete"><i class="bi bi-trash"></i></button>
+  </span>
+</div></div>
+<div class="verdict bad"><b>It is browser chrome, which is the objection already made about the confirm
+dialog on this project</b> &mdash; it cannot be styled, it looks different on every OS, and it is not part of
+the design system. It also <b>shows nothing on keyboard focus</b> (Tab to one above: nothing appears), waits
+about a second, vanishes on a timer, and cannot be hovered or dismissed with Escape. That is
+<b>three failures of WCAG 1.4.13</b> and no keyboard support at all.</div>
+
+<h2>Option B &mdash; the design system's own bubble, on hover and on focus<span class="tag t-rec">recommended</span></h2>
+<p class="note">The app already builds one of these for clipped table text: <code>.tip-bubble</code>, shown on
+hover <b>and keyboard focus</b>, dismissible with Escape, hoverable, persistent. This uses the same bubble for
+a control's name.
+<span class="try">Hover one &mdash; then press Tab to walk them &mdash; then press Escape.</span></p>
+<div class="card"><div style="padding:16px">
+  <span class="acts" id="demoB">
+    <button class="ico tt" data-tip="View" aria-label="View"><i class="bi bi-eye"></i></button>
+    <button class="ico tt" data-tip="Print" aria-label="Print"><i class="bi bi-printer"></i></button>
+    <button class="ico danger tt" data-tip="Delete" aria-label="Delete"><i class="bi bi-trash"></i></button>
+  </span>
+</div></div>
+<ul class="tight">
+  <li><b>It appears on keyboard focus, not only hover.</b> That is the whole reason it is a controller and not an attribute.</li>
+  <li><b>It is <code>aria-hidden</code>, and the button keeps its <code>aria-label</code>.</b> The bubble shows the same string the screen reader already reads from the name &mdash; describing the button with it as well would announce the action twice. Exactly the rule the clipped-text bubble already follows.</li>
+  <li><b><code>title</code> is removed, not kept alongside.</b> Two tooltips for one control is worse than one, and the native one would sit on top of ours. This is checkable, so the audit checks it.</li>
+  <li><b>WCAG 1.4.13 in full</b> &mdash; Escape dismisses without moving the pointer, you can move onto the bubble, and it does not time out.</li>
+</ul>
+
+<h2>Where the bubble goes next to a pinned column</h2>
+<p class="note">The actions column will be pinned to the right edge, so a bubble opening rightwards would be
+cut off by the window. It opens <b>below</b> by default and <b>flips to the left</b> when there is not room.
+<span class="try">Scroll this table and hover the icons at the right edge.</span></p>
+<div class="card">
+  <div class="scroller">
+    <table>
+      <thead><tr><th class="pin-l">Donation</th><th>Source</th><th>Date</th><th>Site</th>
+        <th class="num">Items</th><th class="num">Value</th><th>Comment</th><th class="pin-r">Actions</th></tr></thead>
+      <tbody id="rowsC"></tbody>
+    </table>
+  </div>
+</div>
+
+<h2>Touch has no hover &mdash; so the labels come back<span class="tag t-rec">part of B</span></h2>
+<p class="note">A tooltip is worth nothing on a phone. Below the stacking breakpoint this app already turns
+every table into cards, and a card has room the row never had &mdash; so the actions get their words back
+rather than staying as unexplained glyphs. The label is in the markup either way; the table width is what
+hides it.</p>
+<div class="card"><div class="stack" style="max-width:420px">
+  <div class="stackcard">
+    <div class="top"><div><a class="lnk" href="#">#4021</a></div></div>
+    <dl><dt>Source</dt><dd>Misc. Donation</dd><dt>Date</dt><dd>2026-08-24</dd>
+      <dt>Items</dt><dd>420</dd><dt>Value</dt><dd>$1,204.00</dd></dl>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <a class="lab" href="#"><i class="bi bi-eye"></i>View</a>
+      <a class="lab" href="#"><i class="bi bi-printer"></i>Print</a>
+    </div>
+  </div>
+</div></div>
+
+<h2>Option C &mdash; both the bubble and <code>title</code><span class="tag t-alt">rejected</span></h2>
+<p class="note"><span class="try">Hover this one and wait.</span> Ours appears immediately; the browser's
+appears a second later, on top of it.</p>
+<div class="card"><div style="padding:16px">
+  <span class="acts">
+    <button class="ico tt" data-tip="View" title="View" aria-label="View"><i class="bi bi-eye"></i></button>
+  </span>
+</div></div>
+<div class="verdict bad">Two names for one control, one of which the design system does not own. Whichever
+tooltip is being built, the <code>title</code> has to come off with it.</div>
+
+<h2>Option D &mdash; the button widens to show its label on hover<span class="tag t-alt">rejected</span></h2>
+<p class="note"><span class="try">Hover it.</span></p>
+<div class="card"><div style="padding:16px">
+  <span class="acts"><button class="ico grow" aria-label="View" style="overflow:hidden;transition:width 120ms">
+    <i class="bi bi-eye"></i><span class="growlab" style="display:none">View</span></button></span>
+</div></div>
+<div class="verdict bad"><b>The column changes width under the pointer</b>, and in a pinned column that moves
+the whole table. Column jitter row-to-row is the exact thing the row-actions rule was written to stop, and
+this reintroduces it on hover. It also still gives the keyboard nothing.</div>
+
+<h2>What the industry does</h2>
+<table class="mini">
+  <tr><th>System</th><th>Icon-only button</th><th>Uses native <code>title</code>?</th></tr>
+  <tr class="rec"><td><b>Carbon</b> (IBM)</td><td><code>hasIconOnly</code> renders their own tooltip; docs say an icon-only button <i>must</i> have one</td><td class="no">No</td></tr>
+  <tr class="rec"><td><b>Primer</b> (GitHub)</td><td><code>IconButton</code> renders a <code>Tooltip</code> automatically</td><td class="no">No</td></tr>
+  <tr class="rec"><td><b>Material</b> (MUI)</td><td><code>Tooltip</code> wrapping <code>IconButton</code> is the documented pattern</td><td class="no">No</td></tr>
+  <tr class="rec"><td><b>Ant Design</b></td><td><code>Tooltip</code> around a <code>Button</code> with an icon</td><td class="no">No</td></tr>
+  <tr class="rec"><td><b>Salesforce Lightning</b></td><td><code>button-icon</code> with <code>alternativeText</code> plus a tooltip</td><td class="no">No</td></tr>
+  <tr class="rec"><td><b>Atlassian</b></td><td><code>Tooltip</code> on every icon button</td><td class="no">No</td></tr>
+</table>
+<p class="note"><b>Not one of the six uses <code>title</code></b>, and several warn against it by name. The
+reasons are always the same three: no keyboard focus, no styling, and the 1.4.13 failures.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>Option B.</b> It reuses a bubble this app already has, it is the only option that says
+anything at all to a keyboard user, and it lets the icon-only column be 94px without the name being a
+mystery. <code>title</code> comes off the controls at the same time, and below the stacking breakpoint the
+labels return as words. design.md's line <i>"named by <code>aria-label</code> and <code>title</code>"</i>
+gets rewritten to say the bubble instead.</div>
+
+</div>
+<script>
+  const DATA = [
+    ["#4021","Misc. Donation","2026-08-24","Community Centre",420,"$1,204.00","Left at the loading dock"],
+    ["#4020","Purchased Supplies","2026-08-23","North Annex",180,"$540.00","Two pallets, second next week"],
+    ["#4019","Donation Pickup","2026-08-22","Main Warehouse",96,"$288.00","Call ahead"]
+  ];
+  document.getElementById("rowsC").innerHTML = DATA.map((r) => `<tr>
+    <td class="pin-l"><a class="lnk" href="#">${r[0]}</a></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+    <td class="num">${r[4]}</td><td class="num">${r[5]}</td><td>${r[6]}</td>
+    <td class="pin-r"><span class="acts">
+      <button class="ico tt" data-tip="View" aria-label="View"><i class="bi bi-eye"></i></button>
+      <button class="ico tt" data-tip="Print" aria-label="Print"><i class="bi bi-printer"></i></button>
+    </span></td></tr>`).join("");
+
+  // The bubble. aria-hidden on purpose: the button's aria-label already carries the name, and
+  // describing it with the same words would announce the action twice.
+  let bubble = null, anchor = null;
+  const hide = () => { if (bubble) { bubble.remove(); bubble = null; anchor = null; } };
+  const show = (el) => {
+    if (anchor === el) return;
+    hide();
+    anchor = el;
+    bubble = document.createElement("div");
+    bubble.className = "tip";
+    bubble.setAttribute("aria-hidden", "true");
+    bubble.textContent = el.dataset.tip;
+    document.body.appendChild(bubble);
+    const r = el.getBoundingClientRect(), b = bubble.getBoundingClientRect();
+    // Below by default; flip to the left when the window would clip it.
+    let place = "bottom";
+    let left = r.left + r.width / 2 - b.width / 2, top = r.bottom + 8;
+    if (left + b.width > window.innerWidth - 8) {
+      place = "left"; left = r.left - b.width - 8; top = r.top + r.height / 2 - b.height / 2;
+    }
+    bubble.dataset.place = place;
+    bubble.style.left = Math.max(8, left + window.scrollX) + "px";
+    bubble.style.top = (top + window.scrollY) + "px";
+  };
+  document.addEventListener("mouseover", (e) => { const t = e.target.closest(".tt"); if (t) show(t); });
+  document.addEventListener("mouseout", (e) => {
+    const t = e.target.closest(".tt");
+    if (t && !e.relatedTarget?.closest(".tip")) hide();
+  });
+  document.addEventListener("focusin", (e) => { const t = e.target.closest(".tt"); t ? show(t) : hide(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", hide, true);
+
+  // Option D: the growing button, so its cost is visible rather than described.
+  const grow = document.querySelector(".grow"), glab = document.querySelector(".growlab");
+  grow.addEventListener("mouseenter", () => { glab.style.display = "inline"; grow.style.width = "auto"; grow.style.padding = "0 10px"; grow.style.gap = "6px"; });
+  grow.addEventListener("mouseleave", () => { glab.style.display = "none"; grow.style.width = "28px"; grow.style.padding = "0"; });
+</script>
+</body>
+</html>

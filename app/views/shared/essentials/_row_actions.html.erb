@@ -36,6 +36,14 @@
   <%# `popover-fixed-value`: this menu is inside `.table-scroll`, which clips on both axes, so the
       panel is placed against the viewport instead. Without it the last row's menu is cut off by
       the bottom of the table. %>
+  <%#
+    `aria-controls` on the trigger, and an id on the panel. The ARIA menu-button pattern recommends
+    it, and it is what makes the panel findable now that `popover_controller` moves it to `<body>`
+    while it is open -- the audits and the spec helper had been reaching it through the DOM, which
+    a portal breaks. Random rather than derived from the label, because two rows in one table can
+    share a name and two elements cannot share an id.
+  %>
+  <% panel_id = "row-actions-#{SecureRandom.hex(4)}" %>
   <div class="relative" data-controller="popover" data-popover-fixed-value="true">
     <button type="button"
             <%# `size-7`, not the 38px control height: a row action is `sm` sized everywhere else in the
@@ -45,6 +53,7 @@
             aria-haspopup="true"
             aria-expanded="false"
             aria-label="More actions for <%= label %>"
+            aria-controls="<%= panel_id %>"
             data-popover-target="trigger"
             data-action="click->popover#toggle">
       <i class="bi-three-dots-vertical" aria-hidden="true"></i>
@@ -54,6 +63,7 @@
         arrow-key movement that role promises -- see popover_controller. The overlay audit requires
         a popover panel to declare what it is. %>
     <div class="absolute right-0 z-30 w-56 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
+         id="<%= panel_id %>"
          hidden
          role="menu"
          data-popover-target="panel">

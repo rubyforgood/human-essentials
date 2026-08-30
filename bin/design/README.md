@@ -152,6 +152,22 @@ relationship, and a **plain** reveal, whose content already carries its own box.
 Reported as "the location and size of the shipping cost field does not make any sense". Currently
 **10 reveals, 0 defects**.
 
+`tooltip-audit.js` checks that an **icon-only control says what it is, the app's way**.
+
+```bash
+pw bin/design/tooltip-audit.js
+```
+
+Per control: it has an accessible name, it has `data-tooltip`, it has **no `title`** -- which would
+draw the browser's own tooltip on top of ours a second later -- and the two strings agree. Then,
+once in a real browser: the bubble appears on **keyboard focus**, is `aria-hidden` so the action is
+not announced twice, and Escape dismisses it. None of that is visible to a class-name check, and the
+keyboard case is the one `title` cannot do at all.
+
+The kebab trigger is excluded: `aria-haspopup` already identifies it, and "More actions for <this
+row>" repeated down every row is noise rather than help. Currently **364 row-action controls, 301
+icon-only, 0 defects**.
+
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
 ```bash

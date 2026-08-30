@@ -33,7 +33,10 @@ RSpec.describe "Donations", type: :request do
         it "shows a print button" do
           page = Nokogiri::HTML(subject.body)
           pdf = page.at_css("a[href*='print.pdf']")
-          expect(pdf.text).to include("Print")
+          # A row action is a 28px icon now, so its name is the `aria-label` rather than a text
+          # node -- design.md, Row actions. That *is* what the control is called; it is what a
+          # screen reader announces and what the tooltip shows.
+          expect(pdf["aria-label"]).to include("Print")
         end
 
         context "when given a product drive" do

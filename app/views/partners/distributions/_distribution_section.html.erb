@@ -13,7 +13,7 @@
             <th scope="col">ID</th>
             <th scope="col" class="quantity">Total items</th>
             <th scope="col"><%= item_header %></th>
-            <th scope="col" class="text-right">Actions</th>
+            <th scope="col" class="cell-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -31,8 +31,8 @@
                   <% end %>
                 </div>
               </td>
-              <td class="text-right">
-                <%= essentials_link_button "Print", print_partners_distribution_path(dist, format: :pdf), variant: :ghost, size: :sm, icon: "bi-printer" %>
+              <td class="cell-actions">
+                <%= essentials_row_icon_link "Print", print_partners_distribution_path(dist, format: :pdf), icon: "bi-printer" %>
               </td>
             </tr>
           <% end %>

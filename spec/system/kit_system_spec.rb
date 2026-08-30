@@ -88,7 +88,9 @@ RSpec.describe "Kit management", type: :system do
   it 'can allocate and deallocate quantity per storage location from kit index' do
     visit kits_path
 
-    click_on 'Modify allocation'
+    # Behind the row menu now: which actions a kit row offers depends on `kit.active`,
+    # which is the varying-set case design.md says to collapse. See row_actions.rb.
+    click_row_action 'Modify allocation'
 
     inventory = View::Inventory.new(organization.id)
     original_kit_count = inventory.quantity_for(item_id: existing_kit.id, storage_location: storage_location.id)
@@ -149,7 +151,7 @@ RSpec.describe "Kit management", type: :system do
     it 'will not change quantity amounts when allocating' do
       visit kits_path
 
-      click_on 'Modify allocation'
+      click_row_action 'Modify allocation'
 
       inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.id, storage_location: storage_location.id)
@@ -189,7 +191,7 @@ RSpec.describe "Kit management", type: :system do
     it 'will not change quantity amounts when deallocating' do
       visit kits_path
 
-      click_on 'Modify allocation'
+      click_row_action 'Modify allocation'
 
       inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.id, storage_location: storage_location.id)

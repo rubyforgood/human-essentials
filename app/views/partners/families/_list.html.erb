@@ -12,7 +12,7 @@
           <th scope="col"><%= sortable "guardian_first_name", "Guardian first name" %></th>
           <th scope="col"><%= sortable "case_manager", "Case manager" %></th>
           <th scope="col" class="notes">Comments</th>
-          <th scope="col" class="text-right">Actions</th>
+          <th scope="col" class="cell-actions">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -22,10 +22,10 @@
             <td><%= family.guardian_first_name %></td>
             <td><%= family.case_manager %></td>
             <td class="notes text-slate-600"><%= family.comments %></td>
-            <td class="text-right">
+            <td class="cell-actions">
               <div class="flex justify-end gap-1.5">
-                <%= essentials_link_button "View", family, variant: :ghost, size: :sm, icon: "bi-eye" %>
-                <%= essentials_link_button "Edit", edit_partners_family_path(family), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                <%= essentials_row_icon_link "View", family, icon: "bi-eye" %>
+                <%= essentials_row_icon_link "Edit", edit_partners_family_path(family), icon: "bi-pencil" %>
               </div>
             </td>
           </tr>

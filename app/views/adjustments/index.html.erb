@@ -38,7 +38,7 @@
                 <th scope="col">Storage location</th>
                 <th scope="col" class="notes">Comment</th>
                 <th scope="col">Summary</th>
-                <th scope="col" class="text-right">Actions</th>
+                <th scope="col" class="cell-actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -48,8 +48,8 @@
                   <td class="font-medium text-slate-900"><%= adjustment.storage_location.name %></td>
                   <td class="notes text-slate-600"><%= adjustment.comment %></td>
                   <td><%= pluralize(adjustment.line_items.size, "change") %></td>
-                  <td class="text-right">
-                    <%= essentials_link_button "View", adjustment, variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  <td class="cell-actions">
+                    <%= essentials_row_icon_link "View", adjustment, icon: "bi-eye" %>
                   </td>
                 </tr>
               <% end %>

@@ -15,7 +15,7 @@
   <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
     <td class="notes"><%= item_row.request_units.pluck(:name).join(", ") %></td>
   <% end %>
-  <td class="text-right">
+  <td class="cell-actions">
     <%
       row_items =
         if !item_row.active?

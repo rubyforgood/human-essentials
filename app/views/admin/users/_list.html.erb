@@ -5,7 +5,7 @@
         <th>Roles</th>
         <th>Name</th>
         <th>Email</th>
-        <th scope="col" class="text-right">Actions</th>
+        <th scope="col" class="cell-actions">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -16,14 +16,13 @@
           </td>
           <td><%= user.display_name %></td>
           <td><%= user.email %></td>
-          <td class="text-right">
+          <td class="cell-actions">
             <div class="flex justify-end gap-1.5">
               <% if user.invitation_sent_at.present? %>
-                <%= essentials_action_button "Re-send invite", admin_user_resend_invitation_path(user), method: :post,
-                      variant: :ghost, size: :sm, icon: "bi-envelope",
+                <%= essentials_row_icon_action "Re-send invite", admin_user_resend_invitation_path(user), method: :post, icon: "bi-envelope",
                       confirm: "Re-send an invitation to #{user.preferred_name}?" %>
               <% end %>
-              <%= essentials_link_button "Edit", edit_admin_user_path(user), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+              <%= essentials_row_icon_link "Edit", edit_admin_user_path(user), icon: "bi-pencil" %>
             </div>
           </td>
         </tr>

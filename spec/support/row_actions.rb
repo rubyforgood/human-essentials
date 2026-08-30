@@ -16,9 +16,13 @@ module RowActions
   # Open the menu and return the panel, for asserting on what is in it.
   #
   # Works whether or not the caller has already scoped to a row with `within`: several specs do,
-  # and hunting for a `tbody tr` inside a `tr` finds nothing. The panel is `position: fixed` so it
-  # can escape `.table-scroll`, but it is still a descendant of the row in the DOM, so a scoped
-  # `find` still reaches it.
+  # and hunting for a `tbody tr` inside a `tr` finds nothing.
+  #
+  # **The trigger is found in the row; the panel is found on the page.** `popover_controller` moves
+  # a `fixed` panel to `<body>` while it is open, because `position: fixed` escapes an ancestor's
+  # overflow but not its stacking context -- and the actions column is now a `position: sticky`
+  # cell, which trapped the open menu underneath the scroll rail. Only one panel is ever visible,
+  # so `visible: true` identifies it without ambiguity.
   def open_row_menu(row: nil)
     scope =
       if row
@@ -30,7 +34,7 @@ module RowActions
       end
 
     scope.find("[data-popover-target=trigger]").click
-    scope.find("[data-popover-target=panel]", visible: true)
+    page.document.find("[data-popover-target=panel]", visible: true)
   end
 end
 

@@ -14,7 +14,7 @@
           <th scope="col"><%= sortable "active", "Active" %></th>
           <th scope="col">Guardian</th>
           <th scope="col" class="notes">Comments</th>
-          <th scope="col" class="text-right">Actions</th>
+          <th scope="col" class="cell-actions">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -32,10 +32,10 @@
             </td>
             <td><%= child.family.guardian_display_name %></td>
             <td class="notes text-slate-600"><%= child.comments %></td>
-            <td class="text-right">
+            <td class="cell-actions">
               <div class="flex justify-end gap-1.5">
-                <%= essentials_link_button "View", child, variant: :ghost, size: :sm, icon: "bi-eye" %>
-                <%= essentials_link_button "Edit", edit_partners_child_path(child), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                <%= essentials_row_icon_link "View", child, icon: "bi-eye" %>
+                <%= essentials_row_icon_link "Edit", edit_partners_child_path(child), icon: "bi-pencil" %>
               </div>
             </td>
           </tr>

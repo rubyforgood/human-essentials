@@ -144,7 +144,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content("Organizations")
 
-      within(find("td", text: org_params[:name]).sibling(".text-right")) do
+      within(find("td", text: org_params[:name]).sibling(".cell-actions")) do
         first(:link, "View").click
       end
       expect(page).to have_content(org_params[:name])
@@ -161,7 +161,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within(find("td", text: bar_org.name).sibling(".text-right")) do
+      within(find("td", text: bar_org.name).sibling(".cell-actions")) do
         first(:link, "View").click
       end
 
@@ -189,7 +189,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       def post_form_submit
         expect(page.find("[data-flash]")).to have_content "Organization added!"
-        within(find("td", text: "aaa").sibling(".text-right")) do
+        within(find("td", text: "aaa").sibling(".cell-actions")) do
           first(:link, "View").click
         end
       end

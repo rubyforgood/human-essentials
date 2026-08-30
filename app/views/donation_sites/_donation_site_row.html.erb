@@ -7,7 +7,7 @@
   <td><%= donation_site_row.contact_name %></td>
   <td><%= donation_site_row.email %></td>
   <td><%= donation_site_row.phone %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <%# Three inline, and the third changed between Deactivate and Restore depending on the row --
         both reasons to collapse. No visible View: the name in the first cell links to it. %>
     <%= render "shared/essentials/row_actions", label: donation_site_row.name, items: [

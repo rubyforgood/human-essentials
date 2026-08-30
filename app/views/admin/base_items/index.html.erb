@@ -10,10 +10,13 @@
             <table class="data-table">
               <thead>
               <tr>
+                <%# "Child Items" was here twice, against a row of three cells -- so the header had
+                    four columns and the body three, and the actions landed under the *second*
+                    Child Items rather than under Actions. Found while marking the actions column
+                    for pinning, which is what a column-count mismatch shows up as. %>
                 <th>Name</th>
-                <th class="text-right">Child Items</th>
-                <th>Child Items</th>
-                <th scope="col" class="text-right">Actions</th>
+                <th scope="col" class="numeric">Child Items</th>
+                <th scope="col" class="cell-actions">Actions</th>
               </tr>
               </thead>
               <tbody>

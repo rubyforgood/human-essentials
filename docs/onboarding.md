@@ -621,6 +621,30 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### A row's actions no longer run away to the right
+
+**On a wide table you had to scroll sideways to reach a row's actions, and after you used one the
+page reloaded and threw you back to the left.** On Distributions at a common laptop width that was
+402px of dragging per action -- about 6,000px to work through one page of fifteen rows. At 1024 it
+was 818px each time.
+
+**The Actions column now stays against the right edge**, the same way the first column already stays
+against the left. Whatever you scroll to, the actions are where you left them. A thin line and a soft
+shadow appear on its left while there are still columns hidden behind it, and go when there are not.
+On a table that already fits, nothing has changed at all.
+
+To make room for a column that is always on screen, **the buttons in it are now icons**. Hover one --
+or reach it with the Tab key -- and it tells you what it is. It says the same word it always did; a
+labelled pair took 168-273px and the icons take 94px.
+
+If you are on a phone or a narrow window, the table becomes a list of cards as before, and there
+**the actions get their words back**, because a tooltip is no use without a mouse.
+
+One more change on **Kits**: its two buttons are now behind the same ⋮ menu the other tables use,
+because which ones you get depends on whether the kit is active. And if a kit cannot be deactivated
+because a storage location still holds it, the action is still offered -- clicking it now tells you
+why and what to do about it, instead of being greyed out with no explanation.
+
 ### Fields that only apply to one answer now sit under that answer
 
 **On New distribution, Shipping cost used to sit off to the right of the delivery method options**,

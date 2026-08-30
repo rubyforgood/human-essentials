@@ -45,9 +45,14 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("click", this.onDocumentClick)
     document.removeEventListener("keydown", this.onKeydown)
-    this.panelTarget.removeEventListener("keydown", this.onPanelKeydown)
+    this.panel.removeEventListener("keydown", this.onPanelKeydown)
     window.removeEventListener("resize", this.onReposition)
     window.removeEventListener("scroll", this.onReposition, true)
+    // Turbo can replace the row while the menu is open; the panel would otherwise be left on the
+    // body with nothing pointing at it.
+    if (this.panelHome) this.portalled.remove()
+    this.panelHome = null
+    this.portalled = null
   }
 
   // Arrow keys, Home and End move between items -- but only in a panel that calls itself a
@@ -58,7 +63,7 @@ export default class extends Controller {
   // Gated on the role, because the date range panel holds date inputs and an arrow key there
   // belongs to the input -- hijacking it would break adjusting a date with the keyboard.
   moveWithArrows(event) {
-    if (this.panelTarget.getAttribute("role") !== "menu") return
+    if (this.panel.getAttribute("role") !== "menu") return
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
 
     const items = this.focusableItems()
@@ -77,13 +82,22 @@ export default class extends Controller {
   }
 
   focusableItems() {
-    return [...this.panelTarget.querySelectorAll(
+    return [...this.panel.querySelectorAll(
       "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])"
     )].filter((el) => el.offsetParent !== null)
   }
 
+  /*
+   * A Stimulus target is looked up inside the controller's own element, so once the panel is moved
+   * to `<body>` the lookup finds nothing -- "Missing target element" on the very next click. The
+   * portalled node is held directly, and this is what everything else uses.
+   */
+  get panel() {
+    return this.portalled || this.panelTarget
+  }
+
   get isOpen() {
-    return !this.panelTarget.hidden
+    return !this.panel.hidden
   }
 
   toggle(event) {
@@ -92,11 +106,12 @@ export default class extends Controller {
   }
 
   open() {
-    this.panelTarget.hidden = false
+    this.portalOut()
+    this.panel.hidden = false
     this.triggerTarget.setAttribute("aria-expanded", "true")
     this.position()
 
-    const first = this.panelTarget.querySelector(
+    const first = this.panel.querySelector(
       "input:not([type=hidden]), select, textarea, button, [href], [tabindex]:not([tabindex='-1'])"
     )
     first?.focus()
@@ -105,13 +120,51 @@ export default class extends Controller {
   close({ refocus = true } = {}) {
     if (!this.isOpen) return
 
-    this.panelTarget.hidden = true
+    this.panel.hidden = true
     this.triggerTarget.setAttribute("aria-expanded", "false")
     if (refocus) this.triggerTarget.focus()
+    this.portalBack()
+  }
+
+  /*
+   * A `fixed` panel is moved to `<body>` while it is open, and put back when it closes.
+   *
+   * `position: fixed` escapes an ancestor's *overflow*, which is what `fixedValue` was added for --
+   * but it does not escape an ancestor's **stacking context**, and the row action menu now sits
+   * inside a `.cell-actions` cell that is `position: sticky` so the actions column can be frozen to
+   * the right edge. Trapped there, the panel's `z-30` was resolved below the scroll rail's
+   * `z-index: 20`: measured in the test environment, the rail spanned y=417-441, the *Deactivate*
+   * item's centre was y=423, and `elementFromPoint` returned `.table-rail-track`. Cuprite reported
+   * it honestly as "another element ... at this position" and the click never reached the menu.
+   *
+   * This is the same move `table_scroll_controller` already makes for the rail itself, for the
+   * same class of reason: the only reliable escape from an ancestor you do not control is not to
+   * be inside it. A placeholder holds the panel's place so it returns to exactly where it was,
+   * which matters because Turbo may replace the row while the menu is shut.
+   */
+  portalOut() {
+    if (!this.fixedValue || this.panelHome) return
+
+    const panel = this.panelTarget
+    this.panelHome = document.createComment("popover panel")
+    panel.replaceWith(this.panelHome)
+    document.body.appendChild(panel)
+    this.portalled = panel
+  }
+
+  portalBack() {
+    if (!this.panelHome) return
+
+    this.panelHome.replaceWith(this.portalled)
+    this.panelHome = null
+    this.portalled = null
   }
 
   closeOnOutsideClick(event) {
-    if (!this.isOpen || this.element.contains(event.target)) return
+    // `this.element` no longer contains the panel while it is portalled, so it is checked too --
+    // otherwise the first click *inside* an open menu reads as a click outside it.
+    if (!this.isOpen || this.element.contains(event.target) ||
+        this.panel.contains(event.target)) return
 
     // No refocus: the click has already put focus where the user meant it to go, and pulling it
     // back to the trigger would undo that.
@@ -129,7 +182,7 @@ export default class extends Controller {
   // viewport and there is more room above. Horizontally it is left-aligned with the trigger and
   // pulled back only as far as it needs to stay on screen.
   position() {
-    const panel = this.panelTarget
+    const panel = this.panel
     panel.style.top = panel.style.bottom = panel.style.left = panel.style.right = ""
     panel.style.maxHeight = panel.style.overflowY = ""
 

@@ -99,7 +99,11 @@ RSpec.describe "Purchases", type: :request do
           end
 
           it "puts the right number of purchases on the page" do
-            expect(subject.body).to include(" View").twice
+            # Counting the View actions, whose name moved to `aria-label` when row actions became
+            # icons. Counted as parsed attributes rather than as a substring of the raw body,
+            # which is what made this fragile in the first place.
+            views = Nokogiri::HTML(subject.body).css("tbody [aria-label='View']")
+            expect(views.count).to eq(2)
           end
         end
       end
@@ -520,6 +524,8 @@ RSpec.describe "Purchases", type: :request do
 
         print_link = page.at_css("a[href*='#{print_purchase_path(id: purchase.id)}']")
         expect(print_link).to be_present
+        # A *page header* button, not a row action -- it keeps its visible label. Icon-only applies
+        # to the actions column in a table, where a frozen column has to pay for its width.
         expect(print_link.text).to include("Print")
 
         # `purchase_id`, which distributions#new now understands -- the button could not exist
