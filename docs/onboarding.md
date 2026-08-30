@@ -652,6 +652,17 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### Six tables now reach the edge of their card
+
+**On Partner announcements the table was inset about 20px from the card on both sides**, which you
+could see whenever a row highlighted on hover and in the rule under the column headings, which stopped
+short of the edge. The same was true on five admin screens: Announcements, Base items, Organizations,
+Partners and Users. All six now meet the card's edges like every other table, sit in a scrollable
+region, and say what they list for a screen reader.
+
+**New announcement** has also moved out of the table and up into the page header on both announcement
+screens, which is where a page's main action goes everywhere else.
+
 ### Tabs stay put, and the sidebar stops collapsing
 
 **Switching between Partners and Groups used to shift the whole card up or down by about 50px**,

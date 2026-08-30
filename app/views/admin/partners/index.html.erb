@@ -5,9 +5,12 @@
         subtitle: "Partner agencies across all organizations." %>
 
   <%= render "shared/essentials/card", padded: false do %>
-          <div class="px-5 py-4">
+          <%# Edge to edge, in a scroll region: this was a `px-5 py-4` wrapper
+              inside a `padded: false` card, which inset the table 21px from it. %>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <% if @partners.any? %>
               <table class="data-table">
+  <caption>Partner agencies across all organizations</caption>
                 <thead>
                 <tr>
                   <th>Name</th>

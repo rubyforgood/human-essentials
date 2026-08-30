@@ -337,6 +337,17 @@ findings that belong to this migration rather than to the app's own history:
 measurement. The controller still runs, for the roles and the scroll region's tab stop, but it no
 longer decides the layout. Anything selecting on `[data-stack]` will match nothing.
 
+**A `<div class="px-5 py-4">` around a table inside a `padded: false` card** was a leftover from the
+AdminLTE box, and inset the table 21px from the card on both sides. Six index tables had one; they are
+`.table-scroll` regions now. `w-50` went with them -- Bootstrap's 50% width utility, defined nowhere
+in Tailwind v4.
+
+Five tables are deliberately *not* edge-to-edge scroll regions, so the next audit does not chase
+them: three partner-portal **form** tables (`requests/new`, `individuals_requests/new`,
+`family_requests/new` -- inside a `<form>`, with controls, and they do not overflow), the kit
+allocation **change-summary panel** (inside its own bordered box), and the partner **service area**
+table (two columns in a padded card that also holds a zipcodes section).
+
 **`filter_checkbox` is the grid cell now**, so the four views that wrapped it in
 `<div class="pb-2">` to nudge it into line no longer do. If you add one, do not wrap it.
 
