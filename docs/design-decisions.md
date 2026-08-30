@@ -7288,3 +7288,52 @@ else's product. Both are measured claims about our own code, which is exactly wh
 belongs. Rather than tune the detector until it stopped complaining, it prints the limitation in its
 own output and the baseline records why.
 
+## 2026-08-30 — A syntax error that four checks and 3,159 specs did not catch
+
+Asked to run the full suite. It was green, and running the rest of the checks alongside it found a
+defect I had shipped.
+
+**The bug.** The icon-only sweep rewrote 55 row actions with a Python regex whose replacement
+interpolated an optional match group. Where the group did not match, Python's `None` was
+interpolated *as the string "None"*, leaving
+
+    essentials_row_icon_action "Distribution complete", ..., icon: "bi-check-circle"None
+
+in `distributions/_pickup_day_row`. The template does not compile. `/distributions/pickup_day` raises
+for any day that has a pick-up on it.
+
+**Why nothing caught it, which is the part worth keeping.**
+
+- **`erb_lint` passed.** It checks that ERB *tags* are well formed. It does not compile the Ruby
+  inside them, and the tag here is perfectly balanced.
+- **`rubocop` passed.** It does not read templates.
+- **All 3,159 specs passed**, including the request specs for that action.
+- **The page returned 200.** Rails skips a partial rendered through `collection:` when the
+  collection is empty, and never compiles it. Every spec and every dev page load happened to be
+  looking at a day with no pick-ups.
+- **Brakeman found it**, as a parse error printed under `== Errors ==`, a heading between the
+  warning count and the warnings, which I had been skipping past for weeks.
+
+**Four checks, and the one that worked was the one I was not reading.** The gap is specific and
+closable: nothing compiled the templates. `bin/design/template-compile-audit.rb` and
+`spec/views/every_template_compiles_spec.rb` now do — 431 templates, about a second, verified to fail
+on the exact character when it is put back.
+
+**Two smaller lessons.**
+
+A compiled template is a *method body*. My first checker compiled the source at the top level and
+reported four healthy partials for "Invalid yield", because `<%= yield %>` is legal in a method and
+not outside one. A checker that is wrong about four files is worse than none, and it took a second
+look to notice the failures were all the same shape.
+
+And **a green suite proves less on a page nothing renders**. The request specs for `#pickup_day`
+exercise the action, the response and the status. None creates a pick-up for the day being asked
+for, so none reaches the row partial. Coverage of the *action* is not coverage of the *view*.
+
+**Also worth recording: I contaminated my own first full run.** I started the system suite in the
+background and then ran the non-system suite against the same test database. `DatabaseCleaner`
+truncated tables underneath the running suite and Postgres deadlocked, and the system run reported a
+failure with `<<ERROR>>` stale nodes — the same symptom I had twice attributed to flakiness earlier
+in the week. Run serially, both suites are green. **Some of what I called a flake may have been
+this**, and the honest position is that I do not know which.
+

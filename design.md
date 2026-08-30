@@ -3871,6 +3871,14 @@ label, the spacing and the error message.
   worked, because the HTML parser splits malformed markup into two forms and re-associates the
   button — which is exactly why nobody noticed.
 
+**And compile the templates.** `bin/rails runner bin/design/template-compile-audit.rb`, or the spec
+that runs it. `erb_lint` checks that ERB *tags* are well formed and does not compile the Ruby inside
+them; `rubocop` does not read templates at all. A stray character in a `<%= %>` therefore passes both
+— and passes the suite too if the partial is rendered through `collection:` and the collection is
+empty in every spec, because Rails never compiles a partial it does not render. That is exactly how
+`icon: "bi-check-circle"None` sat in `distributions/_pickup_day_row` with a green build and a page
+that returned 200 until a pick-up existed.
+
 `ruby bin/design/page-audit.rb` checks the mechanical part and exits non-zero on a defect.
 It cannot check the two assertions above.
 
