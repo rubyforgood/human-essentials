@@ -1180,6 +1180,25 @@ matching neither branch is the correct initial state.
 `bin/design/flash-of-hidden-audit.js` checks for it: everything visible at `commit` that is gone
 once the page settles.
 
+<a id="reserve-the-space-for-what-arrives-late"></a>
+**And reserve the space for anything that arrives late.** The flash rule is about content that
+should never have been drawn; this is about content that is not drawn *yet*. A chart container was
+an empty div until Highcharts inflated it on `connect()`, so the two buttons under it and the whole
+table card were thrown **850px** down the page a moment after the reader could see them. Measured
+with Chrome's own `layout-shift` entries: **CLS 0.352** on all three historical trend pages, against
+thresholds of **0.1 good and 0.25 poor**. Give the box its height from the same number the thing
+will draw at — the same reason an `<img>` carries width and height.
+
+`pw bin/design/layout-shift-audit.js` scores every screen the way Chrome does, and names what moved.
+**147 screens, worst 0.000 above the noise floor** at desktop widths. It takes `--width=` because a
+shift is a property of the layout and the layout changes at the breakpoints.
+
+**A `<select>` is not automatically excused.** The flash audit used to skip every one, on the
+grounds that select2 replaces a select with its own container — a swap rather than a hide. That
+excused four genuinely painted-then-hidden selects on the donation form, worth **100px** of reflow
+on every load, which the layout-shift audit had to find instead. It now recognises the actual swap
+— `select2-hidden-accessible`, a `.select2-container` sibling, or a tag input — rather than the tag.
+
 <a id="conditional-reveal"></a>
 ### Conditional reveal
 

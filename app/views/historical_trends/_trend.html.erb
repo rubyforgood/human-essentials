@@ -22,8 +22,10 @@
 <div class="space-y-6">
   <%= render "shared/essentials/card" do %>
     <%
+      # One number, used twice: the box the server reserves and the height Highcharts draws at.
+      chart_height = 850
       config = {
-        chart: {type: "column", height: 850},
+        chart: {type: "column", height: chart_height},
         title: {text: nil},
         xAxis: {categories: last_12_months, crosshair: true},
         yAxis: {min: 0, title: {text: "Line items"}},
@@ -32,7 +34,7 @@
         series: series
       }.to_json
     %>
-    <%= render partial: "shared/highcharts", locals: {config: config} %>
+    <%= render partial: "shared/highcharts", locals: {config: config, height: chart_height} %>
   <% end %>
 
   <%#

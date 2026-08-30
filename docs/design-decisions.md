@@ -6854,3 +6854,52 @@ reverting `active_on` produced 4 findings, and moving one filter bar back above 
 "the strip moves by 54px across this set". Neither was visible to any existing audit: wayfinding
 asks whether a page can be *left*, not whether arriving moves it.
 
+## 2026-08-30 — Auditing the app for layout shift, and what a browser can see that I cannot
+
+Asked to audit the rest of the app after the tab-strip jump. The reported case was a shift *between*
+two pages, which two measurements find. The general question — what moves *within* a page after the
+reader can already see it — is not something to eyeball 147 screens for, so it is asked of the
+browser: `bin/design/layout-shift-audit.js` reads Chrome's own `layout-shift` performance entries,
+the same ones Cumulative Layout Shift is scored from, at **0.1 good and 0.25 poor**.
+
+**Two findings at desktop width, both fixed.**
+
+**The three historical trend charts, CLS 0.352 — the worst in the app by an order of magnitude.**
+The Highcharts container was an empty div, 0px tall until the chart inflated it to 850px on
+`connect()`. Everything below — two buttons and the whole table card — was thrown down the page a
+moment after it was readable. The height is reserved from the same number the chart draws at, which
+is Chrome's own advice for anything arriving late and the reason an `<img>` carries dimensions.
+
+**The donation form's source fields, 100px.** All four of donation site, product drive, participant
+and manufacturer were rendered, and `utils/donations.js` hid three on load — so the field grid was
+two rows tall and then one. This is the rule already written two days ago (*the server renders the
+correct initial state; JavaScript may reveal, never un-draw*), broken in a file that predates it.
+`nil` matching no source is correct, because with nothing chosen the script hides all four too.
+
+**The interesting part is why the flash audit had not already found the second one.** It excused
+every `<select>`, on the grounds that select2 replaces one with its own container — a swap rather
+than a hide. That exclusion was mine, written a week ago, and it was too broad by exactly the amount
+that hid this: four real painted-then-hidden selects. It now recognises the *actual* swap —
+`select2-hidden-accessible`, a `.select2-container` sibling, or a tag input — and reverting the
+donation form makes it report those four and nothing else. **A blanket exemption for a tag is a
+blind spot with a plausible excuse attached.**
+
+**And a third finding, not fixed, because the fix is a design decision rather than a bug.** At a
+phone width the audit reports **six screens POOR** — `/admin/base_items` at **0.658**,
+`/admin/partners` 0.616, `/admin/users` 0.512, `/admin/organizations` 0.506,
+`/partners/family_requests/new` 0.491, `/broadcast_announcements` 0.290 — and the blame is always
+`tbody`, `tr`, `td`. That is `table_stack_controller` turning tables into cards *after* paint.
+
+Measured across four pages and twelve widths, the container width is a pure function of the
+viewport and identical on every page: it stacks at **≤ 640** (container 590 or less) and does not at
+**≥ 700** (container 650 or more), including the 1024 case whose container dips to 702 because the
+sidebar appears. So the threshold **is** expressible as `@media (max-width: 640px)`, and the reason
+recorded for using JavaScript does not apply to it — that reason was about `@container`, whose
+`contain: layout` would have broken the fixed row-action menus.
+
+It is left alone for now because a complete fix needs more than the media query: the controller also
+copies 299 column headings out of `<thead>` into each cell, and inserting those after paint moves
+things too. Rendering them server-side is the decision to make, and it is worth making deliberately
+rather than in the last hour of an audit. Recorded here so the next person starts from the
+measurement rather than the surprise.
+
