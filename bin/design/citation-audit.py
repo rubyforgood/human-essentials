@@ -18,7 +18,10 @@ claims whose *form* outruns the checking behind them, so they can be softened or
   observational       "X, Y and Z do this", no artefact and no absolute. Honest about being a
                       description.
 
-Run: python3 bin/design/citation-audit.py [--list]
+Run: python3 bin/design/citation-audit.py            the summary and the risky claims
+     python3 bin/design/citation-audit.py --list     every claim, with its kind
+     python3 bin/design/citation-audit.py --check    fail if the unevidenced count has grown
+     python3 bin/design/citation-audit.py --bless    record the current count as the baseline
 """
 import re, sys, os
 from collections import Counter
@@ -36,6 +39,31 @@ ARTEFACT = re.compile(r"`[A-Z][A-Za-z]+`|`slds-[\w-]+`|`govuk-[\w-]+`|`<[A-Z][^>
                       r"`[a-z]+Field`|`\.form-check`|`ellipsis`|\"[A-Z][^\"]{6,60}\"")
 ABSOLUTE_WORD = r"(?:all|none|nobody|not one|every|identically|alike|universal|unanimous|never)"
 NUMERIC = re.compile(r"\b\d+\s*(px|dp|rem|%)\b")
+
+
+def attributes_number(blk, named):
+    """Is a measurement being credited to *their* product rather than measured in ours?
+
+    The first version flagged any block holding both a number and two system names, which caught
+    almost every entry in the log -- because the numbers in this project are overwhelmingly
+    measurements of this app, sitting in the same paragraph as the systems the decision was compared
+    against. "`/purchases` rows were 145-245px" is not a claim about Stripe.
+
+    What matters is a number standing next to a system's name with nothing between them to say the
+    measurement is ours.
+    """
+    flat = " ".join(blk.split())
+    flat = re.sub(r"\"[^\"]{0,120}\"", " ", flat)
+    ours = re.compile(r"measured|our own|ours\b|this app|/[a-z_]+\b|derived", re.I)
+    for system in named:
+        for m in re.finditer(r"\b" + re.escape(system) + r"\b", flat):
+            window = flat[m.end():m.end() + 70]
+            if NUMERIC.search(window) and not ours.search(window):
+                return True
+            back = flat[max(0, m.start() - 70):m.start()]
+            if NUMERIC.search(back) and not ours.search(back):
+                return True
+    return False
 
 def blocks(text):
     out, cur = [], []
@@ -98,7 +126,7 @@ for doc in DOCS:
             "n": len(named),
             "artefact": bool(ARTEFACT.search(blk)),
             "absolute": overreaches(blk, named),
-            "numeric": bool(NUMERIC.search(blk)),
+            "numeric": attributes_number(blk, named),
             "first": blk.strip().split("\n")[0][:76],
             "annotated": annotated,
         })
@@ -123,6 +151,44 @@ print(f"  {len(outstanding)} outstanding:")
 risky = outstanding
 for r in risky:
     print(f"  {r['where']:<32} {r['n']} systems   {r['first']}")
+
+# A baseline, so the count can go down but not up.
+#
+# There is no way to check a citation's *truth* from here -- nothing in this repo can open Carbon or
+# Linear. What can be held is the *form*: the number of claims that assert agreement across four or
+# more systems while naming nothing a reader could look up. `--check` fails when that grows, which
+# is the regression this audit exists to prevent. Lower it when you evidence one.
+BASELINE = os.path.join(ROOT, "bin/design/citation-baseline.json")
+
+if "--check" in sys.argv:
+    import json
+    current = len(outstanding)
+    try:
+        allowed = json.load(open(BASELINE))["outstanding"]
+    except (OSError, KeyError, ValueError):
+        print(f"No baseline at {BASELINE}. Write one with --bless.")
+        sys.exit(1)
+    if current > allowed:
+        print(f"\nFAIL {current} unevidenced claims, baseline {allowed}.")
+        print("Name the component, or say what you observed -- see \"Citing another system\" in design.md.")
+        sys.exit(1)
+    if current < allowed:
+        print(f"\n{current} unevidenced claims, below the baseline of {allowed}. Run --bless to lower it.")
+    else:
+        print(f"\nok  {current} unevidenced claims, at the baseline.")
+    sys.exit(0)
+
+if "--bless" in sys.argv:
+    import json
+    with open(BASELINE, "w") as f:
+        json.dump({"outstanding": len(outstanding),
+                   "note": "Claims asserting agreement across 4+ systems with no artefact named. "
+                           "The two that remain are the proximity test's known limit -- absolutes "
+                           "about this app sitting next to a system's name. See design.md, "
+                           "\"Citing another system\"."}, f, indent=2)
+        f.write("\n")
+    print(f"\nbaseline written: {len(outstanding)}")
+    sys.exit(0)
 
 if "--list" in sys.argv:
     print("\n--- every claim ---")
