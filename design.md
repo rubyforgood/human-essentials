@@ -1694,19 +1694,36 @@ Filters submit with **GET**, so a filtered view stays a shareable, bookmarkable 
 (borderless) bar sits 16px above the table it filters; wrap it in a card only when it is a
 section in its own right.
 
-<a id="a-single-filter-is-shown"></a>
-**Two or more filters collapse behind the button; a single one is shown.** A disclosure in front of
-one control is a click that buys nothing, and on `/vendors` and `/donation_sites` that control is a
-*checkbox* — a button, a chevron and a panel to conceal one tick box. Measured across the eighteen
-filtered pages: **4 have one control**, 6 have two, 3 have three, and 5 have four or more, up to
-**9 on `/donations`**.
+<a id="a-bar-that-fits-on-a-line-is-shown"></a>
+**A bar whose controls fit on one line shows them; only a bar that does not fold.** Two is the
+threshold, because two is what fits: the panel is a four column grid whose cells are 261px at 1440,
+so two plus the gap is about 530px against 1078px of card, and it still fits at the narrowest width
+the table stays a table — 656px of card at a 690px viewport. Three would not.
+
+A disclosure in front of one or two controls is a click that buys nothing. On `/vendors` the single
+control is a **checkbox**, and on `/items` it is one select plus an *include inactive* toggle — which
+is a modifier of the first filter rather than a second one. Reported twice, the second time exactly:
+*"the only filter is NDBN reporting category"*.
+
+Measured across the eighteen filtered pages: **4 have one control**, 6 have two, 3 have three, and 5
+have four or more, up to **9 on `/donations`** — so ten pages show their filters and eight fold them.
 
 This is still one rule, which is what the objection was when the old five-filter threshold went:
-*the bar shows its filters; when there are enough to be worth folding away, it folds them.* Nothing
-is hidden that a reader has to learn to look for. The count is taken from the rendered cells, so a
-page that gains or loses a filter cannot forget to say so, and **no chips** are drawn in the single
-case — a chip repeating a filter you can already see and change is duplication. "Clear all" still
-appears the moment something is applied.
+*the bar shows its filters; when there are more than fit on a line, it folds them.* That objection
+was about a reader learning where things are **hidden**, and a filter that is simply visible teaches
+nothing wrong.
+
+- **The count is taken from the rendered cells**, so a page that gains or loses a filter cannot
+  forget to say so.
+- **The inline controls use the panel's own grid**, so a control is the same width whether the bar
+  folds or not. Wrapping them in one fixed-width box instead stacked two of them vertically, 38px
+  apart — the alignment fault this section exists to fix, reintroduced sideways.
+- **No chips inline** — a chip repeating a filter you can already see and change is duplication. The
+  chips exist to say what is applied while the panel is *shut*. "Clear all" still appears the moment
+  something is applied.
+- **No trailing margin on the row.** Its `mb-3` exists to separate it from the panel, and inline
+  there is no panel: it made the band bottom-heavy, measured at 16px above and 29px below on
+  `/partners`, and was reported as the padding not being equal. Inline the band is **16/16**.
 
 <a id="a-checkbox-sits-on-the-control-line"></a>
 **A filter checkbox sits on the line of the control beside it, not at the top of its cell.** A

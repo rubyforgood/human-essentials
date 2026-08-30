@@ -641,12 +641,12 @@ participant, manufacturer — and then hide the three that do not apply, pulling
 up by about 100px. It now shows only the one that matches the source you picked, from the first
 moment.
 
-### A single filter no longer hides behind a button
+### Filters that fit on a line no longer hide behind a button
 
-**Vendors, Donation sites, Partner agencies and Inventory audit each have exactly one filter**, and
-you used to have to open a *Filters* panel to reach it — on two of those, to reach a single tick box.
-The filter is simply on the page now. Everything with two or more filters keeps the button, and
-Donations still folds its nine away.
+**Ten of the eighteen filtered pages have only one or two filters**, and you used to have to open a
+*Filters* panel to reach them — on Vendors and Donation sites, to reach a single tick box; on Item
+list, to reach one category menu and an *include inactive* toggle. Those filters are simply on the
+page now. Pages with three or more keep the button, and Donations still folds its nine away.
 
 **And on Items & inventory the "Also include inactive items" tick box was sitting about 35px higher
 than the menu next to it**, which made the row look crooked and the space under it look like a

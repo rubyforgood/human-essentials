@@ -77,7 +77,7 @@ RSpec.describe "A set of page tabs", type: :system, js: true do
       visit kits_path
       before_filter = strip_top
 
-      click_on "Filters"
+      # No Filters button here: two controls fit on a line, so this bar shows them. See design.md.
       fill_in "Kit name", with: "Newborn"
 
       expect(page).to have_css("tbody tr", count: 1)
