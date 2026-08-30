@@ -234,20 +234,24 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     end
 
     describe "the inventory date filter" do
-      it "reports itself as a chip and clears from one" do
+      it "is shown rather than hidden, and clears from Clear all" do
         visit subject
 
-        open_filters
+        # One filter, so there is no disclosure in front of it: a button, a chevron and a panel to
+        # conceal a single control is a click that buys nothing. See design.md.
+        expect(page).to have_no_css("[data-filter-toggle]")
+
         fill_in "Show inventory at date", with: "2024-01-15"
         wait_for_filters
 
-        expect(page).to have_content("Show inventory at date:")
         expect(page).to have_link("Clear all")
+        # And no chip. A chip repeating a filter you can already see and change is duplication --
+        # the chips exist to say what is applied while the panel is *shut*.
+        expect(page).to have_no_content("Show inventory at date:")
 
         click_on "Clear all"
         wait_for_filters
 
-        expect(page).not_to have_content("Show inventory at date:")
         # The caption is the table's accessible name and `.data-table caption` hides it visually,
         # so it is matched with visible: :all rather than as page text.
         expect(page).to have_css("#panel-inventory caption",

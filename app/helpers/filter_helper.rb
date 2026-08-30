@@ -56,13 +56,25 @@ module FilterHelper
       (hint ? tag.p(hint, id: hint_id, class: EssentialsUiHelper::FILTER_HINT_CLASSES) : "".html_safe)
   end
 
+  # This *is* the grid cell, and it sits its box on the line of the control beside it.
+  #
+  # A labelled filter brings 26px of label above a 38px control, so in a stretched grid cell its
+  # control lands at the bottom. A checkbox has no label above it and landed at the top: measured on
+  # /items, the select's centre at y=327 and the checkbox's at y=292, **35px apart**. The row read as
+  # ragged, and the space under the checkbox read as padding missing from above it -- reported as
+  # exactly that. Four views had tried to close the gap with a hand-tuned `pb-2` on a wrapper.
+  #
+  # `h-full items-end` pushes a 38px row -- the app's control height -- to the bottom of the cell, so
+  # the box is centred on its neighbour's centre line whatever the cell's height turns out to be.
   def filter_checkbox(label:, scope:, selected: nil)
     id = "filters_#{scope}_#{SecureRandom.uuid}"
 
-    tag.div(class: "flex items-center gap-2") do
-      concat check_box_tag(scope, 1, selected, id: id,
-        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30")
-      concat label_tag(id, label, class: "text-sm text-slate-700")
+    tag.div(class: "flex h-full items-end") do
+      tag.div(class: "flex h-[38px] items-center gap-2") do
+        concat check_box_tag(scope, 1, selected, id: id,
+          class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30")
+        concat label_tag(id, label, class: "text-sm text-slate-700")
+      end
     end
   end
 

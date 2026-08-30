@@ -6990,3 +6990,46 @@ is where a control belonging to *this table* goes from now on — that row had *
 space at 1440, and the totals are "across every request matching the current filters", so they
 belong beside the filters that decide them.
 
+## 2026-08-30 — A single filter is shown, and a filter checkbox joins the line
+
+Three things reported on Items & inventory, in the same 147px of card. Two of them were the same
+thing.
+
+**"The checkbox is floating and not centre aligned to the drop down"** — and that is also the
+"unequal padding above and below the filter dropdown". The panel is a grid of equal columns whose
+cells stretch. A labelled filter brings 26px of label above a 38px control, so its control lands at
+the *bottom* of the cell; a checkbox has no label and landed at the *top*. Measured on `/items`: the
+select's centre at **y=327** and the checkbox's at **y=292**, **35px apart**. The band's own padding
+was already even at 16/16 — what read as missing padding was the gap under a checkbox that had
+floated to the ceiling.
+
+`filter_checkbox` is the grid cell now and bottom-aligns a 38px row inside it, so the box lands on
+its neighbour's centre line whatever the cell's height. Measured after: **0px apart.** Four views
+had been closing the gap with a hand-tuned `pb-2`; they no longer need it, which is the tell that
+the fix belonged in the component rather than at the call sites.
+
+**"If there is a single filter, is there a need to have a filter drop down?"** No. Measured across
+the eighteen filtered pages: **4 have one control**, 6 have two, 3 have three, and 5 have four or
+more, up to **9 on `/donations`**. On `/vendors` and `/donation_sites` the single control is a
+*checkbox* — a button, a chevron and a panel to conceal one tick box.
+
+**This does not reintroduce the two behaviours design.md rejected.** When the old five-filter
+threshold was removed the recorded reason was that *"learning the filter bar on donations and then
+meeting something else on transfers teaches nothing transferable"* — and that is about a reader
+having to learn where things are **hidden**. A filter that is simply visible teaches nothing wrong.
+The rule is still one sentence: *the bar shows its filters; when there are enough to be worth
+folding away, it folds them.*
+
+The count is taken from the **rendered cells** rather than declared by the caller, so a page that
+gains or loses a filter cannot forget to say so.
+
+**No chips in the single case**, which cost one spec and was worth it. A chip repeating a filter you
+can already see and change is duplication — the chips exist to say what is applied while the panel is
+*shut*. `storage_locations/show` asserted the chip and now asserts the shape that replaced it: no
+disclosure, and "Clear all" still doing the clearing.
+
+**Rejected: the Polaris/Stripe/Jira arrangement** — common filters always inline, the rest behind
+"More filters". It is the most standard answer and the largest: it needs a decision about *which*
+filters are the common ones on each page with more than two, plus a responsive rule for what drops at
+narrow widths. Worth doing on its own, not as part of fixing an alignment.
+

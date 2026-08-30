@@ -20,7 +20,7 @@
     <%= render "shared/essentials/filter_bar", url: kits_path, in_card: true,
           frame: "kits-results" do %>
       <div class="min-w-0"><%= filter_text(label: "Kit name", scope: :by_name, selected: @selected_filter_name) %></div>
-      <div class="pb-2"><%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %></div>
+      <%= filter_checkbox(label: "Show inactive kits", scope: "include_inactive_items", selected: @selected_filter_name) %>
     <% end %>
 
     <%= turbo_frame_tag "kits-results", target: "_top", data: {turbo_action: "advance"} do %>
