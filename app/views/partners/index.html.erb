@@ -15,30 +15,40 @@
           concat essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg")
         } %>
 
-  <%= render "shared/essentials/filter_bar", url: partners_path, frame: "partners-results" do %>
-    <div class="min-w-0">
-      <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
-            key: :last, value: :first, selected: params.dig(:filters, :by_status),
-            include_blank: @partner_status_default,
-            hint: "Active hides deactivated partner agencies. All statuses includes them.") %>
-    </div>
-  <% end %>
-  <%= turbo_frame_tag "partners-results", target: "_top", data: {turbo_action: "advance"} do %>
+  <%#
+    The card, the tab strip and the filter bar all sit *outside* the results frame; the frame wraps
+    the table alone. Two reasons, and design.md now states both. The filter belongs to this tab
+    rather than to the page, so it goes under the strip -- with it above the card, Groups (which has
+    no filters) put the strip at y=174 against this tab's y=228, a 54px jump on every switch. And
+    the strip must not be re-rendered by applying a filter, or the server's idea of the current tab
+    replaces the reader's.
+  %>
+  <%= render "shared/essentials/card", padded: false do %>
+    <%= render "shared/essentials/page_tabs", tabs: [
+          {label: "Partners", path: partners_path, current: true},
+          {label: "Groups", path: partner_groups_path}
+        ] %>
 
-    <%= render "shared/essentials/card", padded: false do %>
-      <%= render "shared/essentials/page_tabs", tabs: [
-            {label: "Partners", path: partners_path, current: true},
-            {label: "Groups", path: partner_groups_path}
-          ] %>
+    <%= render "shared/essentials/filter_bar", url: partners_path, in_card: true,
+          frame: "partners-results" do %>
+      <div class="min-w-0">
+        <%= filter_select(label: "Status", scope: :by_status, collection: @partner_status_options,
+              key: :last, value: :first, selected: params.dig(:filters, :by_status),
+              include_blank: @partner_status_default,
+              hint: "Active hides deactivated partner agencies. All statuses includes them.") %>
+      </div>
+    <% end %>
+
+    <%= turbo_frame_tag "partners-results", target: "_top", data: {turbo_action: "advance"} do %>
       <%= render partial: "partners_table", locals: {partners: @partners} %>
     <% end %>
+  <% end %>
 
-    <%= render layout: "shared/essentials/csv_import_modal", locals: {
-          import_type: "Partners", csv_template_url: "/partners_template.csv", csv_import_url: import_csv_partners_path
-        } do %>
-      <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your partner agency names and addresses in the matching columns.</li>
-      <li>Save the file as a CSV.</li>
-    <% end %>
+  <%= render layout: "shared/essentials/csv_import_modal", locals: {
+        import_type: "Partners", csv_template_url: "/partners_template.csv", csv_import_url: import_csv_partners_path
+      } do %>
+    <li>Open the CSV file in Excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your partner agency names and addresses in the matching columns.</li>
+    <li>Save the file as a CSV.</li>
   <% end %>
 </div>

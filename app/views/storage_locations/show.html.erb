@@ -57,17 +57,16 @@
             back to whichever tab the server marked -- so this filter only ever worked because
             Inventory happens to be first. Updating a frame leaves the strip alone.
           %>
-          <div class="border-b border-slate-200 px-5 pt-4">
-            <%= render "shared/essentials/filter_bar",
+          <%= render "shared/essentials/filter_bar",
                   url: storage_location_path(@storage_location),
+                  in_card: true,
                   frame: "storage-location-inventory" do %>
               <div class="min-w-0">
                 <%= filter_date(scope: :version_date, label: "Show inventory at date",
                       selected: params[:version_date], min: InventoryItem::EARLIEST_VERSION,
                       hint: "Historical data has been collected since #{Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y")}.") %>
               </div>
-            <% end %>
-          </div>
+          <% end %>
 
           <%= turbo_frame_tag "storage-location-inventory", target: "_top", data: {turbo_action: "advance"} do %>
             <% rows = @inventory ? @inventory.items_for_location(@storage_location.id, include_omitted: true) : (@legacy_inventory || []) %>

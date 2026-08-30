@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs where some have filters and some do not</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 96px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  /* a page slice */
+  .page{background:var(--ground);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0 6px;position:relative}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+  .hdr h3{margin:0;font-size:20px;letter-spacing:-.01em}
+  .hdr p{margin:3px 0 0;color:var(--soft);font-size:13px}
+  .btn{border:1px solid transparent;background:var(--brand);color:#fff;border-radius:8px;padding:7px 12px;font:500 13px Figtree;white-space:nowrap}
+  .filters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .filters .fld{height:38px;border:1px solid #CBD5E1;border-radius:8px;background:#fff}
+  .filters .lab{font-size:12px;font-weight:500;color:#334155;margin-bottom:5px;display:block}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .strip{display:flex;gap:2px;padding:0 14px;border-bottom:1px solid var(--line);background:#fff}
+  .strip a{padding:11px 12px;font-size:13.5px;color:var(--soft);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .strip a.on{color:#3730A3;border-bottom-color:var(--brand);font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line)}
+  thead th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:700;background:#F8FAFC}
+  tbody tr:last-child td{border-bottom:0}
+  .inner-filters{padding:14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#FCFCFE}
+  /* the marker showing where the strip lands */
+  .mark{position:absolute;left:-1px;right:-1px;height:0;border-top:2px dashed var(--bad);pointer-events:none}
+  .mark span{position:absolute;right:6px;top:-18px;font-size:11px;font-weight:700;color:var(--bad);background:var(--ground);padding:0 6px}
+  .mark.ok{border-color:var(--ok)} .mark.ok span{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Tabs where some have filters and some do not</h1>
+<p class="lede">Reported on Partner agencies: <i>"the group tab does not have a filter so the card jumps
+up and down. It is very odd visual experience"</i> — and the same on the item catalogue. Measured from
+the running app at 1440.</p>
+
+<h2>What happens now<span class="tag t-now">measured</span></h2>
+<table class="mini">
+  <tr><th>Tab</th><th>Filter bar</th><th class="n">Tab strip lands at</th><th class="n">Rows</th></tr>
+  <tr><td><b>Partner agencies</b> › Partners</td><td>yes, 38px</td><td class="n">y = 228</td><td class="n">6</td></tr>
+  <tr><td><b>Partner agencies</b> › Groups</td><td>none</td><td class="n"><b>y = 174</b></td><td class="n">2</td></tr>
+  <tr><td><b>Catalogue</b> › Item list</td><td>yes, 38px</td><td class="n">y = 228</td><td class="n">15</td></tr>
+  <tr><td><b>Catalogue</b> › Item categories</td><td>none</td><td class="n"><b>y = 174</b></td><td class="n">3</td></tr>
+  <tr><td><b>Catalogue</b> › quantity &amp; location, inventory, Kits</td><td>yes, 38px</td><td class="n">y = 228</td><td class="n">50 / 100 / 5</td></tr>
+</table>
+<p class="note"><b>A 54px jump, both ways</b>, because the filter bar sits <i>above</i> the card that
+holds the tab strip. Switching tab moves the tab strip you just clicked — the one thing on the page that
+should not move.</p>
+
+<div class="pair">
+  <div>
+    <div class="page">
+      <div class="hdr"><div><h3>Partner agencies</h3><p>Who you distribute to.</p></div><button class="btn">New partner agency</button></div>
+      <div class="filters"><div><span class="lab">Status</span><div class="fld"></div></div><div></div><div></div><div></div></div>
+      <div class="card">
+        <div class="strip"><a class="on">Partners</a><a>Groups</a></div>
+        <table><thead><tr><th>Name</th><th>Status</th></tr></thead>
+          <tbody><tr><td>Pawnee Parks Dept</td><td>Approved</td></tr><tr><td>Eagleton Family Services</td><td>Approved</td></tr></tbody></table>
+      </div>
+      <div class="mark" style="top:198px"><span>strip at 228</span></div>
+    </div>
+    <p class="cap">Partners</p>
+  </div>
+  <div>
+    <div class="page">
+      <div class="hdr"><div><h3>Partner agencies</h3><p>Who you distribute to.</p></div><button class="btn">New partner group</button></div>
+      <div class="card">
+        <div class="strip"><a>Partners</a><a class="on">Groups</a></div>
+        <table><thead><tr><th>Name</th><th>Deadline</th></tr></thead>
+          <tbody><tr><td>Monthly partners</td><td>the 15th</td></tr><tr><td>Quarterly partners</td><td>the 1st</td></tr></tbody></table>
+      </div>
+      <div class="mark" style="top:144px"><span>strip at 174</span></div>
+    </div>
+    <p class="cap">Groups — everything has moved up 54px</p>
+  </div>
+</div>
+
+<h2>Option A — the filter goes inside the card, under the tab strip<span class="tag t-rec">recommended</span></h2>
+<p class="note">The tab strip becomes a fixed landmark: same position on every tab, whatever is below it.
+A tab that filters shows its filters in its own panel; a tab that does not, does not. Only the table
+moves, which is the tab's content and is supposed to change.</p>
+
+<div class="pair">
+  <div>
+    <div class="page">
+      <div class="hdr"><div><h3>Partner agencies</h3><p>Who you distribute to.</p></div><button class="btn">New partner agency</button></div>
+      <div class="card">
+        <div class="strip"><a class="on">Partners</a><a>Groups</a></div>
+        <div class="inner-filters"><div><span class="lab">Status</span><div class="fld"></div></div><div></div><div></div><div></div></div>
+        <table><thead><tr><th>Name</th><th>Status</th></tr></thead>
+          <tbody><tr><td>Pawnee Parks Dept</td><td>Approved</td></tr><tr><td>Eagleton Family Services</td><td>Approved</td></tr></tbody></table>
+      </div>
+      <div class="mark ok" style="top:144px"><span>strip at 174</span></div>
+    </div>
+    <p class="cap">Partners</p>
+  </div>
+  <div>
+    <div class="page">
+      <div class="hdr"><div><h3>Partner agencies</h3><p>Who you distribute to.</p></div><button class="btn">New partner group</button></div>
+      <div class="card">
+        <div class="strip"><a>Partners</a><a class="on">Groups</a></div>
+        <table><thead><tr><th>Name</th><th>Deadline</th></tr></thead>
+          <tbody><tr><td>Monthly partners</td><td>the 15th</td></tr><tr><td>Quarterly partners</td><td>the 1st</td></tr></tbody></table>
+      </div>
+      <div class="mark ok" style="top:144px"><span>strip at 174</span></div>
+    </div>
+    <p class="cap">Groups — the strip has not moved</p>
+  </div>
+</div>
+<ul class="tight">
+  <li><b>design.md already says this.</b> "Nothing sits between a tab strip and the first row of its table except that table's own filters." These pages put the filter <i>above</i> the strip instead, which is how the strip ended up moving.</li>
+  <li><b>The filter belongs to the tab, so it lives in the tab.</b> Reading order finally matches ownership: you are on Partners, and these are the Partners filters.</li>
+  <li><b>It already has to submit into a frame</b>, which it does — so the strip is not re-rendered by filtering.</li>
+</ul>
+
+<h2>Option B — give every tab a filter bar so they match<span class="tag t-alt">rejected</span></h2>
+<p class="note">The symmetrical answer: add a search box to Groups and to Item categories so all tabs
+look alike.</p>
+<div class="verdict bad"><b>It invents a control to fill a hole.</b> Groups has <b>2 rows</b> and Item
+categories has <b>3</b> — measured. A filter over three rows is furniture, and every reader pays a
+row of chrome for it on every visit. If either list grows enough to need filtering it should get one
+<i>on its own merits</i>, and Option A means adding it then costs nothing and moves nothing.</div>
+
+<h2>Option C — reserve the filter's height when a tab has none<span class="tag t-alt">rejected</span></h2>
+<p class="note">Keep the filter where it is, and give the tabs without one a 54px spacer.</p>
+<div class="verdict bad"><b>A blank 54px band that means nothing</b>, on a page whose whole job is to
+show a list. It fixes the jump by paying its cost permanently, and it still leaves the filter sitting
+above a strip it does not belong to.</div>
+
+<h2>What the industry does</h2>
+<table class="mini">
+  <tr><th>System</th><th>Where per-view controls sit</th></tr>
+  <tr class="rec"><td><b>GitHub</b></td><td>Repo tabs are fixed chrome; each tab's own toolbar — the Issues filter bar, the Actions search — sits <i>below</i> the strip and differs per tab.</td></tr>
+  <tr class="rec"><td><b>Jira</b>, <b>Linear</b>, <b>Notion</b></td><td>Tab or view switcher pinned; filters and sort belong to the view, rendered under it.</td></tr>
+  <tr class="rec"><td><b>Ant Design</b>, <b>Material</b>, <b>Carbon</b></td><td>Everything that varies goes in the <i>tab panel</i>. The tablist is chrome.</td></tr>
+  <tr class="rec"><td><b>Salesforce</b></td><td>List view selector fixed; the list's own controls below it.</td></tr>
+</table>
+<p class="note"><b>None of them makes every tab carry the same controls</b>, and none of them reserves
+empty space. The invariant they all keep is that <b>the strip does not move</b> — a tab is a place, and
+a place that shifts when you arrive is the thing that reads as broken.</p>
+
+<h2>And the sidebar<span class="tag t-rec">already fixed</span></h2>
+<p class="note">Reported in the same breath: <i>"when the user clicks on groups, it automatically
+collapses the side nav."</i> It did, and so did Inventory when you opened <b>Item categories</b>. The
+rail decides which section to keep open from the current <i>controller</i>, and its list named only
+<code>partners</code> and <code>items</code> — so on <code>partner_groups</code> and
+<code>item_categories</code> nothing was active, and the whole section shut underneath the reader.</p>
+<p class="note"><b>Industry standard is not in doubt here</b>: GitHub, GitLab, Jira and Linear all keep
+the section open and the parent entry marked while you are anywhere inside it. That is a bug rather
+than a design choice, so it is already fixed — measured before: <code>/partner_groups</code> and
+<code>/item_categories</code> had <b>no open group at all</b>; after: <b>Network</b> and
+<b>Inventory</b> stay open with their entry marked.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>Option A.</b> It is what design.md already asks for, what every system above
+does, and the only one that fixes the jump without either inventing a control or reserving a hole.
+Groups and Item categories keep no filter, because two rows and three rows do not need one — and when
+one of them does, it can be added without moving anything.</div>
+
+</div>
+</body>
+</html>

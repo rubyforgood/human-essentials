@@ -66,7 +66,11 @@ module EssentialsNavHelper
         label: "Inventory",
         icon: "bi-boxes",
         items: [
-          NavItem.new(label: "Items & inventory", path: items_path, active_on: %w[items]),
+          # `item_categories` too: it is the catalogue's second tab, not a destination of its own,
+          # so landing on it must leave this entry marked and this group open. It did not, and the
+          # whole Inventory section collapsed underneath the reader the moment they opened a tab --
+          # reported as "when the user clicks on groups, it automatically collapses the side nav".
+          NavItem.new(label: "Items & inventory", path: items_path, active_on: %w[items item_categories]),
           NavItem.new(label: "Kits", path: kits_path, active_on: %w[kits]),
           NavItem.new(label: "Storage locations", path: storage_locations_path, active_on: %w[storage_locations]),
           NavItem.new(label: "Transfers", path: transfers_path, active_on: %w[transfers]),
@@ -79,7 +83,8 @@ module EssentialsNavHelper
         label: "Network",
         icon: "bi-people",
         items: [
-          NavItem.new(label: "Partner agencies", path: partners_path, active_on: %w[partners]),
+          # `partner_groups` is the Groups tab of this page rather than a rail entry of its own.
+          NavItem.new(label: "Partner agencies", path: partners_path, active_on: %w[partners partner_groups]),
           NavItem.new(label: "Partner announcements", path: broadcast_announcements_path, active_on: %w[broadcast_announcements]),
           NavItem.new(label: "Donation sites", path: donation_sites_path, active_on: %w[donation_sites]),
           NavItem.new(label: "Product drives", path: product_drives_path, active_on: %w[product_drives]),

@@ -331,6 +331,12 @@ findings that belong to this migration rather than to the app's own history:
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
 
+**A filter bar belonging to a tab now renders `in_card: true`**, inside the card under the strip,
+with the results frame around the table alone. Five pages moved: `/partners`, `/items`,
+`/items/quantity_and_location`, `/items/inventory` and `/kits`. `storage_locations/show` had already
+been built this way by hand and now uses the option, so the arrangement has one definition rather
+than six copies of a class string.
+
 **Row selection is new rather than migrated.** There was no bulk operation in the app before
 August 2026 -- every action was per-record, and `print_unfulfilled` was the one thing that acted on
 a set, chosen by filter rather than by hand. `/requests` is the only table with selection, because

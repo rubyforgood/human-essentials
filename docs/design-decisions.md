@@ -6811,3 +6811,46 @@ leaking a picklist — asserted in a spec, because "we scoped it" is the kind of
 that, and it is a different thing — "everything matching what I searched" rather than "these six".
 Both are worth having and the export menu keeps the first.
 
+## 2026-08-30 — A tab is a place, so the strip does not move
+
+Reported on Partner agencies: *"the group tab does not have a filter so the card jumps up and down.
+It is very odd visual experience"* — and, in the same breath, *"when the user clicks on groups, it
+automatically collapses the side nav."* Two defects, and only one of them was a design question.
+
+**Measured.** The tab strip landed at **y=228** on a tab with filters and **y=174** on one without —
+a **54px jump** every time you switched, on two tab sets. Cause: the filter bar sat *above* the card
+holding the strip, so the strip's position depended on whether the tab had filters.
+
+**The industry answer is not in doubt.** GitHub (the Issues filter bar sits under the repo tabs),
+Jira, Linear, Notion, and the Ant Design, Material and Carbon tab components all treat **the tablist
+as chrome and put everything that varies in the panel**. So: `in_card: true` renders the bar inside
+the card under the strip, and the results frame goes around **the table alone** — which also means
+applying a filter cannot re-render the strip with whichever tab the *server* thought was current.
+
+Two alternatives rejected, both of which "fix" the jump by paying for it:
+
+- **Give every tab a filter bar so they match.** None of those systems does this. Groups has **2
+  rows** and Item categories **3** — measured — and a filter over three rows is furniture every
+  reader pays for on every visit. If either grows enough to need one it should get it on its own
+  merits, and under this arrangement adding it moves nothing.
+- **Reserve the filter's height when a tab has none.** A blank 54px band on a page whose whole job
+  is to show a list, paying the cost permanently to hide the symptom.
+
+**The sidebar half was a bug, not a choice**, so it was fixed rather than previewed. The rail decides
+which entry is marked and which section stays open from the current *controller*, and `active_on`
+named only the first tab's — so on `/partner_groups` and `/item_categories` **nothing** was active
+and the whole section shut underneath the reader. GitHub, GitLab, Jira and Linear all keep the
+section open while you are anywhere inside it. Measured before: no open group at all on either page;
+after: Network and Inventory stay open with their entry marked.
+
+**One definition, not six.** `storage_locations/show` had already been built this way by hand — a
+`border-b border-slate-200 px-5 pt-4` wrapper at the call site — and design.md named it "the one
+instance". Adding four more copies of that string is exactly how a system drifts, so it is an option
+on the component and that page now uses it too.
+
+**And the audit is the part that lasts.** `bin/design/tab-set-audit.js` checks both invariants: the
+strip's height across a set, and the rail still marking where you are. Verified to fail on both —
+reverting `active_on` produced 4 findings, and moving one filter bar back above its card produced
+"the strip moves by 54px across this set". Neither was visible to any existing audit: wayfinding
+asks whether a page can be *left*, not whether arriving moves it.
+
