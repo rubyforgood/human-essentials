@@ -33,6 +33,31 @@ async function signIn(page, email) {
   await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
 }
 
+// The controls a *swap* took over, collected from the settled DOM.
+//
+// A swap is not a hide: select2 replaces a <select> with its own container and the tag input
+// replaces one with chips. Both leave the original in the page, hidden, doing the form's work.
+//
+// This is asked of each element rather than excusing the whole `<select>` tag, which is what the
+// first version did -- and excusing the tag also excused four genuinely painted-then-hidden
+// selects on the donation form, worth **100px** of reflow on every load. The layout-shift audit
+// had to find those instead.
+const SWAPPED = () => {
+  const keys = new Set();
+  document.querySelectorAll("select.select2-hidden-accessible").forEach((el) => {
+    keys.add(el.id || el.getAttribute("name") || "");
+  });
+  document.querySelectorAll(".select2-container").forEach((c) => {
+    const owner = c.previousElementSibling;
+    if (owner && owner.tagName === "SELECT") keys.add(owner.id || owner.getAttribute("name") || "");
+  });
+  // The tag input keeps its select and builds chips beside it.
+  document.querySelectorAll("[data-tag-input] select, [data-tag-input-target] select").forEach((el) => {
+    keys.add(el.id || el.getAttribute("name") || "");
+  });
+  return [...keys].filter(Boolean);
+};
+
 // Everything with a box, keyed by what it is and where it sits, so a swap can be told from a hide.
 const VISIBLE = () => [...document.querySelectorAll("main *")]
   .filter((e) => e.offsetParent !== null)
@@ -68,10 +93,10 @@ const VISIBLE = () => [...document.querySelectorAll("main *")]
       const settled = await page.evaluate(VISIBLE).catch(() => []);
 
       const settledKeys = new Set(settled.map((e) => e.key));
+      const swapped = new Set(await page.evaluate(SWAPPED));
       first
-        // select2 replaces a <select> with its own container, which is a swap rather than a hide.
         .filter((e) => !settledKeys.has(e.key))
-        .filter((e) => e.tag !== "SELECT")
+        .filter((e) => !swapped.has(e.key))
         .forEach((e) => findings.push({ path, id: e.key, label: e.label }));
     }
     await context.close();

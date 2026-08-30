@@ -3,29 +3,48 @@
     <%= turbo_frame_tag "modal-new" %>
     <%= essentials_error_summary(@donation) %>
 
+    <%#
+      Which of the four source fields applies, decided on the server. `utils/donations.js` shows
+      one and hides the other three from the selected source -- but it did that *after* paint, so
+      all five were drawn, the grid was two rows tall, and a moment later it was one. Measured with
+      Chrome's `layout-shift` entries: everything below this card jumped **100px** upward on every
+      load of /donations/new and /donations/1/edit.
+
+      design.md: the server renders the correct initial state, and JavaScript may reveal but never
+      un-draw. `nil` matches none of the three, which is right -- with no source chosen the JS
+      hides all four too.
+    %>
+    <%
+      source = donation_form.source
+      hide_unless = ->(applies) { {class: ("hidden" unless applies)} }
+    %>
     <%= render "shared/essentials/card", title: "Where this donation came from" do %>
       <div class="grid gap-x-5 sm:grid-cols-2 lg:grid-cols-3">
-        <%= f.input :source, collection: Donation::SOURCES.values, selected: donation_form.source,
+        <%= f.input :source, collection: Donation::SOURCES.values, selected: source,
               include_blank: true, label: "Source",
               hint: "What effort or initiative did this donation come from?" %>
 
         <%= f.association :donation_site, collection: options_with_new(@donation_sites),
               selected: donation_form.donation_site_id, include_blank: true,
+              wrapper_html: hide_unless.call(source == Donation::SOURCES[:donation_site]),
               label: "Donation site", hint: "Where was this donation dropped off?",
               input_html: {data: {action: "change->donations-modal#handleNewSelect", url: new_donation_site_path}} %>
 
         <%= f.association :product_drive, collection: @product_drives,
               selected: donation_form.product_drive_id, include_blank: true,
+              wrapper_html: hide_unless.call(source == Donation::SOURCES[:product_drive]),
               label_method: ->(x) { x.try(:name).to_s }, label: "Product drive",
               hint: "Which product drive was this from?" %>
 
         <%= f.association :product_drive_participant, collection: @product_drive_participants,
               selected: donation_form.product_drive_participant_id, include_blank: true,
+              wrapper_html: hide_unless.call(source == Donation::SOURCES[:product_drive]),
               label_method: ->(x) { x.try(:business_name).presence || x.try(:contact_name) },
               label: "Product drive participant", hint: "Which participant was this from?" %>
 
         <%= f.association :manufacturer, collection: @manufacturers,
               selected: donation_form.manufacturer_id, include_blank: true,
+              wrapper_html: hide_unless.call(source == Donation::SOURCES[:manufacturer]),
               label_method: ->(x) { x.try(:name).to_s }, label: "Manufacturer",
               hint: "Which manufacturer was this from?" %>
       </div>

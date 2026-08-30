@@ -1,5 +1,19 @@
+<%#
+  A Highcharts chart, with its height **reserved before it renders**.
+
+  The container used to be an empty div, so it was 0px tall until Highcharts inflated it on
+  `connect()` -- and everything under it, the two buttons and the whole table card, was thrown
+  850px down the page a moment after the reader could already see it. Measured with Chrome's own
+  `layout-shift` entries: **CLS 0.352** on all three historical trend pages, against thresholds of
+  0.1 good and 0.25 poor. It was the worst layout shift in the app by an order of magnitude.
+
+  Reserving the box is Chrome's own advice for anything that arrives late -- the same reason an
+  `<img>` carries width and height. The height comes from the caller rather than from parsing the
+  config back out of its JSON, so the number the box reserves and the number the chart draws at
+  cannot disagree.
+%>
 <div data-controller="highchart" data-highchart-config-value="<%= config %>">
-  <div data-highchart-target="chart"></div>
+  <div data-highchart-target="chart" style="min-height: <%= height %>px"></div>
   <div class="mt-3 flex flex-wrap gap-2">
     <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
             data-action="click->highchart#selectAll">Select all</button>

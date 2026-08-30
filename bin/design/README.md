@@ -152,6 +152,25 @@ relationship, and a **plain** reveal, whose content already carries its own box.
 Reported as "the location and size of the shipping cost field does not make any sense". Currently
 **10 reveals, 0 defects**.
 
+`layout-shift-audit.js` scores **what moves after it is drawn**, on every screen.
+
+```bash
+pw bin/design/layout-shift-audit.js
+pw bin/design/layout-shift-audit.js --width=390   # a phone, where tables stack into cards
+```
+
+It reads Chrome's own `layout-shift` performance entries -- the same ones Cumulative Layout Shift is
+scored from, thresholds **0.1 good, 0.25 poor** -- and names the elements that moved. Shifts the
+reader *caused* are excluded by the browser (`hadRecentInput`), so opening a disclosure or applying a
+filter does not count; the dev-only profiler and Bullet badges are filtered out here, because they
+are not in production and have fooled a DOM-reading audit on this project before.
+
+Found two things no other audit could see: the historical trend charts at **CLS 0.352**, because an
+empty container was inflated to 850px on connect, and the donation form's four source selects, drawn
+and then hidden for **100px** of reflow. The second was invisible to `flash-of-hidden-audit.js`
+because that audit excused every `<select>` for select2's sake -- it now recognises the actual swap
+instead.
+
 `tab-set-audit.js` checks that a **set of page tabs behaves as one place**.
 
 ```bash

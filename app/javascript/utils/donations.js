@@ -61,6 +61,13 @@ $(function() {
     }
   });
 
+  // `hidden`, the class the rest of the app uses, rather than jQuery's inline display. The server
+  // now renders the right one visible and the other three hidden -- see the donation form -- so
+  // this only ever changes that in response to a choice. With `.show()`/`.hide()` the two
+  // mechanisms disagreed: an inline style beats the class, so a field the server had correctly
+  // hidden could be un-hidden by an inline `display: block` that outlived the next selection.
+  const showIf = (selector, on) => $(selector).toggleClass("hidden", !on);
+
   function handleSourceSelection() {
     const selection = $(control_id + " option")
       .filter(":selected")
@@ -69,27 +76,10 @@ $(function() {
     /**
     * Handles the dynamic form of Donations
     **/
-    if (selection === product_drive_text) {
-      $(product_drive_container_id).show();
-      $(product_drive_participant_container_id).show();
-      $(donation_site_container_id).hide();
-      $(manufacturer_container_id).hide();
-    } else if (selection === manufacturer_text) {
-      $(manufacturer_container_id).show();
-      $(product_drive_container_id).hide();
-      $(product_drive_participant_container_id).hide();
-      $(donation_site_container_id).hide();
-    } else if (selection === donation_site_text) {
-      $(product_drive_container_id).hide();
-      $(product_drive_participant_container_id).hide();
-      $(donation_site_container_id).show();
-      $(manufacturer_container_id).hide();
-    } else {
-      $(product_drive_container_id).hide();
-      $(product_drive_participant_container_id).hide();
-      $(donation_site_container_id).hide();
-      $(manufacturer_container_id).hide();
-    }
+    showIf(product_drive_container_id, selection === product_drive_text);
+    showIf(product_drive_participant_container_id, selection === product_drive_text);
+    showIf(donation_site_container_id, selection === donation_site_text);
+    showIf(manufacturer_container_id, selection === manufacturer_text);
   };
 
   $(control_id).each(handleSourceSelection);

@@ -621,6 +621,17 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### Two more things that used to jump about
+
+**The three trend reports** — Donations, Purchases and Distributions under Reports — drew their
+buttons and their table first and then dropped the chart in on top, shoving everything about 850px
+down the page just as you started reading. The chart's space is held from the start now.
+
+**The New donation form** used to show all four "where from" boxes — donation site, product drive,
+participant, manufacturer — and then hide the three that do not apply, pulling the rest of the form
+up by about 100px. It now shows only the one that matches the source you picked, from the first
+moment.
+
 ### Tabs stay put, and the sidebar stops collapsing
 
 **Switching between Partners and Groups used to shift the whole card up or down by about 50px**,
