@@ -621,6 +621,15 @@ removed it a fraction of a second later. It now starts hidden and appears when y
 
 The reminder day fields on **Organization settings** did the same thing and no longer do.
 
+### Tables on a phone stop flashing before they settle
+
+**On a narrow window a table redraws itself as a list of cards.** It used to do that *after* the page
+had already appeared, so you saw a squashed table for a moment and then everything jumped as it
+rebuilt. It now arrives as cards, in one go.
+
+Each field's label sits **beside** its value rather than above it, which is how a record's details
+page already reads, and it is also what stops the cards resizing as the labels load.
+
 ### Two more things that used to jump about
 
 **The three trend reports** — Donations, Purchases and Distributions under Reports — drew their

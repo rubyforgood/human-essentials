@@ -13,14 +13,20 @@ import { Controller } from "@hotwired/stimulus";
  * recorded for it -- four columns at 320px leaves the item picker 72px, which is not a control
  * anyone can use -- applies word for word to nine columns of purchase data at 286px.
  *
- * Driven from JavaScript rather than a `@container` query, though the question it asks is the
- * container's width. A container query would have been the tidier mechanism, and
- * `container-type: inline-size` computes to `contain: layout`, which makes the element a containing
- * block for *fixed* descendants -- and the row action menus are fixed precisely so they can escape
- * this card. Every one of them would have been positioned against the wrong box.
+ * **The layout is not decided here any more.** It used to be: this measured the container and wrote
+ * `data-stack`, so the browser laid the page out as a table, painted it, and then rebuilt it as
+ * cards. Measured with Chrome's `layout-shift` entries at 390px, that cost **CLS 0.658** on
+ * /admin/base_items and put six screens past the 0.25 "poor" threshold. A media query is applied
+ * before the first paint, so there is nothing to rebuild -- see application.css.
  *
- * Two other things this has to do, and the second is the one implementations of this pattern usually
- * get wrong:
+ * A `@container` query would have been tidier still, since the question really is about the
+ * container, but `container-type: inline-size` computes to `contain: layout`, which would make the
+ * card a containing block for the fixed row-action menus. `@media` has no such effect, and the
+ * container is the viewport less 34px at these sizes on every page, so nothing is lost by asking
+ * the window instead.
+ *
+ * What is left here is the part CSS cannot do, and the second of these is the one implementations
+ * of this pattern usually get wrong:
  *
  * - **Supply the labels.** Writing `data-label` by hand means 299 headings across 71 views kept in
  *   step forever. They are copied out of `<thead>` by column index instead, into a real element
@@ -30,27 +36,28 @@ import { Controller } from "@hotwired/stimulus";
  *   reader would be left with unlabelled cells in no structure. The roles are set explicitly.
  */
 
-// Available width, in px, below which a table stops being a table. Chosen against the measured
-// container widths so the behaviour is monotonic in the viewport: /purchases has 286px of container
-// at a 320px viewport, 341 at 375, 590 at 640, 718 at 768 and 702 at 1024 -- the dip at 1024 is the
-// sidebar appearing. A threshold of 704 would have stacked 1024 while leaving 768 a table.
-const STACK_BELOW = 640;
-// And below which the fields themselves go to a single column.
-const SINGLE_COLUMN_BELOW = 416;
+// The same breakpoint the stylesheet uses. It is repeated rather than derived because a media query
+// is not readable from script, and it is *only* used for the two things CSS cannot do: telling the
+// scroll controller that a stacked table no longer overflows, and taking the scroll region's tab
+// stop away. If these two ever disagree the symptom is a stray tab stop, not a broken layout.
+const STACKED = "(max-width: 689px)";
 
 export default class extends Controller {
   connect() {
     this.refresh = this.refresh.bind(this);
     this.onViewportChange = this.onViewportChange.bind(this);
 
-    window.addEventListener("resize", this.onViewportChange);
+    // The breakpoint, not every resize: the layout is the stylesheet's job now, and this only has
+    // to notice when the answer changes.
+    this.query = window.matchMedia(STACKED);
+    this.query.addEventListener("change", this.onViewportChange);
     document.addEventListener("turbo:frame-load", this.refresh);
 
     this.refresh();
   }
 
   disconnect() {
-    window.removeEventListener("resize", this.onViewportChange);
+    this.query.removeEventListener("change", this.onViewportChange);
     document.removeEventListener("turbo:frame-load", this.refresh);
   }
 
@@ -111,6 +118,11 @@ export default class extends Controller {
 
         const label = labels[index];
         if (label === undefined) return;
+        // The selection column's heading is a checkbox, so it has no text -- and "no text" is the
+        // test below for an actions column. Without this the checkbox was given `cell-actions` and
+        // stacked into the same corner as the real actions, which measured as CLS 0.312 on
+        // /requests. It needs neither a label nor that class; the CSS places it.
+        if (cell.classList.contains("select-col")) return;
         if (label === "") {
           cell.classList.add("cell-actions");
           return;
@@ -138,27 +150,14 @@ export default class extends Controller {
     const region = table.closest(".table-scroll") || table.parentElement;
     if (!region) return;
 
-    // The width the table has to work with. Read off the region's parent, because the region's own
-    // `clientWidth` is the same number and this keeps working if a table is ever not in one.
-    const available = (region.parentElement || region).clientWidth;
-    if (available === 0) return;
-
-    const stacked = available < STACK_BELOW;
-    const columns = available < SINGLE_COLUMN_BELOW ? "1" : "2";
-
-    const was = table.dataset.stack;
-    if (stacked) {
-      table.dataset.stack = columns;
-    } else {
-      delete table.dataset.stack;
-    }
+    const stacked = window.matchMedia(STACKED).matches;
 
     /*
      * A stacked table does not overflow, so its rail and edge shadow have to go -- and
-     * `table_scroll_controller` has no way to know that on its own. On first paint it runs before
-     * this one and draws a rail for a table that is about to stop needing it.
+     * `table_scroll_controller` has no way to know that on its own.
      */
-    if (was !== table.dataset.stack) {
+    if (this.wasStacked !== stacked) {
+      this.wasStacked = stacked;
       window.dispatchEvent(new CustomEvent("table:stack-change"));
     }
 

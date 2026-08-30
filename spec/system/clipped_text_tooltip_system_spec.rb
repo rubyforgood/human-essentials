@@ -446,11 +446,26 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
   context "when the container is too narrow to be a table" do
     before { create_list(:purchase, 2, organization: organization) }
 
+    # The stacking is a media query now, not a `data-stack` attribute written by JavaScript after
+    # measuring -- the attribute cost CLS 0.658 at 390px, because the browser laid the page out as
+    # a table, painted it, and then rebuilt it as cards. So these ask the *layout*, which is what
+    # actually matters and is all there is left to ask.
+    def table_display
+      page.evaluate_script("getComputedStyle(document.querySelector('table.data-table')).display")
+    end
+
+    def field_columns
+      page.evaluate_script(
+        "getComputedStyle(document.querySelector('table.data-table tbody tr')).gridTemplateColumns"
+      ).split(" ").length
+    end
+
     it "stacks into labelled fields with nothing off screen" do
       page.driver.resize(360, 800)
       visit purchases_path
 
-      expect(page).to have_css("table.data-table[data-stack='1']")
+      expect(table_display).to eq("block")
+      expect(field_columns).to eq(1)
 
       # The heading row is gone, so each field carries its own label instead. Matched in capitals
       # because Capybara compares rendered text and the label is uppercased by CSS -- the DOM text,
@@ -470,7 +485,7 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
       page.driver.resize(360, 800)
       visit purchases_path
 
-      expect(page).to have_css("table.data-table[data-stack]")
+      expect(table_display).to eq("block")
       expect(page).to have_css("table[role='table']")
       expect(page).to have_css("tbody[role='rowgroup']")
       expect(page).to have_css("tbody tr[role='row']")
@@ -482,7 +497,7 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
       page.driver.resize(360, 800)
       visit purchases_path
 
-      expect(page).to have_css("table.data-table[data-stack]")
+      expect(table_display).to eq("block")
       expect(page).to have_no_css(".table-scroll[tabindex]")
       expect(page).to have_no_css(".table-rail")
     end
@@ -491,7 +506,7 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
       page.driver.resize(1200, 800)
       visit purchases_path
 
-      expect(page).to have_css("table.data-table:not([data-stack])")
+      expect(table_display).to eq("table")
       expect(page).to have_css(".table-scroll[tabindex='0']")
 
       hidden = page.evaluate_script(
@@ -500,13 +515,29 @@ RSpec.describe "Scrolling tables say so", type: :system, js: true do
       expect(hidden).to eq("none")
     end
 
-    # 640px of window leaves about 590px of card, which is inside the two-column band. A 700px
-    # window leaves roughly 650 and is over the threshold, so the table stays a table.
+    # The breakpoints, measured to the pixel before they were translated from a container width to
+    # a media query: one column at 449 and below, two from 450 to 689, a table from 690.
     it "gives the fields two columns when the card is wide enough for two" do
       page.driver.resize(640, 800)
       visit purchases_path
 
-      expect(page).to have_css("table.data-table[data-stack='2']")
+      expect(table_display).to eq("block")
+      expect(field_columns).to eq(2)
+    end
+
+    it "changes at exactly the widths the old measurement did" do
+      page.driver.resize(449, 800)
+      visit purchases_path
+      expect(field_columns).to eq(1)
+
+      page.driver.resize(450, 800)
+      expect(field_columns).to eq(2)
+
+      page.driver.resize(689, 800)
+      expect(table_display).to eq("block")
+
+      page.driver.resize(690, 800)
+      expect(table_display).to eq("table")
     end
   end
 

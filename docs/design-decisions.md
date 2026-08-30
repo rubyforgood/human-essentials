@@ -6903,3 +6903,54 @@ things too. Rendering them server-side is the decision to make, and it is worth 
 rather than in the last hour of an audit. Recorded here so the next person starts from the
 measurement rather than the surprise.
 
+## 2026-08-30 — The stacking breakpoint moves from JavaScript to a media query
+
+The third finding of the layout-shift audit, now fixed. At 390px, six screens were past Chrome's
+"poor" threshold — `/admin/base_items` at **CLS 0.658**, `/admin/partners` 0.616, `/admin/users`
+0.512 — and the blame was always `tbody`, `tr`, `td`: `table_stack_controller` measured the
+container, wrote `data-stack`, and the browser rebuilt a painted table into cards.
+
+**The reason for using JavaScript was real but had been over-applied.** It was recorded as an
+argument against `@container` — `container-type: inline-size` computes to `contain: layout`, which
+would make the card a containing block for the fixed row-action menus. That is true, and it says
+nothing about `@media`. The question was never re-asked.
+
+**The translation is exact, and measured rather than estimated.** The old thresholds were on the
+card: stack below 640px of it, one column below 416. Across four pages and twelve widths the
+container is the viewport less 34px at these sizes and identical on every page, and a 1px scan put
+the transitions at **450** and **690**. So `max-width: 689px` and `max-width: 449px` reproduce the
+previous behaviour to the pixel, and a spec now asserts all four boundaries.
+
+**Two attempts before it worked, and both failures were informative.**
+
+The first left the labels above their values. They are inserted by JavaScript — 299 headings across
+71 views, the one part of this that cannot be server-rendered without hand-writing every one — so
+they added a line per field *after* first paint and put back half the shift the media query had just
+removed. **0.163.**
+
+The second put label beside value but only for cells that already had one, `:has(> .cell-label)`.
+That was worse than useless: the value had the full width until the label landed, and gridding it
+afterwards narrowed the value's column and wrapped the long ones. Also 0.163, differently
+distributed. **The fix is to grid every field whether or not its label has arrived** — column one is
+simply empty for a frame — so the value's width, and therefore the row's height, never changes. The
+label is `nowrap`, because a label that wrapped would take the row's height with it.
+
+Label-beside-value is also how the app already presents [a record's details](#) — a `<dl>` at
+`auto 1fr`. Two presentations of "a field and its value" was one too many.
+
+**And it exposed a defect in the selection column I added the same day.** `/requests` measured
+**0.312** because the stacking controller marks any cell whose heading has no text as the actions
+cell — and a selection column's heading is a checkbox. The checkbox was being stacked into the
+actions' corner. It is excluded explicitly now, and the card has a real title line: checkbox, title,
+actions.
+
+**The responsive audit then caught a second one**: those checkboxes were 16×16, under WCAG 2.5.8's
+24px floor, 16 of them per page at every width. Every other checkbox in the app passes because it has
+a visible `<label>`, and a control plus its label is one target. These can never have visible text,
+so they get a 24×24 `<label>` wrapping the box with an `sr-only` name — which also makes them easier
+to hit.
+
+**Result: 0.658 → 0.068 at 390px, and 0.007 at 1400.** Every screen in the app is inside Chrome's
+"good" CLS threshold at both widths, and the responsive audit is clean across 1,562 page/width
+combinations.
+

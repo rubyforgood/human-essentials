@@ -1981,7 +1981,8 @@ viewport.**
 - **The end-of-scroll shadow stops where the frozen column begins**, from `--pin-right-width`, which
   `table_scroll_controller` measures. Painting a gradient *over* a frozen column was a WCAG 1.4.3
   failure the first time it was tried at the start edge.
-- **A card does not scroll sideways**, so `[data-stack]` returns the cell to `position: static`.
+- **A card does not scroll sideways**, so below the stacking breakpoint the cell returns to
+  `position: static`.
 
 ### Forms
 
@@ -2742,6 +2743,7 @@ being its last caller.
 time it was invisible, because `have_content` finds text in the DOM whether or not it is on screen.
 
 <a id="detail-list"></a>
+<a id="a-records-details-are-a-dl"></a>
 ### A record's details are a `<dl>`, and long ones are banded
 
 **`essentials_detail` renders one field** — a `<dt>`/`<dd>` pair in a `<div>`, which is how HTML5
@@ -3110,9 +3112,9 @@ A background-gradient version needs no JavaScript — the `background-attachment
 does not work here: the table's rows are opaque white and paint straight over it.
 
 <a id="a-narrow-table-stops-being-a-table"></a>
-**A narrow table stops being a table.** Below **640px of card** a `.data-table` becomes a list of
-labelled fields: one field column below 416px, two above it. `table_stack_controller` puts the count
-in `data-stack` and the CSS does the rest.
+**A narrow table stops being a table.** At **689px of viewport and below** a `.data-table` becomes a
+list of labelled fields: one field column at 449 and below, two above it. It is a **media query**,
+so it applies before the first paint.
 
 The Reflow exemption above is *permission, not advice.* Measured before this existed: **all fifteen
 tables scrolled sideways at 320px and at 375**, thirteen at 640. The worst hid **80% of its width** —
@@ -3121,17 +3123,31 @@ design system was also contradicting itself, since the [line item row](#line-ite
 stacked below `sm` with a label per cell, for the recorded reason that "four columns at 320px leaves
 the item picker 72px, which is not a control anyone can use".
 
-| Card width | Layout |
+| Viewport | Layout |
 | --- | --- |
-| below 416px | Stacked, **one** field column |
-| 416–640px | Stacked, **two** field columns |
-| 640px and up | A table, scrolling sideways if it must |
+| 449px and below | Stacked, **one** field column |
+| 450–689px | Stacked, **two** field columns |
+| 690px and up | A table, scrolling sideways if it must |
 
-**The threshold is the card's width, not the viewport's.** Measured on `/purchases`: at a **1023px**
-viewport the card is **973px**; at **1024px** it is **702px**, because that is where the sidebar
-appears. A viewport breakpoint at `lg` would return the table to table form exactly where it has
-least room. 640 was chosen so the behaviour is also monotonic in the viewport — a threshold of 704
-would have stacked a 1024px viewport while leaving 768 a table.
+<a id="stacking-is-a-media-query"></a>
+**These numbers are the old card-width thresholds translated, and translated by measurement.** The
+rule used to be about the *card*: stack below 640px of it, one column below 416 — decided by
+`table_stack_controller`, which measured the container and wrote `data-stack`. That meant the browser
+laid the page out as a table, **painted it**, and then rebuilt it as cards. Measured with Chrome's
+own `layout-shift` entries at 390px: **CLS 0.658** on `/admin/base_items`, 0.616 on `/admin/partners`,
+0.512 on `/admin/users` — **six screens past the 0.25 "poor" threshold**, and the blame every time
+was `tbody`, `tr`, `td`.
+
+A media query is applied before the first paint, so there is nothing to rebuild. It is viewport-based
+where the old rule was container-based, and that is safe here because **the container is the viewport
+less 34px at these sizes, on every page**: measured across four pages and twelve widths, with a 1px
+scan putting the transitions at **450** and **690**. So the translation is exact.
+
+**Why not `@container`, which is what the question really is about?** `container-type: inline-size`
+computes to `contain: layout`, which would make the card a containing block for **fixed** descendants
+— and the [row action menus](#row-actions) are fixed precisely to escape this card. `@media` has no
+such effect. (That was already the recorded reason for not using a container query; what changed is
+noticing that it never applied to a *media* query.)
 
 Four things this needs, and the last two are the ones this pattern is usually built without:
 
@@ -3146,16 +3162,28 @@ Four things this needs, and the last two are the ones this pattern is usually bu
   `::before`: hand-written attributes would mean **299 headings across 71 views** kept in step
   forever, and generated content is not reliably announced. `.cell-label` is `display: none` until
   the table stacks.
+- **A stacked field is a two column grid — label beside value — and every field is gridded whether
+  or not its label has arrived yet.** That is not a style choice: the labels are inserted by
+  JavaScript, so above the value they added a line per field *after* first paint and put back half
+  the shift the media query had just removed. Beside it, the row is as tall as its value either way.
+  Gridding only the cells that already have a label was worse than useless — it left the value full
+  width until the label landed and then narrowed it, wrapping long values, which measured **0.163**.
+  It is also how the app already shows [a record's details](#a-records-details-are-a-dl): `auto 1fr`.
+  The label never wraps, for the same reason.
 - **The table's semantics are restored explicitly.** A browser stops exposing rows and cells as a
   table the moment `display` is not `table`, and `thead` is `display: none` here, so a screen reader
   would be left with unlabelled text in no structure. `role="table"`, `rowgroup`, `row`,
   `columnheader` and `cell` are set on every table, always — redundant while it is a table and
   load-bearing while it is not, and there is no way to apply a role conditionally.
 
-**It is driven by an attribute, not a `@container` query**, which would have been tidier.
-`container-type: inline-size` computes to `contain: layout`, which makes the element a containing
-block for **fixed** descendants — and the [row action menus](#row-actions) are fixed precisely to
-escape this card. Every one of them would have been positioned against the wrong box.
+**`table_stack_controller` still runs**, for the two things CSS cannot do: restoring the roles, and
+taking the scroll region's tab stop away when there is nothing to scroll. It reads the same
+breakpoint through `matchMedia` rather than measuring anything.
+
+**A selection column sits on the title line.** `.select-col` is excluded from the field grid and from
+labelling — its heading is a checkbox, so it has no text, and "no text" is the test for an actions
+column: without the exception the checkbox was stacked into the actions' corner, measured at
+**CLS 0.312** on `/requests`.
 
 **And it is a long page.** `/purchases` at 320px goes from 1,448px to **7,614px**. That is the
 trade: down a page you can read, rather than sideways through one you cannot. If it becomes too much,

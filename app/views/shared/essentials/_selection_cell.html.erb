@@ -8,10 +8,23 @@
   `shiftKey`**, so shift-click selected the two ends of the range and nothing in between. A
   keyboard Space on a checkbox dispatches a click too, so nothing is lost by listening for it.
 %>
+<%
+  box_id = "select-#{record.class.name.underscore}-#{record.id}"
+%>
 <td class="select-col">
-  <%= check_box_tag "ids[]", record.id, false,
-        id: "select-#{record.class.name.underscore}-#{record.id}",
-        "aria-label": "Select #{label}",
-        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
-        data: {table_selection_target: "row", action: "click->table-selection#toggleRow"} %>
+  <%#
+    A real `<label>` around the box, not an `aria-label` on it.
+
+    Two things come from that. The name reaches the accessibility tree the same way, and the
+    **target** becomes the label's 24x24 rather than the checkbox's 16x16 -- WCAG 2.5.8 asks for 24,
+    and `bin/design/responsive-audit.js` caught 16 of these on /requests at every width. A control
+    and its `<label for>` are one target, which is why every other checkbox in the app passes: they
+    have a visible label and these never could.
+  %>
+  <%= label_tag box_id, class: "flex size-6 cursor-pointer items-center justify-center" do %>
+    <%= check_box_tag "ids[]", record.id, false, id: box_id,
+          class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+          data: {table_selection_target: "row", action: "click->table-selection#toggleRow"} %>
+    <span class="sr-only">Select <%= label %></span>
+  <% end %>
 </td>
