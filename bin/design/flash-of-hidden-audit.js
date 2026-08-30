@@ -19,7 +19,7 @@ const PASSWORD = process.env.SEED_PASSWORD || "password!";
 // Pages carrying a controller that hides something in `connect()`.
 const PAGES = {
   bank: ["/distributions/new", "/donations/new", "/purchases/new", "/manage/edit",
-         "/partners/new", "/partner_groups/new", "/audits/new"],
+         "/partners/new", "/partner_groups/new", "/audits/new", "/requests"],
   super: ["/admin/users/1/edit", "/admin/users/new"]
 };
 

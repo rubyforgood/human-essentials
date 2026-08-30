@@ -6773,3 +6773,41 @@ seventeen specs to hunt for attributes.
 three cells, with "Child Items" written twice, so its actions landed under the wrong heading. That
 is what a column mismatch looks like when you go to mark the actions column.
 
+## 2026-08-30 — Selection, and only where a batch action is real
+
+The second half of the row-actions complaint: freezing the column removed the *travel* to a row's
+actions, and this removes the *repetition*. The shape is Carbon's `TableBatchActions` — selecting
+rows raises a bar naming the count and offering what can be done to them — which is also what Gmail,
+GitHub, Linear, Jira and Airtable do.
+
+**It is on one table, deliberately.** `/requests` gets it because `PicklistsPdf` already takes a
+collection, so printing several picklists is a real operation and it is exactly the case that used
+to mean opening each row's menu in turn. Everywhere else the row actions are per-record — View,
+Edit, Deactivate — and cannot be batched. **A checkbox column that leads nowhere is a column of
+noise**, and adding one to fifteen tables to look thorough would have cost every reader a column and
+given nine-tenths of them nothing. The component is built to be reused the moment another batch
+endpoint exists.
+
+**The selection column is frozen with the identifier**, not left to scroll. `.select-col` sits at
+`left: 0` and `--select-width` pushes `.pin-col` clear of it, so the two behave as one group — Ant
+Design's and AG Grid's arrangement. A checkbox you have to scroll back to find is no better than an
+action you have to scroll forward to reach, which is the complaint this whole piece of work answers.
+
+**Shift-click is bound to `click`, not `change`, and that was a real bug.** Stimulus's default event
+for a checkbox is `change`, and **a `change` event carries no `shiftKey`** — so the first version
+selected the two ends of the range and nothing in between. Measured: shift-clicking the fourth box
+after the first gave "2 selected". A keyboard Space on a checkbox dispatches a click as well, so
+listening for `click` costs the keyboard nothing.
+
+**`indeterminate` is a property, not an attribute**, so a header box showing three of fifteen chosen
+can only be set from JavaScript. A checked select-all in that state claims something untrue.
+
+**A batch action is an ordinary link.** The chosen ids go on the query string, so there is no fetch,
+no form, and it opens in a new tab if the reader asks for one. The server scopes them through
+`current_organization.requests`, so a guessed id from another bank selects nothing rather than
+leaking a picklist — asserted in a spec, because "we scoped it" is the kind of claim that rots.
+
+**Rejected: acting on the filtered set instead of a selection.** `print_unfulfilled` already does
+that, and it is a different thing — "everything matching what I searched" rather than "these six".
+Both are worth having and the export menu keeps the first.
+

@@ -267,6 +267,9 @@ Rails.application.routes.draw do
       get :print_picklist
     end
     get :print_unfulfilled, on: :collection
+    # The same PDF, for the rows the reader picked rather than for everything unfulfilled.
+    # `PicklistsPdf` already takes a collection, so selecting is the only new part.
+    get :print_picklists, on: :collection
     resource :cancelation, only: %i[new create], controller: "requests/cancelation"
   end
 

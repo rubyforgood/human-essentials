@@ -1,0 +1,43 @@
+<%#
+  The bar that appears when rows are selected, naming the count and offering what can be done to
+  them. Carbon's `TableBatchActions`, and the shape Gmail, GitHub, Linear and Jira all use.
+
+  Locals: `actions` is required -- an array of {label:, path:, icon:}. `noun` and `noun_plural`
+  name what is being counted; without them it says "selected", which is true but says nothing about
+  what of.
+
+  It sits **above the table and below the page header**, so it appears where the reader is already
+  looking rather than at the foot of the list. The count is `aria-live="polite"`: the bar appearing
+  is a visual event, and this is what makes it an audible one. It is rendered `hidden` by the server
+  and revealed by the controller -- JavaScript may reveal, never un-draw.
+%>
+<%
+  noun = local_assigns.fetch(:noun, "selected")
+  noun_plural = local_assigns.fetch(:noun_plural, noun)
+%>
+<div class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-2.5"
+     hidden
+     data-table-selection-target="bar">
+  <p class="text-sm font-medium text-brand-800"
+     aria-live="polite"
+     data-table-selection-target="count">0 selected</p>
+
+  <span class="text-brand-300" aria-hidden="true">|</span>
+
+  <% actions.each do |action| %>
+    <%#
+      An ordinary link. The chosen ids are appended to its query string by the controller, so a
+      batch action is a navigation like any other -- no fetch, no form, and it opens in a new tab
+      if that is what the reader asks for.
+    %>
+    <%= link_to action[:path],
+          class: "#{essentials_button_classes(variant: :secondary, size: :sm)} aria-disabled:pointer-events-none aria-disabled:opacity-60",
+          data: {table_selection_target: "action"} do %>
+      <i class="<%= action[:icon] %>" aria-hidden="true"></i><%= action[:label] %>
+    <% end %>
+  <% end %>
+
+  <button type="button"
+          class="<%= essentials_button_classes(variant: :ghost, size: :sm) %> ms-auto"
+          data-action="table-selection#clear">Cancel</button>
+</div>

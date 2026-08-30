@@ -50,6 +50,31 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Picklists for the requests the reader selected. `print_unfulfilled` prints everything that is
+  # outstanding; this prints the set they picked, which is the case that used to mean opening each
+  # row's menu in turn.
+  #
+  # Scoped through `current_organization.requests` like every other action here, so an id from
+  # another organization selects nothing rather than leaking a picklist.
+  def print_picklists
+    requests = current_organization
+      .requests
+      .includes(:item_requests, partner: [:profile])
+      .where(id: params[:ids].presence || [])
+      .order(created_at: :desc)
+
+    if requests.empty?
+      redirect_back_or_to(requests_path, alert: "Select at least one request to print picklists for.")
+      return
+    end
+
+    pdf = PicklistsPdf.new(current_organization, requests)
+    send_data pdf.compute_and_render,
+      filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
+      type: "application/pdf",
+      disposition: "inline"
+  end
+
   def print_unfulfilled
     requests = current_organization
       .requests

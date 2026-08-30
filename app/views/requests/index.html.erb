@@ -60,11 +60,28 @@
               title: essentials_filtered? ? "No requests #{date_range_label}" : "No requests right now",
               body: essentials_filtered? ? "Try a wider date range, or clear the filters to see every request." : "Requests from your partner agencies will appear here." %>
       <% else %>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+        <%#
+          Selecting rows so several can be acted on at once -- see "Selection" in design.md.
+          Freezing the actions column removed the *travel* to a row's actions; this removes the
+          *repetition*, for the one thing here that can genuinely be done to a set. `PicklistsPdf`
+          already takes a collection, so the picking is the only new part.
+        %>
+        <div data-controller="table-selection">
+          <%= render "shared/essentials/selection_bar",
+                actions: [{label: "Print picklists", icon: "bi-printer",
+                           path: print_picklists_requests_path(format: :pdf)}] %>
+
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Requests from partner agencies</caption>
             <thead>
               <tr>
+                <th scope="col" class="select-col">
+                  <%= check_box_tag "select_all_requests", "1", false,
+                        "aria-label": "Select all requests on this page",
+                        class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                        data: {table_selection_target: "all", action: "table-selection#toggleAll"} %>
+                </th>
                 <th scope="col" class="date pin-col">Date</th>
                 <th scope="col" class="name">Request was sent by</th>
                 <th scope="col">Request sender</th>
@@ -77,6 +94,7 @@
             </thead>
             <tbody><%= render partial: "request_row", collection: info.paginated_requests %></tbody>
           </table>
+          </div>
         </div>
       <% end %>
     <% end %>

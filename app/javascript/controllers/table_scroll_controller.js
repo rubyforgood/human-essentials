@@ -117,6 +117,18 @@ export default class extends Controller {
      * -- the mistake already made once at the start edge, where a gradient over the frozen column
      * took its ink from 9.59:1 to 3.19:1.
      */
+    // A selection column is frozen with the identifier, so the identifier has to start where the
+    // checkbox ends. Measured rather than assumed: the cell's width comes from its checkbox and
+    // the table's own padding.
+    const selectCol = region.querySelector("thead .select-col");
+    if (selectCol) {
+      const selectWidth = Math.round(selectCol.getBoundingClientRect().width);
+      const w = region.parentElement;
+      if (w && w.style.getPropertyValue("--select-width") !== `${selectWidth}px`) {
+        w.style.setProperty("--select-width", `${selectWidth}px`);
+      }
+    }
+
     const pinnedRight = region.querySelector("thead .cell-actions");
     const wrapper = region.parentElement;
     if (wrapper) {

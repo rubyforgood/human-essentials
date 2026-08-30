@@ -422,6 +422,27 @@
     border-right: 1px solid var(--color-slate-200);
   }
 
+  /*
+   * The selection column, frozen with the identifier rather than left to scroll away.
+   *
+   * A checkbox you have to scroll back to find is no better than an action you have to scroll
+   * forward to reach, which is the whole complaint this answers. `--select-width` is measured by
+   * `table_scroll_controller` and pushes `.pin-col` clear of it, so the two behave as one frozen
+   * group -- the arrangement Ant Design and AG Grid both use for a selection column.
+   */
+  .data-table .select-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: 1px;
+    padding-right: 0;
+    background-color: inherit;
+  }
+
+  .data-table:has(.select-col) .pin-col {
+    left: var(--select-width, 0px);
+  }
+
   .data-table tbody tr,
   .data-table thead tr {
     background-color: white;

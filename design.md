@@ -1873,6 +1873,43 @@ its meaning instead of re-deciding alignment cell by cell:
 Every table gets a `<caption>` (visually hidden) saying what it lists. `.table-scroll` is the
 horizontal scroll container — a wide table scrolls, it does not squeeze.
 
+<a id="selection"></a>
+**Selection, where a batch action genuinely exists.** Freezing the actions column removed the
+*travel* to a row's actions; selection removes the *repetition*.
+
+```erb
+<div data-controller="table-selection">
+  <%= render "shared/essentials/selection_bar",
+        actions: [{label: "Print picklists", icon: "bi-printer", path: ...}] %>
+  ...
+  <%= render "shared/essentials/selection_cell", record: row, label: "…" %>
+</div>
+```
+
+The shape is Carbon's `TableBatchActions` — selecting rows raises a bar naming the count and what
+can be done to them — which is what Gmail, GitHub, Linear, Jira and Airtable all do.
+
+- **Only where the action is real.** `/requests` has it, because `PicklistsPdf` already takes a
+  collection and printing several picklists is the case that used to mean opening each row's menu
+  in turn. Most row actions in this app are per-record — View, Edit, Deactivate — and cannot be
+  batched, and a checkbox column that leads nowhere is a column of noise.
+- **The selection column is frozen with the identifier**, at `left: 0`, with `.pin-col` pushed clear
+  by `--select-width`. A checkbox you have to scroll back to find is no better than an action you
+  have to scroll forward to reach.
+- **Shift-click extends a range**, bound to `click` and not `change`: **a `change` event carries no
+  `shiftKey`**, and the first version selected the two ends and nothing in between. Space on a
+  checkbox dispatches a click too, so the keyboard loses nothing.
+- **The header box is `indeterminate` when only some are chosen** — a checked select-all with three
+  of fifteen claims something untrue. It is a property, not an attribute, so only JavaScript can
+  set it.
+- **Escape clears**, and the count is `aria-live="polite"`: the bar appearing is a visual event and
+  this is what makes it an audible one.
+- **A batch action is an ordinary link.** The ids go on its query string, so it needs no fetch and
+  no form, and opens in a new tab if that is what the reader asks for. The server scopes them
+  through `current_organization` — an id from another bank selects nothing.
+- **The bar is server-rendered `hidden`** and revealed, per
+  [render the state](#render-the-state-do-not-correct-it).
+
 <a id="the-actions-column-is-frozen"></a>
 **The actions column is frozen to the right edge**, as `.pin-col` freezes the first to the left.
 Mark it `.cell-actions` on both the `<th>` and the `<td>` — 43 tables do — and the CSS does the rest.
