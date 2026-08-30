@@ -28,17 +28,13 @@ RSpec.describe ItemCreateService, type: :service do
 
     context 'when there are no issues' do
       it 'should return a result object with success? returning true and the item' do
+        allow(fake_organization_item).to receive(:sync_request_units!).with([])
+
         expect(subject).to be_a_kind_of(Result)
         expect(subject.success?).to eq(true)
         expect(subject.value).to eq(fake_organization_item)
-      end
-
-      it 'should execute the expected methods' do
-        # Invoke the subject aka call the service object call method
-        subject
-
-        # Assert that the service object calls the expected method.
         expect(fake_organization_item).to have_received(:save!)
+        expect(fake_organization_item).to have_received(:sync_request_units!)
       end
     end
 
@@ -49,9 +45,12 @@ RSpec.describe ItemCreateService, type: :service do
         end
 
         it 'should return a result object with an ActiveRecord::RecordNotFound error' do
+          allow(fake_organization_item).to receive(:sync_request_units!).with([])
+
           expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
+          expect(fake_organization_item).not_to have_received(:sync_request_units!)
         end
       end
 
@@ -63,9 +62,12 @@ RSpec.describe ItemCreateService, type: :service do
         end
 
         it 'should return a result object with the raised error' do
+          allow(fake_organization_item).to receive(:sync_request_units!).with([])
+
           expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
+          expect(fake_organization_item).not_to have_received(:sync_request_units!)
         end
       end
     end

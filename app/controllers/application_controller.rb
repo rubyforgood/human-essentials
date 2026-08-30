@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
     @role = if !current_user
       nil
     else
-      Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+      current_user.roles.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
     end
   end
 
