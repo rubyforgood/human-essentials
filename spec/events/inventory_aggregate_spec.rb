@@ -6,6 +6,10 @@ RSpec.describe InventoryAggregate do
   let(:item2) { FactoryBot.create(:item, organization: organization) }
   let(:item3) { FactoryBot.create(:item, organization: organization) }
 
+  before do
+    expect(Flipper.enabled?(:reserved_inventory)).to be false
+  end
+
   describe "individual events" do
     let!(:inventory) do
       TestInventory.create_inventory(organization,
@@ -69,8 +73,8 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, reserved_quantity: 20, storage_location_id: storage_location1.id),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5, reserved_quantity: 5, storage_location_id: storage_location1.id),
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id)
             }
           ),
@@ -507,14 +511,14 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70, reserved_quantity: 10, storage_location_id: storage_location1.id),
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25, reserved_quantity: 15, storage_location_id: storage_location2.id),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25, storage_location_id: storage_location2.id),
               item4.id => EventTypes::EventItem.new(item_id: item4.id, quantity: 50, storage_location_id: storage_location2.id)
             }
           )
@@ -579,7 +583,7 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20, reserved_quantity: 40, storage_location_id: storage_location1.id)
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20, storage_location_id: storage_location1.id)
             }
           )
         }
@@ -606,7 +610,7 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, reserved_quantity: 10, storage_location_id: storage_location1.id)
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id)
             }
           )
         }
@@ -668,6 +672,183 @@ RSpec.describe InventoryAggregate do
           )
         }
       ))
+    end
+  end
+
+  describe "reserved inventory lifecycle" do
+    before { Flipper.enable(:reserved_inventory) }
+
+    let(:distributed_quantity) { 30 }
+    let(:item_1_starting_quantity) { 100 }
+    let(:item_2_starting_quantity) { 50 }
+
+    let!(:starting_inventory) do
+      TestInventory.create_inventory(organization,
+        {storage_location1.id => {item1.id => item_1_starting_quantity, item2.id => item_2_starting_quantity}})
+    end
+
+    let(:distribution) do
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: distributed_quantity, item: item1, itemizable: dist)
+      dist.line_items << build(:line_item, quantity: 10, item: item2, itemizable: dist)
+      dist
+    end
+
+    # [available, reserved, physical] for the given item and storage location
+    def state(item = item1, at: storage_location1)
+      entry = described_class.inventory_for(organization.id).storage_locations[at.id].items[item.id]
+      [entry.quantity, entry.reserved_quantity, entry.physical_quantity]
+    end
+
+    it "sets the reserved quantity when a scheduled distribution is created" do
+      expect {
+        DistributionEvent.publish(distribution)  
+      }.to change { state(item1) }.from([100, 0, 100]).to([70, 30, 100])
+    end
+
+    context "when a distribution has already been published" do
+      before do
+        DistributionEvent.publish(distribution)
+      end
+
+      it "changes the available / reserved quantities when the quantity is increased" do
+        distribution.line_items[0].quantity = 40
+        DistributionEvent.publish(distribution)
+        expect(state(item1)).to eq([60, 40, 100])
+      end
+
+      it "changes the available / reserved quantities when the quantity is decreased" do
+        distribution.line_items[0].quantity = 20
+        DistributionEvent.publish(distribution)
+        expect(state(item1)).to eq([80, 20, 100])
+      end
+
+      it "releases the reservation on completion, leaving available untouched" do
+        expect {
+          DistributionCompleteEvent.publish(distribution)  
+        }.to change { state(item1) }.from([70, 30, 100]).to([70, 0, 70])
+      end
+
+      it "reverses both dimensions when a scheduled distribution is reclaimed" do
+        expect {
+          DistributionDestroyEvent.publish(distribution)  
+        }.to change { state(item1) }.from([70, 30, 100]).to([100, 0, 100])
+      end
+
+      it "carries reserved quantities through a snapshot" do
+        expect {
+          SnapshotEvent.publish(organization)  
+        }.not_to change { state(item1) }.from([70, 30, 100])
+      end
+
+      context "when the distribution has already been completed" do
+        before do
+          DistributionCompleteEvent.publish(distribution)
+          distribution.complete!
+        end
+
+        it "moves only available when a completed distribution is edited" do  
+          distribution.line_items[0].quantity = 40
+          expect {
+            DistributionEvent.publish(distribution)  
+          }.to change { state(item1) }.from([70, 0, 70]).to([60, 0, 60])
+        end
+
+        it "moves only available when a completed distribution is reclaimed" do
+          expect {
+            DistributionDestroyEvent.publish(distribution)  
+          }.to change { state(item1) }.from([70, 0, 70]).to([100, 0, 100])
+        end
+      end
+
+      it "releases the reservation when a line item is dropped from the distribution" do
+        distribution.line_items = [build(:line_item, quantity: 30, item: item1, itemizable: distribution)]
+        expect {
+          DistributionEvent.publish(distribution)  
+        }.to change { state(item2) }.from([40, 10, 50]).to([50, 0, 50])
+         .and not_change { state(item1) }.from([70, 30, 100])
+      end
+
+      context "when inventory is added through a donation, purchase, or transfer" do
+        before do
+          donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+          donation.line_items << build(:line_item, quantity: 10, item: item1, itemizable: donation)
+          DonationEvent.publish(donation)
+
+          purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
+          purchase.line_items << build(:line_item, quantity: 5, item: item1, itemizable: purchase)
+          PurchaseEvent.publish(purchase)
+
+          transfer = FactoryBot.create(:transfer, organization: organization,
+            from: storage_location1, to: storage_location2)
+          transfer.line_items << build(:line_item, quantity: 15, item: item1, itemizable: transfer)
+          TransferEvent.publish(transfer)
+        end
+
+        it "does not change the reserved quantity" do
+          expect(state).to eq([70, 30, 100])
+        end
+      end
+    end
+
+    it "holds the reservation across an intervening audit" do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable: donation)
+      DonationEvent.publish(donation)
+
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable: dist)
+      DistributionEvent.publish(dist)
+
+      audit = FactoryBot.create(:audit, organization: organization, storage_location: storage_location1)
+      audit.line_items << build(:line_item, quantity: 50, item: item1, itemizable: audit)
+      AuditEvent.publish(audit)
+
+      dist.line_items[0].quantity = 40
+      expect {
+        DistributionEvent.publish(dist)  
+      }.to change { state(item1) }.from([50, 10, 60]).to([20, 40, 60])
+    end
+
+    it "moves available without touching reserved when an earlier donation is corrected" do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable: donation)
+      DonationEvent.publish(donation)
+
+      DistributionEvent.publish(distribution)
+
+      donation.line_items[0].quantity = 20
+      DonationEvent.publish(donation)
+
+      expect(state).to eq([90, 30, 120])
+    end
+
+    it "tracks reservations per storage location" do
+      transfer = FactoryBot.create(:transfer, organization: organization,
+        from: storage_location1, to: storage_location2)
+      transfer.line_items << build(:line_item, quantity: 40, item: item1, itemizable: transfer)
+      TransferEvent.publish(transfer)
+
+      DistributionEvent.publish(distribution)
+
+      dist2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location2)
+      dist2.line_items << build(:line_item, quantity: 15, item: item1, itemizable: dist2)
+      DistributionEvent.publish(dist2)
+
+      expect(state).to eq([30, 30, 60])
+      expect(state(item1, at: storage_location2)).to eq([25, 15, 40])
+    end
+
+    context "when the organization does not have the feature enabled" do
+      before { Flipper.disable(:reserved_inventory) }
+
+      it "reserves nothing across the whole lifecycle" do
+        DistributionEvent.publish(distribution)
+        expect(state).to eq([70, 0, 70])
+
+        DistributionCompleteEvent.publish(distribution)
+        expect(state).to eq([70, 0, 70])
+      end
     end
   end
 

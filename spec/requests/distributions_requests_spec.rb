@@ -591,6 +591,14 @@ RSpec.describe "Distributions", type: :request do
 
         include_examples "restricts access to organization users/admins"
       end
+
+      context 'when the distribution is already complete' do
+        let(:distribution) { create(:distribution, state: :complete, organization: organization) }
+
+        it 'redirects the user back to the distributions page' do
+          expect(subject).to redirect_to distribution_path
+        end
+      end
     end
 
     describe "GET #pickup_day" do
