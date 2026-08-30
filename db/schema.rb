@@ -386,6 +386,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.datetime "created_at", null: false
     t.bigint "item_id"
     t.string "name", null: false
+    t.integer "request_limit"
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_item_units_on_item_id"
   end
@@ -406,6 +407,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.string "partner_key"
     t.string "reporting_category"
     t.string "type", default: "ConcreteItem", null: false
+    t.integer "unit_request_limit"
     t.datetime "updated_at", precision: nil, null: false
     t.integer "value_in_cents", default: 0
     t.boolean "visible_to_partners", default: true, null: false

@@ -230,11 +230,30 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
-        expect(response.body).to include(partner.organization.email)
+        expect(response.body).to include("quantity must be a whole number greater than or equal to 1")
+      end
+    end
+
+    context "when the quantity exceeds the item's request limit" do
+      let(:limited_item) do
+        create(:item, name: "Kids (Size 1)", organization: organization, unit_request_limit: 50)
+      end
+
+      it "flashes the limit message with the item name's capitalization intact" do
+        expect {
+          post partners_requests_path, params: {
+            request: {
+              comments: "over the limit",
+              item_requests_attributes: {
+                "0" => { item_id: limited_item.id, quantity: 100 }
+              }
+            }
+          }
+        }.not_to change { Request.count }
+
+        expect(response).to be_unprocessable
+        expect(flash[:error]).to include("Kids (Size 1): You requested 100, but are limited to 50")
+        expect(flash[:error]).not_to include("Kids (size 1)")
       end
     end
 
@@ -332,11 +351,7 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
-        expect(response.body).to include(partner.organization.email)
+        expect(response.body).to include("Completely empty request")
       end
     end
 

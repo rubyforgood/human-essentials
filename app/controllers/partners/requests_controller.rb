@@ -44,6 +44,9 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
+        # upcase_first, not capitalize: capitalize downcases the rest of the
+        # string, which mangles item names and pluralized units in the messages.
+        flash[:error] = @errors.full_messages.join("; ").upcase_first + "." if @errors.present?
 
         fetch_items
 
@@ -85,7 +88,7 @@ module Partners
       # hash of (item ID => hash of (request unit name => request unit plural name))
       item_ids = @requestable_items.to_h.values
       if item_ids.present?
-        @item_units = Item.where(id: item_ids).to_h do |i|
+        @item_units = Item.where(id: item_ids).includes(:request_units).to_h do |i|
           [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
         end
       end

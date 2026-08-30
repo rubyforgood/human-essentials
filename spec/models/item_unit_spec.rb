@@ -2,11 +2,12 @@
 #
 # Table name: item_units
 #
-#  id         :bigint           not null, primary key
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  item_id    :bigint
+#  id            :bigint           not null, primary key
+#  name          :string           not null
+#  request_limit :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  item_id       :bigint
 #
 RSpec.describe ItemUnit, type: :model do
   context "Validations >" do
