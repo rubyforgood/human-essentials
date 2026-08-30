@@ -1915,6 +1915,12 @@ Apple's HIG and Material both say so, and 24px is a floor for things that happen
 not a target to design to. The drawer's open and close buttons were `p-2` and `p-1`, giving
 32×32 and 22×32; both are `size-11` now.
 
+> *Corrected 2026-08-30: "Apple's HIG and Material both say so" is wrong about Material — Apple's
+> HIG specifies **44pt** and Material specifies **48dp**, which is a different number. The rule
+> stands (a touch-only control is bigger than the 24px floor) and `size-11` is 44px, but the two
+> systems were not saying the same thing. See "Auditing the industry citations" at the end of this
+> log.*
+
 ## 2026-08-21 · The date range applies itself, and reorders itself
 
 Three changes to the date range filter, all of them removing something.
@@ -5840,6 +5846,11 @@ because the row is exactly the 24px minimum and the spacing exception only appli
 targets. It sits on the floor of the requirement with no separation at all, which is not where any
 comparable system sits — **GOV.UK** pairs a 40px control with a 10px gap, **Material 3** specifies
 48dp rows, **Apple's HIG** 44pt.
+> *Corrected 2026-08-30: the figures credited to other systems here were **recalled, not measured**,
+> unlike every number about this app in the same entry. They are close enough to have decided the
+> question and are not evidence anyone can check. See "Auditing the industry citations" at the end
+> of this log.*
+
 
 **Chosen: 32px rows, 8px gap, 40px pitch**, set once on `:essentials_collection` so no page decides
 it. That clears the AA minimum in both dimensions and lands on GOV.UK's rhythm.
@@ -5922,6 +5933,11 @@ no competing rule on a child element, so the specificity fight disappears rather
 
 Yesterday's change took the row from 24px to 32px *and* added an 8px gap, for a 40px pitch, citing
 GOV.UK (40+10) and Material 3 (48dp). Reported as far too much, and that is right.
+> *Corrected 2026-08-30: the figures credited to other systems here were **recalled, not measured**,
+> unlike every number about this app in the same entry. They are close enough to have decided the
+> question and are not evidence anyone can check. See "Auditing the industry citations" at the end
+> of this log.*
+
 
 **Those were the wrong systems to copy.** GOV.UK sizes for a full-page public-service form used once
 by people who may struggle with small targets; Material 3's 48dp is a touch list row. This app is a
@@ -7233,4 +7249,42 @@ having anyway, as long as it says so.
 **What it cannot do is check whether any of this is true**, and that is worth being plain about. It
 checks the *form*: whether the claim names something falsifiable. The standard it enforces is not
 "be right about Carbon" but **"give the reader enough to catch you being wrong"**.
+
+## 2026-08-30 — Finishing the citation audit, and stopping it recurring
+
+Two questions: how is this prevented, and what did the audit leave unfinished. Both had an answer.
+
+**Unfinished: the numeric bucket.** The audit sorted 97 claims into four kinds and I had remediated
+only one of them — the 32 asserting unanimity. The 24 that *attributed numbers* were left. Tightening
+the test showed most were false positives: it had been flagging any block holding both a number and
+two system names, which catches nearly every entry in this log, because the numbers here are
+overwhelmingly measurements of **this app** sitting in the same paragraph as the systems the decision
+was compared against. *"`/purchases` rows were 145–245px"* is not a claim about Stripe. Asking
+instead whether a number stands next to a system's name **with nothing to say the measurement is
+ours** took 24 down to 6, of which three were genuine.
+
+One of those three was wrong, not merely unevidenced: *"A control that only exists on touch gets
+44×44 — Apple's HIG and Material both say so."* Apple specifies **44pt** and Material **48dp**. The
+rule survives and `size-11` is still right; the two systems were not saying the same thing, and
+saying they were is the same compression that produced the original error. Annotated.
+
+**Prevention, and the honest limit of it.** A new section in design.md, **"Citing another system"**,
+states four rules: name the artefact or say you are describing an interface; check each system
+against the *specific behaviour*, not the category; a number belongs to whoever measured it; avoid
+the absolute unless you have checked every case. It also says the thing the audit kept
+demonstrating — **the citation is rarely what decides anything.** Every decision that needed
+softening still had a measurement of this app behind it, and the measurement always survived.
+
+`citation-audit.py --check` holds a baseline and fails when the unevidenced count goes **up**.
+Verified: adding one sentence of the old form takes it from 2 to 3 and exits 1. That is the whole
+guarantee, and it is worth being plain about what it is not — it cannot tell whether a claim is
+*true*, because nothing in this repo can open Carbon or Linear. It checks the form: whether a reader
+is given enough to catch you being wrong. A count that cannot silently grow is a smaller promise
+than "these claims are correct", and it is one that can actually be kept.
+
+**The two that remain are the tool's limit, not a debt.** The proximity test cannot distinguish an
+absolute about *this app* — "every tab's controller goes in `active_on`" — from one about someone
+else's product. Both are measured claims about our own code, which is exactly where an absolute
+belongs. Rather than tune the detector until it stopped complaining, it prints the limitation in its
+own output and the baseline records why.
 

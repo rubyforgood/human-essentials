@@ -3731,6 +3731,52 @@ Notes that will bite you otherwise:
 - Initializers do not hot-reload. Changing `config/initializers/simple_form_essentials.rb`
   needs a real server restart, not a page refresh.
 
+<a id="citing-another-system"></a>
+## Citing another system
+
+Half the decisions in this document are argued partly from what other design systems do. That
+argument is worth making and it is easy to make badly, so here is the standard it has to meet.
+
+**The failure it exists to stop.** This document once justified a choice with *"three of the four
+keep it in the toolbar"*, naming Carbon, Material, GitHub and Gmail — and only Carbon did the thing
+in question. The other three were counted as agreeing by describing them all as *"keeping it in the
+toolbar"*, which is true of the **category** and false of the **specific behaviour**. It took one
+question from a reader to fall over. `python3 bin/design/citation-audit.py` then found **32 more
+claims in the same form**.
+
+Four rules, in the order they bite:
+
+1. **Name the artefact, or say you are describing an interface.** A design system that publishes a
+   component gives you something falsifiable — Carbon's `OverflowMenu`, Salesforce's `slds-truncate`,
+   Ant Design's `<Table sticky />`, GOV.UK's *"Conditionally revealing a question"*. A product that
+   ships no component gives you an observation, and it should say **observed**. Slack does not
+   publish a rule about avatar menus; describing seven interfaces is not the same as citing seven
+   systems, and the writing must not blur them.
+
+2. **Check each system against the specific behaviour, not the category.** "They all keep it in the
+   toolbar" and "they all take the filters away" are different claims about the same four products,
+   and the first was true while the second was not. When a list is doing work in a sentence, the
+   question to ask of every name on it is *what does this one do with exactly this?*
+
+3. **A number belongs to whoever measured it.** Every figure in this document about *this app* was
+   measured in the session it was written. Figures attributed to someone else's product are
+   **recalled** unless you say otherwise, and they should be marked as such — one entry credited
+   Apple and Material with the same touch target when Apple specifies 44pt and Material 48dp.
+   Never present a number of ours as theirs: the 28px row action came from our own kebab trigger.
+
+4. **Avoid the absolute unless you have checked every case.** "All", "none", "nobody", "not one",
+   "identically" invite exactly one counter-example. *"I have found no system that does X"* says the
+   same useful thing and is true.
+
+**And the citation is rarely what decides anything.** Nearly every decision here also has a
+measurement of this app behind it — 54px of jump, 818px of scrolling, 0.658 of layout shift. That is
+the argument; the citation is corroboration. Where the two were separated during the audit, the
+measurement always survived and the citation was the part that needed softening.
+
+`python3 bin/design/citation-audit.py --check` fails if the number of claims in the riskiest form
+goes up. It cannot tell whether a claim is *true* — nothing here can open another product — but it
+can stop the count growing while nobody is looking.
+
 ## Building or changing a page
 
 1. **Start from the partials.** Page header, card, table, empty state, pagination. If you are

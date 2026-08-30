@@ -168,7 +168,23 @@ Written after a real error. design.md justified the selection bar covering the f
 "three of the four keep it in the toolbar", citing Carbon, Material, GitHub and Gmail -- and only
 Carbon takes the filters away. The other three were counted as agreeing by describing them all as
 "keeping it in the toolbar", which is true of the category and false of the specific behaviour.
-**97 claims, 32 of them in that form.** Advisory, not a build failure.
+**32 claims were in that form**; all are now evidenced, softened to "observed", or annotated.
+
+```bash
+python3 bin/design/citation-audit.py --check   # fails if the unevidenced count has grown
+python3 bin/design/citation-audit.py --bless   # record the current count as the baseline
+```
+
+`--check` is the part that prevents a repeat. It holds a baseline in `citation-baseline.json` and
+exits non-zero when the number of claims asserting agreement across four or more systems, with no
+artefact named, goes **up**. It cannot tell whether a claim is true -- nothing here can open another
+product -- but it can stop the count growing unnoticed. Verified to fail: adding one sentence of the
+old form takes it from 2 to 3 and exits 1.
+
+The two claims still counted are the proximity test's known limit, and it says so in its own output:
+an absolute about *this app* ("every tab's controller goes in `active_on`") sitting within 90
+characters of a system's name. Both are measured claims about our own code, which is where an
+absolute belongs. The standard they are measured against is **"Citing another system"** in design.md.
 
 `layout-shift-audit.js` scores **what moves after it is drawn**, on every screen.
 

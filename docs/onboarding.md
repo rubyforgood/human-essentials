@@ -652,6 +652,19 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### For maintainers: citing another design system
+
+`design.md` argues many decisions partly from what Carbon, GOV.UK, Linear and others do. There is now
+a written standard for that — **"Citing another system"** in `design.md` — and a check behind it:
+
+```bash
+python3 bin/design/citation-audit.py --check
+```
+
+It fails when the number of claims asserting agreement across four or more systems, with no
+component named, goes up. Name the artefact where one is published, say **observed** where it is
+not, and keep numbers attributed to whoever measured them.
+
 ### Six tables now reach the edge of their card
 
 **On Partner announcements the table was inset about 20px from the card on both sides**, which you
