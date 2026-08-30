@@ -45,10 +45,16 @@ RSpec.describe "Requests", type: :system, js: true do
       expect(page.all("[data-page-header='actions'] > *").length).to eq(1)
       expect(page).to have_css("[data-page-header='actions'] button[aria-haspopup='true']", text: "Export")
 
+      trigger = find("[data-page-header='actions'] button[aria-haspopup='true']")
+      panel_id = trigger["aria-controls"]
       click_on "Export"
 
-      expect(page).to have_css("[data-page-header='actions'] [role='menu'] [role='menuitem']", count: 2)
-      items = page.all("[data-page-header='actions'] [role='menuitem']").map(&:text)
+      # The panel is asked for by id, not by its place in the header: `popover_controller` moves an
+      # open `fixed` panel to `<body>`, so it is no longer a descendant of the actions container.
+      # See design.md -- `position: fixed` escapes an ancestor's overflow but not its stacking
+      # context, and the row menus needed that escape once the actions column was frozen.
+      expect(page).to have_css("##{panel_id}[role='menu'] [role='menuitem']", count: 2)
+      items = page.all("##{panel_id} [role='menuitem']").map(&:text)
       expect(items.first).to eq("Requests as CSV")
       expect(items.last).to start_with("Unfulfilled picklists, PDF")
     end

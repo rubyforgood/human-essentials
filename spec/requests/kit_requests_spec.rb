@@ -37,8 +37,27 @@ RSpec.describe "/kits", type: :request do
         expect(page.css(".deactivate-kit-button[disabled]")).to be_empty
       end
 
+      describe "PUT #deactivate when it cannot be deactivated" do
+        it "says why, and what to do next" do
+          storage_location = create(:storage_location)
+          TestInventory.create_inventory(kit.organization, {storage_location.id => {kit.id => 10}})
+
+          put deactivate_kit_path(kit)
+
+          # The reason the action is offered rather than greyed out: a flash can name the kit, say
+          # why, and end with the next step. `Kit` is an `Item` by STI, so this is Item#deactivate!.
+          expect(flash[:alert]).to include(kit.name)
+          expect(flash[:alert]).to include("Move or distribute the remaining stock")
+          expect(kit.reload).to be_active
+        end
+      end
+
       context "when it cannot be deactivated" do
-        it "should disable the button" do
+        # The action is *offered* rather than greyed out -- design.md: an action unavailable
+        # because of the record's state is attempted and answered, because the server's flash can
+        # say why and what to do next and a disabled item cannot. `/items` already worked this way;
+        # kits was the last table that did not. The controller spec below covers the answer.
+        it "still offers the action, without a confirmation" do
           storage_location = create(:storage_location)
           TestInventory.create_inventory(kit.organization, {
             storage_location.id => {
@@ -48,7 +67,10 @@ RSpec.describe "/kits", type: :request do
           get kits_url
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
-          expect(page.css(".deactivate-kit-button[disabled]")).not_to be_empty
+          expect(page.css(".deactivate-kit-button")).not_to be_empty
+          expect(page.css(".deactivate-kit-button[disabled]")).to be_empty
+          # No "are you sure?" for something that cannot happen: it is two steps to a dead end.
+          expect(page.css(".deactivate-kit-button[data-confirm]")).to be_empty
           expect(page.css(".reactivate-kit-button")).to be_empty
         end
       end

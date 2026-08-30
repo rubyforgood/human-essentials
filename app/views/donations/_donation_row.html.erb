@@ -10,10 +10,10 @@
   <td class="numeric"><%= dollar_value(donation_row.money_raised.to_i) %></td>
   <td class="numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
   <td class="notes text-slate-600"><%= truncate donation_row.comment, length: 140, separator: /\w+/ %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", donation_path(donation_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Print", print_donation_path(donation_row, format: :pdf), variant: :ghost, size: :sm, icon: "bi-printer" %>
+      <%= essentials_row_icon_link "View", donation_path(donation_row), icon: "bi-eye" %>
+      <%= essentials_row_icon_link "Print", print_donation_path(donation_row, format: :pdf), icon: "bi-printer" %>
     </div>
   </td>
 </tr>

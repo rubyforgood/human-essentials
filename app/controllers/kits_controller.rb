@@ -51,7 +51,16 @@ class KitsController < ApplicationController
 
   def deactivate
     @kit = current_organization.kits.find(params[:id])
-    @kit.deactivate!
+    # The action is offered even when it cannot succeed, so this is where the reason is given --
+    # design.md, an unavailable action is attempted and answered rather than greyed out. `Kit` is
+    # an `Item` by STI, so `deactivate!` already raises a sentence written to be read in a flash.
+    # `reactivate` below has always worked this way; this is the same shape.
+    begin
+      @kit.deactivate!
+    rescue => e
+      redirect_back_or_to(dashboard_path, alert: e.message)
+      return
+    end
     redirect_back_or_to(dashboard_path, notice: "Kit has been deactivated!")
   end
 

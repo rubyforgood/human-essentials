@@ -331,6 +331,17 @@ findings that belong to this migration rather than to the app's own history:
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
 
+**`title` is not a tooltip in this app any more.** Every icon-only row action carries `aria-label`
+plus `data-tooltip`, read by `tooltip_controller`; `title` was removed from all of them, because the
+browser's tooltip would draw on top of ours and it shows nothing at all on keyboard focus.
+`pw bin/design/tooltip-audit.js` fails if one comes back. The clipped-cell bubble is unchanged and
+still a separate controller.
+
+**Row actions were labelled `sm` ghost buttons and are now 28px icons** -- 55 call sites across 30
+files, rewritten to `essentials_row_icon_link` / `essentials_row_icon_action`. `<td class="text-right">`
+in a table is now `<td class="cell-actions">`, on all 43 tables, which is what the CSS freezes to the
+right edge.
+
 A pattern that had no shared component until August 2026: **a field revealed by another answer**.
 Six of them existed, each built its own way -- a parallel grid column on the distribution form, a
 bare `pl-5` on the partner group form, nothing at all on three others -- and one had a wiring fault

@@ -33,7 +33,7 @@
                     invisible. A long list of links in a cell needs its own answer -- a count, or
                     "+N more" -- which is recorded in docs/todo.md. %>
                 <th scope="col">Items in category</th>
-              <th scope="col" class="text-right">Actions</th>
+              <th scope="col" class="cell-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -51,13 +51,12 @@
                     <% end %>
                   </ul>
                 </td>
-                <td class="text-right">
+                <td class="cell-actions">
                   <div class="flex justify-end gap-1.5">
-                    <%= essentials_link_button "View", item_category_path(item_category), variant: :ghost, size: :sm, icon: "bi-eye" %>
-                    <%= essentials_link_button "Edit", edit_item_category_path(item_category.id), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                    <%= essentials_row_icon_link "View", item_category_path(item_category), icon: "bi-eye" %>
+                    <%= essentials_row_icon_link "Edit", edit_item_category_path(item_category.id), icon: "bi-pencil" %>
                     <% if item_category.items.count <= 0 %>
-                      <%= essentials_action_button "Delete", item_category_path(item_category.id), method: :delete,
-                            variant: :ghost_danger, size: :sm, icon: "bi-trash",
+                      <%= essentials_row_icon_action "Delete", item_category_path(item_category.id), method: :delete, icon: "bi-trash", tone: :danger,
                             confirm: confirm_delete_msg(item_category.name) %>
                     <% end %>
                   </div>

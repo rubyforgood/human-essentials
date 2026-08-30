@@ -7,11 +7,10 @@
       <%= essentials_status_pill("Expired", tone: :danger, icon: "bi-clock-history") %>
     <% end %>
   </td>
-  <td class="text-right">
+  <td class="cell-actions">
     <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "Edit", edit_broadcast_announcement_path(broadcast_announcement), variant: :ghost, size: :sm, icon: "bi-pencil" %>
-      <%= essentials_action_button "Delete", broadcast_announcement, method: :delete,
-            variant: :ghost_danger, size: :sm, icon: "bi-trash",
+      <%= essentials_row_icon_link "Edit", edit_broadcast_announcement_path(broadcast_announcement), icon: "bi-pencil" %>
+      <%= essentials_row_icon_action "Delete", broadcast_announcement, method: :delete, icon: "bi-trash", tone: :danger,
 
             confirm: "Are you sure?" %>
     </div>

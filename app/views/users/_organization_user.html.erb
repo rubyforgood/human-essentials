@@ -5,7 +5,7 @@
   <td class="date"><%= user.current_sign_in_at&.strftime("%Y/%m/%d") %></td>
   <td><%= user.invitation_status %></td>
   <td class="whitespace-nowrap"><%= reinvite_user_link(user) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <%#
       Which actions exist depends on the user's role and on whether they are you, so inline the
       column showed two controls, then one, then nothing, row after row. That is the case

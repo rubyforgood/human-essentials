@@ -14,7 +14,7 @@
           <tr>
             <th scope="col">Role type</th>
             <th scope="col">Resource</th>
-            <th scope="col" class="text-right">Actions</th>
+            <th scope="col" class="cell-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -25,10 +25,9 @@
                 <%= role.resource&.name || "Super admin" %>
                 <% if role.resource&.id %><span class="text-slate-500">(id: <%= role.resource.id %>)</span><% end %>
               </td>
-              <td class="text-right">
+              <td class="cell-actions">
                 <div class="flex justify-end gap-1.5">
-                  <%= essentials_action_button "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete,
-                        variant: :ghost_danger, size: :sm, icon: "bi-trash",
+                  <%= essentials_row_icon_action "Delete", admin_user_remove_role_path(user, role_id: role.id), method: :delete, icon: "bi-trash", tone: :danger,
                         confirm: "Are you sure you want to remove this role?" %>
                 </div>
               </td>

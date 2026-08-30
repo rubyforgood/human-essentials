@@ -12,7 +12,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Organization</th>
-                  <th scope="col" class="text-right">Actions</th>
+                  <th scope="col" class="cell-actions">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -20,10 +20,10 @@
                   <tr>
                     <td><%= partner.name %></td>
                     <td><%= partner.organization&.name %></td>
-                    <td class="text-right">
+                    <td class="cell-actions">
                       <div class="flex justify-end gap-1.5">
-                        <%= essentials_link_button "View", admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-eye" %>
-                        <%= essentials_link_button "Edit", edit_admin_partner_path(partner), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                        <%= essentials_row_icon_link "View", admin_partner_path(partner), icon: "bi-eye" %>
+                        <%= essentials_row_icon_link "Edit", edit_admin_partner_path(partner), icon: "bi-pencil" %>
                       </div>
                     </td>
                 <% end %>

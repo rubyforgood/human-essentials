@@ -11,7 +11,7 @@
   <td><%= storage_location.warehouse_type %></td>
   <td class="quantity"><%= quantity %></td>
   <td class="numeric"><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <%# Three inline, and a third action that was Reactivate, Deactivate or a disabled Deactivate
         depending on the row. The menu keeps `disabled:` and `reason:`, so a location that still
         holds stock still says why -- as sr-only text rather than a hover-only title. %>

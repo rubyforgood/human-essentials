@@ -98,6 +98,8 @@ out/
 
 # Ad-hoc design preview, served at /design-preview.html in development
 /public/design-preview.html
+/public/icon-action-tooltip.html
+/public/row-actions-reach.html
 /public/shipping-cost-reveal.html
 /public/reports-hub-preview.html
 /public/reports-options.html

@@ -133,13 +133,28 @@ RSpec.describe "Row action menus", type: :system, js: true do
     # input and "not the first item" was trivially true.
 
     # `.table-scroll` clips on both axes, so an absolutely positioned panel was cut off on the
-    # last row. The panel is placed against the viewport instead.
-    it "escapes the table's scroll region" do
-      open_row_menu(row: "Costco")
-      position = page.evaluate_script(
-        "getComputedStyle(document.querySelector('tbody tr [data-popover-target=panel]')).position"
-      )
-      expect(position).to eq("fixed")
+    # last row. The panel is placed against the viewport instead -- and, since the actions column
+    # became a `position: sticky` cell, it is also moved to `<body>` while open: `fixed` escapes an
+    # ancestor's overflow but not its stacking context, and trapped in that cell the open menu sat
+    # underneath the scroll rail. See popover_controller.
+    it "escapes the table's scroll region, and its stacking context" do
+      # The id is read while the menu is open: moving the node makes Capybara's reference stale,
+      # so the string has to be captured before the panel goes home.
+      panel_id = open_row_menu(row: "Costco")[:id]
+
+      expect(page.evaluate_script(
+        "getComputedStyle(document.getElementById(#{panel_id.to_json})).position"
+      )).to eq("fixed")
+      expect(page.evaluate_script(
+        "document.getElementById(#{panel_id.to_json}).parentElement.tagName"
+      )).to eq("BODY")
+
+      # And back where it belongs once it closes, so Turbo replacing the row does not strand it.
+      page.send_keys(:escape)
+      expect(page).to have_no_css("[data-popover-target=panel]", visible: true)
+      # That it goes *home* again is asserted in row_actions_reach_system_spec, on a page with no
+      # filter frame: this one is inside a turbo-frame that may replace the table underneath the
+      # assertion, which is a race rather than a fact about the portal.
     end
   end
 end

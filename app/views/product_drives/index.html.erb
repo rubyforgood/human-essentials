@@ -56,7 +56,7 @@
                 <th scope="col" class="quantity">Quantity of items</th>
                 <th scope="col" class="quantity">Variety of items</th>
                 <th scope="col" class="numeric">In-kind value</th>
-                <th scope="col" class="text-right">Actions</th>
+                <th scope="col" class="cell-actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -72,8 +72,8 @@
                   <td class="quantity"><%= number_with_delimiter(@summary[product_drive.id].quantity) %></td>
                   <td class="quantity"><%= @summary[product_drive.id].unique_item_count %></td>
                   <td class="numeric"><%= dollar_value(@summary[product_drive.id].value) %></td>
-                  <td class="text-right">
-                    <%= essentials_link_button "View", product_drive_path(product_drive.id), variant: :ghost, size: :sm, icon: "bi-eye" %>
+                  <td class="cell-actions">
+                    <%= essentials_row_icon_link "View", product_drive_path(product_drive.id), icon: "bi-eye" %>
                   </td>
                 </tr>
               <% end %>

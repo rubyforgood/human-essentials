@@ -20,7 +20,7 @@
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Email</th>
-              <th scope="col" class="text-right">Actions</th>
+              <th scope="col" class="cell-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -28,8 +28,8 @@
               <tr>
                 <td class="font-medium text-slate-900"><%= user.display_name %></td>
                 <td><%= user.email %></td>
-                <td class="text-right">
-                  <%= essentials_link_button "Edit", edit_partners_user_path(user), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+                <td class="cell-actions">
+                  <%= essentials_row_icon_link "Edit", edit_partners_user_path(user), icon: "bi-pencil" %>
                 </td>
               </tr>
             <% end %>

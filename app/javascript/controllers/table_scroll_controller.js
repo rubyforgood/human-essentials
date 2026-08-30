@@ -105,9 +105,24 @@ export default class extends Controller {
        * wrapper draws it and this says where the frozen column ends.
        */
       const width = Math.round(pinned.getBoundingClientRect().width);
-      const wrapper = region.parentElement;
-      if (wrapper && wrapper.style.getPropertyValue("--pin-width") !== `${width}px`) {
-        wrapper.style.setProperty("--pin-width", `${width}px`);
+      const startWrapper = region.parentElement;
+      if (startWrapper && startWrapper.style.getPropertyValue("--pin-width") !== `${width}px`) {
+        startWrapper.style.setProperty("--pin-width", `${width}px`);
+      }
+    }
+
+    /*
+     * And the same at the other end. The actions column is frozen to the right, so the end-of-
+     * scroll shadow has to stop where that column begins rather than being painted underneath it
+     * -- the mistake already made once at the start edge, where a gradient over the frozen column
+     * took its ink from 9.59:1 to 3.19:1.
+     */
+    const pinnedRight = region.querySelector("thead .cell-actions");
+    const wrapper = region.parentElement;
+    if (wrapper) {
+      const rightWidth = pinnedRight ? Math.round(pinnedRight.getBoundingClientRect().width) : 0;
+      if (wrapper.style.getPropertyValue("--pin-right-width") !== `${rightWidth}px`) {
+        wrapper.style.setProperty("--pin-right-width", `${rightWidth}px`);
       }
     }
 

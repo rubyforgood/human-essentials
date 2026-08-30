@@ -12,7 +12,7 @@
     <%= open_account_request.name %>
     <br><span class="text-slate-500"><%= open_account_request.email %></span>
   </td>
-  <td class="text-right">
+  <td class="cell-actions">
     <div class="inline-flex flex-wrap justify-end gap-2">
       <%# Both open the same dialog; the params say which decision it is. %>
       <button type="button" class="<%= essentials_button_classes(variant: :ghost_danger, size: :sm, ) %>"

@@ -115,6 +115,11 @@ export default class extends Controller {
           cell.classList.add("cell-actions");
           return;
         }
+        // The actions column names itself now -- `.cell-actions` is in the markup, because the
+        // column is frozen to the right edge and CSS has to be able to select it. Its heading is
+        // a visible "Actions", so without this the cell would be given a "Actions" label as
+        // though it were a field of the record.
+        if (cell.classList.contains("cell-actions")) return;
         // The identifying column becomes the card's title, so it is not labelled either.
         if (cell.classList.contains("pin-col")) return;
         if (cell.querySelector(":scope > .cell-label")) return;

@@ -6698,3 +6698,78 @@ and `public/vendors.csv`, the pre-rename names of two template files, and Rails 
 ahead of the router. The request never reached the controller. This is the same mechanism
 `bin/design/serve-mockup` relies on, which is worth remembering in both directions.
 
+## 2026-08-30 — Freeze the actions column, and pay for it with icons
+
+Reported: *"having the action all the way at the end of a horizontal scroll for a user who is
+processing multiple rows is a very frustrating experience."*
+
+**Measured first.** At 1440 five of sixteen tables scroll; at 1024, thirteen. On `/distributions`
+the Actions header started **327px past** the right edge at 1440 and the cell needed **402px** of
+scrolling; at 1024 it was **818px**. And it did not stay scrolled — acting on a row reloads the
+page, and a reload puts `scrollLeft` back to **0** (measured, 402 → 0), so a page of 15 rows cost
+**402 × 15 = 6,030px** of dragging, redone after every action. **Keyboard users never had this
+problem**: one Tab from the row's first link reaches the menu and the browser scrolls it into view.
+It was specifically the pointer that paid.
+
+**Four options were previewed** (`docs/mockups/row-actions-reach.html`), and **pinning the actions
+column to the right edge** was chosen. Ant Design (`fixed: 'right'`), AG Grid (`pinned: 'right'`),
+Material React Table, Salesforce Lightning and Excel/Sheets/Handsontable all do this. The rejected:
+
+- **Actions on the left**, beside the pinned name. Zero-scroll and needs no stickiness, but the
+  first thing in every row becomes a control rather than the record it acts on, and it pushes the
+  identifying column off the left edge. **Nobody does this.**
+- **Selection plus a batch bar** — Carbon's `TableBatchActions`, Gmail, GitHub, Linear. Worth doing
+  and it *composes* with pinning rather than replacing it, since most row actions here are
+  per-record. Being built next.
+- **Fewer columns with a chooser** — the real fix for `/distributions`' twelve columns, but it needs
+  a stored per-user preference and a defaults decision across 200+ organisations. Its own work.
+
+**"Does this hurt tables with visible buttons?" — measured, and no.** `position: sticky` is inert
+where nothing overflows, so the widest actions columns in the app (`/manufacturers` **428px**,
+`/barcode_items` 321px) cost nothing: none of them scroll, and that width is the table stretching its
+last column rather than the buttons needing the room. The separator is drawn only while something is
+behind the column, so a table that fits is visually unchanged.
+
+**"Should they all collapse into the menu?" — no**, and the rule that says so was already written.
+Three or more on any row, or a set that *varies* by status/role/state, gets the menu; a settled one
+or two stays visible. Collapsing a settled pair would hide a one-click action behind two clicks on
+every row forever. Checked against that rule, **exactly one table was wrong**: `/kits` branched on
+`kit.active` for Deactivate-or-Reactivate, the varying-set case, and was also the widest that
+scrolls at **273px**. It is a menu now — and while converting it, its unavailable Deactivate stopped
+being greyed out: the action is offered and `KitsController#deactivate` answers with the reason and
+the next step, which is what `/items` already did and what design.md already required.
+
+**The lever instead of collapsing was one design.md already contained**: a visible row action is
+icon-only at 28px. Extending that from "beside a kebab" to every inline actions column takes a
+labelled pair from **168–273px to a uniform 94px** — narrower than three of the five kebab columns —
+at **no extra click**. 55 call sites across 30 files.
+
+**Which forced the tooltip question, and `title` is not the answer.** It is browser chrome:
+unstyleable, silent on keyboard focus, gone on a timer, neither hoverable nor dismissible — three
+failures of WCAG 1.4.13. Carbon, Primer, MUI, Ant Design, Salesforce and Atlassian all pair an
+icon-only button with a component tooltip and **not one uses `title`**. `tooltip_controller` shows
+the app's own bubble on hover *and* focus; the bubble is `aria-hidden` because `aria-label` already
+carries the name and describing the control with it too would announce the action twice; and `title`
+is **removed rather than kept alongside**, since two tooltips is worse than one. Below the stacking
+breakpoint the labels come back as words, because touch has no hover.
+
+**The bug this uncovered is the most reusable part.** Making the cell `position: sticky` trapped the
+row menu: `position: fixed` escapes an ancestor's overflow but **not its stacking context**, so the
+panel's `z-30` resolved below the scroll rail's `z-index: 20`. Measured in the test environment —
+rail y=417–441, menu item centre y=423, `elementFromPoint` returning `.table-rail-track`. Removing
+the cell's `z-index` was not enough. The fix is the one `table_scroll_controller` already made for
+the rail: **the only reliable escape from an ancestor you do not control is not to be inside it**,
+so an open `fixed` panel is moved to `<body>` and put back on close. That in turn required
+`aria-controls`/`id` on the trigger and panel (recommended by the ARIA menu-button pattern anyway),
+a `panel` getter that survives the move, and `open_row_menu` finding the trigger in the row but the
+panel on the page.
+
+**`Capybara.enable_aria_label` is now on.** Seventeen specs broke on `click_on "Delete"` when the
+label moved from a text node to `aria-label`. They were not wrong — "Delete" *is* what that control
+is called, and what a screen reader announces. This makes Capybara agree rather than rewriting
+seventeen specs to hunt for attributes.
+
+**And a column-count defect fell out of the sweep**: `admin/base_items` had four headers against
+three cells, with "Child Items" written twice, so its actions landed under the wrong heading. That
+is what a column mismatch looks like when you go to mark the actions column.
+

@@ -13,7 +13,7 @@
           <th scope="col">Members</th>
           <th scope="col">Requestable item categories</th>
           <th scope="col">Send reminders?</th>
-          <th scope="col" class="text-right">Actions</th>
+          <th scope="col" class="cell-actions">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -68,7 +68,7 @@
                 <%= essentials_status_pill("No", tone: :neutral, icon: "bi-bell-slash") %>
               <% end %>
             </td>
-            <td class="text-right">
+            <td class="cell-actions">
               <%# Delete appeared only on a group with no partners, so the column alternated between
                   two controls and one. Collapsed, and Delete stays in the menu disabled with the
                   reason -- which also answers "why can I not delete this one?", which the row

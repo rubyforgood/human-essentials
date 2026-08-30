@@ -7,7 +7,7 @@
   <td><%= vendor_row&.phone %></td>
   <td><%= vendor_row&.email %></td>
   <td class="quantity"><%= number_with_delimiter(vendor_row&.volume) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <%
       row_items =
         if vendor_row.active?

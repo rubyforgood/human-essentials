@@ -7,10 +7,10 @@
   <td><%= product_drive_participant_row&.phone %></td>
   <td><%= product_drive_participant_row&.email %></td>
   <td class="quantity"><%= number_with_delimiter(product_drive_participant_row&.volume) %></td>
-  <td class="text-right">
+  <td class="cell-actions">
     <div class="flex justify-end gap-1.5">
-      <%= essentials_link_button "View", product_drive_participant_row, variant: :ghost, size: :sm, icon: "bi-eye" %>
-      <%= essentials_link_button "Edit", edit_product_drive_participant_path(product_drive_participant_row), variant: :ghost, size: :sm, icon: "bi-pencil" %>
+      <%= essentials_row_icon_link "View", product_drive_participant_row, icon: "bi-eye" %>
+      <%= essentials_row_icon_link "Edit", edit_product_drive_participant_path(product_drive_participant_row), icon: "bi-pencil" %>
     </div>
   </td>
 </tr>

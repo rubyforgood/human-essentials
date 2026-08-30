@@ -9,7 +9,7 @@
   <td class="numeric"><%= dollar_value(purchase_row.amount_spent_in_cents) %></td>
   <td class="numeric"><%= dollar_value(purchase_row.value_per_itemizable) %></td>
   <td class="date"><%= purchase_row.issued_at.strftime("%F") %></td>
-  <td class="text-right">
-    <%= essentials_link_button "View", purchase_path(purchase_row), variant: :ghost, size: :sm, icon: "bi-eye" %>
+  <td class="cell-actions">
+    <%= essentials_row_icon_link "View", purchase_path(purchase_row), icon: "bi-eye" %>
   </td>
 </tr>
