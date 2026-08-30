@@ -6,8 +6,11 @@
 
   <%= render "shared/essentials/card", padded: false,
         footer: essentials_pagination_footer(@paginated_base_items) do %>
-          <div class="px-5 py-4">
+          <%# Edge to edge, in a scroll region: this was a `px-5 py-4` wrapper
+              inside a `padded: false` card, which inset the table 21px from it. %>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
             <table class="data-table">
+  <caption>Base items and how many organization items map onto each</caption>
               <thead>
               <tr>
                 <%# "Child Items" was here twice, against a row of three cells -- so the header had

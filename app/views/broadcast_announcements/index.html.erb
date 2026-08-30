@@ -1,40 +1,54 @@
 <% content_for :title, "Send broadcast announcement" %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    The page's action is in the page header, where a page's primary action goes -- it used to be a
+    `new_button_to` shim inside a hand-rolled `flex justify-end` div *inside the card*, above the
+    table.
+  %>
   <%= render "shared/essentials/page_header",
         title: "Partner announcements",
-        subtitle: "Messages your partners see on their dashboard." %>
+        subtitle: "Messages your partners see on their dashboard.",
+        actions: essentials_link_button("New announcement", new_broadcast_announcement_path,
+          variant: :primary, icon: "bi-plus-lg") %>
 
   <%= render "shared/essentials/card", padded: false,
         footer: essentials_pagination_footer(@broadcast_announcements) do %>
-
-          <div class="px-5 py-4">
-            <div class='flex justify-end mb-4'>
-              <%= new_button_to new_broadcast_announcement_path, {text: "New announcement"} %>
-            </div>
-              <% if @broadcast_announcements.any? %>
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th class="w-50">Announcement</th>
-                    <th>More info</th>
-                    <th>Sent by</th>
-                    <th class="date text-left">Expiration</th>
-                    <th scope="col" class="cell-actions">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @broadcast_announcements.each do |broadcast_announcement| %>
-                    <%= render broadcast_announcement %>
-                  <% end %>
-                </tbody>
-              </table>
-              <% else %>
-                <%= render "shared/essentials/empty_state", kind: :cold_start,
-                      title: "No announcements yet",
-                      body: "An announcement shows on your partners' dashboards until it expires.",
-                      action: essentials_link_button("New announcement", new_broadcast_announcement_path, variant: :primary, icon: "bi-plus-lg") %>
-              <% end %>
-
-          </div>
+    <% if @broadcast_announcements.any? %>
+      <%#
+        The table meets the card's edges, in a scroll region, like every other table in the app.
+        It was wrapped in a hand-written `px-5 py-4` inside a `padded: false` card, which inset it
+        **21px** from the card on both sides -- so the row hover and the rule under the headings
+        both stopped short of the edge. Reported as "extra padding in the table to the left. The
+        hover shows this clearly, and the divider line below the column headers doesn't span all
+        the way to the left".
+      %>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+        <table class="data-table">
+          <caption>Announcements shown on your partners' dashboards</caption>
+          <thead>
+            <tr>
+              <%# `w-50` was Bootstrap's 50% width utility and is defined nowhere in Tailwind v4. %>
+              <th scope="col">Announcement</th>
+              <th scope="col">More info</th>
+              <th scope="col">Sent by</th>
+              <th scope="col" class="date">Expiration</th>
+              <th scope="col" class="cell-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @broadcast_announcements.each do |broadcast_announcement| %>
+              <%= render broadcast_announcement %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-5 py-4">
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "No announcements yet",
+              body: "An announcement shows on your partners' dashboards until it expires.",
+              action: essentials_link_button("New announcement", new_broadcast_announcement_path, variant: :primary, icon: "bi-plus-lg") %>
+      </div>
+    <% end %>
   <% end %>
 </div>

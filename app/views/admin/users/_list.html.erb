@@ -1,5 +1,8 @@
 <% if @users.any? %>
+  <%# In a scroll region like every other table, and meeting the card's edges. %>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
   <table class="data-table">
+    <caption>Users across all organizations</caption>
     <thead>
       <tr>
         <th>Roles</th>
@@ -29,6 +32,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 <% else %>
   <%= render "shared/essentials/empty_state", kind: :no_results,
         title: "No users match this search",

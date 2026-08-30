@@ -335,8 +335,9 @@ the shape the rule says to open up — and it is correctly collapsed. The audit 
 <a id="row-action-heights"></a>
 **Every visible control in an actions column is an icon at `size-7`.** `essentials_row_icon_link`
 and `essentials_row_icon_action`, or `icon_only: true`. 28px is the kebab trigger's height, so a
-column mixing the two does not step by 2px — that was visible on `/vendors` and `/requests`. Uniform
-28px icon buttons is what Carbon and Salesforce ship for this column.
+column mixing the two does not step by 2px — that was visible on `/vendors` and `/requests`. **The
+28 is ours**, derived from that trigger; Carbon and Salesforce both ship uniform icon-only row
+actions, which is the part they evidence, at their own sizes.
 
 **Icon-only is what makes the frozen column affordable.** A pinned column occupies its width
 permanently, so the labels had to go somewhere. Measured at 1024, a labelled pair ran **168–273px**
@@ -1155,9 +1156,11 @@ floor with no separation.
 **The gap is what buys the separation; do not inflate the row.** A first pass took the row to 32px
 as well, for a 40px pitch, on **GOV.UK**'s 40+10 and **Material 3**'s 48dp — and it was reported as
 too loose, correctly. Those two are the wrong comparators: GOV.UK sizes for a full-page public
-service form and Material for a touch list. The systems this app resembles agree with each other at
-24/8 — **Carbon** 24px rows with 8px between, **Ant Design** 8px between 16px controls,
-**Atlassian** 8px, **Bootstrap 5** a 24px `.form-check`. The row was already compliant; only the
+service form and Material for a touch list. The systems this app resembles sit near 24/8 —
+**Carbon**, **Ant Design**, **Atlassian** and **Bootstrap 5**'s `.form-check` are all in that
+region. Those four figures were **recalled, not measured**, unlike every other number in this
+document; the one that decided it was ours, and WCAG 2.5.8's 24px floor is what makes the row size
+defensible on its own. The row was already compliant; only the
 gap was missing.
 
 <a id="render-the-state-do-not-correct-it"></a>
@@ -1214,10 +1217,13 @@ A field that only applies to **one answer** is revealed under the answer that ne
 
 Locals: `id` and `shown` are required; `data`, `class` and `marked` are optional.
 
-- **It goes below the control that reveals it, never beside it.** GOV.UK ("Conditionally revealing
-  a question"), NHS and USWDS all put it there; Carbon, Material and Polaris have no named
-  component but place dependent fields after their trigger in reading order. **None of the five
-  puts a dependent field in a parallel column.** The shipping cost field on `/distributions/new`
+- **It goes below the control that reveals it, never beside it.** Three systems ship this as a
+  named pattern and are the evidence: GOV.UK's **"Conditionally revealing a question"**, and NHS
+  and USWDS, both forked from it. Carbon, Material and Polaris have **no named component for it**,
+  so what they show is dependent fields following their trigger in reading order — an observation
+  about their forms, not a rule they publish, and it is recorded here as the weaker thing it is.
+  I have not found a system that puts a dependent field in a parallel column, which is not the
+  same as none existing. The shipping cost field on `/distributions/new`
   was in a second grid beside the radios: **529px** where every other field on the card was
   **346px**, a left edge at x=858 that landed on no column line, and **94px above** the *Shipped*
   radio that produces it — so a keyboard user tabbing off *Shipped* was thrown back up the page.
@@ -1351,8 +1357,9 @@ The `back:` local is unchanged at all 99 call sites: the parent's name is derive
 which is `Back to <noun>` everywhere in the app — checked before relying on it. `breadcrumb:` takes
 an explicit `[[label, path], …]` when a trail is deeper than one level.
 
-**The structure is the W3C ARIA APG pattern**, which GOV.UK, Carbon, Material and Bootstrap all
-render identically: a `<nav>` with an accessible name, an **ordered** list because the order is the
+**The structure is the W3C ARIA APG pattern.** The APG is the source; GOV.UK, Carbon, Material and
+Bootstrap all follow it, which is a weaker and truer claim than the "render identically" this said
+before — they differ in separator, spacing and whether the current page is a link: a `<nav>` with an accessible name, an **ordered** list because the order is the
 hierarchy, links for the ancestors, and the current page as **plain text** carrying
 `aria-current="page"`. The separator is a generated `aria-hidden` glyph — a literal `/` between two
 links is announced as "slash". 14px, slate-500 for the trail and slate-700 for the current item,
@@ -3808,6 +3815,26 @@ It cannot check the two assertions above.
 ## Backlog
 
 Known gaps, in rough priority order:
+
+- **The industry citations are unevenly evidenced, and 32 of them are in the riskiest form.**
+  `python3 bin/design/citation-audit.py` classifies every claim in this document and the decision
+  log that names two or more systems. Of **97**: 29 **name an artefact** (a component, class or
+  documented page — `OverflowMenu`, `slds-truncate`, `<Table sticky />`, "Conditionally revealing a
+  question"), which a reader can look up and disagree with; 24 **attribute numbers**; 34 **assert
+  unanimity** ("all", "none", "not one", "identically"); 10 are plainly **observational**.
+
+  **32 assert unanimity across four or more systems without naming anything checkable.** That is
+  the form the selection-bar error took: *"three of the four keep it in the toolbar"* was true of
+  the category and false of the specific behaviour, and one counter-example was enough to fall
+  over. Four have been corrected already — an arithmetic slip ("none of the five", naming six), an
+  "identically" that four systems do not, a 28px of ours attributed to two of them, and four
+  recalled spacing figures now marked as recalled.
+
+  The rest are not known to be wrong; they are **unevidenced in a way that one counter-example
+  would falsify**. Rechecking them needs the products in front of you, which no tool here can do.
+  The standard going forward: **name the component, or say what you observed** — and when systems
+  are cited as agreeing, check what each does with the specific thing, not with the category it
+  belongs to.
 
 - **A pre-existing order-dependent spec failure.**
   `spec/requests/admin/organizations_requests_spec.rb:126` ("displays the correct organization

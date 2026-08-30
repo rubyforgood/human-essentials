@@ -28,10 +28,10 @@
               </div>
             <% end %>
           </div>
-          <div class="px-5 py-4">
-            <div id="filterrific_results">
-              <%= render( partial: 'list', locals: { users: @users }) %>
-            </div>
-          </div>
+    <%# No padding here: the partial's own table meets the card's edges, and a `px-5 py-4` wrapper
+        inset it 21px so the row hover and the rule under the headings both stopped short. %>
+    <div id="filterrific_results">
+      <%= render(partial: "list", locals: {users: @users}) %>
+    </div>
   <% end %>
 </div>

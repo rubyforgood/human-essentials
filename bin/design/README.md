@@ -152,6 +152,24 @@ relationship, and a **plain** reveal, whose content already carries its own box.
 Reported as "the location and size of the shipping cost field does not make any sense". Currently
 **10 reveals, 0 defects**.
 
+`citation-audit.py` classifies the **industry citations** in `design.md` and the decision log.
+
+```bash
+python3 bin/design/citation-audit.py          # the summary and the risky ones
+python3 bin/design/citation-audit.py --list   # every claim
+```
+
+It cannot check whether a claim is *true* -- nothing here can browse. It finds claims whose **form
+outruns the checking behind them**: naming an artefact (`OverflowMenu`, `slds-truncate`,
+`<Table sticky />`) is evidence a reader can look up and disagree with; asserting that four systems
+all do something, with nothing named, is not.
+
+Written after a real error. design.md justified the selection bar covering the filter row with
+"three of the four keep it in the toolbar", citing Carbon, Material, GitHub and Gmail -- and only
+Carbon takes the filters away. The other three were counted as agreeing by describing them all as
+"keeping it in the toolbar", which is true of the category and false of the specific behaviour.
+**97 claims, 32 of them in that form.** Advisory, not a build failure.
+
 `layout-shift-audit.js` scores **what moves after it is drawn**, on every screen.
 
 ```bash

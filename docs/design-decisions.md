@@ -7108,3 +7108,56 @@ The lesson worth keeping is not about toolbars. **When four systems are cited as
 each of them actually does with the specific thing in question**, rather than with the category it
 belongs to.
 
+## 2026-08-30 — Auditing the industry citations, and six tables inset from their cards
+
+Asked to audit the app for other places I generalised from one system, and reported in the same
+breath that the Partner announcements table has extra padding on the left.
+
+**The table first, because it was a live defect.** The table sat in a hand-written
+`<div class="px-5 py-4">` inside a `padded: false` card, which inset it **21px** on both sides — so
+the row hover and the rule under the column headings both stopped short of the card's edge. Exactly
+as described. Auditing for the shape found **six** index tables like it: `/broadcast_announcements`,
+`/admin/broadcast_announcements`, `/admin/base_items`, `/admin/organizations`, `/admin/partners` and
+`/admin/users`. None was in a `.table-scroll` region either, so none had a scroll rail, an overflow
+shadow or a named region; four had no `<caption>`; two carried `w-50`, Bootstrap's 50% width
+utility, which is defined nowhere in Tailwind v4. The two announcement pages also kept their
+**New announcement** button in a `flex justify-end` div *inside the card*, above the table, rather
+than in the page header — which is what "the buttons are obscured" was about.
+
+**Five tables are deliberately left alone**, recorded so the next sweep does not chase them: three
+partner-portal *form* tables (inside a `<form>`, with controls, and they do not overflow), the kit
+allocation change-summary (inside its own bordered panel), and the partner service-area table (two
+columns in a padded card that also holds a zipcodes section). The audit's first rule — "a
+`.data-table` not in a `.table-scroll`" — was too blunt and flagged all five; the distinction is
+whether the card is `padded: false`, i.e. whether the table is *meant* to be the card's content.
+
+**And the citation audit.** `bin/design/citation-audit.py` classifies every claim in `design.md` and
+this log that names two or more systems. **97 of them.** By the strength of what they offer:
+
+| | |
+| --- | --- |
+| **29** | name an artefact — `OverflowMenu`, `slds-truncate`, `<Table sticky />`, "Conditionally revealing a question". A reader can look it up and disagree. |
+| **24** | attribute numbers to a system |
+| **34** | assert unanimity — "all", "none", "not one", "identically" |
+| **10** | plainly observational |
+
+**32 assert unanimity across four or more systems without naming anything checkable**, which is the
+form the selection-bar error took. Four were demonstrably wrong in form and are fixed:
+
+- *"None of the five puts a dependent field in a parallel column"* — **naming six systems**, and
+  crediting three of them with a behaviour they publish no component for. It now separates the
+  three that ship the named pattern from the three where I was reading their forms, and says "I have
+  not found a system that does" rather than "none does".
+- *"GOV.UK, Carbon, Material and Bootstrap all render identically"* — they follow the same APG
+  pattern and differ in separator, spacing and whether the current page is a link.
+- *"Uniform 28px icon buttons is what Carbon and Salesforce ship"* — **the 28 is ours**, derived
+  from our kebab trigger. They ship uniform icon-only row actions at their own sizes.
+- Four recalled radio-spacing figures, now marked as recalled rather than sitting among numbers that
+  were measured.
+
+The rest are not known to be wrong. They are **unevidenced in a way one counter-example would
+falsify**, and rechecking them needs the products in front of you, which no tool here can do — so
+the finding is recorded in the backlog rather than quietly fixed. The standard going forward:
+**name the component, or say what you observed**; and when systems are cited as agreeing, check what
+each does with the specific thing, not with the category it belongs to.
+
