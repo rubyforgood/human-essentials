@@ -70,4 +70,39 @@ module MonthRangeHelper
   # Whether the range is the one the page would have shown anyway, so the filter chip can stay away
   # until somebody has actually chosen something.
   def month_range_default? = selected_month_range == default_month_range
+
+  # --- The two other parameters on a trend page -----------------------------
+
+  # Which category the window is narrowed to. nil is all of them; "none" is the items that have
+  # none, which is not an edge case here -- 16 of 51 items are uncategorised.
+  def selected_trend_category = params.dig(:filters, :item_category_id).presence
+
+  # [label, value] pairs for the select, with the two catch-alls at the ends.
+  def trend_category_options(categories)
+    [["All categories", ""]] + categories.map { |c| [c.name, c.id.to_s] } + [["Uncategorised", "none"]]
+  end
+
+  def selected_trend_category_label(categories)
+    case selected_trend_category
+    when nil then "All categories"
+    when "none" then "Uncategorised"
+    else categories.find { |c| c.id.to_s == selected_trend_category }&.name || "All categories"
+    end
+  end
+
+  # Whether to draw the window before this one behind the current figures.
+  def compare_previous? = params.dig(:filters, :compare).to_s == "1"
+
+  # "up 31%", "down 4%", "unchanged", or nil when there is nothing to compare against. Words, not
+  # an arrow: design.md does not allow a signal that only a sighted reader gets, and a percentage
+  # with no direction in it reads as a quantity rather than a change.
+  def trend_change_phrase(current, previous)
+    return nil if previous.to_i.zero?
+
+    delta = current - previous
+    return "unchanged from the previous period" if delta.zero?
+
+    percent = (delta.abs * 100.0 / previous).round
+    "#{delta.positive? ? "up" : "down"} #{percent}% on the previous period"
+  end
 end

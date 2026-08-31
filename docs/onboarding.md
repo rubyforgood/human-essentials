@@ -710,6 +710,20 @@ It fits at **1366px wide and above**. At 1280 it still scrolls a little — twel
 plus a name, a trend and a total is fifteen columns, and they do not fit in a smaller window. The
 table scrolls inside its own box rather than pushing the page sideways.
 
+### The monthly trend reports break down by category, and can compare periods
+
+**The chart now shows your item categories as stacked bands** rather than one anonymous total, so
+you can see what is driving a month. There is a **Category** filter beside the months to narrow to
+one — including **Uncategorised**, for items you have not filed anywhere. If your bank does not use
+categories, the chart looks exactly as it did.
+
+**"Compare with the previous period"** sits on the chart itself. It draws the window before this one
+as a dashed grey line behind your figures, adds a row of those figures to the table, and says the
+change in words — *"Total 167,278, up 241% on the previous period."*
+
+The previous period is **your window shifted back by its own length**: ask for six months and it
+compares with the six before, not with the same six last year.
+
 ### You can change the window on the monthly trend reports
 
 **The three trend reports were stuck on the last twelve months.** There is a **Months** control on
