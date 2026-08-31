@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>The category filter, at three and at fifty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ .lbl{display:block;font-size:12.5px;font-weight:500;color:#334155;margin-bottom:5px}
+ .sel{width:270px;height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:0 40px 0 12px;
+   font:400 14px Figtree;color:#0F172A;background:#fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2394a3b8' stroke-width='1.6'%3e%3cpath d='M4 6l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 12px center/16px;
+   -webkit-appearance:none;appearance:none}
+ .trig{width:270px;height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:0 12px;
+   display:inline-flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;
+   font:400 14px Figtree;color:#0F172A;cursor:pointer}
+ .pan{width:270px;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgb(15 23 42/.14);
+   background:#fff;padding:8px;margin-top:6px}
+ .pan input[type=search]{width:100%;height:34px;border:1px solid #CBD5E1;border-radius:8px;padding:0 10px;font:400 13.5px Figtree;margin-bottom:6px}
+ .pan ul{list-style:none;margin:0;padding:0;max-height:184px;overflow:auto}
+ .pan li button{display:block;width:100%;text-align:left;border:0;background:none;padding:7px 10px;border-radius:7px;
+   color:#334155;font:400 13.5px Figtree;cursor:pointer}
+ .pan li button:hover{background:#F1F5F9}
+ .pan li button[aria-current]{background:#EEF2FF;color:#3730A3;font-weight:600}
+ .side{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start}
+ .count{font-size:12px;color:#64748B;margin-top:5px}
+ table.mini td.n{text-align:right;font-variant-numeric:tabular-nums}
+</style></head><body><div class="wrap">
+
+<h1>The category filter, at three and at fifty</h1>
+<p class="lede">Before building A+B, what the category control should be. I measured what this app
+already does with long lists first, because the answer changes the recommendation.</p>
+
+<h2>1. What the app already does</h2>
+<table class="mini">
+  <tr><th>Measured across 142 selects on 98 pages</th><th class="n">Count</th></tr>
+  <tr><td>10 options or fewer</td><td class="n">81</td></tr>
+  <tr><td>11&ndash;25</td><td class="n">3</td></tr>
+  <tr><td>26&ndash;50</td><td class="n">4</td></tr>
+  <tr class="rec"><td><b>More than 50</b></td><td class="n"><b>54</b></td></tr>
+  <tr><td>Longest single select &mdash; the storage location time zone</td><td class="n">153</td></tr>
+  <tr class="rec"><td><b>With any search, combobox or autocomplete wrapper</b></td><td class="n"><b>0</b></td></tr>
+</table>
+<div class="verdict"><b>The app's existing answer to &ldquo;one of many&rdquo; is a plain native
+select, at any length.</b> Eight pages already put <b>52 items</b> in one, and a time zone picker
+holds 153. That is a real precedent, and it cuts both ways: matching it is consistent, and improving
+only the category filter makes one control special while 54 others stay as they are.</div>
+
+<h2>2. What is published</h2>
+<p class="note">Verified this morning rather than recalled &mdash; I fetched each of these:</p>
+<ul class="tight">
+  <li><b>GOV.UK maintains <code>accessible-autocomplete</code> as a separate component</b>, whose
+    stated purpose is &ldquo;helping users choose answers from a list you provide&rdquo; and whose
+    first design goal is accessibility. A design system shipping a whole separate component for
+    choosing from a list is itself the signal about what a long <code>&lt;select&gt;</code> costs.</li>
+  <li><b>IBM Carbon ships <code>ComboBox</code></b> and <b>Shopify Polaris ships <code>Combobox</code></b>,
+    both distinct from their plain Select.</li>
+  <li>I could not fetch GOV.UK's prose guidance on when to avoid a select &mdash; it lives on their
+    website, not in the repository &mdash; so I am not quoting it.</li>
+</ul>
+
+<h2>3. Option A &mdash; leave it a plain select</h2>
+<div class="page">
+  <div class="side">
+    <div><span class="lbl">Category</span><select class="sel"><option>All categories</option><option>Nappies</option><option>Period products</option><option>Uncategorised</option></select>
+      <p class="count">3 categories &mdash; this database</p></div>
+    <div><span class="lbl">Category</span><select class="sel"><option>All categories</option><option>Adult incontinence</option><option>Bed pads</option><option>Cloth nappies</option><option>Disposable nappies</option><option>Kits</option><option>Menstrual supplies</option><option>Miscellaneous</option><option>Nappy cream</option><option>Period underwear</option><option>Pull-ups</option><option>Swim nappies</option><option>Training pants</option><option>Wipes (adult)</option><option>Wipes (children)</option><option>Uncategorised</option></select>
+      <p class="count">15 categories &mdash; a plausible real bank</p></div>
+  </div>
+  <span class="mark ok">Native. No JavaScript, works with every screen reader and every mobile
+  picker, and identical to the other 142.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> consistent with the whole app; nothing to get wrong; a phone renders it as its own
+    full-screen wheel, which is genuinely good at 50.</li>
+  <li><b>Against:</b> on a desktop, 50 options is a long scroll with no way to jump except typing
+    the first letter.</li>
+</ul>
+
+<h2>4. Option B &mdash; a searchable popover <span class="tag t-rec">recommended</span></h2>
+<p class="note">The shape this page already uses twice: a trigger showing the current choice, and a
+panel with a list. The <b>date range</b> picker and the <b>month range</b> picker are both this, so
+it adds no new vocabulary &mdash; the only new part is a filter box above the list.</p>
+<div class="page">
+  <div class="side">
+    <div>
+      <span class="lbl">Category</span>
+      <button class="trig" type="button" aria-expanded="true">Menstrual supplies <i class="bi-chevron-down" style="color:#94A3B8"></i></button>
+      <div class="pan" role="dialog" aria-label="Choose a category">
+        <input type="search" placeholder="Search categories" aria-label="Search categories">
+        <ul><li><button type="button">All categories</button></li><li><button type="button">Adult incontinence</button></li><li><button type="button">Bed pads</button></li><li><button type="button">Cloth nappies</button></li><li><button type="button">Disposable nappies</button></li><li><button type="button">Kits</button></li><li><button type="button" aria-current="true">Menstrual supplies</button></li><li><button type="button">Miscellaneous</button></li><li><button type="button">Nappy cream</button></li><li><button type="button">Period underwear</button></li><li><button type="button">Pull-ups</button></li><li><button type="button">Swim nappies</button></li><li><button type="button">Training pants</button></li><li><button type="button">Wipes (adult)</button></li><li><button type="button">Wipes (children)</button></li><li><button type="button">Uncategorised</button></li></ul>
+      </div>
+    </div>
+    <div style="max-width:330px">
+      <p class="note" style="margin:0"><b>Why this one.</b> It is the same control the reader has
+      already used for the months, one field to the left. It scales to any number of categories
+      without a threshold, and it avoids the full combobox ARIA surface &mdash; the panel is a
+      dialog with a text field and a list of buttons, exactly like the month picker that is already
+      built and has specs.</p>
+    </div>
+  </div>
+  <span class="mark ok">Search appears where it earns its place; the list is the same at 3 or 300.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> one pattern, already in the design system and already tested here; scales without a
+    cliff; the search box is the only new part.</li>
+  <li><b>Against:</b> heavier than a select for a bank with three categories, and it is a custom
+    control &mdash; keyboard support has to be written and kept working, where a native select gets
+    it free.</li>
+</ul>
+
+<h2>5. Option C &mdash; a real combobox</h2>
+<div class="page">
+  <div><span class="lbl">Category</span>
+    <input class="sel" style="background-image:none;padding-right:12px" value="Menstru" role="combobox" aria-expanded="true" aria-label="Category">
+    <div class="pan" style="margin-top:4px"><ul>
+      <li><button type="button" aria-current="true"><b>Menstru</b>al supplies</button></li>
+    </ul></div>
+  </div>
+  <span class="mark">Type to narrow. What Carbon, Polaris and GOV.UK's autocomplete all ship &mdash;
+  and the largest ARIA surface of the three: <code>role="combobox"</code>, managed
+  <code>aria-activedescendant</code>, announced result counts, and behaviour that differs between
+  screen readers.</span>
+</div>
+
+<h2>6. Option D &mdash; no category filter at all</h2>
+<p class="note">If the table drives the chart, the table is where you pick things &mdash; a
+<b>Category</b> column you can sort and filter in place, and no separate control above it. Worth
+naming because it is the cheapest answer, and because it removes a control rather than improving one.</p>
+<ul class="tight">
+  <li><b>For:</b> nothing to design; the long list problem does not arise.</li>
+  <li><b>Against:</b> the filter narrows the <i>chart</i> as well as the table, which a column
+    cannot do; and it makes &ldquo;show me only period products&rdquo; a two-step job.</li>
+</ul>
+
+<div class="verdict"><b>Recommendation: B, the searchable popover</b> &mdash; but with a caveat I
+want to state rather than bury. It is right on its own terms: one pattern, already built here,
+scales without a threshold. The caveat is that it makes this the <b>only</b> searchable list in an
+app with <b>54 selects over 50 options</b>, including 52-item pickers on eight pages that matter
+more than this filter does. If B is worth building here it is worth extracting for those too, and I
+would rather that be a decision than an accident.
+<br><br><b>If you would rather not open that door:</b> take <b>A</b>. A plain select is defensible,
+consistent, and native &mdash; and the honest reason to choose it is that the app's long-list
+problem is bigger than this filter and should be solved once, deliberately, not sideways through a
+report page.</div>
+
+<p class="note" style="margin-top:22px">Either way I would add the count to the label &mdash;
+<b>Category (15)</b> &mdash; so the length is visible before the control is opened.</p>
+
+</div></body></html>
