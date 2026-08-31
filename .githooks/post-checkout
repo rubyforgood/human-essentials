@@ -1,0 +1,55 @@
+#!/bin/sh
+# Records a path-limited checkout that leaves the working tree behind HEAD.
+#
+# This repo's working tree has been rolled back to the commit that was HEAD at the start of a
+# session five times, without HEAD ever moving. Nothing in the repo does it -- there are no other
+# hooks, `postCreateCommand` runs no git, and `/tmp` and `.git` both survive -- so it is an external
+# process running the equivalent of
+#
+#     git checkout <session-start-commit> -- .
+#
+# Git has no `pre-checkout` hook, so this cannot prevent it. What it can do is make the next one
+# **attributable**: timestamp, the commit the files came from, how many changed, and the process
+# tree that ran it. That is the thing needed to stop it at the source, which is where it has to be
+# stopped.
+#
+# Arguments: $1 previous HEAD, $2 new HEAD, $3 1 for a branch checkout and 0 for a file checkout.
+# A file checkout is the only shape that matters here: a branch checkout is someone working.
+#
+# It never fails the command it is attached to. A hook that can break `git checkout` is worse than
+# the problem it reports.
+[ "$3" = "0" ] || exit 0
+
+LOG="$(git rev-parse --git-dir)/workspace-resets.log"
+DRIFT=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+
+# One or two files is somebody restoring a file on purpose, which is a normal thing to do.
+[ "${DRIFT:-0}" -lt 10 ] && exit 0
+
+{
+  echo "--- $(date '+%Y-%m-%d %H:%M:%S %z')"
+  echo "    HEAD          $(git rev-parse --short=9 HEAD) $(git log -1 --format=%s | head -c 60)"
+  echo "    tree drift    $DRIFT files differ from HEAD after a path checkout"
+  # Which commit the tree now looks like, if it is a clean rollback to one of HEAD's ancestors.
+  # Bounded, because a hook that walks the whole history is a hook people delete.
+  for c in $(git rev-list --max-count=40 HEAD); do
+    if [ -z "$(git diff --name-only "$c" 2>/dev/null)" ]; then
+      echo "    now matches   $(git rev-parse --short=9 "$c") $(git log -1 --format=%s "$c" | head -c 60)"
+      break
+    fi
+  done
+  echo "    process tree:"
+  pid=$PPID
+  for _ in 1 2 3 4 5 6; do
+    [ -z "$pid" ] || [ "$pid" = "0" ] || [ "$pid" = "1" ] && break
+    echo "      $pid  $(ps -o args= -p "$pid" 2>/dev/null | head -c 160)"
+    pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+  done
+} >> "$LOG" 2>/dev/null
+
+echo "" >&2
+echo "  !! A file checkout left $DRIFT files differing from HEAD." >&2
+echo "     Recorded in $LOG" >&2
+echo "     Run bin/workspace-check to see what moved, bin/workspace-restore --yes to undo it." >&2
+echo "" >&2
+exit 0

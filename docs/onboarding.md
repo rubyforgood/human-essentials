@@ -652,6 +652,45 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### For maintainers: when the working tree goes backwards
+
+This repo's working tree has been **rolled back to the commit that was HEAD at the start of the
+session, five times**, without `HEAD` ever moving. `git` itself is untouched, `/tmp` survives, and
+every commit is still there — only the tracked files on disk revert. Nothing in the repo does it:
+there are no other hooks, `postCreateCommand` runs no git, and the shape of the damage matches an
+external `git checkout <commit> -- .`.
+
+**It cannot be prevented from in here.** Git has no `pre-checkout` hook, and a process outside the
+session writing to the disk is outside the session. What can be done is make it obvious, because
+twice it arrived as a bug report about a fix that had already been made — a rolled-back file renders
+exactly like a regression.
+
+```bash
+bin/workspace-check              # 0 clean, 1 uncommitted work, 2 a rollback
+bin/workspace-check --identify   # name the commit it went back to (~30s)
+bin/workspace-restore --yes      # snapshot the disk, put HEAD back, delete resurrected files
+```
+
+`bin/start` runs the check and shouts only on a rollback, so ordinary uncommitted work is silent.
+`.githooks/post-checkout` records every path-limited checkout that leaves more than ten files
+differing from HEAD, with the process tree that ran it, in `.git/workspace-resets.log` — which is
+the evidence needed to stop it at the source. Point git at the hooks once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+**Commit early. It is the only thing that protects work in progress.** The snapshot
+`bin/workspace-restore` takes is of the disk *after* the rollback, so it holds the damage, not what
+was lost — verified the hard way while building it, on three uncommitted files.
+
+Two symptoms worth recognising:
+
+- **A file a commit deleted is back on disk.** `git checkout .` will not remove it, so the app goes
+  on rendering it. `bin/workspace-check` lists these separately, and tells them apart from your own
+  new files by whether the path has any history.
+- **The fix you just made is "not working".** Check the file on disk before reading the code.
+
 ### Delete asks in the app's own words again, not the browser's
 
 **If Delete — on a product drive, a vendor, an item, anywhere — put up a grey browser box with your

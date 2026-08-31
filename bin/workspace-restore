@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# Put HEAD back on disk after the working tree has been rolled back.
+#
+# The recovery has been done by hand twice and is three steps, one of which is easy to forget:
+#
+#   1. snapshot what is on disk to a stash, so the rollback is recoverable if it held anything
+#   2. restore every tracked file to HEAD
+#   3. delete the files HEAD does not have -- step 2 does not remove them, and a resurrected file
+#      is what made the app render pre-fix markup with a clean `git checkout .` behind it
+#
+# Prints the plan and does nothing unless given --yes, because it writes over the working tree.
+require_relative "../lib/workspace_drift"
+include WorkspaceDrift
+
+Dir.chdir(File.expand_path("..", __dir__))
+CONFIRMED = ARGV.include?("--yes")
+
+tracked = changed
+# Only files a commit *deleted*. Untracked work in progress is left alone -- the first version of
+# this offered to delete the three scripts being written to fix the problem.
+back = resurrected
+
+if tracked.empty? && back.empty?
+  puts "Nothing to restore: the working tree already matches HEAD #{`git rev-parse --short=9 HEAD`.strip}."
+  exit 0
+end
+
+puts "\nPlan:"
+puts "  1. stash #{tracked.size} changed tracked file(s) as a recoverable snapshot"
+puts "  2. restore them to HEAD #{head}"
+if back.empty?
+  puts "  3. nothing to delete"
+else
+  puts "  3. delete #{back.size} file(s) that a commit deleted and something put back:"
+  back.first(12).each { |f| puts "         #{f}" }
+  puts "         ...and #{back.size - 12} more" if back.size > 12
+end
+puts "\n  #{new_work.size} untracked file(s) of your own will be left alone." if new_work.any?
+
+unless CONFIRMED
+  puts "\nNothing done. Re-run with --yes to carry this out."
+  exit 1
+end
+
+label = "workspace rollback snapshot #{Time.now.strftime("%Y-%m-%d %H:%M")}"
+if tracked.any?
+  system("git", "stash", "push", "-q", "-m", label) or abort("stash failed -- stopping before writing anything")
+  puts "\nSnapshotted as #{`git stash list`.lines.first.to_s.split(":").first} (#{label})"
+end
+back.each { |f| File.delete(f) if File.file?(f) }
+
+puts "\nAfter:"
+system("bin/workspace-check")
