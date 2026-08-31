@@ -1,7 +1,7 @@
 <%= render(
   "shared/filtered_card",
   id: "activity_graph",
-  title: "Activity Graph",
+  title: "Activity graph",
   subtitle: @selected_date_range,
   filter_url: reports_activity_graph_path
 ) do %>
@@ -13,39 +13,61 @@
     <div class="px-5 py-4">
       <%# The chart is the content; it had an empty <h2> above it and sat in a div nested
           inside an identical div. %>
-      <%
-            activity_chart_config = {
-              chart: {
-                type: "bar"
-              },
-              title: "",
-              xAxis: {
-                categories: @distribution_data.keys,
-                title: {
-                  text: nil
-                }
-              },
-              yAxis: {
-                title: {
-                  text: nil
-                }
-              },
-              legend: {
-                enabled: false
-              },
-              series: [
-                {
-                  data: @distribution_data.values
-                }
-              ]
-            }.to_json
+      <%#
+        Brought into line with the trend charts: brand colour, the figure printed on each bar so it
+        can be read exactly, no legend for a single series, and the height **reserved** by going
+        through `shared/highcharts` instead of an inline div. It was the only chart in the app not
+        reserving its box, which is the thing that measured CLS 0.352 on the trend pages.
+
+        Three bars, so a horizontal bar stays the right shape -- the category names are words and
+        read better along the left edge than rotated under an axis.
       %>
-      <%# The config sets an empty title, so the chart needs a name given explicitly. %>
-      <div data-controller="highchart"
-           data-highchart-config-value="<%= activity_chart_config %>"
-           data-highchart-label-value="Essentials received against essentials distributed, <%= @selected_date_range %>">
-        <div data-highchart-target="chart"></div>
-      </div>
+      <%
+        chart_height = 260
+        activity_chart_config = {
+          chart: {type: "bar", height: chart_height, spacingRight: 24,
+                  style: {fontFamily: "Figtree, system-ui, sans-serif"}},
+          title: {text: nil},
+          credits: {enabled: false},
+          legend: {enabled: false},
+          xAxis: {categories: @distribution_data.keys, title: {text: nil},
+                  lineColor: "#E2E8F0", tickColor: "#E2E8F0",
+                  labels: {style: {color: "#334155", fontSize: "12px"}}},
+          yAxis: {min: 0, title: {text: nil}, gridLineColor: "#E2E8F0",
+                  labels: {style: {color: "#475569", fontSize: "12px"}}},
+          tooltip: {valueSuffix: " items"},
+          plotOptions: {bar: {borderWidth: 0, borderRadius: 3, color: "#4F46E5", pointPadding: 0.12,
+                              dataLabels: {enabled: true, style: {fontSize: "11px", fontWeight: "500",
+                                                                  color: "#334155", textOutline: "none"}}}},
+          series: [{name: "Items", data: @distribution_data.values}]
+        }.to_json
+      %>
+      <%= render partial: "shared/highcharts",
+            locals: {config: activity_chart_config, height: chart_height,
+                     label: "Essentials received against essentials distributed, #{@selected_date_range}"} %>
+
+      <%#
+        The chart is not the only representation. design.md requires a table of the same figures
+        beside every chart, and this page was the last one in the app without one -- a bar chart is
+        not readable by a screen reader and not printable in colour.
+      %>
+      <table class="data-table mt-5">
+        <caption>Essentials received against essentials distributed, <%= @selected_date_range %></caption>
+        <thead>
+          <tr>
+            <th scope="col">Activity</th>
+            <th scope="col" class="quantity">Items</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @distribution_data.each do |label, value| %>
+            <tr>
+              <th scope="row" class="font-medium text-slate-900"><%= label %></th>
+              <td class="quantity"><%= number_with_delimiter(value) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   <% end %>
 <% end %>

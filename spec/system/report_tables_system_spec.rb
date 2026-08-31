@@ -65,6 +65,56 @@ RSpec.describe "Report tables", type: :system, js: true do
     end
   end
 
+  describe "every report table" do
+    # A report with no data renders an empty state and no table at all, so the caption examples
+    # would have passed on nothing. One donation, one distribution and one request put a table on
+    # each of the five pages.
+    let!(:reported_item) { create(:item, organization: organization) }
+    let!(:partner) { create(:partner, organization: organization) }
+
+    before do
+      TestInventory.create_inventory(organization, storage_location.id => {reported_item.id => 500})
+      create(:donation, :with_items, item: reported_item, organization: organization,
+        storage_location: storage_location, issued_at: Time.current)
+      create(:distribution, :with_items, item: reported_item, organization: organization,
+        partner: partner, storage_location: storage_location, issued_at: Time.current)
+      create(:request, :with_item_requests, organization: organization, partner: partner)
+    end
+
+    # design.md: "Every table gets a <caption> (visually hidden) saying what it lists." The three
+    # itemized reports had none -- the trend and county tables did, so the rule was half kept and
+    # nothing was checking the other half.
+    {
+      "/reports/itemized_donations" => "Donations received",
+      "/reports/itemized_distributions" => "Distributions in the selected period",
+      "/reports/itemized_requests" => "Items requested",
+      "/reports/activity_graph" => "received against",
+      "/historical_trends/distributions" => "by item and month"
+    }.each do |path, phrase|
+      it "names itself in a caption on #{path}" do
+        visit path
+        caption = page.first("main table caption", visible: :all)
+        expect(caption).not_to be_nil, "#{path} has a table with no <caption>"
+        expect(caption.text(:all)).to include(phrase)
+      end
+    end
+
+    # design.md, "Sentence case for everything a person reads". The three trend pages and the
+    # activity graph were Title Case, and the reports hub that links to them was not -- so the link
+    # said "Activity graph" and the page it opened said "Activity Graph".
+    {
+      "/historical_trends/distributions" => "Monthly distributions",
+      "/historical_trends/donations" => "Monthly donations",
+      "/historical_trends/purchases" => "Monthly purchases",
+      "/reports/activity_graph" => "Activity graph"
+    }.each do |path, heading|
+      it "is titled in sentence case on #{path}" do
+        visit path
+        expect(page).to have_css("h1", text: heading, exact_text: true)
+      end
+    end
+  end
+
   describe "pagination" do
     # Answering the question rather than leaving it open: no, and it should not be. Every report
     # here is one row per *item*, so the length is bounded by the bank's catalogue -- dozens --

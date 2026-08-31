@@ -404,6 +404,18 @@ the shape the rule says to open up — and it is correctly collapsed. The audit 
 `case` in the row partial is the answer.
 
 <a id="row-action-heights"></a>
+<a id="every-chart-has-a-table"></a>
+**Every chart has a table of the same figures beside it, and reserves its own height.** Both were
+half-kept. The activity graph was the last chart in the app with no table under it, and the only one
+not going through `shared/_highcharts` — so it reserved no box at all, which is the exact shape of
+the defect that measured **CLS 0.352** on the trend pages. It renders through the partial now, with
+a three-row table beneath.
+
+`shared/_highcharts` takes **one** height and uses it for the reserved box and the chart, so the two
+cannot disagree. `spec/system/layout_shift_system_spec.rb` asserts *that they are equal* rather than
+that either is a particular number — it hard-coded `850px` and broke the day the chart got shorter,
+which is a spec pinning an implementation detail instead of the rule.
+
 <a id="a-chart-answers-one-question"></a>
 **A chart answers one question, and the table beside it answers the rest.** The three trend pages
 drew **one column series per item** — 47, 34 and 37 of them — each created `visible: false`, so the

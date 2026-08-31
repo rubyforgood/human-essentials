@@ -7743,3 +7743,40 @@ five times over and the chart did not render at all. Caught by looking at the br
 verification run rather than by the check that was supposed to catch it. **A check with a fallback
 is not a check.**
 
+## 2026-08-31 — Auditing the other eight report pages
+
+With the trend pages rebuilt, all eleven reports were walked as three roles and measured. The good
+news first: **one `h1` each, no heading-level skips, a card on every page, every scroll region
+labelled, no leftover Bootstrap classes, and no console errors.** Four things were wrong, all of them
+rules the design system already had and nothing was checking.
+
+**Three tables had no `<caption>`.** design.md says every table gets one, visually hidden, saying
+what it lists. The trend and county tables had one and the three itemized reports did not, so the
+rule was half kept. A caption is what tells a screen reader user what a table is *before* they start
+reading cells.
+
+**Four pages were Title Case.** *Monthly Distributions*, *Monthly Donations*, *Monthly Purchases*,
+*Activity Graph* — against design.md's "sentence case for everything a person reads". The reports
+hub that links to them was already correct, so the link said *Activity graph* and the page it opened
+said *Activity Graph*. That is the tell for a rule kept in one place and not another.
+
+**The activity graph reserved no height.** It was the only chart in the app not going through
+`shared/_highcharts`, building its config into a bare div instead — which is exactly the shape that
+measured CLS 0.352 on the trend pages before it was fixed there. It happened to measure 0 today, and
+that is luck rather than a guarantee: the box is reserved now.
+
+**And it had no table.** design.md: a chart is never the only representation of its data, because a
+chart is not readable by a screen reader and not printable in colour. Every other chart page had one;
+this was the last that did not.
+
+**A spec of mine broke, correctly.** `layout_shift_system_spec` asserted `min-height == "850px"` —
+the trend chart's old height — so shortening the chart to 320 failed it. The number was never the
+point. It now asserts that **the reserved height equals the height the chart draws at**, which is the
+actual invariant and is what `shared/_highcharts` exists to guarantee, and it covers the activity
+graph too. **A spec that pins a number instead of a rule breaks on the change it should have
+allowed.**
+
+Verified after: axe **0 violations across 155 pages**, the route sweep **0 design findings across
+141 screens**, the table audit clean, and both halves of the suite green at two seeds —
+**1469 and 1728 examples**.
+
