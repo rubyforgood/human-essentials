@@ -449,6 +449,21 @@ are outside the series by design. The page says so in a callout and links to the
 Dropping them without a word would make the chart quietly wrong for anyone who knows they exist. The
 callout does not appear on donations or purchases, which are recorded after the fact and have none.
 
+**A filter goes in the filter bar, not in the page header's actions.** The month picker shipped in
+`actions:` and came out **142px wide, hard right**, against the **271px, left-aligned** the same
+control gets on the six report pages that already had one. That slot is a right-aligned flex row
+sized for buttons; it shrinks a labelled control to its content. The picker brings **no form of its
+own** either — like the date range picker it sits *inside* the bar's form and contributes one hidden
+field, and the change dispatched on that field is what the bar's auto-submit acts on.
+
+Two things a new control in the bar has to do, both learned by getting them wrong:
+
+- **Mark what "unfiltered" means.** `data-default-value` on the hidden field, or the bar counts a
+  range that is always set as a filter and shows *Clear all* on a page nobody has filtered.
+- **Keep its own inner fields out of the count.** `filter_summary_controller` skips a `type="date"`
+  inside `[data-controller~='date-range']`; `<input type="month">` is not `type="date"`, so the two
+  fields inside the popover were each counted as a filter of their own until the rule was widened.
+
 A long window is the one thing this does not yet handle well: 24 months is 27 columns and **653px of
 overflow**. The table scrolls, which 1.4.10 exempts, but a line rather than columns is the better
 answer past about 18 points, and it is not built.

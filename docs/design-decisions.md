@@ -7869,3 +7869,34 @@ scrolls, which WCAG 1.4.10 exempts, but past about 18 points a line is the bette
 — that, the previous-period comparison and the category filter are the rest of the approved
 recommendation and are still to come.
 
+## 2026-08-31 — The month picker was in the wrong slot
+
+Reported: the range picker is on the right and squeezed into a narrow column. Measured: **142px
+wide at x=1266**, against **271px at x=288** for the date picker on `/reports/itemized_distributions`
+— the same kind of control, on a sibling page.
+
+I had put it in the page header's `actions:` slot. That is a **right-aligned flex row sized for
+buttons**, and it shrinks a labelled control to its content, so a `sm:w-64` came out at 142. The six
+report pages that already had a date filter all put it in `shared/essentials/filter_bar`, below the
+header and aligned with the page. **A filter is not a page action**, and the app had already said so
+by construction six times over; I did not look before building the seventh.
+
+It is in the filter bar now — **x=288, 256px**, aligned with the `h1` — and it brings **no form of
+its own**, exactly like the date picker: it sits inside the bar's form and contributes one hidden
+field, and the change dispatched on that field is what auto-submit acts on. That also removed the
+`this.element.requestSubmit()` from the controller and the whole "the controller must be on the
+form" problem from the previous entry along with it.
+
+**Two more faults the move exposed, both mine.**
+
+*Clear all appeared on a page nobody had filtered.* `filter_summary_controller` skips a
+`type="date"` inside the date popover so the two halves of a range are not chipped alongside their
+own hidden field. `<input type="month">` is not `type="date"`, so both of my visible fields were
+counted as filters in their own right. The rule is widened to the month popover.
+
+*And my own spec for it was vacuous.* I asserted `have_no_button("Clear all")` — but "Clear all" is
+an **anchor**, so `have_no_button` was true no matter what the page did. It passed while the bug was
+present and would have gone on passing. `have_link` now, and the example fails when the skip is
+removed. **That is the third vacuous assertion this session**, and all three had the same shape: a
+negative check against a selector that could never match.
+

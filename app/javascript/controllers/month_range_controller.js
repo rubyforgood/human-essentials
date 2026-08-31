@@ -52,13 +52,13 @@ export default class extends Controller {
     this.endTarget.value = from
   }
 
-  // The controller element *is* the form -- see the partial. A target has to be a descendant of
-  // its controller, and putting month-range on a div inside the form made this.formTarget throw
-  // "Missing target element" on every preset press.
+  // No form of its own. This sits inside the shared filter bar's form and only has to keep one
+  // hidden field right; the change dispatched here is what the bar's auto-submit acts on, and
+  // what its summary chips read.
   commit(presetName, from, to) {
     this.rangeTarget.value = `${from} - ${to}`
     this.summaryTarget.querySelector("span").textContent = presetName || `${this.label(from)} – ${this.label(to)}`
-    this.element.requestSubmit()
+    this.rangeTarget.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
   // "2025-09" -> "Sep 2025". Built from the parts rather than new Date(iso), which reads a bare
