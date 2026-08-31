@@ -439,6 +439,26 @@ line is exactly the kind of thing a reader who cannot see it needs written down.
 **The change is stated in words.** *"Total 167,278, up 241% on the previous period."* A percentage on
 its own reads as a quantity, and a coloured arrow is a signal only some readers get.
 
+<a id="series-count-is-a-constant"></a>
+**A chart's series count is a constant the design picks. It is never a number the data supplies.**
+The trend charts drew one series per item — 47 — and were rebuilt around that. Then the rebuild drew
+one band per *item category*, which is four in this database and **unbounded in the app**:
+`ItemCategory` has no count validation and no database constraint, any signed-in bank user can add
+one, and with 46–55 items a bank could have 51. Changing what a series means did not change the
+fault, because the count still came from the data.
+
+Every analytics product meets this and none answers it with a better palette:
+
+| | |
+| --- | --- |
+| Google Analytics 4 | the **table drives the chart** — tick rows to plot them, capped at a handful |
+| Amplitude, Mixpanel, Datadog, Grafana | **top N with an explicit *Other***; Grafana says *"showing top 20 of 143 series"* |
+| Stripe | **never breaks the chart down** — one total, composition in a table |
+
+Before adding a breakdown to a chart, ask **what sets the number of series, and is it in the
+design's hands or the user's**. "Four fits the palette" is the wrong thing to check; "what makes it
+four" is the right one.
+
 <a id="stack-by-a-grouping-the-bank-maintains"></a>
 **Break a chart down by something the data already groups by, not by a cut you invent.** With no
 category chosen the chart **stacks by item category** — four bands here, from a grouping the bank

@@ -7953,3 +7953,52 @@ by 514px; it scrolls inside its own region, which WCAG 1.4.10 exempts. Twenty-fo
 27 columns, and past about eighteen points a line beats columns — that switch is the one piece of
 the preview still unbuilt.
 
+## 2026-08-31 — I sized a chart from the seed data, and the seed data was a placeholder
+
+Challenged on the stacked-by-category chart: *the categories for the report could be 50 items —
+what's the max number, who determines this? look at the seeded data of the visualization you just
+replaced. this is not a workable solution.*
+
+Correct on every point, and the last one is the sharpest. **The chart I replaced had 47 series. The
+one I replaced it with has as many bands as the bank has categories, and nothing bounds that
+number.** Changing what a series *means* did not change the fact that its count was still being
+taken from the data.
+
+**Measured, since I had not measured it before designing:**
+
+- `ItemCategory` validates name presence, name uniqueness per organization, and description length.
+  **There is no count validation and no database constraint.** A bank can make one category per item.
+- **Any signed-in bank user** can add them, at Items & inventory → Categories. Not admin-only. The
+  form is two fields.
+- The seed gives every organization **3**, named `"Category One"`. That is a placeholder, and I read
+  it as evidence about real banks.
+- Items per organization here: 46, 51, 55. **One category per item is 51 bands.**
+- There *is* a bounded taxonomy in this app and it is not the one the report uses:
+  `BaseItem#category` is a system-wide string with **11 values**, maintained centrally.
+
+**The rule I should have applied.** Every analytics product has this problem and none of them solves
+it with a better palette. GA4 makes the **table drive the chart** — you tick rows to plot them.
+Amplitude, Mixpanel, Datadog and Grafana ship **top-N with an explicit Other**, Grafana announcing
+it: *"showing top 20 of 143 series"*. Stripe simply **never breaks the chart down**. All three are
+the same rule:
+
+> **A chart's series count is a constant the design picks. It is never a number the data supplies.**
+
+That is now in design.md. My stacked chart broke it, which is exactly why it fails at 20 the same way
+the 47-item chart failed at 47 — and why "four bands fit the palette" was the wrong thing to have
+checked. I checked whether four worked and never asked what set the number four.
+
+**Options at `docs/mockups/unbounded-categories.html`**, drawn at 20 and 50 bands so the failure is
+visible rather than argued: **A** the chart is one total, always, O(1) in categories; **B** the table
+plots what you tick, GA4's answer, which fits unusually well here because the table already carries a
+sparkline per row; **C** top N with an *Other* that states its item count.
+
+Recommending **A as the default with B for comparison, and dropping the stack**. B gives the
+comparison the stack was reaching for, bounded by the reader rather than by the data, and it answers
+the original 47-item question too. **C is a real option and my earlier rejection of it was too
+strong** — I said "Other" is a partial answer beside a complete one, and that objection is weaker
+when the alternative is not a complete answer but an unreadable one.
+
+Awaiting a choice. If A + B, the category *filter* wants revisiting too: at 50 categories a plain
+select is a long list.
+
