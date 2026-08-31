@@ -691,6 +691,15 @@ Two symptoms worth recognising:
   new files by whether the path has any history.
 - **The fix you just made is "not working".** Check the file on disk before reading the code.
 
+### Reports: consistent titles, and the activity graph has its figures written out
+
+**Four report pages were titled in Title Case** — *Monthly Distributions*, *Activity Graph* and so
+on — while the Reports page that links to them was not. They match now: *Monthly distributions*,
+*Activity graph*.
+
+**The Activity graph now has a small table under it** with the same three figures, so they can be
+read, copied and printed without squinting at a bar.
+
 ### The monthly trend reports draw something now
 
 **Monthly Distributions, Donations and Purchases used to open with an empty chart.** A tall grey box,

@@ -10,16 +10,52 @@ RSpec.describe "Layout shift", type: :system, js: true do
   before { sign_in user }
 
   describe "a chart" do
-    it "reserves its height before Highcharts renders into it" do
-      # The container was an empty div, 0px tall until the chart inflated it on connect() -- so the
-      # buttons under it and the whole table card were thrown 850px down the page a moment after
-      # the reader could see them. Measured CLS 0.352, against Chrome's 0.25 "poor" threshold.
-      visit historical_trends_donations_path
+    # Both pages render an empty state instead of a chart when there is nothing to plot, so without
+    # this there is no chart to measure and the example passes on nil. The trend chart used to draw
+    # a 47-series box whether or not it had data, which is why the older version of this spec needed
+    # no setup.
+    let(:storage_location) { create(:storage_location, organization: organization) }
+    let!(:charted_item) { create(:item, organization: organization) }
 
-      reserved = page.evaluate_script(
-        "getComputedStyle(document.querySelector('[data-highchart-target=chart]')).minHeight"
-      )
-      expect(reserved).to eq("850px")
+    before do
+      TestInventory.create_inventory(organization, storage_location.id => {charted_item.id => 400})
+      create(:donation, :with_items, item: charted_item, organization: organization,
+        storage_location: storage_location, issued_at: 1.month.ago)
+      create(:distribution, :with_items, item: charted_item, organization: organization,
+        storage_location: storage_location, issued_at: 1.month.ago)
+    end
+
+    # The number is not the point and was hard-coded here as 850px, which broke the day the chart
+    # got shorter. What has to hold is that the box is reserved *and* matches what the chart draws
+    # at -- `shared/_highcharts` takes one height and uses it for both, so they cannot disagree.
+    {
+      "the monthly trend chart" => "/historical_trends/donations",
+      "the activity graph" => "/reports/activity_graph"
+    }.each do |what, path|
+      it "reserves #{what}'s height before Highcharts renders into it" do
+        # The container was an empty div, 0px tall until the chart inflated it on connect() -- so
+        # everything under it was thrown down the page a moment after the reader could see it.
+        # Measured CLS 0.352 on the trend pages, against Chrome's 0.25 "poor" threshold.
+        visit path
+
+        measured = page.evaluate_script(<<~JS)
+          (() => {
+            const box = document.querySelector("[data-highchart-target=chart]");
+            if (!box) return null;
+            const el = document.querySelector("[data-controller='highchart']");
+            const c = window.Stimulus.getControllerForElementAndIdentifier(el, "highchart");
+            return {
+              reserved: parseInt(getComputedStyle(box).minHeight, 10),
+              drawn: c && c.chart ? Math.round(c.chart.chartHeight) : null
+            };
+          })()
+        JS
+
+        expect(measured).not_to be_nil, "#{path} has no chart to measure"
+        expect(measured["reserved"]).to be > 0, "the chart box reserves no height"
+        expect(measured["reserved"]).to eq(measured["drawn"]),
+          "reserved #{measured["reserved"]}px, drew #{measured["drawn"]}px"
+      end
     end
   end
 
