@@ -31,7 +31,11 @@ module UiHelper
     "repeat" => "bi-arrow-counterclockwise", "check" => "bi-check2", "check-circle" => "bi-check-circle",
     "pencil-square-o" => "bi-pencil", "search" => "bi-eye", "download" => "bi-download",
     "upload" => "bi-upload", "print" => "bi-printer", "filter" => "bi-funnel",
-    "envelope" => "bi-envelope", "floppy-o" => "bi-save", "sync" => "bi-arrow-repeat",
+    "envelope" => "bi-envelope", "sync" => "bi-arrow-repeat",
+    # `floppy-o` was here and left with its last caller: a form's own actions carry no icon, so
+    # `bi-save` -- a floppy disk -- is now used nowhere. `IconHelper::FA_TO_BI` still maps the
+    # name, because that table translates Font Awesome for whatever still calls `fa_icon`; this
+    # one is the design system's own lexicon and lists only glyphs the app actually uses.
     "dot-circle-o" => "bi-record-circle", "sign-out" => "bi-box-arrow-right",
     "thumbs-o-up" => "bi-hand-thumbs-up", "undo" => "bi-arrow-counterclockwise",
     "eye" => "bi-eye", "user" => "bi-person", "users" => "bi-people", "close" => "bi-x-lg",
@@ -182,10 +186,17 @@ module UiHelper
     _link_to link, {icon: "print", type: "outline-dark", text: "Print", size: "xs"}.merge(options)
   end
 
-  # Generic Submit button for a form
+  # Generic Submit button for a form.
+  #
+  # No icon. This carried Font Awesome's `floppy-o` -- a floppy disk -- which is why "Save" arrived
+  # with a glyph on the twelve forms built through this helper and bare on the twenty-nine built
+  # through `essentials_form_actions`. See "one glyph, one meaning" in design.md: a form has exactly
+  # one submit and it is the only filled button on the page, so the glyph distinguishes it from
+  # nothing. That is the same argument design.md already makes for a repeated icon tile and for a
+  # pill on every row.
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({text: "Save", icon: "floppy-o", type: "success", size: "md"}.merge(options),
+    _button_to({text: "Save", type: "success", size: "md"}.merge(options),
       data: {disable_with: disable_text}.merge(data), name: options[:name] || "button")
   end
 

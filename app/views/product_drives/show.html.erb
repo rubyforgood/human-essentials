@@ -11,7 +11,7 @@
           # to export from a drive with no donations. "Export participants", not plain "Export",
           # because this page could export either thing and the label has to say which.
           if @product_drive.donations.any?
-            concat essentials_link_button("Export participants", product_drive_path(@product_drive, format: :csv), variant: :secondary, icon: "bi-download")
+            concat essentials_link_button("Export participants", product_drive_path(@product_drive, format: :csv), variant: :secondary, icon: "bi-box-arrow-up")
           end
           # "Edit", not "Make a correction": thirty places in this app say Edit and four said the
           # other, which was pre-migration wording kept through the migration rather than chosen.

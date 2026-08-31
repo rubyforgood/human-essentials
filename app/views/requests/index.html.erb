@@ -21,7 +21,7 @@
                              path: print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params))}
           end
           if export_items.any?
-            concat render("shared/essentials/menu_button", label: "Export", icon: "bi-download", items: export_items)
+            concat render("shared/essentials/menu_button", label: "Export", icon: "bi-box-arrow-up", items: export_items)
           end
           if current_user.has_role?(Role::ORG_ADMIN, current_organization)
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :primary), data: {action: "click->dialog#open", dialog_id_param: "new-request"}) do

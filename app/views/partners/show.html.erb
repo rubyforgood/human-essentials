@@ -130,7 +130,7 @@
     <%= render "shared/essentials/card",
           title: "Prior distributions",
           padded: @partner_distributions.blank?,
-          actions: (@partner_distributions.any? ? essentials_link_button("Export distributions", partner_path(@partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, size: :sm, icon: "bi-download") : nil) do %>
+          actions: (@partner_distributions.any? ? essentials_link_button("Export distributions", partner_path(@partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, size: :sm, icon: "bi-box-arrow-up") : nil) do %>
       <% if @partner_distributions.blank? %>
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "No distributions to this partner yet" %>

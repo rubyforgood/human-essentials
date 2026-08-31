@@ -12,8 +12,11 @@
     <%= hidden_field_tag :org, current_organization.id %>
 
     <div class="flex items-center gap-2 border-t border-slate-200 pt-4">
+      <%# `bi-person-plus`, the same glyph as the trigger that opened this dialog and as the one on
+          /admin/users. It was `bi-envelope`, which is this app's glyph for sending mail -- and
+          three buttons all saying "Invite user" carried three different glyphs between them. %>
       <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>" data-disable-with="Sending...">
-        <i class="bi-envelope" aria-hidden="true"></i>Invite user
+        <i class="bi-person-plus" aria-hidden="true"></i> Invite user
       </button>
       <button type="button" class="<%= essentials_button_classes(variant: :ghost, size: :md) %>"
               onclick="this.closest('dialog').close()">Cancel</button>

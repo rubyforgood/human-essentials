@@ -31,11 +31,11 @@
               confirm: "Send an invitation to #{partner_row.name} to create their profile for approval?"}]
           end
         when "invited"
-          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-check2"},
+          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-eye"},
            {label: "Re-send invite", path: invite_partner_path(partner_row), icon: "bi-envelope", method: :post,
             confirm: "Re-send an invitation to #{partner_row.name}?"}]
         when "awaiting_review"
-          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-check2"}]
+          [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-eye"}]
         when "approved"
           [{label: "Request recertification", path: recertify_partner_partner_path(partner_row),
             icon: "bi-arrow-repeat", method: :post, confirm: "Recertify partner #{partner_row.name}?"}]

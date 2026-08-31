@@ -202,6 +202,77 @@ Rules:
   should write the `<i class="bi-…">` directly or pass `icon:` to a component helper.
 - Icons are aligned once, in `@layer base`, rather than with per-call-site margins.
 
+<a id="one-glyph-one-meaning"></a>
+#### One glyph, one meaning
+
+The rules above say how to *mark up* an icon. They never said **which glyph means what**, and seven
+disagreements went through that gap. The lexicon is `bin/design/icon-lexicon.json`, which
+`bin/design/icon-audit.js` and `spec/system/button_icons_system_spec.rb` both read, so this table
+and the app cannot drift apart. Adding a glyph to the app means adding it there first: the audit
+fails on any glyph it does not recognise, which makes a one-off a decision rather than a reflex.
+
+| Meaning | Glyph | | Meaning | Glyph |
+| --- | --- | --- | --- | --- |
+| create | `bi-plus-lg` | | print | `bi-printer` |
+| edit | `bi-pencil` | | filter | `bi-funnel` |
+| view | `bi-eye` | | email | `bi-envelope` |
+| delete or remove | `bi-trash` | | complete or approve | `bi-check-circle` |
+| **import** | **`bi-box-arrow-in-down`** | | refuse or cancel a record | `bi-x-circle` |
+| **export** | **`bi-box-arrow-up`** | | deactivate | `bi-slash-circle` |
+| download a file | `bi-download` | | undo or reclaim | `bi-arrow-counterclockwise` |
+| upload a file | `bi-upload` | | ask for it again | `bi-arrow-repeat` |
+| invite a person | `bi-person-plus` | | promote / demote | `bi-arrow-up-circle` / `bi-arrow-down-circle` |
+| remove a person | `bi-person-dash` | | more actions | `bi-three-dots-vertical` |
+
+**Import points in, export points out** — because import and export are movements in and out of a
+box, and the box is the app. This app had them the other way round for the length of the migration:
+`/donation_sites` shipped **Import wearing an arrow that leaves a tray and Export wearing one that
+enters it**, and it was reported as the icons looking swapped, which they were.
+
+The cause was two frames of reference in one row of buttons. *Upload* and *download* are measured
+from the **server** — up to it, down to you. *Import* and *export* are measured from the **app** —
+in to it, out of it. The words came from one vocabulary and the glyphs from the other, so whichever
+frame you read the row in, half of it was inverted. Shopify Polaris ships `ImportIcon` as an arrow
+down into a tray and `ExportIcon` as one up out of it; IBM Carbon draws `export` the same way and
+ships `download` as a *separate* icon, so it is explicit there that an export is not a download.
+Both were fetched and rasterised rather than recalled. `bi-download` stays in the lexicon and now
+means only what it says — the **Download example CSV** button in the import dialog, which is on the
+same page as an export and is the reason the two could not share a glyph.
+
+**A generic form verb carries no glyph.** *Save*, *Cancel*, *Submit*, *Continue*, *Close*, *Update*
+and a wizard's *Next* name no action — they say "commit this form" or "abandon it" — and a form has
+exactly one submit, which is the only filled button on the page, so a glyph beside it distinguishes
+it from nothing. Same argument this document already makes for [an icon repeated down a
+list](#icon-tiles-and-avatars) and for a pill on every row. *Save* arrived carrying Font Awesome's `floppy-o` on
+the twelve forms built through `submit_button` and nothing on the twenty-nine built through
+`essentials_form_actions`, from a default argument no view mentioned. Measured after: **45 Save
+buttons, no glyph on any of them**, and `bi-save` — a floppy disk — is used nowhere.
+
+**A named action keeps its glyph wherever it sits**, including on a submit. The filter bar's
+*Filter* is a form submit and wears the funnel; the import dialog's *Import CSV* is a form submit
+and wears the import arrow. The line is between a word that names what happens and a word that only
+says "commit this form" — not between a button and a submit. The first draft of the audit drew it
+in the wrong place and flagged both of those.
+
+**One label, one glyph.** *Invite user* reached three pages wearing `bi-person-plus`, `bi-envelope`
+and `bi-plus-lg` between them, because nothing said which was right. The audit compares a label's
+glyph across every page that renders it, and treats a menu trigger's trailing `bi-chevron-down` as
+the disclosure affordance rather than part of the action. The opposite — one glyph across many
+labels — is reported and never failed: twenty-five *New X* buttons sharing `bi-plus-lg` is the
+lexicon working.
+
+Two exceptions are carried in the lexicon with their reasons, because an undocumented exception is
+indistinguishable from a bug:
+
+- **Next** — the calendar's pager is a `‹ Prev` / `Next ›` pair and points; the request wizard's
+  *Next* is a form step and does not.
+- **Reject request** — the label toggles to *Close request* while a glyph could not, so a fixed
+  `bi-slash-circle` was wrong on every closure. It carries none.
+
+And a label that means two things is a labelling fault, not an icon one. `/requests` had a row
+action called **Cancel**, which is the word this app uses on **122 pages** to mean "abandon this
+form", while here it destroyed a record. It says *Cancel request* now, as the show page already did.
+
 ### Accessibility
 
 Target is **WCAG 2.1 AA**. These are the rules this app has actually had to enforce:

@@ -22,7 +22,10 @@
                       whole content is a button, which put a level-2 heading in the middle of a
                       filter bar and announced the button as one. Neither is needed. %>
                   <div class="flex justify-end">
-                    <%= new_button_to new_admin_user_path, {text: "Invite user"} %>
+                    <%# `user-plus`, not the default `plus`: inviting a person is its own meaning,
+                        and the app already pairs `bi-person-plus` with `bi-person-dash` for
+                        removing one. The same trigger on /organization was already this glyph. %>
+                    <%= new_button_to new_admin_user_path, {text: "Invite user", icon: "user-plus"} %>
                   </div>
                 </div>
               </div>

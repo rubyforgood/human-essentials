@@ -1,0 +1,84 @@
+{
+  "_": [
+    "One glyph, one meaning. The prose version is in design.md under 'One glyph, one meaning';",
+    "this is the machine-readable copy that bin/design/icon-audit.js and",
+    "spec/system/button_icons_system_spec.rb check the app against. Change both together.",
+    "",
+    "Adding a glyph here is how you add one to the app: the audit fails on any glyph it does not",
+    "find, so a one-off has to be a decision rather than a reflex. That is the whole point --",
+    "'Invite user' carried three different glyphs on three pages because nothing said otherwise."
+  ],
+  "glyphs": {
+    "create": "bi-plus-lg",
+    "invite a person": "bi-person-plus",
+    "remove a person": "bi-person-dash",
+    "manage people": "bi-people",
+    "change a person's access": "bi-person-gear",
+    "promote": "bi-arrow-up-circle",
+    "demote": "bi-arrow-down-circle",
+    "edit": "bi-pencil",
+    "view": "bi-eye",
+    "delete or remove": "bi-trash",
+    "import": "bi-box-arrow-in-down",
+    "export": "bi-box-arrow-up",
+    "download a file": "bi-download",
+    "upload a file": "bi-upload",
+    "a CSV": "bi-filetype-csv",
+    "print": "bi-printer",
+    "filter": "bi-funnel",
+    "email": "bi-envelope",
+    "complete or approve": "bi-check-circle",
+    "refuse or cancel a record": "bi-x-circle",
+    "deactivate": "bi-slash-circle",
+    "undo or reclaim": "bi-arrow-counterclockwise",
+    "ask for it again": "bi-arrow-repeat",
+    "adjust an allocation": "bi-sliders",
+    "copy to the clipboard": "bi-clipboard",
+    "total something up": "bi-calculator",
+    "more actions": "bi-three-dots-vertical"
+  },
+  "structural": [
+    "bi-x-lg",
+    "bi-list",
+    "bi-chevron-down",
+    "bi-chevron-right",
+    "bi-chevron-left"
+  ],
+  "exceptions": [
+    {
+      "label": "Next",
+      "reason": "the calendar pager is a Prev/Next pair and points; the request wizard's Next is a form step and does not"
+    },
+    {
+      "label": "Reject request",
+      "reason": "the label toggles to 'Close request', and a fixed glyph would be wrong on one of the two -- so it carries none"
+    }
+  ],
+  "generic_verbs": {
+    "_": [
+      "Words that name no action -- they say 'commit this form' or 'abandon it'. A glyph beside",
+      "one distinguishes it from nothing, which is why 'Save' arrived with a floppy disk on the",
+      "twelve forms built through `submit_button` and bare on the twenty-nine that were not.",
+      "Matched whole and case-insensitively, so 'Cancel request' is a named action and 'Cancel'",
+      "is not."
+    ],
+    "labels": [
+      "save",
+      "save progress",
+      "submit",
+      "cancel",
+      "continue",
+      "update",
+      "close",
+      "next",
+      "back",
+      "done",
+      "confirm",
+      "upload",
+      "send an invitation",
+      "today",
+      "select all",
+      "deselect all"
+    ]
+  }
+}

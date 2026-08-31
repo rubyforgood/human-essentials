@@ -11,11 +11,11 @@
           # right and the others match it now: Import always, Export once there is something to
           # export. A Ruby comment, not an ERB one: this is inside `capture { }`.
             concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
-              concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
+              concat tag.i(nil, class: "bi-box-arrow-in-down", aria: {hidden: true})
               concat " Import donation sites"
             end)
           if @donation_sites.any?
-            concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", donation_sites_path(format: :csv, include_inactive_donation_sites: @include_inactive_donation_sites, filters: filter_params), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New donation site", new_donation_site_path, variant: :primary, icon: "bi-plus-lg")
         } %>

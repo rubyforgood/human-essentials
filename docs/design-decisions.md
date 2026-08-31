@@ -7403,8 +7403,15 @@ either wording alone.
 **The placement, and the rule that caused it.** design.md said *"at most three actions, **exactly
 one** of them primary, primary last."* The app has never worked that way. Measured across 101 bank
 pages: **63 have no header actions at all**, and of the 38 that do, **11 have no primary** — almost
-all record pages, whose job is to be read. Polaris's `primaryAction`, Material's FAB, Carbon's and
-Atlassian's page headers are all optional in the same way.
+all record pages, whose job is to be read. Polaris's `Page` takes `primaryAction` as an optional
+prop, and Atlassian's `PageHeader` takes `actions` the same way; Material has no page-header
+component at all, and its FAB is a thing you place or do not. Three systems, three interfaces, none
+of them requiring a main action.
+
+> *Annotated 2026-08-31.* This paragraph originally read "Polaris's `primaryAction`, Material's FAB,
+> Carbon's and Atlassian's page headers are all optional in the same way" — four systems, nothing
+> named that anyone could check, and Carbon listed without my having looked. `citation-audit.py`
+> caught it the next time it ran, which is the audit doing its job on the person who wrote it.
 
 So on `/product_drives/:id` there was no primary, and **Delete inherited the last slot** — the most
 destructive action on the page sitting where the main one belongs. The rule has been corrected to
@@ -7433,4 +7440,82 @@ the keys went to the *Edit link* and the browser followed it: the next step then
 `/purchases/1/edit`, a page with no header actions. Traced rather than guessed — the URL changed on
 the `send_keys` line and nowhere else. It closes by clicking the trigger again now. **A test helper
 that navigates is worse than no helper**, because the failure it produces points somewhere else.
+
+## 2026-08-31 — Import points in, export points out, and a lexicon so the next one cannot drift
+
+Reported on the donation sites page: the Import and Export buttons look like their icons are mixed
+up. They were. **Import wore `bi-upload`, an arrow leaving a tray, and Export wore `bi-download`, an
+arrow entering one** — checked by rasterising both glyphs out of the font at 80px rather than
+reading the class names, since the class names are what caused this.
+
+**Two frames of reference in one row of buttons.** *Upload* and *download* are measured from the
+**server**: up to it, down to you. *Import* and *export* are measured from the **app**: in to it,
+out of it. The words came from the second vocabulary and the glyphs from the first, so whichever
+frame a reader took, half the row was inverted. It is not a slip anyone made once; it is what
+happens when two vocabularies meet and nothing says which one governs.
+
+**What the systems that ship both do.** Fetched from the source repositories and rasterised, not
+recalled. Shopify's `polaris-icons` ships `ImportIcon` as an arrow **down into** a tray and
+`ExportIcon` as one **up out of** it. IBM Carbon's 32px `export` is an arrow up out of a tray, and
+Carbon ships `download` as a **separate** icon — so it is explicit there that an export is not a
+download. GitHub's Primer ships only `upload-16` and `download-16`, where the words match the
+arrows and the question does not arise. So: `bi-box-arrow-in-down` for import, `bi-box-arrow-up` for
+export, on **13 and 18 controls**. `bi-download` stays and now means only what it says — the
+*Download example CSV* button in the import dialog, which sits on the same page as an export and is
+the reason the two could not share a glyph.
+
+Two alternatives were shown and rejected. **Swapping the two glyphs the app already had** is two
+lines a call site, but leaves `icon: "bi-download"` on a button that says Import — the same fault,
+moved off the screen and into the source, where the next person inherits it. **Renaming the buttons
+to Upload CSV / Download CSV** is honest and internally consistent, but retires "Export", which is
+on 18 buttons and in partner-facing copy.
+
+**The rule that was missing.** design.md said how to *mark up* an icon — `aria-hidden` beside a
+label, `aria-label` when alone, a `<button>` and never an anchor — and had never said **which glyph
+means what**. Seven disagreements had gone through that gap, found by a new audit that walks **124
+pages as three roles** and reads every button and menu item:
+
+- **"Invite user" wore three glyphs on three pages** — `bi-person-plus`, `bi-envelope`, `bi-plus-lg`.
+- **"Save" wore a floppy disk on 12 forms and nothing on 29.** All twelve came from one default
+  argument in `submit_button`, which no view mentioned.
+- **"Upload" wore the same floppy.**
+- **Two glyphs for "done"** — `bi-check2` on Review profile, `bi-check-circle` on Fulfill request.
+- **Refuse and disable shared `bi-slash-circle`** — Reject request and Deactivate partner.
+- **"Next"** had a chevron in the calendar and none in the wizard, which turned out to be right.
+
+So `bin/design/icon-lexicon.json`: **27 meanings, 5 structural glyphs, 16 generic verbs, 2
+exceptions**. `bin/design/icon-audit.js` and `spec/system/button_icons_system_spec.rb` both read it,
+so the table in design.md and the app cannot drift. **The audit fails on a glyph it cannot find**,
+which makes adding one a decision rather than a reflex — which is the whole of what went wrong with
+*Invite user*.
+
+**I drew the Save rule in the wrong place first.** "A form's own actions carry no glyph" is what I
+implemented, and the audit immediately flagged the filter bar's *Filter* and the import dialog's
+*Import CSV* — both form submits, both naming a real action, both sharing a glyph with the same
+action elsewhere. The line is not between a button and a submit. It is between **a word that names
+what happens and a word that only says "commit this form"**: *Save*, *Cancel*, *Submit*, *Continue*,
+*Close*, *Update*, and a wizard's *Next*. Under that rule I put `bi-envelope` back on *Broadcast
+announcement* and `bi-person-plus` on all four *Invite user* buttons, having stripped both a moment
+earlier. Measured after: **45 Save buttons, none with a glyph**, and `bi-save` used nowhere.
+
+Two exceptions are carried in the lexicon **with their reasons**, because an undocumented exception
+is indistinguishable from a bug. *Next* — the calendar's pager is a `‹ Prev` / `Next ›` pair and
+points, the wizard's does not. *Reject request* — the label **toggles to "Close request"** while a
+glyph could not, so the fixed `bi-slash-circle` it carried was wrong on every closure.
+
+And one finding that was a labelling fault rather than an icon one: `/requests` had a row action
+called **Cancel**, the word this app uses on **122 pages** to mean "abandon this form", while here it
+destroyed a record. It says *Cancel request* now, as the show page already did.
+
+**Two things went wrong on the way and are worth keeping.**
+
+`%>` **inside a Ruby comment still closes the ERB block.** Writing *"a Ruby comment, not an ERB one
+— this is inside `<% %>`"* inside a `<% %>` block terminated the block at the backtick, and the rest
+of the array became HTML. ERB scans the raw text; it does not know the comment is a comment.
+`template-compile-audit.rb` caught it, which is the second time that audit has paid for itself.
+
+**And the workspace was reset for the fifth time**, mid-task: 316 files reverted, 81 of this work's
+files deleted and 4 that its commits had deleted resurrected. HEAD was intact and pushed, so the
+recovery was a stash for the snapshot, `git checkout` back to HEAD and `rm` for the four. The reason
+it costs minutes rather than a day is that every checkpoint has been committed and pushed.
 

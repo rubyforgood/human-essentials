@@ -25,7 +25,10 @@
     <%
       row_items = [
         {label: "Print", path: print_picklist_request_path(request_row), icon: "bi-printer"},
-        ({label: "Cancel", path: new_request_cancelation_path(request_id: request_row.id),
+        # "Cancel request", as the show page already says, not bare "Cancel": that word means
+        # "abandon this form" on 122 pages of this app, and here it destroys a record. A Ruby
+        # comment, not an ERB one, because this is inside a code block.
+        ({label: "Cancel request", path: new_request_cancelation_path(request_id: request_row.id),
           icon: "bi-x-circle", tone: :danger} unless request_row.status_cancelled? || request_row.status_fulfilled?)
       ]
     %>

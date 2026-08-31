@@ -6,7 +6,7 @@
         subtitle: "Move inventory from one of your storage locations to another.",
         actions: capture {
           if @transfers.any?
-            concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New transfer", new_transfer_path, variant: :primary, icon: "bi-plus-lg")
         } %>

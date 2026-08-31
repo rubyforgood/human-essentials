@@ -6,7 +6,7 @@
         subtitle: "Barcodes that map a scan to an item and a quantity.",
         actions: capture {
           if @barcode_items.any?
-            concat essentials_link_button("Export", barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New barcode", new_barcode_item_path, variant: :primary, icon: "bi-plus-lg")
         } %>
