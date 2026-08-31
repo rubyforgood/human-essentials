@@ -7,7 +7,7 @@ import Highcharts from 'highcharts';
  * configValue via data-highchart-config-value attribute.
  */
 export default class extends Controller {
-  static targets = [ "chart", "selectAllButton", "deselectAllButton"]
+  static targets = ["chart"]
   static values = {
     config: Object,
     label: String
@@ -41,23 +41,4 @@ export default class extends Controller {
       svg.setAttribute("focusable", "false");
     }
   }
-
-  deselectAll() {
-    this.chart.series.forEach((s) => {
-      // Change series visibility to hidden (first param) without redrawing (second param)
-      s.setVisible(false, false);
-    })
-    // Redraw chart only once at the end for performance reasons.
-    this.chart.redraw();
-  }
-
-  selectAll() {
-    this.chart.series.forEach((s) => {
-      // Change series visibility to visible (first param) without redrawing (second param)
-      s.setVisible(true, false);
-    })
-    // Redraw chart only once at the end for performance reasons.
-    this.chart.redraw();
-  }
-
 }

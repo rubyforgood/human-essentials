@@ -455,6 +455,54 @@ module EssentialsUiHelper
 
   # --- Icon tile ------------------------------------------------------------
   #
+  # --- Sparkline ------------------------------------------------------------
+  #
+  # A twelve-point trend, drawn inline, for one row of a table.
+  #
+  #   <td class="trend"><%= essentials_sparkline(item[:data], months: last_12_months) %></td>
+  #
+  # Server-rendered SVG rather than a charting library: it is 47 of these on one page, none of them
+  # interactive, and a library would cost a second Highcharts instance per row. It also means the
+  # cell has its final size in the first paint, so nothing moves.
+  #
+  # **Accessibility.** The drawing is `aria-hidden` and the cell carries an `sr-only` sentence
+  # naming the peak month and value. That is not a restatement of the row -- the twelve numbers are
+  # already in it -- it is the one thing the *shape* says that reading twelve numbers in order does
+  # not give you for free. design.md: a chart is never the only representation of its data.
+  SPARK_W = 104
+  SPARK_H = 26
+
+  def essentials_sparkline(values, months: [])
+    values = Array(values).map(&:to_i)
+    return tag.span("—", class: "text-slate-400") if values.empty? || values.sum.zero?
+
+    top = values.max
+    step = (values.size > 1) ? SPARK_W.to_f / (values.size - 1) : 0
+    points = values.each_with_index.map { |v, i|
+      # 2px of padding top and bottom so a peak or a zero is not clipped by the viewBox.
+      "#{(i * step).round(1)},#{(SPARK_H - 2 - (SPARK_H - 4) * v / top.to_f).round(1)}"
+    }.join(" ")
+    last_x, last_y = points.split(" ").last.split(",")
+
+    peak_index = values.index(top)
+    peak_month = months[peak_index]
+    description = peak_month ? "Peaks at #{number_with_delimiter(top)} in #{peak_month}." : "Peaks at #{number_with_delimiter(top)}."
+
+    safe_join([
+      tag.svg(
+        safe_join([
+          tag.polyline(nil, points: points, fill: "none", stroke: "currentColor",
+            "stroke-width": "1.5", "stroke-linejoin": "round", "stroke-linecap": "round"),
+          tag.circle(nil, cx: last_x, cy: last_y, r: "2.2", fill: "currentColor")
+        ]),
+        viewBox: "0 0 #{SPARK_W + 4} #{SPARK_H}", width: SPARK_W + 4, height: SPARK_H,
+        class: "inline-block align-middle text-brand-600",
+        aria: {hidden: true}, focusable: "false"
+      ),
+      tag.span(description, class: "sr-only")
+    ])
+  end
+
   # A soft coloured tile behind an icon means "a stat or a status". A person is an
   # initials avatar instead. Keeping these disjoint is what makes either one readable.
   # Two sizes, named as the buttons are: `md` is the default and stands beside a figure or a

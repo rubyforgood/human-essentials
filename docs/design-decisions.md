@@ -7695,3 +7695,51 @@ The audit of all eleven report pages also measured what comes next: the three tr
 **47, 34 and 37 series with none of them visible**, which is a separate problem and gets its own
 entry.
 
+## 2026-08-31 — One total per month, and a sparkline for every row
+
+Four options were drawn from this bank's real figures and **A with D** was chosen: the headline
+chart plots one total per month, and every row of the table beneath gets its own twelve-month
+sparkline.
+
+**Why A.** The chart's job on that page is the month-to-month shape. "Which item" is answered
+*completely* by the table directly under it — all 47, by month, with a total — and that table is
+also the accessible representation the design system requires of every chart. **B (top 8 and Other,
+stacked) was the near miss**, and it was rejected for one reason: it would have put a *partial*
+answer beside a complete one, and a reader who saw eight named items and a grey band would
+reasonably think that was the whole picture. The 75.2% figure that makes a top-8 cut viable is also
+the figure that makes it misleading — a quarter of everything distributed would have been "Other".
+
+**Why D as well.** A sparkline per row is the 47-series chart that the summary cannot be. Every item
+gets its own shape, with no legend, no shared colour and no interaction. Rendered as inline SVG on
+the server rather than through a charting library: 47 to a page, none of them interactive, so a
+library would cost an instance per row and a layout shift with it. Shopify's `polaris-viz` ships
+`SparkLineChart` as a component in its own right, which is the same recognition — a trend inside a
+row is a different problem from a series inside a legend.
+
+**The accessibility of a sparkline was the part worth thinking about.** The drawing is `aria-hidden`,
+and the cell carries an `sr-only` sentence: *"Peaks at 3,042 in Aug 2026."* Two wrong answers were
+available. Leaving the SVG unlabelled announces "image" and nothing else. Restating the row's twelve
+figures is redundant — a screen reader has just read them. Naming **the peak and its month** is the
+one thing the shape says that reading twelve numbers in order does not hand you, so that is what the
+alternative carries.
+
+**Measured after.** One series, visible, twelve points, **320px** instead of 850 — so the table is
+above the fold, which matters when the table is the accessible representation. Bars are **55px at
+1440 and 10px at 320**, against 1.8px before. Contrast: the column at **6.29:1** against white,
+data labels at **10.35:1**, axis labels **7.58:1**, sparkline stroke **6.29:1** — against 3:1 for
+1.4.11 and 4.5:1 for 1.4.3. At 320px there is no horizontal document scroll; the table scrolls
+inside its own region, which 1.4.10 exempts. axe reports **0 violations across 155 pages**.
+
+**Two things went out with the chart.** `Select all` / `Deselect all` in `shared/_highcharts`
+existed only because the series were all hidden; a chart that needs a button before it will draw has
+already failed, and there is nothing to toggle in one series. And `HistoricalTrendService` no longer
+returns `visible: false` on each entry — a Highcharts rendering flag had been living in a service
+whose job is to return figures, and it was the direct cause of the empty chart.
+
+**And one mistake of my own.** Cutting the two toggle methods out of `highchart_controller.js` with
+a script left the class unclosed, and the syntax check I ran was `node --check … || node -e …`,
+whose `||` swallowed the failure. The page then reported `Failed to register controller: highchart`
+five times over and the chart did not render at all. Caught by looking at the browser console in the
+verification run rather than by the check that was supposed to catch it. **A check with a fallback
+is not a check.**
+

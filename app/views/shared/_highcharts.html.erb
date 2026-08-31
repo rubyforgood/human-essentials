@@ -12,12 +12,16 @@
   config back out of its JSON, so the number the box reserves and the number the chart draws at
   cannot disagree.
 %>
-<div data-controller="highchart" data-highchart-config-value="<%= config %>">
+<%#
+  The Select all / Deselect all pair is gone with the reason it existed. They were there because the
+  trend charts drew 47 series with every one of them hidden, so the page could not show you anything
+  until you pressed a button; a chart that needs a button before it draws is not a chart. Those pages
+  now plot one total per month and there is nothing to toggle.
+
+  `label:` names the chart for a screen reader. Highcharts renders `<svg role="img">` with no
+  accessible name, so without one a reader announces "image" and stops -- WCAG 1.1.1.
+%>
+<div data-controller="highchart" data-highchart-config-value="<%= config %>"
+     <%= tag.attributes("data-highchart-label-value": local_assigns[:label]) %>>
   <div data-highchart-target="chart" style="min-height: <%= height %>px"></div>
-  <div class="mt-3 flex flex-wrap gap-2">
-    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
-            data-action="click->highchart#selectAll">Select all</button>
-    <button type="button" class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>"
-            data-action="click->highchart#deselectAll">Deselect all</button>
-  </div>
 </div>

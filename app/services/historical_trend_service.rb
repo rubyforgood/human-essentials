@@ -4,8 +4,12 @@ class HistoricalTrendService
     @type = type
   end
 
-  # Returns: [{:name=>"Adult Briefs (XXL)", :data=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 416, 0, 0], :visible=>false}]
+  # Returns: [{:name=>"Adult Briefs (XXL)", :data=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 416, 0, 0]}]
   # :data contains quantity from 11 months ago to current month
+  #
+  # Each entry used to carry `visible: false`, which was a Highcharts rendering flag and the reason
+  # all three trend pages opened with an empty chart. The chart plots one total per month now and
+  # this is a table of figures again, with nothing in it about how to draw them.
   def series
     type_symbol = @type.tableize.to_sym # :distributions, :donations, :purchases
     records_for_type = @organization.send(type_symbol)
@@ -29,7 +33,7 @@ class HistoricalTrendService
         else
           quantity_per_month = Array.new(12, 0)
           quantity_per_month[index] += quantity
-          array_of_items << {name:, data: quantity_per_month, visible: false}
+          array_of_items << {name:, data: quantity_per_month}
         end
       end
     end

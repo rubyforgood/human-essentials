@@ -1,13 +1,13 @@
 <%#
-  The three historical trend pages -- donations, purchases, distributions -- were identical
-  apart from a title and a series, and each was a bare Highcharts config with no page header,
-  no card and no <h1>. Their controllers had been given `layout "essentials_app"` and marked
-  migrated; the views were never touched.
+  The three historical trend pages -- donations, purchases, distributions -- were identical apart
+  from a title and a series, and each was a bare Highcharts config with no page header, no card and
+  no <h1>. Their controllers had been given `layout "essentials_app"` and marked migrated; the
+  views were never touched.
 
-    render "historical_trends/trend", title: @title, series: @series
+    render "historical_trends/trend", title: title, series: series
 
-  The chart carries no title of its own any more: the page header is the h1, and the chart
-  repeating it gave the page two headings that could drift apart.
+  The chart carries no title of its own: the page header is the h1, and the chart repeating it gave
+  the page two headings that could drift apart.
 %>
 <% content_for :title, "#{title} - #{current_organization.name}" %>
 
@@ -19,62 +19,117 @@
         subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind.",
         back: {path: reports_path, label: "Back to reports"} %>
 
-<div class="space-y-6">
-  <%= render "shared/essentials/card" do %>
+  <div class="space-y-6">
     <%
-      # One number, used twice: the box the server reserves and the height Highcharts draws at.
-      chart_height = 850
-      config = {
-        chart: {type: "column", height: chart_height},
-        title: {text: nil},
-        xAxis: {categories: last_12_months, crosshair: true},
-        yAxis: {min: 0, title: {text: "Line items"}},
-        tooltip: {style: {zIndex: 100}, shared: true, useHTML: true},
-        plotOptions: {column: {pointPadding: 0.2, borderWidth: 0}},
-        series: series
-      }.to_json
+      months = last_12_months
+      # One total per month, summed across every item. The per-item figures are in the table below.
+      monthly_totals = Array.new(months.size, 0)
+      series.each { |item| item[:data].each_with_index { |value, i| monthly_totals[i] += value.to_i } }
+      grand_total = monthly_totals.sum
+      # The y axis said "Line items" before. It is the unit these figures are counted in, and it
+      # belongs in the tooltip and the subtitle rather than sideways down the left edge.
+      unit_label = "line items"
+      chart_subtitle = "Every item added together, #{months.first} to #{months.last}."
     %>
-    <%= render partial: "shared/highcharts", locals: {config: config, height: chart_height} %>
-  <% end %>
 
-  <%#
-    The same figures as a table. design.md: a chart is never the only representation of the
-    data, because a chart is not readable by a screen reader and not printable in colour.
-    These three were the only chart pages in the app and none of them had one, so the rule had
-    nowhere it was actually being kept.
-  %>
-  <%= render "shared/essentials/card", padded: false do %>
-    <% if series.blank? %>
-      <%= render "shared/essentials/empty_state", kind: :cold_start,
-            title: "Nothing to chart yet",
-            body: "Once there are twelve months of activity, the trend appears here." %>
-    <% else %>
-      <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
-        <table class="data-table">
-          <caption><%= title %>, by item and month</caption>
-          <thead>
-            <tr>
-              <th scope="col">Item</th>
-              <% last_12_months.each do |month| %>
-                <th scope="col" class="quantity"><%= month %></th>
-              <% end %>
-              <th scope="col" class="quantity">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% series.each do |item| %>
+    <%#
+      **One series, not forty-seven.**
+
+      This drew one column series per item, every one of them created `visible: false` -- so the
+      page opened with an 850px box, a legend of 47 names and no data at all until you pressed
+      "Select all". Pressing it was worse: 47 series across 12 months in a 1034px plot is about
+      **1.8px per bar**, keyed by a 191px legend over a ten-colour palette, so five different items
+      shared every swatch and the legend could not identify a bar even in principle.
+
+      The chart's job on this page is the month-to-month shape -- how much, and when. "Which item"
+      is answered completely by the table directly beneath it, which holds all 47 by month, and a
+      top-8 cut would have set a partial answer beside a complete one. See "A chart answers one
+      question" in design.md.
+
+      No legend, one colour, and the figure printed on each column so it can be read exactly rather
+      than estimated off an axis.
+    %>
+    <%= render "shared/essentials/card", title: "Total per month", subtitle: chart_subtitle do %>
+      <% if grand_total.zero? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "Nothing to chart yet",
+              body: "Once there are twelve months of activity, the trend appears here." %>
+      <% else %>
+        <%
+          chart_height = 320
+          config = {
+            chart: {type: "column", height: chart_height, spacingBottom: 8, style: {fontFamily: "Figtree, system-ui, sans-serif"}},
+            title: {text: nil},
+            credits: {enabled: false},
+            legend: {enabled: false},
+            xAxis: {categories: months, crosshair: true, lineColor: "#E2E8F0", tickColor: "#E2E8F0",
+                    labels: {style: {color: "#475569", fontSize: "12px"}}},
+            yAxis: {min: 0, title: {text: nil}, gridLineColor: "#E2E8F0",
+                    labels: {style: {color: "#475569", fontSize: "12px"}}},
+            tooltip: {shared: true, valueSuffix: " #{unit_label}"},
+            plotOptions: {column: {borderWidth: 0, borderRadius: 3, color: "#4F46E5", pointPadding: 0.08, groupPadding: 0.12,
+                                   dataLabels: {enabled: true, style: {fontSize: "11px", fontWeight: "500", color: "#334155", textOutline: "none"}}}},
+            series: [{name: unit_label.humanize, data: monthly_totals}]
+          }.to_json
+        %>
+        <%= render partial: "shared/highcharts",
+              locals: {config: config, height: chart_height, label: "#{title}: total per month, last twelve months"} %>
+      <% end %>
+    <% end %>
+
+    <%#
+      The same figures as a table. design.md: a chart is never the only representation of the data,
+      because a chart is not readable by a screen reader and not printable in colour. These three
+      were the only chart pages in the app and none of them had one, so the rule had nowhere it was
+      actually being kept.
+
+      The trend column is the chart the summary above cannot be: 47 items, each with its own shape,
+      no legend and no colour spent. See `essentials_sparkline`.
+    %>
+    <%= render "shared/essentials/card", padded: false, title: "By item and month" do %>
+      <% if series.blank? %>
+        <%= render "shared/essentials/empty_state", kind: :cold_start,
+              title: "Nothing to show yet",
+              body: "Once there is activity, every item appears here with its monthly figures." %>
+      <% else %>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+          <table class="data-table">
+            <caption><%= title %>, by item and month</caption>
+            <thead>
               <tr>
-                <th scope="row" class="font-medium text-slate-900"><%= item[:name] %></th>
-                <% item[:data].each do |value| %>
+                <th scope="col">Item</th>
+                <th scope="col" class="trend">Last 12 months</th>
+                <% months.each do |month| %>
+                  <th scope="col" class="quantity"><%= month %></th>
+                <% end %>
+                <th scope="col" class="quantity">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% series.each do |item| %>
+                <tr>
+                  <th scope="row" class="font-medium text-slate-900"><%= item[:name] %></th>
+                  <td class="trend"><%= essentials_sparkline(item[:data], months: months) %></td>
+                  <% item[:data].each do |value| %>
+                    <td class="quantity"><%= number_with_delimiter(value) %></td>
+                  <% end %>
+                  <td class="quantity font-medium text-slate-900"><%= number_with_delimiter(item[:data].sum) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">All items</th>
+                <td class="trend"><%= essentials_sparkline(monthly_totals, months: months) %></td>
+                <% monthly_totals.each do |value| %>
                   <td class="quantity"><%= number_with_delimiter(value) %></td>
                 <% end %>
-                <td class="quantity font-medium text-slate-900"><%= number_with_delimiter(item[:data].sum) %></td>
+                <td class="quantity"><%= number_with_delimiter(grand_total) %></td>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+            </tfoot>
+          </table>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
-</div>
+  </div>
 </div>

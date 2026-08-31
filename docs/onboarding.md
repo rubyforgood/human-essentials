@@ -691,6 +691,23 @@ Two symptoms worth recognising:
   new files by whether the path has any history.
 - **The fix you just made is "not working".** Check the file on disk before reading the code.
 
+### The monthly trend reports draw something now
+
+**Monthly Distributions, Donations and Purchases used to open with an empty chart.** A tall grey box,
+a list of 47 item names down the side, and no bars — you had to press **Select all** before anything
+appeared, and what appeared then was 47 items crammed into each month at about two pixels each, in
+ten colours shared between them.
+
+**The chart now shows one column per month: the total, with the figure printed on it.** It is
+shorter, so the table of figures is visible without scrolling.
+
+**And every row of that table has its own small trend line** covering the same twelve months, so you
+can see at a glance which items are rising or falling without reading across fourteen columns. A
+screen reader is told where each one peaks — *"Peaks at 3,042 in Aug 2026"*.
+
+The **Select all** and **Deselect all** buttons are gone. They existed only because the chart started
+empty.
+
 ### Reports: the item column has its padding back, and a hidden warning is visible
 
 **On the three monthly trend reports the item name sat flush against the edge of the card** — no
