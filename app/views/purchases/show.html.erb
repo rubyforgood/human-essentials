@@ -16,16 +16,36 @@
         actions: capture {
           concat essentials_link_button("Print", print_purchase_path(@purchase, format: :pdf), variant: :secondary, icon: "bi-printer")
           concat essentials_link_button("Start a distribution", new_distribution_path(purchase_id: @purchase.id, storage_location_id: @purchase.storage_location_id), variant: :primary, icon: "bi-plus-lg")
+          # Edit and Delete act on the record as a whole, so they belong in the page header --
+          # design.md names *Deactivate* as the example. They were at the foot of the page, below
+          # the last card, which is where a form's Save goes and not where a record's own actions
+          # do.
+          #
+          # In the overflow rather than beside the primary, for two reasons: the header allows
+          # three actions and a menu counts as one, and the last slot belongs to the primary, so a
+          # destructive action must not inherit it. "Edit", not "Make a correction" -- thirty
+          # places in this app say Edit, and four said the other, which was pre-migration wording
+          # carried through the migration rather than chosen.
+          unless inactive
+            record_actions = [{label: "Edit", path: edit_purchase_path(@purchase), icon: "bi-pencil"}]
+            if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+              record_actions << {label: "Delete", path: purchase_path(@purchase), method: :delete,
+                                 icon: "bi-trash", tone: :danger,
+                                 confirm: "Are you sure you want to permanently remove this purchase?"}
+            end
+            concat essentials_record_actions(label: "this purchase", items: record_actions)
+          end
         } %>
 
   <div class="space-y-6">
     <% if inactive %>
       <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
-        <p class="font-semibold">This purchase cannot be corrected or deleted</p>
+        <%# The wording follows the controls: they say Edit and Delete, so this does too. It read
+            "corrected" while the button read "Make a correction", and both changed together. %>
+        <p class="font-semibold">This purchase cannot be edited or deleted</p>
         <p class="mt-1">
-        Purchases can only be changed while all of their items are active. To delete this
-        purchase or make a correction,
-        reactivate these items: <%= @purchase.inactive_items.map(&:name).join(", ") %>
+        Purchases can only be changed while all of their items are active. To edit or delete this
+        purchase, reactivate these items: <%= @purchase.inactive_items.map(&:name).join(", ") %>
         </p>
 
       <% end %>
@@ -71,15 +91,5 @@
       </div>
     <% end %>
 
-    <% unless inactive %>
-      <div class="flex flex-wrap items-center gap-2">
-        <%= essentials_link_button "Make a correction", edit_purchase_path(@purchase), variant: :secondary, icon: "bi-pencil" %>
-        <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-          <%= essentials_action_button "Delete", purchase_path(@purchase), method: :delete,
-                variant: :ghost_danger, icon: "bi-trash",
-                confirm: "Are you sure you want to permanently remove this purchase?" %>
-        <% end %>
-      </div>
-    <% end %>
   </div>
 </div>

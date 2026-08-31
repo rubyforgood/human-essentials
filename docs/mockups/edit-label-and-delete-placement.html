@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>"Make a correction", and where Delete goes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>"Make a correction", and where Delete goes</h1>
+<p class="lede">Two questions about the product drive page. Both are right, and the second one is the
+sharper of the two.</p>
+
+<h2>What is there now<span class="tag t-now">measured</span></h2>
+<div class="page">
+  <div class="hdr">
+    <div><p class="back">← Back to product drives</p><h3>Spring Diaper Drive</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi bi-download"></i>Export participants</button>
+      <button class="btn"><i class="bi bi-pencil"></i>Make a correction</button>
+      <button class="btn ghostdanger"><i class="bi bi-trash"></i>Delete</button>
+    </div>
+  </div>
+  <span class="mark">Delete is in the last slot — which design.md reserves for the page's primary action</span>
+</div>
+
+<h2>1. Is "Make a correction" right? &mdash; No<span class="tag t-rec">measured</span></h2>
+<table class="mini">
+  <tr><th>Label</th><th class="n">Call sites</th><th>Where</th></tr>
+  <tr class="rec"><td><b>Edit</b></td><td class="n">30</td><td>Vendors, Storage locations, Items, Donation sites, every admin page, the partner portal</td></tr>
+  <tr><td>Make a correction</td><td class="n">4</td><td>Donations, Purchases, Distributions, Product drives</td></tr>
+</table>
+<p class="note"><b>It is inherited, not chosen.</b> The decision log records it as pre-existing wording
+kept during the migration — <i>"the pre-migration purchase page carried exactly two actions, Make a
+correction and a delete button, and both are still there."</i> No entry argues for it.</p>
+<p class="note">And design.md's own rule says a button label is <b>a verb and its object</b>, two or
+three words. "Make a correction" is three, so it passes on length and fails on meaning: <b>it assumes
+the record is wrong.</b> You might be adding a tag, fixing a date, or attaching a receipt. "Correction"
+narrows an ordinary action to one of its reasons.</p>
+<div class="verdict"><b>Use "Edit".</b> Thirty places in this app already do, and it is what GOV.UK,
+Polaris and Carbon all use for the same action. <b>The one thing worth keeping</b> is the sentence in
+the callout when a record is locked — <i>"This purchase cannot be corrected or deleted"</i> — because
+there "corrected" is prose explaining a restriction, not a control.</div>
+
+<h2>2. The placement &mdash; and it is not just the order<span class="tag t-now">measured</span></h2>
+<p class="note">design.md: <b>"At most three actions, exactly one of them primary, primary last."</b>
+This header has <b>no primary</b>, so Delete inherits the last slot by default — the most destructive
+thing on the page sits where the main action belongs. That is the reversal you are seeing.</p>
+<p class="note">It is also the only page in the app shaped this way. Donations, purchases and
+distributions put <i>their</i> Edit and Delete in a row at the <b>foot of the page</b>, and their
+headers carry <i>Print</i> and <i>Start a distribution</i> instead.</p>
+
+<h3>Option A &mdash; Delete moves into an overflow menu<span class="tag t-rec">recommended</span></h3>
+<div class="page">
+  <div class="hdr">
+    <div><p class="back">← Back to product drives</p><h3>Spring Diaper Drive</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi bi-download"></i>Export participants</button>
+      <button class="btn"><i class="bi bi-pencil"></i>Edit</button>
+      <div class="slot">
+        <button class="btn kebab" aria-label="More actions"><i class="bi bi-three-dots-vertical"></i></button>
+        <div class="menu"><a class="danger" href="#"><i class="bi bi-trash"></i>Delete</a></div>
+      </div>
+    </div>
+  </div>
+  <span class="mark ok">Nothing destructive in the primary slot, and Edit is where the eye lands</span>
+</div>
+<ul class="tight">
+  <li><b>This app already owns the pattern.</b> `menu_button` renders it, and every table row already collapses its destructive action into one.</li>
+  <li><b>It is what GitHub, Linear, Notion and Stripe do</b> on a detail page: the common actions are buttons, delete is behind a ⋮.</li>
+  <li><b>Cost:</b> deleting becomes two clicks. For an action guarded by a confirmation anyway, that is close to free.</li>
+</ul>
+
+<h3>Option B &mdash; keep both visible, put Delete first<span class="tag t-alt">alternative</span></h3>
+<div class="page">
+  <div class="hdr">
+    <div><p class="back">← Back to product drives</p><h3>Spring Diaper Drive</h3></div>
+    <div class="acts">
+      <button class="btn ghostdanger"><i class="bi bi-trash"></i>Delete</button>
+      <button class="btn"><i class="bi bi-download"></i>Export participants</button>
+      <button class="btn"><i class="bi bi-pencil"></i>Edit</button>
+    </div>
+  </div>
+</div>
+<div class="verdict bad">It clears the primary slot, and it puts <b>Delete first</b> — the leftmost
+action is the one a left-to-right reader meets first, so this trades one wrong emphasis for another.
+No system in the comparison group leads a header with its delete.</div>
+
+<h3>Option C &mdash; leave the order, relabel only<span class="tag t-alt">alternative</span></h3>
+<div class="page">
+  <div class="hdr">
+    <div><p class="back">← Back to product drives</p><h3>Spring Diaper Drive</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi bi-download"></i>Export participants</button>
+      <button class="btn"><i class="bi bi-pencil"></i>Edit</button>
+      <button class="btn ghostdanger"><i class="bi bi-trash"></i>Delete</button>
+    </div>
+  </div>
+</div>
+<div class="verdict bad">Fixes the wording and leaves the reversal. Honest about being half the job,
+and worth having on the table if you would rather not move a destructive action behind a menu.</div>
+
+<h2>The wider question this exposes</h2>
+<p class="note">Four record pages carry an Edit and a Delete, and <b>they do not agree on where those
+go</b>:</p>
+<table class="mini">
+  <tr><th>Page</th><th>Edit + Delete live…</th><th>Header carries</th></tr>
+  <tr><td>Product drives</td><td>in the <b>page header</b></td><td>Export, Edit, Delete</td></tr>
+  <tr><td>Donations</td><td>at the <b>foot of the page</b></td><td>Print, Start a distribution</td></tr>
+  <tr><td>Purchases</td><td>at the <b>foot of the page</b></td><td>Print, Start a distribution</td></tr>
+  <tr><td>Distributions</td><td>at the <b>foot of the page</b></td><td>Print, Distribution complete</td></tr>
+</table>
+<p class="note">design.md is clear which is right: an action on <b>the record as a whole</b> belongs in
+the page header, and it names <i>Deactivate</i> as the example. So product drives has the placement
+right and the other three have it wrong — the opposite of what "this one looks odd" would suggest.
+Those three also have a genuine primary already, so their headers would go to four actions, which is
+one past the limit; the overflow menu in Option A is what makes them fit.</p>
+<p class="note"><b>I have scoped this preview to the page you asked about.</b> Say the word and the
+same treatment goes on the other three, which is where the inconsistency actually lives.</p>
+
+<h2>Recommendation</h2>
+<div class="verdict"><b>"Edit", and Option A.</b> The label because thirty places already say it and
+the current one asserts something that may not be true. The placement because the last slot is the
+primary's, a delete should never inherit it by default, and this app already has the component that
+solves it.</div>
+
+</div>
+</body>
+</html>

@@ -10,21 +10,30 @@
         back: {path: distributions_path, label: "Back to distributions"},
         actions: capture {
           concat essentials_link_button("Print", print_distribution_path(@distribution, format: :pdf), variant: :secondary, icon: "bi-printer")
+          # "Edit", not "Make a correction": thirty places in this app say Edit and four said the
+          # other, which was pre-migration wording carried through the migration rather than
+          # chosen -- and "correction" asserts the record is wrong when it may not be.
+          #
+          # Visible rather than in an overflow, and *before* the primary. A distribution has no
+          # delete -- it is reclaimed from the index, which is a different action -- so this is a
+          # single action, and one item is not a menu. Three actions, primary last.
+          if !inactive && (@distribution.future? || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization))
+            concat essentials_record_actions(label: "this distribution",
+                     items: [{label: "Edit", path: edit_distribution_path(@distribution), icon: "bi-pencil"}])
+          end
           if @distribution.scheduled?
             concat essentials_action_button("Distribution complete", picked_up_distribution_path(@distribution), method: :patch, variant: :primary, icon: "bi-check-circle")
-          end
-          if !inactive && (@distribution.future? || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization))
-            concat essentials_link_button("Make a correction", edit_distribution_path(@distribution), variant: :secondary, icon: "bi-pencil")
           end
         } %>
 
   <div class="space-y-6">
     <% if inactive %>
       <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
-        <p class="font-semibold">This distribution cannot be corrected</p>
+        <%# The wording follows the control, which says Edit. %>
+        <p class="font-semibold">This distribution cannot be edited</p>
         <p class="mt-1">
-        Distributions can only be corrected while all of their items are active.
-        To make a correction, reactivate these items: <%= @distribution.inactive_items.map(&:name).join(", ") %>
+        Distributions can only be edited while all of their items are active.
+        To edit it, reactivate these items: <%= @distribution.inactive_items.map(&:name).join(", ") %>
         </p>
 
       <% end %>

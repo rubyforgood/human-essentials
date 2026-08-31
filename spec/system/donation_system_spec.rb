@@ -675,7 +675,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_on "View"
         expect(page).to have_content "Rare Candy"
 
-        click_on "Make a correction"
+        click_record_action "Edit"
 
         select Donation::SOURCES[:manufacturer], from: "donation_source"
         select Manufacturer.first.name, from: "donation_manufacturer_id"
@@ -702,7 +702,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_on "View"
         expect(page).to have_content "Rare Candy"
 
-        click_on "Make a correction"
+        click_record_action "Edit"
 
         item_select = "#donation_line_items_attributes_0_item_id"
         selected_option_text = find(item_select).find("option[selected]").text
@@ -772,10 +772,10 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "allows deletion of a donation" do
-        expect(page).to have_button("Delete")
+        expect(record_action_labels).to include("Delete")
 
         accept_confirm_dialog do
-          click_on "Delete", match: :first
+          click_record_action "Delete"
         end
 
         expect(page).to have_content "Donation #{@donation.id} has been removed!"

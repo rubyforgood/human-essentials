@@ -98,6 +98,7 @@ out/
 
 # Ad-hoc design preview, served at /design-preview.html in development
 /public/design-preview.html
+/public/edit-label-and-delete-placement.html
 /public/filters-and-batch-together.html
 /public/filter-bar-single-and-alignment.html
 /public/selection-bar-and-totals.html
