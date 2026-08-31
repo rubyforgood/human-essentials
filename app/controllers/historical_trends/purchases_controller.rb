@@ -3,7 +3,7 @@ class HistoricalTrends::PurchasesController < HistoricalTrends::BaseController
   layout "essentials_app"
 
   def index
-    @series = cached_series('Purchase')
+    trend_for("Purchase")
     @title = "Monthly purchases"
   end
 end

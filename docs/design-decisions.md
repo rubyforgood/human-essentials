@@ -7819,3 +7819,53 @@ now asserts the row header is padded **the same as the data cells in its own row
 — a row header is a cell — rather than a number that any density change invalidates. **Writing down
 the lesson is not the same as having learned it.**
 
+## 2026-08-31 — A month range for a monthly chart, and what happens at the current month
+
+Option A was chosen — a month/year range in the same popover as the existing picker — with the
+follow-up question: *is the user only able to select completed months?*
+
+**No, and they should not be.** *"How are we doing this month"* is the question people ask most of a
+trend, and a control whose latest choosable month is last month sends them off to count rows. The
+current month is offered and the chart **marks it** instead, which is Google Analytics 4's answer to
+the same problem and Stripe's to the current period.
+
+Marked four ways, three of them words:
+
+- the column is drawn in a lighter fill with a border
+- the axis label reads *"so far"* under the month
+- the table header for that month reads *"so far"*
+- the card subtitle says *"Aug 2026 is still running."*
+
+Only one of those is a fill, deliberately. **A fill pattern is a colour by another name**, and
+design.md does not allow colour alone; it is the least of the four signals rather than the only one.
+The marking also correctly *disappears* on the last day of a month, when the bucket is not partial —
+which is why the spec travels to a date rather than trusting whatever today happens to be, and why
+there is an example asserting the absence as well as one asserting the presence.
+
+**And measuring the question turned up something else.** A distribution can be dated ahead of
+itself: **10 of them, 82 line items**, up to two months out. The old service capped at
+`Time.current` and dropped them silently. A trend is what happened rather than what is booked, so
+they stay out — mixing them in would make the last columns mean something different from every other
+one — but the page now *says so*, in a callout linking to the distributions list. Donations and
+purchases have none, being recorded after the fact, so the callout never appears there. **Dropping
+data silently is the part that was wrong, not dropping it.**
+
+**Three things the rewrite fixed on the way.**
+
+The bucket index was `record.issued_at.month - Date.current.month - 1` — modular arithmetic that
+only lands correctly for a window of exactly twelve months ending this month. It is an index into
+the window now, so any window works.
+
+The cache key was `"#{org}-historical-#{type}-data"`, with no window in it, because there was only
+one window. Left alone, choosing a different range would have been served the previous one's
+figures.
+
+And the picker's Stimulus controller threw `Missing target element "form"` on every preset press: I
+had put `data-controller` on a div *inside* the form, and **a Stimulus target has to be a descendant
+of its controller element**. The controller sits on the form and submits `this.element`.
+
+**Not built, and worth knowing.** 24 months is 27 columns and **653px of overflow**. The table
+scrolls, which WCAG 1.4.10 exempts, but past about 18 points a line is the better shape than columns
+— that, the previous-period comparison and the category filter are the rest of the approved
+recommendation and are still to come.
+

@@ -710,6 +710,24 @@ It fits at **1366px wide and above**. At 1280 it still scrolls a little — twel
 plus a name, a trend and a total is fifteen columns, and they do not fit in a smaller window. The
 table scrolls inside its own box rather than pushing the page sideways.
 
+### You can change the window on the monthly trend reports
+
+**The three trend reports were stuck on the last twelve months.** There is a **Months** control on
+them now, with presets — last 6, 12 or 24 months, this year to date, last calendar year — and two
+month boxes for anything else. The window is in the address bar, so you can bookmark or share one.
+
+**Months, not days, on purpose.** These charts count by month, so a range like *12 March to 20
+August* would give you two stub columns at the ends that look like a fall but are just a part-month.
+You can only pick whole months, so that cannot happen.
+
+**The current month is included, and labelled.** It says *"so far"* on the column and on the table
+heading, and the card says *"…is still running"* — so you can see how the month is going without
+mistaking a part-month for a bad one.
+
+**Scheduled distributions are not counted.** If you have distributions dated in the future, the page
+tells you how many line items they cover and links you to the distributions list. A trend is what
+happened, not what is booked.
+
 ### The monthly trend reports draw something now
 
 **Monthly Distributions, Donations and Purchases used to open with an empty chart.** A tall grey box,

@@ -1,0 +1,88 @@
+<%#
+  The window for a chart that buckets by month.
+
+    render "shared/month_range_picker", url: historical_trends_distributions_path
+
+  Same popover, same presets-on-the-left / custom-on-the-right layout, same apply-as-you-choose
+  behaviour as the date range picker. The one difference is the field type -- `month` rather than
+  `date` -- and it is the reason this exists: a day-granular range over a monthly chart produces
+  partial months at both ends, and a partial column is short for a reason the chart cannot state.
+  See "A period chart takes a period range" in design.md.
+
+  A native month field, the same kind of control as the date fields the app already uses. No
+  calendar widget and no third-party dependency, which is the rule the date picker set when
+  Litepicker was removed. (Spelling the tag out here trips erb_lint's autocomplete rule, which
+  reads comments.)
+
+  The maximum is the current month. The current month **is** offered -- "how are we doing this month" is
+  the question people ask most of a trend -- and the chart marks that column as still running rather
+  than letting it be compared with a whole one.
+%>
+<%
+  presets = month_range_presets
+  from, to = selected_month_range
+  panel_id = "month-range-panel-#{SecureRandom.uuid}"
+  this_month = Time.zone.today.strftime("%Y-%m")
+%>
+<%#
+  Both controllers sit on the <form>, not on a div inside it. A Stimulus target has to be a
+  *descendant* of its controller element, and the first cut had `month-range` on an inner div with
+  the form as its parent -- so `this.formTarget` threw "Missing target element" on every preset
+  press. The controller submits `this.element` instead, and needs no form target at all.
+%>
+<%= form_with url: url, method: :get,
+      data: {controller: "popover month-range", turbo_action: "advance",
+             month_range_presets_value: presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json},
+      class: "relative inline-block" do |f| %>
+  <div>
+    <%= label_tag "filters_months_trigger", "Months", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+    <button type="button" id="filters_months_trigger"
+            class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left sm:w-64"
+            aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
+            data-popover-target="trigger" data-month-range-target="summary"
+            data-action="click->popover#toggle">
+      <span class="truncate"><%= month_range_summary %></span>
+      <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
+    </button>
+
+    <%# Hidden with the attribute, not a class: Tailwind's preflight marks [hidden] !important, so
+        it cannot lose to a display utility. %>
+    <div id="<%= panel_id %>" hidden
+         role="dialog" aria-label="Choose a range of months"
+         data-popover-target="panel"
+         class="absolute left-0 z-30 w-[24rem] max-w-[calc(100vw-2rem)] p-3 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
+      <div class="grid gap-3 sm:grid-cols-2">
+        <ul class="space-y-0.5 sm:border-r sm:border-slate-100 sm:pr-3">
+          <% presets.each_key do |name| %>
+            <li>
+              <button type="button"
+                      class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_month_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
+                      <%= tag.attributes("aria-current": true) if name == selected_month_preset %>
+                      data-action="click->month-range#choosePreset"
+                      data-preset="<%= name %>"><%= name %></button>
+            </li>
+          <% end %>
+        </ul>
+
+        <div class="space-y-3">
+          <div>
+            <%= label_tag "filters_months_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+            <%= month_field_tag "months_start", from.strftime("%Y-%m"), id: "filters_months_start", name: nil,
+                  max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+                  data: {month_range_target: "start", action: "change->month-range#changeCustom"} %>
+          </div>
+          <div>
+            <%= label_tag "filters_months_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+            <%= month_field_tag "months_end", to.strftime("%Y-%m"), id: "filters_months_end", name: nil,
+                  max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+                  data: {month_range_target: "end", action: "change->month-range#changeCustom"} %>
+          </div>
+          <p class="pt-1 text-xs text-slate-500">Whole months, applied as you choose them.</p>
+        </div>
+      </div>
+    </div>
+
+    <%= hidden_field_tag "filters[months]", month_range_param(from, to),
+          id: nil, autocomplete: "off", data: {month_range_target: "range"} %>
+  </div>
+<% end %>
