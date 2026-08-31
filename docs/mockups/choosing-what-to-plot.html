@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Choosing what the trend chart draws</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ .bar{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin-bottom:16px}
+ .fld{width:260px}
+ .lbl{display:block;font-size:12.5px;font-weight:500;color:#334155;margin-bottom:5px}
+ .trig{width:100%;min-height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:5px 12px;
+   display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;
+   font:400 14px Figtree;color:#0F172A;cursor:pointer;text-align:left}
+ .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+ .chip{display:inline-flex;align-items:center;gap:5px;background:#EEF2FF;border:1px solid #C7D2FE;
+   border-radius:999px;padding:2px 4px 2px 7px;font-size:12px;color:#3730A3}
+ .chip button{border:0;background:none;color:#4338CA;cursor:pointer;font-size:14px;line-height:1;padding:0 3px}
+ .pan{width:260px;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgb(15 23 42/.14);
+   background:#fff;padding:8px;margin-top:6px}
+ .pan input{width:100%;height:34px;border:1px solid #CBD5E1;border-radius:8px;padding:0 10px;font:400 13.5px Figtree;margin-bottom:6px}
+ .pan ul{list-style:none;margin:0;padding:0;max-height:170px;overflow:auto}
+ .pan li label{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:13.5px;color:#334155;cursor:pointer}
+ .pan li label:hover{background:#F1F5F9}
+ .pan .grp{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#94A3B8;padding:6px 8px 2px}
+ .pan li input{width:16px;height:16px;margin:0}
+ .cost td.n{text-align:right;font-variant-numeric:tabular-nums}
+ .bad{color:#B4232E;font-weight:700}
+</style></head><body><div class="wrap">
+
+<h1>Choosing what the trend chart draws</h1>
+<p class="lede">You are right about the friction, and it measures worse than it reads. I also agree
+the category control should not be a second, separate thing. Below: what it costs today, your
+proposal drawn out, and three alternatives.</p>
+
+<h2>1. What ticking a row costs, measured</h2>
+<table class="mini cost">
+  <tr><th>Ticking one row, 21st of 47</th><th class="n">Measured</th></tr>
+  <tr class="rec"><td>Scroll position lost</td><td class="n bad">1,702px</td></tr>
+  <tr><td>Full document reloads</td><td class="n">1 per tick</td></tr>
+  <tr><td>Is the row you just ticked still on screen?</td><td class="n bad">No</td></tr>
+  <tr class="rec"><td><b>To plot four rows</b></td><td class="n bad"><b>4 reloads, 4 scroll-downs</b></td></tr>
+</table>
+<div class="warn" style="border-left:3px solid #B4232E;background:#FBEDEE;padding:10px 14px;border-radius:0 8px 8px 0;color:#7F1D1D;font-size:13.5px">
+<b>This was foreseeable and I did not foresee it.</b> The checkbox submits a form, the form is a
+GET, and a GET is a new page. I checked that the cap worked and never checked what four selections
+cost end to end.</div>
+
+<h2>2. Option A &mdash; your proposal: one multi-select <span class="tag t-rec">recommended</span></h2>
+<p class="note">One control replaces both the filter-bar category select and the row checkboxes. It
+picks categories, narrows the table, and draws a line for each &mdash; so there is one answer to
+&ldquo;what am I looking at&rdquo;, not two. Selections apply when the panel closes: <b>one request
+for four choices, and no scrolling at all</b>.</p>
+<div class="page">
+  <div class="bar">
+    <div class="fld"><span class="lbl">Months</span>
+      <button class="trig" type="button">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></button></div>
+    <div class="fld"><span class="lbl">Categories (15)</span>
+      <button class="trig" type="button" aria-expanded="true"><span class="chips"><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg>Nappies<button type="button" aria-label="Remove Nappies">&times;</button></span><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg>Period products<button type="button" aria-label="Remove Period products">&times;</button></span><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg>Wipes<button type="button" aria-label="Remove Wipes">&times;</button></span></span>
+        <i class="bi-chevron-down" style="color:#94A3B8"></i></button>
+      <div class="pan" role="dialog" aria-label="Choose categories">
+        <input type="search" placeholder="Search" aria-label="Search categories">
+        <ul>
+          <li><label><input type="checkbox" checked> Nappies</label></li>
+          <li><label><input type="checkbox" checked> Period products</label></li>
+          <li><label><input type="checkbox" checked> Wipes</label></li>
+          <li><label><input type="checkbox"> Adult incontinence</label></li>
+          <li><label><input type="checkbox"> Bed pads</label></li>
+          <li><label><input type="checkbox"> Uncategorised</label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <svg viewBox="0 0 780 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="770" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">14,988</text><line x1="58" y1="74.7" x2="770" y2="74.7" stroke="#E2E8F0"/><text x="52" y="78.7" text-anchor="end" font-size="10" fill="#64748B">9,992</text><line x1="58" y1="135.3" x2="770" y2="135.3" stroke="#E2E8F0"/><text x="52" y="139.3" text-anchor="end" font-size="10" fill="#64748B">4,996</text><line x1="58" y1="196.0" x2="770" y2="196.0" stroke="#E2E8F0"/><text x="52" y="200.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="87.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="147.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="206.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="265.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="325.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="384.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="443.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="503.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="562.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="621.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="681.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="740.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><polyline points="58.0,196.0 122.7,196.0 187.5,178.5 252.2,132.7 316.9,196.0 381.6,196.0 446.4,196.0 511.1,196.0 575.8,183.4 640.5,196.0 705.3,94.3 770.0,14.0" fill="none" stroke="#4F46E5" stroke-width="2.4" stroke-linejoin="round"/><polyline points="58.0,196.0 122.7,196.0 187.5,188.1 252.2,196.0 316.9,196.0 381.6,196.0 446.4,196.0 511.1,196.0 575.8,124.6 640.5,196.0 705.3,171.9 770.0,29.5" fill="none" stroke="#B4232E" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="6 4"/><polyline points="58.0,196.0 122.7,196.0 187.5,141.5 252.2,196.0 316.9,196.0 381.6,196.0 446.4,196.0 511.1,196.0 575.8,152.8 640.5,196.0 705.3,184.9 770.0,77.1" fill="none" stroke="#0F766E" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="1.5 4"/></svg>
+  <span class="mark ok">Three chosen, three lines, each with its own dash pattern. The chips in the
+  trigger say what is on the chart without opening anything.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> no scrolling, one request, one control, and the chips double as the chart's key.
+    It is what Amplitude and Mixpanel ship for exactly this.</li>
+  <li><b>Against:</b> you can no longer compare two individual <i>items</i> &mdash; only categories.
+    The 47 items stay in the table, unplottable.</li>
+  <li><b>On spacing:</b> the two controls sit on one row, 27px apart today. Keeping them together is
+    deliberate &mdash; both govern the chart <i>and</i> the table, so putting one above the table
+    would say it only affects the table.</li>
+</ul>
+
+<h2>3. Option B &mdash; the same control, listing categories <i>and</i> items</h2>
+<div class="page">
+  <div class="fld"><span class="lbl">Compare (62)</span>
+    <button class="trig" type="button" aria-expanded="true"><span class="chips"><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg>Nappies<button type="button" aria-label="Remove Nappies">&times;</button></span><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg>Period products<button type="button" aria-label="Remove Period products">&times;</button></span><span class="chip"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg>Wipes<button type="button" aria-label="Remove Wipes">&times;</button></span></span>
+      <i class="bi-chevron-down" style="color:#94A3B8"></i></button>
+    <div class="pan" role="dialog" aria-label="Choose what to compare">
+      <input type="search" placeholder="Search" aria-label="Search">
+      <p class="grp">Categories</p>
+      <ul>
+        <li><label><input type="checkbox" checked> Nappies</label></li>
+        <li><label><input type="checkbox" checked> Period products</label></li>
+      </ul>
+      <p class="grp">Items</p>
+      <ul>
+        <li><label><input type="checkbox"> Kids (Size 2)</label></li>
+        <li><label><input type="checkbox"> Tampons</label></li>
+      </ul>
+    </div>
+  </div>
+  <span class="mark">One searchable list, grouped. Keeps per-item comparison, which A gives up.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> everything A does, plus the item-level question the original 47-line chart was
+    clumsily trying to answer.</li>
+  <li><b>Against:</b> a list of 62 mixed things, where a reader has to notice which group a name
+    came from. Two kinds of thing in one control is the cost.</li>
+</ul>
+
+<h2>4. Option C &mdash; no plotting at all</h2>
+<div class="page"><svg viewBox="0 0 780 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="770" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="74.7" x2="770" y2="74.7" stroke="#E2E8F0"/><text x="52" y="78.7" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="135.3" x2="770" y2="135.3" stroke="#E2E8F0"/><text x="52" y="139.3" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="196.0" x2="770" y2="196.0" stroke="#E2E8F0"/><text x="52" y="200.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="87.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="147.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="206.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="265.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="325.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="384.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="443.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="503.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="562.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="621.7" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="681.0" y="211" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="740.3" y="211" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="69.9" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="129.2" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="188.5" y="175.8" width="35.6" height="20.2" rx="3" fill="#4F46E5"/><text x="206.3" y="170.8" text-anchor="middle" font-size="10" fill="#334155">11,087</text><rect x="247.9" y="172.2" width="35.6" height="23.8" rx="3" fill="#4F46E5"/><text x="265.7" y="167.2" text-anchor="middle" font-size="10" fill="#334155">13,093</text><rect x="307.2" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="366.5" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="425.9" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="485.2" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="544.5" y="173.7" width="35.6" height="22.3" rx="3" fill="#4F46E5"/><text x="562.3" y="168.7" text-anchor="middle" font-size="10" fill="#334155">12,283</text><rect x="603.9" y="196.0" width="35.6" height="0.0" rx="3" fill="#4F46E5"/><text x="621.7" y="191.0" text-anchor="middle" font-size="10" fill="#334155">3</text><rect x="663.2" y="140.0" width="35.6" height="56.0" rx="3" fill="#4F46E5"/><text x="681.0" y="135.0" text-anchor="middle" font-size="10" fill="#334155">30,762</text><rect x="722.5" y="14.0" width="35.6" height="182.0" rx="3" fill="#4F46E5"/><text x="740.3" y="9.0" text-anchor="middle" font-size="10" fill="#334155">100,050</text></svg>
+  <span class="mark">The chart is always the total for the window and the chosen categories. The
+  table answers &ldquo;which&rdquo;, with a sparkline on every row.</span></div>
+<ul class="tight">
+  <li><b>For:</b> the least machinery of anything here. No cap, no chips, no dash patterns, nothing
+    to explain. The sparkline column already gives every one of the 47 items its own shape.</li>
+  <li><b>Against:</b> two items cannot be compared on one axis. Whether that matters is a question
+    about how these reports are actually used, and I do not know the answer.</li>
+</ul>
+
+<h2>5. Option D &mdash; keep the checkboxes, fix the friction</h2>
+<p class="note">The reported problem is the reload, not the checkbox. Applying into a turbo frame
+with the scroll kept would make ticking a row cost nothing and leave the row where it was.</p>
+<ul class="tight">
+  <li><b>For:</b> smallest change; keeps per-item plotting; the table is where the items already are.</li>
+  <li><b>Against:</b> <b>it does not fix the real cost.</b> Even with no reload you still scroll a
+    47-row table to find each thing you want. The dropdown removes the search; the frame only removes
+    the flinch.</li>
+</ul>
+
+<div class="verdict"><b>Recommendation: A, and it is your proposal.</b> One multi-select, beside
+Months, replacing both the single-select and the row checkboxes; chips in the trigger doubling as
+the chart's key; applied on close so four choices cost one request. The cap of four stays &mdash; it
+was measured against dash patterns and label collisions, and none of that changes.
+<br><br><b>Take B instead if</b> comparing two individual items matters; the price is a 62-entry
+list of two different kinds of thing. <b>Take C if</b> nobody actually compares series on this page,
+in which case all of this machinery should go and the sparklines carry it.
+<br><br><b>D is not enough on its own</b> &mdash; and the scroll bug gets fixed regardless of which
+you pick, because losing 1,702px is a defect rather than a design choice.</div>
+
+<p class="note" style="margin-top:22px">One thing I would like to know before building, because it
+decides between A and C: <b>does anyone compare two series on this page today, or is the question
+always &ldquo;how much, and of what&rdquo;?</b> The 47-line chart that was here suggests someone
+once wanted comparison; the fact that every series arrived hidden suggests nobody used it.</p>
+
+</div></body></html>

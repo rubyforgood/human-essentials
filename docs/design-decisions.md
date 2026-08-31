@@ -8091,3 +8091,47 @@ their shape now. I have written the pattern down rather than the instance.
 graph example failed once in a full run and has passed in five runs since, including at the same
 seed and run alone. I could not reproduce it and I have not explained it.
 
+## 2026-08-31 — Ticking rows in a table is the wrong control, and I should have measured it
+
+Reported: the category dropdown is still there, ticking a row throws you to the top of the page so
+you have to scroll back for the next one, and plotting from the table creates too much friction.
+
+**Measured, and it is worse than it reads.** Ticking the 21st row of 47 loses **1,702px of scroll**,
+costs **a full document reload**, and leaves the row you just ticked **off screen**. Four rows is
+four reloads and four scroll-downs.
+
+**This was foreseeable and I did not foresee it.** The checkbox submits a form, the form is a GET,
+and a GET is a new page. I verified that the cap worked, that the dash patterns were distinct, that
+the window and category survived — and never once checked what choosing four things cost end to end.
+Every one of those checks was about a state; none was about the *path between* states.
+
+**And the second complaint is fair on its own.** Two controls that both narrow what you are looking
+at — a single-select in the filter bar and checkboxes in the table — is two answers to "what am I
+looking at". One control should do it.
+
+**Options at `docs/mockups/choosing-what-to-plot.html`**, and the recommendation is the proposal
+that was put to me: **one multi-select beside Months**, replacing both the single-select and the row
+checkboxes, picking categories, narrowing the table and drawing a line each, **applied on close** so
+four choices cost one request and no scrolling. Chips in the trigger double as the chart's key. The
+cap of four survives unchanged — it was measured against dash patterns and label collisions, and
+none of that depends on how the choosing happens.
+
+Named alternatives rather than dismissed: **B**, the same control listing categories *and* items in
+one grouped list, which keeps the per-item comparison A gives up and costs a 62-entry list of two
+kinds of thing; **C**, no plotting at all, where the chart is always the total and the sparkline
+column carries every item's shape — the least machinery of anything on the table; and **D**, keeping
+the checkboxes and applying into a frame, which **fixes the flinch and not the cost**: you still
+scroll a 47-row table to find each thing.
+
+**On spacing:** the two controls are on one row 27px apart, and I would keep them together rather
+than move one above the table. Both govern the chart *and* the table; putting one at the top of the
+table would say it only affects the table.
+
+**The scroll loss gets fixed whichever option wins**, because 1,702px is a defect and not a design
+choice.
+
+**One question I cannot answer from the code, and it decides between A and C.** Does anyone compare
+two series on this page, or is the question always "how much, and of what"? The 47-line chart that
+was here suggests somebody once wanted comparison; the fact that every one of its series arrived
+`visible: false` suggests nobody used it.
+
