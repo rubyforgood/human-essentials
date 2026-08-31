@@ -22,5 +22,10 @@ rbenv install --skip-existing &
 
 wait
 
+# The post-checkout hook that records a rolled-back working tree. `.git/hooks` is not tracked, so
+# the hooks live in `.githooks/` and git is pointed at them; this has to be re-run per clone.
+echo "*** Pointing git at .githooks"
+git config core.hooksPath .githooks
+
 echo "*** Running project bin/setup"
 bin/setup

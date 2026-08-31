@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+# Is the working tree the one HEAD says it should be?
+#
+# This exists because a rolled-back working tree looks exactly like a regression. Twice it was
+# reported as one -- the new-kit warning "back at the bottom of the page", and Delete "showing the
+# browser's confirm box" -- and both times the file on disk was the pre-fix version, put there by
+# something outside the session. Each cost a diagnosis before anyone thought to look at the disk.
+# This answers it in under a second, before anyone reads code that is already correct.
+#
+#   bin/workspace-check             # 0 clean, 1 uncommitted work, 2 a rollback
+#   bin/workspace-check --quiet     # exit status only, for scripts
+#   bin/workspace-check --identify  # also name the commit the tree was rolled back to (~30s)
+#
+# Three exit codes rather than two, because `bin/start` runs this and **uncommitted work is
+# normal**. A check that shouts at every developer with a half-finished branch is a check people
+# learn to scroll past, which would leave it useless for the one case it exists for.
+#
+# Deliberately not `git status`: the two facts that matter are the *magnitude* of the drift and
+# which files came back from the dead, and `git status` says neither in a form you can read at a
+# glance.
+require_relative "../lib/workspace_drift"
+include WorkspaceDrift
+
+QUIET = ARGV.include?("--quiet")
+IDENTIFY = ARGV.include?("--identify")
+def say(msg) = (puts msg unless QUIET)
+
+Dir.chdir(File.expand_path("..", __dir__))
+
+drifted = changed
+back = resurrected
+
+if drifted.empty? && back.empty?
+  say "working tree matches HEAD  #{head}  #{head_subject[0, 60]}"
+  say "#{new_work.size} untracked file(s), which are yours" if new_work.any?
+  exit 0
+end
+
+say "\n  working tree DIFFERS from HEAD  #{head}  #{head_subject[0, 60]}"
+if drifted.any?
+  modified = drifted.count { |l| l[0, 2].include?("M") }
+  missing  = drifted.count { |l| l[0, 2].include?("D") }
+  say "  #{drifted.size} tracked file(s): #{modified} modified, #{missing} missing"
+end
+
+# The loudest symptom, and the one a plain `git checkout .` will not clear: a file some commit
+# deleted, back on disk, being served.
+if back.any?
+  say "\n  #{back.size} file(s) that a commit deleted are back on disk:"
+  back.first(10).each { |f| say "      #{f}" }
+  say "      ...and #{back.size - 10} more" if back.size > 10
+end
+
+rolled_back = rollback?(drifted.size, back.size)
+if rolled_back
+  say "\n  This is a ROLLBACK, not an edit. Nobody changes #{drifted.size} files by hand," if drifted.size >= 50
+  say "  and a deleted file does not come back on its own." if back.any?
+  if IDENTIFY
+    say "\n  Scanning for the commit it was rolled back to..."
+    ancestor, best = closest_ancestor
+    if ancestor && best * 4 < drifted.size
+      short = git("rev-parse", "--short=9", ancestor).strip
+      when_ = git("log", "-1", "--format=%cd", "--date=format:%Y-%m-%d %H:%M", ancestor).strip
+      say "  #{best} file(s) differ from #{short} (#{when_}) against #{drifted.size} from HEAD"
+      say "      #{git("log", "-1", "--format=%s", ancestor).strip[0, 60]}"
+      say "  #{git("rev-list", "--count", "#{ancestor}..HEAD").strip} commit(s) of work are in git and not on disk."
+    else
+      say "  No older commit matches more closely."
+    end
+  else
+    say "  Run with --identify to name the commit it went back to (~30s)."
+  end
+else
+  say "\n  Small enough to be work in progress."
+end
+
+log = File.join(git("rev-parse", "--git-dir").strip, "workspace-resets.log")
+if File.exist?(log)
+  say "\n  #{File.readlines(log).count { |l| l.start_with?("---") }} file-checkout(s) recorded in #{log}"
+end
+if rolled_back
+  say "\n  Recover with:  bin/workspace-restore --yes\n\n"
+  exit 2
+end
+exit 1

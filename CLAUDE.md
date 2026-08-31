@@ -139,8 +139,21 @@ because the next person will trust it.
 
 The cadence: **work, then document, then commit and push, at every checkpoint.** Not batched at
 the end. The documentation and the change it describes belong in the same commit, and a
-checkpoint that is not pushed is a checkpoint that can be lost — this workspace has been reset
-out from under the work three times.
+checkpoint that is not pushed is a checkpoint that can be lost — **this working tree has been
+rolled back to the session's starting commit five times**, without `HEAD` ever moving.
+
+Committing is the only protection for work in progress; nothing here can prevent the rollback.
+What is here makes it *visible*, because twice it arrived disguised as a bug report about a fix
+that had already been made:
+
+```bash
+bin/workspace-check              # 0 clean, 1 uncommitted work, 2 a rollback. bin/start runs it.
+bin/workspace-check --identify   # name the commit it went back to (~30s)
+bin/workspace-restore --yes      # snapshot the disk, put HEAD back, remove resurrected files
+```
+
+**Before believing a report that a fix has come undone, run `bin/workspace-check`.** A
+rolled-back file renders exactly like a regression, and `git status` alone does not say so.
 
 **Do this without being asked.** Finishing a piece of work means: update whichever of the six
 documents it touched — `design.md`, `docs/onboarding.md`, `docs/migration-map.md` and the rest —

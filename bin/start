@@ -1,3 +1,18 @@
 #!/bin/bash
 
+# Say so if the files on disk are not the ones HEAD says they should be.
+#
+# The working tree of this repo has been rolled back to an earlier commit five times, without HEAD
+# moving, by something outside the repo. Twice that surfaced as a bug report about a fix that had
+# already been made -- a rolled-back file renders exactly like a regression. Starting the server is
+# the moment to notice, because it is the moment before anyone looks at a page.
+#
+# Exit 2 means a rollback; exit 1 means somebody has uncommitted work, which is normal and silent.
+bin/workspace-check --quiet
+if [ $? -eq 2 ]; then
+  bin/workspace-check
+  echo "  The server is about to start against those files, not against HEAD."
+  echo
+fi
+
 bundle exec foreman start -f Procfile.dev

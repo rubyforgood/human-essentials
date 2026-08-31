@@ -7603,3 +7603,61 @@ Not Provided"** is a defect for a screen reader user before it is one for an aud
 `preferred_name` now, which falls back to the email. The cell still shows "Name Not Provided" — a
 fine thing to display, a useless thing to be called.
 
+## 2026-08-31 — What is resetting the workspace, and what can be done about it
+
+Asked whether the resets can be stopped. **Not from inside the repo** — but they can be identified,
+and they can be made to announce themselves, which is where the cost actually is.
+
+**What it does, measured.** Both snapshots of a reset are the same tree:
+`git diff --name-only stash@{n} <commit>` across the branch history puts both within **6 and 4 files
+of `548db78f6`** and hundreds of files from everything else. `548db78f6` is the commit that was
+`HEAD` when the session started. The reflog shows **`HEAD` never moved** — no `reset`, no branch
+checkout, only my own recovery. `/tmp` files from previous days survive and `.git` is untouched, so
+it is not a container or filesystem snapshot being restored. What is left is an external process
+running the equivalent of
+
+    git checkout 548db78f6 -- .
+
+which restores every tracked file as of that commit, brings back files later commits deleted, and
+leaves `HEAD` and the index alone. That is exactly the damage observed, including the resurrected
+`app/models/kit_item.rb`.
+
+**Nothing in the repo does it.** No hooks were installed, `core.hooksPath` was unset,
+`postCreateCommand` runs no git, and no watcher or sync process is running.
+
+**Why it cannot be prevented here.** Git has **no `pre-checkout` hook**. `post-checkout` runs after
+the files are already written. A hook could re-restore, but it would then fight every legitimate
+`git checkout -- <path>`, and a hook that can break `git checkout` is worse than the problem.
+
+**So: detect, attribute, recover.**
+
+- `.githooks/post-checkout` records any path-limited checkout leaving more than ten files differing
+  from HEAD — timestamp, the commit, the drift, and **the process tree that ran it**, which is the
+  one thing that would name the culprit. Verified: `post-checkout` does fire for
+  `git checkout <c> -- <path>` and for `git restore --source=`, with the branch flag `0`.
+- `bin/workspace-check` — **0 clean, 1 uncommitted work, 2 a rollback**. Three codes rather than two
+  because `bin/start` runs it and uncommitted work is normal; a check that shouts at everyone is a
+  check people scroll past.
+- `bin/workspace-restore --yes` — snapshot, restore, and **delete the resurrected files**, which
+  `git checkout .` does not.
+
+**Three things I got wrong while building it, all kept.**
+
+*Untracked is not resurrected.* The first `workspace-restore` offered to delete every untracked
+file — including the three scripts being written to fix the problem. A file some commit *deleted*
+has history on its path; work in progress has none. That one query separates them.
+
+*An exact tree match is the wrong test.* `matching_ancestor` demanded the disk equal a commit
+exactly, and **one stray untracked file defeats equality** — so on the one occasion the answer
+mattered it said "looks like work in progress" about a 412-file rollback. Closeness is the signal:
+6 files from the target against 412 from HEAD is not a judgement call. It is opt-in behind
+`--identify`, because it costs a `git diff` per commit and the last rollback landed **215 commits
+back** — half a minute to say what the drift count already said.
+
+*The snapshot holds the damage, not the work.* Rehearsing a rollback destroyed three uncommitted
+files of my own, and `workspace-restore` dutifully stashed the **rolled-back** contents, because
+that is what was on the disk by then. They were not recoverable and had to be rewritten. The stash
+protects against the tool being wrong; it does not protect against the reset. **Committing is the
+only thing that does**, which is the cadence this file has argued for from the beginning — now with
+a measurement behind it.
+
