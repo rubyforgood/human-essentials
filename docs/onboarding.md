@@ -652,6 +652,14 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### The warning on New kit is above the form again
+
+**If you saw "You will not be able to change the composition of the kit once it is saved" at the
+*bottom* of `/kits/new`, reload.** That is the old wording and the old position; a working-tree
+rollback briefly put it back. The warning belongs directly under the heading, before the form it
+warns about — a warning that arrives after the decision is not a warning — and there is now a check
+that fails if it ever drifts below the first card or below the fold.
+
 ### Import and Export had their arrows the wrong way round
 
 **On any page with both — donation sites, vendors, partners, storage locations, participants —

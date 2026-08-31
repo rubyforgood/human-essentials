@@ -7519,3 +7519,41 @@ files deleted and 4 that its commits had deleted resurrected. HEAD was intact an
 recovery was a stash for the snapshot, `git checkout` back to HEAD and `rm` for the four. The reason
 it costs minutes rather than a day is that every checkpoint has been committed and pushed.
 
+## 2026-08-31 — The kit warning came back, because nothing was holding it
+
+Reported: the warning on `/kits/new` is at the bottom of the page where you cannot see it, and what
+triggered it. The same page, in the same words, as **2026-08-29** — and the answer to "what
+triggered it" is the interesting part, because it was not the app.
+
+The text quoted was *"You will not be able to change the composition of the kit once it is saved.
+Partner visibility and name can be changed later via the kit's item"* — the **pre-fix** wording,
+including the `kit's item` phrasing that leaked the STI relationship. It is not in the codebase. It
+is in `stash@{0}`, the snapshot of the fifth workspace reset, which reverted 316 files including
+`app/views/kits/_form.html.erb`. Checked rather than guessed: `git show stash@{0}:app/views/kits/_form.html.erb`
+has the callout after both cards with exactly those two sentences.
+
+So the report was accurate about what was on screen and the screen was showing a rolled-back tree.
+The live page measures **y=205, 48px under the `h1`**, which is where `e3e12881d` put it.
+
+**The lesson is not "the reset did it".** It is that the fix had no test. `e3e12881d` moved a
+callout in one template and wrote the rule into design.md, and neither of those things can fail. A
+grep for `callout` across the system specs returned four comments and no assertion. Any rollback,
+any refactor that moves a wrapper, any future edit that appends rather than prepends puts it back
+silently — and the only detector was a person opening the page.
+
+`spec/system/callout_placement_system_spec.rb` now pins both halves of the scope rule, in a browser:
+the kit warning above its first card, above its submit and **above the fold at 720px**; and the
+partner group's reminder note staying *below* its card, because the rule is scope and not position
+and a spec that only knew "callouts go at the top" would have driven that one to the wrong place.
+Verified against the old markup: it fails at **y=922**, the number from the original report.
+
+Two things the first draft got wrong, both worth keeping:
+
+- **It matched an empty live region.** Selecting `main [role=status]` found the first of *three* on
+  `/kits/new` — the other two are empty and sit at y=0 — so the assertion compared nothing to the
+  card and passed. It matches on the callout's own words now, and asserts it was found at all.
+- **The counter-example asserted nothing.** `/partners/new` renders no callout, so
+  `expect(callout).to be_nil.or be > firstCard` was true by vacuity. The partner group's note is
+  behind a checkbox; the spec ticks it. **A green example that could not have gone red is worse
+  than no example**, because it reads like coverage.
+

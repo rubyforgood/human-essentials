@@ -3128,6 +3128,12 @@ heading.
 Of 26 callouts in the app, four sat below a card and **one** was a defect; the other three are
 section-scoped. Position alone does not decide it.
 
+`spec/system/callout_placement_system_spec.rb` pins both halves of the rule — the kit warning above
+its cards and above the fold, and the partner group's reminder note staying with the fields it
+describes. It exists because the kit callout was reported **twice**: fixed in `e3e12881d`, unpinned,
+and back at y=922 the moment the working tree was rolled back. **A placement fixed by editing one
+template survives exactly as long as the template does.**
+
 **`wrapper_class` is for the margin only.** A callout does not know where it sits, so spacing
 stays with the page that places it.
 
