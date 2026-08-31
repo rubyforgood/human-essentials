@@ -332,6 +332,17 @@
     color: var(--color-slate-900);
   }
 
+  /*
+   * The trend column: a sparkline, one per row. Fixed width so 47 of them line up into a column
+   * you can read down -- which is the whole point of a sparkline in a table, and is lost the
+   * moment they are ragged. Not `numeric`: it holds a drawing, not a figure.
+   */
+  .data-table .trend {
+    width: 124px;
+    min-width: 124px;
+    text-align: left;
+  }
+
   .data-table .numeric,
   .data-table .quantity,
   .data-table .percent {

@@ -18,8 +18,8 @@ RSpec.describe HistoricalTrendService, type: :service do
 
     it "returns an array of items with their monthly data" do
       expected_result = [
-        {name: "Item 1", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120], visible: false},
-        {name: "Item 2", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0], visible: false}
+        {name: "Item 1", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120]},
+        {name: "Item 2", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0]}
       ]
       expect(service.series).to eq(expected_result)
     end

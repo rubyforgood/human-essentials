@@ -404,6 +404,50 @@ the shape the rule says to open up — and it is correctly collapsed. The audit 
 `case` in the row partial is the answer.
 
 <a id="row-action-heights"></a>
+<a id="a-chart-answers-one-question"></a>
+**A chart answers one question, and the table beside it answers the rest.** The three trend pages
+drew **one column series per item** — 47, 34 and 37 of them — each created `visible: false`, so the
+page opened with an 850px box, a legend of 47 names, and nothing drawn. Pressing *Select all* was
+worse: 47 series across 12 months in a 1034px plot is **about 1.8px a bar**, keyed by a **191px
+legend** over a **ten-colour palette**, so five different items shared every swatch and the legend
+could not identify a bar even in principle.
+
+They plot **one total per month** now: one series, one colour, no legend, the figure printed on each
+column so it can be read exactly rather than estimated off an axis. **55px bars at 1440, 10px at
+320.** The chart says *how much, and when*; the table directly beneath says *which item*, in full.
+A top-8-and-Other cut was drawn up and rejected for that reason — it would have set a partial answer
+beside a complete one.
+
+The rules that came out of it:
+
+- **A chart with more series than the palette has colours is not a chart.** Bootstrap Icons aside,
+  a legend can only identify a series if its swatch is unique. Past about eight, choose a different
+  shape rather than a longer legend.
+- **A chart that draws nothing until you press a button has already failed.** `Select all` and
+  `Deselect all` are gone from `shared/_highcharts` with the reason they existed.
+- **Height is part of the design.** 850px pushed the figures below the fold on every screen. 320
+  leaves the table visible, which matters because the table is the accessible representation.
+
+<a id="a-sparkline-per-row"></a>
+**A sparkline gives every row a trend without spending a colour.** `essentials_sparkline(values,
+months:)` renders inline SVG on the server — 47 to a page, none interactive, so a charting library
+would cost an instance per row and a layout shift with it. Shopify's `polaris-viz` ships
+`SparkLineChart` as its own component for the same reason: a trend inside a row is a different
+problem from a series inside a legend.
+
+```erb
+<td class="trend"><%= essentials_sparkline(item[:data], months: months) %></td>
+```
+
+**The drawing is `aria-hidden` and the cell carries an `sr-only` sentence naming the peak and its
+month** — *"Peaks at 3,042 in Aug 2026."* That is not a restatement of the row, whose twelve figures
+are already read out; it is the one thing the *shape* says that reading twelve numbers in order does
+not hand you. An `aria-hidden` drawing with nothing beside it would leave the cell silent, which is
+worse than no sparkline.
+
+`.trend` fixes the column at 124px so the shapes line up into something you can read *down*. Ragged
+sparklines are not comparable, which is the only reason to have them in a table at all.
+
 <a id="a-row-header-is-a-cell"></a>
 **A row header is a cell, and takes a cell's padding.** `.data-table` styles `thead th`, `tbody td`
 and `tfoot th`; it did not style `tbody th`, so a table that labels its rows with
