@@ -4,15 +4,18 @@ class HistoricalTrendService
   #
   # A month is the bucket, so a month is the unit the window is expressed in -- see "A period chart
   # takes a period range" in design.md. The picker only offers months for the same reason.
-  def initialize(organization_id, type, from: nil, to: nil)
+  def initialize(organization_id, type, from: nil, to: nil, category_id: nil)
     @organization = Organization.find(organization_id)
     @type = type
+    # nil is every category; "none" is the items that have none. Both are real answers -- 16 of the
+    # 51 items here are uncategorised, so an "Uncategorised" option is not an edge case.
+    @category_id = category_id.presence
     @to = (to || Time.zone.today).to_date.end_of_month
     @from = (from || (@to - 11.months)).to_date.beginning_of_month
     @from = @to.beginning_of_month if @from > @to
   end
 
-  attr_reader :from, :to
+  attr_reader :from, :to, :category_id
 
   # The months in the window, oldest first, as Date objects on the first of each.
   def months
@@ -53,6 +56,8 @@ class HistoricalTrendService
       next if index.nil?
 
       record.line_items.each do |line_item|
+        next unless in_category?(line_item.item)
+
         name = line_item.item.name
         quantity = line_item.quantity
         next if quantity.zero?
@@ -88,10 +93,75 @@ class HistoricalTrendService
     months.last == today.beginning_of_month && today != today.end_of_month
   end
 
+  # One total per month, every item added together. What the chart draws.
+  def monthly_totals
+    @monthly_totals ||= begin
+      out = Array.new(months.size, 0)
+      series.each { |item| item[:data].each_with_index { |value, i| out[i] += value.to_i } }
+      out
+    end
+  end
+
+  # The same window, shifted back by its own length: twelve months becomes the twelve before it,
+  # six becomes the six before. Not "the same months last year" -- that is a different question and
+  # answers it wrongly for any window that is not a whole year.
+  def previous_totals
+    @previous_totals ||= begin
+      span = months.size
+      shifted = self.class.new(@organization.id, @type,
+        from: @from - span.months, to: @to.beginning_of_month - span.months + 1.month - 1.day,
+        category_id: @category_id)
+      shifted.monthly_totals
+    end
+  end
+
+  def previous_window
+    span = months.size
+    [@from - span.months, (@from - 1.month).end_of_month]
+  end
+
+  # Per item *category*, oldest month first, largest first. The composition view: four bands from a
+  # grouping the bank already maintains, rather than the arbitrary "top 8 and Other" cut that was
+  # considered and rejected for setting a partial answer beside a complete one.
+  def category_series
+    @category_series ||= begin
+      names = item_category_names
+      buckets = Hash.new { |h, k| h[k] = Array.new(months.size, 0) }
+      series.each do |item|
+        bucket = names.fetch(item[:name], UNCATEGORISED)
+        item[:data].each_with_index { |value, i| buckets[bucket][i] += value.to_i }
+      end
+      buckets.map { |name, data| {name: name, data: data} }.sort_by { |c| -c[:data].sum }
+    end
+  end
+
+  UNCATEGORISED = "Uncategorised"
+
   private
 
   # The end of the window, never later than now: see #series.
   def window_end
     [@to.end_of_day, Time.zone.now].min
+  end
+
+  # Filtered in Ruby rather than in the query because the line items are already loaded by the
+  # `includes` above -- adding a join to narrow them would cost a second pass over the same rows.
+  def in_category?(item)
+    return true if @category_id.nil?
+    return item.item_category_id.nil? if @category_id == "none"
+
+    item.item_category_id.to_s == @category_id.to_s
+  end
+
+  # item name => category name, for #category_series. Two queries rather than one per item, and
+  # deliberately not `left_joins(:item_category)`: Item has both `item_category` and an
+  # `item_categories` through-association, and joining by name raises
+  # AmbiguousSourceReflectionForThroughAssociation.
+  def item_category_names
+    @item_category_names ||= begin
+      categories = @organization.item_categories.pluck(:id, :name).to_h
+      @organization.items.pluck(:name, :item_category_id)
+        .to_h { |item_name, category_id| [item_name, categories[category_id] || UNCATEGORISED] }
+    end
   end
 end

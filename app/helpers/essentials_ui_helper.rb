@@ -455,6 +455,13 @@ module EssentialsUiHelper
 
   # --- Icon tile ------------------------------------------------------------
   #
+  # Bands on a stacked chart. Four in practice -- the item categories a bank maintains -- and
+  # capped by the palette rather than by the data: past about eight, a legend stops being a key,
+  # which is the fault the 47-series chart was rebuilt to escape. Ordered so adjacent bands differ
+  # in lightness as well as hue, for anyone reading it without colour.
+  CHART_BAND_COLOURS = ["#4F46E5", "#0EA5E9", "#14B8A6", "#F59E0B", "#EC4899", "#8B5CF6",
+    "#0891B2", "#65A30D"].freeze
+
   # --- Sparkline ------------------------------------------------------------
   #
   # A twelve-point trend, drawn inline, for one row of a table.

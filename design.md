@@ -416,6 +416,46 @@ cannot disagree. `spec/system/layout_shift_system_spec.rb` asserts *that they ar
 that either is a particular number — it hard-coded `850px` and broke the day the chart got shorter,
 which is a spec pinning an implementation detail instead of the rule.
 
+<a id="comparing-is-not-filtering"></a>
+**Comparing is a view option, and it does not go in the filter bar.** A filter *narrows* what is
+shown; *Compare with the previous period* adds a reference series and narrows nothing. It sits on
+the chart card's `actions:`, as a link, so it works with no JavaScript and reads as what it does.
+
+That distinction had a hard edge here. The bar **folds everything behind a disclosure past two
+controls**, and that limit is measured — two plus the gap is about 530px against 656px of card at
+the narrowest width the table stays a table, and three do not fit. Adding a comparison checkbox as a
+third filter hid the month range behind a button, one change after the range had been given to the
+page at all. **A third control in a bar does not cost a third of the row; it costs the whole row.**
+
+**The comparison is the window shifted back by its own length** — twelve months becomes the twelve
+before it, six becomes the six before. Not "the same months last year", which is a different
+question and answers it wrongly for any window that is not a whole year.
+
+It is drawn as **one dashed grey line over the columns**, not a second set of columns: two column
+series a month is the crowding this chart was rebuilt to escape, at n=2. And it is in the **table**
+as well — a `tfoot` row of the same figures, named with the window it covers — because a dashed grey
+line is exactly the kind of thing a reader who cannot see it needs written down.
+
+**The change is stated in words.** *"Total 167,278, up 241% on the previous period."* A percentage on
+its own reads as a quantity, and a coloured arrow is a signal only some readers get.
+
+<a id="stack-by-a-grouping-the-bank-maintains"></a>
+**Break a chart down by something the data already groups by, not by a cut you invent.** With no
+category chosen the chart **stacks by item category** — four bands here, from a grouping the bank
+maintains — and choosing one narrows to a single series. This is the composition view that
+*top 8 and Other* was rejected for: a top-N cut is a choice the reader cannot see being made, and
+here "Other" would have been a quarter of everything distributed.
+
+- **`Uncategorised` is an option, not an omission.** 16 of the 51 items here have no category, so
+  leaving it out would hide almost a third of the catalogue behind a filter with no way to reach it.
+- **It stacks only when there is more than one band with data.** An organization that does not use
+  categories gets the single-series chart unchanged, which is also what you get the moment you
+  narrow to one.
+- **The band colours are capped by the palette**, `CHART_BAND_COLOURS`, not by the data. Past about
+  eight a legend stops being a key — the fault the 47-series chart was rebuilt to escape.
+- The stack's **total** is printed on top, from `stackLabels`, so the same figure stays on screen
+  whichever shape the chart is in.
+
 <a id="a-period-chart-takes-a-period-range"></a>
 **A period chart takes a period range.** The date filter on the six other report pages is
 **day**-granular. Over a chart that buckets by **month** that produces **partial months at both

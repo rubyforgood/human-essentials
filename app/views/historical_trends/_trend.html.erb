@@ -23,6 +23,17 @@
       header's actions, which is a right-aligned row sized for buttons. %>
   <%= render "shared/essentials/filter_bar", url: request.path, auto_submit: true do %>
     <div class="min-w-0"><%= render partial: "shared/month_range_picker" %></div>
+
+    <%# Item category, not item: 47 items is a select nobody can use, and a category is a grouping
+        the bank already maintains. "Uncategorised" is a real option -- 16 of the 51 items here
+        have no category, so leaving it out would hide almost a third of them. %>
+    <div class="min-w-0">
+      <%= label_tag "filters_item_category_id", "Category", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+      <%= select_tag "filters[item_category_id]",
+            options_for_select(trend_category_options(@item_categories), selected_trend_category.to_s),
+            id: "filters_item_category_id", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+            data: {filter_label: "Category", default_value: ""} %>
+    </div>
   <% end %>
 
   <div class="space-y-6">
@@ -33,15 +44,25 @@
       months = @months.map { |m| m.strftime("%b %Y") }
       short_months = @months.map { |m| m.strftime("%b %y") }
       in_progress = @last_month_in_progress
-      # One total per month, summed across every item. The per-item figures are in the table below.
-      monthly_totals = Array.new(months.size, 0)
-      series.each { |item| item[:data].each_with_index { |value, i| monthly_totals[i] += value.to_i } }
+      monthly_totals = @monthly_totals
       grand_total = monthly_totals.sum
+      # Stack by category only when there is more than one to stack. An organization that does not
+      # use categories gets the single-series chart that was approved as option A, unchanged --
+      # which is also what a reader gets the moment they narrow to one category.
+      bands = (selected_trend_category.nil? && @category_series.count { |c| c[:data].sum.positive? } > 1) ? @category_series : nil
+      # One total per month, summed across every item. The per-item figures are in the table below.
       # The y axis said "Line items" before. It is the unit these figures are counted in, and it
       # belongs in the tooltip and the subtitle rather than sideways down the left edge.
       unit_label = "line items"
-      chart_subtitle = "Every item added together, #{months.first} to #{months.last}."
+      chart_subtitle = bands ? "By item category, #{months.first} to #{months.last}." :
+        "#{selected_trend_category_label(@item_categories)}, #{months.first} to #{months.last}."
       chart_subtitle += " #{months.last} is still running." if in_progress
+      if @previous_totals
+        # Said in words, because a percentage on its own reads as a quantity and a coloured arrow
+        # is a signal only a sighted reader gets. See design.md, never colour alone.
+        change = trend_change_phrase(grand_total, @previous_totals.sum)
+        chart_subtitle += " Total #{number_with_delimiter(grand_total)}, #{change}." if change
+      end
     %>
 
     <%#
@@ -61,38 +82,92 @@
       No legend, one colour, and the figure printed on each column so it can be read exactly rather
       than estimated off an axis.
     %>
-    <%= render "shared/essentials/card", title: "Total per month", subtitle: chart_subtitle do %>
+    <%#
+      Comparing sits on the chart, not in the filter bar. **It is not a filter** -- it narrows
+      nothing, it adds a reference series -- and the bar folds everything behind a disclosure past
+      two controls, which is a measured rule: two plus the gap is ~530px, and three do not fit at
+      the narrowest width the table stays a table. Putting a view option there would have hidden the
+      range, the control this page was just given.
+
+      A link rather than a checkbox, so it works with no JavaScript and reads as what it does.
+    %>
+    <% compare_toggle = capture do %>
+      <%= essentials_link_button(
+            compare_previous? ? "Stop comparing" : "Compare with the previous period",
+            request.path + "?" + request.query_parameters.deep_merge("filters" => {"compare" => (compare_previous? ? nil : "1")}).to_query,
+            variant: :secondary, size: :sm, icon: compare_previous? ? "bi-x-lg" : "bi-arrow-left-right") %>
+    <% end %>
+
+    <%= render "shared/essentials/card", title: "Total per month", subtitle: chart_subtitle,
+          actions: compare_toggle do %>
       <% if grand_total.zero? %>
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "Nothing to chart yet",
-              body: "Once there are twelve months of activity, the trend appears here." %>
+              body: "Nothing was recorded between #{months.first} and #{months.last}. Widen the range, or choose a different category." %>
       <% else %>
         <%
-          chart_height = 320
+          previous = @previous_totals
+          # The month still running is drawn in a lighter fill with a border. It is never the only
+          # signal: the axis label, the table header and the subtitle all say "so far" too, and a
+          # fill is a colour by another name.
+          mark_last = lambda do |values|
+            values.each_with_index.map { |value, i|
+              (in_progress && i == values.size - 1) ? {y: value, color: "#A5B4FC", borderColor: "#4F46E5", borderWidth: 1} : value
+            }
+          end
+
+          chart_series =
+            if bands
+              # Four bands at most in practice, and always inside what the palette can name --
+              # unlike the 47 item series this chart used to carry.
+              bands.each_with_index.map { |band, i|
+                {type: "column", name: band[:name], data: band[:data],
+                 color: EssentialsUiHelper::CHART_BAND_COLOURS[i % EssentialsUiHelper::CHART_BAND_COLOURS.size]}
+              }
+            else
+              [{type: "column", name: selected_trend_category_label(@item_categories),
+                color: "#4F46E5", data: mark_last.call(monthly_totals)}]
+            end
+          if previous
+            chart_series += [{type: "line", name: "Previous period", data: previous}]
+          end
+
+          chart_height = previous || bands ? 360 : 320
           config = {
             chart: {type: "column", height: chart_height, spacingBottom: 8, style: {fontFamily: "Figtree, system-ui, sans-serif"}},
             title: {text: nil},
             credits: {enabled: false},
-            legend: {enabled: false},
             xAxis: {categories: months.each_with_index.map { |m, i| (in_progress && i == months.size - 1) ? "#{m}\nso far" : m },
                     crosshair: true, lineColor: "#E2E8F0", tickColor: "#E2E8F0",
                     labels: {style: {color: "#475569", fontSize: "12px"}}},
             yAxis: {min: 0, title: {text: nil}, gridLineColor: "#E2E8F0",
-                    labels: {style: {color: "#475569", fontSize: "12px"}}},
+                    labels: {style: {color: "#475569", fontSize: "12px"}},
+                    # The total on top of a stack. A label on each segment is unreadable, and the
+                    # total is the figure the single-series chart prints on its columns -- so the
+                    # same number stays on screen whichever shape the chart is in.
+                    stackLabels: {enabled: !!bands, style: {fontSize: "11px", fontWeight: "500", color: "#334155", textOutline: "none"}}},
             tooltip: {shared: true, valueSuffix: " #{unit_label}"},
-            plotOptions: {column: {borderWidth: 0, borderRadius: 3, color: "#4F46E5", pointPadding: 0.08, groupPadding: 0.12,
-                                   dataLabels: {enabled: true, style: {fontSize: "11px", fontWeight: "500", color: "#334155", textOutline: "none"}}}},
-            # The month still running is drawn hatched rather than solid, and the word is in the
-            # subtitle, the axis label and the table -- never the pattern alone. design.md: never
-            # colour alone, and a fill pattern is a colour by another name.
-            series: [{name: unit_label.humanize,
-                      data: monthly_totals.each_with_index.map { |value, i|
-                        (in_progress && i == monthly_totals.size - 1) ? {y: value, color: "#A5B4FC", borderColor: "#4F46E5", borderWidth: 1} : value
-                      }}]
+            plotOptions: {
+              column: {borderWidth: 0, borderRadius: 3, pointPadding: 0.08, groupPadding: 0.12,
+                       stacking: bands ? "normal" : nil,
+                       # A data label on every segment of a stack is unreadable; the total on top
+                       # of the stack is the number a reader wants, and Highcharts draws that from
+                       # the stackLabels below.
+                       dataLabels: {enabled: !bands, style: {fontSize: "11px", fontWeight: "500", color: "#334155", textOutline: "none"}}}.compact,
+              # The previous period is a line over the columns rather than a second set of columns:
+              # two column series a month is the crowding this chart was rebuilt to escape. Dashed
+              # and grey, so it reads as background against the period being looked at.
+              line: {color: "#94A3B8", dashStyle: "ShortDash", lineWidth: 2,
+                     marker: {enabled: false}, enableMouseTracking: true}
+            },
+            legend: {enabled: !!(bands || previous), align: "left", verticalAlign: "bottom",
+                     itemStyle: {fontWeight: "500", color: "#334155"}},
+            series: chart_series
           }.to_json
         %>
         <%= render partial: "shared/highcharts",
-              locals: {config: config, height: chart_height, label: "#{title}: total per month, last twelve months"} %>
+              locals: {config: config, height: chart_height,
+                       label: "#{title}: total per month, #{months.first} to #{months.last}#{" against the previous period" if previous}"} %>
       <% end %>
     <% end %>
 
@@ -159,13 +234,32 @@
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row">All items</th>
+                <th scope="row"><%= bands || selected_trend_category.nil? ? "All items" : selected_trend_category_label(@item_categories) %></th>
                 <td class="trend"><%= essentials_sparkline(monthly_totals, months: months) %></td>
                 <% monthly_totals.each do |value| %>
                   <td class="quantity"><%= number_with_delimiter(value) %></td>
                 <% end %>
                 <td class="quantity"><%= number_with_delimiter(grand_total) %></td>
               </tr>
+              <%#
+                The comparison belongs in the table too. A chart is not the only representation of
+                its data, and a dashed grey line is exactly the kind of thing a reader who cannot
+                see it needs written down -- so the previous period is a row of figures, with the
+                change stated in words rather than left to be worked out from two totals.
+              %>
+              <% if @previous_totals %>
+                <tr>
+                  <th scope="row" class="font-normal text-slate-500">
+                    Previous period
+                    <span class="block text-xs"><%= @previous_window.first.strftime("%b %Y") %> – <%= @previous_window.last.strftime("%b %Y") %></span>
+                  </th>
+                  <td class="trend"><%= essentials_sparkline(@previous_totals, months: months) %></td>
+                  <% @previous_totals.each do |value| %>
+                    <td class="quantity font-normal text-slate-500"><%= number_with_delimiter(value) %></td>
+                  <% end %>
+                  <td class="quantity font-normal text-slate-500"><%= number_with_delimiter(@previous_totals.sum) %></td>
+                </tr>
+              <% end %>
             </tfoot>
           </table>
         </div>

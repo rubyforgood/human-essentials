@@ -7900,3 +7900,56 @@ present and would have gone on passing. `have_link` now, and the example fails w
 removed. **That is the third vacuous assertion this session**, and all three had the same shape: a
 negative check against a selector that could never match.
 
+## 2026-08-31 — Comparing and categories, and where a view option is not a filter
+
+The last two pieces of the approved recommendation. Both landed roughly where the preview said, and
+one of them moved for a reason the preview could not have shown.
+
+**Comparing is not a filter.** I built it as a third checkbox in the filter bar, and the bar
+promptly folded **all three controls behind a Filters button** — including the month range, one
+change after the page had been given a range at all. The limit of two is measured, not arbitrary:
+two controls plus the gap is about 530px against 656px of card at the narrowest width the table
+stays a table, and three do not fit. **A third control in a bar does not cost a third of the row; it
+costs the whole row.**
+
+The fix is the distinction rather than the limit. A filter *narrows* what is shown; *Compare with
+the previous period* narrows nothing, it adds a reference series. So it sits on the chart card's
+`actions:` as a link — no JavaScript needed, and it reads as what it does. The bar keeps its two
+genuine filters, inline.
+
+**The comparison window is the current one shifted back by its own length**, not "the same months
+last year". Twelve months becomes the twelve before it; six becomes the six before. The second is
+wrong for any window that is not a whole year, and a control that is right only for the default is
+worse than no control.
+
+Drawn as **one dashed grey line over the columns**. The preview drew both periods as lines; I kept
+the current period as columns so the chart does not change shape when you press a button, which
+satisfies the same argument — the point was never "lines", it was "not two sets of columns a month".
+It is also a `tfoot` row of the same figures, named with the window it covers, because a dashed grey
+line is exactly the thing a reader who cannot see it needs written down. And the change is in
+**words** — *"up 241% on the previous period"* — since a percentage alone reads as a quantity.
+
+**Categories, and the three judgement calls in them.** With nothing chosen the chart stacks by item
+category; choosing one narrows to a single series.
+
+- **It stacks only when more than one band has data.** An organization that does not use categories
+  gets the single-series chart approved as option A, unchanged — and so does anyone who narrows to
+  one category. The stacked view is not a new default so much as what the default *is* when there is
+  something to stack.
+- **`Uncategorised` is an option.** 16 of the 51 items here have none. Leaving it out would have
+  hidden almost a third of the catalogue behind a filter with no way to reach it.
+- **Band colours are capped by the palette, not the data.** `CHART_BAND_COLOURS` has eight. Past
+  about eight a legend stops being a key, which is the fault the 47-series chart was rebuilt to
+  escape, and a cap in the constant is what stops it coming back through a different door.
+
+**Two things measured on the way.** `left_joins(:item_category)` raises
+`AmbiguousSourceReflectionForThroughAssociation` — `Item` has both `item_category` and an
+`item_categories` through-association — so the name lookup is two plucks and a hash. And the
+category totals were checked against the unfiltered total rather than eyeballed:
+12,717 + 71,065 + 76,163 + 7,333 = **167,278**, which is the whole.
+
+**Known and not fixed.** With the comparison on at 768px the table overflows by 332px and at 390px
+by 514px; it scrolls inside its own region, which WCAG 1.4.10 exempts. Twenty-four months is still
+27 columns, and past about eighteen points a line beats columns — that switch is the one piece of
+the preview still unbuilt.
+
