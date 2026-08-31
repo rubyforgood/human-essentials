@@ -3913,14 +3913,23 @@ Known gaps, in rough priority order:
   are cited as agreeing, check what each does with the specific thing, not with the category it
   belongs to.
 
-- **A pre-existing order-dependent spec failure.**
-  `spec/requests/admin/organizations_requests_spec.rb:126` ("displays the correct organization
-  details") fails when the full system-and-request suite runs at **seed 29928**, and passes in
-  isolation, with its neighbours, across the whole `spec/requests` folder, and at other seeds.
-  Verified on 2026-08-30 to fail identically with that day's changes stashed, so it is not from
-  them — something earlier in that ordering leaks state the spec depends on. Two others behave the
-  same way and have not been pinned to a seed: `distribution_system_spec:115` and
-  `request_system_spec:119`.
+<a id="the-flake-was-a-bug"></a>
+- **~~A pre-existing order-dependent spec failure.~~ It was an application bug, now fixed.**
+  `admin/organizations_requests_spec` failed at some seeds and passed at others, and I called it a
+  flake twice. `rspec --bisect` at seed **29928** reduced 1,690 non-failing examples to **31** in
+  32 minutes, all of them storage-location specs — and the cause was
+  `Admin::OrganizationsController#show` asking for
+  `StorageLocation.find_by(id: @organization.storage_locations)`: the whole **association** as the
+  id, which builds `WHERE id IN (SELECT id FROM storage_locations WHERE organization_id = ?)` and
+  returns whichever row the database hands back first. The admin organization page was showing an
+  **arbitrary** storage location as its "Default intake storage location". The bank's own controller
+  had always had it right.
+
+  **A spec that fails at some seeds and passes at others is not automatically flaky.** It is what a
+  non-deterministic *query* looks like from outside, and the difference is a bisect away. The two
+  others named alongside it — `distribution_system_spec:115` and `request_system_spec:119` — do not
+  reproduce, and at least one of the runs they failed in was a test database being truncated by a
+  second suite I had started concurrently.
 
 - **Review the Brakeman warning on every release.** It currently reports one: Rails 8.0.2.1
   reaches end of support on 2026-10-07 (`Gemfile.lock:539`, weak confidence, unmaintained

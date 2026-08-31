@@ -652,6 +652,13 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### Admin: an organization's intake location was the wrong one
+
+**On the admin page for an organization, "Default intake storage location" showed an arbitrary
+storage location** rather than the one actually set — whichever the database returned first. If an
+organization had more than one storage location, the odds of it being right were roughly one in
+however many it had. Fixed.
+
 ### Pick ups & deliveries: a day with a pick-up on it no longer errors
 
 **`/distributions/pickup_day` raised an error whenever there was actually a pick-up scheduled for

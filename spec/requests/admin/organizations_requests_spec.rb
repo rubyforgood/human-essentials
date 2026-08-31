@@ -135,6 +135,28 @@ RSpec.describe "Admin::Organizations", type: :request do
         expect(response.body).to include("Default Center")
       end
 
+      # The controller used to ask for `find_by(id: @organization.storage_locations)` -- the whole
+      # association as the id -- which returns whichever storage location of that organization the
+      # database hands back first. The page showed an arbitrary one as the intake location, and this
+      # spec passed or failed depending on insertion order. It was called a flake twice before a
+      # bisect at seed 29928 found it.
+      #
+      # Decoys, so the wrong query cannot pass by luck: several other storage locations exist, and
+      # the intake one is created last.
+      it "names the intake location rather than any storage location of the organization" do
+        # Distinct names: a storage location's name is unique per organization.
+        3.times { |i| create(:storage_location, organization: organization, name: "Somewhere else #{i}") }
+        intake = create(:storage_location, organization: organization, name: "The Real Intake")
+        organization.update!(intake_location: intake.id)
+
+        get admin_organization_path(id: organization.id)
+
+        page = Nokogiri::HTML(response.body)
+        row = page.css("div").find { |d| d.text.include?("Default intake storage location") }
+        expect(row.text).to include("The Real Intake")
+        expect(row.text).not_to include("Somewhere else")
+      end
+
       context "with an organization user" do
         let!(:user) { create(:user, organization: organization) }
 

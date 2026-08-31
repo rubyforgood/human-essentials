@@ -7337,3 +7337,51 @@ failure with `<<ERROR>>` stale nodes — the same symptom I had twice attributed
 in the week. Run serially, both suites are green. **Some of what I called a flake may have been
 this**, and the honest position is that I do not know which.
 
+## 2026-08-31 — The flake was an application bug
+
+Asked to re-run the three specs I had called flaky, to see whether the database contamination
+explained them. Clean serial runs, one seed at a time, nothing else touching the test database:
+
+| Spec | Seed | Result |
+| --- | --- | --- |
+| `admin/organizations_requests_spec:126` | 29928 | **failed again** |
+| `distribution_system_spec:115` | 11588 | passed |
+| `request_system_spec:119` | 50705 | passed |
+
+So contamination was not the explanation for the first, and `rspec --bisect` at that seed reduced
+**1,690 non-failing examples to 31** in 32 minutes. All 31 were storage-location specs, which named
+the cause:
+
+```ruby
+# Admin::OrganizationsController#show
+@intake_storage_location = StorageLocation.find_by(id: @organization.storage_locations)
+```
+
+The whole **association**, passed as the id. That builds
+`WHERE id IN (SELECT id FROM storage_locations WHERE organization_id = ?)` and returns whichever row
+the database hands back first — so the admin organization page showed an **arbitrary** storage
+location as its "Default intake storage location". The bank's own controller (`organizations_controller.rb:13`)
+had always used `id: @organization.intake_location`; only the admin copy was wrong.
+
+**The spec was correct the whole time.** It creates "Intake Center", sets it as the intake location,
+and asserts the page says so. It passed whenever the arbitrary row happened to be that one, which
+depends on how many storage locations earlier specs had inserted. That is not flakiness — **it is
+what a non-deterministic query looks like from outside**, and I mislabelled it twice: once as a
+flake, and once as a "pre-existing order dependency", which sounded like a property of the suite
+rather than a bug in a controller.
+
+The tell I ignored: it reproduced *at a specific seed*, twice. A genuinely timing-flaky spec does
+not do that. A seed that reproduces is a bisect waiting to be run, and the bisect cost half an hour
+against a defect that had been in the backlog for two days.
+
+**A new spec pins it** and is verified to fail against the old query: three decoy storage locations
+are created first and the intake one last, so a query that returns "any storage location of this
+organization" cannot pass by luck.
+
+**On the other two, the honest position is that I do not know.** They do not reproduce, but the
+seeds no longer mean what they meant: fifteen spec files have been added this week and the example
+count went 1,654 → 1,692, so the same seed produces a different ordering. At least one of the runs
+they failed in was demonstrably contaminated by a second suite truncating the database underneath
+it. They are not in the backlog as order dependencies any more, because there is no evidence they
+are one.
+
