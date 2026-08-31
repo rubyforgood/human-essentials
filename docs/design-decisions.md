@@ -7780,3 +7780,42 @@ Verified after: axe **0 violations across 155 pages**, the route sweep **0 desig
 141 screens**, the table audit clean, and both halves of the suite green at two seeds —
 **1469 and 1728 examples**.
 
+## 2026-08-31 — The trend table scrolled at 1440, and the sparkline was not why
+
+Reported: the sparkline column makes the table too wide and puts a horizontal scroll on the desktop
+view. The first half was right and the second was not, and measuring before trimming is what found
+the difference.
+
+At 1440 the table was **1,423px in a 1,118px card — 305px over**. The sparkline column was **140** of
+that. The twelve month columns were **1,054px, 74% of the table**, and what set their width was not
+the figures but the *headings*: `Sep 2025`, eight characters over a five-character number, 88px a
+column when the number needs about 40.
+
+So the sparkline was trimmed, and it was the smallest of three:
+
+| Trim | Saved |
+| --- | --- |
+| `Sep 2025` → `Sep 25` | ~190px |
+| `.data-table.dense`, 16px → 10px horizontal padding | ~180px |
+| Trend column 124 → 64px, heading to one word | ~76px |
+
+**Measured after: no scroll at 1366, 1440, 1512 or 1920.** 1280 is down from 465px of overflow to
+81 and still scrolls — fifteen columns do not fit in 958px of card, and no amount of narrowing the
+content changes that. It scrolls inside `.table-scroll`, which is what that component is for and what
+**WCAG 1.4.10 exempts a data table from**. Clearing 1280 too would mean dropping the per-row total or
+hiding the trend below a breakpoint, and both cost more than the scroll does; that is a call for
+whoever asks for it, not one to make quietly.
+
+**Two digits of year, not none.** Dropping the year entirely would have saved another 190px and made
+the header ambiguous — a twelve-month window crosses a year boundary, so `Sep` and `Aug` are in
+different ones. `last_12_months` keeps the long form for the chart axis and for the sentence a screen
+reader hears about each sparkline, where there is room and where the year matters; only the column
+heading is short.
+
+**And a second spec of mine broke, in the same way as the first.** `report_tables_system_spec`
+asserted the row header's padding was `16px`, so it failed the moment the table took `dense`. That is
+exactly the fault I had written up an hour earlier about `layout_shift_system_spec` and `850px`. It
+now asserts the row header is padded **the same as the data cells in its own row**, which is the rule
+— a row header is a cell — rather than a number that any density change invalidates. **Writing down
+the lesson is not the same as having learned it.**
+

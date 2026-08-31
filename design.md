@@ -440,6 +440,31 @@ The rules that came out of it:
 - **Height is part of the design.** 850px pushed the figures below the fold on every screen. 320
   leaves the table visible, which matters because the table is the accessible representation.
 
+<a id="dense"></a>
+**`.data-table.dense` for a table that is wide by construction.** 16px of horizontal cell padding is
+right for five columns and is the single largest cost in fifteen: **32px a column, 480px of a
+1,423px table**, more than a third of it spent on air. `dense` takes the horizontal padding to 10px
+and leaves the vertical padding alone, so row height and the 24px target rules are untouched.
+
+Reach for it only when the column count is fixed by the data — twelve months plus a name, a trend
+and a total — not to squeeze a table that has too many columns for a different reason.
+
+**Where the width actually goes.** The monthly trend table scrolled at 1440 by **305px**, and the
+sparkline column was only 140 of it. **The twelve month columns were 1,054px** — 74% of the table —
+and what set them was the *heading*, `Sep 2025`, eight characters over a five-character figure. The
+three trims together, in the order they paid:
+
+| | saved |
+| --- | --- |
+| `Sep 2025` → `Sep 25` (`last_12_months_short`) | ~190px |
+| `dense` padding, 16px → 10px | ~180px |
+| Trend column 124px → 64px, and the heading to one word | ~76px |
+
+Measured after: **no scroll at 1366, 1440, 1512 or 1920**, and 1280 down from 465px of overflow to
+81. Fifteen columns do not fit in 1280 and the table scrolls there, which is what `.table-scroll` is
+for and what **WCAG 1.4.10 exempts data tables from**. The lesson is the one the first measurement
+gave: **look at what is setting the width before trimming what looks widest.**
+
 <a id="a-sparkline-per-row"></a>
 **A sparkline gives every row a trend without spending a colour.** `essentials_sparkline(values,
 months:)` renders inline SVG on the server — 47 to a page, none interactive, so a charting library

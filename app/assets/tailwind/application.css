@@ -333,13 +333,33 @@
   }
 
   /*
+   * `dense`: tighter horizontal padding for a table that is wide by construction.
+   *
+   * The default 16px each side is right for a five-column table and is the single biggest cost in
+   * a fifteen-column one -- 32px a column, 480px of a 1,423px table, more than a third of it spent
+   * on air. The trend tables carry twelve months, an item name, a sparkline and a total, and no
+   * amount of narrowing the *content* gets a table that shape inside a 1,118px card.
+   *
+   * 10px, not less: `--spacing * 2.5` keeps the figures visibly separated, and the vertical
+   * padding is untouched so the row height and the 24px target rules still hold.
+   */
+  .data-table.dense thead th,
+  .data-table.dense tbody td,
+  .data-table.dense tbody th,
+  .data-table.dense tfoot td,
+  .data-table.dense tfoot th {
+    padding-left: calc(var(--spacing) * 2.5);
+    padding-right: calc(var(--spacing) * 2.5);
+  }
+
+  /*
    * The trend column: a sparkline, one per row. Fixed width so 47 of them line up into a column
    * you can read down -- which is the whole point of a sparkline in a table, and is lost the
    * moment they are ragged. Not `numeric`: it holds a drawing, not a figure.
    */
   .data-table .trend {
-    width: 124px;
-    min-width: 124px;
+    width: 64px;
+    min-width: 64px;
     text-align: left;
   }
 

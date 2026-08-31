@@ -31,18 +31,23 @@ RSpec.describe "Report tables", type: :system, js: true do
       # symptom is the text sitting flush against the edge of the card.
       visit historical_trends_distributions_path
 
+      # Compared with the row's own data cells rather than against a number. The first version
+      # asserted 16px and broke the day the table took `dense` padding -- which is the same fault
+      # as `layout_shift_system_spec` pinning "850px". The rule is that a row header is padded
+      # *like a cell*, whatever a cell is padded by on that table.
       inset = page.evaluate_script(<<~JS)
         (() => {
-          const cell = document.querySelector("main .data-table tbody th");
-          if (!cell) return null;
-          const cs = getComputedStyle(cell);
-          return { left: parseFloat(cs.paddingLeft), right: parseFloat(cs.paddingRight) };
+          const row = document.querySelector("main .data-table tbody tr");
+          if (!row) return null;
+          const px = (el) => [parseFloat(getComputedStyle(el).paddingLeft),
+                              parseFloat(getComputedStyle(el).paddingRight)];
+          return { header: px(row.querySelector("th")), cell: px(row.querySelector("td.quantity")) };
         })()
       JS
 
       expect(inset).not_to be_nil, "the trend table no longer has a row header to check"
-      expect(inset["left"]).to eq(16)
-      expect(inset["right"]).to eq(16)
+      expect(inset["header"]).to eq(inset["cell"])
+      expect(inset["header"][0]).to be > 0, "the row header has no left padding at all"
     end
   end
 
