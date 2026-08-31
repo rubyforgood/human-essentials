@@ -124,6 +124,10 @@ export default class extends Controller {
     this.triggerTarget.setAttribute("aria-expanded", "false")
     if (refocus) this.triggerTarget.focus()
     this.portalBack()
+    // Announced, so a panel whose contents are applied *on close* has one place to listen rather
+    // than three. It closes from the trigger, from Escape and from a click outside, and a control
+    // that only handled the button would silently drop the other two.
+    this.element.dispatchEvent(new CustomEvent("popover:close", { bubbles: true }))
   }
 
   /*

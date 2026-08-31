@@ -439,27 +439,43 @@ line is exactly the kind of thing a reader who cannot see it needs written down.
 **The change is stated in words.** *"Total 167,278, up 241% on the previous period."* A percentage on
 its own reads as a quantity, and a coloured arrow is a signal only some readers get.
 
-<a id="the-table-plots-what-you-tick"></a>
-**The table plots what you tick, up to four.** The breakdown lives in the table, which can be any
-length, and the reader chooses which rows become series. Nothing is plotted until they do — the
-chart shows the total, which is the state it has to be legible in.
+<a id="one-control-for-what-a-page-is-about"></a>
+**One control for what the page is about, and it applies on close.** The trend pages had two — a
+single-select category filter in the bar, and a checkbox on every table row — which are two answers
+to *"what am I looking at"*. `shared/compare_picker` is one: a searchable, grouped, multi-select
+list holding **categories and items together**, because somebody thinking *"how are nappies doing"*
+should not have to know first which of the two nappies is.
 
-**Four, and the number is measured rather than picked.** Both non-colour distinguishers run out
-there:
+**Ticking rows in a table was the wrong control, and the numbers say why.** Ticking the 21st of 47
+rows lost **1,702px of scroll**, cost a full document reload, and left the row off screen. Four
+choices were four reloads and four scroll-downs. The picker is **one request for four choices and no
+scrolling at all** — measured.
 
-- **Four dash patterns** — solid, dashed, dotted, dash-dot — are the most that stay distinct at 2px.
-- **A fourth direct label is the first to collide.** On this bank's real figures the end-gaps are
-  55 and 18px at three lines, and 6px at four, against the 16px a 12px label needs.
+- **Applied on close, not on change.** A range is one answer and commits on change; a *set* is not
+  finished until you stop adding to it. `popover_controller` dispatches `popover:close` so a panel
+  applying on close has one place to listen rather than three — it closes from the trigger, from
+  Escape and from a click outside.
+- **`event.stopPropagation()` on the checkbox.** These boxes are inside the filter bar's form and
+  the bar submits on any change that reaches it: left to bubble, the first tick navigated
+  immediately, which is the friction this control exists to remove, reintroduced one level down.
+- **The chips in the trigger are the chart's key.** Each carries its series' dash pattern, so what
+  is drawn can be read without opening the panel and without matching a swatch to a colour.
+- **A group heading is `text-xs font-semibold text-slate-500`** — sentence case, no `uppercase`, no
+  tracking, exactly as [sentence case](#sentence-case) requires of any heading over a column. A
+  heading over an empty group is hidden with it, because a heading over nothing is noise.
 
-**Colour is not the distinguisher and cannot be.** Of 28 pairs from an eight-colour candidate set,
-**none** clears 3:1 across normal vision and deuteranopia, protanopia and tritanopia. Each line
-colour *is* ≥3:1 against the white plot, which is the separate thing WCAG 1.4.11 asks for; telling
-two lines apart is the dash pattern's job and the legend word's.
+**The cap is four, and the number is measured.** Both non-colour distinguishers run out there: four
+dash patterns — solid, dashed, dotted, dash-dot — are the most that stay distinct at 2px, and on
+real figures a fourth direct label is the first to collide (end-gaps of 55 and 18px at three lines,
+**6px** at four, against the 16px a 12px label needs). **Colour is not the distinguisher and cannot
+be** — of 28 pairs from an eight-colour candidate set, **none** clears 3:1 across normal vision and
+deuteranopia, protanopia and tritanopia. Each line *is* ≥3:1 against the white plot, which is the
+separate thing WCAG 1.4.11 asks.
 
-**At the cap, the remaining checkboxes are disabled and the reason is visible.** *"4 of 4 plotted.
-Clear one to plot another."* Not `sr-only` — a greyed-out control whose explanation only a screen
-reader gets is the fault this app fixed once already in the row action menus. The four already
-chosen stay enabled, so there is always a way out of the cap.
+At the cap the remaining boxes are disabled, in the browser *and* on the server, and the panel says
+**"4 of 4 chosen. Clear one to add another."** The four already chosen stay tickable, so there is
+always a way out. A box that lets you tick a fifth and then silently drops it is worse than one that
+will not be ticked.
 
 <a id="choosing-from-an-unbounded-list"></a>
 **A control for choosing from an unbounded list is a searchable popover, not a select.**

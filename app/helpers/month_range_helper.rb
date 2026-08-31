@@ -71,31 +71,57 @@ module MonthRangeHelper
   # until somebody has actually chosen something.
   def month_range_default? = selected_month_range == default_month_range
 
-  # --- The two other parameters on a trend page -----------------------------
+  # --- What the page is looking at -----------------------------------------
+  #
+  # One control, not two. A single-select in the filter bar *and* checkboxes in the table were two
+  # answers to "what am I looking at", and ticking a row cost a full page load -- measured at
+  # **1,702px of scroll lost** on the 21st of 47 rows. `shared/compare_picker` replaces both.
+  #
+  # The wire format is one repeated parameter, `filters[compare_with][]`, holding entries of the
+  # form `cat:12` or `item:Kids (Size 2)`. Two kinds in one list because they answer the same
+  # question -- what should this page be about -- and a reader thinking "how are nappies doing"
+  # should not have to know whether nappies is a category or an item.
+  COMPARE_CAP = 4
 
-  # Which category the window is narrowed to. nil is all of them; "none" is the items that have
-  # none, which is not an edge case here -- 16 of 51 items are uncategorised.
-  def selected_trend_category = params.dig(:filters, :item_category_id).presence
-
-  # [label, value] pairs for the select, with the two catch-alls at the ends.
-  def trend_category_options(categories)
-    [["All categories", ""]] + categories.map { |c| [c.name, c.id.to_s] } + [["Uncategorised", "none"]]
+  # [[kind, value], ...] with the cap applied. Order is the reader's, because it decides which line
+  # gets the solid dash.
+  def selected_comparisons
+    Array(params.dig(:filters, :compare_with)).map(&:to_s).compact_blank.uniq
+      .filter_map { |entry|
+        kind, value = entry.split(":", 2)
+        [kind, value] if %w[cat item].include?(kind) && value.present?
+      }.first(COMPARE_CAP)
   end
 
-  def selected_trend_category_label(categories)
-    case selected_trend_category
-    when nil then "All categories"
-    when "none" then "Uncategorised"
-    else categories.find { |c| c.id.to_s == selected_trend_category }&.name || "All categories"
-    end
+  def compare_cap_reached? = selected_comparisons.size >= COMPARE_CAP
+
+  # What the trigger shows: the chosen things, or the unfiltered state named rather than left blank.
+  def comparison_labels(categories, series)
+    selected_comparisons.filter_map { |kind, value|
+      if kind == "cat"
+        categories.find { |c| c.id.to_s == value }&.name
+      else
+        (series.any? { |i| i[:name] == value }) ? value : nil
+      end
+    }
   end
+
+  # Solid first, so a single choice is an ordinary line.
+  PLOT_DASHES = ["Solid", "Dash", "Dot", "DashDot"].freeze
+  # Each is >= 3:1 against the white plot, which is what WCAG 1.4.11 asks of a line. They are *not*
+  # relied on to tell two lines apart -- the dash pattern and the legend word do that, because of
+  # 28 pairs from an eight-colour candidate set, none clears 3:1 under normal vision and three kinds
+  # of colour blindness.
+  PLOT_COLOURS = ["#4F46E5", "#B4232E", "#0F766E", "#B45309"].freeze
+
+  # --- Comparing with the window before this one ----------------------------
 
   # Whether to draw the window before this one behind the current figures.
   def compare_previous? = params.dig(:filters, :compare).to_s == "1"
 
-  # "up 31%", "down 4%", "unchanged", or nil when there is nothing to compare against. Words, not
-  # an arrow: design.md does not allow a signal that only a sighted reader gets, and a percentage
-  # with no direction in it reads as a quantity rather than a change.
+  # "up 31%", "down 4%", "unchanged", or nil when there is nothing to compare against. Words, not an
+  # arrow: design.md does not allow a signal that only a sighted reader gets, and a percentage with
+  # no direction in it reads as a quantity rather than a change.
   def trend_change_phrase(current, previous)
     return nil if previous.to_i.zero?
 
@@ -105,27 +131,4 @@ module MonthRangeHelper
     percent = (delta.abs * 100.0 / previous).round
     "#{delta.positive? ? "up" : "down"} #{percent}% on the previous period"
   end
-
-  # --- Which rows the reader has asked to plot ------------------------------
-
-  # The cap, and it is a design constant rather than a number the data supplies -- the rule this
-  # whole rebuild turned on. Four, because that is where both of the non-colour distinguishers run
-  # out: **four dash patterns** (solid, dashed, dotted, dash-dot) are the most that stay distinct at
-  # 2px, and measured on this bank's real figures a fourth direct label is the first one to collide
-  # with its neighbour. Colour cannot be the distinguisher at all -- of 28 pairs from an eight-colour
-  # candidate set, **none** clears 3:1 under normal vision and three kinds of colour blindness.
-  PLOT_CAP = 4
-
-  # The item names the reader ticked, capped and de-duplicated.
-  def plotted_items
-    Array(params.dig(:filters, :plot)).map(&:to_s).compact_blank.uniq.first(PLOT_CAP)
-  end
-
-  def plot_cap_reached? = plotted_items.size >= PLOT_CAP
-
-  # Solid first, so a single choice is an ordinary line.
-  PLOT_DASHES = ["Solid", "Dash", "Dot", "DashDot"].freeze
-  # Each is >= 3:1 against the white plot, which is what WCAG 1.4.11 asks of a line. They are *not*
-  # relied on to tell two lines apart -- the dash pattern and the legend word do that.
-  PLOT_COLOURS = ["#4F46E5", "#B4232E", "#0F766E", "#B45309"].freeze
 end

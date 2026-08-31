@@ -24,8 +24,9 @@
   <%= render "shared/essentials/filter_bar", url: request.path, auto_submit: true do %>
     <div class="min-w-0"><%= render partial: "shared/month_range_picker" %></div>
 
-    <%# A searchable popover, not a select: nothing caps how many categories a bank can make. %>
-    <div class="min-w-0"><%= render "shared/category_picker", categories: @item_categories %></div>
+    <%# One control for what the page is about -- categories and items in one searchable list.
+        It replaces the single-select that was here and the checkbox that was on every table row. %>
+    <div class="min-w-0"><%= render "shared/compare_picker", categories: @item_categories, items: @series %></div>
   <% end %>
 
   <div class="space-y-6">
@@ -42,18 +43,18 @@
       # use categories gets the single-series chart that was approved as option A, unchanged --
       # which is also what a reader gets the moment they narrow to one category.
       # **No stacked breakdown.** One band per category is a series count taken from the data, and
-      # the data does not bound it -- see "A chart's series count is a constant" in design.md. The
-      # breakdown lives in the table, and the reader plots the rows they want.
-      plotted = plotted_items
-      picked = plotted.any? ? @series.select { |i| plotted.include?(i[:name]) }.sort_by { |i| plotted.index(i[:name]) } : []
+      # the data does not bound it -- see "A chart's series count is a constant" in design.md. What
+      # the reader chose is what the chart draws, at most four of them.
+      picked = @comparison_series
+      table_items = @table_items
       # One total per month, summed across every item. The per-item figures are in the table below.
       # The y axis said "Line items" before. It is the unit these figures are counted in, and it
       # belongs in the tooltip and the subtitle rather than sideways down the left edge.
       unit_label = "line items"
       chart_subtitle = if picked.any?
-        "#{picked.size} of #{@series.size} items, #{months.first} to #{months.last}."
+        "#{picked.map { |p| p[:name] }.to_sentence}, #{months.first} to #{months.last}."
       else
-        "#{selected_trend_category_label(@item_categories)}, #{months.first} to #{months.last}."
+        "Everything, #{months.first} to #{months.last}."
       end
       chart_subtitle += " #{months.last} is still running." if in_progress && picked.empty?
       if @previous_totals
@@ -127,8 +128,7 @@
                  lineWidth: 2.5, marker: {enabled: false}}
               }
             else
-              [{type: "column", name: selected_trend_category_label(@item_categories),
-                color: "#4F46E5", data: mark_last.call(monthly_totals)}]
+              [{type: "column", name: "All items", color: "#4F46E5", data: mark_last.call(monthly_totals)}]
             end
           if previous
             chart_series += [{type: "line", name: "Previous period", data: previous}]
@@ -198,30 +198,14 @@
       <% end %>
     <% end %>
 
-    <%
-      cap_reached = plot_cap_reached?
-      plot_subtitle =
-        if plotted.any?
-          "#{plotted.size} of #{MonthRangeHelper::PLOT_CAP} plotted." +
-            (cap_reached ? " Clear one to plot another." : "")
-        else
-          "Tick up to #{MonthRangeHelper::PLOT_CAP} rows to plot them against each other."
-        end
-    %>
     <%#
-      A form of its own, because the checkboxes are in the table and the filter bar's form closed
-      three cards ago -- and a form inside a form is not a thing. It carries the window and the
-      category forward as hidden fields so ticking a row does not silently reset them.
+      No form and no checkboxes. Choosing is done in the Compare control above -- ticking a row here
+      cost a full page load and 1,702px of lost scroll, so four choices were four reloads and four
+      scroll-downs. The table is a table again.
     %>
-    <%= form_with url: request.path, method: :get,
-          data: {controller: "auto-submit", action: "change->auto-submit#submit", turbo_action: "advance"} do %>
-      <%= hidden_field_tag "filters[months]", month_range_param(*selected_month_range), id: nil, autocomplete: "off" %>
-      <%= hidden_field_tag "filters[item_category_id]", selected_trend_category, id: nil, autocomplete: "off" %>
-      <%= hidden_field_tag "filters[compare]", "1", id: nil, autocomplete: "off" if compare_previous? %>
-
     <%= render "shared/essentials/card", padded: false, title: "By item and month",
-          subtitle: plot_subtitle do %>
-      <% if series.blank? %>
+          subtitle: selected_comparisons.empty? ? nil : "Narrowed to what you are comparing." do %>
+      <% if table_items.blank? %>
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "Nothing to show yet",
               body: "Once there is activity, every item appears here with its monthly figures." %>
@@ -231,9 +215,6 @@
             <caption><%= title %>, by item and month</caption>
             <thead>
               <tr>
-                <%# The plot column. Its header is a word, not a glyph: the column is doing
-                    something a reader has to understand before they use it. %>
-                <th scope="col" class="plot-col">Plot</th>
                 <th scope="col">Item</th>
                 <th scope="col" class="trend">Trend</th>
                 <% short_months.each_with_index do |month, i| %>
@@ -248,23 +229,8 @@
               </tr>
             </thead>
             <tbody>
-              <% series.each do |item| %>
-                <%
-                  on = plotted.include?(item[:name])
-                  # Disabled once four are chosen, and the reason is *visible* rather than sr-only.
-                  # A greyed-out box with the explanation only for screen readers is the fault this
-                  # app has already fixed once, in the row-action menus.
-                  blocked = !on && cap_reached
-                %>
+              <% table_items.each do |item| %>
                 <tr>
-                  <td class="plot-col">
-                    <%= check_box_tag "filters[plot][]", item[:name], on,
-                          id: "plot_#{item[:id] || item[:name].parameterize}",
-                          disabled: blocked, autocomplete: "off",
-                          class: "h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30 disabled:cursor-not-allowed disabled:opacity-50",
-                          aria: {label: "Plot #{item[:name]}"},
-                          data: {action: "change->auto-submit#submit"} %>
-                  </td>
                   <th scope="row" class="font-medium text-slate-900"><%= item[:name] %></th>
                   <td class="trend"><%= essentials_sparkline(item[:data], months: months) %></td>
                   <% item[:data].each do |value| %>
@@ -276,8 +242,7 @@
             </tbody>
             <tfoot>
               <tr>
-                <td class="plot-col"></td>
-                <th scope="row"><%= selected_trend_category.nil? ? "All items" : selected_trend_category_label(@item_categories) %></th>
+                <th scope="row"><%= selected_comparisons.empty? ? "All items" : "These #{table_items.size}" %></th>
                 <td class="trend"><%= essentials_sparkline(monthly_totals, months: months) %></td>
                 <% monthly_totals.each do |value| %>
                   <td class="quantity"><%= number_with_delimiter(value) %></td>
@@ -292,7 +257,6 @@
               %>
               <% if @previous_totals %>
                 <tr>
-                  <td class="plot-col"></td>
                   <th scope="row" class="font-normal text-slate-500">
                     Previous period
                     <span class="block text-xs"><%= @previous_window.first.strftime("%b %Y") %> – <%= @previous_window.last.strftime("%b %Y") %></span>
@@ -308,7 +272,6 @@
           </table>
         </div>
       <% end %>
-    <% end %>
     <% end %>
   </div>
 </div>
