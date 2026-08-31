@@ -1,0 +1,65 @@
+<%#
+  Choose one item category, from a list with no upper bound.
+
+    render "shared/category_picker", categories: @item_categories
+
+  The same shape as the date and month range pickers: a trigger showing the current choice, a
+  popover holding the choices, and a hidden field the filter bar submits. The only new part is the
+  search box, and it is here because **nothing caps how many categories a bank can make** --
+  `ItemCategory` has no count validation and no database constraint, any signed-in bank user can add
+  one, and with 46-55 items a bank could have fifty. A plain select is fine at three and a scroll at
+  fifty. See "Choosing from an unbounded list" in design.md.
+
+  Filtered in the browser because the whole list is already here: it is one row per category, and a
+  round trip to narrow a list you are holding is slower than the typing.
+%>
+<%
+  selected = selected_trend_category
+  panel_id = "category-panel-#{SecureRandom.uuid}"
+  options = trend_category_options(categories)
+%>
+<div class="relative" data-controller="popover list-filter">
+  <%# The count is in the label, so the length of the list is visible before it is opened. %>
+  <%= label_tag "filters_item_category_trigger", "Category (#{categories.size})",
+        class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+  <button type="button" id="filters_item_category_trigger"
+          class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left sm:w-64"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
+          data-popover-target="trigger" data-list-filter-target="summary"
+          data-action="click->popover#toggle">
+    <span class="truncate"><%= selected_trend_category_label(categories) %></span>
+    <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
+  </button>
+
+  <div id="<%= panel_id %>" hidden
+       role="dialog" aria-label="Choose a category"
+       data-popover-target="panel"
+       class="absolute left-0 z-30 w-72 max-w-[calc(100vw-2rem)] p-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
+    <%# `type="search"`, and a real label rather than a placeholder: a placeholder is not a name and
+        goes as soon as anyone types. %>
+    <label class="sr-only" for="<%= panel_id %>-search">Search categories</label>
+    <%= search_field_tag "#{panel_id}-search", nil, id: "#{panel_id}-search", name: nil,
+          autocomplete: "off", placeholder: "Search",
+          class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mb-1.5",
+          data: {list_filter_target: "query", action: "input->list-filter#filter"} %>
+
+    <ul class="max-h-56 space-y-0.5 overflow-y-auto" data-list-filter-target="list">
+      <% options.each do |label, value| %>
+        <li data-list-filter-target="option" data-label="<%= label.downcase %>">
+          <button type="button"
+                  class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (value.to_s == selected.to_s) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
+                  <%= tag.attributes("aria-current": true) if value.to_s == selected.to_s %>
+                  data-action="click->list-filter#choose"
+                  data-value="<%= value %>" data-label-text="<%= label %>"><%= label %></button>
+        </li>
+      <% end %>
+    </ul>
+    <%# Announced, not just drawn: a list that silently empties tells a screen reader user nothing. %>
+    <p class="hidden px-3 py-2 text-sm text-slate-500" role="status" data-list-filter-target="empty">
+      No category matches that.
+    </p>
+  </div>
+
+  <%= hidden_field_tag "filters[item_category_id]", selected, id: nil, autocomplete: "off",
+        data: {list_filter_target: "field", filter_label: "Category", default_value: ""} %>
+</div>

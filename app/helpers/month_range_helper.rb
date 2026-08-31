@@ -105,4 +105,27 @@ module MonthRangeHelper
     percent = (delta.abs * 100.0 / previous).round
     "#{delta.positive? ? "up" : "down"} #{percent}% on the previous period"
   end
+
+  # --- Which rows the reader has asked to plot ------------------------------
+
+  # The cap, and it is a design constant rather than a number the data supplies -- the rule this
+  # whole rebuild turned on. Four, because that is where both of the non-colour distinguishers run
+  # out: **four dash patterns** (solid, dashed, dotted, dash-dot) are the most that stay distinct at
+  # 2px, and measured on this bank's real figures a fourth direct label is the first one to collide
+  # with its neighbour. Colour cannot be the distinguisher at all -- of 28 pairs from an eight-colour
+  # candidate set, **none** clears 3:1 under normal vision and three kinds of colour blindness.
+  PLOT_CAP = 4
+
+  # The item names the reader ticked, capped and de-duplicated.
+  def plotted_items
+    Array(params.dig(:filters, :plot)).map(&:to_s).compact_blank.uniq.first(PLOT_CAP)
+  end
+
+  def plot_cap_reached? = plotted_items.size >= PLOT_CAP
+
+  # Solid first, so a single choice is an ordinary line.
+  PLOT_DASHES = ["Solid", "Dash", "Dot", "DashDot"].freeze
+  # Each is >= 3:1 against the white plot, which is what WCAG 1.4.11 asks of a line. They are *not*
+  # relied on to tell two lines apart -- the dash pattern and the legend word do that.
+  PLOT_COLOURS = ["#4F46E5", "#B4232E", "#0F766E", "#B45309"].freeze
 end

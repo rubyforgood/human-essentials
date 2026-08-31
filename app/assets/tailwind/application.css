@@ -353,6 +353,18 @@
   }
 
   /*
+   * The plot column: one checkbox, in the narrowest cell that still clears WCAG 2.5.8's 24x24
+   * target. It sits first because a reader ticks before they read across, and because a control
+   * column at the far end of a fifteen-column table is the reach problem the row actions were
+   * moved for.
+   */
+  .data-table .plot-col {
+    width: 44px;
+    min-width: 44px;
+    text-align: center;
+  }
+
+  /*
    * The trend column: a sparkline, one per row. Fixed width so 47 of them line up into a column
    * you can read down -- which is the whole point of a sparkline in a table, and is lost the
    * moment they are ragged. Not `numeric`: it holds a drawing, not a figure.

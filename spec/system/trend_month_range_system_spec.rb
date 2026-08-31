@@ -23,8 +23,12 @@ RSpec.describe "Trend month range", type: :system, js: true do
     sign_in user
   end
 
-  # Item + Trend + one per month + Total.
-  def month_columns = page.all("main table thead th").size - 3
+  # Counted rather than subtracted from a total. The first version was `thead th - 3`, and it broke
+  # the day a Plot column was added -- the same fault as pinning a padding of 16px or a height of
+  # 850. A month header is the one that reads "Mon YY".
+  def month_columns
+    page.all("main table thead th").count { |th| th.text(:all).match?(/\A\w{3} \d{2}/) }
+  end
 
   describe "where the control sits" do
     it "is in the filter bar, at the width every other report's filter gets" do

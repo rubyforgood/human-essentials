@@ -8040,3 +8040,54 @@ deliberately, rather than sideways through a report page.
 Either way, the count belongs in the label — *Category (15)* — so the length is visible before the
 control is opened.
 
+## 2026-08-31 — A+B built, and the cap that makes B honest
+
+Built A and B, with the searchable category picker. The question that came with the approval —
+*how will it look when several items are selected, should there be a cap, how would that be
+handled* — is the one that decides whether B is any better than the stack it replaces. Without a
+cap it is not: it is the same unbounded series count, handed to the user instead of taken from the
+data.
+
+**So: yes, a cap, and four.** Measured rather than picked, and both non-colour distinguishers run
+out at the same number:
+
+- **Four dash patterns** — solid, dashed, dotted, dash-dot — are the most that stay distinct at 2px.
+  Past that they read as "some kind of broken line".
+- **A fourth direct label is the first to collide.** On this bank's real figures the end-gaps are 55
+  and 18px at three lines and **6px** at four, against the 16px a 12px label needs. Five gives three
+  collisions.
+
+**Colour is not the distinguisher and cannot be.** Of 28 pairs from an eight-colour candidate set,
+**not one** clears 3:1 across normal vision and deuteranopia, protanopia and tritanopia. Each line
+colour *is* ≥3:1 against the white plot — that is WCAG 1.4.11, and a different question from telling
+two lines apart. The pattern and the legend word do that.
+
+**At the cap the remaining boxes are disabled and the reason is visible**: *"4 of 4 plotted. Clear
+one to plot another."* Not `sr-only`. A greyed-out control whose explanation only a screen reader
+gets is the fault this app already fixed once, in the row action menus. The four already chosen stay
+enabled, so there is always a way out.
+
+**The stacked-by-category chart is gone**, and with it the last place a series count came from the
+data. Nothing ticked shows one total; ticking shows those rows.
+
+**Three things that had to be got right, and one I got wrong first.**
+
+*The checkboxes are in the table, and the filter bar's form closed three cards earlier.* A form
+inside a form is not a thing, so the table has its own, carrying the window, the category and the
+comparison forward as hidden fields. Without that, ticking a row would silently reset all three —
+there is an example for exactly that.
+
+*The category picker filters in the browser.* The whole list is already in the page, one row per
+category, and a round trip to narrow a list you are holding is slower than the typing that started
+it. The empty result is a `role="status"` message, because a list that silently empties tells a
+screen reader user nothing.
+
+*And a spec of mine broke on the new column.* `month_columns` was `thead th - 3`, so adding a Plot
+column made every window assertion off by one. That is the **third** time this session a spec pinned
+an arithmetic constant instead of the rule — after `850px` and `16px` — so it counts month headers by
+their shape now. I have written the pattern down rather than the instance.
+
+**One unreproduced failure, reported rather than swept up.** `layout_shift_system_spec`'s activity
+graph example failed once in a full run and has passed in five runs since, including at the same
+seed and run alone. I could not reproduce it and I have not explained it.
+
