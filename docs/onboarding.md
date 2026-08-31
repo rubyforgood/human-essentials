@@ -691,6 +691,21 @@ Two symptoms worth recognising:
   new files by whether the path has any history.
 - **The fix you just made is "not working".** Check the file on disk before reading the code.
 
+### Reports: the item column has its padding back, and a hidden warning is visible
+
+**On the three monthly trend reports the item name sat flush against the edge of the card** — no
+padding on either side, unlike every other table in the app. Fixed for all three.
+
+**Pagination has not been applied to the reports, and will not be.** Every report is one row per
+item, so its length is set by how many items your bank has — dozens — not by how many transactions
+you recorded. Reports are meant to be read, exported and printed whole, and a pager breaks all
+three.
+
+**On Itemized distributions and Itemized requests, "below the on-hand minimum" was invisible.** The
+cell was meant to turn red and had been doing nothing at all since the design system landed. It now
+shows the number in red *and* the words **Below minimum**, the same as the dashboard's low inventory
+table.
+
 ### Delete asks in the app's own words again, not the browser's
 
 **If Delete — on a product drive, a vendor, an item, anywhere — put up a grey browser box with your

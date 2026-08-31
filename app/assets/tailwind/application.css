@@ -307,7 +307,18 @@
     background-color: var(--color-slate-50);
   }
 
-  .data-table tbody td {
+  .data-table tbody td,
+  /*
+   * `tbody th` too -- a row header. This rule named `thead th`, `tbody td` and `tfoot th`, and
+   * never the fourth combination, so a table that labels its rows with `<th scope="row">` -- which
+   * is what a screen reader needs to say "Kids (Size 2), March, 3,042" instead of reading a bare
+   * number -- lost its padding entirely and sat flush against the edge of the card. Three tables
+   * did: the three historical trend pages, whose first column is the item name.
+   *
+   * Reported as "padding missing on both sides" on the monthly distributions table, and it was
+   * missing on both sides, because a cell with no horizontal padding has neither.
+   */
+  .data-table tbody th {
     padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
     color: var(--color-slate-700);
     vertical-align: top;

@@ -404,6 +404,27 @@ the shape the rule says to open up — and it is correctly collapsed. The audit 
 `case` in the row partial is the answer.
 
 <a id="row-action-heights"></a>
+<a id="a-row-header-is-a-cell"></a>
+**A row header is a cell, and takes a cell's padding.** `.data-table` styles `thead th`, `tbody td`
+and `tfoot th`; it did not style `tbody th`, so a table that labels its rows with
+`<th scope="row">` — which is what lets a screen reader say *"Kids (Size 2), March, 3,042"* instead
+of reading a bare number — lost its padding and sat flush against the edge of the card. The three
+historical trend tables did. Reported as *"padding missing on both sides"*, and it was missing on
+both, because a cell with no horizontal padding has neither.
+
+Use `<th scope="row">` for the column that identifies the row. It is the accessible thing to do and
+it now costs nothing.
+
+<a id="reports-do-not-paginate"></a>
+**A report does not paginate; an index does.** Asked whether pagination had been applied to the
+reports: no, and it should not be. Every report table here is **one row per item**, so its length is
+bounded by the bank's catalogue — dozens — while an index table is one row per transaction and
+unbounded. Measured: 27, 46 and 47 rows on the itemized reports and 47 on the monthly trend. A
+report is also read whole, exported whole and printed whole, and a pager breaks all three: you
+cannot scan a year of an item's figures if a quarter of them are on page 2.
+`spec/system/report_tables_system_spec.rb` pins the absence, so it reads as a decision rather than
+an omission.
+
 **Every visible control in an actions column is an icon at `size-7`.** `essentials_row_icon_link`
 and `essentials_row_icon_action`, or `icon_only: true`. 28px is the kebab trigger's height, so a
 column mixing the two does not step by 2px — that was visible on `/vendors` and `/requests`. **The
