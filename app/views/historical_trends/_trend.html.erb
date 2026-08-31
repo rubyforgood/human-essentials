@@ -31,7 +31,7 @@
       <%= label_tag "filters_item_category_id", "Category", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
       <%= select_tag "filters[item_category_id]",
             options_for_select(trend_category_options(@item_categories), selected_trend_category.to_s),
-            id: "filters_item_category_id", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
+            id: "filters_item_category_id", class: EssentialsUiHelper::SELECT_CLASSES,
             data: {filter_label: "Category", default_value: ""} %>
     </div>
   <% end %>
