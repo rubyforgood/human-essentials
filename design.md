@@ -416,6 +416,43 @@ cannot disagree. `spec/system/layout_shift_system_spec.rb` asserts *that they ar
 that either is a particular number — it hard-coded `850px` and broke the day the chart got shorter,
 which is a spec pinning an implementation detail instead of the rule.
 
+<a id="a-period-chart-takes-a-period-range"></a>
+**A period chart takes a period range.** The date filter on the six other report pages is
+**day**-granular. Over a chart that buckets by **month** that produces **partial months at both
+ends** — a first and last column short for a reason the chart cannot state, which a reader takes for
+a fall rather than an artefact of the range. So the trend pages get
+`shared/month_range_picker`: the same popover, the same presets-left / custom-right layout, the same
+apply-as-you-choose behaviour, and a native month field instead of a date one.
+
+The industry splits on exactly this line, and every resolution of it is one of three:
+
+| | |
+| --- | --- |
+| Xero, QuickBooks | month/year pickers on monthly reports — a partial month cannot be expressed |
+| Grafana `TimeRangePicker`, Metabase | granularity is a control of its own, beside the window |
+| Google Analytics 4 | day granularity kept, and the incomplete period **marked** |
+
+**The current month is offered, not withheld until it completes.** *"How are we doing this month"* is
+the question people ask most of a trend, and a control that cannot answer it sends them to count
+rows. It is never silently compared with a whole month either — GA4's answer, and the app's:
+
+- the column is drawn in a lighter fill with a border, **and** the axis label reads *"so far"*
+- the table header for that month reads *"so far"* under the month
+- the card subtitle says *"Aug 2026 is still running."*
+
+Three of those are words. **A fill is a colour by another name**, and design.md does not allow colour
+alone; the pattern is the least of the four signals rather than the only one.
+
+**What the window leaves out is said out loud.** A distribution can be dated ahead of itself — **10
+of them here, 82 line items** — and a *trend* is what happened, not what is booked, so those records
+are outside the series by design. The page says so in a callout and links to the distributions list.
+Dropping them without a word would make the chart quietly wrong for anyone who knows they exist. The
+callout does not appear on donations or purchases, which are recorded after the fact and have none.
+
+A long window is the one thing this does not yet handle well: 24 months is 27 columns and **653px of
+overflow**. The table scrolls, which 1.4.10 exempts, but a line rather than columns is the better
+answer past about 18 points, and it is not built.
+
 <a id="a-chart-answers-one-question"></a>
 **A chart answers one question, and the table beside it answers the rest.** The three trend pages
 drew **one column series per item** — 47, 34 and 37 of them — each created `visible: false`, so the

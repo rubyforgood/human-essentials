@@ -16,15 +16,18 @@
       way in and there was no way out. %>
   <%= render "shared/essentials/page_header",
         title: title,
-        subtitle: "The last twelve months. Cached, so it may be up to 24 hours behind.",
-        back: {path: reports_path, label: "Back to reports"} %>
+        subtitle: "Cached, so it may be up to 24 hours behind.",
+        back: {path: reports_path, label: "Back to reports"},
+        actions: capture { concat render("shared/month_range_picker", url: request.path) } %>
 
   <div class="space-y-6">
     <%
-      months = last_12_months
-      # Short in the header, long everywhere it has room: the chart's axis and the sentence a
-      # screen reader hears about each sparkline. See `last_12_months_short`.
-      short_months = last_12_months_short
+      # The window comes from the controller now, and with it the two things a reader has to be
+      # told about the *edges* of a monthly chart: whether the last column is still running, and
+      # whether anything is dated past it. See `HistoricalTrendService`.
+      months = @months.map { |m| m.strftime("%b %Y") }
+      short_months = @months.map { |m| m.strftime("%b %y") }
+      in_progress = @last_month_in_progress
       # One total per month, summed across every item. The per-item figures are in the table below.
       monthly_totals = Array.new(months.size, 0)
       series.each { |item| item[:data].each_with_index { |value, i| monthly_totals[i] += value.to_i } }
@@ -33,6 +36,7 @@
       # belongs in the tooltip and the subtitle rather than sideways down the left edge.
       unit_label = "line items"
       chart_subtitle = "Every item added together, #{months.first} to #{months.last}."
+      chart_subtitle += " #{months.last} is still running." if in_progress
     %>
 
     <%#
@@ -65,14 +69,21 @@
             title: {text: nil},
             credits: {enabled: false},
             legend: {enabled: false},
-            xAxis: {categories: months, crosshair: true, lineColor: "#E2E8F0", tickColor: "#E2E8F0",
+            xAxis: {categories: months.each_with_index.map { |m, i| (in_progress && i == months.size - 1) ? "#{m}\nso far" : m },
+                    crosshair: true, lineColor: "#E2E8F0", tickColor: "#E2E8F0",
                     labels: {style: {color: "#475569", fontSize: "12px"}}},
             yAxis: {min: 0, title: {text: nil}, gridLineColor: "#E2E8F0",
                     labels: {style: {color: "#475569", fontSize: "12px"}}},
             tooltip: {shared: true, valueSuffix: " #{unit_label}"},
             plotOptions: {column: {borderWidth: 0, borderRadius: 3, color: "#4F46E5", pointPadding: 0.08, groupPadding: 0.12,
                                    dataLabels: {enabled: true, style: {fontSize: "11px", fontWeight: "500", color: "#334155", textOutline: "none"}}}},
-            series: [{name: unit_label.humanize, data: monthly_totals}]
+            # The month still running is drawn hatched rather than solid, and the word is in the
+            # subtitle, the axis label and the table -- never the pattern alone. design.md: never
+            # colour alone, and a fill pattern is a colour by another name.
+            series: [{name: unit_label.humanize,
+                      data: monthly_totals.each_with_index.map { |value, i|
+                        (in_progress && i == monthly_totals.size - 1) ? {y: value, color: "#A5B4FC", borderColor: "#4F46E5", borderWidth: 1} : value
+                      }}]
           }.to_json
         %>
         <%= render partial: "shared/highcharts",
@@ -89,6 +100,22 @@
       The trend column is the chart the summary above cannot be: 47 items, each with its own shape,
       no legend and no colour spent. See `essentials_sparkline`.
     %>
+    <%#
+      What the window does *not* include, said out loud. A distribution can be dated ahead of
+      itself, and a trend is what happened rather than what is booked -- so those records are out
+      of the series by design, and dropping them without a word would make the chart quietly wrong
+      for anyone who knows they exist. Zero for donations and purchases, which are recorded after
+      the fact, so the callout does not appear on those pages at all.
+    %>
+    <% if @scheduled_beyond_today.to_i.positive? %>
+      <%= render "shared/essentials/callout", tone: :info do %>
+        <%= number_with_delimiter(@scheduled_beyond_today) %> line items are scheduled for after
+        today and are not counted here. This is what has happened, not what is booked &mdash;
+        <%= link_to "the distributions list", distributions_path, class: "font-medium underline" %>
+        shows those.
+      <% end %>
+    <% end %>
+
     <%= render "shared/essentials/card", padded: false, title: "By item and month" do %>
       <% if series.blank? %>
         <%= render "shared/essentials/empty_state", kind: :cold_start,
@@ -102,8 +129,13 @@
               <tr>
                 <th scope="col">Item</th>
                 <th scope="col" class="trend">Trend</th>
-                <% short_months.each do |month| %>
-                  <th scope="col" class="quantity"><%= month %></th>
+                <% short_months.each_with_index do |month, i| %>
+                  <%# The month still running is named as such in the header too. A hatched column
+                      and a footnote are not enough on their own: this is the cell a reader
+                      compares, so the word belongs on the cell. %>
+                  <th scope="col" class="quantity">
+                    <%= month %><% if in_progress && i == short_months.size - 1 %><span class="block text-[11px] font-normal text-slate-500">so far</span><% end %>
+                  </th>
                 <% end %>
                 <th scope="col" class="quantity">Total</th>
               </tr>
