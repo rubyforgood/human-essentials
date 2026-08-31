@@ -453,6 +453,15 @@ here "Other" would have been a quarter of everything distributed.
   narrow to one.
 - **The band colours are capped by the palette**, `CHART_BAND_COLOURS`, not by the data. Past about
   eight a legend stops being a key — the fault the 47-series chart was rebuilt to escape.
+
+  > *Corrected 2026-08-31.* This originally added "ordered so adjacent bands differ in lightness as
+  > well as hue". **That is false and I wrote it without measuring.** Sky is luminance 0.33 and teal
+  > 0.37. Measured against WCAG 1.4.11's 3:1 floor under normal vision and three kinds of colour
+  > blindness, **all six pairs of the four bands this app draws fail**, the worst at **1.03:1**.
+  > Worse, it cannot be fixed by choosing better colours: **at most three fills can be mutually 3:1
+  > apart on white** — the luminance steps are 0.0, 0.10, 0.40 and the next is past white — and only
+  > two of those are also 3:1 against the card. **Four bands distinguished by fill alone is
+  > arithmetically impossible.** Options are at `docs/mockups/stacked-chart-accessibility.html`.
 - The stack's **total** is printed on top, from `stackLabels`, so the same figure stays on screen
   whichever shape the chart is in.
 
