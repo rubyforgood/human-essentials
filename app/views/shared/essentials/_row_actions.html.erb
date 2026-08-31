@@ -13,6 +13,14 @@
              rather than "button" once per row
     items    required; each {label:, path:, icon:, method:, confirm:, tone:, disabled:, reason:}
     primary  optional; rendered as a visible button beside the trigger
+    size     optional; `:sm` (28px, the default, for a table row) or `:md` (38px, to stand beside
+             the page header's own buttons)
+
+  **It is also the page header's overflow.** A record page's Edit and Delete go here rather than
+  beside the primary: the header allows three actions and a menu counts as one, and a destructive
+  action should never inherit the last slot, which belongs to the primary. `menu_button` is the
+  wrong component for that -- it collapses a single item back to a button, and it is named after
+  its contents, which works for two exports and not for "edit and delete". See design.md.
 
   Five labelled buttons made the actions column 331px on /distributions -- the second-widest
   column in the table, wider than Total items, Total value and Status together. Collapsed it is
@@ -46,10 +54,12 @@
   <% panel_id = "row-actions-#{SecureRandom.hex(4)}" %>
   <div class="relative" data-controller="popover" data-popover-fixed-value="true">
     <button type="button"
-            <%# `size-7`, not the 38px control height: a row action is `sm` sized everywhere else in the
-        app, and a 38px trigger made every distribution row 10px taller. 28px still clears
-        WCAG 2.5.8's 24x24 floor. %>
-            class="inline-flex size-7 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            <%# `size-7` in a row, not the 38px control height: a row action is `sm` sized everywhere
+        else in the app, and a 38px trigger made every distribution row 10px taller. 28px still
+        clears WCAG 2.5.8's 24x24 floor. In a page header it is 2.375rem -- 38px, the control
+        height design.md fixes -- so it stands level with the buttons beside it rather than 10px
+        short of them. Not `size-10`, which is 40 and was 2px proud of them. %>
+            class="inline-flex <%= (local_assigns[:size].to_s == "md") ? "size-[2.375rem] border border-slate-300 bg-white" : "size-7" %> items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
             aria-haspopup="true"
             aria-expanded="false"
             aria-label="More actions for <%= label %>"

@@ -13,12 +13,21 @@
           if @product_drive.donations.any?
             concat essentials_link_button("Export participants", product_drive_path(@product_drive, format: :csv), variant: :secondary, icon: "bi-download")
           end
-          concat essentials_link_button("Make a correction", edit_product_drive_path(@product_drive), variant: :secondary, icon: "bi-pencil")
+          # "Edit", not "Make a correction": thirty places in this app say Edit and four said the
+          # other, which was pre-migration wording kept through the migration rather than chosen.
+          # "Correction" also asserts the record is wrong, when you may be adding a tag or fixing
+          # a date.
+          #
+          # And Delete is in the overflow rather than last. The header's last slot belongs to the
+          # primary action -- design.md -- and with no primary here the most destructive thing on
+          # the page was inheriting it. Reported as the buttons looking reversed.
+          record_actions = [{label: "Edit", path: edit_product_drive_path(@product_drive), icon: "bi-pencil"}]
           if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
-            concat essentials_action_button("Delete", product_drive_path(@product_drive), method: :delete,
-                     variant: :ghost_danger, icon: "bi-trash",
-                     confirm: "Are you sure you want to permanently remove this product drive?")
+            record_actions << {label: "Delete", path: product_drive_path(@product_drive), method: :delete,
+                               icon: "bi-trash", tone: :danger,
+                               confirm: "Are you sure you want to permanently remove this product drive?"}
           end
+          concat essentials_record_actions(label: @product_drive.name, items: record_actions)
         } %>
 
   <div class="space-y-6">

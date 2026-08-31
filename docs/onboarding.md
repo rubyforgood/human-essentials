@@ -652,6 +652,21 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### "Make a correction" is now "Edit", and Delete has moved
+
+**On a donation, purchase, distribution or product drive, the button that opens the record for
+changes now says "Edit".** It said *Make a correction*, which is the wording the old app used — and
+it implied the record was wrong, when you may just be adding a tag or fixing a date. Everywhere else
+in the app already said Edit.
+
+**Delete has moved into the ⋮ menu** beside it, with Edit. It used to sit at the far right of the
+page header, which is where a page's main action goes — so the most destructive thing on the page
+was in the most prominent slot. On donations, purchases and distributions these two also used to be
+at the very *bottom* of the page; they are with the other actions at the top now.
+
+Where a record cannot be changed because some of its items are inactive, the explanation now says
+"cannot be edited or deleted", matching the buttons.
+
 ### Admin: an organization's intake location was the wrong one
 
 **On the admin page for an organization, "Default intake storage location" showed an arbitrary

@@ -7385,3 +7385,52 @@ they failed in was demonstrably contaminated by a second suite truncating the da
 it. They are not in the backlog as order dependencies any more, because there is no evidence they
 are one.
 
+## 2026-08-31 — "Edit", and a delete that had inherited the primary's slot
+
+Reported on the product drive page: the buttons read *Make a correction* and *Delete*, the placement
+looked reversed, and would *Edit* not do. Both halves were right, and the second exposed a rule in
+design.md that the app had never followed.
+
+**The label.** Measured: **30 call sites say "Edit"**, four said "Make a correction" — donations,
+purchases, distributions, product drives. The decision log shows it was **inherited, not chosen**:
+*"the pre-migration purchase page carried exactly two actions, Make a correction and a delete
+button, and both are still there."* No entry argues for it. It is also a claim the app cannot
+support — a *correction* says the record is wrong, when you may be adding a tag or fixing a date.
+The callout prose that explains a locked record changed with the buttons, from "cannot be corrected"
+to "cannot be edited or deleted", because copy that contradicts its own controls is worse than
+either wording alone.
+
+**The placement, and the rule that caused it.** design.md said *"at most three actions, **exactly
+one** of them primary, primary last."* The app has never worked that way. Measured across 101 bank
+pages: **63 have no header actions at all**, and of the 38 that do, **11 have no primary** — almost
+all record pages, whose job is to be read. Polaris's `primaryAction`, Material's FAB, Carbon's and
+Atlassian's page headers are all optional in the same way.
+
+So on `/product_drives/:id` there was no primary, and **Delete inherited the last slot** — the most
+destructive action on the page sitting where the main one belongs. The rule has been corrected to
+*at most* one primary, which is what the app does and what the systems above allow. **Requiring a
+primary does not produce one; it produces a false one.**
+
+**Where a record's own actions go.** Edit and Delete act on the record as a whole, so they belong to
+the page header — design.md names *Deactivate* as that example. Donations, purchases and
+distributions had them at the **foot of the page**, below the last card, which is where a form's
+Save goes. They are in the header's overflow now, from `essentials_record_actions`.
+
+Two details that took a second pass:
+
+- **One item is not a menu.** A distribution has an Edit and no Delete, and a non-admin sees Edit
+  alone everywhere. The first version gave those a kebab hiding a single action behind a click and a
+  generic name. It renders a plain secondary button instead, placed before the primary — three
+  actions, primary last. `menu_button` already made this call for the same reason.
+- **The kebab, not a named menu.** design.md asks that a menu be named after its contents, which
+  works for two exports and not for "edit and delete". `row_actions` takes `size: :md` so it stands
+  38px beside the header's buttons rather than the 28 a table row wants. `size-10` was tried first
+  and is 40 — two proud of everything next to it.
+
+**And a spec helper that navigated.** `record_action_labels` opened the menu, read the labels and
+closed it with `page.send_keys(:escape)`. `popover_controller` focuses the first item on open, so
+the keys went to the *Edit link* and the browser followed it: the next step then failed on
+`/purchases/1/edit`, a page with no header actions. Traced rather than guessed — the URL changed on
+the `send_keys` line and nowhere else. It closes by clicking the trigger again now. **A test helper
+that navigates is worse than no helper**, because the failure it produces points somewhere else.
+

@@ -364,9 +364,9 @@ RSpec.describe "Purchases", type: :system, js: true do
     context "When the purchase remains in storage location" do
       it "allows deletion of a purchase" do
         visit "#{subject}/#{purchase.id}"
-        expect(page).to have_button("Delete")
+        expect(record_action_labels).to include("Delete")
         accept_confirm_dialog do
-          click_on "Delete"
+          click_record_action "Delete"
         end
         expect(page).to have_content "Purchase #{purchase.id} has been removed!"
         # That was the only purchase, so the list is empty. The design system shows an empty
@@ -380,9 +380,9 @@ RSpec.describe "Purchases", type: :system, js: true do
         allow(PurchaseDestroyService).to receive(:call).with(purchase).and_raise(InventoryError)
 
         visit "#{subject}/#{purchase.id}"
-        expect(page).to have_button("Delete")
+        expect(record_action_labels).to include("Delete")
         accept_confirm_dialog do
-          click_on "Delete"
+          click_record_action "Delete"
         end
 
         expect(page).to have_css("[data-flash='error']")

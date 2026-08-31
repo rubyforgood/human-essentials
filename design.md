@@ -1557,11 +1557,44 @@ shipped `Save progress` before `Save and review` for exactly that reason.
 `button-audit` checks the header rule only. The form rule holds by construction, since
 `essentials_form_for` renders the submit before anything a view appends.
 
-**At most three actions, exactly one of them primary, primary last.** Everything else is
+**At most three actions, at most one of them primary, primary last.** Everything else is
 `:secondary` or `:ghost`. Past three, the least-used collapse behind a menu — and **name the
 menu after what is in it**. `/requests` had four, the only page in the app that did; its two
 outputs became one `Export` menu. "Export" says what is inside, "More actions" only says that
 something is.
+
+<a id="not-every-page-needs-a-primary"></a>
+**"At most one", not "exactly one" — a page without a main action should not invent one.** This
+said *exactly* one for months and the app has never worked that way: measured across 101 bank
+pages, **63 have no header actions at all**, and of the 38 that do, **11 have no primary** — almost
+all of them record pages, whose job is to be read. Polaris's `primaryAction`, Material's FAB and
+Carbon's and Atlassian's page headers are all optional in the same way; none of them requires one.
+
+The cost of requiring one is concrete. `/product_drives/:id` had `[Export] [Make a correction]
+[Delete]` and no primary, so **Delete inherited the last slot** — the most destructive action on the
+page sitting where the main one belongs. Reported as the buttons looking reversed, and it was.
+
+<a id="a-records-own-actions"></a>
+**A record's Edit and Delete go in the header's overflow**, from `essentials_record_actions`. They
+act on the record as a whole, so they belong to the page rather than to a card or a form — but not
+beside the primary, because a menu counts as one of the three and because the last slot is the
+primary's. Donations, purchases and distributions had them at the **foot of the page**, below the
+last card, which is where a form's Save goes.
+
+- **One item is not a menu.** With a single action — a distribution has an Edit and no Delete, and
+  a non-admin sees Edit alone — it renders as an ordinary secondary button, placed before the
+  primary. `menu_button` makes the same call for the same reason.
+- **The kebab, not a named menu.** design.md asks that a menu be named after its contents, which
+  works for two exports and not for "edit and delete". A menu holding the record's remaining
+  actions is the same kebab a table row uses; `row_actions` takes `size: :md` so it stands 38px
+  beside the header's buttons instead of 28.
+
+<a id="edit-not-make-a-correction"></a>
+**The label is "Edit".** Thirty places in the app say so; four said *"Make a correction"*, which was
+pre-migration wording carried through the migration rather than chosen. It is also a claim: a
+correction implies the record is **wrong**, when you may be adding a tag or fixing a date. Where a
+record genuinely cannot be changed, the callout says so in prose — and that prose follows the
+control, so it now reads "cannot be edited or deleted" rather than "cannot be corrected".
 
 The actions container carries `data-page-header="actions"` so a spec can count what is in it
 without walking ancestors — and **`bin/design/button-audit.js` does**, across 27 page headers and

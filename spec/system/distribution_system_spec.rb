@@ -923,7 +923,7 @@ RSpec.feature "Distributions", type: :system do
       before do
         @distribution = Distribution.last
         expect(page).to have_current_path(distribution_path(@distribution.id))
-        click_on "Make a correction"
+        click_record_action "Edit"
       end
 
       it "User creates a distribution from a donation then edits it" do
@@ -1242,7 +1242,7 @@ RSpec.feature "Distributions", type: :system do
       click_button "Yes, it's correct"
     end
 
-    click_link "Make a correction"
+    click_record_action "Edit"
 
     fill_in "distribution_line_items_attributes_0_quantity", with: 20
 

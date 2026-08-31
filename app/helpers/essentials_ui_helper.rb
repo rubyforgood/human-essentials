@@ -98,6 +98,36 @@ module EssentialsUiHelper
       icon_only: true, variant: ((tone.to_sym == :danger) ? :ghost_danger : :ghost))
   end
 
+  # A record's own actions in a page header -- its Edit, its Delete.
+  #
+  # They belong in the header rather than at the foot of the page, because they act on the record as
+  # a whole; design.md names *Deactivate* as the example. They belong in an **overflow** rather than
+  # beside the primary, because the header allows three actions and a menu counts as one, and
+  # because the last slot is the primary's -- a destructive action must never inherit it by being
+  # last in the list. That is what `/product_drives` did, and it was reported as the buttons looking
+  # reversed.
+  #
+  # **One item is not a menu.** With a single action -- a distribution has an Edit and no Delete,
+  # and a non-admin sees Edit alone everywhere -- a kebab hides one thing behind a click and a
+  # generic name. It renders as an ordinary secondary button instead, which still leaves the last
+  # slot free if the caller puts it before the primary. `menu_button` makes the same call for the
+  # same reason.
+  def essentials_record_actions(label:, items:)
+    items = items.compact
+    return if items.empty?
+
+    if items.one?
+      only = items.first
+      return essentials_link_button(only[:label], only[:path], variant: :secondary, icon: only[:icon]) unless only[:method]
+
+      return essentials_action_button(only[:label], only[:path], method: only[:method],
+        variant: (only[:tone] == :danger) ? :ghost_danger : :secondary,
+        icon: only[:icon], confirm: only[:confirm])
+    end
+
+    render("shared/essentials/row_actions", label: label, size: :md, items: items)
+  end
+
   # One segment of a segmented toggle -- the calendar's range and layout switchers. Its state is
   # `aria-pressed`, and the styling hangs off the attribute so markup and appearance cannot
   # disagree. `first:` drops the divider, which belongs between segments rather than before them.

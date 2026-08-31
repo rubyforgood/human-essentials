@@ -348,6 +348,13 @@ them: three partner-portal **form** tables (`requests/new`, `individuals_request
 allocation **change-summary panel** (inside its own bordered box), and the partner **service area**
 table (two columns in a padded card that also holds a zipcodes section).
 
+**"Make a correction" is gone.** Four record pages used it; the app's other thirty say **Edit**. It
+was pre-migration wording carried through rather than chosen. The callout prose that explained the
+restriction changed with it, from "cannot be corrected" to "cannot be edited or deleted".
+
+**A record's Edit and Delete live in the page header's overflow**, from `essentials_record_actions`,
+not at the foot of the page. Donations, purchases and distributions had them below the last card.
+
 **`filter_checkbox` is the grid cell now**, so the four views that wrapped it in
 `<div class="pb-2">` to nudge it into line no longer do. If you add one, do not wrap it.
 
