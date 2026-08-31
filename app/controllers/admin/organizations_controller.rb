@@ -57,7 +57,16 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.find(params[:id])
     @header_link = admin_dashboard_path
     @default_storage_location = StorageLocation.find_by(id: @organization.default_storage_location) if @organization.default_storage_location
-    @intake_storage_location = StorageLocation.find_by(id: @organization.storage_locations) if @organization.intake_location
+    # `id: @organization.intake_location`, not `id: @organization.storage_locations`. Passing the
+    # whole association built `WHERE id IN (SELECT id FROM storage_locations WHERE organization_id
+    # = ?)`, so the page showed an **arbitrary** storage location of that organization as its
+    # "Default intake storage location" -- whichever the database returned first. The bank's own
+    # controller has always had this right; only the admin copy was wrong.
+    #
+    # It surfaced as a spec that failed at some random seeds and passed at others, which is what a
+    # non-deterministic query looks like from the outside. It was called a flake twice before a
+    # bisect at seed 29928 pinned it.
+    @intake_storage_location = StorageLocation.find_by(id: @organization.intake_location) if @organization.intake_location
     @users = @organization.users.with_discarded.includes(:roles, :organization).alphabetized
   end
 
