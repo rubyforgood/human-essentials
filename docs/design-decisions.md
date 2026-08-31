@@ -8002,3 +8002,41 @@ when the alternative is not a complete answer but an unreadable one.
 Awaiting a choice. If A + B, the category *filter* wants revisiting too: at 50 categories a plain
 select is a long list.
 
+## 2026-08-31 — The category filter, and a habit the app already has
+
+Asked for recommendations on the category control before building A+B. I measured what the app
+already does with long lists before designing anything, and the measurement changed the
+recommendation.
+
+**Across 142 selects on 98 pages:** 81 have ten options or fewer, 3 have 11–25, 4 have 26–50, and
+**54 have more than 50**. The longest is the storage location **time zone picker at 153**. Eight
+pages put **52 items** in a plain select. **Not one has a search, combobox or autocomplete wrapper.**
+
+So the app's answer to "one of many" is already settled: a native `<select>`, at any length. That is
+a precedent, and it cuts both ways — matching it is consistent, and improving only the category
+filter makes one control special while fifty-four others stay as they are.
+
+**Verified, not recalled.** GOV.UK maintains **`accessible-autocomplete`** as a standalone
+component whose stated purpose is choosing from a list and whose first design goal is accessibility;
+Carbon ships **`ComboBox`** and Polaris **`Combobox`**, both distinct from their plain Select. A
+design system shipping a separate component for this is the signal. I could not fetch GOV.UK's prose
+guidance on avoiding selects — it is on their website, not in the repository — so it is not quoted.
+
+**Four options** at `docs/mockups/category-filter.html`, drawn at 3 and at 15 categories: **A** a
+plain select; **B** a searchable popover reusing the shape the date and month range pickers already
+use; **C** a real combobox; **D** no filter at all, with category as a table column.
+
+**Recommending B**, with the caveat stated rather than buried. B is right on its own terms — one
+pattern, already built and specced on this very page, scaling with no threshold, and avoiding the
+full combobox ARIA surface because the panel is a dialog with a text field and a list of buttons.
+The caveat is that it would make this **the only searchable list in an app with 54 over-long
+selects**, several of which matter more than a report filter. If it is worth building here it is
+worth extracting for those, and **that should be a decision rather than an accident**.
+
+**A is the honest alternative**, and the reason to choose it is not that a long select is good: it
+is that the app's long-list problem is bigger than this filter and should be solved once,
+deliberately, rather than sideways through a report page.
+
+Either way, the count belongs in the label — *Category (15)* — so the length is visible before the
+control is opened.
+
