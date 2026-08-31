@@ -540,6 +540,27 @@ Two details that are easy to get wrong and were:
 that cannot use `data-confirm`: `utils/donations.js` guards a large donation from inside its own
 click handler. Anything else should use the attribute.
 
+**And it is checked by pressing it.** `pw bin/design/confirm-audit.js` walks every page as three
+roles, finds every `data-confirm`, opens the menu it is behind, **presses it, and dismisses it** —
+**59 confirmations on 22 pages**, reporting any that raises a native box, opens nothing, arrives
+with an empty message, or is destructive without the red button. It never accepts, so nothing is
+deleted. `spec/system/confirm_dialog_system_spec.rb` pins the same contract in CI.
+
+This is here because it was reported: *Delete* on `/product_drives/:id` drew the browser's own box.
+The controller, the partial and the test helper had all been rolled out of the working tree at once,
+and the layouts with them — and nothing failed, because nothing looked. Thirteen spec files drive
+this dialog through `spec/support/confirm_dialog.rb`, but only at the call sites they happen to
+exercise, and that one had no spec. **A mechanism that only one call site's spec would notice is a
+mechanism nobody is watching.**
+
+<a id="a-row-action-is-named-by-its-row"></a>
+**A row's menu is named by something no two rows share.** The trigger's label is *"More actions
+for X"*, and X has to identify the row. `/organization` passed `User#display_name`, which falls back
+to the literal string *"Name Not Provided"* — so **four triggers on that page had the same
+accessible name**, indistinguishable to a screen reader and to anything automating the page. It
+passes `preferred_name` now, which falls back to the email. The cell still *shows* "Name Not
+Provided"; that is a fine thing to display and a useless thing to be called.
+
 <a id="a-menu-item-is-not-a-button"></a>
 **A menu item is not a button — do not render one through `essentials_action_button`.** That helper
 applies `essentials_button_classes`, which is `inline-flex justify-center` plus the size's own
