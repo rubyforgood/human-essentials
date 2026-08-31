@@ -26,6 +26,50 @@ RSpec.describe "Trend month range", type: :system, js: true do
   # Item + Trend + one per month + Total.
   def month_columns = page.all("main table thead th").size - 3
 
+  describe "where the control sits" do
+    it "is in the filter bar, at the width every other report's filter gets" do
+      # It shipped in the page header's `actions:` slot, which is a right-aligned flex row sized
+      # for buttons: the same control came out 142px wide and hard right, against 271px and
+      # left-aligned on the six report pages that already had one. A filter is not a page action.
+      visit historical_trends_distributions_path
+
+      box = page.evaluate_script(<<~JS)
+        (() => {
+          const t = document.querySelector("#filters_months_trigger");
+          const h1 = document.querySelector("main h1");
+          if (!t || !h1) return null;
+          const a = t.getBoundingClientRect(), b = h1.getBoundingClientRect();
+          return { width: Math.round(a.width), left: Math.round(a.left), headingLeft: Math.round(b.left),
+                   inHeaderActions: !!t.closest('[data-page-header="actions"]') };
+        })()
+      JS
+
+      expect(box["inHeaderActions"]).to be(false)
+      expect(box["left"]).to eq(box["headingLeft"]), "the filter is not aligned with the page"
+      expect(box["width"]).to be >= 240
+    end
+  end
+
+  describe "the filter bar's summary" do
+    it "offers nothing to clear until the window is not the default one" do
+      # The two visible month fields inside the popover were being counted as filters in their own
+      # right, so "Clear all" appeared on a page nobody had filtered. The summary controller skipped
+      # `type="date"` inside the date popover and `<input type="month">` is not that.
+      # `have_link`, not `have_button`: "Clear all" is an anchor, and `have_no_button` passed
+      # against it whatever the state -- the negative assertion was vacuous before this.
+      visit historical_trends_distributions_path
+      expect(page).to have_css("#filters_months_trigger")
+      expect(page).to have_no_link("Clear all")
+
+      click_button "Last 12 months"
+      click_button "Last 6 months"
+      # Wait for the reload before looking: choosing a preset submits the bar, and the summary is
+      # rendered by the server response rather than by the click.
+      expect(page).to have_current_path(/filters%5Bmonths%5D/)
+      expect(page).to have_link("Clear all")
+    end
+  end
+
   describe "the default window" do
     it "is the last twelve months" do
       visit historical_trends_distributions_path

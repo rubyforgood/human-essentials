@@ -45,7 +45,11 @@ export default class extends Controller {
       // date input, which was the same thing while the popover owned all of them; `filter_date`
       // put a standalone one in a bar and it reported nothing, so a page arrived at by a filtered
       // URL showed no chip and no way to clear it.
+      // Widened to month, for the trend pages' range: `<input type="month">` is not
+      // `type === "date"`, so the two visible fields inside that popover were being counted as
+      // filters of their own -- which showed "Clear all" on a page nobody had filtered.
       if (field.type === "date" && field.closest("[data-controller~='date-range']")) return []
+      if (field.type === "month" && field.closest("[data-controller~='month-range']")) return []
 
       // The date range is always set to something, so it only counts as a filter when it is not
       // the range the page would have shown anyway.

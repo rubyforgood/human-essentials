@@ -17,8 +17,13 @@
   <%= render "shared/essentials/page_header",
         title: title,
         subtitle: "Cached, so it may be up to 24 hours behind.",
-        back: {path: reports_path, label: "Back to reports"},
-        actions: capture { concat render("shared/month_range_picker", url: request.path) } %>
+        back: {path: reports_path, label: "Back to reports"} %>
+
+  <%# The window goes in the filter bar, where every other report's date filter goes -- not in the
+      header's actions, which is a right-aligned row sized for buttons. %>
+  <%= render "shared/essentials/filter_bar", url: request.path, auto_submit: true do %>
+    <div class="min-w-0"><%= render partial: "shared/month_range_picker" %></div>
+  <% end %>
 
   <div class="space-y-6">
     <%

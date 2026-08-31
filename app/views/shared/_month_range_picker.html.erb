@@ -1,7 +1,9 @@
 <%#
   The window for a chart that buckets by month.
 
-    render "shared/month_range_picker", url: historical_trends_distributions_path
+    render "shared/essentials/filter_bar", url: historical_trends_distributions_path, auto_submit: true do
+      render partial: "shared/month_range_picker"
+    end
 
   Same popover, same presets-on-the-left / custom-on-the-right layout, same apply-as-you-choose
   behaviour as the date range picker. The one difference is the field type -- `month` rather than
@@ -25,15 +27,16 @@
   this_month = Time.zone.today.strftime("%Y-%m")
 %>
 <%#
-  Both controllers sit on the <form>, not on a div inside it. A Stimulus target has to be a
-  *descendant* of its controller element, and the first cut had `month-range` on an inner div with
-  the form as its parent -- so `this.formTarget` threw "Missing target element" on every preset
-  press. The controller submits `this.element` instead, and needs no form target at all.
+  **It brings no form of its own**, exactly like the date range picker. It goes *inside* the shared
+  filter bar's form and contributes one hidden field; changing that field dispatches a `change`
+  that the bar's auto-submit acts on. The first cut wrapped itself in a `form_with` and was dropped
+  into the page header's `actions:` slot -- which is a right-aligned flex row sized for buttons, so
+  a labelled 256px control came out **142px wide, hard right**, against the 271px the same control
+  gets on the six other report pages. A filter is not a page action.
 %>
-<%= form_with url: url, method: :get,
-      data: {controller: "popover month-range", turbo_action: "advance",
-             month_range_presets_value: presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json},
-      class: "relative inline-block" do |f| %>
+<div class="relative"
+     data-controller="popover month-range"
+     data-month-range-presets-value="<%= presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json %>">
   <div>
     <%= label_tag "filters_months_trigger", "Months", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
     <button type="button" id="filters_months_trigger"
@@ -82,7 +85,14 @@
       </div>
     </div>
 
+    <%#
+      data-filter-label names this for the filter bar's summary chips -- a hidden input has no
+      <label> for the controller to read. data-default-value is the window the page shows when
+      nobody has chosen one, so a chip appears only when the range is genuinely a filter.
+    %>
     <%= hidden_field_tag "filters[months]", month_range_param(from, to),
-          id: nil, autocomplete: "off", data: {month_range_target: "range"} %>
+          id: nil, autocomplete: "off",
+          data: {month_range_target: "range", filter_label: "Months",
+                 default_value: month_range_param(*default_month_range)} %>
   </div>
-<% end %>
+</div>
