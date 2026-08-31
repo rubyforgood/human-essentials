@@ -710,21 +710,23 @@ It fits at **1366px wide and above**. At 1280 it still scrolls a little — twel
 plus a name, a trend and a total is fifteen columns, and they do not fit in a smaller window. The
 table scrolls inside its own box rather than pushing the page sideways.
 
-### Pick which items the trend chart draws
+### One control for what the trend report is about
 
-**The chart shows the total for the window.** To compare particular items, **tick them in the table**
-— up to **four** — and they are drawn as lines, each with its own dash pattern and its name in the
-key. Untick to go back to the total.
+**There is a single "Compare" control beside Months.** Open it, type a few letters, and tick what you
+want — **your categories and your items are in the same list**, so you do not have to know which one
+a name belongs to before you look for it.
 
-Four is the limit because it is where the lines stop being tellable apart: beyond four, dash
-patterns start looking alike and the labels collide. Once four are ticked the rest are greyed out
-and the page says *"4 of 4 plotted. Clear one to plot another."*
+What you tick is what the page is about: the chart draws a line for each, and the table narrows to
+match. Tick nothing and you get everything.
 
-**The Category control is now a searchable list.** Click it, type a few letters, pick one. The number
-of categories you have is shown in its label, and there is no limit on how many you can create.
+**Up to four at a time.** Beyond four the lines stop being tellable apart, so the rest are greyed out
+and the panel says *"4 of 4 chosen. Clear one to add another."* Each line has its own dash pattern —
+solid, dashed, dotted, dash-dot — shown next to its name in the control, so you can read the chart
+without matching colours.
 
-**The chart no longer stacks the categories.** With enough categories that became unreadable — the
-same problem the old 47-line chart had.
+**Your choices apply when you close the control**, so picking four things is one page load rather
+than four. The old version put a tick box on every table row and reloaded the page on each one,
+which threw you back to the top every time.
 
 ### The monthly trend reports break down by category, and can compare periods
 

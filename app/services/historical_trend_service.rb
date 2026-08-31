@@ -4,18 +4,15 @@ class HistoricalTrendService
   #
   # A month is the bucket, so a month is the unit the window is expressed in -- see "A period chart
   # takes a period range" in design.md. The picker only offers months for the same reason.
-  def initialize(organization_id, type, from: nil, to: nil, category_id: nil)
+  def initialize(organization_id, type, from: nil, to: nil)
     @organization = Organization.find(organization_id)
     @type = type
-    # nil is every category; "none" is the items that have none. Both are real answers -- 16 of the
-    # 51 items here are uncategorised, so an "Uncategorised" option is not an edge case.
-    @category_id = category_id.presence
     @to = (to || Time.zone.today).to_date.end_of_month
     @from = (from || (@to - 11.months)).to_date.beginning_of_month
     @from = @to.beginning_of_month if @from > @to
   end
 
-  attr_reader :from, :to, :category_id
+  attr_reader :from, :to
 
   # The months in the window, oldest first, as Date objects on the first of each.
   def months
@@ -56,8 +53,6 @@ class HistoricalTrendService
       next if index.nil?
 
       record.line_items.each do |line_item|
-        next unless in_category?(line_item.item)
-
         name = line_item.item.name
         quantity = line_item.quantity
         next if quantity.zero?
@@ -109,8 +104,7 @@ class HistoricalTrendService
     @previous_totals ||= begin
       span = months.size
       shifted = self.class.new(@organization.id, @type,
-        from: @from - span.months, to: @to.beginning_of_month - span.months + 1.month - 1.day,
-        category_id: @category_id)
+        from: @from - span.months, to: @to.beginning_of_month - span.months + 1.month - 1.day)
       shifted.monthly_totals
     end
   end
@@ -137,12 +131,47 @@ class HistoricalTrendService
 
   UNCATEGORISED = "Uncategorised"
 
-  # The rows the reader ticked, in the window's month order. Names rather than ids because that is
-  # what `#series` is keyed by and what the table renders.
-  def series_named(names)
-    wanted = Array(names)
-    series.select { |item| wanted.include?(item[:name]) }
-      .sort_by { |item| wanted.index(item[:name]) }
+  # One series per thing the reader chose, in their order -- a category is the sum of its items, an
+  # item is itself. Their order matters because it decides which line gets the solid dash.
+  def comparison_series(selections)
+    names = item_category_names
+    ids = category_ids_by_name
+    selections.filter_map do |kind, value|
+      if kind == "cat"
+        label = ids.key(value.to_s)
+        next if label.nil?
+        data = Array.new(months.size, 0)
+        series.each do |item|
+          next unless names.fetch(item[:name], UNCATEGORISED) == label
+          item[:data].each_with_index { |v, i| data[i] += v.to_i }
+        end
+        {name: label, data: data}
+      else
+        series.find { |item| item[:name] == value }
+      end
+    end
+  end
+
+  # Which items the table should list: everything, unless the reader has narrowed the page.
+  def items_for(selections)
+    return series if selections.empty?
+
+    names = item_category_names
+    ids = category_ids_by_name
+    # `filter_map` over the pairs, not `select`+`map`: `selections` is an array of two-element
+    # arrays rather than a Hash, and Style/HashSlice reads the latter shape as a hash slice.
+    wanted_categories = selections.filter_map { |kind, value| ids.key(value.to_s) if kind == "cat" }
+    wanted_items = selections.filter_map { |kind, value| value if kind == "item" }
+
+    series.select do |item|
+      wanted_items.include?(item[:name]) ||
+        wanted_categories.include?(names.fetch(item[:name], UNCATEGORISED))
+    end
+  end
+
+  def category_ids_by_name
+    @category_ids_by_name ||= @organization.item_categories.pluck(:name, :id)
+      .to_h { |name, id| [name, id.to_s] }
   end
 
   private
@@ -150,15 +179,6 @@ class HistoricalTrendService
   # The end of the window, never later than now: see #series.
   def window_end
     [@to.end_of_day, Time.zone.now].min
-  end
-
-  # Filtered in Ruby rather than in the query because the line items are already loaded by the
-  # `includes` above -- adding a join to narrow them would cost a second pass over the same rows.
-  def in_category?(item)
-    return true if @category_id.nil?
-    return item.item_category_id.nil? if @category_id == "none"
-
-    item.item_category_id.to_s == @category_id.to_s
   end
 
   # item name => category name, for #category_series. Two queries rather than one per item, and

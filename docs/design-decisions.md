@@ -8135,3 +8135,45 @@ two series on this page, or is the question always "how much, and of what"? The 
 was here suggests somebody once wanted comparison; the fact that every one of its series arrived
 `visible: false` suggests nobody used it.
 
+## 2026-08-31 — One Compare control, and what it cost to get the interaction right
+
+Built option B: one searchable, grouped, multi-select holding categories and items, capped at four,
+replacing both the single-select filter and the row checkboxes.
+
+**Measured before and after.** Choosing four things went from **four document reloads and 1,702px of
+lost scroll** to **one request and no scrolling**. That was the whole point, and it is the number I
+should have taken before building the checkboxes rather than after being told.
+
+**Three things the interaction needed, none of them obvious from the mockup.**
+
+*Applied on close, not on change.* A range is one answer, so the date and month pickers commit on
+change. A set is not finished until you stop adding to it. `popover_controller` now dispatches
+`popover:close`, so a panel that applies on close has **one** place to listen — it closes from the
+trigger, from Escape and from a click outside, and a control that only handled the button would have
+silently dropped two of the three.
+
+*`stopPropagation` on the checkbox.* The boxes sit inside the filter bar's form and the bar submits
+on any change reaching it, so the first tick navigated immediately — **the exact friction the control
+exists to remove, reintroduced one level down**. The date picker's custom fields already did this,
+for the same reason, and I did not think to look.
+
+*Waiting for the navigation in the spec.* `close()` sets `aria-expanded="false"` synchronously and
+submits after, so a helper that waited only for the attribute returned while the old page was still
+on screen, and the assertion read the previous chart. It failed intermittently until the helper
+waited for the URL. **An assertion that can run against the page you were leaving is not an
+assertion.**
+
+**Two smaller calls.** The group headings are `text-xs font-semibold text-slate-500` — sentence
+case, no uppercase, no tracking — because that is what design.md already requires of a heading over
+a column, and my mockup had used the uppercase eyebrow the rule exists to prevent. And a heading
+over an empty group hides with its group, since a heading over nothing is noise.
+
+**What the selection means, stated once so it is one rule.** *What you choose is what the page is
+about.* It draws the lines and it narrows the table; choosing nothing means everything. The earlier
+arrangement had the select narrowing the table and the checkboxes drawing lines, which is two rules
+wearing one label.
+
+**And what went out with it:** the row checkbox column, its CSS, `plotted_items`, `PLOT_CAP`,
+`selected_trend_category` and the three helpers around it, and the table's own form. The cap and the
+dash palette moved across unchanged, since neither depends on how the choosing happens.
+
