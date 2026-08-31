@@ -652,6 +652,27 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### Delete asks in the app's own words again, not the browser's
+
+**If Delete — on a product drive, a vendor, an item, anywhere — put up a grey browser box with your
+server's hostname above the message, reload.** The app has its own confirmation dialog: it names the
+action on the button (*Delete*, not *OK*) and reddens it when the action destroys something. A
+working-tree rollback had removed the whole mechanism, so every confirmation in the app fell through
+to the browser's for the length of that window.
+
+There is now a check that presses **all 59 confirmations in the app** and fails if any of them is
+the browser's:
+
+```bash
+pw bin/design/confirm-audit.js      # never accepts -- nothing gets deleted
+bundle exec rspec spec/system/confirm_dialog_system_spec.rb
+```
+
+It also turned up something separate, on **Your organization**: four users with no name filled in
+all had a row menu called *"More actions for Name Not Provided"*, which a screen reader user cannot
+tell apart. Those menus are named by email address now where there is no name. The table still shows
+"Name Not Provided" in the name column.
+
 ### The warning on New kit is above the form again
 
 **If you saw "You will not be able to change the composition of the kit once it is saved" at the

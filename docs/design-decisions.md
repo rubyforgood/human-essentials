@@ -7557,3 +7557,49 @@ Two things the first draft got wrong, both worth keeping:
   behind a checkbox; the spec ticks it. **A green example that could not have gone red is worse
   than no example**, because it reads like coverage.
 
+## 2026-08-31 — The confirmation was the browser's, and nothing was watching for that
+
+Reported: on `/product_drives/:id`, Delete puts up the browser's own confirm box. Audit every
+instance, fix them all, and say why the previous audits missed it. All three parts have answers, and
+the third is the one worth keeping.
+
+**Why it happened.** The mechanism was gone. `confirm_dialog_controller.js`,
+`shared/essentials/_confirm_dialog.html.erb` and `spec/support/confirm_dialog.rb` were among the 81
+files deleted by the fifth workspace reset, and both shells reverted to not rendering the host
+element. Verified from the snapshot: `git stash show --name-only stash@{0}` lists all three, and the
+reverted `essentials_app.html.erb` contains no `confirm_dialog` render. With no host element,
+`intercept` returns early on `!this.hasDialogTarget` and rails-ujs raises `window.confirm` for
+**every** `data-confirm` in the app — not just this one.
+
+**Why no audit caught it.** Because no audit ever pressed a button. `overlay-audit.js` opens dialogs
+and popovers, `page-audit.rb` reads markup, `wcag-audit.js` scans the page as loaded. A confirmation
+does not exist until a control is clicked, and clicking a *destructive* control is the thing an audit
+is least likely to do. The specs are better — thirteen files drive the dialog through
+`accept_confirm_dialog`, which looks for `dialog[open]` and fails if the native box appeared — but
+only at the call sites they happen to exercise, and **Delete on `/product_drives/:id` had no spec**:
+it moved into the header overflow the day before, in `a596d0c0f`, and I did not pin its confirm.
+**A mechanism that only some call sites' specs would notice is a mechanism nobody is watching.**
+
+So `bin/design/confirm-audit.js`: every page as three roles, every `data-confirm`, the menu it hides
+behind opened, **the control pressed and the answer dismissed**. **59 confirmations on 22 pages, 0
+findings.** It reports a native box, a dialog that never opened, an empty message, and a destructive
+action whose confirm button is not red. It **never accepts** — a native dialog is dismissed through
+Playwright's own handler — so it can be run against a seeded database without deleting anything.
+Verified by removing the render from the layout: it reports `NATIVE confirm` on exactly the reported
+control and exits 1.
+
+**Two of my own bugs in the audit, both instructive.** It first recorded the menu panel's `id` as
+the handle for reaching an item again — but `row_actions` builds that from `SecureRandom.hex(4)`, so
+it is different on the next request, and **twenty controls were reported unreachable that were
+perfectly reachable**. Then, keyed on the label instead, it marked the *first* match anywhere in the
+document — and every **closed** row menu is still in the DOM holding its own *Reclaim*, so the click
+waited forever on a hidden one: **thirty-seven false findings**. Both were my audit, not the app. An
+audit's first run is a claim about the audit.
+
+**And one real finding that fell out of it.** Three controls stayed unreachable after both fixes,
+because four row triggers on `/organization` had the *same* accessible name: `User#display_name`
+falls back to the literal string *"Name Not Provided"*. Four menus called **"More actions for Name
+Not Provided"** is a defect for a screen reader user before it is one for an audit. They pass
+`preferred_name` now, which falls back to the email. The cell still shows "Name Not Provided" — a
+fine thing to display, a useless thing to be called.
+

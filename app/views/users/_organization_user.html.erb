@@ -40,6 +40,13 @@
                       reason: "You cannot change your own membership"}
       end
     %>
-    <%= render "shared/essentials/row_actions", label: user.display_name, items: row_items %>
+    <%# `preferred_name`, not `display_name`: the latter falls back to the literal string "Name Not
+        Provided", so every user who has not filled in a name produces the *same* accessible name.
+        Measured on /organization: **four triggers all called "More actions for Name Not
+        Provided"**, which a screen reader user cannot tell apart, and which the confirm audit could
+        not reach either. `preferred_name` falls back to the email, which every user has and no two
+        share. The visible cell still reads "Name Not Provided" -- that is a fine thing to *show*
+        and a useless thing to be *called*. %>
+    <%= render "shared/essentials/row_actions", label: user.preferred_name, items: row_items %>
   </td>
 </tr>
