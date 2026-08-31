@@ -652,6 +652,44 @@ page now. Pages with three or more keep the button, and Donations still folds it
 than the menu next to it**, which made the row look crooked and the space under it look like a
 mistake. It is on the same line now.
 
+### Import and Export had their arrows the wrong way round
+
+**On any page with both — donation sites, vendors, partners, storage locations, participants —
+Import wore an arrow pointing out of a tray and Export wore one pointing into it.** Both were
+backwards. Import now shows an arrow going **into** a box and Export one coming **out** of it.
+
+Two ways of thinking about direction had collided. *Upload* and *download* are measured from the
+server: up to it, down to you. *Import* and *export* are measured from the app: in to it, out of it.
+The buttons used the second vocabulary and the icons the first, so half the row read backwards
+whichever way you took it. The **Download example CSV** button in the import dialog keeps its
+download arrow, because that button really does download a file — and it is on the same page as an
+export, which is why the two could not share.
+
+Some smaller things went with it:
+
+- **"Save" no longer carries a floppy-disk icon** on the twelve forms that had one. The other
+  twenty-nine never did, and a floppy disk names a thing most people have never handled.
+- **The partner group form's button says "Save"**, like every other form in the app. It said *Add
+  partner group* and *Update partner group*.
+- **On Requests, the row action called "Cancel" now says "Cancel request".** *Cancel* is the word
+  this app uses on every form to mean "abandon what I was doing"; here it cancelled the request,
+  which is not the same thing at all.
+- **"Invite user" wore three different icons on three pages.** It is one now.
+
+### For maintainers: which icon means what
+
+`design.md` now carries a lexicon — **"One glyph, one meaning"** — and the machine-readable copy of
+it is `bin/design/icon-lexicon.json`, which both the audit and the spec read:
+
+```bash
+pw bin/design/icon-audit.js          # walks 124 pages as three roles
+bundle exec rspec spec/system/button_icons_system_spec.rb
+```
+
+The audit fails on a glyph it does not find in the lexicon, so adding one to the app means adding it
+to the table first. That is the point: *Invite user* reached three pages with three glyphs because
+nothing said which was right.
+
 ### "Make a correction" is now "Edit", and Delete has moved
 
 **On a donation, purchase, distribution or product drive, the button that opens the record for

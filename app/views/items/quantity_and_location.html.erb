@@ -6,7 +6,7 @@
         subtitle: "What #{current_organization.name} stocks, and how much of it.",
         actions: capture {
           if @items.any?
-            concat essentials_link_button("Export", items_path(format: :csv, include_inactive_items: @include_inactive_items, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", items_path(format: :csv, include_inactive_items: @include_inactive_items, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New item", new_item_path, variant: :primary, icon: "bi-plus-lg")
         } %>

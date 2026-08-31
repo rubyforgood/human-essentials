@@ -6,7 +6,9 @@
   <% end %>
 
   <%= essentials_form_actions do %>
-    <%= f.button :button, "Invite user",
+    <%# "Invite user" is a named action, not a generic Save, so it wears the lexicon's
+        `bi-person-plus` here as it does on the other two pages that say it. %>
+    <%= f.button :button, safe_join([tag.i(nil, class: "bi-person-plus", aria: {hidden: true}), "Invite user"], " "),
           class: essentials_button_classes(variant: :primary, size: :md),
           data: {disable_with: "Inviting..."} %>
   <% end %>

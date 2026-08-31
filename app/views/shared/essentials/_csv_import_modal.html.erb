@@ -19,7 +19,7 @@
     </li>
 
     <li class="flex gap-3">
-      <%= essentials_icon_tile("bi-upload", tone: :brand) %>
+      <%= essentials_icon_tile("bi-box-arrow-in-down", tone: :brand) %>
       <div class="min-w-0 flex-1">
         <h3 class="text-sm font-semibold text-slate-900">2. Upload your CSV file</h3>
         <%= form_with(url: csv_import_url, class: "mt-3 space-y-3") do |f| %>
@@ -27,7 +27,7 @@
           <%= f.file_field :file, accept: "text/csv",
                 class: "block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100" %>
           <button type="submit" class="<%= essentials_button_classes(variant: :primary, size: :md) %>" data-disable-with="Importing...">
-            <i class="bi-upload" aria-hidden="true"></i>Import CSV
+            <i class="bi-box-arrow-in-down" aria-hidden="true"></i>Import CSV
           </button>
         <% end %>
       </div>

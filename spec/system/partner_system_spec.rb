@@ -723,7 +723,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           choose 'Day of the month'
           fill_in "partner_group_reminder_schedule_service_day_of_month", with: 1
           fill_in "partner_group_deadline_day", with: 25
-          find_button('Add partner group').click
+          find_button('Save').click
 
           click_on 'Groups'
           assert page.has_content? 'Group name', wait: page_content_wait
@@ -755,7 +755,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Set a new one on the category
           find("input#partner_group_item_category_ids_#{item_category_2.id}").click
 
-          find_button('Update partner group').click
+          find_button('Save').click
 
           click_on 'Groups'
           assert page.has_content? 'New Group Name', wait: page_content_wait
@@ -790,7 +790,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             post_refresh
           end
 
-          it_behaves_like "deadline and reminder form", "partner_group", "Update partner group", :post_form_submit, :post_refresh
+          it_behaves_like "deadline and reminder form", "partner_group", "Save", :post_form_submit, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             travel_to Time.zone.local(2025, 9, 30)
@@ -810,7 +810,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             deadline_text.slice!(".")
             shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 
-            click_on "Update partner group"
+            click_on "Save"
             click_on "Groups"
             existing_partner_group.reload
 

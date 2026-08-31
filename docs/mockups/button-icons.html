@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Import, Export, and one glyph per meaning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+  .big{font-size:34px;line-height:1;color:#334155}
+  .glyphs{display:flex;gap:34px;flex-wrap:wrap;margin:14px 0 4px}
+  .glyph{text-align:center;min-width:104px}
+  .glyph .lbl{font-size:11.5px;color:var(--soft);margin-top:9px;display:block;font-family:ui-monospace,monospace}
+  .glyph .dir{font-size:11.5px;font-weight:700;margin-top:3px;display:block}
+  .dir.out{color:#B45309} .dir.in{color:#0369A1}
+  .opt{display:grid;grid-template-columns:1fr;gap:0}
+  .lex td:first-child{font-family:ui-monospace,monospace;font-size:12.5px;white-space:nowrap}
+  .lex td i{font-size:17px;color:#334155;margin-right:7px;vertical-align:-2px}
+  .strike{text-decoration:line-through;color:var(--soft)}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>Import, Export, and one glyph per meaning</h1>
+<p class="lede">You are right: the arrows point the wrong way. <b>Import</b> carries an arrow leaving
+a tray and <b>Export</b> carries one entering it &mdash; two directional words over two arrows
+pointing the opposite way. The audit found six more disagreements behind it.</p>
+
+<h2>1. What is actually on screen</h2>
+<p class="note">The header of <code>/donation_sites</code>, exactly as it renders today. The glyphs
+below are the two icons at 34px so the direction is unmistakable.</p>
+
+<div class="page">
+  <div class="hdr">
+    <div><h3>Donation sites</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi-upload"></i> Import donation sites</button>
+      <button class="btn"><i class="bi-download"></i> Export</button>
+      <button class="btn primary"><i class="bi-plus-lg"></i> New donation site</button>
+    </div>
+  </div>
+  <div class="glyphs" style="margin-top:22px">
+    <div class="glyph"><i class="bi-upload big"></i><span class="lbl">bi-upload</span>
+      <span class="dir out">arrow OUT &mdash; on <b>Import</b></span></div>
+    <div class="glyph"><i class="bi-download big"></i><span class="lbl">bi-download</span>
+      <span class="dir in">arrow IN &mdash; on <b>Export</b></span></div>
+  </div>
+  <span class="mark">Import points out. Export points in. Both are backwards.</span>
+</div>
+
+<p class="note">There is a reason it happened, and it is not carelessness. Two frames of reference
+collided. <b>Upload / download</b> is measured from the <i>server</i>: up to it, down to you.
+<b>Import / export</b> is measured from the <i>app</i>: in to it, out of it. The buttons say
+import and export; the icons are named upload and download. Whichever frame you read it in, half
+the row is inverted.</p>
+
+<h2>2. What the systems that ship both do</h2>
+<p class="note">Fetched from the source repositories this morning and rasterised, not recalled.
+Shopify Polaris and IBM Carbon both ship a named Import/Export pair, and <b>both draw export as an
+arrow going up and out, import as an arrow coming down and in</b>. Carbon ships
+<code>export</code> and <code>download</code> as <i>separate</i> icons, so it is explicit that an
+export is not a download.</p>
+
+<table class="mini">
+  <tr><th>System</th><th>Import</th><th>Export</th><th>Frame</th></tr>
+  <tr><td>Shopify Polaris</td><td><b>arrow down, into a tray</b></td><td><b>arrow up, out of a tray</b></td><td>the app</td></tr>
+  <tr><td>IBM Carbon</td><td>&mdash; (uses <code>download</code>)</td><td><b>arrow up, out of a tray</b></td><td>the app</td></tr>
+  <tr><td>GitHub Primer</td><td colspan="2">ships <code>upload</code> / <code>download</code> only &mdash; the words match the arrows</td><td>the server</td></tr>
+  <tr class="rec"><td><b>This app today</b></td><td><b>arrow up, out</b></td><td><b>arrow down, in</b></td><td>mixed</td></tr>
+</table>
+<p class="cap">Polaris <code>ImportIcon</code>/<code>ExportIcon</code>, Carbon 32px
+<code>export</code>/<code>download</code>/<code>upload</code>, Primer <code>upload-16</code>/<code>download-16</code>.</p>
+
+<h2>3. Three ways out</h2>
+
+<h3>Option A &mdash; match the frame to the word <span class="tag t-rec">recommended</span></h3>
+<p class="note">Import and export are movements <i>in and out of a box</i>, so they get the in/out-of-a-box
+arrows. This is Polaris and Carbon exactly. Bootstrap Icons already ships the pair, and
+<code>bi-download</code> stays free to mean a literal download &mdash; which the same page uses for
+<b>Download example CSV</b>.</p>
+<div class="page">
+  <div class="hdr">
+    <div><h3>Donation sites</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi-box-arrow-in-down"></i> Import donation sites</button>
+      <button class="btn"><i class="bi-box-arrow-up"></i> Export</button>
+      <button class="btn primary"><i class="bi-plus-lg"></i> New donation site</button>
+    </div>
+  </div>
+  <div class="glyphs" style="margin-top:22px">
+    <div class="glyph"><i class="bi-box-arrow-in-down big"></i><span class="lbl">bi-box-arrow-in-down</span>
+      <span class="dir in">into the box &mdash; <b>Import</b></span></div>
+    <div class="glyph"><i class="bi-box-arrow-up big"></i><span class="lbl">bi-box-arrow-up</span>
+      <span class="dir out">out of the box &mdash; <b>Export</b></span></div>
+    <div class="glyph"><i class="bi-download big"></i><span class="lbl">bi-download</span>
+      <span class="dir in">stays on <b>Download example CSV</b></span></div>
+  </div>
+  <span class="mark ok">Word and arrow agree. Three meanings, three glyphs.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> what the two systems that ship the pair both do; leaves <code>bi-download</code>
+    meaning download and nothing else; the class name reads like the button.</li>
+  <li><b>Against:</b> two glyphs the app has not used before.</li>
+</ul>
+
+<h3>Option B &mdash; swap the two it already has <span class="tag t-alt">smallest change</span></h3>
+<div class="page">
+  <div class="hdr">
+    <div><h3>Donation sites</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi-download"></i> Import donation sites</button>
+      <button class="btn"><i class="bi-upload"></i> Export</button>
+      <button class="btn primary"><i class="bi-plus-lg"></i> New donation site</button>
+    </div>
+  </div>
+  <span class="mark">Arrows now agree with the words &mdash; but the source reads
+    <code>icon: "bi-download"</code> on the <b>Import</b> button, and <code>bi-download</code> ends up
+    on both <b>Import</b> and <b>Download example CSV</b> on the same page.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> two lines per call site, no new glyphs.</li>
+  <li><b>Against:</b> a name that contradicts its use is a trap for whoever edits it next &mdash;
+    this is the same class of fault as the one you spotted, moved from the screen into the source.</li>
+</ul>
+
+<h3>Option C &mdash; change the words instead</h3>
+<div class="page">
+  <div class="hdr">
+    <div><h3>Donation sites</h3></div>
+    <div class="acts">
+      <button class="btn"><i class="bi-upload"></i> Upload CSV</button>
+      <button class="btn"><i class="bi-download"></i> Download CSV</button>
+      <button class="btn primary"><i class="bi-plus-lg"></i> New donation site</button>
+    </div>
+  </div>
+  <span class="mark">Consistent, and honest about what the browser does &mdash; but it retires
+    &ldquo;Export&rdquo;, which is on <b>18 buttons</b>, in the menu on <code>/requests</code>, and in
+    the partner-facing copy.</span>
+</div>
+
+<h2>4. What else the audit found</h2>
+<p class="note">A new audit walks <b>124 pages</b> as three different roles and reads every button and
+menu item the design system renders &mdash; <b>152 distinct labels</b>. It reports a label carrying two
+different glyphs, a glyph carrying two different meanings, and an arrow pointing against its own
+word. Six findings besides the one you reported:</p>
+
+<table class="mini">
+  <tr><th>Finding</th><th>Where</th><th>Proposed</th></tr>
+  <tr><td><b>&ldquo;Invite user&rdquo; has three different icons</b><br>
+      <i class="bi-person-plus"></i><i class="bi-envelope"></i><i class="bi-plus-lg"></i></td>
+      <td class="n">3 pages</td>
+      <td>One glyph: <i class="bi-person-plus"></i> <code>bi-person-plus</code>, which the app
+        already pairs with <code>bi-person-dash</code> for removing one.</td></tr>
+  <tr><td><b>&ldquo;Save&rdquo; carries a floppy disk on some forms and nothing on others</b><br>
+      <i class="bi-save"></i> vs nothing</td>
+      <td class="n">12 vs 29 pages</td>
+      <td>No icon, on all 41. A form has one submit and it is the only filled button on the
+        page &mdash; the glyph adds nothing, and a floppy disk names a thing most users have
+        never handled.</td></tr>
+  <tr><td><b>&ldquo;Upload&rdquo; carries a floppy disk</b> <i class="bi-save"></i></td>
+      <td class="n">/admin/ndbn_members</td>
+      <td>Same fix: it is a form submit. The word is already the whole message.</td></tr>
+  <tr><td><b>Two glyphs for &ldquo;done&rdquo;</b><br>
+      <i class="bi-check2"></i> Review profile &nbsp;
+      <i class="bi-check-circle"></i> Fulfill request</td>
+      <td class="n">4 pages</td>
+      <td>One: <i class="bi-check-circle"></i> <code>bi-check-circle</code>.</td></tr>
+  <tr><td><b>Refuse and disable share a glyph</b><br>
+      <i class="bi-slash-circle"></i> Reject request &nbsp;
+      <i class="bi-slash-circle"></i> Deactivate partner</td>
+      <td class="n">2 pages</td>
+      <td>Refusing a request is not disabling a record.
+        <i class="bi-x-circle"></i> <code>bi-x-circle</code> for reject &mdash; which
+        <b>Cancel request</b> already uses &mdash; and slash-circle for deactivate only.</td></tr>
+  <tr><td><b>&ldquo;Next&rdquo; has a chevron in the scheduler and none in the request wizard</b></td>
+      <td class="n">2 pages</td>
+      <td>Chevron for moving through a <i>calendar</i>, where it pairs with Prev; none for a
+        wizard step, where the next thing is not in a direction.</td></tr>
+  <tr><td><b>&ldquo;Add partner group&rdquo; / &ldquo;Update partner group&rdquo;</b> are the only
+      form submits not called <b>Save</b></td>
+      <td class="n">2 pages</td>
+      <td>&ldquo;Save&rdquo;, like the other 39. The heading above already says which thing.</td></tr>
+</table>
+
+<div class="verdict"><b>And the rule that was missing.</b> design.md tells you how to <i>mark up</i>
+an icon &mdash; <code>aria-hidden</code> beside a label, <code>aria-label</code> when alone, a
+button and never an anchor. It has never said <b>which glyph means what</b>. That is the gap all
+seven of these fell through, so the fix is a short lexicon in design.md and the audit above wired
+to fail when something diverges from it.</div>
+
+<h2>5. The lexicon, if you take A</h2>
+<table class="mini lex">
+  <tr><th>Meaning</th><th>Glyph</th><th>Pages, measured</th></tr>
+  <tr><td>create</td><td><i class="bi-plus-lg"></i>bi-plus-lg</td><td class="n">38</td></tr>
+  <tr><td>edit</td><td><i class="bi-pencil"></i>bi-pencil</td><td class="n">32</td></tr>
+  <tr><td>filter</td><td><i class="bi-funnel"></i>bi-funnel</td><td class="n">27</td></tr>
+  <tr><td>view</td><td><i class="bi-eye"></i>bi-eye</td><td class="n">20</td></tr>
+  <tr><td>delete / remove</td><td><i class="bi-trash"></i>bi-trash</td><td class="n">18</td></tr>
+  <tr class="rec"><td>export</td><td><i class="bi-box-arrow-up"></i>bi-box-arrow-up</td><td class="n">18 &larr; was bi-download</td></tr>
+  <tr class="rec"><td>import</td><td><i class="bi-box-arrow-in-down"></i>bi-box-arrow-in-down</td><td class="n">13 &larr; was bi-upload</td></tr>
+  <tr><td>download a file</td><td><i class="bi-download"></i>bi-download</td><td class="n">7</td></tr>
+  <tr><td>print</td><td><i class="bi-printer"></i>bi-printer</td><td class="n">8</td></tr>
+  <tr><td>email</td><td><i class="bi-envelope"></i>bi-envelope</td><td class="n">8</td></tr>
+  <tr class="rec"><td>deactivate</td><td><i class="bi-slash-circle"></i>bi-slash-circle</td><td class="n">6 &mdash; reject moves out</td></tr>
+  <tr class="rec"><td>complete / approve</td><td><i class="bi-check-circle"></i>bi-check-circle</td><td class="n">3 + Review profile</td></tr>
+  <tr class="rec"><td>refuse / cancel</td><td><i class="bi-x-circle"></i>bi-x-circle</td><td class="n">2 + Reject request</td></tr>
+  <tr><td>remove a person</td><td><i class="bi-person-dash"></i>bi-person-dash</td><td class="n">2</td></tr>
+  <tr class="rec"><td>invite a person</td><td><i class="bi-person-plus"></i>bi-person-plus</td><td class="n">1 &rarr; 4</td></tr>
+  <tr><td>more actions</td><td><i class="bi-three-dots-vertical"></i>bi-three-dots-vertical</td><td class="n">15</td></tr>
+  <tr><td colspan="3" style="color:#64748B"><b>No icon:</b> Save, Cancel, Submit, Continue, Close,
+      Next-in-a-wizard, and every other form action &mdash; <b>29 pages already do this</b>.
+      <span class="strike">bi-save</span> is retired, and with it the last Font Awesome
+      <code>floppy-o</code> in the app.</td></tr>
+</table>
+
+<p class="note" style="margin-top:26px"><b>Tell me A, B or C</b>, and whether any of the six in
+section 4 should stay as they are.</p>
+
+</div></body></html>

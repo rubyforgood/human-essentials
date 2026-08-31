@@ -39,7 +39,7 @@
 
     <%= essentials_form_actions do %>
       <% if Rails.env.staging? %>
-        <%= _button_to({text: "Save", icon: "floppy-o", type: "success"}, disabled: true) %>
+        <%= _button_to({text: "Save", type: "success"}, disabled: true) %>
       <% else %>
         <%= submit_button %>
       <% end %>

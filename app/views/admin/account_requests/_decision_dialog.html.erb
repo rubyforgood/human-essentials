@@ -48,8 +48,10 @@
     <div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 px-5 py-3">
       <button type="button" class="<%= essentials_button_classes(variant: :secondary) %>"
               data-action="click->account-request-decision#close">Cancel</button>
+      <%# No icon, for two reasons. A form's own actions carry none -- and this label *toggles*
+          between "Reject request" and "Close request", while the glyph could not, so a fixed
+          `bi-slash-circle` was wrong on every closure. %>
       <button type="submit" class="<%= essentials_button_classes(variant: :danger) %>">
-        <i class="bi-slash-circle" aria-hidden="true"></i>
         <span data-account-request-decision-target="submitLabel">Reject request</span>
       </button>
     </div>

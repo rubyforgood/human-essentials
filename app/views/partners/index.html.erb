@@ -6,11 +6,11 @@
         subtitle: "Who you distribute to. A partner's group sets what it can request.",
         actions: capture {
           concat(button_tag(type: "button", class: essentials_button_classes(variant: :secondary), data: {action: "click->dialog#open", dialog_id_param: "csv-import-modal"}) do
-            concat tag.i(nil, class: "bi-upload", aria: {hidden: true})
+            concat tag.i(nil, class: "bi-box-arrow-in-down", aria: {hidden: true})
             concat " Import partners"
           end)
           if @partners.any?
-            concat essentials_link_button("Export", partners_path(format: :csv, filters: filter_params), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", partners_path(format: :csv, filters: filter_params), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New partner agency", new_partner_path, variant: :primary, icon: "bi-plus-lg")
         } %>

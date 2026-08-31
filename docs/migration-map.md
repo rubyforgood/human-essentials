@@ -178,6 +178,9 @@ What to write when you meet the old thing.
 | `$(el).modal("show")` | `data-action="click->dialog#open"` + `data-dialog-id-param` |
 | `$(el).modal("hide")` | `document.getElementById(id).close()` |
 | `f.button :submit` | `f.button :button` — renders a real `<button>`, not `<input type=submit>` |
+| `fa_icon "floppy-o"` | **nothing** — a form's generic verbs carry no glyph. `UiHelper::ICON_FOR_FA` no longer maps the name, so `bi-save` (a floppy disk) is used nowhere. `IconHelper::FA_TO_BI` still maps it, because that table translates Font Awesome for whatever still calls `fa_icon` |
+| `fa_icon "upload"` on an **Import** button | `bi-box-arrow-in-down` — the arrow goes *into* the box. `bi-upload` stays, and means uploading a file |
+| `fa_icon "download"` on an **Export** button | `bi-box-arrow-up` — the arrow comes *out of* the box. `bi-download` stays, and means downloading one |
 
 ## Defects the conversion exposed
 
@@ -300,6 +303,12 @@ console errors, and is rendering in Figtree.
    system's version. Record the choice in [design-decisions.md](design-decisions.md).
 4. Re-run the sweep and the system specs for the area.
 5. Add a row to [changelog.md](changelog.md) in the same change.
+
+A glyph is now checked, not chosen. `bin/design/icon-lexicon.json` is the table of meanings, and
+both `bin/design/icon-audit.js` and `spec/system/button_icons_system_spec.rb` read it, so a glyph the
+lexicon does not name fails. Two Font Awesome names that survived the migration mapped onto glyphs
+that contradicted their buttons — `upload` on Import and `download` on Export — and nothing caught it
+for the length of the migration, because the mapping was right and the *use* was wrong.
 
 The legacy `*_button_to` shims are no longer used inside any table cell: they map onto
 `:primary` and `:danger`, which are filled, and that is wrong for a row. They remain in use on

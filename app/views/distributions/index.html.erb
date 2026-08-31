@@ -16,7 +16,7 @@
             # back here with a flag and the download runs in the background, instead of the browser
             # sitting on a long request with nothing to show. The label stays "Export", which is
             # what every other index page in this app calls it.
-            concat essentials_link_button("Export", distributions_path(export_csv: true, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-download", data: {filter_export: true})
+            concat essentials_link_button("Export", distributions_path(export_csv: true, filters: filter_params.merge(date_range: date_range_params)), variant: :secondary, icon: "bi-box-arrow-up", data: {filter_export: true})
           end
           concat essentials_link_button("New distribution", new_distribution_path, variant: :primary, icon: "bi-plus-lg")
         } %>
