@@ -137,6 +137,14 @@ class HistoricalTrendService
 
   UNCATEGORISED = "Uncategorised"
 
+  # The rows the reader ticked, in the window's month order. Names rather than ids because that is
+  # what `#series` is keyed by and what the table renders.
+  def series_named(names)
+    wanted = Array(names)
+    series.select { |item| wanted.include?(item[:name]) }
+      .sort_by { |item| wanted.index(item[:name]) }
+  end
+
   private
 
   # The end of the window, never later than now: see #series.

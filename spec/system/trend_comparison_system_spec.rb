@@ -52,24 +52,27 @@ RSpec.describe "Trend comparison and categories", type: :system, js: true do
       visit historical_trends_distributions_path
 
       expect(page).to have_css("#filters_months_trigger", visible: true)
-      expect(page).to have_css("#filters_item_category_id", visible: true)
+      expect(page).to have_css("#filters_item_category_trigger", visible: true)
       expect(page).to have_no_button("Filters")
     end
   end
 
   describe "with no category chosen" do
-    it "stacks the categories rather than showing one anonymous total" do
+    it "draws one total and does not stack" do
+      # It used to stack one band per category. That is a series count taken from the data, and
+      # nothing in the app bounds the number of categories -- see "A chart's series count is a
+      # constant" in design.md. The breakdown is the table, and the reader plots what they want.
       visit historical_trends_distributions_path
 
-      expect(chart["stacked"]).to be(true)
-      expect(chart["names"]).to include("Nappies", "Period products", "Uncategorised")
+      expect(chart["stacked"]).to be(false)
+      expect(chart["names"]).to eq(["All categories"])
     end
   end
 
   describe "narrowed to one category" do
     it "draws that category alone, and lists only its items" do
       visit historical_trends_distributions_path
-      select "Period products", from: "Category"
+      choose_category "Period products"
 
       expect(page).to have_css("h2", text: "Total per month")
       expect(page).to have_content("Tampons")
@@ -82,7 +85,7 @@ RSpec.describe "Trend comparison and categories", type: :system, js: true do
       # 16 of 51 items here have none, so this is not an edge case -- leaving it out would hide
       # almost a third of the catalogue behind a filter with no option for it.
       visit historical_trends_distributions_path
-      select "Uncategorised", from: "Category"
+      choose_category "Uncategorised"
 
       expect(page).to have_content("Wipes")
       expect(page).to have_no_content("Tampons")
@@ -119,6 +122,16 @@ RSpec.describe "Trend comparison and categories", type: :system, js: true do
 
     it "names the window it is comparing against" do
       expect(page).to have_css("tfoot th", text: /\w{3} \d{4} – \w{3} \d{4}/)
+    end
+  end
+
+  # The category control is a searchable popover, not a select: nothing caps how many categories a
+  # bank can make, and a select is a scroll at fifty.
+  def choose_category(name)
+    find("#filters_item_category_trigger").click
+    within("[role=dialog][aria-label='Choose a category']") do
+      fill_in "Search categories", with: name
+      click_button name
     end
   end
 end

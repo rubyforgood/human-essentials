@@ -439,6 +439,42 @@ line is exactly the kind of thing a reader who cannot see it needs written down.
 **The change is stated in words.** *"Total 167,278, up 241% on the previous period."* A percentage on
 its own reads as a quantity, and a coloured arrow is a signal only some readers get.
 
+<a id="the-table-plots-what-you-tick"></a>
+**The table plots what you tick, up to four.** The breakdown lives in the table, which can be any
+length, and the reader chooses which rows become series. Nothing is plotted until they do — the
+chart shows the total, which is the state it has to be legible in.
+
+**Four, and the number is measured rather than picked.** Both non-colour distinguishers run out
+there:
+
+- **Four dash patterns** — solid, dashed, dotted, dash-dot — are the most that stay distinct at 2px.
+- **A fourth direct label is the first to collide.** On this bank's real figures the end-gaps are
+  55 and 18px at three lines, and 6px at four, against the 16px a 12px label needs.
+
+**Colour is not the distinguisher and cannot be.** Of 28 pairs from an eight-colour candidate set,
+**none** clears 3:1 across normal vision and deuteranopia, protanopia and tritanopia. Each line
+colour *is* ≥3:1 against the white plot, which is the separate thing WCAG 1.4.11 asks for; telling
+two lines apart is the dash pattern's job and the legend word's.
+
+**At the cap, the remaining checkboxes are disabled and the reason is visible.** *"4 of 4 plotted.
+Clear one to plot another."* Not `sr-only` — a greyed-out control whose explanation only a screen
+reader gets is the fault this app fixed once already in the row action menus. The four already
+chosen stay enabled, so there is always a way out of the cap.
+
+<a id="choosing-from-an-unbounded-list"></a>
+**A control for choosing from an unbounded list is a searchable popover, not a select.**
+`shared/category_picker` is the same shape as the date and month range pickers — trigger, panel,
+hidden field — with a filter box above the list, and the count in the label so the length is visible
+before it is opened. Filtering happens in the browser: the whole list is already in the page, and a
+round trip to narrow a list you are holding is slower than the typing that started it.
+
+**This is not yet the app's general answer, and that is worth knowing.** Measured across 142 selects
+on 98 pages: 81 have ten options or fewer, **54 have more than 50**, the longest is a **153-option**
+time zone picker, and until now **none** had any search. GOV.UK maintains `accessible-autocomplete`
+as a separate component for exactly this, and Carbon and Polaris both ship a `ComboBox` distinct from
+their Select. If this pattern is right here it is right for those 54 too; extracting it is a
+decision someone should take deliberately rather than let happen page by page.
+
 <a id="series-count-is-a-constant"></a>
 **A chart's series count is a constant the design picks. It is never a number the data supplies.**
 The trend charts drew one series per item — 47 — and were rebuilt around that. Then the rebuild drew
