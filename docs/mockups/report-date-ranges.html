@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Report date ranges, parameters and chart styles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ .key{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#475569;margin:0 12px 4px 0}
+ .key i{width:11px;height:11px;border-radius:3px;display:inline-block}
+ .legendbox{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+ .ctl{display:inline-flex;align-items:center;gap:8px;border:1px solid #CBD5E1;background:#fff;border-radius:8px;
+   padding:8px 12px;font:500 14px Figtree;color:#334155}
+ .ctl .lbl{color:#64748B;font-weight:400}
+ .seg{display:inline-flex;border:1px solid #CBD5E1;border-radius:8px;overflow:hidden}
+ .seg button{border:0;background:#fff;padding:7px 13px;font:500 13px Figtree;color:#475569;cursor:pointer;border-left:1px solid #E2E8F0}
+ .seg button:first-child{border-left:0} .seg button[aria-pressed=true]{background:#EEF2FF;color:#3730A3}
+ .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px}
+ .panel{border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgb(15 23 42/.13);padding:10px;width:340px;background:#fff}
+ .panel ul{list-style:none;margin:0;padding:0;font-size:13.5px}
+ .panel li button{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 10px;border-radius:7px;color:#334155;font:400 13.5px Figtree;cursor:pointer}
+ .panel li button[aria-current]{background:#EEF2FF;color:#3730A3;font-weight:600}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .warn{border-left:3px solid #B4232E;background:#FBEDEE;padding:10px 14px;border-radius:0 8px 8px 0;font-size:13.5px;color:#7F1D1D;margin:10px 0 0}
+ .fld{width:100%;margin-top:4px;padding:7px;border:1px solid #CBD5E1;border-radius:8px;font:400 13px Figtree}
+</style></head><body><div class="wrap">
+
+<h1>Report date ranges, parameters and chart styles</h1>
+<p class="lede">Three questions: what the industry does about date ranges on a chart, whether these
+pages want month/year granularity, and what other controls or chart shapes would earn their place.
+Every chart below is drawn from this bank's real figures.</p>
+
+<h2>1. Where the app stands</h2>
+<table class="mini">
+  <tr><th>Page</th><th>Date control</th></tr>
+  <tr><td>Itemized donations / distributions / requests, Activity graph, Manufacturer donations, By county</td>
+      <td><b>Yes</b> &mdash; 11 presets plus a custom From/To, day granularity</td></tr>
+  <tr class="rec"><td><b>Monthly distributions / donations / purchases</b></td>
+      <td><b>None.</b> Hard-coded to the last twelve months, inside the service</td></tr>
+  <tr><td>Annual survey</td><td>Per year, by its nature</td></tr>
+</table>
+<p class="note">The charts are the only reports you cannot re-aim, and the window is welded into
+<code>HistoricalTrendService</code>:
+<code>where(issued_at: 1.year.ago.beginning_of_month..Time.current)</code> with twelve fixed buckets.</p>
+
+<h2>2. The catch with the picker we already have</h2>
+<p class="note">It is <b>day-granular</b>. On a chart that buckets by <b>month</b> that produces
+<b>partial months at both ends</b> &mdash; a first and last column that are short for a reason the
+reader cannot see and the axis does not state.</p>
+<div class="page">
+  <p class="cap" style="margin:0 0 6px">&ldquo;12 Mar &ndash; 20 Aug&rdquo; on a monthly chart. The
+  end columns cover 20 days each; the ones between cover 30 or 31.</p>
+  <svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Partial months at both ends"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">30,762</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">23,072</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">15,381</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">7,690</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="77.8" y="195.1" width="47.3" height="28.9" rx="3" fill="#4F46E5"/><text x="101.4" y="190.1" text-anchor="middle" font-size="10" fill="#334155">4,200</text><rect x="156.6" y="133.8" width="47.3" height="90.2" rx="3" fill="#4F46E5"/><text x="180.2" y="128.8" text-anchor="middle" font-size="10" fill="#334155">13,093</text><rect x="235.4" y="224.0" width="47.3" height="0.0" rx="3" fill="#4F46E5"/><rect x="314.2" y="224.0" width="47.3" height="0.0" rx="3" fill="#4F46E5"/><rect x="393.0" y="224.0" width="47.3" height="0.0" rx="3" fill="#4F46E5"/><rect x="471.8" y="224.0" width="47.3" height="0.0" rx="3" fill="#4F46E5"/><rect x="550.6" y="139.4" width="47.3" height="84.6" rx="3" fill="#4F46E5"/><text x="574.2" y="134.4" text-anchor="middle" font-size="10" fill="#334155">12,283</text><rect x="629.4" y="224.0" width="47.3" height="0.0" rx="3" fill="#4F46E5"/><text x="653.0" y="219.0" text-anchor="middle" font-size="10" fill="#334155">3</text><rect x="708.2" y="12.0" width="47.3" height="212.0" rx="3" fill="#4F46E5"/><text x="731.8" y="7.0" text-anchor="middle" font-size="10" fill="#334155">30,762</text><rect x="787.0" y="202.6" width="47.3" height="21.4" rx="3" fill="#4F46E5"/><text x="810.6" y="197.6" text-anchor="middle" font-size="10" fill="#334155">3,100</text></svg>
+  <div class="warn"><b>The two shortest columns are the two you cannot compare.</b> Nothing says they
+  are partial, so a reader sees a fall at the end that is an artefact of the range.</div>
+</div>
+
+<h2>3. What the industry does</h2>
+<table class="mini">
+  <tr><th>System</th><th>Approach</th><th>Partial periods</th></tr>
+  <tr><td>Google Analytics 4</td><td>Presets + custom, day granularity, with an explicit Apply</td>
+      <td>Marks the current, incomplete period and warns on it</td></tr>
+  <tr><td>Grafana</td><td><code>TimeRangePicker</code> plus a <b>separate interval</b> control</td>
+      <td>The bucket is chosen independently of the window</td></tr>
+  <tr><td>Metabase</td><td>Date filter with an explicit <b>granularity</b> &mdash; day, week, month, quarter</td>
+      <td>Snaps the range to whole buckets</td></tr>
+  <tr><td>Xero, QuickBooks</td><td><b>Month/year pickers</b> on monthly reports</td>
+      <td>A partial month cannot be expressed; the problem is designed out</td></tr>
+  <tr><td>Stripe</td><td>Presets + custom; the chart re-buckets to suit the span</td>
+      <td>Granularity follows the window automatically</td></tr>
+</table>
+<p class="note">The split is clean. <b>Where a chart buckets by a period, the control is in that
+period</b>, or the granularity is a control of its own. Nobody offers a day-granular range over a
+monthly chart and leaves the partial months unexplained.</p>
+
+<h2>4. Option A &mdash; month/year range <span class="tag t-rec">recommended</span></h2>
+<p class="note">The same popover as the existing picker, the same presets-plus-custom shape, the same
+apply-as-you-choose behaviour. Only the field type changes:
+<code>&lt;input type="month"&gt;</code> instead of <code>type="date"</code>.</p>
+<div class="page">
+  <div class="bar">
+    <span class="ctl"><span class="lbl">Months</span> Sep 2025 &ndash; Aug 2026 <i class="bi-chevron-down" style="color:#94A3B8"></i></span>
+    <div class="panel">
+      <div class="grid2">
+        <ul>
+          <li><button type="button">Last 6 months</button></li>
+          <li><button type="button" aria-current="true">Last 12 months</button></li>
+          <li><button type="button">Last 24 months</button></li>
+          <li><button type="button">This year to date</button></li>
+          <li><button type="button">Last calendar year</button></li>
+        </ul>
+        <div>
+          <label style="font-size:12px;color:#475569">From<input type="month" value="2025-09" class="fld"></label>
+          <label style="font-size:12px;color:#475569;display:block;margin-top:8px">To<input type="month" value="2026-08" class="fld"></label>
+          <p style="font-size:11.5px;color:#64748B;margin:8px 0 0">Applied as you choose them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Whole months only"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">75,038</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">50,025</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">25,012</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="75.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="140.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="206.5" y="200.5" width="39.4" height="23.5" rx="3" fill="#4F46E5"/><text x="226.2" y="195.5" text-anchor="middle" font-size="10" fill="#334155">11,087</text><rect x="272.1" y="196.3" width="39.4" height="27.7" rx="3" fill="#4F46E5"/><text x="291.8" y="191.3" text-anchor="middle" font-size="10" fill="#334155">13,093</text><rect x="337.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="403.5" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="469.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="534.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="600.5" y="198.0" width="39.4" height="26.0" rx="3" fill="#4F46E5"/><text x="620.2" y="193.0" text-anchor="middle" font-size="10" fill="#334155">12,283</text><rect x="666.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><text x="685.8" y="219.0" text-anchor="middle" font-size="10" fill="#334155">3</text><rect x="731.8" y="158.8" width="39.4" height="65.2" rx="3" fill="#4F46E5"/><text x="751.5" y="153.8" text-anchor="middle" font-size="10" fill="#334155">30,762</text><rect x="797.5" y="12.0" width="39.4" height="212.0" rx="3" fill="#4F46E5"/><text x="817.2" y="7.0" text-anchor="middle" font-size="10" fill="#334155">100,050</text></svg>
+  <span class="mark ok">Every column covers a whole month. Nothing to explain, because nothing is
+  partial.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> the control's granularity matches the chart's, so the partial-month problem cannot
+    occur. <code>type="month"</code> is native, like the <code>type="date"</code> the app already
+    uses &mdash; no widget, no dependency, and it keeps the &ldquo;no calendar library&rdquo; rule.</li>
+  <li><b>Against:</b> a second kind of date control in one app. Mitigated by everything except the
+    field type being identical to the existing one.</li>
+</ul>
+
+<h2>5. Option B &mdash; window presets only</h2>
+<div class="page">
+  <div class="bar"><div class="seg">
+    <button type="button">6 months</button><button type="button" aria-pressed="true">12 months</button><button type="button">24 months</button><button type="button">All time</button>
+  </div></div>
+  <svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Preset windows only"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">75,038</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">50,025</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">25,012</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="75.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="140.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="206.5" y="200.5" width="39.4" height="23.5" rx="3" fill="#4F46E5"/><text x="226.2" y="195.5" text-anchor="middle" font-size="10" fill="#334155">11,087</text><rect x="272.1" y="196.3" width="39.4" height="27.7" rx="3" fill="#4F46E5"/><text x="291.8" y="191.3" text-anchor="middle" font-size="10" fill="#334155">13,093</text><rect x="337.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="403.5" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="469.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="534.8" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><rect x="600.5" y="198.0" width="39.4" height="26.0" rx="3" fill="#4F46E5"/><text x="620.2" y="193.0" text-anchor="middle" font-size="10" fill="#334155">12,283</text><rect x="666.1" y="224.0" width="39.4" height="0.0" rx="3" fill="#4F46E5"/><text x="685.8" y="219.0" text-anchor="middle" font-size="10" fill="#334155">3</text><rect x="731.8" y="158.8" width="39.4" height="65.2" rx="3" fill="#4F46E5"/><text x="751.5" y="153.8" text-anchor="middle" font-size="10" fill="#334155">30,762</text><rect x="797.5" y="12.0" width="39.4" height="212.0" rx="3" fill="#4F46E5"/><text x="817.2" y="7.0" text-anchor="middle" font-size="10" fill="#334155">100,050</text></svg>
+  <span class="mark ok">One click, nothing to get wrong, and it fits on a phone.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> the smallest thing that answers &ldquo;show me more, or less&rdquo;. Every preset is
+    a whole number of months by construction.</li>
+  <li><b>Against:</b> cannot answer &ldquo;what did last spring look like&rdquo;, and for a bank
+    comparing one grant year with another that is the question.</li>
+</ul>
+
+<h2>6. Option C &mdash; window plus a granularity control <span class="tag t-alt">Grafana / Metabase</span></h2>
+<div class="page">
+  <div class="bar">
+    <span class="ctl"><span class="lbl">Months</span> Sep 2025 &ndash; Aug 2026 <i class="bi-chevron-down" style="color:#94A3B8"></i></span>
+    <div class="seg"><button type="button">Week</button><button type="button" aria-pressed="true">Month</button><button type="button">Quarter</button></div>
+  </div>
+  <svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Quarterly"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">130,815</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">98,111</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">65,408</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">32,704</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Q4 25</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Q1 26</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Q2 26</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Q3 26</text><rect x="101.4" y="206.0" width="118.2" height="18.0" rx="3" fill="#4F46E5"/><text x="160.5" y="201.0" text-anchor="middle" font-size="10" fill="#334155">11,087</text><rect x="298.4" y="202.8" width="118.2" height="21.2" rx="3" fill="#4F46E5"/><text x="357.5" y="197.8" text-anchor="middle" font-size="10" fill="#334155">13,093</text><rect x="495.4" y="204.1" width="118.2" height="19.9" rx="3" fill="#4F46E5"/><text x="554.5" y="199.1" text-anchor="middle" font-size="10" fill="#334155">12,283</text><rect x="692.4" y="12.0" width="118.2" height="212.0" rx="3" fill="#4F46E5"/><text x="751.5" y="7.0" text-anchor="middle" font-size="10" fill="#334155">130,815</text></svg>
+  <span class="mark">Quarterly, from the same figures. Right for a two-year window; noise for a
+  twelve-month one.</span>
+</div>
+
+<h2>7. Other parameters worth having</h2>
+<table class="mini">
+  <tr><th>Parameter</th><th>What it answers</th><th>Verdict</th></tr>
+  <tr class="rec"><td><b>Compare with the previous period</b></td>
+      <td>&ldquo;Is this year better than last?&rdquo;</td>
+      <td><b>Recommended.</b> The most common follow-up to any trend, and this page cannot answer it at all</td></tr>
+  <tr class="rec"><td><b>Filter by item category</b></td>
+      <td>&ldquo;How are period products doing?&rdquo; &mdash; 3 categories cover <b>35 of 51</b> items here</td>
+      <td><b>Recommended.</b> The one breakdown the summary chart cannot show</td></tr>
+  <tr><td>Filter by partner</td><td>&ldquo;What has this agency had?&rdquo;</td>
+      <td>Answered better on the partner page, which already has its own distributions table</td></tr>
+  <tr><td>Filter by storage location</td><td>&ldquo;What moved through this warehouse?&rdquo;</td>
+      <td>Three locations here, and the question is about inventory rather than trend</td></tr>
+  <tr><td>Cumulative / running total</td><td>&ldquo;How far through the year&rsquo;s target are we?&rdquo;</td>
+      <td>Needs a target to run against, and there is none in the app</td></tr>
+  <tr><td>Units &mdash; line items vs packs</td><td>What the y axis is actually counting</td>
+      <td>Worth a look on its own: the chart says &ldquo;line items&rdquo; and never says what one is</td></tr>
+</table>
+
+<h3>Compare with the previous period</h3>
+<div class="page">
+  <svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="This period against last"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">75,038</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">50,025</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">25,012</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><polyline points="62.0,224.0 133.6,224.0 205.3,200.5 276.9,196.3 348.5,224.0 420.2,224.0 491.8,224.0 563.5,224.0 635.1,198.0 706.7,224.0 778.4,158.8 850.0,12.0" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linejoin="round"/><polyline points="62.0,224.0 133.6,224.0 205.3,204.9 276.9,201.8 348.5,224.0 420.2,224.0 491.8,224.0 563.5,224.0 635.1,203.2 706.7,224.0 778.4,173.1 850.0,54.5" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4 3"/></svg>
+  <div class="legendbox"><span class="key"><i style="background:#4F46E5"></i>Sep 2025 &ndash; Aug 2026</span>
+    <span class="key"><i style="background:#94A3B8"></i>Sep 2024 &ndash; Aug 2025</span></div>
+  <span class="mark ok">Lines, not columns: two sets of columns per month is the crowding problem
+  again, at n=2.</span>
+</div>
+
+<h2>8. Other chart styles, on the same figures</h2>
+
+<h3>Line instead of columns <span class="tag t-alt">for long windows</span></h3>
+<div class="page"><svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Total per month as a line"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">75,038</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">50,025</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">25,012</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><polygon points="62,224 62.0,224.0 133.6,224.0 205.3,200.5 276.9,196.3 348.5,224.0 420.2,224.0 491.8,224.0 563.5,224.0 635.1,198.0 706.7,224.0 778.4,158.8 850.0,12.0 850,224" fill="#4F46E5" opacity="0.12"/><polyline points="62.0,224.0 133.6,224.0 205.3,200.5 276.9,196.3 348.5,224.0 420.2,224.0 491.8,224.0 563.5,224.0 635.1,198.0 706.7,224.0 778.4,158.8 850.0,12.0" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linejoin="round"/></svg>
+  <span class="mark">At 24 or 36 months columns get thin and a line does not. Worth switching to
+  automatically once the window passes about 18 points.</span></div>
+
+<h3>Stacked by item category <span class="tag t-rec">recommended, with the filter</span></h3>
+<div class="page"><svg viewBox="0 0 860 250" width="100%" height="250" role="img" aria-label="Total per month by item category"><line x1="62" y1="12.0" x2="850" y2="12.0" stroke="#E2E8F0"/><text x="54" y="16.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="62" y1="65.0" x2="850" y2="65.0" stroke="#E2E8F0"/><text x="54" y="69.0" text-anchor="end" font-size="10" fill="#64748B">75,038</text><line x1="62" y1="118.0" x2="850" y2="118.0" stroke="#E2E8F0"/><text x="54" y="122.0" text-anchor="end" font-size="10" fill="#64748B">50,025</text><line x1="62" y1="171.0" x2="850" y2="171.0" stroke="#E2E8F0"/><text x="54" y="175.0" text-anchor="end" font-size="10" fill="#64748B">25,012</text><line x1="62" y1="224.0" x2="850" y2="224.0" stroke="#E2E8F0"/><text x="54" y="228.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="94.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="160.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="226.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="291.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="357.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="423.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="488.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="554.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="620.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="685.8" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="751.5" y="240" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="817.2" y="240" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="206.5" y="210.7" width="39.4" height="13.3" fill="#4F46E5"/><rect x="206.5" y="201.5" width="39.4" height="9.2" fill="#0EA5E9"/><rect x="206.5" y="200.7" width="39.4" height="0.8" fill="#14B8A6"/><rect x="206.5" y="200.5" width="39.4" height="0.2" fill="#F59E0B"/><rect x="272.1" y="210.2" width="39.4" height="13.8" fill="#4F46E5"/><rect x="272.1" y="200.0" width="39.4" height="10.3" fill="#0EA5E9"/><rect x="272.1" y="198.6" width="39.4" height="1.4" fill="#14B8A6"/><rect x="272.1" y="196.3" width="39.4" height="2.3" fill="#F59E0B"/><rect x="600.5" y="213.2" width="39.4" height="10.8" fill="#4F46E5"/><rect x="600.5" y="199.5" width="39.4" height="13.7" fill="#0EA5E9"/><rect x="600.5" y="198.1" width="39.4" height="1.4" fill="#14B8A6"/><rect x="600.5" y="198.0" width="39.4" height="0.2" fill="#F59E0B"/><rect x="666.1" y="224.0" width="39.4" height="0.0" fill="#4F46E5"/><rect x="731.8" y="189.0" width="39.4" height="35.0" fill="#4F46E5"/><rect x="731.8" y="169.6" width="39.4" height="19.4" fill="#0EA5E9"/><rect x="731.8" y="163.5" width="39.4" height="6.1" fill="#14B8A6"/><rect x="731.8" y="158.8" width="39.4" height="4.7" fill="#F59E0B"/><rect x="797.5" y="135.5" width="39.4" height="88.5" fill="#4F46E5"/><rect x="797.5" y="37.4" width="39.4" height="98.1" fill="#0EA5E9"/><rect x="797.5" y="20.1" width="39.4" height="17.3" fill="#14B8A6"/><rect x="797.5" y="12.0" width="39.4" height="8.1" fill="#F59E0B"/></svg>
+  <div class="legendbox"><span class="key"><i style="background:#4F46E5"></i>Uncategorised</span><span class="key"><i style="background:#0EA5E9"></i>Category Two</span><span class="key"><i style="background:#14B8A6"></i>Category One</span><span class="key"><i style="background:#F59E0B"></i>Category Three</span></div>
+  <span class="mark ok">Four bands, not forty-seven. This is the composition view that
+  &ldquo;top 8 and Other&rdquo; was rejected for &mdash; because a category is a grouping the bank
+  already maintains, not an arbitrary cut.</span></div>
+
+<h3>Calendar heatmap</h3>
+<div class="page"><svg viewBox="0 0 860 86" width="100%" height="86" role="img" aria-label="Months as a heatmap"><rect x="62.0" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="93.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><rect x="128.5" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="159.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><rect x="195.0" y="14" width="62.5" height="40" rx="4" fill="rgb(217,220,246)" stroke="#E2E8F0"/><text x="226.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="226.2" y="39" text-anchor="middle" font-size="10" fill="#334155">11k</text><rect x="261.5" y="14" width="62.5" height="40" rx="4" fill="rgb(213,216,244)" stroke="#E2E8F0"/><text x="292.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="292.8" y="39" text-anchor="middle" font-size="10" fill="#334155">13k</text><rect x="328.0" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="359.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><rect x="394.5" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="425.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><rect x="461.0" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="492.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><rect x="527.5" y="14" width="62.5" height="40" rx="4" fill="#EEF2FF" stroke="#E2E8F0"/><text x="558.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><rect x="594.0" y="14" width="62.5" height="40" rx="4" fill="rgb(215,217,245)" stroke="#E2E8F0"/><text x="625.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="625.2" y="39" text-anchor="middle" font-size="10" fill="#334155">12k</text><rect x="660.5" y="14" width="62.5" height="40" rx="4" fill="rgb(238,242,255)" stroke="#E2E8F0"/><text x="691.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="691.8" y="39" text-anchor="middle" font-size="10" fill="#334155">0k</text><rect x="727.0" y="14" width="62.5" height="40" rx="4" fill="rgb(180,181,229)" stroke="#E2E8F0"/><text x="758.2" y="70" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="758.2" y="39" text-anchor="middle" font-size="10" fill="#334155">30k</text><rect x="793.5" y="14" width="62.5" height="40" rx="4" fill="rgb(48,42,170)" stroke="#E2E8F0"/><text x="824.8" y="70" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><text x="824.8" y="39" text-anchor="middle" font-size="10" fill="#fff">100k</text></svg>
+  <span class="mark">Compact, and good for seasonality across several years. At twelve months it
+  says less than the columns and reads less precisely.</span></div>
+
+<div class="verdict"><b>Recommendation: A, plus compare, plus category.</b>
+<b>A</b> for the range &mdash; a month/year picker in the same popover as the existing one, so the
+partial-month problem is designed out rather than explained away.
+<b>Compare with the previous period</b>, as a faded line, because it is the question every trend
+prompts and the one this page cannot answer.
+<b>A category filter, with the stacked view when none is chosen</b> &mdash; four bands from a
+grouping the bank already maintains, which is the honest composition answer that a top-N cut
+could not give.
+<br><br>Leaving out: <b>granularity</b> (no window long enough to need it yet), <b>partner and
+location filters</b> (answered better elsewhere), <b>cumulative</b> (no target to run against),
+<b>heatmap</b> (says less than the columns at this span).</div>
+
+<p class="note" style="margin-top:22px"><b>Tell me which to build.</b> And whether the units question
+&mdash; what a &ldquo;line item&rdquo; means to a bank reading this &mdash; is worth its own look.</p>
+
+</div></body></html>
