@@ -33,8 +33,26 @@
               <% end %>
             </td>
             <td class="numeric"><%= item[:quantity] %></td>
-            <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
-              <%= item[:on_hand] || 0 %>
+            <%#
+              `table-danger` was Bootstrap's, and nothing defines it now -- so this cell had been
+              signalling "below the on-hand minimum" by painting itself a colour that does not
+              exist. The warning was invisible on this page and on itemized distributions.
+
+              The treatment is the dashboard's low inventory one, unchanged: the number in rose
+              *and* a pill carrying the word and an icon. design.md -- never colour alone. A cell
+              tinted red says something is wrong to a sighted reader with normal colour vision and
+              nothing to anyone else, which is what this was trying to do before it stopped
+              working at all.
+            %>
+            <td class="quantity">
+              <% if item[:below_onhand_minimum] %>
+                <span class="inline-flex items-center gap-1.5">
+                  <span class="font-semibold text-rose-700"><%= item[:on_hand] || 0 %></span>
+                  <%= essentials_status_pill("Below minimum", tone: :danger, icon: "bi-exclamation-triangle") %>
+                </span>
+              <% else %>
+                <%= item[:on_hand] || 0 %>
+              <% end %>
             </td>
           </tr>
         <% end %>

@@ -7661,3 +7661,37 @@ protects against the tool being wrong; it does not protect against the reset. **
 only thing that does**, which is the cadence this file has argued for from the beginning — now with
 a measurement behind it.
 
+## 2026-08-31 — A row header is a cell, and a report is not an index
+
+Reported on the monthly distributions table: padding missing on both sides, and had pagination been
+applied. Two questions, two different kinds of answer.
+
+**The padding was a hole in the design system, not a mistake in the view.** `.data-table` styles
+`thead th`, `tbody td`, and `tfoot td, tfoot th` — and never the fourth combination. Any table whose
+first column is a `<th scope="row">` therefore had **no cell padding at all**, and sat flush against
+the edge of the card. Measured: `padding-left: 0px` on the trend tables against `16px` on
+`/donations`, and after the fix both are 17px in from the card edge. Three tables were affected, all
+three historical trend pages, and the row header is the *right* markup there — it is what lets a
+screen reader say "Kids (Size 2), March, 3,042" rather than reading a bare number, so the rule was
+punishing the correct thing.
+
+**Pagination: no, and it should not be.** Every report table is **one row per item**, bounded by the
+bank's catalogue — 27, 46 and 47 rows measured — where an index table is one row per transaction and
+unbounded. A report is also read whole, exported whole and printed whole, and a pager breaks all
+three: you cannot scan a year of one item's figures with a quarter of them on page 2.
+`docs/migration-map.md` already lists the eight *index* tables that do not paginate and why; reports
+were not in that list because nobody had decided. Now it is a decision, and a spec pins the absence
+so it does not read as an omission.
+
+**And auditing the rest for the same class of fault found a worse one.** Two reports marked "below
+the on-hand minimum" with `table-danger` — Bootstrap's class, defined nowhere since ADR 0011. The
+warning was not subtle, it was **invisible**: the cell rendered exactly like every other cell. It
+now uses the treatment the dashboard's low inventory table already had, unchanged — the number in
+rose *and* a pill carrying the word and an icon, because design.md does not allow colour alone. Had
+that cell still been Bootstrap-red it would have been a design system violation; being undefined, it
+was a functional one, and the two failure modes are easy to confuse when reading a diff.
+
+The audit of all eleven report pages also measured what comes next: the three trend charts render
+**47, 34 and 37 series with none of them visible**, which is a separate problem and gets its own
+entry.
+

@@ -28,8 +28,19 @@
           <tr>
             <td><%= item[:name] %></td>
             <td class="numeric"><%= item[:distributed] %></td>
-            <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
-              <%= item[:current_onhand] %>
+            <%# `table-danger` was Bootstrap's and is defined nowhere, so this cell had been
+                signalling "below the on-hand minimum" with a colour that does not exist. Same
+                treatment as the dashboard's low inventory table: the number in rose *and* the
+                word, because design.md does not allow colour alone. %>
+            <td class="quantity">
+              <% if item[:below_onhand_minimum] %>
+                <span class="inline-flex items-center gap-1.5">
+                  <span class="font-semibold text-rose-700"><%= item[:current_onhand] %></span>
+                  <%= essentials_status_pill("Below minimum", tone: :danger, icon: "bi-exclamation-triangle") %>
+                </span>
+              <% else %>
+                <%= item[:current_onhand] %>
+              <% end %>
             </td>
           </tr>
         <% end %>
