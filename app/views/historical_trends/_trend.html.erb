@@ -22,6 +22,9 @@
   <div class="space-y-6">
     <%
       months = last_12_months
+      # Short in the header, long everywhere it has room: the chart's axis and the sentence a
+      # screen reader hears about each sparkline. See `last_12_months_short`.
+      short_months = last_12_months_short
       # One total per month, summed across every item. The per-item figures are in the table below.
       monthly_totals = Array.new(months.size, 0)
       series.each { |item| item[:data].each_with_index { |value, i| monthly_totals[i] += value.to_i } }
@@ -93,13 +96,13 @@
               body: "Once there is activity, every item appears here with its monthly figures." %>
       <% else %>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
-          <table class="data-table">
+          <table class="data-table dense">
             <caption><%= title %>, by item and month</caption>
             <thead>
               <tr>
                 <th scope="col">Item</th>
-                <th scope="col" class="trend">Last 12 months</th>
-                <% months.each do |month| %>
+                <th scope="col" class="trend">Trend</th>
+                <% short_months.each do |month| %>
                   <th scope="col" class="quantity"><%= month %></th>
                 <% end %>
                 <th scope="col" class="quantity">Total</th>

@@ -469,7 +469,7 @@ module EssentialsUiHelper
   # naming the peak month and value. That is not a restatement of the row -- the twelve numbers are
   # already in it -- it is the one thing the *shape* says that reading twelve numbers in order does
   # not give you for free. design.md: a chart is never the only representation of its data.
-  SPARK_W = 104
+  SPARK_W = 44
   SPARK_H = 26
 
   def essentials_sparkline(values, months: [])

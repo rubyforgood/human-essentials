@@ -700,6 +700,16 @@ on — while the Reports page that links to them was not. They match now: *Month
 **The Activity graph now has a small table under it** with the same three figures, so they can be
 read, copied and printed without squinting at a bar.
 
+### The monthly trend table fits on the screen again
+
+**The by-item table no longer scrolls sideways on a normal desktop.** Three changes got it there:
+the month headings are now `Sep 25` rather than `Sep 2025`, the cells are a little tighter, and the
+trend column is narrower.
+
+It fits at **1366px wide and above**. At 1280 it still scrolls a little — twelve months of figures
+plus a name, a trend and a total is fifteen columns, and they do not fit in a smaller window. The
+table scrolls inside its own box rather than pushing the page sideways.
+
 ### The monthly trend reports draw something now
 
 **Monthly Distributions, Donations and Purchases used to open with an empty chart.** A tall grey box,
