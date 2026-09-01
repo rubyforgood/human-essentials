@@ -95,17 +95,6 @@ module MonthRangeHelper
 
   def compare_cap_reached? = selected_comparisons.size >= COMPARE_CAP
 
-  # What the trigger shows: the chosen things, or the unfiltered state named rather than left blank.
-  def comparison_labels(categories, series)
-    selected_comparisons.filter_map { |kind, value|
-      if kind == "cat"
-        categories.find { |c| c.id.to_s == value }&.name
-      else
-        (series.any? { |i| i[:name] == value }) ? value : nil
-      end
-    }
-  end
-
   # Solid first, so a single choice is an ordinary line.
   PLOT_DASHES = ["Solid", "Dash", "Dot", "DashDot"].freeze
   # Each is >= 3:1 against the white plot, which is what WCAG 1.4.11 asks of a line. They are *not*
@@ -130,5 +119,43 @@ module MonthRangeHelper
 
     percent = (delta.abs * 100.0 / previous).round
     "#{delta.positive? ? "up" : "down"} #{percent}% on the previous period"
+  end
+  # --- The chip row under the bar -------------------------------------------
+  #
+  # Links, not form controls. The chips sit outside the filter bar's form -- they have to, because
+  # four of them are 659px and the bar's cell is 256 -- so a link is the thing that works there with
+  # no JavaScript and no second controller. Each one is this page minus that selection.
+
+  def compare_chip_entries(categories, series)
+    selected_comparisons.each_with_index.filter_map { |(kind, value), i|
+      label = (kind == "cat") ? categories.find { |c| c.id.to_s == value }&.name : value
+      next if label.nil?
+      next if kind == "item" && series.none? { |item| item[:name] == value }
+
+      {label: label, entry: "#{kind}:#{value}",
+       colour: PLOT_COLOURS[i], dash: PLOT_DASHES[i]}
+    }
+  end
+
+  def compare_without(entry)
+    kept = selected_comparisons.map { |kind, value| "#{kind}:#{value}" } - [entry]
+    trend_url(kept)
+  end
+
+  def compare_cleared = trend_url([])
+
+  # The SVG dash-array for a Highcharts dash style, so a chip's swatch is the line it stands for.
+  PLOT_DASH_ARRAYS = {"Dash" => "6 4", "Dot" => "1.5 4", "DashDot" => "8 3 2 3"}.freeze
+
+  private
+
+  # Everything the page is currently showing, with the comparison replaced. Built from the params
+  # actually in use rather than from `request.query_parameters`, so a stale or hand-edited key
+  # cannot survive a chip being removed.
+  def trend_url(entries)
+    filters = {"months" => month_range_param(*selected_month_range)}
+    filters["compare"] = "1" if compare_previous?
+    filters["compare_with"] = entries if entries.any?
+    "#{request.path}?#{{filters: filters}.to_query}"
   end
 end

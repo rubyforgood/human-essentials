@@ -34,6 +34,9 @@
     <div class="min-w-0"><%= render "shared/compare_picker", categories: @item_categories, items: @series %></div>
   <% end %>
 
+  <%# Directly under the bar, where there is room for four of them on one line. %>
+  <%= render "shared/compare_chips", categories: @item_categories, items: @series %>
+
   <div class="space-y-6">
     <%
       # The window comes from the controller now, and with it the two things a reader has to be

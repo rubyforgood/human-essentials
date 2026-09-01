@@ -8258,3 +8258,40 @@ field from a *filter chip* in a chip set. Two of three put the count in the cont
 a row, which is also the only thing the width allows. Recommended C, with the relationship carried by
 a **"Comparing:"** prefix as well as by position.
 
+## 2026-09-01 — The chips moved out of the field, and the measurement chose where
+
+Built C. The field says how many; a row under the bar says which.
+
+**Why not B.** Four chips are **659px** and the Compare cell is **256** — one chip and an overflow
+badge is all that fits, and the three behind the badge could be neither seen nor removed without
+opening the panel, which is the thing that was asked for two changes before. Under the bar there is
+**1,120px**: four chips sit on one line with 461px spare, and the row costs a fixed **26px** however
+many there are.
+
+**Measured after.** Both controls **38px** at every count, where the Compare field had been 46px
+empty and **166px at four**. The chart card sits at y=347 with one chip, two chips or four — it moves
+once, when the row appears, and then not at all. Before, four chips pushed it **120px** down.
+
+**What the design systems do**, read from source: Carbon's `MultiSelect` puts a `selectionCount`
+badge in the field and not the chips; Polaris ships `Tag` for a row; Material distinguishes an
+*input chip*, which belongs inside a text field you type into, from a *filter chip*, which belongs
+in a chip set. Two of three put the summary in the control and the chips in a row — which was also
+the only thing the width allowed.
+
+**On proximity, which was the objection to putting them on the chart.** The row is immediately under
+the bar and prefixed **`Comparing:`**, so the relationship is carried by a word as well as by
+position. Aligning it under the Compare column instead would have been perfect proximity and three
+rows of height, which is the problem being fixed.
+
+**Two things fell out of it.** The chips are **links**, because the row is outside the bar's form and
+a link needs no JavaScript and no second controller — which also deleted `compare-picker#remove`.
+And the row's clear control is **`Clear comparison`**, not *Clear all*: the bar already has a *Clear
+all* and it resets the date range too. Two controls with the same word doing different things is the
+fault the row action called *Cancel* had, and it would have been reintroduced two feet away from it.
+
+**One mistake worth recording.** My first attempt at this edit failed on a missing anchor and wrote
+nothing, while a second edit in the same batch succeeded — so the page briefly had chips in *both*
+places, and the measurement showed the field at 28px inside a 38px wrapper with the chart still
+sliding. I caught it by measuring rather than by looking at the diff. **A batch of edits where one
+silently does nothing looks exactly like a batch that worked.**
+
