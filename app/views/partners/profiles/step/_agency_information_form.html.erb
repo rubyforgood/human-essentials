@@ -36,23 +36,27 @@
     <%= pf.input :agency_mission, as: :text, label: "Agency mission", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
+  <%# `address_field` supplies the label, the state list and the autocomplete token, so this form
+      and the six others that collect an address cannot drift apart. **State was a free text box
+      here** while the organization form has offered a 52-option select all along, and no field on
+      any of them carried `autocomplete` -- WCAG 1.3.5. See design.md. %>
   <div class="mb-4">
-    <%= pf.input :address1, label: "Address (line 1)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :address1, **address_field(:line1), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :address2, label: "Address (line 2)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :address2, **address_field(:line2), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :city, label: "City", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :city, **address_field(:city), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :state, label: "State", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :state, **address_field(:state), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :zip_code, label: "Zip code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :zip_code, **address_field(:zip), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

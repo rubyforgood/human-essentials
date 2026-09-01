@@ -24,11 +24,11 @@
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.agency_mission %></dd>
     </dl>
     <dl>
-      <dt class="text-xs font-medium text-slate-500">Address Line 1</dt>
+      <dt class="text-xs font-medium text-slate-500">Address line 1</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.address1 %></dd>
     </dl>
     <dl>
-      <dt class="text-xs font-medium text-slate-500">Address Line 2</dt>
+      <dt class="text-xs font-medium text-slate-500">Address line 2</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.address2 %></dd>
     </dl>
     <dl>
@@ -40,29 +40,29 @@
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.state %></dd>
     </dl>
     <dl>
-      <dt class="text-xs font-medium text-slate-500">Zip Code</dt>
+      <dt class="text-xs font-medium text-slate-500">ZIP code</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zip_code %></dd>
     </dl>
     <% if partner_profile.program_address1.present? || partner_profile.program_address2.present? || partner_profile.program_city.present? || partner_profile.program_state.present? || partner_profile.program_zip_code.present? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Program or delivery address, if different</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program Address</dt>
+        <dt class="text-xs font-medium text-slate-500">Program address line 1</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_address1 %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program Address</dt>
+        <dt class="text-xs font-medium text-slate-500">Program address line 2</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_address2 %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program City</dt>
+        <dt class="text-xs font-medium text-slate-500">Program city</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_city %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program State</dt>
+        <dt class="text-xs font-medium text-slate-500">Program state</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_state %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program Zip Code</dt>
+        <dt class="text-xs font-medium text-slate-500">Program ZIP code</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_zip_code %></dd>
       </dl>
     <% end %>
@@ -197,7 +197,7 @@
         <dt class="text-xs font-medium text-slate-500">Other</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_other %></dd>
       </dl>
-      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Zip codes served</h2>
+      <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">ZIP codes served</h2>
       <dl>
         <dt class="text-xs font-medium text-slate-500">Zips</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.zips_served %></dd>

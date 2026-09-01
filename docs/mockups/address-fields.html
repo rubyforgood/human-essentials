@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Address fields</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--bad:#B4232E;--badsoft:#FBEDEE;--ok:#0F6E4F;--oksoft:#E9F5EF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .card h4{margin:0 0 14px;font-size:16px;font-weight:600}
+  label{display:block;font-size:13.5px;font-weight:500;color:#334155;margin-bottom:6px}
+  .fld{margin-bottom:16px}
+  input,select{width:100%;height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:0 11px;
+    font:14px Figtree;color:var(--ink);background:#fff}
+  select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2394A3B8'><path d='M4.2 6.3 8 10l3.8-3.7'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:38px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .hint{font-size:12px;color:var(--soft);margin-top:5px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 6px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--soft);font-weight:600}
+  code{background:#F1F5F9;border-radius:4px;padding:1px 5px;font-size:12.5px}
+  .mark{font-size:12px;font-weight:600;color:var(--bad);display:block;margin-top:8px}
+  .mark.ok{color:var(--ok)}
+  ul.pts{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.pts li{margin-bottom:6px} ul.pts b{color:var(--ink)}
+</style></head><body><div class="wrap">
+
+<h1>Address fields: one box, or four?</h1>
+<p class="lede">Reported on the vendor form. Everything on this page below the first section is
+already built and pushed &mdash; the shared definition, the autocomplete tokens, the ZIP fix, the
+audit. <b>The one thing left to decide is whether the four freeform addresses become four fields.</b></p>
+
+<h2>Where the app stands now</h2>
+<p class="note">Seven screens collect an address, in <b>three</b> storage shapes.</p>
+<table>
+  <tr><th>Model</th><th>Columns</th><th>Screens</th></tr>
+  <tr><td><code>Vendor</code>, <code>DonationSite</code>, <code>ProductDriveParticipant</code>, <code>StorageLocation</code></td>
+      <td><code>address</code> &mdash; one freeform string</td><td>8 (new + edit each)</td></tr>
+  <tr><td><code>Organization</code></td><td><code>street</code>, <code>city</code>, <code>state</code>, <code>zipcode</code></td><td>3</td></tr>
+  <tr><td><code>Partners::Profile</code></td><td><code>address1</code>, <code>address2</code>, <code>city</code>, <code>state</code>, <code>zip_code</code> &mdash; and the same five again for the program address</td><td>2</td></tr>
+</table>
+
+<h2>Option A &mdash; leave the four as one box <span class="tag t-now">what happens if you do nothing</span></h2>
+<div class="grid2">
+  <div class="card">
+    <h4>New vendor</h4>
+    <div class="fld"><label>Business name</label><input value="Kimberly-Clark"></div>
+    <div class="fld"><label>Address</label><input value="1500 Remount Road, Front Royal, VA 22630">
+      <p class="hint">autocomplete="street-address"</p></div>
+  </div>
+  <div>
+    <ul class="pts">
+      <li><b>Nothing to migrate.</b> No schema change, no backfill, the four CSV import templates keep working.</li>
+      <li><b>Still inconsistent with the other three screens</b>, which is what was reported.</li>
+      <li><b>You cannot filter or group by state</b>, because there is no state. This is why donation sites cannot be listed by region.</li>
+      <li>Geocoding keeps working exactly as it does today.</li>
+    </ul>
+    <span class="mark">Does not answer the report.</span>
+  </div>
+</div>
+
+<h2>Option B &mdash; four fields, and the CSV keeps one column <span class="tag t-rec">recommended</span></h2>
+<div class="grid2">
+  <div class="card">
+    <h4>New vendor</h4>
+    <div class="fld"><label>Business name</label><input value="Kimberly-Clark"></div>
+    <div class="fld"><label>Street address</label><input value="1500 Remount Road"></div>
+    <div class="fld"><label>City</label><input value="Front Royal"></div>
+    <div class="row">
+      <div class="fld"><label>State</label><select><option>VA</option></select></div>
+      <div class="fld"><label>ZIP code</label><input value="22630" placeholder="12345 or 12345-6789"></div>
+    </div>
+  </div>
+  <div>
+    <ul class="pts">
+      <li><b>The same four fields as the organization form</b>, from the same <code>address_field</code> definition, so all seven screens match.</li>
+      <li><b>The CSV templates do not change.</b> The importer keeps a single <code>address</code> column and parses it; a bank's saved template file still works.</li>
+      <li><b>The old column stays</b> as a composed <code>#address</code> method, exactly as <code>Organization</code> does it &mdash; so geocoding, the four PDFs and the exports need no changes at all.</li>
+      <li><b>State becomes filterable</b> on donation sites, vendors and storage locations.</li>
+    </ul>
+    <span class="mark">Cost: a migration on 4 tables, a backfill, and an importer that parses.</span>
+  </div>
+</div>
+<h3>The backfill is the risk, and it is measurable</h3>
+<p class="note">Splitting existing text is where this can lose data. Measured against the seed
+database &mdash; <b>10 of 18 rows parse cleanly</b>:</p>
+<table>
+  <tr><th>Model</th><th>Rows with an address</th><th>Parse as "street, city, ST zip"</th><th>Examples</th></tr>
+  <tr><td>DonationSite</td><td>8</td><td style="color:var(--ok)"><b>8</b></td><td><code>2345 NE Some St., Pawnee, IN 12345</code></td></tr>
+  <tr><td>StorageLocation</td><td>5</td><td style="color:var(--bad)"><b>2</b></td><td>two rows say <code>Unknown</code></td></tr>
+  <tr><td>Vendor</td><td>5</td><td style="color:var(--bad)"><b>0</b></td><td><code>3035 Mattie Isle Vincentshire, MA 11923-5457</code> &mdash; no comma before the city</td></tr>
+  <tr><td>ProductDriveParticipant</td><td>0</td><td>&mdash;</td><td></td></tr>
+</table>
+<p class="note">Seed data is not production data, so those proportions are indicative only. The safe
+handling is the same either way: <b>put whatever does not parse into Street address unchanged</b> and
+leave city, state and ZIP blank, so nothing is ever thrown away and a human can finish the ones the
+parser could not. Nothing is deleted by the migration.</p>
+
+<h2>Option C &mdash; four fields, and the CSV gains columns <span class="tag t-alt">rejected</span></h2>
+<p class="note">The same form as B, but the import templates become
+<code>name,street,city,state,zipcode,&hellip;</code>. Cleaner on paper, and rejected: 200+ banks have
+downloaded these templates and keep local copies, and a bank whose saved file still has one
+<code>address</code> column would get a silent import failure at the point it is least able to debug
+one. B gets the same result without breaking a file somebody already has.</p>
+
+<h2>Already built, whichever you choose</h2>
+<table>
+  <tr><th>Change</th><th>Why</th></tr>
+  <tr><td><code>address_field</code> owns every label and token</td><td>Seven screens, five spellings of the same words. One definition now.</td></tr>
+  <tr><td><b>autocomplete on all 26 fields</b></td><td>WCAG 1.3.5, a AA criterion, was failing on every one &mdash; 17 measured, 0 attributes.</td></tr>
+  <tr><td><b>State is a list on the partner profile</b></td><td>It was a free text box while <code>us_states</code> sat unused in a helper.</td></tr>
+  <tr><td><b><code>program_zip_code</code> is a string</b></td><td>It was an integer, so <code>04194</code> stored as <code>4194</code> and ZIP+4 would not go in. Two of five seed values were already damaged; the migration pads them back.</td></tr>
+  <tr><td><b>One spelling of ZIP</b></td><td>"Zip code", "Zipcode", "Zip Code" and "zip code" across nine views.</td></tr>
+  <tr><td><code>bin/design/address-audit.js</code></td><td>Reads each field's role off its name, so a new address field is audited the day it is written.</td></tr>
+</table>
+<span class="mark ok">26 address fields, 0 findings.</span>
+
+</div></body></html>

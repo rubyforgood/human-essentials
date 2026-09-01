@@ -32,7 +32,11 @@
         <%= f.input :phone, label: "Phone" %>
         <%= f.input :email, label: "Email" %>
       </fieldset>
-      <%= f.input :address, label: "Address" %>
+      <%# One box holding a whole address, so the whole-address token: `street-address` is defined
+          as multi-line and is the right one here, where `address-line1` would claim this box is
+          only the first line of one. See "Address fields" in design.md. %>
+      <%= f.input :address, label: "Address",
+            input_html: {autocomplete: "street-address"} %>
       <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
     <% end %>
 

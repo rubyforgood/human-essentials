@@ -8537,3 +8537,68 @@ the track now, and fails at 100 when the CSS rule is removed. The chart box was 
 **And design.md had no rule about inline styles at all** — the constraint existed only inside an
 audit, enforced more strictly than it was written and never written down anywhere a person building
 a screen would look. It is a Foundations section now.
+
+## 2026-09-01 — Address fields: one definition, and one question left open
+
+Reported on the vendor form: its address box does not match the address/city/state shape used
+elsewhere. The audit that followed found the app collecting an address in **five different shapes
+across seven screens**, and several of the differences were worse than cosmetic.
+
+### What was actually wrong
+
+| | Before |
+| --- | --- |
+| Shape | Four models store one freeform `address` string; `Organization` stores four columns; `Partners::Profile` stores five, twice |
+| State | A 52-option select on the organization form, a **free text box** on the partner profile — with `us_states` sitting in a helper the partner form never called |
+| ZIP | `zip_code` a string, `program_zip_code` an **integer column**, so that field rendered `type="number"` |
+| Labels | "Street" / "Street address" / "Address (line 1)"; "Zip code" / "Zipcode" / "Zip Code"; two `<dt>`s both reading "Program Address" |
+| autocomplete | **17 fields, 0 attributes.** WCAG 1.3.5 Identify Input Purpose, a AA criterion, failing on every one |
+
+The integer ZIP is the one that was losing data rather than looking untidy. `"04194".to_i` is
+`4194`, so every ZIP in MA, RI, NH, ME, VT, CT, NJ and Puerto Rico was silently truncated, and
+ZIP+4 could not be entered at all — while the string column beside it held ZIP+4 on 4 of its 7 rows,
+so ZIP+4 is the normal case here rather than an edge one. Two of the five stored values were already
+damaged. The migration changes the type and pads values under five digits back out, which is the
+exact inverse of the cast that broke them.
+
+### One definition
+
+`AddressHelper::ADDRESS_FIELDS` now owns the label and the autocomplete token for each part, and
+`address_field(role)` hands them to simple_form. Six screens call it. A form that writes its own
+`label:` for part of an address has drifted by definition, which is what the audit looks for.
+
+The autocomplete tokens are the part worth getting right and the part most often got wrong:
+`street-address` is defined as a *multi-line whole* address, so a form with two street lines must
+use `address-line1`/`address-line2` instead — the two are not synonyms, and using the whole-address
+token on line 1 tells the browser that box holds everything.
+
+### Two exemptions, both declared rather than inferred
+
+**`third_party: true`** renders `autocomplete="off"`. A partner typing a client's ZIP is not
+entering their own address, and WCAG 1.3.5 is explicitly about fields collecting the *user's*
+information — autofilling a caseworker's own address into a family record would be worse than
+leaving it empty. `off` says so; a missing attribute says nothing, and nothing is indistinguishable
+from an oversight. The audit prints these rather than passing them silently.
+
+**A qualified label.** "Guardian ZIP code" is right, because it says whose. So the label check is
+not equality — it asks that the label *end with* the app's word for the part. The qualifier is free,
+the part is not.
+
+### The question I did not decide
+
+Whether the four freeform addresses — `Vendor`, `DonationSite`, `ProductDriveParticipant`,
+`StorageLocation` — become four fields each. That is what the report was originally about, and
+everything above is true either way.
+
+It is left open because it is not a form change. It is a schema migration across four tables; a
+change to four **CSV import templates** that banks have downloaded and keep local copies of; and a
+parse of existing freeform text, which in the seed database succeeds on **10 of 18 rows** — the
+vendor addresses have no comma between street and city (`"3035 Mattie Isle Vincentshire, MA
+11923-5457"`) and two storage locations say `"Unknown"`. All four also include `Geocodable`, which
+is `geocoded_by :address`, so each would need `Organization`'s pattern: a composed `#address` and a
+hand-written `#address_changed?`.
+
+None of that argues against doing it — structured fields are the standard and the freeform box is
+why nobody can filter donation sites by state. It argues that it is a decision with a data-loss
+mode, taken deliberately, rather than a rider on a consistency pass. The preview is
+`docs/mockups/address-fields.html`.

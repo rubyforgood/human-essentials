@@ -27,6 +27,7 @@ dump.rdb
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/log/*.out
 /tmp
 .env
 .env.production
@@ -144,3 +145,4 @@ out/
 /public/field-height-and-axis.html
 /public/where-the-chips-go.html
 /public/manufacturer-donations.html
+/public/address-fields.html

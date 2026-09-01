@@ -4,7 +4,7 @@
   metrics = [
     {icon: "bi-people", tone: :brand, value: total_on_hand(impact_metrics[:families_served] || 0), label: "Families served"},
     {icon: "bi-person-arms-up", tone: :info, value: total_on_hand(impact_metrics[:children_served] || 0), label: "Children served"},
-    {icon: "bi-geo-alt", tone: :success, value: total_on_hand(impact_metrics[:family_zipcodes] || 0), label: "Zipcodes served"}
+    {icon: "bi-geo-alt", tone: :success, value: total_on_hand(impact_metrics[:family_zipcodes] || 0), label: "ZIP codes served"}
   ]
   metrics << {icon: "bi-speedometer", tone: :warning, value: number_with_delimiter(partner.quota), label: "Monthly limit"} if partner.quota.present?
 %>

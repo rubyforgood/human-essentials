@@ -1,21 +1,24 @@
 <%= f.fields_for :profile, profile do |pf| %>
+  <%# The same five fields as the agency address, from the same definition. `program_zip_code` was
+      an *integer* column until 20260901180000, so this box rendered as `type="number"` -- which
+      drops the leading zero on every ZIP in New England and refuses ZIP+4 outright. %>
   <div class="mb-4">
-    <%= pf.input :program_address1, label: "Address (line 1)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :program_address1, **address_field(:line1), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :program_address2, label: "Address (line 2)", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :program_address2, **address_field(:line2), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :program_city, label: "City", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :program_city, **address_field(:city), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :program_state, label: "State", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :program_state, **address_field(:state), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :program_zip_code, label: "Zip code", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :program_zip_code, **address_field(:zip), class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

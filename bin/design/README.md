@@ -273,6 +273,26 @@ on `/events` was never looked at; and a hardcoded list goes stale in silence, so
 targets now, like `route-sweep.js` and `icon-audit.js`, and takes every control whose visible text
 is empty. Currently **640 icon-only controls across 153 screens, 0 defects**.
 
+`address-audit.js` checks that **every screen collecting an address asks for it the same way**.
+
+```bash
+bin/rails runner bin/design/route-targets.rb > /tmp/targets.json
+pw bin/design/address-audit.js
+```
+
+Per field: the WCAG 1.3.5 `autocomplete` token for its role, a state chosen from a list rather than
+typed, a ZIP as text with a numeric inputmode rather than `type="number"`, a label ending in the
+app's word for that part, and an accessible name at all.
+
+**Roles are read off the field's name, not from a list of screens**, so a form that adds an address
+field is audited the day it is written -- the lesson from `tooltip-audit.js`, which carried a
+hardcoded page list and reported zero while there were fourteen. It found two things a manual sweep
+of the views had missed: a guardian ZIP on the family form, and a program ZIP still rendering as
+`type="number"`.
+
+`autocomplete="off"` is reported separately rather than failed: it declares an address belonging to
+somebody other than the person filling the form in. Currently **26 address fields, 0 findings**.
+
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
 ```bash

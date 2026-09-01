@@ -15,10 +15,13 @@
       <%= f.input :name, required: true, autofocus: true %>
       <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
       <%= f.input :email %>
-      <%= f.input :street %>
-      <%= f.input :city %>
-      <%= f.input :state, collection: us_states, prompt: "Select a state" %>
-      <%= f.input :zipcode %>
+      <%# One definition of an address field, shared with the six other screens that collect one.
+          These four carried no labels at all, so they were titled from the column names --
+          "Street", "Zipcode" -- against "Street address" and "Zip code" on the bank's own form. %>
+      <%= f.input :street, **address_field(:street) %>
+      <%= f.input :city, **address_field(:city) %>
+      <%= f.input :state, **address_field(:state) %>
+      <%= f.input :zipcode, **address_field(:zip) %>
       <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @organization %>
       <%= f.simple_fields_for :account_request do |account_request| %>
         <%= account_request.association :ndbn_member, label: "NDBN membership",

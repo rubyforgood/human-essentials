@@ -22,14 +22,18 @@
       <fieldset class="mb-4">
         <legend class="block text-sm font-medium text-slate-700">Address</legend>
         <div class="mt-1.5 space-y-2">
-          <%= f.input_field :street, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                placeholder: "Street", aria: {label: "Street"} %>
-          <%= f.input_field :city, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                placeholder: "City", aria: {label: "City"} %>
-          <%= f.input_field :state, collection: us_states,
-                class: EssentialsUiHelper::SELECT_CLASSES, aria: {label: "State"} %>
-          <%= f.input_field :zipcode, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
-                placeholder: "Zip code", aria: {label: "Zip code"} %>
+          <%# A stacked block of unlabelled fields, named by placeholder and aria-label -- the words
+              and the autocomplete tokens still come from `address_field` so they match the six
+              other address forms. "Street" and "Zip code" here read "Street address" and
+              "ZIP code" everywhere else. %>
+          <%= f.input_field :street, **address_field_attrs(:street),
+                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+          <%= f.input_field :city, **address_field_attrs(:city),
+                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+          <%= f.input_field :state, collection: us_states, **address_field_attrs(:state),
+                class: EssentialsUiHelper::SELECT_CLASSES %>
+          <%= f.input_field :zipcode, **address_field_attrs(:zip),
+                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
         </div>
       </fieldset>
 

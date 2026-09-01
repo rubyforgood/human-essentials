@@ -159,6 +159,27 @@ Partner
 └── partner_group ──────────── item_categories (what it may request)
 ```
 
+### Where an address is stored
+
+Verified with `rails runner`, because the shapes disagree and it matters which one you are holding:
+
+| Model | Columns | Shape |
+| --- | --- | --- |
+| `Organization` | `street`, `city`, `state`, `zipcode` | Four parts. `#address` composes `"street, city, ST zip"` |
+| `Partners::Profile` | `address1`, `address2`, `city`, `state`, `zip_code` — and the same five again prefixed `program_` | Five parts, twice: the agency's and the delivery address |
+| `Vendor`, `DonationSite`, `ProductDriveParticipant`, `StorageLocation` | `address` | **One freeform string** |
+| `Partners::Family` | `guardian_zip_code`, `guardian_county` | A ZIP and a county, not an address |
+
+The four with a single `address` column include **`Geocodable`**, which is `geocoded_by :address`
+and runs `after_validation` outside development. `Organization` includes it too and satisfies it
+with the composed `#address` plus a hand-written `#address_changed?` — which is the pattern any of
+the other four would have to adopt if they were ever split into parts.
+
+**All ZIP columns are strings.** `partner_profiles.program_zip_code` was an `integer` until
+`20260901180000`, which silently dropped the leading zero from every ZIP in MA, RI, NH, ME, VT, CT,
+NJ and Puerto Rico and could not hold ZIP+4 at all; two of the five values in the seed database had
+been corrupted that way and the migration padded them back. A ZIP is an identifier, not a quantity.
+
 ## The request → distribution path
 
 The workflow the app exists for.

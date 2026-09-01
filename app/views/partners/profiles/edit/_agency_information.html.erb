@@ -24,18 +24,20 @@
     label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
 
     <%= profile_form.input :agency_mission, label: "Agency mission" %>
-    <%= profile_form.input :address1, label: "Address (line 1)" %>
-    <%= profile_form.input :address2, label: "Address (line 2)" %>
-    <%= profile_form.input :city, label: "City" %>
-    <%= profile_form.input :state, label: "State" %>
-    <%= profile_form.input :zip_code, label: "Zip code" %>
+    <%# One definition of an address field, shared with the six other screens that collect one --
+        labels, the state list and the WCAG 1.3.5 autocomplete tokens. See design.md. %>
+    <%= profile_form.input :address1, **address_field(:line1) %>
+    <%= profile_form.input :address2, **address_field(:line2) %>
+    <%= profile_form.input :city, **address_field(:city) %>
+    <%= profile_form.input :state, **address_field(:state) %>
+    <%= profile_form.input :zip_code, **address_field(:zip) %>
   <% end %>
 
   <%= render "shared/essentials/card", title: "Program / delivery address (if different)" do %>
-    <%= profile_form.input :program_address1, label: "Address (line 1)" %>
-    <%= profile_form.input :program_address2, label: "Address (line 2)" %>
-    <%= profile_form.input :program_city, label: "City" %>
-    <%= profile_form.input :program_state, label: "State" %>
-    <%= profile_form.input :program_zip_code, label: "Zip code" %>
+    <%= profile_form.input :program_address1, **address_field(:line1) %>
+    <%= profile_form.input :program_address2, **address_field(:line2) %>
+    <%= profile_form.input :program_city, **address_field(:city) %>
+    <%= profile_form.input :program_state, **address_field(:state) %>
+    <%= profile_form.input :program_zip_code, **address_field(:zip) %>
   <% end %>
 </div>
