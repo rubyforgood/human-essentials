@@ -72,18 +72,6 @@ export default class extends Controller {
     if (this.hasClearTarget) this.clearTarget.classList.toggle("hidden", chosen.length === 0)
   }
 
-  // One chip's × removes one choice. The box it corresponds to is found by its label, because the
-  // chip is outside the panel and the panel may not even be in the document -- `popover_controller`
-  // moves it to <body> while it is open.
-  remove(event) {
-    const label = event.currentTarget.dataset.label
-    const box = this.boxTargets.find((b) => b.dataset.filterLabel === label)
-    if (!box) return
-    box.checked = false
-    this.toggle()
-    this.commit()
-  }
-
   // Untick everything and apply at once, rather than firing a request per box.
   clearAll() {
     for (const box of this.boxTargets) {

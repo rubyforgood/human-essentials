@@ -483,8 +483,22 @@ scrolling at all** — measured.
 - **`event.stopPropagation()` on the checkbox.** These boxes are inside the filter bar's form and
   the bar submits on any change that reaches it: left to bubble, the first tick navigated
   immediately, which is the friction this control exists to remove, reintroduced one level down.
-- **The chips in the trigger are the chart's key.** Each carries its series' dash pattern, so what
-  is drawn can be read without opening the panel and without matching a swatch to a colour.
+- **The count is in the control; the names are in a row beneath the bar.** Four chips are **659px**
+  and the Compare cell is **256** — inside the field they wrapped to three rows, made the control
+  **166px against the date range's 38**, and pushed the chart **120px down the page**. Under the bar
+  they have **1,120px**, sit on one line, and cost a fixed **26px** however many there are. Carbon's
+  `MultiSelect` puts a `selectionCount` badge in the field for the same reason; Polaris ships `Tag`
+  for a row, and Material distinguishes an *input chip* inside a text field from a *filter chip* in
+  a chip set. `shared/compare_chips` is the row.
+- **The row is prefixed `Comparing:`**, so the relationship to the control a row above is carried by
+  a word and not by position alone. Each chip carries its series' dash pattern, so the row is the
+  chart's key as well.
+- **Its chips are links, not form controls.** The row is outside the bar's form — it has to be, to
+  have the width — and a link needs no JavaScript and no second controller. Each is the page minus
+  that one selection.
+- **`Clear comparison`, not `Clear all`.** The bar has its own *Clear all* and that one resets the
+  date range too; two controls with the same word doing different things is the fault the row action
+  called *Cancel* had.
 - **A group heading is `text-xs font-semibold text-slate-500`** — sentence case, no `uppercase`, no
   tracking, exactly as [sentence case](#sentence-case) requires of any heading over a column. A
   heading over an empty group is hidden with it, because a heading over nothing is noise.

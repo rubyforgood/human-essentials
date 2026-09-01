@@ -109,20 +109,20 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
   describe "clearing a choice" do
     before { compare_with "Nappies", "Tampons" }
 
-    it "removes one from the chip in the control, without opening it" do
-      # The chips are outside the trigger, because each carries a remove button and a button inside
-      # a button is not valid HTML. That restructuring is what makes a choice clearable while the
-      # panel is shut.
+    it "removes one from its chip under the bar, without opening the control" do
+      # The chips are a row under the filter bar: four of them are 659px and the Compare cell is
+      # 256, so inside the field they wrapped to three rows and pushed the chart down. They are
+      # links, so they need no JavaScript and no second controller.
       expect(chart["names"]).to eq(%w[Nappies Tampons])
 
-      click_button "Stop comparing Nappies"
+      click_link "Stop comparing Nappies"
       expect(page).to have_current_path(/compare_with/)
       expect(chart["names"]).to eq(["Tampons"])
     end
 
     it "clears everything from inside the panel" do
       open_compare
-      click_button "Clear all"
+      click_button "Clear comparison"
 
       expect(page).to have_css("#filters_compare_trigger", text: "Everything")
       expect(chart["types"]).to eq(["column"])
@@ -131,7 +131,7 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
     it "offers nothing to clear before anything is chosen" do
       visit historical_trends_distributions_path
       open_compare
-      expect(page).to have_no_button("Clear all")
+      expect(page).to have_no_button("Clear comparison")
     end
   end
 
@@ -162,6 +162,50 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
         expect(page).to have_content("Jun 2026 is still running")
         expect(page).to have_css("thead th", text: "so far")
       end
+    end
+  end
+
+  describe "where the chips sit" do
+    it "keeps both fields at the app's control height, whatever is chosen" do
+      # Chips inside the field made it 46px empty and 166px at four choices, against the date
+      # range's 38 -- and pushed the chart card 120px down the page.
+      compare_with "Nappies", "Period products", "Kids Size 2", "Kids Size 4"
+
+      heights = page.evaluate_script(<<~JS)
+        (() => {
+          const h = (s) => Math.round(document.querySelector(s).getBoundingClientRect().height);
+          return { range: h("#filters_months_trigger"), compare: h("#filters_compare_trigger") };
+        })()
+      JS
+
+      expect(heights["compare"]).to eq(heights["range"])
+    end
+
+    it "does not move the chart as more are chosen" do
+      compare_with "Nappies"
+      one = chart_card_top
+      compare_with "Period products", "Kids Size 2", "Kids Size 4"
+
+      # One row of chips, 26px, however many there are -- four of them are 659px against the bar's
+      # 1,120, so they never wrap at this width.
+      expect(chart_card_top).to eq(one)
+    end
+
+    it "puts the count in the control and the names underneath" do
+      compare_with "Nappies", "Tampons"
+
+      expect(page).to have_css("#filters_compare_trigger", text: "2 chosen")
+      # The names are not in the control -- only the count is. They are in the row beneath it.
+      expect(page).to have_no_css("#filters_compare_trigger", text: "Nappies")
+      expect(page).to have_content("Comparing:")
+      expect(page).to have_link("Stop comparing Nappies")
+      expect(page).to have_link("Stop comparing Tampons")
+    end
+
+    it "names its clear control for what it clears" do
+      # The filter bar has its own "Clear all", and that one resets the date range too.
+      compare_with "Nappies"
+      expect(page).to have_link("Clear comparison")
     end
   end
 
@@ -198,5 +242,10 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
         expect(page).to have_field("Nappies", disabled: false, checked: true)
       end
     end
+  end
+  def chart_card_top
+    page.evaluate_script(
+      "Math.round(document.querySelector('main .card-surface').getBoundingClientRect().top + window.scrollY)"
+    )
   end
 end

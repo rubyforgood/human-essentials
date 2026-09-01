@@ -1,0 +1,44 @@
+<%#
+  What is being compared, as a row of removable chips under the filter bar.
+
+    render "shared/compare_chips", categories: @item_categories, items: @series
+
+  **Under the bar, not inside the control.** Four chips are 659px and the Compare cell is 256, so
+  inside the field they wrapped to three rows and pushed the chart 120px down the page. Under the
+  bar they have 1,120px and sit on one line with room to spare, and the row costs a fixed 34px
+  however many there are. Carbon's `MultiSelect` puts a count in the field and not the chips for the
+  same reason; Polaris ships `Tag` for a row, and Material calls this a chip *set*.
+
+  **`Comparing:` is not decoration.** The chips are a row away from the control that made them, so
+  the relationship is carried by a word as well as by position.
+
+  Links rather than form controls: the row is outside the bar's form -- it has to be, to have the
+  width -- and a link needs no JavaScript and no second controller. Each is this page minus that one
+  selection.
+%>
+<% entries = compare_chip_entries(categories, items) %>
+<% if entries.any? %>
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <span class="text-sm font-medium text-slate-600">Comparing:</span>
+    <% entries.each do |chip| %>
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 py-0.5 pl-2 pr-0.5 text-xs text-brand-800">
+        <%# The swatch is the line this chip stands for, so the row is the chart's key as well. %>
+        <svg width="18" height="8" aria-hidden="true" class="shrink-0">
+          <line x1="0" y1="4" x2="18" y2="4" stroke="<%= chip[:colour] %>" stroke-width="2.4"
+                <%= tag.attributes("stroke-dasharray": MonthRangeHelper::PLOT_DASH_ARRAYS[chip[:dash]]) %> />
+        </svg>
+        <span class="max-w-56 truncate"><%= chip[:label] %></span>
+        <%= link_to compare_without(chip[:entry]),
+              class: "flex size-5 shrink-0 items-center justify-center rounded-full text-brand-700 hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
+              aria: {label: "Stop comparing #{chip[:label]}"} do %>
+          <i class="bi-x-lg text-[10px]" aria-hidden="true"></i>
+        <% end %>
+      </span>
+    <% end %>
+    <%# "Clear comparison", not "Clear all": the filter bar has its own "Clear all" and it resets
+        the date range too. Two controls with the same word doing different things is the fault the
+        row action called "Cancel" had. %>
+    <%= link_to "Clear comparison", compare_cleared,
+          class: "text-xs font-medium text-brand-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+  </div>
+<% end %>

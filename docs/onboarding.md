@@ -719,8 +719,9 @@ which one a name belongs to before you look for it.
 What you tick is what the page is about: the chart draws a line for each, and the table narrows to
 match. Tick nothing and you get everything.
 
-**Each choice becomes a chip you can remove** with the × beside it, without opening the control
-again — and there is a **Clear all** inside it. Each chip shows its line's dash pattern, so you can
+**The control shows how many you have chosen; the names appear as chips on the line below it**,
+after the word *Comparing:*. Remove one with the × beside it, or use **Clear comparison** to remove
+them all — neither needs the control opened. Each chip shows its line's dash pattern, so you can
 read the chart without matching colours.
 
 **Up to four at a time.** Beyond four the lines stop being tellable apart, so the rest are greyed out
