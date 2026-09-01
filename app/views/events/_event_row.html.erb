@@ -5,19 +5,16 @@
   <% to_loc = event.data.items.first&.to_storage_location %>
   <tr>
     <td>
-      <%= event.user&.name || "No Name Provided" %>
+      <%= event.user&.name || "Not recorded" %>
     </td>
-    <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
+    <%# `title="Internal Event ID: N"` used to sit on this cell. A `title` is browser chrome --
+        silent on keyboard focus, gone on a timer, unstyleable -- and design.md says an app
+        tooltip or nothing. Nothing: the internal id of an Event row is not something a diaper
+        bank has any use for, and it was on the *whole cell*, so hovering the type text produced
+        a number with no explanation. %>
+    <td><%= event.type.sub(/Event/, '') %></td>
     <td>
       <%= link_to event.eventable_id, event.eventable, class: "font-medium text-brand-700 hover:text-brand-800" %>
-      <%# Filters the history to this record. Icon-only, so it carries its own name -- the
-          AdminLTE version was a bare fa-filter glyph with nothing to announce. %>
-      <%= link_to(
-            events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
-            class: essentials_button_classes(variant: :ghost, size: :sm),
-            "aria-label": "Show only history for this record") do %>
-        <i class="bi-funnel" aria-hidden="true"></i>
-      <% end %>
     </td>
     <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
     <td>
@@ -44,6 +41,20 @@
         <% end %>
         <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
       <% end %>
+    </td>
+    <%#
+      The funnel used to sit inline in the "Refers to" cell, three pixels from the record link: a
+      34x30 ghost *button* beside a 24px link, in the narrowest column of the table (93px), on 24
+      of the 25 rows. Row actions belong in the actions column at `size-7`, which is what every
+      other table does and what design.md requires -- see "Every visible control in an actions
+      column". `essentials_row_icon_link` also gives it the `data-tooltip` it never had.
+    %>
+    <td class="cell-actions">
+      <div class="flex justify-end gap-1.5">
+        <%= essentials_row_icon_link "Show only this record's history",
+              events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
+              icon: "bi-funnel" %>
+      </div>
     </td>
   </tr>
 <% end %>

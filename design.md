@@ -783,6 +783,24 @@ column mixing the two does not step by 2px — that was visible on `/vendors` an
 28 is ours**, derived from that trigger; Carbon and Salesforce both ship uniform icon-only row
 actions, which is the part they evidence, at their own sizes.
 
+<a id="row-actions-live-in-the-actions-column"></a>
+**And it lives in the actions column, not loose in a data cell.** `/events` put its funnel inline in
+the *Refers to* cell: a 34×30 ghost button three pixels from a 24px record link, in the table's
+narrowest column (93px), on 24 of the 25 rows — the one without it being the snapshot row, which has
+no record to narrow to. Reported as *"the alignment looks wrong"*, and it was three faults at once:
+the wrong size, because it was hand-rolled rather than `essentials_row_icon_link`; the wrong place,
+because a row action in a data cell has nothing to line up with; and a ragged column, because the
+one row without it had a differently-shaped cell in the middle of the table.
+
+Moving it made the table **narrower**, which is the opposite of what adding a column should do:
+107px of hidden columns became **45px** at 1440. Two of the three columns it touched had been
+stretched by content that did not belong to them.
+
+A row that genuinely has no action still renders `<td class="cell-actions"></td>`. A row short of a
+cell pulls the frozen column out of line, and `row-actions-audit.js` reports "some rows carry no
+action" as an advisory rather than a defect — correct where the row has no record to act on, a
+defect where one was forgotten, and it cannot tell which from one render.
+
 **Icon-only is what makes the frozen column affordable.** A pinned column occupies its width
 permanently, so the labels had to go somewhere. Measured at 1024, a labelled pair ran **168–273px**
 and the same pair as icons is a uniform **94px** — narrower than three of the five kebab columns.
@@ -835,12 +853,38 @@ for you.
 already identifies it, and "More actions for <this row>" repeated down every row is noise — the menu
 it opens carries the labels.
 
+**A chip's dismiss gets no tooltip either, and says so with `data-chip-dismiss`.** The rule exists
+because a lone glyph is the only clue to what a control does; a chip's ✕ sits inside the label it
+removes, so the label is already on screen and a bubble would repeat it. MUI's `Chip onDelete`,
+Ant Design's closable `Tag`, Carbon's `DismissibleTag` and Primer's `Token` all ship the ✕ with an
+accessible name and no tooltip. It still needs `aria-label`, and still gets checked for one.
+
+The attribute is there so the exemption is **declared rather than inferred**. The obvious test —
+*its parent has visible text* — would have exempted the `/events` funnel too, since that sat in a
+cell beside a record link. An exemption a component opts into cannot widen behind anyone's back.
+
 **Touch has no hover, so below the stacking breakpoint the labels come back as words.** A card has
 room the row never had.
 
 `pw bin/design/tooltip-audit.js` checks all of it — named, tooltipped, no `title`, tooltip agrees
 with the name — and then, once in a real browser, that the bubble appears on keyboard focus, is
-`aria-hidden`, and goes on Escape. **364 row-action controls, 301 icon-only, 0 defects.**
+`aria-hidden`, and goes on Escape. **640 icon-only controls across 153 screens, 0 defects.**
+
+<a id="the-audit-scoped-itself-blind"></a>
+**It used to read `main .cell-actions` on 25 hardcoded pages, and reported 0 defects while there
+were 14.** Both halves of that scope were wrong in the same way. The rule is about an *icon-only
+control*, not about where one sits, so a funnel in a data cell on `/events` was never looked at;
+and a hardcoded page list goes stale in silence, so nine `/new` and `/edit` forms carrying a
+barcode-scan button were never visited. It walks every screen `route-targets.rb` knows about now
+and reads every control whose visible text is empty — 153 screens against 25, and 640 controls
+against 364.
+
+It is not the first. `route-targets.rb` skipped `devise/`, so the route sweep never visited the two
+screens serving 200 OK with no layout at all; `row-actions-audit.js` read the last cell of every
+table and called `/events` ragged; the confirm audit pressed the controls it knew about. **An
+audit's scope is a claim, and it is the claim least likely to be checked** — a clean report says
+nothing about what was never visited. When one reports zero, the question to ask is what it looked
+at.
 
 <a id="actions-column-header"></a>
 **The actions column header is `<th scope="col" class="text-right">Actions</th>` — visible.**
@@ -1109,6 +1153,19 @@ appears above the actual scroll bar and then it disappears"*.
 The native one is hidden under **`[data-railed]`**, which the controller sets only once it has built
 a rail. No JavaScript, or a table that does not overflow, and the native scrollbar is untouched —
 this hides a scrollbar only after its replacement is on the page.
+
+<a id="a-rail-outlives-its-table"></a>
+**A rail outlives its table unless something goes looking for it.** The second bar came back through
+a different door: the rails live on `document.body` and are kept in a `Map` keyed on the region they
+scroll, and `markAll` only ever visits regions still in the document — so a region Turbo swapped out
+left its rail behind, fixed where it was, scrolling nothing. Every filter applied added one.
+Measured on `/events`: one rail before filtering, **two** after, at y=876 and y=832. Reported as
+*"the scroll bar is stuck on the item drop down"*, because the item filter was the one being used.
+
+`sweep()` drops every rail whose region is no longer connected, and runs at the top of `markAll`.
+The invariant to test is **one rail per overflowing region and no others**, not a count: the
+filtered page held a single row that did not overflow, so one stranded rail plus no live one came
+to the same total as one live rail, and two versions of the spec passed with the bug in place.
 
 **The rail is a track and a thumb — plus a ground, but only while it floats.** It carried a 25px
 bar, a 92%-white backdrop over a table row, and a hairline border permanently: six elements
@@ -2296,6 +2353,25 @@ exactly when the panel is shut. It hides itself when nothing is set.
 
 The date range counts as set only when it is not the range the page would have shown anyway; its
 select carries `data-default-value` to say which that is.
+
+<a id="a-filter-the-bar-cannot-see"></a>
+**A filter the bar cannot see is a filter the reader cannot reverse.** Some narrowings arrive by
+clicking something in the results rather than by choosing from a menu — the funnel on a `/events`
+row, which shows one record's history. That one submitted `?eventable_id=…` as a bare param
+*outside* the bar's form, so nothing counted it, no chip appeared, *Clear all* could not undo it,
+and the only way back was the browser's Back button. Reported exactly that way: "it is not clear
+what happens when this is pressed and how to reverse this action."
+
+Such a filter goes in the form as a **hidden field**, through `hidden_fields:` — inside the form so
+it submits, counts and clears, outside the grid so it takes no cell. Two attributes make it
+readable: `data-filter-label` names it, and `data-filter-display` gives the chip something to say
+when the submitted value is an id (`eventable_id=12` chips as *Refers to: Adjustment 12*). Where a
+filter needs more than one field, `data-filter-group` clears the set as one thing and only one of
+them carries the label, so it is one chip rather than two.
+
+The server side has a matching trap: clearing the chip submits the field **empty**, and
+`params[:eventable_id]` is then `""` — truthy in Ruby. `/events` narrowed itself to the events of
+record `""`, which is none of them. Test these with `.present?`, never for bare truth.
 
 **Filters apply on change. There is no Filter button.** Pass `frame:` and the bar submits into
 that Turbo Frame, so only the results are replaced:

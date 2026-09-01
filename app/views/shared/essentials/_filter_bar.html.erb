@@ -20,6 +20,19 @@
 
     clear_path:         Where "Clear all" goes. Defaults to the current path.
 
+    hidden_fields:      Filters that are applied but have no control of their own -- a narrowing
+                        arrived at by clicking something in the results rather than by choosing
+                        from a menu. They go inside the form but outside the grid, so they submit
+                        with the rest and are counted, chipped and cleared like any other filter,
+                        without taking a cell.
+
+                        `/events` is the case: the funnel on a row narrows the page to that one
+                        record, and while that param sat outside the form nothing on screen said
+                        the page was narrowed and "Clear all" could not undo it. **A filter the
+                        bar cannot see is a filter the reader cannot reverse.** Give the field a
+                        `data-filter-label`, and a `data-filter-display` when the submitted value
+                        is an id rather than something to read.
+
     actions:            Markup for the right end of the button row -- a control that belongs to
                         this table rather than to the page. It goes here rather than in a card
                         header band of its own: on /requests that band was **63px** of card, rule
@@ -104,6 +117,7 @@
   bar_class = in_card ? "border-b border-slate-200 px-5 py-4" : "mb-4"
 %>
 <%= form_tag url, method: :get, class: bar_class, data: form_data do %>
+  <%= local_assigns[:hidden_fields] %>
   <% if frame.present? %>
     <%#
       Applying into a frame changes nothing a screen reader notices -- no navigation, no focus

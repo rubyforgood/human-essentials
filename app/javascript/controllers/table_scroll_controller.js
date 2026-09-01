@@ -76,7 +76,27 @@ export default class extends Controller {
   }
 
   markAll() {
+    this.sweep();
     this.element.querySelectorAll(".table-scroll").forEach((region) => this.mark(region));
+  }
+
+  /*
+   * Drops the rails whose table is no longer on the page.
+   *
+   * `layoutRail` removes a rail when its region stops overflowing, but it only ever runs for the
+   * regions `markAll` can find -- and a region Turbo has swapped out is not one of them, so its rail
+   * was left on `document.body` with the `top` and `visibility` it last had. Filtering `/events` by
+   * item put **two** bars on screen, one of them scrolling nothing: reported as "the scroll bar is
+   * stuck on the item drop down". Every filter applied added another.
+   *
+   * The map is keyed on the region, so "is this table still in the document" is the whole test.
+   */
+  sweep() {
+    this.rails.forEach(({ rail }, region) => {
+      if (region.isConnected) return;
+      rail.remove();
+      this.rails.delete(region);
+    });
   }
 
   mark(region) {

@@ -13,7 +13,27 @@
         title: "History",
         subtitle: "Every event that changed inventory, most recent first." %>
 
-  <%= render "shared/essentials/filter_bar", url: events_path, frame: "events-results" do %>
+  <%#
+    The row funnel's narrowing, as two fields inside the bar's form rather than two params beside
+    it. It arrives by clicking a row rather than by choosing from a menu, so it has no control of
+    its own -- but it is a filter, and a reader who cannot see or undo one is stuck: the only way
+    back used to be the browser's Back button. As a field it is counted on the Filters button,
+    shown as a chip, and cleared by "Clear all" like everything else.
+
+    Two fields, one chip: only the id carries a `data-filter-label`, so the type is not chipped a
+    second time, and `data-filter-group` clears the pair together.
+  %>
+  <% narrowed_to = params[:eventable_id].presence %>
+  <% refers_to = capture do %>
+    <%= hidden_field_tag :eventable_type, params[:eventable_type],
+          id: "events-eventable-type", data: {filter_group: "refers-to"} %>
+    <%= hidden_field_tag :eventable_id, narrowed_to, id: "events-eventable-id",
+          data: {filter_group: "refers-to", filter_label: "Refers to",
+                 filter_display: "#{params[:eventable_type]} #{narrowed_to}".strip} %>
+  <% end if narrowed_to %>
+
+  <%= render "shared/essentials/filter_bar", url: events_path, frame: "events-results",
+        hidden_fields: refers_to do %>
     <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
     <div class="min-w-0">
       <%= filter_select(label: "Event type", scope: :by_type, collection: Event.types_for_select,
@@ -51,6 +71,7 @@
                 <th scope="col">From location</th>
                 <th scope="col">To location</th>
                 <th scope="col">Items</th>
+                <th scope="col" class="cell-actions">Actions</th>
               </tr>
             </thead>
             <tbody>

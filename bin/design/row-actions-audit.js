@@ -118,7 +118,10 @@ const PROBE = () => {
   const findings = [];
   const add = (why, list) => list.forEach((t) => findings.push({ why, path: t.path, detail: JSON.stringify(t.counts) }));
   add("3+ inline, no menu", withActions.filter((t) => !t.menu && Math.max(...t.counts) >= 3));
-  add("varies row to row", withActions.filter((t) => t.counts.length > 1));
+  // Rows that *have* actions, disagreeing about how many. A row with none at all is counted
+  // separately below: an empty actions cell is not a ragged column, it is a row with nothing to do.
+  const acting = (t) => [...new Set(t.counts.filter((c) => c > 0))];
+  add("varies row to row", withActions.filter((t) => acting(t).length > 1));
   add("mixed control heights", withActions.filter((t) => t.heights.length > 1));
 
   // Advisory, not a failure, and the distinction is the point.
@@ -132,6 +135,13 @@ const PROBE = () => {
   // So: a menu holding two or fewer is worth a look at the row partial, and nothing more.
   const advisory = withActions.filter((t) => t.menu && Math.max(...t.totals) <= 2);
 
+  // Some rows have no actions at all, which the rule above deliberately does not fail. `/events` is
+  // the case it was written for: a SnapshotEvent has no `eventable`, so there is no record for the
+  // funnel to narrow the history to, and an empty cell says that better than a control that can
+  // never do anything. Still worth reading, because the same shape covers a row whose actions were
+  // forgotten -- so it is printed, not hidden.
+  const someRowsBare = withActions.filter((t) => t.counts.includes(0));
+
   console.log("");
   if (!findings.length) {
     console.log("every actions column is consistent within its table and across the app");
@@ -144,6 +154,12 @@ const PROBE = () => {
     console.log("\nadvisory -- a menu holding 2 or fewer actions. Correct when the *set* varies by");
     console.log("row state, which this cannot see from one render. Check the row partial:");
     advisory.forEach((t) => console.log(`  ${t.path}`));
+  }
+
+  if (someRowsBare.length) {
+    console.log("\nadvisory -- some rows carry no action. Correct where the row has no record to act");
+    console.log("on; a defect where one was forgotten. Check the row partial:");
+    someRowsBare.forEach((t) => console.log(`  ${t.path.padEnd(32)} [${t.counts.join(",")}]`));
   }
   process.exit(findings.length ? 1 : 0);
 })();

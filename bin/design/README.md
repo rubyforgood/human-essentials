@@ -251,6 +251,7 @@ spread when a filter bar is moved back above its card.
 `tooltip-audit.js` checks that an **icon-only control says what it is, the app's way**.
 
 ```bash
+bin/rails runner bin/design/route-targets.rb > /tmp/targets.json
 pw bin/design/tooltip-audit.js
 ```
 
@@ -260,9 +261,17 @@ once in a real browser: the bubble appears on **keyboard focus**, is `aria-hidde
 not announced twice, and Escape dismisses it. None of that is visible to a class-name check, and the
 keyboard case is the one `title` cannot do at all.
 
-The kebab trigger is excluded: `aria-haspopup` already identifies it, and "More actions for <this
-row>" repeated down every row is noise rather than help. Currently **364 row-action controls, 301
-icon-only, 0 defects**.
+Two exclusions, both declared on the element rather than guessed at. The kebab trigger, because
+`aria-haspopup` already identifies it and "More actions for <this row>" repeated down every row is
+noise rather than help; and a chip's dismiss, marked `data-chip-dismiss`, because the label it
+removes is right beside it.
+
+**It used to read `main .cell-actions` on 25 hardcoded pages and report 0 defects while there were
+14.** The rule is about an icon-only control, not about where one sits, so a funnel in a data cell
+on `/events` was never looked at; and a hardcoded list goes stale in silence, so nine `/new` and
+`/edit` forms with an untooltipped barcode-scan button were never visited. It reads the route
+targets now, like `route-sweep.js` and `icon-audit.js`, and takes every control whose visible text
+is empty. Currently **640 icon-only controls across 153 screens, 0 defects**.
 
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 
