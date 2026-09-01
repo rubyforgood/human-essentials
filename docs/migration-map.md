@@ -415,11 +415,24 @@ went with it: one label set, one state list, one ZIP shape, `autocomplete` throu
 column is still valid. `:address` is also still permitted in the four controllers for the same
 reason. See docs/design-decisions.md for why that beat a tidier template.
 
-**Not migrated yet, and named so it is not forgotten:** the `address` *column* still exists on those
-four tables, in `ignored_columns`. Nothing reads or writes it. Dropping it is a separate release, so
-that an old process running the previous code during a deploy does not meet a column that has
-vanished — the sequence strong_migrations asks for. The migration to write is
-`RemoveAddressFromProviders`, and it is the only thing left of this change.
+**The `address` column is gone**, dropped by `20260901200000`. Nothing on these four tables stores a
+freeform address any more.
+
+It was meant to be a later *release* than the one that set `ignored_columns`, so that a rolling
+deploy finishes with an old process still finding the column it expects. Run in the same release,
+that protection is not there and the window is the length of the deploy. It was collapsed
+deliberately, and the migration says so in its own comment rather than leaving the next reader to
+wonder why the two files exist separately.
+
+**`ignored_columns += ["address"]` is still in `StructuredAddress` and is now a no-op.** It stays
+one more release for the same reason: new code meeting a database where the drop has not run yet.
+Remove it after this deploys — it is the last thing left of this change.
+
+One query had to move before the drop: `db/seeds.rb` looked donation sites up with
+`find_or_create_by!(address:)`. `ignored_columns` hides an *attribute* but the SQL kept resolving
+while the column existed, so the seed would have broken at the drop and not before. It keys on name
+and organization now, which is the model's own uniqueness rule — and a better key anyway, since two
+organizations may collect at one address.
 
 **Row actions were labelled `sm` ghost buttons and are now 28px icons** -- 55 call sites across 30
 files, rewritten to `essentials_row_icon_link` / `essentials_row_icon_action`. `<td class="text-right">`

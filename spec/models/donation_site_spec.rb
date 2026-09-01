@@ -4,7 +4,6 @@
 #
 #  id              :integer          not null, primary key
 #  active          :boolean          default(TRUE)
-#  address         :string
 #  city            :string
 #  contact_name    :string
 #  email           :string

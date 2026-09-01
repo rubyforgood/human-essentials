@@ -3,7 +3,6 @@
 # Table name: storage_locations
 #
 #  id              :integer          not null, primary key
-#  address         :string
 #  city            :string
 #  discarded_at    :datetime
 #  latitude        :float
