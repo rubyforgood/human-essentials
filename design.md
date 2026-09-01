@@ -582,12 +582,18 @@ The industry splits on exactly this line, and every resolution of it is one of t
 the question people ask most of a trend, and a control that cannot answer it sends them to count
 rows. It is never silently compared with a whole month either — GA4's answer, and the app's:
 
-- the column is drawn in a lighter fill with a border, **and** the axis label reads *"so far"*
+- the column is drawn in a lighter fill with a border
 - the table header for that month reads *"so far"* under the month
-- the card subtitle says *"Aug 2026 is still running."*
+- the card subtitle says *"Sep 2026 is still running."*
 
-Three of those are words. **A fill is a colour by another name**, and design.md does not allow colour
-alone; the pattern is the least of the four signals rather than the only one.
+Two of those are words. **A fill is a colour by another name**, and this document does not allow
+colour alone; the fill is the least of the three signals rather than the only one.
+
+**It is not on the axis, and that is deliberate.** *"so far"* under the last category put one label
+on two lines — **29px against every other label's 14** — so a single column's label was twice its
+neighbours' height and the axis 12px deeper for one word. Of the four places the marking was made,
+the axis was the only one that cost symmetry and the only one not also carried in words, so it is
+the one that went.
 
 **What the window leaves out is said out loud.** A distribution can be dated ahead of itself — **10
 of them here, 82 line items** — and a *trend* is what happened, not what is booked, so those records

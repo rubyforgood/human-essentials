@@ -8223,3 +8223,38 @@ measured a chart Highcharts had not drawn yet and a chip that did not exist. I a
 have written this session for the same shape and found four more. A wait now comes first in all of
 them. The suite passes at the seed that failed, and at a fresh one.
 
+## 2026-09-01 — "so far" off the axis, and a fourth vacuous assertion
+
+Approved: take the current month's marking off the chart's axis. Done, and the spec for it was wrong
+before it was right.
+
+**The measurement.** *"so far"* sat on a second line under the last category, making that label
+**29px against every other one at 14** — one column's label twice its neighbours' height, and the
+axis 12px deeper than it needed to be for one word. All twelve labels measure 14px now.
+
+**Nothing was lost.** The month was marked four ways and is marked three: the lighter fill and
+outline, the table header for that column, and the card subtitle *"Sep 2026 is still running."* The
+axis was the only one of the four that cost symmetry and the only one not also said in words.
+
+**And the assertion I wrote for it was vacuous — the fourth this session.** I measured the axis
+labels' heights and asserted they were all equal. It passed with the two-line label put back,
+because **the test browser renders the newline flat**: `tspans: 0`, every label 14px, and the text
+reading `"Jun 2026\nso far"` on one line. The fault I was pinning is invisible to the check I wrote
+for it, in the environment the check runs in.
+
+It asserts the label *text* now — that no category carries "so far" — which fails on the bug and
+passes on the fix. I found it by reverting the fix and watching the spec stay green, **which is the
+only reason to bother reverting**. Three of the four vacuous assertions this session were negative
+checks against a selector that could not match; this one was a positive check against a measurement
+the environment flattens. The habit that catches all four is the same: revert the fix, and disbelieve
+a spec that stays green.
+
+**Also previewed, not built:** where the chips go, at `docs/mockups/where-the-chips-go.html`. The
+measurement decides it — four chips are **659px**, the Compare field is **256px**, the filter bar row
+is **1,120px** — so the chips cannot fit inside the field and fit on one row beneath it with 461px to
+spare. Carbon's `MultiSelect` puts a **`selectionCount` badge** in the field rather than chips, read
+from its source; Polaris ships `Tag` for a row; Material separates an *input chip* inside a text
+field from a *filter chip* in a chip set. Two of three put the count in the control and the chips in
+a row, which is also the only thing the width allows. Recommended C, with the relationship carried by
+a **"Comparing:"** prefix as well as by position.
+

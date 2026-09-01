@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Where the chips go</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ .lbl{display:block;font-size:12.5px;font-weight:500;color:#334155;margin-bottom:5px}
+ .fld{height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:0 12px;display:flex;
+   align-items:center;justify-content:space-between;background:#fff;font:400 14px Figtree;color:#0F172A;width:271px}
+ .chip{display:inline-flex;align-items:center;gap:5px;background:#EEF2FF;border:1px solid #C7D2FE;
+   border-radius:999px;padding:1px 2px 1px 7px;font-size:12px;color:#3730A3;white-space:nowrap}
+ .chip button{border:0;background:none;color:#4338CA;cursor:pointer;font-size:13px;line-height:1;padding:0 4px}
+ .row{display:flex;gap:12px;align-items:flex-start}
+ .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+   border-radius:999px;background:#4F46E5;color:#fff;font-size:11px;font-weight:600;padding:0 6px}
+ .kv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+ .kvlabel{font-size:12.5px;font-weight:500;color:#475569;margin-right:2px}
+ .meas td.n{text-align:right;font-variant-numeric:tabular-nums}
+ .bad{color:#B4232E;font-weight:700}
+ .ok2{color:#0F6E4F;font-weight:700}
+ .ruler{border:1px dashed #CBD5E1;border-radius:8px;padding:8px;margin-top:8px;font-size:11.5px;color:#64748B}
+</style></head><body><div class="wrap">
+
+<h1>Where the chips go</h1>
+<p class="lede">You are right that they belong near the control. The measurements decide between the
+two, and they are not close.</p>
+
+<h2>1. The numbers</h2>
+<table class="mini meas">
+  <tr><th>Measured on four chips</th><th class="n">Value</th></tr>
+  <tr><td>The four chips, with gaps</td><td class="n">659px</td></tr>
+  <tr class="rec"><td><b>The Compare field</b></td><td class="n bad"><b>256px</b> &mdash; one chip and a bit</td></tr>
+  <tr class="rec"><td><b>The filter bar row</b></td><td class="n ok2"><b>1,120px</b> &mdash; all four, with 461px to spare</td></tr>
+  <tr><td>One chip's height</td><td class="n">26px, so a row costs ~34px</td></tr>
+</table>
+<p class="note"><b>Four chips cannot fit inside the field.</b> At 256px it holds one and an overflow
+badge. On a row of its own it holds all four with room left, and costs a fixed 34px however many
+there are.</p>
+
+<h2>2. What the design systems do</h2>
+<p class="note">Read from the source this morning, not recalled:</p>
+<ul class="tight">
+  <li><b>IBM Carbon's <code>MultiSelect</code></b> puts a <b><code>selectionCount</code> badge inside
+    the field</b>, with a <code>clearSelection</code> control beside it. <b>No chips in the
+    field.</b></li>
+  <li><b>Shopify Polaris ships <code>Tag</code></b> as a removable tag used <i>in a row</i>, separate
+    from any select.</li>
+  <li><b>Material</b> distinguishes an <b>input chip</b>, which lives inside a text field you type
+    into &mdash; email recipients, tags you invent &mdash; from a <b>filter chip</b>, which lives in
+    a <i>chip set</i>, a row of its own. This control is the second kind: the options already exist
+    and you are choosing among them.</li>
+</ul>
+<div class="verdict"><b>Two of the three put the summary in the field and the chips in a row.</b>
+That is also the only arrangement the width allows here.</div>
+
+<h2>3. Option B — one chip and an overflow badge</h2>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span>
+      <div class="fld" style="gap:5px;justify-content:flex-start;overflow:hidden">
+        <span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip" style="background:#F1F5F9;border-color:#E2E8F0;color:#475569">+3</span>
+        <i class="bi-chevron-down" style="color:#94A3B8;margin-left:auto"></i>
+      </div>
+    </div>
+  </div>
+  <span class="mark">38px, level with the date range. But <b>three of the four are behind a badge</b>
+  &mdash; you cannot see what they are or remove them without opening the panel, which is the thing
+  that was missing before.</span>
+</div>
+
+<h2>4. Option C — the field says how many, a row underneath says which <span class="tag t-rec">recommended</span></h2>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span>
+      <div class="fld"><span>4 chosen</span>
+        <span style="display:flex;align-items:center;gap:8px"><span class="badge">4</span>
+        <i class="bi-chevron-down" style="color:#94A3B8"></i></span></div>
+    </div>
+  </div>
+  <div class="kv"><span class="kvlabel">Comparing:</span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg><span>Period products</span><button type="button" aria-label="Stop comparing Period products">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg><span>Adult incontinence</span><button type="button" aria-label="Stop comparing Adult incontinence">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B45309" stroke-width="2.4" stroke-dasharray="8 3 2 3"/></svg><span>Adult Briefs (Small/Medium)</span><button type="button" aria-label="Stop comparing Adult Briefs (Small/Medium)">&times;</button></span>
+    <button type="button" style="border:0;background:none;color:#3730A3;font:500 12.5px Figtree;cursor:pointer;text-decoration:underline">Clear all</button>
+  </div>
+  <div class="ruler">One row, 34px, whatever the count. Four chips use 659 of the 1,120px available,
+  so they never wrap at this width &mdash; and if they ever did, the row grows downwards, away from
+  the controls rather than through them.</div>
+  <span class="mark ok">Both fields 38px, all four visible, all four removable, and the word
+  <b>Comparing:</b> says what the row is for so the relationship does not rest on position alone.</span>
+</div>
+
+<h2>5. The variant that does not work: chips under the field only</h2>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div>
+      <span class="lbl">Compare (50)</span>
+      <div class="fld"><span>4 chosen</span><i class="bi-chevron-down" style="color:#94A3B8"></i></div>
+      <div style="width:271px;display:flex;flex-wrap:wrap;gap:5px;margin-top:6px"><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg><span>Period products</span><button type="button" aria-label="Stop comparing Period products">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg><span>Adult incontinence</span><button type="button" aria-label="Stop comparing Adult incontinence">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B45309" stroke-width="2.4" stroke-dasharray="8 3 2 3"/></svg><span>Adult Briefs (Small/Medium)</span><button type="button" aria-label="Stop comparing Adult Briefs (Small/Medium)">&times;</button></span></div>
+    </div>
+  </div>
+  <span class="mark">Aligned exactly under the control that made them &mdash; and 659px of chips in a
+  271px column is <b>three rows, about 100px</b>, which pushes the chart down again. It solves the
+  height and reintroduces the shove.</span>
+</div>
+
+<div class="verdict"><b>Recommendation: C.</b> The field carries the count, which is Carbon's answer
+and the only thing that fits in 256px; the chips go in a labelled row directly beneath the bar,
+which is Polaris' and Material's. It is the only option where all four are visible <i>and</i>
+removable <i>and</i> both fields stay 38px.
+<br><br><b>Why not B:</b> it hides three of four behind a badge, and being able to clear a choice
+without opening the panel is exactly what was asked for two changes ago.
+<br><br><b>On proximity:</b> the row sits immediately under the bar and is prefixed
+<b>Comparing:</b>, so the relationship is carried by a word as well as by position. Tucking the row
+inside the Compare column instead would align it perfectly and cost three rows of height &mdash;
+which is the problem being fixed.</div>
+
+<p class="note" style="margin-top:20px"><b>Already done, as approved:</b> &ldquo;so far&rdquo; is off
+the axis. All twelve labels now measure 14px where the last was 29, and the month still reads as
+unfinished from its lighter fill, from the card subtitle
+(<i>&ldquo;Sep 2026 is still running&rdquo;</i>) and from its column header in the table.</p>
+
+</div></body></html>
