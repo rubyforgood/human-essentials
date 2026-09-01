@@ -81,7 +81,10 @@ def copy_literals(src)
   found = []
   quoted = '(["\'])((?:\\\\.|(?!\1).)*)\1'
   COPY_KEYS.each do |key|
-    src.scan(/#{Regexp.escape(key)}:\s*#{quoted}/) { |_q, t| found << [:copy, t] }
+    # `hint` gets its own kind. It is the one piece of copy in this app with a punctuation rule --
+    # a hint is a sentence -- and a rule applied to every string would report every label.
+    kind = (key == "hint") ? :hint : :copy
+    src.scan(/#{Regexp.escape(key)}:\s*#{quoted}/) { |_q, t| found << [kind, t] }
   end
   src.scan(/["']aria-label["']\s*[:=>]+\s*#{quoted}/) { |_q, t| found << [:copy, t] }
   # A short label is fine when the link carries an `aria-label` that extends it -- that is the
@@ -203,13 +206,21 @@ CHECKS = {
   "gendered wording" => ->(t, _f, _k) { t.match?(GENDERED) },
   "ableist wording" => ->(t, _f, _k) { t.match?(ABLEIST) },
   "politeness filler" => ->(t, _f, _k) { t.match?(POLITENESS) },
-  "shouting" => ->(t, _f, _k) { !shouting(t).empty? }
+  "shouting" => ->(t, _f, _k) { !shouting(t).empty? },
+  # A hint is a sentence and ends like one. Measured when this check was added: 21 of the app's
+  # hints ended in a full stop and 3 did not, and two of those three were the same rule written
+  # two ways -- "500 character maximum" beside "500 characters maximum." Interpolations are
+  # skipped: the text here is the source literal, so a hint built from a value ends in `}`.
+  "hint without a full stop" => lambda { |t, _f, k|
+    k == :hint && !t.include?('#{') && t.strip.length > 3 && !t.strip.match?(/[.!?]\z/)
+  }
 }.freeze
 
 # Three of this repository's audits were once found checking a proxy rather than the property
 # they claimed to check, and each reported a clean zero while doing it. Every case below is one
 # these checks got wrong at some point, or one a careless pattern would get wrong.
 LINK = "link text (WCAG 2.4.4)"
+HINT = "hint without a full stop"
 SENSE = "sensory instruction (WCAG 1.3.3)"
 SENS = "sensory instruction (WCAG 1.3.3)"
 V = "app/views/x.erb"
@@ -238,6 +249,15 @@ PROBES = [
   # A card titled "Details" is a heading, not a link. Sixteen of them were reported as WCAG
   # failures until the corpus started carrying a kind.
   ["Details", V, LINK, false, :copy],
+  # The hint punctuation check, and the cases that would trip a careless version of it.
+  ["500 characters maximum.", V, HINT, false, :hint],
+  ["500 character maximum", V, HINT, true, :hint],
+  ["Cannot be more than 250 characters", V, HINT, true, :hint],
+  # A label is not a hint. Applied to every string this would report every label in the app.
+  ["Storage location", V, HINT, false, :copy],
+  # Built from a value, so the literal ends in a brace and says nothing about the rendered text.
+  ["Historical data has been collected since \#{since}", V, HINT, false, :hint],
+  ["Where is it being stored?", V, HINT, false, :hint],
   # A vague visible label that carries an aria-label extending it is named, not nameless.
   ["More info", V, LINK, false, :named_link],
 

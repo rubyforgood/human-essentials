@@ -5,7 +5,7 @@
     <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Category name" %>
       <%= f.input :description, label: "Category description", as: :text,
-            hint: "Cannot be more than 250 characters", input_html: {rows: 3, maxlength: 250} %>
+            hint: "250 characters maximum.", input_html: {rows: 3, maxlength: 250} %>
     <% end %>
 
     <%= essentials_form_actions do %>

@@ -449,6 +449,31 @@ is the same width whether the bar folds or not"* — and two controls did it any
 `spec/system/filter_control_width_system_spec.rb` asserts the gap **equals the grid's own**, rather
 than any particular number.
 
+<a id="a-hint-is-a-sentence"></a>
+**A hint is a sentence, and ends like one.** Measured when the rule was written down: **21 of the
+app's hints ended in a full stop and 3 did not** — and two of those three were the same rule written
+two ways, *"500 character maximum"* beside *"500 characters maximum."* `bin/design/copy-audit.rb`
+has a check for it, with probes, so the 3 cannot come back.
+
+The same audit's corpus is the place to look for the rest of the app's explanatory prose: **card
+subtitles, page-header subtitles and filter hints**, 38 distinct strings across 129 pages at the time
+of writing.
+
+<a id="a-subtitle-answers-the-readers-question"></a>
+**A subtitle answers the reader's question, not the writer's.** The table on a trend page said
+*"Narrowed to what you are comparing"* — which names what the code did and leaves the reader to work
+out what is left. It says **"27 of 47 items."** now, which is the app's own habit everywhere else:
+*"10 donations, from July 1 to October 1"*, *"The 20 most recent of 23 users added in the last week."*
+**Prefer a figure to a description of a state.**
+
+The same fault, twice more, both fixed in the same pass:
+
+- *"Cached, so it may be up to 24 hours behind"* — a sentence about our infrastructure, in a word
+  most readers do not use, and untrue besides.
+- **One spelling per thing.** *Zip code*, *Zip Code*, *Zip Codes Served* and *Zipcode* were four
+  spellings of the same words across seven places, three of them Title Case against
+  [sentence case](#sentence-case). They are all *Zip code* now.
+
 <a id="a-hint-goes-under-the-control"></a>
 **A hint goes under the control, in `FILTER_HINT_CLASSES`.** *"Whole months. Ends with the current
 one."* under the date range; *"Up to 4. Leave empty for everything."* under Compare. Both say a rule

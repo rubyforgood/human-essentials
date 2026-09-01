@@ -8295,3 +8295,39 @@ places, and the measurement showed the field at 28px inside a 38px wrapper with 
 sliding. I caught it by measuring rather than by looking at the diff. **A batch of edits where one
 silently does nothing looks exactly like a batch that worked.**
 
+## 2026-09-01 — "Narrowed to what you are comparing", and what an audit of the app's prose found
+
+Reported: the table's helper text does not make sense. It said *"Narrowed to what you are
+comparing."* — which names **what the code did** and leaves the reader to work out what is left. It
+says **"27 of 47 items."** now, which is the app's own habit everywhere else: *"10 donations, from
+July 1 to October 1"*, *"The 20 most recent of 23 users added in the last week."* **Prefer a figure
+to a description of a state.**
+
+**The audit.** I collected every card subtitle, page-header subtitle and filter hint the app renders
+— **38 distinct strings across 129 pages** — rather than grepping the source, because a grep cannot
+tell a hint from an identifier and half of these are interpolated. Four faults:
+
+**Hints did not agree on punctuation.** 21 ended in a full stop, 3 did not. A hint is a sentence, so
+the 3 were the odd ones and are fixed.
+
+**The same rule written two ways.** *"500 character maximum"* on one form and *"500 characters
+maximum."* on two others, plus *"Cannot be more than 250 characters"* as a third phrasing of the same
+constraint. All three are *"N characters maximum."* now.
+
+**A hint that described the feature rather than the field.** *"Categories help organize and identify
+items"* says what categories are for in the abstract; the field is asking which one this item is in.
+It says what a category *does* in this app instead — *"Categories group items for reporting and for
+partner requests."* — which is checkable and true: `ItemCategory has_and_belongs_to_many
+:partner_groups`, so a category really does gate what partners can request.
+
+**Four spellings of one thing.** *Zip code*, *Zip Code*, *Zip Codes Served* and *Zipcode*, across
+seven places, three of them Title Case against the sentence-case rule. All *Zip code* now, including
+the pluralised prose in the service area card, which read *"Their families live in 8 zipcodes."*
+
+**And the check to stop it drifting back.** `bin/design/copy-audit.rb` has a *hint without a full
+stop* check, and `hint` now carries its own kind in the extractor so the rule applies to hints and
+not to every label in the app. Six probes went with it, including the two that would trip a careless
+version: a label is not a hint, and a hint built from a value ends in a brace in the source and says
+nothing about the rendered text. Verified by putting *"500 character maximum"* back and watching the
+audit report it.
+
