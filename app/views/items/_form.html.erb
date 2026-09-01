@@ -11,7 +11,7 @@
     <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
       <%= f.input :item_category_id, label: "Category", collection: @item_categories,
-            hint: "Categories help organize and identify items" %>
+            hint: "Categories group items for reporting and for partner requests." %>
       <%= f.input :reporting_category, label: "NDBN reporting category",
             collection: Item.reporting_categories_for_select,
             disabled: @item.is_a?(Kit), required: !@item.is_a?(Kit), hint: @reporting_category_hint %>
@@ -43,7 +43,7 @@
       <%= f.input :visible_to_partners, label: "Item is visible to partners?", as: :boolean %>
 
       <%= f.input :additional_info, label: "Additional information (bank use only)", as: :text,
-            maxlength: 500, hint: "500 character maximum", input_html: {rows: 3} %>
+            maxlength: 500, hint: "500 characters maximum.", input_html: {rows: 3} %>
     <% end %>
 
     <%= essentials_form_actions do %>

@@ -191,6 +191,15 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
       expect(chart_card_top).to eq(one)
     end
 
+    it "says how much of the table is showing, in figures" do
+      # The subtitle read "Narrowed to what you are comparing" -- the writer's word for what had
+      # happened, not an answer to the reader's question, which is how much of the table is left.
+      compare_with "Period products"
+
+      expect(page).to have_css("main .card-surface p", text: /\A\d+ of \d+ items\.\z/)
+      expect(page).to have_no_content("Narrowed to what you are comparing")
+    end
+
     it "puts the count in the control and the names underneath" do
       compare_with "Nappies", "Tampons"
 

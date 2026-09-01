@@ -32,7 +32,7 @@
 
   summary = [
     served_areas.any? ? "They serve #{pluralize(served_areas.size, "county")}." : "No counties recorded yet.",
-    zipcodes.any? ? "Their families live in #{pluralize(zipcodes.size, "zipcode")}." : "No families registered yet."
+    zipcodes.any? ? "Their families live in #{pluralize(zipcodes.size, "zip code")}." : "No families registered yet."
   ].join(" ")
 %>
 <%= render "shared/essentials/card", title: "Service area", subtitle: summary do %>
@@ -102,7 +102,7 @@
 
 <%# Only when the list was too long to show in full -- otherwise there is nothing behind it. %>
 <% if hidden_zipcodes.positive? %>
-  <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Zipcodes their families live in" do %>
+  <%= render "shared/essentials/modal", id: "see-zipcodes", title: "Zip codes their families live in" do %>
     <ul class="flex flex-wrap gap-1.5">
       <% zipcodes.each do |zipcode| %>
         <li class="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-xs tabular-nums text-slate-700"><%= zipcode %></li>

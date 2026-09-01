@@ -850,6 +850,18 @@ Some smaller things went with it:
   which is not the same thing at all.
 - **"Invite user" wore three different icons on three pages.** It is one now.
 
+### For maintainers: the app's explanatory prose
+
+`bin/design/copy-audit.rb` reads what the app *says*, not what it is built from. It now also checks
+that a **hint ends in a full stop** — a hint is a sentence, and 21 of the app's 24 already did.
+
+The prose worth reviewing together is the three kinds the design system has: **card subtitles,
+page-header subtitles and filter hints**. Two rules came out of auditing them:
+
+- **A subtitle answers the reader's question, not the writer's.** *"Narrowed to what you are
+  comparing"* names what the code did; *"27 of 47 items"* says what is left. Prefer a figure.
+- **One spelling per thing.** *Zip code* had four spellings across seven places.
+
 ### For maintainers: which icon means what
 
 `design.md` now carries a lexicon — **"One glyph, one meaning"** — and the machine-readable copy of

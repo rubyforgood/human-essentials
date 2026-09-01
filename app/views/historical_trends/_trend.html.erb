@@ -219,7 +219,7 @@
       scroll-downs. The table is a table again.
     %>
     <%= render "shared/essentials/card", padded: false, title: "By item and month",
-          subtitle: selected_comparisons.empty? ? nil : "Narrowed to what you are comparing." do %>
+          subtitle: (@table_items.size == @series.size) ? nil : "#{@table_items.size} of #{@series.size} items." do %>
       <% if table_items.blank? %>
         <%= render "shared/essentials/empty_state", kind: :cold_start,
               title: "Nothing to show yet",
