@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Manufacturer donations, redesigned</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ table.rep{width:100%;font-size:14px;border-collapse:collapse;margin-top:4px}
+ table.rep th,table.rep td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+ table.rep thead th{font-size:12px;font-weight:600;color:#64748B;border-bottom:1px solid #CBD5E1}
+ table.rep th[scope=row]{font-weight:500;color:#0F172A}
+ table.rep td.n,table.rep th.n{text-align:right;font-variant-numeric:tabular-nums}
+ table.rep td.d,table.rep th.d{white-space:nowrap;color:#475569}
+ table.rep td.a,table.rep th.a{text-align:right;width:70px}
+ table.rep td.a a{color:#4338CA;font-weight:500;text-decoration:none}
+ table.rep td.rank,table.rep th.rank{width:34px;color:#94A3B8;font-variant-numeric:tabular-nums}
+ table.rep td.barcell{width:160px;position:relative}
+ .bar{display:inline-block;height:8px;border-radius:4px;background:#C7D2FE;vertical-align:middle}
+ .pct{font-size:11.5px;color:#64748B;margin-left:8px;font-variant-numeric:tabular-nums}
+ table.rep tfoot td,table.rep tfoot th{border-top:1px solid #CBD5E1;border-bottom:0;font-weight:600;color:#0F172A}
+ .statband{display:flex;gap:32px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+ .stat .k{font-size:12px;color:#64748B;display:block}
+ .stat .v{font-size:22px;font-weight:700;letter-spacing:-.01em;color:#0F172A}
+ .cardx{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+ .cardhead{padding:14px 16px;border-bottom:1px solid var(--line)}
+ .cardhead h3{margin:0;font-size:15px;font-weight:600}
+ .cardhead p{margin:2px 0 0;font-size:12.5px;color:#64748B}
+ .cardfoot{padding:12px 16px;border-top:1px solid var(--line);font-size:13.5px}
+ .cardfoot a{color:#4338CA;font-weight:500}
+ .nowlist div{padding:2px 0;font-size:16px;color:#0F172A}
+ .flaw{border-left:3px solid #B4232E;background:#FBEDEE;padding:10px 14px;border-radius:0 8px 8px 0;font-size:13.5px;color:#7F1D1D;margin-top:10px}
+</style></head><body><div class="wrap">
+
+<h1>Manufacturer donations, redesigned</h1>
+<p class="lede">Six things are wrong with this page and four of them are the same thing: it is the one
+report that is not a table.</p>
+
+<h2>1. What is there now</h2>
+<div class="page">
+  <div class="nowlist">
+    <p class="cap" style="margin:0 0 4px">Recent manufacturer donations</p>
+    <div><span style="color:#0F172A">Manufacturer 1 (2,901)</span></div>
+  </div>
+  <div class="flaw">
+    <b>The list is a <code>&lt;div class="manufacturer"&gt;</code> per row, and that class is defined
+    nowhere.</b> So the link renders in near-black with no underline &mdash; it does not look like a
+    link, and it is the only way into the manufacturer.
+  </div>
+</div>
+<table class="mini">
+  <tr><th>Fault</th><th>Detail</th></tr>
+  <tr class="rec"><td><b>Not a table</b></td><td>The other five reports are tables. This is a list of
+    bare <code>div</code>s: no column headings, no alignment, no totals, nothing to scan down.</td></tr>
+  <tr class="rec"><td><b><code>(2,901)</code> has no unit</b></td><td>It is
+    <code>sum(line_items.quantity)</code> &mdash; <b>items</b>, not donations &mdash; but the model
+    calls the column <code>donation_count</code> and the page prints it bare. The stat directly above
+    says <i>Items donated 2,901</i>, the same number, so the page shows one figure twice and labels
+    it once.</td></tr>
+  <tr><td><b>A date the page has and never shows</b></td><td>The query already selects
+    <code>max(donations.issued_at) as donation_date</code> and orders by it. The reader is shown a
+    list in date order with no dates in it.</td></tr>
+  <tr class="rec"><td><b>Capped at 10, silently</b></td><td><code>by_donation_date(10, …)</code>. A
+    bank with more manufacturers is shown ten and not told.</td></tr>
+  <tr><td><b>&ldquo;1 Manufacturer&rdquo;</b></td><td><code>pluralize(1, "Manufacturer")</code>, under
+    a label already reading <i>Manufacturers donating</i> &mdash; the word twice, and a capital M
+    mid-value against sentence case.</td></tr>
+  <tr><td><b>A page action in the card body</b></td><td><i>New donation</i> sits between the list and
+    the footer. Page actions go in the page header.</td></tr>
+</table>
+
+<h2>2. Option A &mdash; make it a table, like the other five reports <span class="tag t-rec">recommended</span></h2>
+<div class="page">
+  <div class="cardx">
+    <div class="statband">
+      <span class="stat"><span class="k">Items donated</span><span class="v">108,500</span></span>
+      <span class="stat"><span class="k">Manufacturers donating</span><span class="v">6</span></span>
+    </div>
+    <div class="cardhead">
+      <h3>By manufacturer</h3>
+      <p>The 6 manufacturers who donated between 1 July and 1 October 2026, most recent first.</p>
+    </div>
+    <table class="rep">
+      <thead><tr><th>Manufacturer</th><th class="n">Items donated</th><th class="d">Last donation</th><th class="a"></th></tr></thead>
+      <tbody><tr><th scope="row">Kimberly-Clark</th><td class="n">48,200</td><td class="d">Sep 12, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><th scope="row">Procter & Gamble</th><td class="n">31,450</td><td class="d">Aug 30, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><th scope="row">Essity</th><td class="n">12,800</td><td class="d">Aug 14, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><th scope="row">Ontex</th><td class="n">9,600</td><td class="d">Jul 28, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><th scope="row">Domtar</th><td class="n">4,100</td><td class="d">Jun 19, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><th scope="row">First Quality</th><td class="n">2,350</td><td class="d">May 3, 2026</td><td class="a"><a href="#">View</a></td></tr></tbody>
+      <tfoot><tr><th scope="row">All manufacturers</th><td class="n">108,500</td><td class="d"></td><td></td></tr></tfoot>
+    </table>
+    <div class="cardfoot"><a href="#">View all manufacturer donations</a></div>
+  </div>
+  <span class="mark ok">Three columns the data already has, a total, and the period stated. Nothing
+  new is computed &mdash; <code>donation_date</code> was being selected and thrown away.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> identical to the app's other five reports, so it inherits their row height, their
+    numeric alignment, their scroll region and their sparkline column if it ever wants one. The
+    figures become scannable and the date stops being invisible.</li>
+  <li><b>Against:</b> nothing shows relative size at a glance.</li>
+</ul>
+
+<h2>3. Option B &mdash; the same table with a share bar in the row <span class="tag t-alt">GA4, Stripe</span></h2>
+<div class="page">
+  <div class="cardx">
+    <div class="cardhead">
+      <h3>By manufacturer</h3>
+      <p>The 6 manufacturers who donated between 1 July and 1 October 2026, largest first.</p>
+    </div>
+    <table class="rep">
+      <thead><tr><th class="rank">#</th><th>Manufacturer</th><th class="n">Items donated</th><th class="barcell">Share</th><th class="d">Last donation</th><th class="a"></th></tr></thead>
+      <tbody><tr><td class="rank">1</td><th scope="row">Kimberly-Clark</th><td class="n">48,200</td><td class="barcell"><span class="bar" style="width:100.0%"></span><span class="pct">44%</span></td><td class="d">Sep 12, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><td class="rank">2</td><th scope="row">Procter & Gamble</th><td class="n">31,450</td><td class="barcell"><span class="bar" style="width:65.2%"></span><span class="pct">29%</span></td><td class="d">Aug 30, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><td class="rank">3</td><th scope="row">Essity</th><td class="n">12,800</td><td class="barcell"><span class="bar" style="width:26.6%"></span><span class="pct">12%</span></td><td class="d">Aug 14, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><td class="rank">4</td><th scope="row">Ontex</th><td class="n">9,600</td><td class="barcell"><span class="bar" style="width:19.9%"></span><span class="pct">9%</span></td><td class="d">Jul 28, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><td class="rank">5</td><th scope="row">Domtar</th><td class="n">4,100</td><td class="barcell"><span class="bar" style="width:8.5%"></span><span class="pct">4%</span></td><td class="d">Jun 19, 2026</td><td class="a"><a href="#">View</a></td></tr><tr><td class="rank">6</td><th scope="row">First Quality</th><td class="n">2,350</td><td class="barcell"><span class="bar" style="width:4.9%"></span><span class="pct">2%</span></td><td class="d">May 3, 2026</td><td class="a"><a href="#">View</a></td></tr></tbody>
+    </table>
+  </div>
+  <span class="mark">A ranked table with an in-row bar is the standard shape for &ldquo;top N by a
+  measure&rdquo; &mdash; it is what GA4's report tables and Stripe's breakdowns do. The bar is
+  redundant to the figure beside it, which is the point: it is there to be scanned, not read.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> relative size at a glance without a chart, and no series-count problem &mdash; a
+    bar per row scales to any number of rows, unlike a series per manufacturer.</li>
+  <li><b>Against:</b> a bar is a graphical object and needs a text alternative; the percentage beside
+    it is that. Sorting largest-first also loses the &ldquo;most recent&rdquo; order the query was
+    built for, so one of the two has to give.</li>
+</ul>
+
+<h2>4. Option C &mdash; a chart above the table</h2>
+<div class="page">
+  <p class="note" style="margin:0 0 8px">Named for completeness and <b>not recommended</b>. The
+  number of manufacturers is set by the data, not by the design &mdash; the rule this app arrived at
+  after the 47-series trend chart and the unbounded category stack. A bar per row inside the table,
+  as in B, gets the same reading without a series count.</p>
+  <span class="mark">Rejected on the rule already written down, rather than on taste.</span>
+</div>
+
+<div class="verdict"><b>Recommendation: A, with B's share bar.</b> Make it a table first &mdash; that
+fixes four of the six faults at once, because the missing unit, the missing date, the missing total
+and the unscannable layout are all consequences of not having columns. Then add the share bar and the
+rank, because &ldquo;which manufacturers matter most&rdquo; is the question this report exists to
+answer, and a bar per row answers it without a chart.
+<br><br>The other two faults are copy and placement: the count gets a unit
+(<b>&ldquo;6 manufacturers&rdquo;</b>, sentence case, not repeating its own label), the ten-row cap
+gets said out loud in the subtitle, and <b>New donation</b> moves to the page header where every
+other page action lives.
+<br><br><b>Which order should the table be in?</b> The query orders by most recent donation and B
+sorts largest first. I would keep <b>largest first</b> and put the date in its column &mdash; the
+page is a summary of who gives most, and &ldquo;recent&rdquo; is already the date range's job. Tell
+me if you would rather it stayed chronological.</div>
+
+</div></body></html>
