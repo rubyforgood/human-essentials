@@ -178,8 +178,14 @@ taking a single `address` column. `Organization` still has its own copies of the
 rather than including the concern, because it is not `Geocodable` in quite the same way and has no
 `#address=`.
 
-**The `address` column still exists on those four tables and is in `ignored_columns`.** Nothing
-reads or writes it; a later release drops it. Do not add code that uses it.
+**The freeform `address` column is gone**, dropped by `20260901200000`. `#address` is a method, not
+a column, on all five of those models — so it cannot be used in a query. `where(address: …)`,
+`find_by(address: …)` and `pluck(:address)` will raise; narrow on `street`, `city`, `state` or
+`zipcode` instead. That is what caught `db/seeds.rb`, which looked donation sites up by address and
+kept working right until the column went.
+
+`ignored_columns += ["address"]` is still set in `StructuredAddress` and is now a no-op, kept one
+release so that new code meeting an un-migrated database is safe.
 
 **All ZIP columns are strings.** `partner_profiles.program_zip_code` was an `integer` until
 `20260901180000`, which silently dropped the leading zero from every ZIP in MA, RI, NH, ME, VT, CT,

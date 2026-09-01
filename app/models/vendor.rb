@@ -4,7 +4,6 @@
 #
 #  id              :bigint           not null, primary key
 #  active          :boolean          default(TRUE)
-#  address         :string
 #  business_name   :string
 #  city            :string
 #  comment         :string

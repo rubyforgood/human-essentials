@@ -3,7 +3,6 @@
 # Table name: product_drive_participants
 #
 #  id              :integer          not null, primary key
-#  address         :string
 #  business_name   :string
 #  city            :string
 #  comment         :string

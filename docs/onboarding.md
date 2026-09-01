@@ -1276,6 +1276,10 @@ and **ZIP code** separately &mdash; the same four your organization's settings p
 it was not, the whole thing was left in **Street address** and the other boxes are empty for you to
 finish. <b>Nothing was deleted or changed</b>: every address still reads exactly as it did before.
 
+**Nothing changed for you in this step, and that is the point.** The old single-address field was
+removed from the database once every record had been split into four. Your addresses read exactly as
+they did before, on every page and in every export and PDF.
+
 **Your import files still work.** The CSV templates are unchanged &mdash; still one `address`
 column &mdash; so a copy you downloaded last year imports exactly as it always did. The app splits
 the address as it reads each row.

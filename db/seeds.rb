@@ -207,9 +207,13 @@ complete_orgs.each do |org|
     {name: "Waffle House", address: "3456 Some Bay., #{org.city}, #{org.state} 12345"},
     {name: "Eagleton Country Club", address: "4567 Some Blvd., Eagleton, #{org.state} 12345"}
   ].each do |donation_option|
-    DonationSite.find_or_create_by!(address: donation_option[:address]) do |donation|
-      donation.name = donation_option[:name]
-      donation.organization = org
+    # Keyed on name and organization, which is the model's own uniqueness rule
+    # (`validates :name, uniqueness: {scope: :organization_id}`). It used to key on `address`, and
+    # that stops working the moment the freeform `address` column is dropped -- a query needs a
+    # real column, where the assignment below goes through `StructuredAddress#address=`. Keying on
+    # the address was also wrong on its own terms: two organizations may collect at one address.
+    DonationSite.find_or_create_by!(name: donation_option[:name], organization: org) do |donation|
+      donation.address = donation_option[:address]
     end
   end
 end

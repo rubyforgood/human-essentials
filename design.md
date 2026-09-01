@@ -280,6 +280,12 @@ five. They keep `street`, `city`, `state` and `zipcode` now, through `Structured
 `Organization`'s own pattern extracted, so `#address` still composes `"street, city, ST zip"` for the
 geocoder and the four PDFs, and `#address_changed?` still answers `Geocodable`.
 
+**`#address` is a method, not a column** — the freeform one was dropped by `20260901200000`. It
+cannot appear in a query: `where(address: …)`, `find_by(address: …)` and `pluck(:address)` all
+raise. Narrow on `street`, `city`, `state` or `zipcode`. `db/seeds.rb` was the one place that had
+not noticed, because `ignored_columns` hides an attribute while the SQL keeps resolving against a
+column that is still there — so it worked right up to the moment the column went.
+
 **The CSV import templates did not change, and that was the point.** `import_csv` does
 `new(row.to_hash)`, so `#address=` parses a whole address on the way in and a bank's saved template
 file with one `address` column is still valid. Changing the templates would have been tidier and

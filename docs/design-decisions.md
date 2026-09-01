@@ -8676,3 +8676,40 @@ green, but against a **stale test schema** — `db:test:prepare` had not been ru
 so the two examples asserting `eq(80401)` were still passing against an integer column. They failed
 the moment the test database caught up. A suite run after a migration is not evidence until the test
 database has the migration too.
+
+## 2026-09-01 — Dropping `address` in the same release, and what it flushed out
+
+Asked for directly. The concern was stated first and the answer was to run it, so this records why
+the sequence existed and what changed by collapsing it.
+
+**Why the two migrations were separate files.** `20260901185000` added the four columns and put
+`address` in `ignored_columns`; `20260901200000` drops it. The gap between them is meant to be a
+*release*, not a file boundary: during a rolling deploy, processes running the previous code are
+still reading `address`, and they need the column to be there. Dropping it in the same release
+leaves that window open for the length of the deploy. That is the only cost, it is bounded, and it
+is the deploying team's call — but the migration says so in its own comment, so nobody later reads
+two files and assumes the split was accidental.
+
+**`ignored_columns` stays for now.** It is a no-op once the column is gone. It is kept one more
+release for the mirror-image reason: new code meeting a database where the drop has not run yet.
+Removing it is the last thing left of this change and is named in `docs/migration-map.md`.
+
+### What the drop flushed out that `ignored_columns` had not
+
+`db/seeds.rb` looked donation sites up with `find_or_create_by!(address: …)`. That kept working
+through the whole `ignored_columns` release and would have failed at the drop, because
+**`ignored_columns` hides an attribute while the SQL still resolves against a column that exists**.
+The failure mode is delayed by exactly one migration, which makes it the kind of thing an audit does
+not catch and a test suite only catches if it seeds.
+
+It keys on `name` and `organization` now, which is the model's own uniqueness rule
+(`validates :name, uniqueness: {scope: :organization_id}`) and a better key regardless: two
+organizations may perfectly well collect donations at the same address.
+
+**The general rule, now in design.md and domain-model.md:** `#address` is a method, not a column, so
+it cannot appear in a query. `where`, `find_by`, `pluck` and `order` on it all raise. Narrow on
+`street`, `city`, `state` or `zipcode`.
+
+I swept for the whole class before running the migration rather than after — `find_by(address`,
+`where(address`, `pluck(:address)`, `order(:address)` and raw SQL across `app/`, `lib/`, `db/` and
+`spec/`. One hit, and it was the seed.
