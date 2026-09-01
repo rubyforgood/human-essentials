@@ -8331,3 +8331,46 @@ version: a label is not a hint, and a hint built from a value ends in a brace in
 nothing about the rendered text. Verified by putting *"500 character maximum"* back and watching the
 audit report it.
 
+## 2026-09-01 — The manufacturer report becomes a table, with a bar in the row
+
+Built A with B's share bar. Four of that page's six faults were one fault — it was the only report in
+the app that was not a table — and a table fixed all four **without computing anything new**.
+
+**What the columns are made of.** `donation_date` was already being selected and ordered by, and
+never shown; `sum(line_items.quantity)` was already there and printed bare. The table gives both a
+column and a name.
+
+**Two renames that were corrections, not tidying.** `donation_count` → **`items_donated`**: it is a
+sum of quantities, so under the old name the page printed an items figure as though it counted
+donations, directly beneath a stat labelled *Items donated* holding the same number. And
+`by_donation_date` → **`donating_in`**, because the order changed: largest first, not most recent.
+The page is a summary of who gives most, the period is the date filter's job, and the old ordering
+was invisible anyway since no dates were shown.
+
+**The share bar rather than a chart.** A bar per row scales to any number of rows, where a series per
+manufacturer would be a count taken from the data — the rule this app arrived at after the 47-series
+trend chart. The bar is `aria-hidden` and the percentage beside it is its text alternative, which
+also means the column still works on a phone, where the stacked layout collapses the track to zero
+width and the figure is what survives. **Verified at 390px: the bar is 0px and the cell reads
+"SHARE 80%".**
+
+**Two faults a table would not have fixed on its own.** *New donation* was in the card body, so
+`shared/filtered_card` takes an `actions:` local now and every report can put a page action in the
+page header. And *"Manufacturers donating: 1 Manufacturer"* repeated its own label and capitalised a
+word mid-value; it is a figure.
+
+**Three things measured on the way.**
+
+`.size` on a grouped relation returns a **Hash of group counts**, not a number — which is why the
+model's count has to say `.count.size` and why the controller hands the view an array. The spec
+caught it; the view had got away with it by accident.
+
+The model spec's example named *"returns manufacturers in order of their most recent donation"* used
+`match_array`, **which ignores order**. It asserted nothing about ordering and would have passed
+whatever the query did. It asserts the order now, and the new order.
+
+And two request specs asserted the old rendering — `Manufacturer 1 (5)` and the date ordering. Those
+are expectations about a design that was deliberately replaced, so they were rewritten to the new
+one rather than the code bent to keep them green; the comments say which change made each of them
+wrong.
+

@@ -1,8 +1,9 @@
 <%#
   A report: a date-range filter above one card of results.
 
-  Locals: filter_url, title, subtitle (optional), footer (optional), id (optional), and
-  `padded: false` when the body is a table that should meet the card's edges.
+  Locals: filter_url, title, subtitle (optional), footer (optional), id (optional), actions
+  (optional, for the page header), and `padded: false` when the body is a table that should meet
+  the card's edges.
 
   Every report using this had **no way back to the reports hub** -- no breadcrumb, no back link,
   and none of them is in the sidebar, so the only route out was the browser button. The trail is
@@ -21,7 +22,13 @@
   padded = true if defined?(padded).nil? || padded.nil?
 %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%#
+    `actions:` is the page header's, not the card's. The manufacturer report had a "New donation"
+    button between its list and its footer, which is where a form's submit goes rather than a page
+    action -- and it was the only report with one, so there was nowhere to put it until now.
+  %>
   <%= render "shared/essentials/page_header", title: title, subtitle: subtitle,
+        actions: local_assigns[:actions],
         back: {path: reports_path, label: "Back to reports"} %>
 
   <%#

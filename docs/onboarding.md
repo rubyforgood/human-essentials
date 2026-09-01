@@ -691,6 +691,19 @@ Two symptoms worth recognising:
   new files by whether the path has any history.
 - **The fix you just made is "not working".** Check the file on disk before reading the code.
 
+### Manufacturer donations is a table now
+
+**It used to be a list of names with a number in brackets** — and that number was *items*, not
+donations, with nothing on the page saying so.
+
+It is a table like the rest of the reports: the manufacturer, how many items they donated, their
+**share** of the total as a small bar, and **when they last donated** — a date the page always had
+and never showed. Biggest first, with a total at the foot.
+
+If you have more manufacturers than fit, the page now tells you: *"The 10 largest of 14 manufacturers
+who donated."* And **New donation** has moved up to the top of the page, where every other page's
+main button is.
+
 ### Reports: consistent titles, and the activity graph has its figures written out
 
 **Four report pages were titled in Title Case** — *Monthly Distributions*, *Activity Graph* and so

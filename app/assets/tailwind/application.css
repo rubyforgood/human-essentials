@@ -353,6 +353,52 @@
   }
 
   /*
+   * A share bar in a row: the standard shape for "top N by a measure", and the reason this report
+   * needs no chart. GA4's report tables and Stripe's breakdowns both put the bar in the row, where
+   * it scales to any number of rows -- unlike a series per row, whose count comes from the data.
+   *
+   * The bar is `aria-hidden` and the percentage beside it is its text alternative, so the column
+   * says the same thing to a reader who cannot see the fill. The track is what gives the bar a
+   * length to be read against; without it a short bar and a small container look alike.
+   */
+  .data-table .share {
+    width: 168px;
+    min-width: 168px;
+  }
+
+  .data-table .share-track {
+    display: block;
+    flex: 1;
+    height: calc(var(--spacing) * 2);
+    border-radius: 999px;
+    background-color: var(--color-slate-100);
+    overflow: hidden;
+  }
+
+  .data-table .share-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background-color: var(--color-brand-300);
+  }
+
+  .data-table .share-figure {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-slate-500);
+    font-size: var(--text-xs);
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  /* The rank column: a position, not a quantity, so it is narrow and quiet. */
+  .data-table .rank {
+    width: 40px;
+    min-width: 40px;
+    color: var(--color-slate-400);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
    * The trend column: a sparkline, one per row. Fixed width so 47 of them line up into a column
    * you can read down -- which is the whole point of a sparkline in a table, and is lost the
    * moment they are ragged. Not `numeric`: it holds a drawing, not a figure.

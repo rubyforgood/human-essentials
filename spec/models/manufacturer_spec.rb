@@ -54,7 +54,7 @@ RSpec.describe Manufacturer, type: :model do
   end
 
   context "Methods" do
-    describe "by_donation_date" do
+    describe ".donating_in" do
       before do
         # Prepare manufacturers with donations for tests
         today = Time.zone.today
@@ -76,15 +76,30 @@ RSpec.describe Manufacturer, type: :model do
         create(:manufacturer)
         mfg_no_in_range = create(:manufacturer)
         create(:donation, :with_items, item_quantity: 5, source: Donation::SOURCES[:manufacturer], manufacturer: mfg_no_in_range, issued_at: today - 1.year)
-        @mfg_by_donation = Manufacturer.all.by_donation_date(10, from..to)
+        @range = from..to
+        @mfg_by_donation = Manufacturer.all.donating_in(@range, limit: 10)
       end
 
       it "ignores manufacturers with no donations in the date range" do
         expect(@mfg_by_donation.length).to eq(2)
       end
 
-      it "returns manufacturers in order of their most recent donation" do
-        expect(@mfg_by_donation).to match_array([@mfg1, @mfg2])
+      it "returns them largest first" do
+        # `match_array` before, which ignores order -- so the example named for the ordering never
+        # asserted one. mfg1 gave 15 items across three donations, mfg2 gave 5.
+        expect(@mfg_by_donation.map(&:id)).to eq([@mfg1.id, @mfg2.id])
+      end
+
+      it "reports items donated, not a count of donations" do
+        # The column was called donation_count and holds sum(line_items.quantity). Under that name
+        # the report printed an items figure as though it counted donations.
+        expect(@mfg_by_donation.first.items_donated.to_i).to eq(15)
+      end
+
+      it "counts every donating manufacturer, not only the ones shown" do
+        expect(Manufacturer.all.donating_in_count(@range)).to eq(2)
+        # `.to_a` first: `.size` on a grouped relation is a Hash of group counts, not a number.
+        expect(Manufacturer.all.donating_in(@range, limit: 1).to_a.size).to eq(1)
       end
     end
   end

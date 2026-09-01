@@ -728,6 +728,34 @@ worse than no sparkline.
 `.trend` fixes the column at 124px so the shapes line up into something you can read *down*. Ragged
 sparklines are not comparable, which is the only reason to have them in a table at all.
 
+<a id="a-share-bar-goes-in-the-row"></a>
+**A share bar goes in the row, not in a chart above it.** `.share` is a track and a fill with the
+percentage beside it, and it is the standard shape for *top N by a measure* — GA4's report tables and
+Stripe's breakdowns both do it. It is also the shape that obeys
+[the series-count rule](#series-count-is-a-constant): **a bar per row scales to any number of rows**,
+where a series per row is a count taken from the data.
+
+**The bar is `aria-hidden` and the percentage is its text alternative**, so the column says the same
+thing to a reader who cannot see the fill — and on a phone, where the stacked layout collapses the
+track to nothing, the figure is what survives. Pair it with `.rank`, which is a position rather than a
+quantity and so is narrow and quiet.
+
+<a id="every-report-is-a-table"></a>
+**Every report is a table.** `/reports/manufacturer_donations_summary` was the one that was not: a
+`<div class="manufacturer">` per row, with that class defined nowhere, so the only link into a
+manufacturer rendered in near-black with no underline. **Four of its six faults were consequences of
+having no columns** — the figure had no unit, the date the query already selected was never shown,
+there was no total, and nothing lined up to be read down. A table fixed all four without computing
+anything new.
+
+The other two are worth naming because they are not table faults and would have survived one:
+
+- **A page action belongs in the page header.** *New donation* sat in the card body, between the
+  list and the footer, which is where a form's submit goes. `shared/filtered_card` takes an
+  `actions:` local now, so every report can put one there.
+- **A figure does not repeat its own label.** *"Manufacturers donating: 1 Manufacturer"* — the word
+  twice, and a capital M mid-value against [sentence case](#sentence-case).
+
 <a id="a-row-header-is-a-cell"></a>
 **A row header is a cell, and takes a cell's padding.** `.data-table` styles `thead th`, `tbody td`
 and `tfoot th`; it did not style `tbody th`, so a table that labels its rows with

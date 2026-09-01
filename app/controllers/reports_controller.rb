@@ -9,9 +9,18 @@ class ReportsController < ApplicationController
   def index
   end
 
+  MANUFACTURER_ROWS = 10
+
   def manufacturer_donations_summary
-    @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
-    @recent_manufacturers = current_organization.manufacturers.by_donation_date(10, helpers.selected_range)
+    range = helpers.selected_range
+    @recent_donations_from_manufacturers = current_organization.donations.during(range).by_source(:manufacturer)
+    # `to_a`, because these are grouped relations: `.size` on one returns a Hash of group counts
+    # rather than a number, and the view wants to count rows. The model's `donating_in_count` exists
+    # for the same reason -- it has to say `.count.size`.
+    @manufacturers = current_organization.manufacturers.donating_in(range, limit: MANUFACTURER_ROWS).to_a
+    # What the page is showing ten *of*. The list was capped at ten and never said so.
+    @manufacturers_donating = current_organization.manufacturers.donating_in_count(range)
+    @manufacturer_items_total = @manufacturers.sum { |m| m.items_donated.to_i }
   end
 
   def itemized_donations
