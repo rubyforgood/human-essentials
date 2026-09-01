@@ -23,5 +23,7 @@
 %>
 <div data-controller="highchart" data-highchart-config-value="<%= config %>"
      <%= tag.attributes("data-highchart-label-value": local_assigns[:label]) %>>
-  <div data-highchart-target="chart" style="min-height: <%= height %>px"></div>
+  <%# `--chart-height`, not a `min-height`: the declaration belongs in the stylesheet and only the
+      number belongs here. See "A value is not a style" in design.md. %>
+  <div class="chart-box" data-highchart-target="chart" style="--chart-height: <%= height %>px"></div>
 </div>

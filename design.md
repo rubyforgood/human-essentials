@@ -173,6 +173,46 @@ Tailwind's 4px scale, unmodified. In practice:
 Depth is carried by the hairline border, not the shadow. A card is white on `slate-50` with
 `border-slate-200`; the shadow is a hint, not the edge.
 
+<a id="a-value-is-not-a-style"></a>
+### A value is not a style
+
+**A view carries no `style` attribute, with one exception: a CSS custom property.** Presentation
+lives in a class; `page-audit.rb` fails a view that declares any of it inline.
+
+The exception exists because two things on screen have a length only the server knows, and neither
+can be a class. A share bar's fill is a continuous percentage computed per row, and Tailwind only
+compiles the classes it can *see in the source* — so `w-[37.2%]` interpolated at runtime names a
+class that does not exist. A Highcharts box's reserved height is worse than that: the same number
+has to reach the box **and** the `height` in the chart's JSON config, so a class would be a second
+copy of it, and the two disagreeing is exactly the fault [reserving the box](#reserve-the-space-for-what-arrives-late)
+was added to prevent.
+
+So the markup carries the **value** and the stylesheet carries the **declaration**:
+
+```erb
+<span class="share-fill" style="--share-fill: 37.2%"></span>
+<div class="chart-box" style="--chart-height: 320px"></div>
+```
+```css
+.share-fill { width: var(--share-fill, 0%); }
+.chart-box  { min-height: var(--chart-height, 0px); }
+```
+
+**A custom property cannot style anything on its own** — some rule has to pick it up — which is what
+makes this a line rather than a loophole. `style="width: 37.2%"` is a declaration in the markup and
+is still a defect, interpolated or not; so is `style="--ok: 1px; color: red"`, because one of its
+declarations is presentation. The audit checks every declaration in the attribute, and deliberately
+does *not* ask whether ERB built the string: that would let `style="<%= "color: red" %>"` through
+and would make the rule about how a value was assembled rather than about what it does.
+
+**Give the property a fallback, and pick the one that fails safe.** `var(--share-fill, 0%)` draws an
+empty bar when a row forgets it, so a missing figure reads as no share rather than the whole of it.
+
+The rule used to be *no `style` attribute at all*, which is what the audit's own comment said it was
+enforcing — "a hardcoded inline style" — and is not what it did. It counted the two data bindings
+too, so the app carried two standing defects that were not defects, and a standing finding is how an
+audit stops being read.
+
 ### Iconography
 
 **Bootstrap Icons**, self-hosted, compiled into the Tailwind bundle. Font Awesome is gone —

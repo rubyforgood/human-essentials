@@ -64,6 +64,19 @@ RSpec.describe "Manufacturer donations report", type: :system, js: true do
         expect(page).to have_css(".share-fill", visible: :all)
         expect(page).to have_css(".share-figure", text: "83%")
       end
+
+      # And the bar is as long as the figure says. Asserting the element exists is not enough: the
+      # length arrives as `--share-fill` on the row and is applied by a `width` in the stylesheet,
+      # so a bar that is drawn but never filled looks exactly like a passing test.
+      drawn = page.evaluate_script(<<~JS)
+        (() => {
+          const fill = document.querySelector("main tbody tr .share-fill");
+          const track = fill.parentElement;
+          return Math.round(fill.getBoundingClientRect().width /
+                            track.getBoundingClientRect().width * 100);
+        })()
+      JS
+      expect(drawn).to be_within(1).of(83)
       expect(page.first(".share-fill", visible: :all)[:"aria-hidden"] ||
              page.first(".share-track", visible: :all)[:"aria-hidden"]).to eq("true")
     end
