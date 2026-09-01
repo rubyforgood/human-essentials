@@ -535,7 +535,7 @@ GEM
     puma (7.2.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.6)
+    rack (3.2.7)
     rack-mini-profiler (4.0.1)
       rack (>= 1.2.0)
     rack-protection (4.2.1)
@@ -699,8 +699,8 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
-    sprockets (4.2.2)
-      concurrent-ruby (~> 1.0)
+    sprockets (4.4.1)
+      concurrent-ruby (~> 1.1)
       logger
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.4.2)
@@ -855,7 +855,7 @@ DEPENDENCIES
   simple_form
   simplecov
   solid_cache (~> 1.0)
-  sprockets (~> 4.2.2)
+  sprockets (~> 4.4.1)
   stackprof
   standard (~> 1.56)
   standard-performance
