@@ -7,7 +7,10 @@ class EventsController < ApplicationController
 
     @events = Event.for_organization(current_organization)
       .includes(:eventable, :user)
-    @events = if params[:eventable_id]
+    # `.present?`, not a bare truth test. The row funnel's narrowing is a field in the filter bar's
+    # form now, so clearing its chip submits `eventable_id=` -- an empty string, which is truthy in
+    # Ruby and used to narrow the page to the events belonging to record "", i.e. none of them.
+    @events = if params[:eventable_id].present?
       @events.where(eventable_id: params[:eventable_id],
         eventable_type: params[:eventable_type])
     else

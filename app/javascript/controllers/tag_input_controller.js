@@ -97,6 +97,9 @@ export default class extends Controller {
       "hover:bg-brand-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-1 " +
       "focus-visible:outline-brand-600"
     remove.setAttribute("aria-label", `Remove ${value}`)
+    // A chip's x is named but carries no tooltip: the label it removes is right beside it. Declared
+    // rather than left for the tooltip audit to guess -- see the note there.
+    remove.setAttribute("data-chip-dismiss", "")
     remove.innerHTML = '<i class="bi-x-lg text-[0.625rem]" aria-hidden="true"></i>'
     remove.addEventListener("click", () => this.remove(value))
 

@@ -1244,6 +1244,27 @@ last week"**, and plain **"Added in the last week"** when the list is the whole 
 title carries it instead, which is where the third card on that page already explained itself. The
 period is new information: before, "in the last week" appeared *only* when there was nothing to show.
 
+### History: the funnel on a row says what it does, and you can undo it
+
+On **History**, each row has a funnel button in the *Actions* column at the right. It narrows the
+page to everything that has happened to that one record — the donation, the adjustment, whichever
+it is. Hover it and a label says so.
+
+**It used to be a glyph in the middle of the row with no label**, and pressing it left you with no
+way back except your browser's back button: nothing on the page said you had narrowed anything. Now
+it behaves like every other filter — the Filters button shows a count, a chip appears saying
+*Refers to: Adjustment 12*, and either the chip's ✕ or *Clear all* puts the full list back.
+
+**The snapshot row's items were under the wrong heading.** History tints one row for each inventory
+snapshot, and its list of locations and quantities was printed under *From location*, with *Items*
+left empty. It is under *Items* now, and its date is written the same way as every other row's.
+
+### Filtering a wide table no longer leaves a second scroll bar behind
+
+On a table wide enough to scroll sideways, applying a filter used to leave the old scroll bar on
+screen — so you would end up with two, one of which did nothing at all. Each filter you applied
+added another. There is one again, and it belongs to the table you are looking at.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

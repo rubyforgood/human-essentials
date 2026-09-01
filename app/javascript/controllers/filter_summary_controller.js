@@ -84,6 +84,9 @@ export default class extends Controller {
         "hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 " +
         "focus-visible:outline-offset-2 focus-visible:outline-brand-600"
       remove.setAttribute("aria-label", `Remove the ${label.toLowerCase()} filter`)
+      // Named, and deliberately without a tooltip -- the chip it dismisses is its label. See the
+      // note in bin/design/tooltip-audit.js.
+      remove.setAttribute("data-chip-dismiss", "")
       remove.innerHTML = '<i class="bi-x-lg text-xs" aria-hidden="true"></i>'
       remove.addEventListener("click", () => this.clearField(field))
       chip.append(remove)
@@ -95,6 +98,17 @@ export default class extends Controller {
   // Reset the control and let the change event do the rest: the date range controller updates its
   // hidden field from it, and auto-submit applies the result. Nothing here submits directly.
   clearField(field) {
+    // Some filters take more than one field. `/events`' row funnel submits an eventable *type* and
+    // an *id*, and clearing the id alone would leave a half-filter in the URL. Only one of the
+    // group carries a `data-filter-label`, so the group is one chip and clears as one thing.
+    const group = field.dataset.filterGroup
+    if (group) {
+      const rest = [...this.element.elements].filter(
+        (f) => f !== field && f.dataset.filterGroup === group
+      )
+      rest.forEach((f) => { f.value = f.dataset.defaultValue ?? "" })
+    }
+
     if (field.type === "checkbox") {
       field.checked = false
       field.dispatchEvent(new Event("change", { bubbles: true }))
@@ -119,7 +133,11 @@ export default class extends Controller {
     return field.dataset.filterLabel || field.labels?.[0]?.textContent.trim() || null
   }
 
+  // What the chip shows. A select says its option's text; anything else says its value -- except
+  // where the value is an id, which reads as nothing. `data-filter-display` is the label for those:
+  // `/events` submits `eventable_id=12` and the chip has to say "Adjustment 12".
   displayValue(field) {
+    if (field.dataset.filterDisplay) return field.dataset.filterDisplay
     if (field.tagName !== "SELECT") return field.value
     return field.options[field.selectedIndex]?.text.trim() ?? field.value
   }

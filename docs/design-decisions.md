@@ -8374,3 +8374,114 @@ are expectations about a design that was deliberately replaced, so they were rew
 one rather than the code bent to keep them green; the comments say which change made each of them
 wrong.
 
+
+## 2026-09-01 — Four faults on the History page, and the audit that saw none of them
+
+Reported as one message with four complaints: the funnel next to *Refers to* gives no clue what it
+does or how to undo it, the scroll bar is stuck, the icon button has no label or tooltip, and the
+alignment looks wrong. They turned out to be four independent faults that happened to share a
+screen, so each is recorded on its own terms.
+
+### The funnel: a row action that was not in the actions column
+
+`/events` was the one table in the app with no actions column. Its funnel sat inline in the
+*Refers to* cell — `essentials_button_classes(variant: :ghost, size: :sm)`, measuring 34×30, three
+pixels from a 24px record link, in the narrowest column of the table.
+
+Three things follow from that placement, and all three were in the report. It was the wrong size,
+because it was built from the button helper rather than `essentials_row_icon_link`, so it missed the
+`size-7` every other row control uses **and** the `data-tooltip` that helper supplies. It had
+nothing to align with, because a control in a data cell shares its box with text. And the column was
+ragged, because the snapshot row has no `eventable` and so carried no button — a differently-shaped
+cell in the middle of the table.
+
+**The alternative was to keep it inline and tidy it up**, which would have meant inventing a
+placement rule for a control the design system already has a place for. Rejected: design.md's rule
+is that a row action is an icon at `size-7` in the actions column, and following it is not a design
+decision.
+
+What was not foreseen: moving it made the table **narrower**. 107px of columns were off screen at
+1440 and 45px are now, because the snapshot row's misplaced dump had been stretching *From location*
+to 202px. Two of the three columns involved were being sized by content that did not belong to them.
+
+### The narrowing: a filter nothing could see
+
+The funnel navigated to `?eventable_type=Adjustment&eventable_id=12` — outside the `filters[…]`
+namespace, and outside the bar's form entirely. The chips are built in the browser from the form's
+own fields, so a param beside the form is invisible to every part of the mechanism: no count on the
+Filters button, no chip, and *Clear all* pointing at a path that does not clear it. The browser's
+Back button was the only way out, which is what "how to reverse this action" was asking about.
+
+Three shapes were considered.
+
+**A scope banner** — *"Showing history for Adjustment 12 · Show all"* — is what a lot of admin tools
+do, and it is honest about this not being a menu choice. Rejected because it teaches a second
+vocabulary for the same idea on one page out of eighteen: everywhere else in this app a narrowing is
+a chip beside the Filters button and *Clear all* removes it.
+
+**Moving it into `filters[…]`** so `class_filter` handles it. Rejected because it is not a scope —
+there is no `by_eventable` and writing one to hold a type/id pair would put polymorphic lookup into
+the filtering concern for a single caller.
+
+**A hidden field in the bar's form**, which is what was built. It submits, counts, chips and clears
+exactly like every other filter, and needs no new concept — the two new attributes, `filter_display`
+and `filter_group`, are both things the chip mechanism was missing generally rather than for this
+page. `hidden_fields:` puts them inside the form and outside the grid, so they take no cell.
+
+The rule that came out of it is more general than the page: **a filter the bar cannot see is a
+filter the reader cannot reverse.**
+
+### The stuck scrollbar
+
+Not the item dropdown at all. The rails are built once per scrollable region and kept in a `Map`
+keyed on that region, on `document.body` so no ancestor can clip them — and `markAll` iterates the
+regions *currently in the document*. A Turbo frame swap replaces the region, so the old one is never
+visited again and its rail stays where it was, at the `top` it last had, scrolling nothing. One rail
+before filtering, two after. The user reached it through the item filter because that is the filter
+they used; any of the four would have done it.
+
+This is the same defect as the "ghost scroll bar" fixed a week ago, arriving through a different
+door: that one was a native bar and a rail both being permanent, this one is a rail that outlived
+its table. **Both are the same rule** — a scrollable table gets one scrollbar — and the second was
+not caught by the first fix because nothing checked the invariant, only the appearance.
+
+### The audit that reported zero
+
+`tooltip-audit.js` said "301 icon-only, 0 defects" while `/events` rendered 24 funnels with no
+tooltip. It collected `main .cell-actions a, main .cell-actions button` on 25 hardcoded pages.
+
+Both halves of that scope were wrong in the same way. design.md's rule is about *an icon-only
+control*; the audit had encoded *where the defect was expected to be*, which is a different claim.
+And a hardcoded page list goes stale silently — the nine `/new` and `/edit` forms with an
+untooltipped barcode-scan button had never been visited by it at all.
+
+Widened to every screen `route-targets.rb` produces and every control whose visible text is empty:
+153 screens, 640 controls, and **14 defects the narrow version reported as zero**. All 14 fixed.
+
+One exemption was needed — a chip's ✕, which sits inside the label it removes and is shipped without
+a tooltip by MUI, Ant Design, Carbon and Primer alike. It is **declared** with `data-chip-dismiss`
+rather than inferred, because the obvious heuristic (*its parent has visible text*) would have
+exempted the `/events` funnel too, and an exemption that can widen on its own is how an audit goes
+quiet.
+
+`row-actions-audit.js` needed a smaller version of the same distinction: rows that *have* actions
+disagreeing about how many is a defect, while some rows having none at all is an advisory. A
+snapshot row has no record to act on, and an empty cell says that better than a control that can
+never do anything.
+
+### Three specs that passed with the fix reverted
+
+The rail example took four attempts, and each failure was a different way of not testing the thing:
+
+1. It clicked the funnel. That is a plain link and Turbo Drive is off app-wide, so the page fully
+   reloaded, the controller disconnected and took every rail with it. The bug cannot occur there.
+2. It counted rails and compared to the count before. The filtered page holds one row and does not
+   overflow, so **one stranded rail plus no live one** equals one live rail.
+3. It read the count with `evaluate_script`, which does not retry, immediately after a Capybara
+   matcher that settles *before* `turbo:frame-load` — so it counted the page one rail early.
+4. `expect(page).to have_css(".table-rail", maximum: 1)` — a retrying matcher, stating the rule the
+   user reported: one scrollbar, not two. This fails with the sweep removed.
+
+The general lesson is the one this migration keeps re-learning, in its sharpest form yet: **a green
+example is evidence of nothing until you have watched it go red.** All four of these were written
+by someone who believed the fix was correct, and it was; the examples were not.

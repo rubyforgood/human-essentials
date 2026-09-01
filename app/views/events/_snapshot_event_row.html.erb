@@ -1,13 +1,23 @@
-<% num_locations = event.data.storage_locations.length %>
+<%#
+  A snapshot row is marked with the brand tint rather than a hex literal.
 
-<%# A snapshot row is marked with the brand tint rather than a hex literal. %>
+  **Its cells were one column out of true.** The whole location-and-quantity dump was rendered in
+  the *From location* cell, with To location and Items left empty -- so the one row on the page
+  that lists items put them under a heading that says where things moved from, and it stood 97px
+  tall against 55px for every other row. A snapshot is not a movement: it has no from and no to.
+  The breakdown belongs in Items, which is where every other row lists "item: quantity", and the
+  two movement columns are empty because there is nothing to put in them.
+%>
 <tr class="bg-brand-50">
-  <td><%= event.user&.name || "No Name Provided" %></td>
+  <td><%= event.user&.name || "Not recorded" %></td>
   <td>Snapshot</td>
   <td></td>
-  <td><%= event.event_time.to_s %></td>
+  <%# The same format as every other row. `to_s` gave this one column two date formats. %>
+  <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
+  <td></td>
+  <td></td>
   <td>
-    <% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
+    <% event.data.storage_locations.values.each do |loc| %>
       <%= link_to storage_locs.find { |i| i.id == loc.id}.name, storage_location_path(loc.id), class: "font-medium text-brand-700 hover:text-brand-800" %>
       <% loc.items.values.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id} %>
@@ -21,6 +31,7 @@
       <br>
     <% end %>
   </td>
-  <td></td>
-  <td></td>
+  <%# No actions: a snapshot has no `eventable` to narrow the history to. The cell is still here,
+      because a row short of a cell would pull the frozen actions column out of line. %>
+  <td class="cell-actions"></td>
 </tr>

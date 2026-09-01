@@ -380,11 +380,27 @@ August 2026 -- every action was per-record, and `print_unfulfilled` was the one 
 a set, chosen by filter rather than by hand. `/requests` is the only table with selection, because
 it is the only one where a batch endpoint exists; the component is ready for others when one does.
 
-**`title` is not a tooltip in this app any more.** Every icon-only row action carries `aria-label`
+**`title` is not a tooltip in this app any more.** Every icon-only control carries `aria-label`
 plus `data-tooltip`, read by `tooltip_controller`; `title` was removed from all of them, because the
 browser's tooltip would draw on top of ours and it shows nothing at all on keyboard focus.
 `pw bin/design/tooltip-audit.js` fails if one comes back. The clipped-cell bubble is unchanged and
 still a separate controller.
+
+That used to read *every icon-only **row action***, which is what the audit checked, and it left
+three kinds of control behind: the `/events` funnel in a data cell, the barcode-scan button on nine
+forms, and `title="Internal Event ID: N"` on 24 `<td>`s. All fixed; the audit reads every screen and
+every icon-only control now, wherever it sits.
+
+**`/events` had no actions column and now has one.** It was the only table in the app with a row
+action and nowhere to put it: the funnel that narrows the history to one record was a hand-rolled
+ghost button inline in a data cell. `essentials_row_icon_link` in `<td class="cell-actions">` now,
+which takes the views carrying an actions header from 42 to **43**. A `SnapshotEvent` row renders
+the cell empty, because it has no record to narrow to.
+
+Eleven other `.data-table` views still have no actions column, and correctly: the trend tables, the
+annual and by-county reports, the NDBN member list and six partner request lists are read-only, so
+there is nothing for the column to hold. `row-actions-audit.js` sees **26 tables, 26 with row
+actions** -- it walks pages rather than partials, so the read-only ones are not among them.
 
 **Row actions were labelled `sm` ghost buttons and are now 28px icons** -- 55 call sites across 30
 files, rewritten to `essentials_row_icon_link` / `essentials_row_icon_action`. `<td class="text-right">`
