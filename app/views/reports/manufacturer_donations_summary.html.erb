@@ -1,27 +1,112 @@
+<%
+  total_items = @recent_donations_from_manufacturers.sum { |d| d.line_items.total }
+  shown = @manufacturers.size
+  # The list was capped at ten and never said so. `essentials_recent_subtitle` states a total only
+  # where the list is truncated, and this follows the same rule by hand because the count here is a
+  # grouped query rather than a relation.
+  table_subtitle =
+    if shown < @manufacturers_donating
+      "The #{shown} largest of #{@manufacturers_donating} manufacturers who donated, biggest first."
+    else
+      "#{pluralize(shown, "manufacturer")}, biggest first."
+    end
+%>
 <%= render(
   "shared/filtered_card",
   id: "manufacturers",
   title: "Manufacturer donations",
   subtitle: @selected_date_range,
   filter_url: reports_manufacturer_donations_summary_path,
+  actions: capture { concat essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") },
+  padded: false,
   footer: link_to("View all manufacturer donations", donations_path(filters: {by_source: "Manufacturer"}), class: "text-sm font-medium text-brand-700 hover:text-brand-800")
 ) do %>
-  <div class="space-y-5 px-5 py-4">
-    <%# No caption here: shared/filtered_card already states the period in the page header. %>
+  <div class="border-b border-slate-200 px-5 py-4">
+    <%#
+      "Manufacturers donating: 1 Manufacturer" repeated its own label and capitalised a word
+      mid-value. The figure is a figure now.
+    %>
     <%= essentials_stats([
-          {label: "Items donated",
-           value: number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }),
+          {label: "Items donated", value: number_with_delimiter(total_items),
            value_class: "total_received_donations"},
-          {label: "Manufacturers donating",
-           value: pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, "Manufacturer"),
+          {label: "Manufacturers donating", value: number_with_delimiter(@manufacturers_donating),
            value_class: "num_manufacturers_donated"}
         ]) %>
-
-    <div>
-      <h2 class="mb-2 text-base font-semibold text-slate-900">Recent manufacturer donations</h2>
-      <%= render partial: "manufacturer", collection: @recent_manufacturers, as: :manufacturer %>
-    </div>
-
-    <div><%= new_button_to new_donation_path, {text: "New donation"} %></div>
   </div>
+
+  <% if @manufacturers.empty? %>
+    <div class="p-5">
+      <%= render "shared/essentials/empty_state", kind: :no_results,
+            title: "No manufacturer donations found",
+            body: "Nothing matched the selected date range. Try widening it." %>
+    </div>
+  <% else %>
+    <%#
+      A table, like the app's other five reports. It was a `<div class="manufacturer">` per row --
+      a class defined nowhere, so the only link into a manufacturer rendered in near-black with no
+      underline and did not look like a link. Four of that page's six faults were consequences of
+      having no columns: the figure had no unit, the date the query already selected was never
+      shown, there was no total, and nothing lined up to be read down.
+    %>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
+      <table class="data-table">
+        <caption>Manufacturers who donated, <%= @selected_date_range %></caption>
+        <thead>
+          <tr>
+            <th scope="col" class="rank">#</th>
+            <th scope="col">Manufacturer</th>
+            <th scope="col" class="quantity">Items donated</th>
+            <th scope="col" class="share">Share</th>
+            <th scope="col" class="date">Last donation</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @manufacturers.each_with_index do |manufacturer, i| %>
+            <%
+              items = manufacturer.items_donated.to_i
+              share = @manufacturer_items_total.positive? ? (items * 100.0 / @manufacturer_items_total) : 0
+            %>
+            <tr>
+              <td class="rank"><%= i + 1 %></td>
+              <th scope="row" class="font-medium text-slate-900"><%= manufacturer.name %></th>
+              <td class="quantity"><%= number_with_delimiter(items) %></td>
+              <%#
+                A bar in the row rather than a chart: it scales to any number of rows, where a
+                series per manufacturer would be a count taken from the data. The percentage beside
+                it is the bar's text alternative -- the bar itself is decorative and hidden.
+              %>
+              <td class="share">
+                <span class="flex items-center gap-2">
+                  <span class="share-track" aria-hidden="true">
+                    <span class="share-fill" style="width: <%= [share, 100].min.round(1) %>%"></span>
+                  </span>
+                  <span class="share-figure"><%= number_to_percentage(share, precision: 0) %></span>
+                </span>
+              </td>
+              <td class="date"><%= manufacturer.last_donation_at&.to_date&.to_fs(:long) %></td>
+              <td class="cell-actions">
+                <%# The design system's actions column: an icon at size-7, named for a screen
+                    reader and tooltipped for everyone else. See design.md. %>
+                <%= essentials_row_icon_link "View #{manufacturer.name}", manufacturer_path(manufacturer), icon: "bi-eye" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="rank"></td>
+            <%# "All manufacturers" when the list is whole, "These 10" when it is not: the total
+                below is of the rows shown, and saying otherwise would make it not add up. %>
+            <th scope="row"><%= (shown < @manufacturers_donating) ? "These #{shown}" : "All manufacturers" %></th>
+            <td class="quantity"><%= number_with_delimiter(@manufacturer_items_total) %></td>
+            <td class="share"></td>
+            <td class="date"></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="border-t border-slate-200 px-5 py-3 text-sm text-slate-600"><%= table_subtitle %></p>
+  <% end %>
 <% end %>
