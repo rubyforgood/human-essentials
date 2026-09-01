@@ -229,7 +229,6 @@ the label, the state list, the ZIP pattern and the `autocomplete` token; a form 
 
 | Part | Label | `autocomplete` |
 | --- | --- | --- |
-| A whole address in one box | Address | `street-address` |
 | Street | Street address | `street-address` |
 | Two-line street | Address line 1 / Address line 2 | `address-line1` / `address-line2` |
 | City | City | `address-level2` |
@@ -238,8 +237,9 @@ the label, the state list, the ZIP pattern and the `autocomplete` token; a form 
 
 **Every address field carries `autocomplete`.** WCAG 1.3.5 Identify Input Purpose is a AA criterion
 and the app was failing it everywhere: **17 address inputs measured across the 7 screens that
-collect one, and not a single `autocomplete` attribute between them**. (The audit counts 26, because
-it visits the `new` and `edit` variants of the same forms.) It is also
+collect one, and not a single `autocomplete` attribute between them**. (The audit counts 50: it
+visits the `new` and `edit` variants of the same forms, and the four freeform boxes have since
+become four fields each.) It is also
 the largest single usability gain available here: a browser fills a whole address from these tokens
 and a diaper bank's volunteer is typing the same addresses repeatedly. The tokens are WHATWG's, and
 they are not interchangeable — `street-address` is defined as a *multi-line* whole address, so a
@@ -265,16 +265,36 @@ audit already knows it.
 `pw bin/design/address-audit.js` checks all of it across every screen `route-targets.rb` knows
 about, reading each field's role off its **name** rather than from a list of pages — the lesson from
 [the tooltip audit](#the-audit-scoped-itself-blind), which carried a hardcoded page list and
-reported zero while there were fourteen. **26 address fields, 0 findings.**
+reported zero while there were fourteen. **50 address fields, 0 findings.**
+
+It also guards the decision below: **a single freeform `address` input is itself a finding.** No
+model stores an address that way any more, so one appearing again means a form has gone back to the
+shape the app moved away from, and that should be noticed the day it happens.
 
 <a id="one-box-or-four"></a>
-**Not settled: whether the four freeform addresses become four fields.** `Vendor`, `DonationSite`,
-`ProductDriveParticipant` and `StorageLocation` each store one `address` string, against
-`Organization`'s four columns and the partner profile's five. Structured fields are the industry
-standard and the rest of this section assumes them — but splitting these four is a schema migration
-across four tables, a change to four CSV import templates that banks have saved copies of, and a
-parse of existing freeform text that succeeds on only 10 of the 18 rows in the seed database. It is
-recorded here as an open question rather than quietly left out; see `docs/design-decisions.md`.
+**All seven screens store an address as parts. There is no freeform address box left.**
+
+`Vendor`, `DonationSite`, `ProductDriveParticipant` and `StorageLocation` each kept a single
+`address` string until 2026-09-01, against `Organization`'s four columns and the partner profile's
+five. They keep `street`, `city`, `state` and `zipcode` now, through `StructuredAddress` — which is
+`Organization`'s own pattern extracted, so `#address` still composes `"street, city, ST zip"` for the
+geocoder and the four PDFs, and `#address_changed?` still answers `Geocodable`.
+
+**The CSV import templates did not change, and that was the point.** `import_csv` does
+`new(row.to_hash)`, so `#address=` parses a whole address on the way in and a bank's saved template
+file with one `address` column is still valid. Changing the templates would have been tidier and
+would have broken a file 200+ organizations already have on disk, at the moment they are least able
+to debug it. The alternative is recorded in `docs/design-decisions.md`.
+
+**The parser never discards text.** It reads from the end inwards, because the end is the part with
+a shape: a ZIP is unmistakable, a state is one of 51 known codes, and the last comma separates city
+from street. Anything it cannot place stays in `street` whole — so the worst case is a record whose
+city needs filling in by hand, never a record missing what somebody typed. It does not guess: a
+two-letter word at the end that is not a state code stays part of the street, and an address with no
+comma keeps its street intact rather than having a city invented from the last two words.
+
+Measured over the backfill: **18 of 18 addresses compose back to exactly the string they were**, and
+10 of 18 split into all four parts. The other 8 keep their text in `street`.
 
 ### Iconography
 

@@ -4,13 +4,17 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  city            :string
 #  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  square_footage  :integer
+#  state           :string
+#  street          :string
 #  time_zone       :string           default("America/Los_Angeles"), not null
 #  warehouse_type  :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer

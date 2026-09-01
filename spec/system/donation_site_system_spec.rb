@@ -54,7 +54,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       visit subject
       donation_site_traits = attributes_for(:donation_site)
       fill_in "Name", with: donation_site_traits[:name], match: :prefer_exact
-      fill_in "Address", with: donation_site_traits[:address]
+      fill_in_address donation_site_traits[:address]
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "added"
@@ -64,7 +64,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
       visit subject
       donation_site_traits = attributes_for(:donation_site)
       fill_in "Name", with: donation_site_traits[:name], match: :prefer_exact
-      fill_in "Address", with: donation_site_traits[:address]
+      fill_in_address donation_site_traits[:address]
       fill_in "Contact name", with: donation_site_traits[:contact_name]
       fill_in "Phone", with: donation_site_traits[:phone]
       fill_in "Email", with: donation_site_traits[:email]
@@ -94,7 +94,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
     it "updates an existing donation site's Address" do
       visit subject
-      fill_in "Address", with: "123 Donation Site Way"
+      fill_in_address "123 Donation Site Way"
       click_button "Save"
 
       expect(page.find("[data-flash]")).to have_content "updated"
@@ -135,7 +135,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
     it "does not allow updating to an existing donation site with empty required attributes[Address]" do
       visit subject
-      fill_in "Address", with: "", match: :prefer_exact
+      clear_address
 
       click_button "Save"
 

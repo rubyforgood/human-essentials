@@ -97,7 +97,9 @@ class DonationSitesController < ApplicationController
   private
 
   def donation_site_params
-    params.require(:donation_site).permit(:name, :address, :contact_name, :email, :phone)
+    # `:address` is still accepted beside the four parts and split by `#address=`.
+    params.require(:donation_site)
+      .permit(:name, :street, :city, :state, :zipcode, :address, :contact_name, :email, :phone)
   end
 
   helper_method \

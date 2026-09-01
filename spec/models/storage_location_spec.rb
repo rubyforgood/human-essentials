@@ -4,13 +4,17 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  city            :string
 #  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  square_footage  :integer
+#  state           :string
+#  street          :string
 #  time_zone       :string           default("America/Los_Angeles"), not null
 #  warehouse_type  :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -21,7 +25,8 @@ RSpec.describe StorageLocation, type: :model do
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:organization_id).case_insensitive }
-    it { is_expected.to validate_presence_of(:address) }
+    # `street`, not `address` -- see the note in donation_site_spec. The address is composed.
+    it { is_expected.to validate_presence_of(:street) }
     it "ensures that square_footage cannot be negative" do
       expect(build(:storage_location, square_footage: -1)).not_to be_valid
       expect(build(:storage_location, square_footage: 0)).to be_valid

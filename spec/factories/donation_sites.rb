@@ -5,12 +5,16 @@
 #  id              :integer          not null, primary key
 #  active          :boolean          default(TRUE)
 #  address         :string
+#  city            :string
 #  contact_name    :string
 #  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  phone           :string
+#  state           :string
+#  street          :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer

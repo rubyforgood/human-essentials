@@ -58,13 +58,13 @@ RSpec.describe AddressHelper, type: :helper do
     block = source[/const ROLES = \{(.*?)\n\};/m, 1]
     expect(block).to be_present, "could not find ROLES in address-audit.js"
 
-    in_js = block.scan(/^\s*(\w+):\s*\{ label: "([^"]+)", token: "([^"]+)" \}/)
+    in_js = block.scan(/^\s*(\w+): \{ label: "([^"]+)", token: "([^"]+)"/)
       .to_h { |role, label, token| [role.to_sym, {label: label, autocomplete: token}] }
 
-    # `whole` is the audit's name for a single box holding an entire address, which the helper has
-    # no separate entry for -- it is `street` under another name, and the audit needs to tell them
-    # apart to check the label.
+    # `whole` is the audit's name for a single box holding an entire address. No model stores one
+    # any more, and the audit keeps the entry so it can *report* one appearing again -- so it is
+    # expected here to be absent from the helper, not equal to something in it.
+    expect(AddressHelper::ADDRESS_FIELDS).not_to have_key(:whole)
     expect(in_js.except(:whole)).to eq(AddressHelper::ADDRESS_FIELDS)
-    expect(in_js[:whole][:autocomplete]).to eq(AddressHelper::ADDRESS_FIELDS[:street][:autocomplete])
   end
 end

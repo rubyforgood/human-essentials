@@ -151,7 +151,9 @@ class StorageLocationsController < ApplicationController
   private
 
   def storage_location_params
-    params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type, :time_zone)
+    # `:address` is still accepted beside the four parts and split by `#address=`.
+    params.require(:storage_location).permit(:name, :street, :city, :state, :zipcode, :address,
+      :square_footage, :warehouse_type, :time_zone)
   end
 
   def include_omitted_items(existing_item_ids = [])

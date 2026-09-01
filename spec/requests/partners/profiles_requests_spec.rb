@@ -100,7 +100,9 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(partner.profile.program_address2).to eq("suite 333")
       expect(partner.profile.program_city).to eq("Golden")
       expect(partner.profile.program_state).to eq("Colorado")
-      expect(partner.profile.program_zip_code).to eq(80401)
+      # A string since 20260901180000. It was an integer, which cannot hold the leading
+      # zero on an 0xxxx ZIP, or a ZIP+4 at all.
+      expect(partner.profile.program_zip_code).to eq("80401")
       expect(response).to redirect_to(partners_profile_path)
     end
 

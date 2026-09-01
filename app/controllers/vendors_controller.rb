@@ -108,7 +108,10 @@ class VendorsController < ApplicationController
 
   def vendor_params
     params.require(:vendor)
-          .permit(:contact_name, :phone, :email, :business_name, :address)
+          .permit(:contact_name, :phone, :email, :business_name,
+            # The four parts, plus `:address` -- still accepted, and split by `#address=`, so a
+            # client posting a whole address keeps working. See design.md, "Address fields".
+            :street, :city, :state, :zipcode, :address)
   end
 
   helper_method \

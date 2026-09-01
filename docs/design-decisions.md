@@ -8602,3 +8602,77 @@ None of that argues against doing it — structured fields are the standard and 
 why nobody can filter donation sites by state. It argues that it is a decision with a data-loss
 mode, taken deliberately, rather than a rider on a consistency pass. The preview is
 `docs/mockups/address-fields.html`.
+
+## 2026-09-01 — Option B: four address fields, and a CSV that still takes one column
+
+Chosen from `docs/mockups/address-fields.html`. This records what the app does now and why B rather
+than A or C, because the reasoning is the part that will be needed later — the code only shows the
+outcome.
+
+### Where it stands now
+
+All seven screens that collect an address store it as parts. `Vendor`, `DonationSite`,
+`ProductDriveParticipant` and `StorageLocation` gained `street`, `city`, `state` and `zipcode` and
+include `StructuredAddress`, which is `Organization`'s long-standing pattern extracted into a
+concern: `#address` composes `"street, city, ST zip"`, `#address_changed?` answers `Geocodable`, and
+`#address=` parses. `Organization` and `Partners::Profile` are unchanged — they were already
+structured.
+
+The old `address` column still exists and is in `ignored_columns`. Dropping it is a **separate
+release**, deliberately: between the two deploys an old process running the previous code can still
+read the column instead of hitting one that has vanished. Four PDFs, the geocoder and three CSV
+exports read these tables, which is what makes the extra step worth taking rather than ceremony.
+
+### Why B and not A
+
+A was leaving the four as one box. It answers nothing that was reported and keeps the app unable to
+group or filter by state, which is the practical cost: there is no way to list donation sites by
+region because there is no region, only a string.
+
+### Why B and not C
+
+C is the same forms with the CSV templates changed to `name,street,city,state,zipcode`. Cleaner on
+paper, and the reason it lost is not aesthetic: **200+ organizations have downloaded these templates
+and keep local copies.** A bank whose saved file still has one `address` column would get an import
+failure at the moment it is least equipped to debug one, and the failure would look like the app
+being broken rather than the file being old.
+
+B gets the identical database with none of that, because `import_csv` does `new(row.to_hash)` and
+`#address=` splits on the way in. The importers were not touched at all. That property is now pinned
+by a spec that fails when `#address=` is removed — verified by removing it.
+
+### The parser, and what it refuses to do
+
+It reads from the end inwards, because the end is the part with a shape: a ZIP is unmistakable, a
+state is one of 51 known codes, and the last comma separates city from street.
+
+What it will not do is guess. A two-letter word at the end that is not a state code stays part of
+the street, so "12 Sesame St" keeps its street. An address with no comma keeps its street whole
+rather than having a city invented from the last two words — which matters because **every vendor in
+the seed database is written that way**: `"3035 Mattie Isle Vincentshire, MA 11923-5457"` yields a
+state and a ZIP and leaves the rest alone, because there is no way to know whether Vincentshire is
+the city or the end of the street name.
+
+**The invariant is that nothing is discarded.** Anything unplaced stays in `street`, so the worst
+outcome is a record whose city wants filling in by hand. Measured over the backfill: **18 of 18
+addresses compose back to exactly the string they were**, and 10 of 18 split into all four parts.
+
+The migration carries its own copy of the parser rather than calling the concern. That is the house
+pattern — `20260612120000` says the same thing about the `Kit` class — because a migration has to
+keep working years later with no application code around it. A copy is safe here because it runs
+once, and the two were verified to produce identical output for all 26 inputs before committing.
+
+### What the audit does now
+
+`address-audit.js` gained a rule that guards this decision: **a single freeform `address` input is a
+finding.** No model stores an address that way any more, so one appearing again means a form has
+gone back to the shape the app moved away from. Verified by putting a freeform box back on the
+vendor form and watching it fail.
+
+### A miss worth recording
+
+The previous commit changed `program_zip_code` to a string and I reported the suite green. It was
+green, but against a **stale test schema** — `db:test:prepare` had not been run after the migration,
+so the two examples asserting `eq(80401)` were still passing against an integer column. They failed
+the moment the test database caught up. A suite run after a migration is not evidence until the test
+database has the migration too.

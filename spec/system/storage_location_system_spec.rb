@@ -14,7 +14,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       visit subject
       storage_location_traits = attributes_for(:storage_location)
       fill_in "Name", with: storage_location_traits[:name]
-      fill_in "Address", with: storage_location_traits[:address]
+      fill_in_address storage_location_traits[:address]
       click_on "Save"
 
       expect(page.find("[data-flash]")).to have_content "added"
@@ -25,7 +25,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       storage_location1 = create(:storage_location, name: "non-Unique Name")
 
       fill_in "Name", with: storage_location1.name
-      fill_in "Address", with: storage_location1.address
+      fill_in_address storage_location1.address
       click_on "Save"
 
       expect(page).to have_content "Name has already been taken"
@@ -36,7 +36,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       storage_location1 = create(:storage_location, name: "non-Unique Name")
 
       fill_in "Name", with: storage_location1.name.upcase
-      fill_in "Address", with: storage_location1.address
+      fill_in_address storage_location1.address
       click_on "Save"
 
       expect(page).to have_content "Name has already been taken"
@@ -46,7 +46,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       visit subject
       storage_location_traits = attributes_for(:storage_location)
       fill_in "Name", with: storage_location_traits[:name]
-      fill_in "Address", with: storage_location_traits[:address]
+      fill_in_address storage_location_traits[:address]
       fill_in "Square footage", with: storage_location_traits[:square_footage]
       select StorageLocation::WAREHOUSE_TYPES.sample, from: 'Warehouse type'
       click_on "Save"
@@ -67,7 +67,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
     it "User updates an existing storage location" do
       visit subject
-      fill_in "Address", with: storage_location.name + " new"
+      fill_in_address storage_location.name + " new"
       fill_in "Square footage", with: 50
       select (StorageLocation::WAREHOUSE_TYPES - [storage_location.warehouse_type]).sample, from: 'Warehouse type'
 

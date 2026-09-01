@@ -111,7 +111,7 @@ they render as nothing at all.
 | select2's box | The vendored 2014 control: 28px tall, 4px radius, 16px text, a `#aaa` border, no focus style, on six selects across five views | The app's control box, restyled unlayered in `application.css`: 38px (`min-height` for a multi-select), 8px, 14px, slate-300, and the same focus ring as everything else |
 | The line item row | A `flex-wrap` row per line carrying its own "Scan a barcode" field, an "or", a labelled item picker, a labelled quantity and a text "Remove" — five controls on three different bottom edges, 96px a row | `line_items/_line_item_table`: one scan bar per card, column headings once, an icon-only remove, a running total, 58px a row. All seven forms render the one partial |
 | A length only the server knows | `style="width: 37.2%"` and `style="min-height: 320px"` written straight into the markup -- `page-audit.rb` counted both as defects and had done since each was written | A CSS custom property: the row carries `style="--share-fill: 37.2%"`, the stylesheet carries `width: var(--share-fill, 0%)`. Declarations in CSS, values in the markup |
-| Asking for an address | Five shapes across seven screens: `state` a select on one form and a free text box on another, `zip_code` a string beside an integer `program_zip_code`, the same box labelled "Street", "Street address" and "Address (line 1)", and no `autocomplete` on any of the 17 inputs | `address_field(role)` from `AddressHelper`, which owns the label, the state list, the ZIP pattern and the WCAG 1.3.5 token. `pw bin/design/address-audit.js` fails if a screen writes its own |
+| Asking for an address | Five shapes across seven screens: four models with one freeform `address` box, `state` a select on one form and a free text box on another, `zip_code` a string beside an integer `program_zip_code`, the same box labelled "Street", "Street address" and "Address (line 1)", and no `autocomplete` on any of the 17 inputs | Four fields everywhere, from `address_field(role)`, which owns the label, the state list, the ZIP pattern and the WCAG 1.3.5 token. `pw bin/design/address-audit.js` fails if a screen writes its own — or goes back to one box |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
 
 ## What was migrated, by area
@@ -404,13 +404,22 @@ annual and by-county reports, the NDBN member list and six partner request lists
 there is nothing for the column to hold. `row-actions-audit.js` sees **26 tables, 26 with row
 actions** -- it walks pages rather than partials, so the read-only ones are not among them.
 
-**Four addresses are still one freeform box.** `Vendor`, `DonationSite`, `ProductDriveParticipant`
-and `StorageLocation` each store a single `address` string, where `Organization` stores four columns
-and `Partners::Profile` five. Every *field-level* difference is gone -- one label set, one state
-list, one ZIP shape, `autocomplete` throughout -- but the storage shapes still disagree, and closing
-that is a schema migration on four tables plus a change to four CSV import templates. Previewed in
-`docs/mockups/address-fields.html` and left as an open decision rather than dropped; see
-design.md, "Not settled: whether the four freeform addresses become four fields".
+**The four freeform addresses are four fields.** `Vendor`, `DonationSite`,
+`ProductDriveParticipant` and `StorageLocation` each stored one `address` string; they store
+`street`, `city`, `state` and `zipcode` now and include `StructuredAddress`, which composes
+`#address` back for the geocoder, the four PDFs and the CSV exports. Every field-level difference
+went with it: one label set, one state list, one ZIP shape, `autocomplete` throughout.
+
+**The CSV import templates did not change, on purpose.** `import_csv` does `new(row.to_hash)`, so
+`#address=` parses a whole address on the way in and a bank's saved template file with one `address`
+column is still valid. `:address` is also still permitted in the four controllers for the same
+reason. See docs/design-decisions.md for why that beat a tidier template.
+
+**Not migrated yet, and named so it is not forgotten:** the `address` *column* still exists on those
+four tables, in `ignored_columns`. Nothing reads or writes it. Dropping it is a separate release, so
+that an old process running the previous code during a deploy does not meet a column that has
+vanished — the sequence strong_migrations asks for. The migration to write is
+`RemoveAddressFromProviders`, and it is the only thing left of this change.
 
 **Row actions were labelled `sm` ghost buttons and are now 28px icons** -- 55 call sites across 30
 files, rewritten to `essentials_row_icon_link` / `essentials_row_icon_action`. `<td class="text-right">`

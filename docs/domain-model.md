@@ -161,19 +161,25 @@ Partner
 
 ### Where an address is stored
 
-Verified with `rails runner`, because the shapes disagree and it matters which one you are holding:
+Verified with `rails runner`. **Every model stores an address as parts** — the four that kept a
+single freeform string were split on 2026-09-01.
 
-| Model | Columns | Shape |
+| Model | Columns | Composed by |
 | --- | --- | --- |
-| `Organization` | `street`, `city`, `state`, `zipcode` | Four parts. `#address` composes `"street, city, ST zip"` |
-| `Partners::Profile` | `address1`, `address2`, `city`, `state`, `zip_code` — and the same five again prefixed `program_` | Five parts, twice: the agency's and the delivery address |
-| `Vendor`, `DonationSite`, `ProductDriveParticipant`, `StorageLocation` | `address` | **One freeform string** |
-| `Partners::Family` | `guardian_zip_code`, `guardian_county` | A ZIP and a county, not an address |
+| `Organization` | `street`, `city`, `state`, `zipcode` | its own `#address` |
+| `Vendor`, `DonationSite`, `ProductDriveParticipant`, `StorageLocation` | `street`, `city`, `state`, `zipcode` | `StructuredAddress#address` |
+| `Partners::Profile` | `address1`, `address2`, `city`, `state`, `zip_code` — and the same five again prefixed `program_` | not composed; rendered field by field |
+| `Partners::Family` | `guardian_zip_code`, `guardian_county` | a ZIP and a county, not an address |
 
-The four with a single `address` column include **`Geocodable`**, which is `geocoded_by :address`
-and runs `after_validation` outside development. `Organization` includes it too and satisfies it
-with the composed `#address` plus a hand-written `#address_changed?` — which is the pattern any of
-the other four would have to adopt if they were ever split into parts.
+`StructuredAddress` is `Organization`'s pattern extracted: `#address` composes
+`"street, city, ST zip"`, `#address_changed?` answers `Geocodable`'s `after_validation` hook, and
+`#address=` parses a whole address into the four parts — which is what lets the CSV importers keep
+taking a single `address` column. `Organization` still has its own copies of the first two methods
+rather than including the concern, because it is not `Geocodable` in quite the same way and has no
+`#address=`.
+
+**The `address` column still exists on those four tables and is in `ignored_columns`.** Nothing
+reads or writes it; a later release drops it. Do not add code that uses it.
 
 **All ZIP columns are strings.** `partner_profiles.program_zip_code` was an `integer` until
 `20260901180000`, which silently dropped the leading zero from every ZIP in MA, RI, NH, ME, VT, CT,

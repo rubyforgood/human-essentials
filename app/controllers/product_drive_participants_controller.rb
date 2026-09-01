@@ -61,7 +61,9 @@ class ProductDriveParticipantsController < ApplicationController
 
   def product_drive_participant_params
     params.require(:product_drive_participant)
-          .permit(:contact_name, :phone, :email, :business_name, :address, :comment)
+          .permit(:contact_name, :phone, :email, :business_name, :comment,
+            # The four parts, plus `:address`, which `#address=` splits.
+            :street, :city, :state, :zipcode, :address)
   end
 
   helper_method \

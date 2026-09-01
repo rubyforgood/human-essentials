@@ -1265,6 +1265,21 @@ On a table wide enough to scroll sideways, applying a filter used to leave the o
 screen — so you would end up with two, one of which did nothing at all. Each filter you applied
 added another. There is one again, and it belongs to the table you are looking at.
 
+### Addresses are four boxes now, not one
+
+Vendors, donation sites, storage locations and product drive participants used to have a single
+**Address** box you typed everything into. They now ask for **Street address**, **City**, **State**
+and **ZIP code** separately &mdash; the same four your organization's settings page has always used.
+
+**Your existing addresses were split for you.** Where an address was written the usual way
+&mdash; <i>1500 Remount Road, Front Royal, VA 22630</i> &mdash; all four boxes are filled in. Where
+it was not, the whole thing was left in **Street address** and the other boxes are empty for you to
+finish. <b>Nothing was deleted or changed</b>: every address still reads exactly as it did before.
+
+**Your import files still work.** The CSV templates are unchanged &mdash; still one `address`
+column &mdash; so a copy you downloaded last year imports exactly as it always did. The app splits
+the address as it reads each row.
+
 ### Addresses: your browser can fill them in now
 
 Every box that asks for an address &mdash; on your organization's settings, a partner's profile, a
