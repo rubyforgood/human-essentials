@@ -439,6 +439,31 @@ line is exactly the kind of thing a reader who cannot see it needs written down.
 **The change is stated in words.** *"Total 167,278, up 241% on the previous period."* A percentage on
 its own reads as a quantity, and a coloured arrow is a signal only some readers get.
 
+<a id="a-filter-fills-its-cell"></a>
+**A filter control fills its grid cell.** The bar lays its controls out on a grid — 271px columns
+with a 12px gap at the widest breakpoint — and a control with its own fixed width sits narrow inside
+that cell, so the *visible* gap is the grid's plus whatever is left over. Both trend pickers carried
+`sm:w-64`, which is 256 in a 271px cell: **12px of gap read as 27**, and it was reported as too much
+padding. This document already said it — *"the inline controls use the panel's own grid, so a control
+is the same width whether the bar folds or not"* — and two controls did it anyway.
+`spec/system/filter_control_width_system_spec.rb` asserts the gap **equals the grid's own**, rather
+than any particular number.
+
+<a id="a-hint-goes-under-the-control"></a>
+**A hint goes under the control, in `FILTER_HINT_CLASSES`.** *"Whole months. Ends with the current
+one."* under the date range; *"Up to 4. Leave empty for everything."* under Compare. Both say a rule
+the control cannot show and an option label should not have to carry — an explanation inside an
+option is re-read every time the list opens and is invisible while it is shut. They are wired with
+`aria-describedby`, so a screen reader hears the rule with the control rather than after it.
+
+<a id="say-what-the-page-is-not-how-it-is-built"></a>
+**A subtitle says what the page is, not how it is built.** The trend pages read *"Cached, so it may
+be up to 24 hours behind"* — a sentence about our infrastructure, in a word most readers do not use,
+qualifying figures they came to trust. It was also **no longer true**: the nightly job that made it
+true was writing a cache key the page had stopped reading. They say *"How much came in and went out,
+month by month"* now, and the figures are recomputed every five minutes so there is nothing to
+apologise for.
+
 <a id="one-control-for-what-a-page-is-about"></a>
 **One control for what the page is about, and it applies on close.** The trend pages had two — a
 single-select category filter in the bar, and a checkbox on every table row — which are two answers

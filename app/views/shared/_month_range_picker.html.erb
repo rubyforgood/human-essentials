@@ -38,15 +38,22 @@
      data-controller="popover month-range"
      data-month-range-presets-value="<%= presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json %>">
   <div>
-    <%= label_tag "filters_months_trigger", "Months", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+    <%# "Date range", not "Months": it is the same question the six other report pages ask under that
+      name, and a reader should not have to learn a second word for it because this one happens to
+      round to whole months. The granularity is a detail, and the hint says it. %>
+  <%= label_tag "filters_months_trigger", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
     <button type="button" id="filters_months_trigger"
-            class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left sm:w-64"
+            class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left"
             aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
+            aria-describedby="<%= panel_id %>-hint"
             data-popover-target="trigger" data-month-range-target="summary"
             data-action="click->popover#toggle">
       <span class="truncate"><%= month_range_summary %></span>
       <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
     </button>
+    <p id="<%= panel_id %>-hint" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>">
+      Whole months. Ends with the current one.
+    </p>
 
     <%# Hidden with the attribute, not a class: Tailwind's preflight marks [hidden] !important, so
         it cannot lose to a display utility. %>

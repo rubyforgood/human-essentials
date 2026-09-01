@@ -37,6 +37,10 @@ RSpec.describe "Layout shift", type: :system, js: true do
         # everything under it was thrown down the page a moment after the reader could see it.
         # Measured CLS 0.352 on the trend pages, against Chrome's 0.25 "poor" threshold.
         visit path
+        # `evaluate_script` does not retry, and Highcharts draws on `connect()` -- so reading
+        # straight after `visit` sometimes measured `drawn: null` and failed. Capybara's matchers
+        # are the only thing here that waits, so one has to come first.
+        expect(page).to have_css("svg.highcharts-root")
 
         measured = page.evaluate_script(<<~JS)
           (() => {

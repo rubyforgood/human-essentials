@@ -90,6 +90,10 @@ RSpec.describe "Custom request units", type: :system, js: true do
 
   # select2's remove control measured 9x21 against WCAG 2.5.8's 24x24.
   it "gives the remove control a 24px target" do
+    # Wait for the chip before measuring it: `evaluate_script` does not retry, so without this the
+    # script occasionally ran before the chip existed and read a null element.
+    expect(page).to have_css("[data-tag-input-target='chips'] button")
+
     size = page.evaluate_script(<<~JS)
       (() => {
         const b = document.querySelector("[data-tag-input-target='chips'] button");

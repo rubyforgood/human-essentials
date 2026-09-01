@@ -13,10 +13,15 @@
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%# These three are listed in the reports catalogue and are in no menu, so the hub was the only
-      way in and there was no way out. %>
+      way in and there was no way out.
+
+      The subtitle was "Cached, so it may be up to 24 hours behind" -- true of the nightly job that
+      has now gone, and meaningless to a reader who does not know what a cache is. It is not true
+      any more either: the figures are recomputed every few minutes. A caveat nobody needs is worse
+      than none, so the subtitle says what the page is for instead. %>
   <%= render "shared/essentials/page_header",
         title: title,
-        subtitle: "Cached, so it may be up to 24 hours behind.",
+        subtitle: "How much came in and went out, month by month.",
         back: {path: reports_path, label: "Back to reports"} %>
 
   <%# The window goes in the filter bar, where every other report's date filter goes -- not in the

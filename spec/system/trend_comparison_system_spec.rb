@@ -30,6 +30,7 @@ RSpec.describe "Trend comparison and categories", type: :system, js: true do
   end
 
   def chart
+    expect(page).to have_css("svg.highcharts-root")
     page.evaluate_script(<<~JS)
       (() => {
         const el = document.querySelector("[data-controller~='highchart']");

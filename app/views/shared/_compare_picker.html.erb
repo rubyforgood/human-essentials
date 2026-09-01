@@ -27,30 +27,50 @@
   <%# The count is in the label, so the length of the list is known before it is opened. %>
   <%= label_tag "filters_compare_trigger", "Compare (#{total})",
         class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-  <button type="button" id="filters_compare_trigger"
-          class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full min-h-[38px] items-center justify-between gap-2 text-left sm:w-72"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
-          data-popover-target="trigger" data-action="click->popover#toggle">
-    <%# The chips are the chart's key as well as the trigger's value, so what is drawn can be read
-        without opening anything. Each carries its own dash pattern, which is what tells the lines
-        apart -- colour cannot, and does not have to. %>
-    <span class="flex flex-wrap items-center gap-1" data-compare-picker-target="summary">
-      <% if labels.empty? %>
-        <span class="text-slate-500">Everything</span>
-      <% else %>
-        <% labels.each_with_index do |label, i| %>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-xs text-brand-800">
-            <svg width="18" height="8" aria-hidden="true" class="shrink-0">
-              <line x1="0" y1="4" x2="18" y2="4" stroke="<%= MonthRangeHelper::PLOT_COLOURS[i] %>"
-                    stroke-width="2.4" <%= tag.attributes("stroke-dasharray": {"Dash" => "6 4", "Dot" => "1.5 4", "DashDot" => "8 3 2 3"}[MonthRangeHelper::PLOT_DASHES[i]]) %> />
-            </svg>
-            <%= label %>
-          </span>
-        <% end %>
-      <% end %>
-    </span>
-    <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
-  </button>
+  <%#
+    **The chips are not inside the trigger.** They carry a remove button each, and a button inside a
+    button is not valid HTML -- so the control is a field-shaped row holding the chips and, at its
+    end, the button that opens the panel. That is what makes a choice clearable without opening
+    anything, which is what the trigger could not do while it was one big button.
+
+    The bar's own chip row is not available here: it is inline with two controls, and design.md
+    keeps chips out of an inline bar deliberately -- "a chip repeating a filter you can already see
+    and change is duplication". These are not a repetition of the control, they *are* the control.
+  %>
+  <div class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex min-h-[38px] w-full flex-wrap items-center gap-1 py-1">
+    <% labels.each_with_index do |label, i| %>
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 py-0.5 pl-2 pr-0.5 text-xs text-brand-800">
+        <%# Each chip carries its series' dash pattern, so the trigger doubles as the chart's key
+            and a reader never has to match a swatch to a colour. %>
+        <svg width="18" height="8" aria-hidden="true" class="shrink-0">
+          <line x1="0" y1="4" x2="18" y2="4" stroke="<%= MonthRangeHelper::PLOT_COLOURS[i] %>"
+                stroke-width="2.4" <%= tag.attributes("stroke-dasharray": {"Dash" => "6 4", "Dot" => "1.5 4", "DashDot" => "8 3 2 3"}[MonthRangeHelper::PLOT_DASHES[i]]) %> />
+        </svg>
+        <span class="max-w-40 truncate"><%= label %></span>
+        <button type="button"
+                class="flex size-5 shrink-0 items-center justify-center rounded-full text-brand-700 hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                aria-label="Stop comparing <%= label %>"
+                data-action="click->compare-picker#remove" data-label="<%= label %>">
+          <i class="bi-x-lg text-[10px]" aria-hidden="true"></i>
+        </button>
+      </span>
+    <% end %>
+
+    <button type="button" id="filters_compare_trigger"
+            class="flex flex-1 items-center justify-between gap-2 rounded-md px-1 py-1 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
+            aria-describedby="<%= panel_id %>-hint"
+            data-popover-target="trigger" data-action="click->popover#toggle">
+      <span class="truncate <%= labels.any? ? "text-slate-500" : "" %>">
+        <%= labels.any? ? "Add" : "Everything" %>
+      </span>
+      <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <p id="<%= panel_id %>-hint" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>">
+    Up to <%= MonthRangeHelper::COMPARE_CAP %>. Leave empty for everything.
+  </p>
 
   <div id="<%= panel_id %>" hidden
        role="dialog" aria-label="Choose what to compare"
@@ -75,10 +95,17 @@
             <% on = chosen.any? { |k, v| "#{k}:#{v}" == value } %>
             <li data-compare-picker-target="option" data-label="<%= label.downcase %>" data-group="<%= group %>">
               <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-100 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
+                <%#
+                  `data-filter-label` puts each choice into the filter bar's own chip row, which
+                  already renders a removable chip per checked box and already has "Clear all".
+                  That is where a selection gets cleared without opening the panel -- the trigger
+                  cannot hold a remove button, because a button inside a button is not valid HTML.
+                %>
                 <%= check_box_tag "filters[compare_with][]", value, on,
                       id: nil, disabled: (!on && cap_reached), autocomplete: "off",
                       class: "h-4 w-4 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
-                      data: {compare_picker_target: "box", action: "change->compare-picker#toggle"} %>
+                      data: {compare_picker_target: "box", filter_label: label,
+                             action: "change->compare-picker#toggle"} %>
                 <span class="min-w-0 truncate"><%= label %></span>
               </label>
             </li>
@@ -91,10 +118,19 @@
     <p class="hidden px-2 py-2 text-sm text-slate-500" role="status" data-compare-picker-target="empty">
       Nothing matches that.
     </p>
-    <p class="border-t border-slate-100 px-2 pt-2 text-xs text-slate-500" role="status"
+    <div class="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+      <p class="px-2 text-xs text-slate-500" role="status"
        data-compare-picker-target="count">
       <%= chosen.empty? ? "Choose up to #{MonthRangeHelper::COMPARE_CAP} to compare them." :
             "#{chosen.size} of #{MonthRangeHelper::COMPARE_CAP} chosen#{cap_reached ? ". Clear one to add another." : "."}" %>
-    </p>
+      </p>
+      <%# Inside the panel as well as in the bar's chip row: this is where you are when you realise
+          you want to start again. Hidden while nothing is chosen, so it never offers to undo
+          nothing. %>
+      <button type="button"
+              class="rounded-lg px-2 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= "hidden" if chosen.empty? %>"
+              data-compare-picker-target="clear"
+              data-action="click->compare-picker#clearAll">Clear all</button>
+    </div>
   </div>
 </div>

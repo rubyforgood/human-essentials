@@ -9,17 +9,16 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  DATA_TYPES = %w[Distribution Purchase Donation]
-  every(1.day, "Cache historical data", at: "03:00") do
-    Organization.is_active.each do |org|
-      DATA_TYPES.each do |type|
-        Rails.logger.info("Queuing up #{type} cache data for #{org.name}")
-        HistoricalDataCacheJob.perform_later(org_id: org.id, type: type)
-      end
-    end
-
-    Rails.logger.info("Done!")
-  end
+  # The nightly "Cache historical data" job is gone, and so is HistoricalDataCacheJob.
+  #
+  # It wrote `"#{org}-historical-#{type}-data"`, and once the trend pages gained a date range the
+  # page read a key built from the window instead -- so the job spent every night, for every active
+  # organization and three record types, writing something nothing read. Verified before removing:
+  # the only other reference to that key was the job's own spec.
+  #
+  # The page caches its own figures for five minutes, which is measured at 6ms to compute on this
+  # data. A pre-warm that survives until morning would have to hold the figures for a day, and a
+  # day-old inventory report is the staleness the page used to apologise for.
 
   every(1.day, "Periodically reset seed data in staging", at: "01:00") do
     if ENV["RAILS_ENV"] == "staging"

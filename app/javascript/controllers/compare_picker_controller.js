@@ -11,7 +11,7 @@ import { Controller } from "@hotwired/stimulus"
 // commit on change because a range is one answer; this one is a set, and a set is not finished until
 // you stop adding to it.
 export default class extends Controller {
-  static targets = ["query", "option", "group", "box", "empty", "count", "summary"]
+  static targets = ["query", "option", "group", "box", "empty", "count", "summary", "clear"]
   static values = { cap: Number }
 
   connect() {
@@ -53,6 +53,15 @@ export default class extends Controller {
   toggle(event) {
     event?.stopPropagation()
 
+    // A box can also be unchecked from outside the panel: the filter bar renders a removable chip
+    // per choice, and its remove button unchecks the box directly. With the panel shut there is no
+    // close event coming, so the commit has to happen here or the chip would tick the box off and
+    // leave the page unchanged.
+    if (!this.panelOpen) {
+      this.commit()
+      return
+    }
+
     const chosen = this.selection()
     const full = chosen.length >= this.capValue
     for (const box of this.boxTargets) box.disabled = !box.checked && full
@@ -60,6 +69,33 @@ export default class extends Controller {
     this.countTarget.textContent = chosen.length === 0
       ? `Choose up to ${this.capValue} to compare them.`
       : `${chosen.length} of ${this.capValue} chosen${full ? ". Clear one to add another." : "."}`
+    if (this.hasClearTarget) this.clearTarget.classList.toggle("hidden", chosen.length === 0)
+  }
+
+  // One chip's × removes one choice. The box it corresponds to is found by its label, because the
+  // chip is outside the panel and the panel may not even be in the document -- `popover_controller`
+  // moves it to <body> while it is open.
+  remove(event) {
+    const label = event.currentTarget.dataset.label
+    const box = this.boxTargets.find((b) => b.dataset.filterLabel === label)
+    if (!box) return
+    box.checked = false
+    this.toggle()
+    this.commit()
+  }
+
+  // Untick everything and apply at once, rather than firing a request per box.
+  clearAll() {
+    for (const box of this.boxTargets) {
+      box.checked = false
+      box.disabled = false
+    }
+    this.toggle()
+    this.commit()
+  }
+
+  get panelOpen() {
+    return this.element.querySelector("[data-popover-target=panel]")?.hidden === false
   }
 
   commit() {

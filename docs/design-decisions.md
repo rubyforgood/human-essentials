@@ -8177,3 +8177,49 @@ wearing one label.
 `selected_trend_category` and the three helpers around it, and the table's own form. The cap and the
 dash palette moved across unchanged, since neither depends on how the choosing happens.
 
+## 2026-09-01 — Five small things, and a cache bug behind the fifth
+
+Reported together: too much space between the two filters, "Months" being narrower than the question
+it asks, no way to clear a chip without opening the panel, whether hints would help, and a subtitle
+that means nothing to a non-technical reader.
+
+**The gap was 27px where the grid says 12.** The bar lays controls out on 271px columns with a 12px
+gap; both trend pickers carried `sm:w-64`, which is 256, so each sat 15px narrow inside its cell and
+the leftover read as padding. design.md already said the inline controls use the panel's own grid —
+and two controls did not. The spec asserts the gap **equals the grid's own** rather than equals 12,
+which is the lesson from `850px` and `16px` applied before it bit.
+
+**"Months" is "Date range" now**, which is what the six other report pages call the same question. A
+reader should not learn a second word for it because this one rounds to whole months; the hint says
+the granularity.
+
+**Clearing needed the trigger taken apart.** A chip carries a remove button, and a button inside a
+button is not valid HTML — so while the trigger was one big `<button>` wrapping the chips, there was
+nowhere to put an ×. It is a field-shaped row now: chips with their own remove buttons, and a
+smaller button at the end that opens the panel. The bar's own chip row was not available, and
+deliberately: design.md keeps chips out of an *inline* bar because "a chip repeating a filter you
+can already see and change is duplication". These chips are not a repetition of the control, they
+are the control. **Clear all** sits in the panel as well, hidden while nothing is chosen.
+
+**Hints, yes.** Two lines, in `FILTER_HINT_CLASSES`, wired with `aria-describedby`.
+
+**And the subtitle was hiding a bug.** *"Cached, so it may be up to 24 hours behind"* was written for
+a nightly job — and that job had been writing `"#{org}-historical-#{type}-data"` since long before
+the trend pages gained a date range, at which point the page started reading a key built from the
+window. So it spent every night, for every active organization and three record types, **writing
+something nothing read**. Verified before removing it: the only other reference to that key was the
+job's own spec.
+
+Worse, my replacement had **no `expires_in`**. On `solid_cache_store` that caches indefinitely, so a
+window's figures would have frozen until the window itself moved — next month. A distribution
+recorded today would not have appeared. That is a correctness bug I introduced and the sentence
+would have gone on excusing it. Five minutes now, against 6ms measured to compute, and the subtitle
+says what the page is for instead of apologising.
+
+**Two flaky examples turned out to be one fault, and mine.** `layout_shift` and `request_units` each
+failed once in a full run and passed alone. Both read with `evaluate_script` immediately after a
+navigation — and **`evaluate_script` does not retry**, where every Capybara matcher does. So they
+measured a chart Highcharts had not drawn yet and a chip that did not exist. I audited every spec I
+have written this session for the same shape and found four more. A wait now comes first in all of
+them. The suite passes at the seed that failed, and at a fresh one.
+
