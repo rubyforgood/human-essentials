@@ -135,6 +135,36 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
     end
   end
 
+  describe "the month that is still running" do
+    it "is marked off the axis, in words" do
+      # "so far" used to be appended to the last axis category on a second line, which made that one
+      # label 29px against every other one at 14 -- one column's label twice its neighbours' height,
+      # and the axis 12px deeper for one word.
+      #
+      # Asserted on the label's *text*, not its height. The first version of this measured heights
+      # and was **vacuous**: the test browser renders the newline flat -- `tspans: 0`, every label
+      # 14px -- so it passed with the two-line label put back. Found by reverting the fix and
+      # watching the spec stay green, which is the only reason to bother reverting.
+      travel_to Time.zone.local(2026, 6, 12) do
+        create(:distribution, :with_items, item: size_two, organization: organization,
+          storage_location: storage_location, issued_at: Time.zone.local(2026, 6, 3))
+        visit historical_trends_distributions_path
+        expect(page).to have_css("svg.highcharts-root")
+
+        labels = page.evaluate_script(<<~JS)
+          [...document.querySelectorAll(".highcharts-xaxis-labels text")].map((t) => t.textContent)
+        JS
+
+        expect(labels.size).to eq(12)
+        expect(labels.grep(/so far/)).to be_empty,
+          "the axis still carries \"so far\": #{labels.grep(/so far/).inspect}"
+        # Still said, in words, twice -- so dropping it from the axis costs no signal.
+        expect(page).to have_content("Jun 2026 is still running")
+        expect(page).to have_css("thead th", text: "so far")
+      end
+    end
+  end
+
   describe "the labels around it" do
     it "calls the window a date range, like the six other report pages" do
       expect(page).to have_css("label[for=filters_months_trigger]", text: "Date range")

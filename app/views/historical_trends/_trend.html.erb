@@ -144,7 +144,14 @@
             chart: {type: "column", height: chart_height, spacingBottom: 8, style: {fontFamily: "Figtree, system-ui, sans-serif"}},
             title: {text: nil},
             credits: {enabled: false},
-            xAxis: {categories: months.each_with_index.map { |m, i| (in_progress && i == months.size - 1) ? "#{m}\nso far" : m },
+            # "so far" is not on the axis. It put one label on two lines -- 29px against every
+            # other one at 14 -- so one column's label was twice its neighbours' height and the axis
+            # 12px deeper than it needed to be. The month still reads as unfinished from its lighter
+            # fill and outline, and the words are still there twice: the card subtitle says
+            # "... is still running" and the table header for that column says "so far". The axis was
+            # the one place the marking cost symmetry, and the only one of the four where it was not
+            # also said in words. (A Ruby comment: this is inside a code block.)
+            xAxis: {categories: months,
                     crosshair: true, lineColor: "#E2E8F0", tickColor: "#E2E8F0",
                     labels: {style: {color: "#475569", fontSize: "12px"}}},
             yAxis: {min: 0, title: {text: nil}, gridLineColor: "#E2E8F0",
