@@ -8485,3 +8485,55 @@ The rail example took four attempts, and each failure was a different way of not
 The general lesson is the one this migration keeps re-learning, in its sharpest form yet: **a green
 example is evidence of nothing until you have watched it go red.** All four of these were written
 by someone who believed the fix was correct, and it was; the examples were not.
+
+## 2026-09-01 — Two standing audit findings, and which of the two was wrong
+
+`page-audit.rb` reported an inline style in `shared/_highcharts.html.erb` and another in the
+manufacturer report's share bar. Both had been there since the day each was written. Asked to
+address them, and the first question is whether the code is wrong or the rule is.
+
+**The rule was.** Its own comment says it fails "a hardcoded inline style"; the implementation was
+`src.scan(/style=['"]/)`, which counts every style attribute there is. The two findings were not
+hardcoded — one is a share percentage computed per row, the other a chart height passed in by the
+caller — so the check was broader than the sentence describing it, and the app carried two standing
+defects that were not defects. A finding that is always there and always fine is how an audit stops
+being read.
+
+That is not licence to widen it until it passes, which is the obvious failure mode here. So: is
+there a way to express these *without* a style attribute at all?
+
+- **A Tailwind class.** Not possible. Tailwind v4 compiles the classes it can see in the source, so
+  `w-[37.2%]` built at runtime names a class nothing generated. The value is continuous.
+- **A `<meter>` for the share bar.** Semantically exact — a scalar within a known range — and
+  rejected on styling: `<meter>`'s appearance is vendor-specific and would need a different set of
+  pseudo-element overrides per engine to look like one bar. The track is already `aria-hidden` with
+  the percentage beside it as text, so the semantics `<meter>` would add are covered.
+- **A class per chart height.** There are only three (260, 320, 360), so this looked viable. It is
+  the worst option. The same number has to reach the reserved box *and* the `height` in the chart's
+  JSON config, and a class would be a second copy of it — reintroducing the exact disagreement that
+  reserving the box was added to prevent. One Ruby local reaching both places is the point.
+
+So the attribute stays, and what changes is what it may contain: **a value, never a declaration.**
+`style="--share-fill: 37.2%"` with `width: var(--share-fill, 0%)` in the stylesheet. A custom
+property cannot style anything by itself — some rule has to pick it up — which is what makes this a
+line and not a hole.
+
+The audit now checks every declaration inside the attribute and fails if any is not a custom
+property. Verified by planting three: a plain `style="color: red"`, a mixed
+`style="--ok: 1px; color: red"`, and `style="<%= "color: red" %>"`. All three still reported.
+
+That last one is why the rule is **not** "does it contain ERB", which was the tempting shortcut: it
+would have made the check about how a string was assembled rather than about what it does, and
+`style="<%= "color: red" %>"` would have sailed through.
+
+**One spec was asserting the wrong half of this.** `manufacturer_report_system_spec` checked that
+`.share-fill` exists and that the figure beside it reads 83% — but never that the bar is 83% long.
+With the length moving from a `width` in the markup to a `width` in the stylesheet, a bar that is
+drawn but never filled would have looked exactly like a pass. It measures the drawn width against
+the track now, and fails at 100 when the CSS rule is removed. The chart box was already covered:
+`layout_shift_system_spec` reads the computed `min-height` and fails on both charts without the
+`.chart-box` rule.
+
+**And design.md had no rule about inline styles at all** — the constraint existed only inside an
+audit, enforced more strictly than it was written and never written down anywhere a person building
+a screen would look. It is a Foundations section now.

@@ -375,9 +375,20 @@
     overflow: hidden;
   }
 
+  /*
+   * The one thing about this bar the stylesheet cannot know is how long it is, so the row supplies
+   * `--share-fill` and every *declaration* stays here. See "A value is not a style" in design.md:
+   * the alternative is a `width` in the row's `style` attribute, which puts presentation back in the
+   * markup, and there is no class for it -- the value is continuous and Tailwind compiles the
+   * classes it can see in the source.
+   *
+   * The fallback matters. A row that forgets the property draws an empty track rather than a full
+   * one, so a missing figure reads as no share instead of the whole of it.
+   */
   .data-table .share-fill {
     display: block;
     height: 100%;
+    width: var(--share-fill, 0%);
     border-radius: 999px;
     background-color: var(--color-brand-300);
   }
@@ -407,6 +418,19 @@
     width: 64px;
     min-width: 64px;
     text-align: left;
+  }
+
+  /*
+   * The box a Highcharts chart is drawn into, with its height reserved before it arrives.
+   *
+   * The height is the caller's -- 260, 320 or 360 across the app's three charts -- and it comes in
+   * as `--chart-height` rather than as a class, because the same Ruby local has to reach *two*
+   * places: this box and the `height` in the chart's own JSON config. A class would be a second
+   * copy of the number, and the two disagreeing is precisely the fault reserving the box was added
+   * to prevent. See "A value is not a style" in design.md.
+   */
+  .chart-box {
+    min-height: var(--chart-height, 0px);
   }
 
   .data-table .numeric,

@@ -79,7 +79,7 @@
               <td class="share">
                 <span class="flex items-center gap-2">
                   <span class="share-track" aria-hidden="true">
-                    <span class="share-fill" style="width: <%= [share, 100].min.round(1) %>%"></span>
+                    <span class="share-fill" style="--share-fill: <%= [share, 100].min.round(1) %>%"></span>
                   </span>
                   <span class="share-figure"><%= number_to_percentage(share, precision: 0) %></span>
                 </span>

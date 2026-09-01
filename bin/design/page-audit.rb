@@ -135,6 +135,28 @@ def strip_comments(src) = src.gsub(/<%#.*?%>/m, "")
 # The one place the exclusions live. They used to be written twice -- once as `next if` guards in
 # the scan and once, less completely, in the per-kind total -- so the totals counted files the
 # audit had skipped and every "N files" line was slightly too big.
+# Inline `style` attributes that declare presentation, which is the thing the rule is against.
+#
+# The check used to be `src.scan(/style=['"]/)`, which is broader than the sentence above it: it
+# counted every style attribute, including the two that carry a **value rather than a declaration**
+# -- a share bar's length and a chart box's reserved height. Neither can be a class. Both are
+# continuous numbers the server computes, and Tailwind only compiles the classes it can see in the
+# source, so `w-[37.2%]` interpolated at runtime is a class that does not exist.
+#
+# The line is drawn at the **custom property**. `style="--share-fill: 37.2%"` cannot style anything
+# on its own: some rule in the stylesheet has to pick it up and use it, so every declaration stays
+# in CSS and the markup carries only data. `style="width: 37.2%"` is a declaration in the markup and
+# is still a defect, interpolated or not.
+#
+# Deliberately *not* "does it contain ERB": that would let `style="<%= "color: red" %>"` through,
+# and would make the rule about how a string was built rather than about what it does.
+def presentational_styles(src)
+  src.scan(/style=(['"])(.*?)\1/m).count do |_quote, value|
+    # An empty attribute declares nothing; anything else must be custom properties throughout.
+    value.split(";").map(&:strip).reject(&:empty?).any? { |decl| !decl.start_with?("--") }
+  end
+end
+
 def audited?(rel, kind)
   return false unless rel.match?(KINDS[kind])
   return false if rel.start_with?("shared/essentials/")
@@ -167,7 +189,7 @@ kinds.each do |kind, pattern|
     dead = UNDEFINED.select { |c| src.include?(c) }
     dead << "card" if bare_card?(src)
     defects << "dead class: #{dead.join(", ")}" if dead.any?
-    inline = src.scan(/style=['"]/).size
+    inline = presentational_styles(src)
     defects << "#{inline} inline style#{"s" if inline > 1}" if inline.positive?
     # &nbsp; inside sr-only prose separates words for a screen reader; without it "Deactivate"
     # runs into the explanation after it. Only layout &nbsp; is a defect.
