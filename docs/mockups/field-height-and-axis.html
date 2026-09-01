@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Three things pushing the chart around</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--ground:#FBFBFD;--surface:#FFF;--line:#E2E8F0;--ink:#0F172A;--mid:#475569;--soft:#64748B;
+    --brand:#4F46E5;--brand50:#EEF2FF;--brand800:#3730A3;--bad:#B4232E;--badsoft:#FBEDEE;
+    --ok:#0F6E4F;--oksoft:#E9F5EF;--rose:#B91C1C;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif;padding:44px 24px 120px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:29px;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--mid);max-width:82ch;margin:0 0 26px}
+  h2{font-size:19px;margin:46px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:24px 0 6px;color:var(--mid);font-weight:600}
+  p.note{color:var(--mid);max-width:88ch;margin:0 0 14px;font-size:14px}
+  p.note b{color:var(--ink)}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .t-now{background:var(--badsoft);color:var(--bad)} .t-rec{background:var(--oksoft);color:var(--ok)}
+  .t-alt{background:var(--brand50);color:#4338CA}
+  .page{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:12px 0 6px}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  .hdr h3{margin:0;font-size:21px;letter-spacing:-.01em;color:var(--ink);font-weight:600}
+  .hdr .back{font-size:12.5px;color:var(--soft);margin:0 0 6px}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD5E1;background:#fff;color:#334155;
+    border-radius:8px;padding:8px 13px;font:500 14px Figtree;cursor:pointer;white-space:nowrap}
+  .btn.ghostdanger{border-color:transparent;background:transparent;color:#475569}
+  .btn.ghostdanger:hover{background:var(--badsoft);color:var(--rose)}
+  .btn.kebab{padding:8px 10px;border-color:#CBD5E1}
+  .btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+  .slot{position:relative}
+  .menu{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgb(15 23 42 /.16);padding:4px;width:190px;z-index:5}
+  .menu a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;
+    color:#334155;text-decoration:none}
+  .menu a:hover{background:#F1F5F9}
+  .menu a.danger{color:#334155} .menu a.danger:hover{background:var(--badsoft);color:var(--rose)}
+  .mark{font-size:11px;font-weight:700;color:var(--bad);margin-top:8px;display:block}
+  .mark.ok{color:var(--ok)}
+  table.mini{width:100%;font-size:14px;margin:12px 0 4px}
+  table.mini th,table.mini td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;background:transparent}
+  table.mini th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+  table.mini td.n{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .rec{background:var(--oksoft)}
+  ul.tight{margin:8px 0 0;padding-left:20px;color:var(--mid);font-size:14px;max-width:88ch}
+  ul.tight li{margin-bottom:6px} ul.tight b{color:var(--ink)}
+  .verdict{border-left:3px solid var(--ok);background:var(--oksoft);padding:12px 16px;margin:16px 0 0;
+    font-size:14px;color:#14532D;max-width:88ch;border-radius:0 8px 8px 0}
+  .verdict.bad{border-left-color:var(--bad);background:var(--badsoft);color:#7F1D1D}
+  code{background:#F1F5F9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .cap{font-size:12.5px;color:var(--soft);margin:6px 0 16px}
+</style>
+<style>
+ .lbl{display:block;font-size:12.5px;font-weight:500;color:#334155;margin-bottom:5px}
+ .fld{height:38px;border:1px solid #CBD5E1;border-radius:8px;padding:0 12px;display:flex;
+   align-items:center;justify-content:space-between;background:#fff;font:400 14px Figtree;color:#0F172A;width:271px}
+ .fldgrow{min-height:38px;height:auto;flex-wrap:wrap;gap:4px;padding:5px 8px;align-items:center;justify-content:flex-start}
+ .chip{display:inline-flex;align-items:center;gap:5px;background:#EEF2FF;border:1px solid #C7D2FE;
+   border-radius:999px;padding:1px 2px 1px 7px;font-size:12px;color:#3730A3;white-space:nowrap}
+ .chip button{border:0;background:none;color:#4338CA;cursor:pointer;font-size:13px;line-height:1;padding:0 4px}
+ .row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+ .keyrow{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:10px}
+ .cardish{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+ .h2c{font-size:15px;font-weight:600;margin:0 0 2px}
+ .subc{font-size:12.5px;color:#64748B;margin:0 0 12px}
+ .meas td.n{text-align:right;font-variant-numeric:tabular-nums}
+ .bad{color:#B4232E;font-weight:700}
+ .ruler{position:relative;border-left:2px dashed #B4232E;margin-left:6px;padding-left:10px;color:#B4232E;font-size:11.5px}
+</style></head><body><div class="wrap">
+
+<h1>Three things pushing the chart around</h1>
+<p class="lede">All three measured. The two field problems have one cause, and the axis one is
+separate.</p>
+
+<h2>1. What it does now</h2>
+<table class="mini meas">
+  <tr><th>Chips chosen</th><th class="n">Date range</th><th class="n">Compare</th><th class="n">Chart card starts at</th></tr>
+  <tr><td>none</td><td class="n">38px</td><td class="n bad">46px</td><td class="n">y=313</td></tr>
+  <tr><td>one</td><td class="n">38px</td><td class="n bad">46px</td><td class="n">y=313</td></tr>
+  <tr><td>two</td><td class="n">38px</td><td class="n bad">76px</td><td class="n bad">y=343</td></tr>
+  <tr class="rec"><td><b>four</b></td><td class="n">38px</td><td class="n bad"><b>166px</b></td><td class="n bad"><b>y=433</b></td></tr>
+</table>
+<p class="note"><b>It is 8px too tall before a single chip is added</b>, and at four chips it is
+<b>166px against the date range's 38</b> — pushing the chart <b>120px down the page</b>. The taller
+it gets, the further the thing you are reading moves.</p>
+
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span><div class="fld fldgrow" style="width:271px"><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg><span>Period products</span><button type="button" aria-label="Stop comparing Period products">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg><span>Adult incontinence</span><button type="button" aria-label="Stop comparing Adult incontinence">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B45309" stroke-width="2.4" stroke-dasharray="8 3 2 3"/></svg><span>Wipes (children)</span><button type="button" aria-label="Stop comparing Wipes (children)">&times;</button></span><span style="color:#64748B;font-size:13px;padding:0 4px">Add</span></div></div>
+  </div>
+  <span class="mark">Two controls asking two questions, one of them four times taller than the other.</span>
+</div>
+
+<h2>2. Option A — the chips are the chart's key, so put them on the chart <span class="tag t-rec">recommended</span></h2>
+<p class="note">The field goes back to a plain 38px control saying how many are chosen. The chips move
+to the foot of the chart card, <b>where a legend would be</b> — which is what they already are: each
+one carries its line's dash pattern. They keep their remove buttons, so nothing is lost.</p>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span><div class="fld">4 chosen <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+  </div>
+  <div class="cardish">
+    <p class="h2c">Total per month</p>
+    <p class="subc">Nappies, Period products, Adult incontinence and Wipes (children), Oct 2025 to Sep 2026.</p>
+    <svg viewBox="0 0 760 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="750" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="73.3" x2="750" y2="73.3" stroke="#E2E8F0"/><text x="52" y="77.3" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="132.7" x2="750" y2="132.7" stroke="#E2E8F0"/><text x="52" y="136.7" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="192.0" x2="750" y2="192.0" stroke="#E2E8F0"/><text x="52" y="196.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="86.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="144.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="202.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="259.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="317.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="375.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="432.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="490.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="548.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="605.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="663.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="721.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="69.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="127.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="184.9" y="172.3" width="34.6" height="19.7" rx="3" fill="#4F46E5"/><rect x="242.5" y="168.7" width="34.6" height="23.3" rx="3" fill="#4F46E5"/><rect x="300.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="357.9" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="415.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="473.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="530.9" y="170.1" width="34.6" height="21.9" rx="3" fill="#4F46E5"/><rect x="588.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="646.2" y="137.3" width="34.6" height="54.7" rx="3" fill="#4F46E5"/><rect x="703.9" y="14.0" width="34.6" height="178.0" rx="3" fill="#A5B4FC" stroke="#4F46E5" stroke-width="1"/></svg>
+    <div class="keyrow"><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg><span>Period products</span><button type="button" aria-label="Stop comparing Period products">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg><span>Adult incontinence</span><button type="button" aria-label="Stop comparing Adult incontinence">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B45309" stroke-width="2.4" stroke-dasharray="8 3 2 3"/></svg><span>Wipes (children)</span><button type="button" aria-label="Stop comparing Wipes (children)">&times;</button></span></div>
+  </div>
+  <span class="mark ok">Both fields 38px. The chart never moves, however many are chosen — the key
+  grows downwards, below the thing you are reading.</span>
+</div>
+<ul class="tight">
+  <li><b>For:</b> the field can never push the chart; the key sits with what it explains; removal
+    stays one click; and Highcharts' own legend goes, so there is one key rather than two.</li>
+  <li><b>Against:</b> what you chose is no longer visible in the control you chose it in — you read
+    it off the chart instead. The count in the field is the compromise.</li>
+</ul>
+
+<h2>3. Option B — keep the chips in the field, but on one line</h2>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span>
+      <div class="fld" style="gap:4px;justify-content:flex-start;overflow:hidden">
+        <span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip" style="background:#F1F5F9;border-color:#E2E8F0;color:#475569">+3</span>
+        <i class="bi-chevron-down" style="color:#94A3B8;margin-left:auto"></i>
+      </div>
+    </div>
+  </div>
+  <span class="mark">38px always. But the three behind the <b>+3</b> cannot be removed without opening
+  the panel, which is the thing that was asked for.</span>
+</div>
+
+<h2>4. Option C — chips in their own row under the bar</h2>
+<div class="page">
+  <div class="row">
+    <div><span class="lbl">Date range</span><div class="fld">Last 12 months <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+    <div><span class="lbl">Compare (50)</span><div class="fld">4 chosen <i class="bi-chevron-down" style="color:#94A3B8"></i></div></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#4F46E5" stroke-width="2.4"/></svg><span>Nappies</span><button type="button" aria-label="Stop comparing Nappies">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B4232E" stroke-width="2.4" stroke-dasharray="6 4"/></svg><span>Period products</span><button type="button" aria-label="Stop comparing Period products">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#0F766E" stroke-width="2.4" stroke-dasharray="1.5 4"/></svg><span>Adult incontinence</span><button type="button" aria-label="Stop comparing Adult incontinence">&times;</button></span><span class="chip"><svg width="18" height="8" aria-hidden="true"><line x1="0" y1="4" x2="18" y2="4" stroke="#B45309" stroke-width="2.4" stroke-dasharray="8 3 2 3"/></svg><span>Wipes (children)</span><button type="button" aria-label="Stop comparing Wipes (children)">&times;</button></span></div>
+  <svg viewBox="0 0 760 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="750" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="73.3" x2="750" y2="73.3" stroke="#E2E8F0"/><text x="52" y="77.3" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="132.7" x2="750" y2="132.7" stroke="#E2E8F0"/><text x="52" y="136.7" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="192.0" x2="750" y2="192.0" stroke="#E2E8F0"/><text x="52" y="196.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="86.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="144.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="202.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="259.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="317.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="375.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="432.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="490.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="548.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="605.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="663.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="721.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="69.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="127.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="184.9" y="172.3" width="34.6" height="19.7" rx="3" fill="#4F46E5"/><rect x="242.5" y="168.7" width="34.6" height="23.3" rx="3" fill="#4F46E5"/><rect x="300.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="357.9" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="415.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="473.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="530.9" y="170.1" width="34.6" height="21.9" rx="3" fill="#4F46E5"/><rect x="588.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="646.2" y="137.3" width="34.6" height="54.7" rx="3" fill="#4F46E5"/><rect x="703.9" y="14.0" width="34.6" height="178.0" rx="3" fill="#A5B4FC" stroke="#4F46E5" stroke-width="1"/></svg>
+  <span class="mark">Fields level, chips removable — but the row still sits <i>above</i> the chart, so
+  a second line of chips still pushes it down. Better than now, worse than A.</span>
+</div>
+
+<h2>5. The axis label</h2>
+<p class="note">Measured: the last label is <b>29px tall against every other one at 14</b>, because
+&ldquo;so far&rdquo; sits under it on a second line. That is the asymmetry — one column's label is
+twice the height of its neighbours.</p>
+<div class="page">
+  <p class="cap" style="margin:0 0 6px"><b>Now</b></p>
+  <svg viewBox="0 0 760 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="750" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="69.3" x2="750" y2="69.3" stroke="#E2E8F0"/><text x="52" y="73.3" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="124.7" x2="750" y2="124.7" stroke="#E2E8F0"/><text x="52" y="128.7" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="180.0" x2="750" y2="180.0" stroke="#E2E8F0"/><text x="52" y="184.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="86.8" y="195" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="144.5" y="195" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="202.2" y="195" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="259.8" y="195" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="317.5" y="195" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="375.2" y="195" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="432.8" y="195" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="490.5" y="195" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="548.2" y="195" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="605.8" y="195" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="663.5" y="195" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="721.2" y="195" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><text x="721.2" y="207" text-anchor="middle" font-size="10" fill="#94A3B8">so far</text><rect x="69.5" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="127.2" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="184.9" y="161.6" width="34.6" height="18.4" rx="3" fill="#4F46E5"/><rect x="242.5" y="158.3" width="34.6" height="21.7" rx="3" fill="#4F46E5"/><rect x="300.2" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="357.9" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="415.5" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="473.2" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="530.9" y="159.6" width="34.6" height="20.4" rx="3" fill="#4F46E5"/><rect x="588.5" y="180.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="646.2" y="129.0" width="34.6" height="51.0" rx="3" fill="#4F46E5"/><rect x="703.9" y="14.0" width="34.6" height="166.0" rx="3" fill="#A5B4FC" stroke="#4F46E5" stroke-width="1"/></svg>
+  <span class="mark">The axis is 12px deeper than it needs to be, for one word under one label.</span>
+</div>
+
+<h3>Option A — take it off the axis <span class="tag t-rec">recommended</span></h3>
+<div class="page"><svg viewBox="0 0 760 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="750" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="73.3" x2="750" y2="73.3" stroke="#E2E8F0"/><text x="52" y="77.3" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="132.7" x2="750" y2="132.7" stroke="#E2E8F0"/><text x="52" y="136.7" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="192.0" x2="750" y2="192.0" stroke="#E2E8F0"/><text x="52" y="196.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="86.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="144.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="202.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="259.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="317.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="375.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="432.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="490.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="548.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="605.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="663.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="721.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Aug</text><rect x="69.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="127.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="184.9" y="172.3" width="34.6" height="19.7" rx="3" fill="#4F46E5"/><rect x="242.5" y="168.7" width="34.6" height="23.3" rx="3" fill="#4F46E5"/><rect x="300.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="357.9" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="415.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="473.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="530.9" y="170.1" width="34.6" height="21.9" rx="3" fill="#4F46E5"/><rect x="588.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="646.2" y="137.3" width="34.6" height="54.7" rx="3" fill="#4F46E5"/><rect x="703.9" y="14.0" width="34.6" height="178.0" rx="3" fill="#A5B4FC" stroke="#4F46E5" stroke-width="1"/></svg>
+  <p class="cap" style="margin:8px 0 0">The month still reads as unfinished from its lighter fill and
+  outline, and the words are still there twice: the card subtitle says
+  <b>&ldquo;Sep 2026 is still running&rdquo;</b> and the table header for that column says
+  <b>&ldquo;so far&rdquo;</b>.</p>
+  <span class="mark ok">Every label the same height. Two words and a fill, none of them the axis.</span>
+</div>
+
+<h3>Option B — one line, with a mark</h3>
+<div class="page"><svg viewBox="0 0 760 220" width="100%" height="220" role="img"><line x1="58" y1="14.0" x2="750" y2="14.0" stroke="#E2E8F0"/><text x="52" y="18.0" text-anchor="end" font-size="10" fill="#64748B">100,050</text><line x1="58" y1="73.3" x2="750" y2="73.3" stroke="#E2E8F0"/><text x="52" y="77.3" text-anchor="end" font-size="10" fill="#64748B">66,700</text><line x1="58" y1="132.7" x2="750" y2="132.7" stroke="#E2E8F0"/><text x="52" y="136.7" text-anchor="end" font-size="10" fill="#64748B">33,350</text><line x1="58" y1="192.0" x2="750" y2="192.0" stroke="#E2E8F0"/><text x="52" y="196.0" text-anchor="end" font-size="10" fill="#64748B">0</text><text x="86.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Sep</text><text x="144.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Oct</text><text x="202.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Nov</text><text x="259.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Dec</text><text x="317.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jan</text><text x="375.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Feb</text><text x="432.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Mar</text><text x="490.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Apr</text><text x="548.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">May</text><text x="605.8" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jun</text><text x="663.5" y="207" text-anchor="middle" font-size="10" fill="#64748B">Jul</text><text x="721.2" y="207" text-anchor="middle" font-size="10" fill="#64748B">Aug*</text><rect x="69.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="127.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="184.9" y="172.3" width="34.6" height="19.7" rx="3" fill="#4F46E5"/><rect x="242.5" y="168.7" width="34.6" height="23.3" rx="3" fill="#4F46E5"/><rect x="300.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="357.9" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="415.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="473.2" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="530.9" y="170.1" width="34.6" height="21.9" rx="3" fill="#4F46E5"/><rect x="588.5" y="192.0" width="34.6" height="0.0" rx="3" fill="#4F46E5"/><rect x="646.2" y="137.3" width="34.6" height="54.7" rx="3" fill="#4F46E5"/><rect x="703.9" y="14.0" width="34.6" height="178.0" rx="3" fill="#A5B4FC" stroke="#4F46E5" stroke-width="1"/></svg>
+  <p class="cap" style="margin:8px 0 0">An asterisk keeps a signal <i>on the chart</i> at one line
+  height, with a note under it: <b>* September is still running.</b></p>
+  <span class="mark">Symmetric, and the chart still says something. The asterisk is one more
+  convention to learn, and it is silent to anyone not reading the note.</span>
+</div>
+
+<div class="verdict"><b>Recommendation: chips onto the chart as its key, and &ldquo;so far&rdquo; off
+the axis.</b>
+<br><br>The two field problems are one problem — chips inside a field make the field grow — and
+moving them below the chart solves both at once, because a key that grows downwards cannot push the
+thing it explains. It also replaces Highcharts' own legend rather than sitting beside it.
+<br><br>For the axis, the marking is already carried three other ways: the lighter fill, the table
+header, and the card subtitle. The axis is the one place it costs symmetry, so it is the one to drop.
+If you would rather the chart itself still said something, <b>B</b> keeps an asterisk at one line
+height.</div>
+
+</div></body></html>
