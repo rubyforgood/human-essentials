@@ -404,7 +404,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_content("New Donation Site")
 
           fill_in "donation_site_name", with: "Test Donation Site"
-          fill_in "donation_site_address", with: "Test Address"
+          fill_in_address "Test Address", within: "donation_site"
           within("dialog[open]") { click_button "Save" }
           select "Test Donation Site", from: "donation_donation_site_id"
         end

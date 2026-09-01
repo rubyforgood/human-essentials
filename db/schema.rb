@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_01_185000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -253,6 +253,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
   create_table "donation_sites", id: :serial, force: :cascade do |t|
     t.boolean "active", default: true
     t.string "address"
+    t.string "city"
     t.string "contact_name"
     t.datetime "created_at", precision: nil, null: false
     t.string "email"
@@ -261,7 +262,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
     t.string "name"
     t.integer "organization_id"
     t.string "phone"
+    t.string "state"
+    t.string "street"
     t.datetime "updated_at", precision: nil, null: false
+    t.string "zipcode"
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -631,6 +635,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
   create_table "product_drive_participants", id: :serial, force: :cascade do |t|
     t.string "address"
     t.string "business_name"
+    t.string "city"
     t.string "comment"
     t.string "contact_name"
     t.datetime "created_at", precision: nil, null: false
@@ -639,7 +644,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
     t.float "longitude"
     t.integer "organization_id"
     t.string "phone"
+    t.string "state"
+    t.string "street"
     t.datetime "updated_at", precision: nil, null: false
+    t.string "zipcode"
     t.index ["latitude", "longitude"], name: "index_product_drive_participants_on_latitude_and_longitude"
   end
 
@@ -722,6 +730,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
 
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "address"
+    t.string "city"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "discarded_at"
     t.float "latitude"
@@ -729,9 +738,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
     t.string "name"
     t.integer "organization_id"
     t.integer "square_footage"
+    t.string "state"
+    t.string "street"
     t.string "time_zone", default: "America/Los_Angeles", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "warehouse_type"
+    t.string "zipcode"
     t.index ["discarded_at"], name: "index_storage_locations_on_discarded_at"
     t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
@@ -828,6 +840,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
     t.boolean "active", default: true
     t.string "address"
     t.string "business_name"
+    t.string "city"
     t.string "comment"
     t.string "contact_name"
     t.datetime "created_at", precision: nil, null: false
@@ -836,7 +849,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_180000) do
     t.float "longitude"
     t.integer "organization_id"
     t.string "phone"
+    t.string "state"
+    t.string "street"
     t.datetime "updated_at", precision: nil, null: false
+    t.string "zipcode"
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 

@@ -5,12 +5,16 @@
 #  id              :integer          not null, primary key
 #  active          :boolean          default(TRUE)
 #  address         :string
+#  city            :string
 #  contact_name    :string
 #  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  phone           :string
+#  state           :string
+#  street          :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -22,13 +26,19 @@ class DonationSite < ApplicationRecord
 
   belongs_to :organization
 
-  validates :name, :address, presence: true
+  # `street`, not `address`. The address is composed now, so validating it would accept a
+  # record with a city and nothing else; whatever the parser could not place lands in
+  # `street`, so that is the part that is always filled in when an address was given.
+  validates :name, :street, presence: true
   validates :name, uniqueness: {scope: :organization_id, message: "must be unique within the organization"}
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
 
   has_many :donations, dependent: :restrict_with_error
 
+  # Four address columns and a composed `#address`, the same shape `Organization` has always
+  # had. Before Geocodable, which asks for `address` in its own `included` block.
+  include StructuredAddress
   include Geocodable
   include Exportable
 

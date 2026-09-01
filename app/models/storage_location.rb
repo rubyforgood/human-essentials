@@ -4,13 +4,17 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  city            :string
 #  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  square_footage  :integer
+#  state           :string
+#  street          :string
 #  time_zone       :string           default("America/Los_Angeles"), not null
 #  warehouse_type  :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -43,7 +47,10 @@ class StorageLocation < ApplicationRecord
                           foreign_key: :to_id,
                           dependent: :destroy
 
-  validates :name, :address, presence: true
+  # `street`, not `address`. The address is composed now, so validating it would accept a
+  # record with a city and nothing else; whatever the parser could not place lands in
+  # `street`, so that is the part that is always filled in when an address was given.
+  validates :name, :street, presence: true
   validates :name, uniqueness: { scope: :organization_id, case_sensitive: false}
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
@@ -51,6 +58,9 @@ class StorageLocation < ApplicationRecord
   before_destroy :validate_empty_inventory, prepend: true
 
   include Discard::Model
+  # Four address columns and a composed `#address`, the same shape `Organization` has always
+  # had. Before Geocodable, which asks for `address` in its own `included` block.
+  include StructuredAddress
   include Geocodable
   include Filterable
   include Exportable

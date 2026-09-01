@@ -5,12 +5,16 @@
 #  id              :integer          not null, primary key
 #  address         :string
 #  business_name   :string
+#  city            :string
 #  comment         :string
 #  contact_name    :string
 #  email           :string
 #  latitude        :float
 #  longitude       :float
 #  phone           :string
+#  state           :string
+#  street          :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -19,6 +23,9 @@
 class ProductDriveParticipant < ApplicationRecord
   has_paper_trail
   include Filterable
+  # Four address columns and a composed `#address`, the same shape `Organization` has always
+  # had. Before Geocodable, which asks for `address` in its own `included` block.
+  include StructuredAddress
   include Geocodable
   include Provideable
 

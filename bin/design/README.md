@@ -291,7 +291,11 @@ of the views had missed: a guardian ZIP on the family form, and a program ZIP st
 `type="number"`.
 
 `autocomplete="off"` is reported separately rather than failed: it declares an address belonging to
-somebody other than the person filling the form in. Currently **26 address fields, 0 findings**.
+somebody other than the person filling the form in.
+
+**A single freeform `address` input is a finding.** Four models stored an address that way until
+2026-09-01 and none does now, so one appearing again means a form has gone back to the shape the app
+moved away from. Currently **50 address fields, 0 findings**.
 
 `row-actions-audit.js` reads a table's *actions column*, which no other check here asks about.
 

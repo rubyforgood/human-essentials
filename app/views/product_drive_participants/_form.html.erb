@@ -32,11 +32,16 @@
         <%= f.input :phone, label: "Phone" %>
         <%= f.input :email, label: "Email" %>
       </fieldset>
-      <%# One box holding a whole address, so the whole-address token: `street-address` is defined
-          as multi-line and is the right one here, where `address-line1` would claim this box is
-          only the first line of one. See "Address fields" in design.md. %>
-      <%= f.input :address, label: "Address",
-            input_html: {autocomplete: "street-address"} %>
+      <%# Four fields, from `address_field`, the same as the organization form -- see "Address fields"
+          in design.md. This was one freeform box until 2026-09-01; the CSV import template still has a
+          single `address` column, which `StructuredAddress#address=` splits on the way in, so a bank's
+          saved template file is still valid. %>
+      <%= f.input :street, **address_field(:street) %>
+      <%= f.input :city, **address_field(:city) %>
+      <%= essentials_field_row do %>
+        <%= f.input :state, **address_field(:state) %>
+        <%= f.input :zipcode, **address_field(:zip) %>
+      <% end %>
       <%= f.input :comment, label: "Comment", as: :text, input_html: {rows: 3} %>
     <% end %>
 

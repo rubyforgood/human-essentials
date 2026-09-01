@@ -5,12 +5,16 @@
 #  id              :integer          not null, primary key
 #  active          :boolean          default(TRUE)
 #  address         :string
+#  city            :string
 #  contact_name    :string
 #  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
 #  phone           :string
+#  state           :string
+#  street          :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -20,7 +24,10 @@ RSpec.describe DonationSite, type: :model do
   context "Validations >" do
     it { should belong_to(:organization) }
     it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:address) }
+    # `street`, not `address`: the address is composed from four columns now, so validating the
+    # composition would accept a record with a city and nothing else. Whatever the parser cannot
+    # place lands in `street`, which makes it the part that is always present.
+    it { should validate_presence_of(:street) }
   end
 
   before(:each) do
@@ -61,6 +68,27 @@ RSpec.describe DonationSite, type: :model do
 
       donation_site = DonationSite.first
       expect(donation_site.name).to eq "Donation Site 1"
+    end
+
+    it "still takes a single address column, and splits it" do
+      # **This is the whole reason the import template did not change** when the address became four
+      # columns: 200+ banks have downloaded these templates and keep local copies, and a saved file
+      # with one `address` column has to keep working. `import_csv` does `new(row.to_hash)`, so the
+      # split happens in `StructuredAddress#address=`. See design.md, "Address fields".
+      csv = CSV.parse(<<~CSV, headers: true)
+        name,address,contact_name,email,phone
+        Site,"1500 Remount Road, Front Royal, VA 22630",Joanna,jo@example.com,123-456-7890
+      CSV
+
+      expect(DonationSite.import_csv(csv, organization.id)).to be_empty
+
+      site = DonationSite.last
+      expect(site.street).to eq "1500 Remount Road"
+      expect(site.city).to eq "Front Royal"
+      expect(site.state).to eq "VA"
+      expect(site.zipcode).to eq "22630"
+      # And it reads back exactly as it went in, which is what the geocoder and the PDFs see.
+      expect(site.address).to eq "1500 Remount Road, Front Royal, VA 22630"
     end
 
     it "captures errors when importing donation sites from an invalid csv file" do

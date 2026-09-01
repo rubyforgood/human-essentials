@@ -6,12 +6,16 @@
 #  active          :boolean          default(TRUE)
 #  address         :string
 #  business_name   :string
+#  city            :string
 #  comment         :string
 #  contact_name    :string
 #  email           :string
 #  latitude        :float
 #  longitude       :float
 #  phone           :string
+#  state           :string
+#  street          :string
+#  zipcode         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer

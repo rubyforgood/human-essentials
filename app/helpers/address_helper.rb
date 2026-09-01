@@ -73,59 +73,20 @@ module AddressHelper
     attrs
   end
 
+  # The 50 states plus DC, as postal codes. A **constant**, not just the collection the
+  # helper returns, because `StructuredAddress` parses addresses in the model layer and
+  # needs to recognise a state code there -- and two copies of this list is how they
+  # drift. `spec/helpers/address_helper_spec.rb` pins that there is only one.
+  STATE_CODES = %w[
+    AK AL AR AZ CA CO CT DC DE FL
+    GA HI IA ID IL IN KS KY LA MA
+    MD ME MI MN MO MS MT NC ND NE
+    NH NJ NM NV NY OH OK OR PA RI
+    SC SD TN TX UT VA VT WA WI WV
+    WY
+  ].freeze
+
   def us_states
-    [
-      %w(AK AK),
-      %w(AL AL),
-      %w(AR AR),
-      %w(AZ AZ),
-      %w(CA CA),
-      %w(CO CO),
-      %w(CT CT),
-      %w(DC DC),
-      %w(DE DE),
-      %w(FL FL),
-      %w(GA GA),
-      %w(HI HI),
-      %w(IA IA),
-      %w(ID ID),
-      %w(IL IL),
-      %w(IN IN),
-      %w(KS KS),
-      %w(KY KY),
-      %w(LA LA),
-      %w(MA MA),
-      %w(MD MD),
-      %w(ME ME),
-      %w(MI MI),
-      %w(MN MN),
-      %w(MO MO),
-      %w(MS MS),
-      %w(MT MT),
-      %w(NC NC),
-      %w(ND ND),
-      %w(NE NE),
-      %w(NH NH),
-      %w(NJ NJ),
-      %w(NM NM),
-      %w(NV NV),
-      %w(NY NY),
-      %w(OH OH),
-      %w(OK OK),
-      %w(OR OR),
-      %w(PA PA),
-      %w(RI RI),
-      %w(SC SC),
-      %w(SD SD),
-      %w(TN TN),
-      %w(TX TX),
-      %w(UT UT),
-      %w(VA VA),
-      %w(VT VT),
-      %w(WA WA),
-      %w(WI WI),
-      %w(WV WV),
-      %w(WY WY)
-    ]
+    STATE_CODES.map { |code| [code, code] }
   end
 end

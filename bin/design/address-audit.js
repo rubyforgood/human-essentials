@@ -43,9 +43,11 @@ const ROLES = {
   city: { label: "City", token: "address-level2" },
   state: { label: "State", token: "address-level1" },
   zip: { label: "ZIP code", token: "postal-code" },
-  // A single box holding the whole thing. Still an address, still gets a token; whether it *should*
-  // be one box is a separate question that this audit deliberately does not decide.
-  whole: { label: "Address", token: "street-address" }
+  // A single box holding the whole thing. **This is now a finding rather than a shape.** Four
+  // models stored an address that way until 2026-09-01 and none does since; a bare `address` input
+  // appearing again means a form has gone back to the shape the app moved away from, and the audit
+  // is here so that is noticed the day it happens rather than a year later.
+  whole: { label: "Address", token: "street-address", obsolete: true }
 };
 
 async function signIn(page, email) {
@@ -110,6 +112,9 @@ const COLLECT = () => [...document.querySelectorAll("main input, main select, ma
         const named = f.label || f.aria;
 
         if (!named) bad.push(`${f.name} has no accessible name`);
+        if (want.obsolete) {
+          bad.push(`${f.name} is one freeform box; an address is street, city, state and ZIP`);
+        }
         // `off` is a declaration, not an omission: this address belongs to someone other than the
         // person filling the form in, so autofilling it would put the wrong address in the record.
         // WCAG 1.3.5 asks for a token on fields collecting the *user's own* information. Counted
