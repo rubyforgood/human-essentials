@@ -30,6 +30,7 @@ RSpec.describe "Report charts", type: :system, js: true do
   end
 
   def chart
+    expect(page).to have_css("svg.highcharts-root")
     page.evaluate_script(<<~JS)
       (() => {
         const el = document.querySelector("[data-controller='highchart']");

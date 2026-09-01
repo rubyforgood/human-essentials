@@ -712,21 +712,25 @@ table scrolls inside its own box rather than pushing the page sideways.
 
 ### One control for what the trend report is about
 
-**There is a single "Compare" control beside Months.** Open it, type a few letters, and tick what you
-want — **your categories and your items are in the same list**, so you do not have to know which one
-a name belongs to before you look for it.
+**There is a single "Compare" control beside "Date range".** Open it, type a few letters, and tick
+what you want — **your categories and your items are in the same list**, so you do not have to know
+which one a name belongs to before you look for it.
 
 What you tick is what the page is about: the chart draws a line for each, and the table narrows to
 match. Tick nothing and you get everything.
 
+**Each choice becomes a chip you can remove** with the × beside it, without opening the control
+again — and there is a **Clear all** inside it. Each chip shows its line's dash pattern, so you can
+read the chart without matching colours.
+
 **Up to four at a time.** Beyond four the lines stop being tellable apart, so the rest are greyed out
-and the panel says *"4 of 4 chosen. Clear one to add another."* Each line has its own dash pattern —
-solid, dashed, dotted, dash-dot — shown next to its name in the control, so you can read the chart
-without matching colours.
+and the panel says *"4 of 4 chosen. Clear one to add another."*
 
 **Your choices apply when you close the control**, so picking four things is one page load rather
-than four. The old version put a tick box on every table row and reloaded the page on each one,
-which threw you back to the top every time.
+than four.
+
+**The figures are current.** These pages used to say they might be up to 24 hours behind; they are
+recomputed every few minutes now, so what you recorded this morning is there.
 
 ### The monthly trend reports break down by category, and can compare periods
 

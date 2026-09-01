@@ -36,6 +36,7 @@ RSpec.describe "Trend month range", type: :system, js: true do
       # for buttons: the same control came out 142px wide and hard right, against 271px and
       # left-aligned on the six report pages that already had one. A filter is not a page action.
       visit historical_trends_distributions_path
+      expect(page).to have_css("#filters_months_trigger")
 
       box = page.evaluate_script(<<~JS)
         (() => {

@@ -30,6 +30,7 @@ RSpec.describe "Report tables", type: :system, js: true do
       # Measured, not asserted against a class name: the rule lives in application.css and the
       # symptom is the text sitting flush against the edge of the card.
       visit historical_trends_distributions_path
+      expect(page).to have_css("main .data-table tbody th")
 
       # Compared with the row's own data cells rather than against a number. The first version
       # asserted 16px and broke the day the table took `dense` padding -- which is the same fault

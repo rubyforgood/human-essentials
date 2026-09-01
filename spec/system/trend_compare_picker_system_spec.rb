@@ -26,7 +26,10 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
     visit historical_trends_distributions_path
   end
 
+  # Waits first: `evaluate_script` does not retry, and Highcharts draws on `connect()`, so reading
+  # straight after a navigation sometimes measured a chart that was not there yet.
   def chart
+    expect(page).to have_css("svg.highcharts-root")
     page.evaluate_script(<<~JS)
       (() => {
         const el = document.querySelector("[data-controller~='highchart']");
@@ -101,6 +104,55 @@ RSpec.describe "The trend Compare control", type: :system, js: true do
 
     close_compare(applies: true)
     expect(chart["types"]).to eq(%w[line line])
+  end
+
+  describe "clearing a choice" do
+    before { compare_with "Nappies", "Tampons" }
+
+    it "removes one from the chip in the control, without opening it" do
+      # The chips are outside the trigger, because each carries a remove button and a button inside
+      # a button is not valid HTML. That restructuring is what makes a choice clearable while the
+      # panel is shut.
+      expect(chart["names"]).to eq(%w[Nappies Tampons])
+
+      click_button "Stop comparing Nappies"
+      expect(page).to have_current_path(/compare_with/)
+      expect(chart["names"]).to eq(["Tampons"])
+    end
+
+    it "clears everything from inside the panel" do
+      open_compare
+      click_button "Clear all"
+
+      expect(page).to have_css("#filters_compare_trigger", text: "Everything")
+      expect(chart["types"]).to eq(["column"])
+    end
+
+    it "offers nothing to clear before anything is chosen" do
+      visit historical_trends_distributions_path
+      open_compare
+      expect(page).to have_no_button("Clear all")
+    end
+  end
+
+  describe "the labels around it" do
+    it "calls the window a date range, like the six other report pages" do
+      expect(page).to have_css("label[for=filters_months_trigger]", text: "Date range")
+    end
+
+    it "explains both controls underneath rather than inside them" do
+      # design.md: a hint explains a rule an option label should not have to carry, and it goes
+      # under the control -- an explanation inside an option is invisible while the list is shut.
+      expect(page).to have_content("Whole months. Ends with the current one.")
+      expect(page).to have_content("Up to 4. Leave empty for everything.")
+    end
+
+    it "does not tell the reader about a cache" do
+      # It used to say "Cached, so it may be up to 24 hours behind" -- a sentence about our
+      # infrastructure rather than their data, and no longer true besides.
+      expect(page).to have_no_content("Cached")
+      expect(page).to have_content("How much came in and went out")
+    end
   end
 
   describe "the cap" do
