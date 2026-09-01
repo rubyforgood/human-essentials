@@ -48,11 +48,13 @@
           which is a lot of box for a two-letter state code, and city/state/zip on one line is how
           a US address is written anyway.
         %>
-        <%= f.input :street, label: "Street address" %>
-        <%= f.input :city, label: "City" %>
+        <%# Labels, the state list and the autocomplete tokens all come from `address_field`, so
+            this form cannot drift from the other six that collect an address. See design.md. %>
+        <%= f.input :street, **address_field(:street) %>
+        <%= f.input :city, **address_field(:city) %>
         <%= essentials_field_row do %>
-          <%= f.input :state, label: "State", collection: us_states, include_blank: true %>
-          <%= f.input :zipcode, label: "Zip code" %>
+          <%= f.input :state, **address_field(:state) %>
+          <%= f.input :zipcode, **address_field(:zip) %>
         <% end %>
 
         <div class="mb-4">

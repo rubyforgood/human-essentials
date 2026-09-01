@@ -213,6 +213,69 @@ enforcing — "a hardcoded inline style" — and is not what it did. It counted 
 too, so the app carried two standing defects that were not defects, and a standing finding is how an
 audit stops being read.
 
+<a id="address-fields"></a>
+### Address fields
+
+**An address is asked for the same way on every screen, from `address_field`.** The helper supplies
+the label, the state list, the ZIP pattern and the `autocomplete` token; a form that writes its own
+`label:` for a part of an address has already drifted.
+
+```erb
+<%= f.input :street,  **address_field(:street) %>
+<%= f.input :city,    **address_field(:city) %>
+<%= f.input :state,   **address_field(:state) %>
+<%= f.input :zipcode, **address_field(:zip) %>
+```
+
+| Part | Label | `autocomplete` |
+| --- | --- | --- |
+| A whole address in one box | Address | `street-address` |
+| Street | Street address | `street-address` |
+| Two-line street | Address line 1 / Address line 2 | `address-line1` / `address-line2` |
+| City | City | `address-level2` |
+| State | State — a list of the 51, never a text box | `address-level1` |
+| ZIP | ZIP code | `postal-code` |
+
+**Every address field carries `autocomplete`.** WCAG 1.3.5 Identify Input Purpose is a AA criterion
+and the app was failing it everywhere: **17 address inputs measured across the 7 screens that
+collect one, and not a single `autocomplete` attribute between them**. (The audit counts 26, because
+it visits the `new` and `edit` variants of the same forms.) It is also
+the largest single usability gain available here: a browser fills a whole address from these tokens
+and a diaper bank's volunteer is typing the same addresses repeatedly. The tokens are WHATWG's, and
+they are not interchangeable — `street-address` is defined as a *multi-line* whole address, so a
+form with two street lines uses `address-line1` and `address-line2` instead, and city and state are
+`address-level2`/`address-level1`, named by administrative level rather than by American words.
+
+**A ZIP is text with `inputmode="numeric"`, never `type="number"`.** A number input drops the
+leading zero from every ZIP in MA, RI, NH, ME, VT, CT, NJ and Puerto Rico, refuses ZIP+4 outright,
+and puts a spinner on a field nobody increments. `partner_profiles.program_zip_code` was an integer
+*column*, which is where its `type="number"` came from — two of the five values in the seed database
+had already lost their leading zero. **A ZIP is an identifier, not a quantity.**
+
+**`third_party: true` for an address that is not the filler's own.** A partner typing a client's ZIP
+is entering someone else's, and autofilling the caseworker's own address into a family record would
+be worse than not filling it — so it becomes `autocomplete="off"`, which says that out loud. Leaving
+the attribute off entirely says nothing, and nothing is indistinguishable from an oversight.
+
+**A label may be qualified, but the words for the part are the app's.** *Guardian ZIP code* is right
+because it says whose; *Zip code*, *Zipcode* and *Zip Code* were three spellings of one word. `ZIP`
+is an acronym — Zone Improvement Plan — so it is capitalised even in sentence case, and the copy
+audit already knows it.
+
+`pw bin/design/address-audit.js` checks all of it across every screen `route-targets.rb` knows
+about, reading each field's role off its **name** rather than from a list of pages — the lesson from
+[the tooltip audit](#the-audit-scoped-itself-blind), which carried a hardcoded page list and
+reported zero while there were fourteen. **26 address fields, 0 findings.**
+
+<a id="one-box-or-four"></a>
+**Not settled: whether the four freeform addresses become four fields.** `Vendor`, `DonationSite`,
+`ProductDriveParticipant` and `StorageLocation` each store one `address` string, against
+`Organization`'s four columns and the partner profile's five. Structured fields are the industry
+standard and the rest of this section assumes them — but splitting these four is a schema migration
+across four tables, a change to four CSV import templates that banks have saved copies of, and a
+parse of existing freeform text that succeeds on only 10 of the 18 rows in the seed database. It is
+recorded here as an open question rather than quietly left out; see `docs/design-decisions.md`.
+
 ### Iconography
 
 **Bootstrap Icons**, self-hosted, compiled into the Tailwind bundle. Font Awesome is gone —

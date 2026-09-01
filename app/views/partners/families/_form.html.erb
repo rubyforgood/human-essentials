@@ -16,7 +16,13 @@
     <%= render "shared/essentials/card" do %>
       <%= f.input :guardian_first_name, label: "Guardian first name" %>
       <%= f.input :guardian_last_name, label: "Guardian last name" %>
-      <%= f.input :guardian_zip_code, label: "Guardian zip code" %>
+      <%# A qualified address field: the qualifier says whose ZIP it is, the rest of the words
+          and the autocomplete token come from `address_field` like every other address box.
+          Not `postal-code` in the WCAG sense of the *user's own* ZIP -- a partner typing a
+          client's ZIP is entering someone else's -- so the token is deliberately omitted and
+          only the keypad and the wording are shared. See design.md. %>
+      <%= f.input :guardian_zip_code, **address_field(:zip, label: "Guardian ZIP code",
+            third_party: true) %>
       <%= f.input :guardian_county, label: "Guardian county" %>
       <%= f.input :guardian_phone, label: "Guardian phone" %>
       <%= f.input :case_manager, label: "Case manager",

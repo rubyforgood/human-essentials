@@ -60,7 +60,7 @@
 #  program_description            :text
 #  program_name                   :string
 #  program_state                  :string
-#  program_zip_code               :integer
+#  program_zip_code               :string
 #  receives_essentials_from_other :string
 #  sources_of_diapers             :string
 #  sources_of_funding             :string

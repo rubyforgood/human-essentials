@@ -1265,6 +1265,26 @@ On a table wide enough to scroll sideways, applying a filter used to leave the o
 screen — so you would end up with two, one of which did nothing at all. Each filter you applied
 added another. There is one again, and it belongs to the table you are looking at.
 
+### Addresses: your browser can fill them in now
+
+Every box that asks for an address &mdash; on your organization's settings, a partner's profile, a
+vendor, a donation site, a storage location, a product drive participant &mdash; now tells your
+browser what it is. If you have an address saved in Chrome, Safari or Firefox, it will offer to fill
+the whole thing in, which it could not do before on any screen in this app.
+
+**Partner profiles: state is a menu now.** It was a box you typed into, so "CA", "Calif." and
+"California" could all end up in the same column. It is the same list of states the organization
+settings page has always used.
+
+**ZIP codes stopped losing their first digit.** The *program / delivery address* ZIP on a partner
+profile was stored as a number, and a number cannot begin with a zero &mdash; so a partner in Boston
+(02108) had it saved as 2108, and a ZIP+4 like 39428-1234 could not be entered at all. It is stored
+as text now, and any ZIP that had already lost its leading zero has had it put back.
+
+**One spelling.** "Zip code", "Zipcode" and "Zip Code" all appeared on different screens; it is
+**ZIP code** everywhere. On the partner profile view, the two program address lines were both
+labelled "Program Address" &mdash; they now say which line is which.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

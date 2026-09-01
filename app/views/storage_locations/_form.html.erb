@@ -6,7 +6,11 @@
   <%= essentials_form_for form, html: {role: "form"} do |f| %>
     <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
-      <%= f.input :address, label: "Address" %>
+      <%# One box holding a whole address, so the whole-address token: `street-address` is defined
+          as multi-line and is the right one here, where `address-line1` would claim this box is
+          only the first line of one. See "Address fields" in design.md. %>
+      <%= f.input :address, label: "Address",
+            input_html: {autocomplete: "street-address"} %>
       <%# Both describe the building rather than address it, and neither fills a line. %>
       <%= essentials_field_row do %>
         <%= f.input :square_footage, label: "Square footage" %>

@@ -6,7 +6,11 @@
   <%= essentials_form_for form, remote: request.xhr?, html: {role: "form"} do |f| %>
     <%= render "shared/essentials/card" do %>
       <%= f.input :name, label: "Name" %>
-      <%= f.input :address, label: "Address" %>
+      <%# One box holding a whole address, so the whole-address token: `street-address` is defined
+          as multi-line and is the right one here, where `address-line1` would claim this box is
+          only the first line of one. See "Address fields" in design.md. %>
+      <%= f.input :address, label: "Address",
+            input_html: {autocomplete: "street-address"} %>
       <%= f.input :contact_name, label: "Contact name" %>
       <%# Two ways of reaching the same person, and neither needs a full-width box. %>
       <%= essentials_field_row do %>
