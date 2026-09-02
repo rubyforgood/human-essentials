@@ -20,23 +20,14 @@
 //
 // Usage: pw bin/design/disclosure-audit.js
 const { chromium } = require("playwright");
+const { targets, signIn, visit, RUNS } = require("./targets");
 
-const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
-const PASSWORD = process.env.SEED_PASSWORD || "password!";
-
-const PAGES = {
-  bank: ["/distributions/new", "/manage/edit", "/partner_groups/new", "/partners/new"],
-  super: ["/admin/users/new"]
-};
-const ROLES = { bank: "org_admin1@example.com", super: "superadmin@example.com" };
-
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
+/*
+ * **Every screen, not a list of five.** This used to name four bank pages and one admin page, and
+ * a conditionally revealed field on any other screen was invisible to it -- which is the same
+ * blindness that let the tooltip audit report 0 defects while there were 14. The check already
+ * skips a page with no reveals on it, so widening costs nothing but time and can only find more.
+ */
 
 const COLLECT = () => {
   // A reveal is an element some control points at with aria-controls, plus the two legacy shapes
@@ -115,7 +106,12 @@ const COLLECT = () => {
       triggerX: m.t ? m.t.x : null,
       // Only meaningful where the trigger is actually laid out on a grid: several forms are a
       // plain stacked card, where there are no column lines to land on.
-      triggerOnColumn: (trigger && trigger.closest("main .grid"))
+      //
+      // **And only where it is laid out at all.** A trigger inside a collapsed accordion has a
+      // zero-size rect at the origin, so its left edge is 0 and matches no column -- reported as
+      // "trigger left edge 0 is on no grid column" the first time this audit was widened beyond
+      // the five pages it used to know about. An element with no box cannot be misaligned.
+      triggerOnColumn: (trigger && trigger.offsetParent !== null && trigger.closest("main .grid"))
         ? [...columns].some((c) => Math.abs(c - m.t.x) <= 1) : null,
       // A radio or checkbox has its label beside it, so the revealed field should line up with
       // that label. A select's label sits above it at the same left edge, so it should not.
@@ -128,13 +124,17 @@ const COLLECT = () => {
   const browser = await chromium.launch();
   let found = 0, defects = 0;
 
-  for (const [role, paths] of Object.entries(PAGES)) {
+  let visited = 0;
+  for (const [email, wants] of RUNS) {
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
     const page = await ctx.newPage();
-    await signIn(page, ROLES[role]);
+    await signIn(page, email);
 
-    for (const path of paths) {
-      await page.goto(BASE + path, { waitUntil: "networkidle" }).catch(() => {});
+    for (const { path } of targets().filter((t) => wants(t.path))) {
+      // `visit` waits for `load`, never `networkidle`: three form pages here take longer than the
+      // 30s idle timeout, and a page an audit gives up on is a page it reports as clean.
+      if (!await visit(page, path)) continue;
+      visited++;
       const reveals = await page.evaluate(COLLECT);
       if (!reveals.length) continue;
 
@@ -169,6 +169,7 @@ const COLLECT = () => {
   }
 
   await browser.close();
-  console.log(`\n${found} conditional reveals, ${defects} with a defect.`);
+  // The page count is part of the finding: "0 defects" means nothing without it.
+  console.log(`\n${visited} screens, ${found} conditional reveals, ${defects} with a defect.`);
   process.exit(defects ? 1 : 0);
 })();
