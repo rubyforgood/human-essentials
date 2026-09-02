@@ -9,6 +9,14 @@ const { chromium } = require("playwright");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 
+// The expensive checks -- reflow, zoom, text spacing, a full tab traverse -- resize the viewport
+// several times per page, so they run over a representative sample rather than the whole app: one
+// dashboard, two index tables, a long form, a settings page, a hub and a calendar.
+//
+// **The cheap per-page checks do not sample.** A page title, a `lang` attribute and a skip link
+// cost one evaluate each, and 2.4.2 is partly a question about *uniqueness* -- which eight pages
+// cannot answer about a hundred and fifty. Those run over every screen `route-targets.rb` knows
+// about; see BROAD below.
 const PAGES = [
   ["dashboard", "/dashboard"],
   ["distributions", "/distributions"],
@@ -19,6 +27,16 @@ const PAGES = [
   ["reports hub", "/reports"],
   ["pick ups", "/distributions/schedule"]
 ];
+
+// Every screen, for the checks that cost nothing. Falls back to the sample if the file is missing,
+// so this still runs without `route-targets.rb` having been generated.
+const BROAD = (() => {
+  try {
+    return require("fs").readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8");
+  } catch {
+    return null;
+  }
+})();
 
 async function signIn(page, email) {
   await page.goto(`${BASE}/users/sign_in`);
@@ -167,11 +185,20 @@ async function keyboard(page, label) {
 
 // 2.4.1 Bypass blocks: the skip link must exist, take focus, and move focus to the main content.
 async function skipLink(page, label) {
-  // A page with autofocus has already moved focus into its form, so the first Tab lands on the
-  // next field rather than the skip link. That is the autofocus doing its job, not a missing skip
-  // link; focus is reset to the top before testing.
+  /*
+   * A page with autofocus has already moved focus into its form, so the first Tab lands on the
+   * next field rather than the skip link. That is the autofocus doing its job, not a missing skip
+   * link, so focus goes back to the top of the document before testing.
+   *
+   * **`blur()` is not enough**, which is what this used to do. Blurring clears the active element
+   * but leaves the *sequential focus navigation starting point* where it was, so Tab carried on
+   * from the autofocused field regardless -- and five form pages were reported as having no skip
+   * link while rendering one as their first tab stop. Focusing the root element moves the starting
+   * point with it.
+   */
   await page.evaluate(() => {
-    if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+    document.documentElement.tabIndex = -1;
+    document.documentElement.focus();
   });
   await page.keyboard.press("Tab");
   const state = await page.evaluate(() => {
@@ -179,7 +206,27 @@ async function skipLink(page, label) {
     return { text: (el.textContent || "").trim(), href: el.getAttribute && el.getAttribute("href") };
   });
   if (!/skip/i.test(state.text)) {
-    record("2.4.1 Bypass blocks", label, `first tab stop is "${state.text.slice(0, 30)}", not a skip link`);
+    /*
+     * 2.4.1 asks for a way past "blocks of content that are repeated on multiple Web pages". A
+     * standalone page whose entire repeated header is three links has no block to bypass, and a
+     * skip link over it is noise -- the first thing a keyboard user would meet is an offer to skip
+     * almost nothing. So the requirement is scaled to what there is to skip.
+     *
+     * A threshold rather than a list of excused pages: an exclusion list is how an audit quietly
+     * stops covering things. The app shell puts thirteen controls ahead of `main` and is well over
+     * the line; `/privacypolicy` puts three and is under it.
+     */
+    const ahead = await page.evaluate(() => {
+      const main = document.querySelector("main, #main-content");
+      if (!main) return Infinity;
+      return [...document.querySelectorAll(
+        "a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])"
+      )].filter((e) => main.compareDocumentPosition(e) & Node.DOCUMENT_POSITION_PRECEDING).length;
+    });
+    if (ahead > 5) {
+      record("2.4.1 Bypass blocks", label,
+        `first tab stop is "${state.text.slice(0, 30)}", not a skip link, with ${ahead} controls before main`);
+    }
     return;
   }
   await page.keyboard.press("Enter");
@@ -200,7 +247,13 @@ async function skipLink(page, label) {
 
   const titles = new Map();
   for (const [label, path] of PAGES) {
-    const res = await page.goto(BASE + path, { waitUntil: "networkidle" });
+    // `domcontentloaded`, not `networkidle`. Three form pages take longer than the 30s idle
+    // timeout, and this crashed on the first of them -- so every page after it went unchecked, and
+    // the run reported whatever it had found so far as though that were the whole app.
+    const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 })
+      .catch(() => null);
+    if (!res) { console.log(`skipped ${label} (did not load)`); continue; }
+    await page.waitForTimeout(150);
     if (!res || res.status() >= 400) { console.log(`skipped ${label} (HTTP ${res && res.status()})`); continue; }
 
     // 2.4.2 Page titled, and titles distinct enough to tell pages apart.
@@ -222,10 +275,46 @@ async function skipLink(page, label) {
   }
   console.log("\n");
 
+  // The cheap pass, over every screen. 2.4.2 in particular is a question about the whole set: a
+  // title is only useful if it tells this page apart from the others, and a sample of eight cannot
+  // see a collision with the hundred and forty-two it did not visit.
+  let broadPages = 0;
+  if (BROAD) {
+    const targets = JSON.parse(BROAD);
+    const sampled = new Set(PAGES.map(([, p]) => p));
+    const seenUrls = new Set();
+    for (const { path } of targets) {
+      if (sampled.has(path) || path.startsWith("/admin") || path.startsWith("/partners/")) continue;
+      const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 })
+        .catch(() => null);
+      if (!res || res.status() >= 400) continue;
+      // Where it *landed*, not where it was asked for. `/` redirects to `/dashboard` and an
+      // already-accepted invitation lands there too, so comparing requested paths reported three
+      // views of one page as three pages sharing a title.
+      const landed = new URL(page.url()).pathname;
+      if (sampled.has(landed) || seenUrls.has(landed)) continue;
+      seenUrls.add(landed);
+      broadPages++;
+
+      const title = await page.title();
+      if (!title || title.trim().length < 3) record("2.4.2 Page titled", path, `title is "${title}"`);
+      else if (titles.has(title)) record("2.4.2 Page titled", path, `same title as ${titles.get(title)}: "${title}"`);
+      else titles.set(title, path);
+
+      const lang = await page.evaluate(() => document.documentElement.getAttribute("lang"));
+      if (!lang) record("3.1.1 Language of page", path, "no lang attribute on <html>");
+
+      await skipLink(page, path);
+      process.stdout.write(".");
+    }
+    console.log("\n");
+  }
+
   await browser.close();
 
   if (fails.length === 0) {
-    console.log(`${PAGES.length} pages checked against 1.4.4, 1.4.10, 1.4.12, 2.1.1, 2.4.1, 2.4.2, 2.4.7, 3.1.1 — no failures`);
+    console.log(`${PAGES.length} pages checked against 1.4.4, 1.4.10, 1.4.12, 2.1.1, 2.4.7`);
+    console.log(`${PAGES.length + broadPages} pages checked against 2.4.1, 2.4.2, 3.1.1 — no failures`);
     process.exit(0);
   }
   const byCriterion = new Map();

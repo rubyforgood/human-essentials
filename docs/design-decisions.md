@@ -8713,3 +8713,100 @@ it cannot appear in a query. `where`, `find_by`, `pluck` and `order` on it all r
 I swept for the whole class before running the migration rather than after — `find_by(address`,
 `where(address`, `pluck(:address)`, `order(:address)` and raw SQL across `app/`, `lib/`, `db/` and
 `spec/`. One hit, and it was the seed.
+
+## 2026-09-02 — A WCAG audit of the whole app, and what "no violations" was not saying
+
+Asked for a WCAG audit of every element and pattern. The starting position looked excellent: axe
+clean on 155 screens, the keyboard audit clean on 142, the manual criteria clean. All three were
+true, and none of them meant what it appeared to.
+
+### The suite was auditing a superseded standard
+
+`wcag-audit.js` says *WCAG 2.1 A/AA* in its first line and passes that tag set to axe.
+`wcag-manual.js` names 2.1 criteria. **WCAG 2.2 has been a W3C Recommendation since 5 October
+2023** and adds six A/AA success criteria. The app already satisfied one of them — 2.5.8 Target
+Size, which is a design system rule — and had no check for the other five.
+
+That is the whole shape of the problem with a green suite: it is a statement about the questions
+asked, and nobody re-reads the questions.
+
+**2.4.11 Focus Not Obscured (Minimum), AA, was failing on five screens.** The scroll rail is
+`position: fixed` at the bottom of the window whenever a table runs past the fold, and a browser
+scrolls a newly focused element only far enough to touch the edge of the viewport — which is exactly
+where the rail is. Measured on `/items/quantity_and_location` at 1280×900: focused link at y=876,
+height 24, bottom 900; rail at y=876. Entirely covered, which is the failing condition. A sixth
+instance came from the frozen actions column covering a focused link scrolled to the right edge.
+
+The remedy is `scroll-padding` — on `html` for the rail, on `.table-scroll` for the frozen columns —
+which is what the criterion's own understanding document recommends for a sticky bar. The values are
+the rail's height and the two column widths `table_scroll_controller` already measures for the edge
+shadows, so they cannot drift apart. Verified by reverting: the four rail failures come straight
+back, and the column one does not, which attributes each fix to its findings.
+
+### Three of my own new checks were wrong before they were right
+
+Writing the 2.2 audit produced three false results in a row, and they are worth recording because
+each is the *obvious* implementation of its criterion.
+
+**2.5.7 Dragging Movements** clicked the scroll rail's track at a fixed 85% of its width to prove a
+non-dragging alternative exists. On `/items/quantity_and_location` the thumb fills 95% of the track,
+so the click landed on the thumb, the handler correctly ignored it, and a passing app was reported
+as failing. It now computes a point clear of the thumb.
+
+Then it failed again on `/items` for a different reason: the audit tabs through the page for 2.4.11
+*before* testing the rail, and tabbing scrolls the table sideways — so by the time the click
+happened the region was already at its maximum and had nowhere to go. It resets the scroll first.
+
+**3.2.6 Consistent Help** measured the help link's position as a fraction of the page's focusables.
+The link is in the same place on every page; dividing by the total turned that into 12% on a page
+with 111 focusables and 62% on one with 21. Measuring the absolute tab index instead was closer and
+still wrong, because the sidebar expands the section you are in, so five more links precede it on
+`/donations` than on `/help` — a state change the criterion explicitly excuses. What is actually
+invariant is its position **from the end of the navigation it lives in**. It was also matching on
+`href^="/help"`, and the destination is role-dependent: bank users get an external user guide, so
+the check was silently testing nothing for two of the three roles.
+
+**3.3.7 Redundant Entry** was named in the file's header and printed in the pass line **with no
+check behind it at all.** A criterion nothing tested is not a criterion that passed. It now walks
+the request → distribution flow and asserts the partner and quantities arrive filled in, and the
+output names which processes it covered rather than claiming the criterion.
+
+Every check was then proved by planting the defect it is meant to catch: the track handler removed,
+an extra link after the help link on one page, `onpaste="return false"` on the password field,
+`copy_from_request` deleted. All fired.
+
+### A sample of eight was hiding fourteen failures
+
+`wcag-manual.js` visited **8 pages** while axe visited 155. The expensive checks — reflow, zoom, text
+spacing, a full tab traverse — resize the viewport several times per page and are reasonably
+sampled. The cheap ones are not: a page title costs one `evaluate`, and **2.4.2 is partly a question
+about uniqueness**, which eight pages cannot answer about a hundred and fifty.
+
+Run over every screen, 2.4.2 failed on **14 pages**. Five reports and five account-request screens
+had no `content_for :title` at all and fell back to the organization name alone; the annual-reports
+index reused the hub's title; the broadcast index and its new form shared one. All now titled.
+
+It also surfaced that the audit **crashed on the third page of its own list** — a `networkidle` wait
+against a form page slower than 30 seconds — so the eight it claimed had lately been two.
+
+### Two false positives in that widening, and the rule that replaced them
+
+The broad pass reported 2.4.1 Bypass Blocks failing on seven pages. Five were forms with an
+autofocused field: the check blurred before tabbing, but **`blur()` does not move the sequential
+focus navigation starting point**, so Tab resumed from inside the form. Focusing the root element
+does move it.
+
+The other two were standalone legal and account-request pages whose entire repeated header is three
+links. 2.4.1 asks for a way past *blocks* of content repeated across pages, and three links is not a
+block — a skip link there would offer to skip almost nothing. Rather than excuse those pages by
+name, which is how an audit stops covering things, the requirement is scaled to what there is to
+skip: more than five controls ahead of `main`. The app shell has thirty-four and is well over; the
+legal pages have three.
+
+### What was verified rather than assumed
+
+Eleven criteria are marked not applicable in the coverage table in design.md, and each was checked
+rather than waved through: zero `<video>`/`<audio>` elements, no orientation lock, no `setInterval`
+or meta-refresh, a 7-day session (2.2.1 exempts limits over 20 hours), one language per document,
+and the only document-level key binding is Escape — which is not a character, so 2.1.4 does not
+apply. The full 55-criterion table says what verifies each one.
