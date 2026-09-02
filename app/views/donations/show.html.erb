@@ -8,7 +8,12 @@
         back: {path: donations_path, label: "Back to donations"},
         actions: capture {
           concat essentials_link_button("Print", print_donation_path(@donation, format: :pdf), variant: :secondary, icon: "bi-printer")
-          concat essentials_link_button("Start a distribution", new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), variant: :primary, icon: "bi-plus-lg")
+          # **The primary is emitted last.** design.md: at most three actions, at most one of them
+          # primary, primary last -- a page header's actions are right-aligned, so the last slot is
+          # the one the eye lands on. It used to be emitted second, with the record actions after
+          # it, which is the opposite of what the comment below has always claimed. Found once
+          # `button-audit` stopped working from a hardcoded list of index pages and started visiting
+          # the show pages too.
           # Edit and Delete act on the record as a whole, so they belong in the page header --
           # design.md names *Deactivate* as the example. They were at the foot of the page, below
           # the last card, which is where a form's Save goes and not where a record's own actions
@@ -28,6 +33,7 @@
             end
             concat essentials_record_actions(label: "this donation", items: record_actions)
           end
+          concat essentials_link_button("Start a distribution", new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), variant: :primary, icon: "bi-plus-lg")
         } %>
 
   <div class="space-y-6">
