@@ -4,7 +4,18 @@
 // pressed, a viewport resized, a stylesheet overridden. Each check below names the criterion it
 // covers so a failure is traceable to the standard rather than to an opinion.
 //
-// Run: pw bin/design/wcag-manual.js
+// Run: pw bin/design/wcag-manual.js          the expensive checks over a sample, the cheap ones over
+//                                            every screen. ~40s.
+//      pw bin/design/wcag-manual.js --all     every check over every screen, in all three roles.
+//
+// **Why there are two scopes rather than one.** Reflow, 200% zoom, text spacing and a full tab
+// traverse each resize the viewport two or three times, so they cost seconds per page where a title
+// or a `lang` attribute costs milliseconds. A check nobody runs because it takes minutes is worth
+// less than one that runs in the inner loop, so the default samples them -- and `--all` exists
+// because sampling is *least* defensible for exactly these checks: reflow and text-spacing failures
+// come from one page's content, a wide table or a long unbroken string, so eight pages say almost
+// nothing about the other hundred and forty. Widening the cheap checks took 2.4.2 from "0 failures
+// on 8 pages" to 14 on 92, which is the same lesson arriving early.
 const { chromium } = require("playwright");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -30,6 +41,16 @@ const PAGES = [
 
 // Every screen, for the checks that cost nothing. Falls back to the sample if the file is missing,
 // so this still runs without `route-targets.rb` having been generated.
+const ALL = process.argv.includes("--all");
+
+const PARTNER = (p) => (p.startsWith("/partners/") && !/^\/partners\/\d+/.test(p)) || p === "/partners/profile";
+const ADMIN = (p) => p.startsWith("/admin");
+const ROLES = [
+  ["org_admin1@example.com", (p) => !ADMIN(p) && !PARTNER(p)],
+  ["verified@example.com", PARTNER],
+  ["superadmin@example.com", ADMIN]
+];
+
 const BROAD = (() => {
   try {
     return require("fs").readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8");
@@ -126,18 +147,34 @@ const zoom = (page, label) => horizontalOverflow(page, label, 640, "1.4.4 Resize
 
 // 1.4.12 Text spacing: applying the required spacing must not clip content.
 async function textSpacing(page, label) {
+  /*
+   * 1.4.12 asks that applying the required spacing causes **no loss of content or functionality**.
+   * The loss is the point, so this measures twice: what is already clipped before the override, and
+   * what is clipped after. Only the difference is a finding.
+   *
+   * Measuring once reported `sr-only` labels on the two partner request forms -- 1px wide with
+   * `overflow: hidden`, which is the visually-hidden technique doing exactly its job. They are
+   * clipped before and after, no content is lost, and their text reaches a screen reader in full.
+   * A one-shot check cannot tell that apart from a heading that stopped fitting.
+   */
+  const clippedNow = () => page.evaluate(() =>
+    [...document.querySelectorAll("main button, main a, main h1, main h2, main label")]
+      .filter((el) => el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow === "hidden")
+      .map((el) => `${el.tagName}:${el.textContent.trim().slice(0, 30)}`));
+
+  const before = new Set(await clippedNow());
   await page.addStyleTag({
     content: `* { line-height: 1.5 !important; letter-spacing: 0.12em !important;
                   word-spacing: 0.16em !important; }
               p { margin-bottom: 2em !important; }`
   });
   await page.waitForTimeout(250);
-  const clipped = await page.evaluate(() =>
-    [...document.querySelectorAll("main button, main a, main h1, main h2, main label")]
-      .filter((el) => el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow === "hidden")
-      .slice(0, 3)
-      .map((el) => el.textContent.trim().slice(0, 30)));
-  if (clipped.length) record("1.4.12 Text spacing", label, `clipped: ${clipped.join(" | ")}`);
+  const after = (await clippedNow()).filter((el) => !before.has(el));
+
+  if (after.length) {
+    record("1.4.12 Text spacing", label,
+      `clipped only once the spacing is applied: ${after.slice(0, 3).join(" | ")}`);
+  }
 }
 
 // 2.1.1 Keyboard and 2.4.7 Focus visible: every interactive element must be reachable by Tab and
@@ -164,16 +201,26 @@ async function keyboard(page, label) {
     record("2.1.1 Keyboard", label, `not reachable by Tab: ${result.unreachable.join(" | ")}`);
   }
 
-  // Focus the first few and confirm a visible focus indicator.
-  const noIndicator = await page.evaluate(() => {
+  /*
+   * Focus the first few and confirm a visible focus indicator.
+   *
+   * **Two frames between focusing and measuring.** Reading `getComputedStyle` in the same
+   * synchronous block as `el.focus()` catches the style mid-recalc where a transition is involved:
+   * the privacy policy's links animate their outline, and a same-tick read returned `solid 0px`
+   * for a link that does have one -- reported as a failure for a page that had just been fixed.
+   * One frame applies `:focus-visible`, the second lets a transition reach a measurable width.
+   */
+  const noIndicator = await page.evaluate(async () => {
+    const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     const els = [...document.querySelectorAll("main a[href], main button:not([disabled])")]
       .filter((el) => el.offsetParent !== null).slice(0, 8);
     const bad = [];
     for (const el of els) {
       el.focus();
+      await frame();
       const s = getComputedStyle(el);
       const hasOutline = s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0;
-      const hasRing = /(inset )?0(px)? 0(px)? 0(px)? \d/.test(s.boxShadow) || s.boxShadow !== "none";
+      const hasRing = s.boxShadow !== "none";
       if (!hasOutline && !hasRing) bad.push((el.textContent || "").trim().slice(0, 24));
     }
     return bad;
@@ -230,11 +277,23 @@ async function skipLink(page, label) {
     return;
   }
   await page.keyboard.press("Enter");
-  await page.waitForTimeout(150);
-  const landed = await page.evaluate(() => {
+  /*
+   * Poll, rather than read once after a fixed pause.
+   *
+   * The assertion is "focus ends up in main", and on the slowest screen in the app -- the new
+   * distribution form -- something focusable arrives after the skip link has already moved focus,
+   * so a single read 150ms later caught the intermediate state about one run in three. Reproduced
+   * by hand three times in a row without failing, which is what a flaky check looks like from the
+   * outside. Waiting for the condition is the fix; a longer fixed pause is only a slower guess.
+   */
+  const landed = await page.waitForFunction(() => {
+    const el = document.activeElement;
+    if (el && (el.id === "main-content" || el.closest("main"))) return el.id || "inside main";
+    return false;
+  }, null, { timeout: 3000 }).then((h) => h.jsonValue()).catch(() => page.evaluate(() => {
     const el = document.activeElement;
     return el.id || (el.closest("main") ? "inside main" : el.tagName);
-  });
+  }));
   if (!/main/i.test(landed)) {
     record("2.4.1 Bypass blocks", label, `skip link moved focus to "${landed}", not the main content`);
   }
@@ -242,24 +301,58 @@ async function skipLink(page, label) {
 
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewportSize: { width: 1280, height: 900 } });
-  await signIn(page, "org_admin1@example.com");
-
   const titles = new Map();
-  for (const [label, path] of PAGES) {
-    // `domcontentloaded`, not `networkidle`. Three form pages take longer than the 30s idle
-    // timeout, and this crashed on the first of them -- so every page after it went unchecked, and
-    // the run reported whatever it had found so far as though that were the whole app.
-    const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 })
+  const seenUrls = new Set();
+  let expensive = 0, cheap = 0;
+
+  /*
+   * One page, and how deeply to look at it. The cheap checks always run; the expensive ones run on
+   * the sample, or on everything under `--all`.
+   *
+   * Splitting *what is checked* from *which pages* is the point: there is one definition of each
+   * check, and the scope is an argument. A second script for the thorough run would be a copy, and
+   * a copy drifts.
+   */
+  const inspect = async (page, label, deep) => {
+    const res = await page.goto(BASE + label, { waitUntil: "domcontentloaded", timeout: 60000 })
       .catch(() => null);
-    if (!res) { console.log(`skipped ${label} (did not load)`); continue; }
+    /*
+     * A page that will not load is reported, not skipped.
+     *
+     * This used to `return` on any 4xx or 5xx, which means **breaking a page hides it from the
+     * audit**: a bad `content_for :title` on `/partners/children/1` produced a 500, the audit
+     * skipped it in silence, and the test suite is what caught it. An audit that quietly stops
+     * looking at what it cannot load reports its own blind spot as a pass.
+     *
+     * 404s are excluded because `route-targets.rb` approximates some ids and a few of its guesses
+     * genuinely do not exist; a 500 never has an innocent explanation.
+     */
+    if (!res) { record("did not load", label, "no response"); return; }
+    if (res.status() >= 500) { record("server error", label, `HTTP ${res.status()}`); return; }
+    if (res.status() >= 400) return;
+    /*
+     * Wait for `load` before testing anything about focus.
+     *
+     * `domcontentloaded` plus 150ms is enough to read a title, and not enough to Tab through a page
+     * that is still booting: `/distributions/new` is the slowest screen in the app, and a late
+     * autofocus arriving after the skip link's Enter made 2.4.1 fail there about one run in three.
+     * Reproduced by hand three times in a row and it passed every time, which is the shape of a
+     * flaky check rather than a defect. Capped, because `load` never settles on a page holding a
+     * long poll -- and `domcontentloaded` has already happened either way.
+     */
+    await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(150);
-    if (!res || res.status() >= 400) { console.log(`skipped ${label} (HTTP ${res && res.status()})`); continue; }
+
+    // Where it landed, not where it was asked for: `/` redirects to `/dashboard`, and comparing
+    // requested paths reported three views of one page as three pages sharing a title.
+    const landed = new URL(page.url()).pathname;
+    if (seenUrls.has(landed)) return;
+    seenUrls.add(landed);
 
     // 2.4.2 Page titled, and titles distinct enough to tell pages apart.
     const title = await page.title();
     if (!title || title.trim().length < 3) record("2.4.2 Page titled", label, `title is "${title}"`);
-    if (titles.has(title)) record("2.4.2 Page titled", label, `same title as ${titles.get(title)}: "${title}"`);
+    else if (titles.has(title)) record("2.4.2 Page titled", label, `same title as ${titles.get(title)}: "${title}"`);
     else titles.set(title, label);
 
     // 3.1.1 Language of page.
@@ -267,56 +360,63 @@ async function skipLink(page, label) {
     if (!lang) record("3.1.1 Language of page", label, "no lang attribute on <html>");
 
     await skipLink(page, label);
+    cheap++;
+
+    if (!deep) { process.stdout.write("."); return; }
     await keyboard(page, label);
     await reflow(page, label);
     await zoom(page, label);
     await textSpacing(page, label);
-    process.stdout.write(".");
+    expensive++;
+    process.stdout.write("#");
+  };
+
+  /*
+   * One entry per controller action, not per path. `get :admin, to: "admin#dashboard"` gives the
+   * same page two URLs with no redirect between them, so the landed-URL check cannot tell they are
+   * one page -- and it was reported as two pages sharing a title, which is what a title is *for*.
+   * `route-targets.rb` already carries the controller and action.
+   */
+  const byAction = new Map();
+  (BROAD ? JSON.parse(BROAD) : []).forEach((t) => {
+    const key = `${t.controller}#${t.action}`;
+    if (!byAction.has(key)) byAction.set(key, t.path);
+  });
+  const targets = [...byAction.values()];
+  const sampled = PAGES.map(([, path]) => path);
+
+  for (const [email, wants] of ROLES) {
+    // Without `--all` only the bank admin runs: the sample is all bank pages, and signing in three
+    // times to visit nothing would just be slower.
+    const mine = ALL ? targets.filter(wants) : (email === ROLES[0][0] ? sampled : []);
+    if (!mine.length) continue;
+
+    const page = await browser.newPage({ viewportSize: { width: 1280, height: 900 } });
+    await signIn(page, email);
+
+    for (const path of mine) await inspect(page, path, ALL || sampled.includes(path));
+
+    // The cheap pass over the rest, for the default run. Under `--all` there is no rest.
+    if (!ALL && email === ROLES[0][0]) {
+      for (const path of targets) {
+        if (ADMIN(path) || PARTNER(path)) continue;
+        await inspect(page, path, false);
+      }
+    }
+    await page.close();
   }
   console.log("\n");
 
-  // The cheap pass, over every screen. 2.4.2 in particular is a question about the whole set: a
-  // title is only useful if it tells this page apart from the others, and a sample of eight cannot
-  // see a collision with the hundred and forty-two it did not visit.
-  let broadPages = 0;
-  if (BROAD) {
-    const targets = JSON.parse(BROAD);
-    const sampled = new Set(PAGES.map(([, p]) => p));
-    const seenUrls = new Set();
-    for (const { path } of targets) {
-      if (sampled.has(path) || path.startsWith("/admin") || path.startsWith("/partners/")) continue;
-      const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 })
-        .catch(() => null);
-      if (!res || res.status() >= 400) continue;
-      // Where it *landed*, not where it was asked for. `/` redirects to `/dashboard` and an
-      // already-accepted invitation lands there too, so comparing requested paths reported three
-      // views of one page as three pages sharing a title.
-      const landed = new URL(page.url()).pathname;
-      if (sampled.has(landed) || seenUrls.has(landed)) continue;
-      seenUrls.add(landed);
-      broadPages++;
-
-      const title = await page.title();
-      if (!title || title.trim().length < 3) record("2.4.2 Page titled", path, `title is "${title}"`);
-      else if (titles.has(title)) record("2.4.2 Page titled", path, `same title as ${titles.get(title)}: "${title}"`);
-      else titles.set(title, path);
-
-      const lang = await page.evaluate(() => document.documentElement.getAttribute("lang"));
-      if (!lang) record("3.1.1 Language of page", path, "no lang attribute on <html>");
-
-      await skipLink(page, path);
-      process.stdout.write(".");
-    }
-    console.log("\n");
-  }
-
   await browser.close();
 
+  const scope = `${expensive} pages against 1.4.4, 1.4.10, 1.4.12, 2.1.1, 2.4.7 · ` +
+    `${cheap} against 2.4.1, 2.4.2, 3.1.1`;
   if (fails.length === 0) {
-    console.log(`${PAGES.length} pages checked against 1.4.4, 1.4.10, 1.4.12, 2.1.1, 2.4.7`);
-    console.log(`${PAGES.length + broadPages} pages checked against 2.4.1, 2.4.2, 3.1.1 — no failures`);
+    console.log(`${scope} — no failures`);
+    if (!ALL) console.log("(`--all` runs the expensive checks over every screen, in all three roles)");
     process.exit(0);
   }
+  console.log(`${scope}\n`);
   const byCriterion = new Map();
   for (const f of fails) {
     const e = byCriterion.get(f.criterion) || [];

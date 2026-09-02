@@ -8810,3 +8810,74 @@ rather than waved through: zero `<video>`/`<audio>` elements, no orientation loc
 or meta-refresh, a 7-day session (2.2.1 exempts limits over 20 hours), one language per document,
 and the only document-level key binding is Escape — which is not a character, so 2.1.4 does not
 apply. The full 55-criterion table says what verifies each one.
+
+## 2026-09-02 — The slow target, and what a sample of eight was worth
+
+Asked to wire the expensive WCAG checks up to run over every screen. `wcag-manual.js --all` does
+that: same checks, scope as an argument, one definition of each.
+
+**Why a flag and not a second script.** A copy drifts. The checks are defined once and the loop asks
+how deeply to look at each page; `--all` also runs all three roles, where the default runs only the
+bank admin because the sample is entirely bank pages.
+
+**Why a split scope at all.** Reflow, 200% zoom, text spacing and a tab traverse each resize the
+viewport two or three times. Measured: the default run is **38 seconds**, `--all` is **4.5 minutes**
+over 139 screens. My estimate before measuring was 40 minutes — wrong by roughly an order of
+magnitude, which is a good argument for measuring before quoting.
+
+### What it found
+
+Sampling is least defensible for exactly these checks, because reflow and text-spacing failures come
+from a *page's content* rather than from the layout system. The first `--all` run returned:
+
+- **2.4.2 on ten more pages** — all admin and partner screens, which the earlier single-role broad
+  pass had never visited. A partner's help page titled itself after the *bank*; `/admin/questions`
+  had no title at all; three admin forms shared their index's title; two partner show pages
+  inherited their index's. All fixed.
+
+### Three of the findings were the audit's fault, not the app's
+
+Worth writing down, because two of them would have produced a "fix" for something that was never
+broken.
+
+**1.4.12 Text spacing** reported the two partner request forms clipping *Item Requested | Quantity |
+Unit*. Those are `sr-only` labels: 1px wide with `overflow: hidden`, which is the visually-hidden
+technique working exactly as intended, and their text reaches a screen reader in full. The tell was
+in the output all along — they were clipped *before* the spacing was applied too. The criterion asks
+about loss caused by the spacing, so the check measures before and after and reports the difference.
+
+**2.4.7 Focus visible** reported `/privacypolicy`. I added a focus ring to both standalone pages,
+re-ran, and it still failed — which is what forced the question. The check calls `el.focus()` and
+reads `getComputedStyle` in the same synchronous block, catching the style mid-recalc where a
+transition is involved. With two frames between the two, the ring measures correctly.
+
+And then the more useful finding: with the author rule removed entirely, Chromium still paints its
+own ring, measured as `auto 1px`. **2.4.7 was never failing.** The CSS I added is a consistency
+improvement — the same 2px indigo indicator as the other 139 screens instead of the browser default
+on two of them — and its comment now says that, rather than claiming a fix. A comment that credits
+a change with solving a problem it did not solve is worse than no comment.
+
+**2.4.2 on `/admin` vs `/admin/dashboard`** is one action at two paths — `get :admin, to:
+"admin#dashboard"` — with no redirect, so the landed-URL check could not see they are one page.
+`route-targets.rb` already carries the controller and action, so the list is deduped on those.
+
+That makes five false positives from new or widened checks in two days. The pattern is consistent
+enough to state plainly: **a new check's first findings are evidence about the check.** Every one
+here was confirmed by reproducing it by hand before anything was changed, and every corrected check
+was then re-proved by planting the defect it is meant to catch — which is how the 2.4.7 one was
+caught, because after the timing fix the planted defect *stopped* reproducing.
+
+### Two holes in the audit, found by using it
+
+**A page that will not load was skipped in silence.** A `content_for :title` I added to
+`partners/children/show` called a method the model does not have, and the page 500ed. The audit's
+`if (res.status() >= 400) return` skipped it without a word; the *test suite* caught it. An audit
+that quietly stops looking at what it cannot load reports its own blind spot as a pass, so a 500 is
+a finding now. 404s still pass over, because `route-targets.rb` approximates a few ids and some of
+its guesses genuinely do not exist — a 500 never has an innocent explanation.
+
+**The skip-link check read focus once, after a fixed pause.** On the new distribution form, the
+slowest screen in the app, something focusable arrives after the skip link has already moved focus,
+so the single read caught the intermediate state about one run in three. Reproduced by hand three
+times without failing, which is what a flake looks like from outside. It waits for the condition
+now; a longer pause would only have been a slower guess.
