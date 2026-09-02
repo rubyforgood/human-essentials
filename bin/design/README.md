@@ -293,6 +293,18 @@ screens that a single-role pass had never visited.
 One definition of each check, with the scope as an argument: a second script for the thorough run
 would be a copy, and a copy drifts.
 
+`targets.js` is the seam between the audits and the application, and the only file that knows this
+is a Rails app. It supplies the list of screens, the three roles, `signIn` and `visit`.
+
+It replaced **21 hand-copied `signIn` functions**, seven copies of the role predicates and six of the
+targets-file read. Four of the copies had drifted: one did not sign out first, so a second role
+silently reused the first one's session, and one waited on `networkidle`, which never settles on the
+slowest screens here.
+
+The targets file regenerates itself when it is missing or older than `config/routes.rb`, so an audit
+cannot quietly run against a stale list of screens. `TARGETS_CMD` overrides the command that builds
+it — that one line is the whole Rails dependency.
+
 `audit-selftest.js` tests the audits, by breaking a page on purpose and by leaving it alone on
 purpose.
 
