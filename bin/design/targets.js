@@ -96,6 +96,12 @@ async function signIn(page, email, password = PASSWORD) {
  * `domcontentloaded` plus `load`, never `networkidle`: three form pages in this app take longer
  * than the 30-second idle timeout, and an audit that gives up on a page reports it as clean.
  * Returns null for anything that did not load, so a caller can tell "not checked" from "fine".
+ *
+ * **Returns where it landed, not where it was asked to go.** Redirects are common here and the
+ * distinction has mattered three times: `/` and `/dashboard` are one page, `kits#show` redirects to
+ * its allocations, and `/partners/1/approve_application` redirects to `/partners` *with a flash
+ * bar* -- which the tab-set audit read as the same strip sitting 72px lower on a second tab. An
+ * audit that groups or counts pages should key on `landed`.
  */
 async function visit(page, urlPath, { timeout = 60000 } = {}) {
   const res = await page.goto(BASE + urlPath, { waitUntil: "domcontentloaded", timeout })
@@ -103,6 +109,7 @@ async function visit(page, urlPath, { timeout = 60000 } = {}) {
   if (!res || res.status() >= 400) return null;
   await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {});
   await page.waitForTimeout(120);
+  res.landed = new URL(page.url()).pathname;
   return res;
 }
 
