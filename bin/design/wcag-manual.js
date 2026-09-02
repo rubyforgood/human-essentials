@@ -68,7 +68,11 @@ async function signIn(page, email) {
 }
 
 const fails = [];
-const record = (criterion, page, detail) => fails.push({ criterion, page, detail });
+// The sink is swappable so `audit-selftest.js` can run one check in isolation and see exactly
+// what it reported. The audit's own runs push into `fails` exactly as before.
+let sink = (criterion, page, detail) => fails.push({ criterion, page, detail });
+const record = (...args) => sink(...args);
+const captureInto = (fn) => { sink = fn; };
 
 // 1.4.10 Reflow at 320px, and 1.4.4 Resize text at 200% (which is the same page at half width).
 //
@@ -299,6 +303,11 @@ async function skipLink(page, label) {
   }
 }
 
+module.exports = { captureInto, reflow, zoom, textSpacing, keyboard, skipLink, horizontalOverflow, signIn };
+
+// Requiring this file must not run the audit: `audit-selftest.js` imports the checks
+// above and drives them one at a time against a page it has deliberately broken.
+if (require.main === module) {
 (async () => {
   const browser = await chromium.launch();
   const titles = new Map();
@@ -430,3 +439,4 @@ async function skipLink(page, label) {
   }
   process.exit(1);
 })();
+}

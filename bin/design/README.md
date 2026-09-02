@@ -293,6 +293,25 @@ screens that a single-role pass had never visited.
 One definition of each check, with the scope as an argument: a second script for the thorough run
 would be a copy, and a copy drifts.
 
+`audit-selftest.js` tests the audits, by breaking a page on purpose and by leaving it alone on
+purpose.
+
+```bash
+pw bin/design/audit-selftest.js
+```
+
+Two controls per check. **Positive**: the page is broken in the way the criterion is about, and the
+check must report — this catches a check that examines nothing. **Negative**: the page is changed in
+a way that is not a violation, and the check must stay silent.
+
+**The negative control is the one that was missing.** Five checks reported failures the app did not
+have, each of them "verified" by planting the defect it catches, and each of them passed that test:
+a check that fires when it should not still fires when it should. All five would have been caught by
+a benign control — a table that only just overflows, a region already scrolled, a longer page, an
+`sr-only` label, a transitioned focus ring.
+
+Run it whenever a check changes. Currently **11 controls over 5 checks, 0 wrong**.
+
 `wcag22-audit.js` covers the **six criteria WCAG 2.2 added at A and AA**, five of which nothing
 else here checked.
 
