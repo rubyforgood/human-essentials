@@ -15,7 +15,7 @@ rbenv init zsh &
 # gem install nokogiri -v 1.18.1 --platform=ruby -- --use-system-libraries
 
 # If the project's required ruby version (specified in .ruby-version)
-# changes from 3.4.3, this command will download and compile the correct
+# changes from 4.0.6, this command will download and compile the correct
 # version, but it will take a long time.
 echo "*** Installing rbenv-able Ruby ***"
 rbenv install --skip-existing &
