@@ -310,7 +310,17 @@ a check that fires when it should not still fires when it should. All five would
 a benign control — a table that only just overflows, a region already scrolled, a longer page, an
 `sr-only` label, a transitioned focus ring.
 
-Run it whenever a check changes. Currently **11 controls over 5 checks, 0 wrong**.
+**It runs in CI on every push and pull request** — `.github/workflows/audit-selftest.yml`, the only
+workflow that boots a real server and drives it with Playwright. Run it yourself before pushing a
+change to a check; it takes eleven seconds.
+
+The controls **build the structures they need** rather than relying on the page having them. They
+first ran against a development database with a session's worth of data, where `/distributions`
+overflows and grows a scroll rail; on a freshly seeded database it does not, `.table-rail-track` was
+null, and half the controls threw. A self-test that depends on how much data happens to exist is not
+a test — and in CI it would have been a red build about nothing.
+
+Currently **11 controls over 5 checks, 0 wrong**.
 
 `wcag22-audit.js` covers the **six criteria WCAG 2.2 added at A and AA**, five of which nothing
 else here checked.
