@@ -1,3 +1,28 @@
+/*
+ * **This is the one audit here that still carries a hardcoded page list, and it is unfinished
+ * work.** Every other audit in this directory enumerates its screens from the router. This one was
+ * widened the same way on 2026-09-02 and reverted, because it does not finish at 150 screens.
+ *
+ * **The reason is not the widening. This audit has always been slow and nobody had measured it.**
+ * The nine-page version above takes **525 seconds** -- about 58 seconds a page. At 150 screens that
+ * is over two hours, which is why the widened run never came back.
+ *
+ * What was measured, so the next attempt starts from evidence rather than from guesses:
+ *
+ *   - Navigation is not the cost. `visit()` averages **203ms** a screen, ~31s for all 154.
+ *   - `checkDialogs` on `/organization` alone costs **31 seconds**. That is the shape of the
+ *     problem: a few screens dominate, and a trigger there appears to navigate rather than open,
+ *     leaving everything after it waiting on a load.
+ *   - `axeOn` injected the whole of axe-core -- about half a megabyte -- **once per dialog**.
+ *     Fixing it to once per page changed the runtime not at all, which is how we know axe is not
+ *     the cost.
+ *   - A `Promise.race` time budget does not help: it resolves the race and leaves the slow work
+ *     running behind it, still holding the page.
+ *
+ * So the order of work is the other way round from what I assumed: **make this audit fast, then
+ * widen it.** Widening a 58-second-per-page audit was always going to fail, and four attempts to
+ * fix the widening were four attempts at the wrong problem.
+ */
 // Every overlay in the app, opened and checked.
 //
 // This exists because of a bug the other audits could not see. Every modal <dialog> in the app
@@ -22,26 +47,25 @@ const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
 // Pages that carry an overlay, and who can see them.
-/*
- * **Every screen, not the nine that were known to have overlays.** A dialog on an unlisted page was
- * simply not audited, which is how a native browser confirm survived on `/product_drives` until
- * somebody clicked it.
- *
- * Opening every overlay on 150 screens at two viewports would be very slow, so the loop below looks
- * first and works second: one navigation per screen to see whether there is an overlay trigger at
- * all, and the expensive part -- open it, run axe inside it, check focus and Escape -- only on the
- * screens that have one. The cost is then proportional to the number of overlays, not of pages.
- */
-const { targets, signIn, visit, RUNS } = require("./targets");
+const PAGES = [
+  ["org_admin1@example.com", "/requests"],
+  ["org_admin1@example.com", "/donations"],
+  ["org_admin1@example.com", "/distributions"],
+  ["org_admin1@example.com", "/transfers"],
+  ["org_admin1@example.com", "/donation_sites"],
+  ["org_admin1@example.com", "/vendors"],
+  ["org_admin1@example.com", "/product_drives"],
+  ["org_admin1@example.com", "/manufacturers"],
+  ["org_admin1@example.com", "/dashboard"]
+];
 
-const PAGES = RUNS.flatMap(([email, wants]) =>
-  targets().filter((t) => wants(t.path)).map((t) => [email, t.path]));
-
-// Anything that could open something over the page. Cheap to ask, and asked before any interaction.
-const HAS_OVERLAY = () => Boolean(document.querySelector(
-  "dialog, [data-confirm], [data-controller~='popover'], [data-controller~='confirmation'], " +
-  "[aria-haspopup], [data-filter-toggle]"
-));
+async function signIn(page, email) {
+  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
+  await page.fill("#user_email", email);
+  await page.fill("#user_password", "password!");
+  await page.click("input[type=submit], button[type=submit]");
+  await page.waitForLoadState("networkidle");
+}
 
 async function axeOn(page, selector) {
   await page.addScriptTag({ content: fs.readFileSync(AXE, "utf8") });
@@ -195,7 +219,7 @@ async function checkNativeConfirms(page, label, findings) {
   const browser = await chromium.launch();
   const findings = [];
   let dialogs = 0, natives = 0;
-  let popovers = 0, screensWithOverlays = 0;
+  let popovers = 0;
 
   for (const viewport of VIEWPORTS) {
     const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
@@ -206,26 +230,21 @@ async function checkNativeConfirms(page, label, findings) {
         await signIn(page, email);
         signedInAs = email;
       }
-      // `visit` waits for `load`, never `networkidle`: several screens here take longer than the
-      // 30s idle timeout, and this audit used to navigate twice per page per viewport that way.
-      if (!await visit(page, path)) continue;
-      if (!await page.evaluate(HAS_OVERLAY)) continue;      // nothing to open; next screen
-      screensWithOverlays++;
+      await page.goto(BASE + path, { waitUntil: "networkidle" });
 
       // Filter bars start collapsed, and the date range popover lives inside one.
       await page.click("[data-filter-toggle]").catch(() => {});
       await page.waitForTimeout(150);
 
       popovers += await checkPopovers(page, `${path} @${viewport.label}`, findings);
-      if (!await visit(page, path)) continue;
+      await page.goto(BASE + path, { waitUntil: "networkidle" });
       dialogs += await checkDialogs(page, `${path} @${viewport.label}`, findings);
       natives += await checkNativeConfirms(page, `${path} @${viewport.label}`, findings);
     }
     await page.close();
   }
 
-  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} screens ` +
-    `(${screensWithOverlays} had something to open) at ${VIEWPORTS.map((v) => v.label).join(" and ")}`);
+  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages at ${VIEWPORTS.map((v) => v.label).join(" and ")}`);
   console.log(`${natives} native browser confirm(s) found\n`);
   if (findings.length === 0) {
     console.log("no findings");

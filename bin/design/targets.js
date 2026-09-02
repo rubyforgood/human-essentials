@@ -107,7 +107,13 @@ async function visit(page, urlPath, { timeout = 60000 } = {}) {
   const res = await page.goto(BASE + urlPath, { waitUntil: "domcontentloaded", timeout })
     .catch(() => null);
   if (!res || res.status() >= 400) return null;
-  await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {});
+  /*
+   * Three seconds, not fifteen. `domcontentloaded` has already happened; `load` is a bonus that
+   * settles the layout, and on a page where it never fires -- a long poll, a slow font -- a
+   * generous cap is paid in full on every screen. At 150 screens a 15s cap put the overlay audit
+   * past ten minutes before it had opened anything.
+   */
+  await page.waitForLoadState("load", { timeout: 3000 }).catch(() => {});
   await page.waitForTimeout(120);
   res.landed = new URL(page.url()).pathname;
   return res;

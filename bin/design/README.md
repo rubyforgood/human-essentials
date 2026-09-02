@@ -293,6 +293,28 @@ screens that a single-role pass had never visited.
 One definition of each check, with the scope as an argument: a second script for the thorough run
 would be a copy, and a copy drifts.
 
+**Almost no audit here carries a list of pages any more.** Three exceptions: `audit.js` takes a path
+on the command line, `audit-selftest.js` uses one fixture page because it is testing the checks
+rather than the app, and **`overlay-audit.js` is unfinished** — it was widened and reverted, because
+it takes 58 seconds a page and would need over two hours. That is not a consequence of the widening:
+its nine-page version takes 525 seconds too, and nobody had ever measured it. Make it fast, then
+widen it; the evidence is in its header comment.
+
+Getting there widened seven audits and found four things:
+
+| | |
+| --- | --- |
+| `button-audit` | Six real violations on show pages its list of index pages never visited. `/donations/1` and `/purchases/1` emitted the primary action second; `/requests/1` gave the last slot to the destructive Cancel — the fault reported for `/product_drives` and fixed there but not here |
+| `route-targets.rb` | **The enumerator itself was missing a screen.** `SKIP_ACTION` matches on the action name alone, so `inventory` — there to skip a storage-locations partial — also skipped `items#inventory`, a full screen in the item catalogue's tab strip. Every audit built on the file was blind to it |
+| `sweep.js` | Deleted. `route-sweep.js` performs every one of its checks, so keeping it was keeping a hardcoded list beside the thing built to replace it |
+| `table-audit` | Its list still named `/users`, deleted in August |
+
+And three findings that were the audits' fault rather than the app's, each confirmed by measuring
+before changing anything: a disclosure trigger inside a collapsed accordion has a zero-size rect and
+so matches no grid column; a page can display a tab strip without being one of its tabs; and
+`/partners/1/approve_application` redirects to `/partners` carrying a flash bar, which puts the strip
+72px lower.
+
 `targets.js` is the seam between the audits and the application, and the only file that knows this
 is a Rails app. It supplies the list of screens, the three roles, `signIn` and `visit`.
 
