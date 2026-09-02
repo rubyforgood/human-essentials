@@ -1,0 +1,110 @@
+# Tests the design audits themselves, on every push and pull request.
+#
+# `bin/design/audit-selftest.js` runs two controls per WCAG check: a positive one that breaks the
+# page and expects a finding, and a negative one that changes it benignly and expects silence. The
+# negative control is the point -- five checks reported failures the app did not have over two days,
+# every one of them "verified" by planting the defect it catches, because a check that fires when it
+# should not still fires when it should.
+#
+# **Why this is its own workflow rather than a step in `rspec-system`.** That suite runs the app
+# in-process through Capybara and Cuprite; this drives a real server with Playwright, which is what
+# the audits use. Bolting it on would mean a second browser stack inside a job that already has one.
+#
+# It is cheap: ~25s to seed, ~3s to boot, ~11s to run. The browser download dominates.
+#
+# **`bin/` is not in `paths-ignore`,** unlike the other workflows. The audits live in `bin/design/`
+# and guarding them is the whole point -- a filter that skipped them would leave this running on
+# everything except the thing it tests. (`bin/*` does not match `bin/design/*` anyway, so the other
+# workflows are unaffected either way; this one says so on purpose.)
+name: audit-selftest
+
+on:
+  push:
+    paths-ignore:
+      - "doc/**"
+      - "docs/**"
+      - "*.md"
+  pull_request:
+    paths-ignore:
+      - "doc/**"
+      - "docs/**"
+      - "*.md"
+
+jobs:
+  audit-selftest:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:12.3
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # `development`, not `test`, and deliberately: it is the environment the audits are written
+      # and documented against, and `Geocodable` skips geocoding in it -- seeding under `test` makes
+      # real HTTP calls to the geocoder, which is a network dependency a CI job should not have.
+      RAILS_ENV: development
+      PG_HOST: localhost
+      PG_USERNAME: postgres
+      PG_PASSWORD: password
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      BASE_URL: http://127.0.0.1:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get -yqq install libpq-dev
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Prepare the database
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+          bundle exec rake db:seed
+
+      - name: Build the stylesheet
+        # Propshaft serves from the load path in development, so there is nothing to precompile --
+        # but `tailwind.css` is a build artifact and every page 500s without it.
+        run: bundle exec rails tailwindcss:build
+
+      - name: Boot the app
+        run: |
+          # `tmp/` is not in the repository, so the pidfile has nowhere to go on a fresh checkout.
+          mkdir -p tmp/pids
+          bundle exec rails server -p 3000 -b 127.0.0.1 -P tmp/pids/ci.pid > /tmp/server.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null "$BASE_URL/users/sign_in" && echo "up after ${i}s" && exit 0
+            sleep 1
+          done
+          echo "the server never came up"; cat /tmp/server.log; exit 1
+
+      - name: Test the audits
+        run: node bin/design/audit-selftest.js
+
+      - name: Server log
+        if: ${{ failure() }}
+        run: tail -100 /tmp/server.log

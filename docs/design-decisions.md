@@ -8952,3 +8952,47 @@ A negative control only covers the benign case somebody thought of. Nothing here
 sixth failure mode nobody has met yet. The claim is narrower and checkable: **the five that
 happened cannot happen again silently**, and the next one gets added as a control the day it is
 found.
+
+## 2026-09-02 — Putting the audit self-test in CI
+
+Asked to run it on every PR. Three decisions worth recording, because each had a cheaper wrong
+answer.
+
+**Its own workflow, not a step in `rspec-system`.** That suite runs the app in-process through
+Capybara and Cuprite. The self-test drives a real server with Playwright, because that is what the
+audits do — porting the checks to Cuprite would mean two implementations of every check, which is
+the drift the harness exists to prevent. Bolting it on would have put a second browser stack inside
+a job that already has one.
+
+**`development`, not `test`.** It is the environment the audits are written and documented against,
+so CI exercises what a maintainer exercises. It also removes a network dependency: `Geocodable`
+skips geocoding in development, and seeding under `test` makes real HTTP calls to the geocoder —
+measured, 46s with failed geocode attempts in the log against 25s and none. A CI job that talks to a
+third party to prepare its fixtures is a CI job that goes red for reasons unrelated to the change.
+
+**The controls build their own preconditions.** This is the one that would have shipped broken. The
+harness was written against a development database with a session's worth of data in it, where
+`/distributions` overflows and the app grows a scroll rail. On a freshly seeded database it does
+not: `.table-rail-track` was null and half the controls threw. Validating the whole chain locally
+against a scratch database — create, schema, seed, boot, run — is what caught it, and it is the only
+reason this was not a red build on the first PR after merge.
+
+So the controls widen the table themselves and wait for the app's own controller to build the rail.
+That is honest for a self-test: these controls exercise the *checks*, not the app's content, and the
+structures they need are still produced by the real code reacting to a real overflow. **A self-test
+that depends on how much data happens to exist is not a test.**
+
+Measured, end to end: schema 2s, seed 25s, stylesheet 1s, boot 3s, self-test 11s. The Chromium
+download dominates the job.
+
+**`bin/` is not in this workflow's `paths-ignore`,** where the other three exclude it. The audits
+live in `bin/design/` and guarding them is the entire point; a filter that skipped them would leave
+the job running on everything except the thing it tests. It makes no practical difference to the
+other workflows — GitHub's `*` does not match `/`, so `bin/*` never matched `bin/design/*` — but
+this one says so rather than relying on a reader knowing that.
+
+**Not done, and deliberately:** the audits themselves are not in CI, only their self-test. They are
+slower and they read seeded data, so they answer "is the app accessible today" rather than "is this
+change sound" — a different question, better asked deliberately than on every push. `wcag22-audit`
+takes 4.5 minutes and `wcag-manual --all` the same; both are documented in `bin/design/README.md`
+for when that is the question.

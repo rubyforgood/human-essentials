@@ -45,6 +45,29 @@ async function signIn(page, email) {
   await page.waitForLoadState("networkidle").catch(() => {});
 }
 
+/*
+ * Guarantee the structures the checks look for, rather than hoping the page has them.
+ *
+ * The controls first ran against a development database with a session's worth of data in it, where
+ * `/distributions` overflows and grows a scroll rail. On a freshly seeded database it does not, so
+ * `.table-rail-track` was null and half the controls threw -- which in CI would have been a red
+ * build about nothing. **A self-test that depends on how much data happens to exist is not a test.**
+ *
+ * Widening the table is honest here: these controls exercise the *checks*, not the app's content,
+ * and the rail they need is built by the app's own controller reacting to a real overflow.
+ */
+async function ensureRail(page) {
+  await page.evaluate(() => {
+    const region = document.querySelector(".table-scroll");
+    if (!region) return;
+    const table = region.querySelector("table");
+    table.style.width = `${region.clientWidth + 600}px`;
+    window.dispatchEvent(new Event("resize"));
+  });
+  await page.waitForSelector(".table-rail-track", { timeout: 5000 });
+  await page.waitForTimeout(200);
+}
+
 async function settle(page, path) {
   await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {});
@@ -69,6 +92,15 @@ const CONTROLS = [
     mutate: async (page) => {
       await page.addStyleTag({ content: "html { scroll-padding-bottom: 0 !important; }" });
       await page.evaluate(() => {
+        // A link pinned to the bottom of the window, early in the tab order so it is certainly
+        // reached, and a bar over it. Relying on the page's own last row put this at the mercy of
+        // how many rows the data happened to have.
+        const link = document.createElement("a");
+        link.href = "#covered";
+        link.textContent = "covered";
+        link.style.cssText = "position:fixed;left:20px;bottom:20px;z-index:1;";
+        document.body.prepend(link);
+
         const bar = document.createElement("div");
         bar.style.cssText = "position:fixed;left:0;right:0;bottom:0;height:90px;" +
           "background:#000;z-index:9999;";
@@ -80,7 +112,7 @@ const CONTROLS = [
   {
     check: "2.4.11", kind: "negative", path: RAILED,
     what: "the page as it ships, scroll rail and frozen columns and all",
-    mutate: async () => {},
+    mutate: (page) => ensureRail(page),
     run: (page) => wcag22.focusNotObscured(page, "selftest")
   },
 
@@ -89,25 +121,29 @@ const CONTROLS = [
     check: "2.5.7", kind: "positive", path: RAILED,
     what: "the rail's track click handler removed, leaving only the drag",
     // Replacing the track with a clone drops its listeners and keeps the geometry.
-    mutate: (page) => page.evaluate(() => {
+    mutate: async (page) => { await ensureRail(page); await page.evaluate(() => {
       const t = document.querySelector(".table-rail-track");
       t.replaceWith(t.cloneNode(true));
-    }),
+    }); },
     run: (page) => wcag22.draggingHasAnAlternative(page, "selftest")
   },
   {
     check: "2.5.7", kind: "negative", path: RAILED,
     what: "a region already scrolled to its maximum, as an earlier check leaves it",
-    mutate: (page) => page.evaluate(() => {
-      const r = document.querySelector(".table-scroll");
-      r.scrollLeft = r.scrollWidth;
-    }),
+    mutate: async (page) => {
+      await ensureRail(page);
+      await page.evaluate(() => {
+        const r = document.querySelector(".table-scroll");
+        r.scrollLeft = r.scrollWidth;
+      });
+    },
     run: (page) => wcag22.draggingHasAnAlternative(page, "selftest")
   },
   {
     check: "2.5.7", kind: "negative", path: RAILED,
     what: "a table that only just overflows, so the thumb fills almost the whole track",
     mutate: async (page) => {
+      await ensureRail(page);
       // Shrink the *table*, not the region. Widening the region pushed the rail's far end off the
       // screen, so the click landed on nothing -- the control was testing the viewport, not the
       // check, and reported a pass as a failure.

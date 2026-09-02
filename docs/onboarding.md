@@ -202,6 +202,15 @@ CI splits it: `rspec` for unit and request specs, `rspec-system` for system and 
 across six parallel nodes. System specs drive real Chromium through Cuprite; failure
 screenshots land in `tmp/screenshots` and `tmp/capybara`.
 
+A third workflow, **`audit-selftest`**, runs on every push and pull request. It does not audit the
+app — it tests the *audits*, by breaking a page on purpose and by leaving it alone on purpose. It is
+the only workflow that boots a real server and drives it with Playwright, which is why it is its own
+job rather than a step in `rspec-system`: that suite already runs a browser, in-process, a different
+way. About two minutes, most of it downloading Chromium.
+
+If you change anything in `bin/design/`, that is the job that will tell you about it. Run it
+yourself first — `pw bin/design/audit-selftest.js` — it takes eleven seconds.
+
 Two things that will save you an afternoon:
 
 - **Set up inventory with the helper**, not by writing quantity columns:

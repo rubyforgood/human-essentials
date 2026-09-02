@@ -22,7 +22,7 @@ bundle exec rspec spec/models/item_spec.rb:42  # Run a single test at line
 bundle exec rspec spec/models/                 # Run a directory of tests
 ```
 
-CI splits tests into two workflows: `rspec` (unit tests, excludes system/request specs) and `rspec-system` (system and request specs only, 6 parallel nodes). System tests use Capybara with Cuprite (headless Chrome).
+CI splits tests into two workflows: `rspec` (unit tests, excludes system/request specs) and `rspec-system` (system and request specs only, 6 parallel nodes). System tests use Capybara with Cuprite (headless Chrome). A third workflow, `audit-selftest`, boots a real server and runs `bin/design/audit-selftest.js` on every push and PR — it tests the design audits themselves, not the app.
 
 ### Linting
 ```bash
