@@ -273,6 +273,26 @@ on `/events` was never looked at; and a hardcoded list goes stale in silence, so
 targets now, like `route-sweep.js` and `icon-audit.js`, and takes every control whose visible text
 is empty. Currently **640 icon-only controls across 153 screens, 0 defects**.
 
+`wcag-manual.js` covers the criteria axe cannot see, and has **two scopes**.
+
+```bash
+pw bin/design/wcag-manual.js          # expensive checks over a sample, cheap ones over all. ~40s
+pw bin/design/wcag-manual.js --all    # every check over every screen, all three roles. ~4.5 min
+```
+
+Reflow, 200% zoom, text spacing and a full tab traverse each resize the viewport two or three
+times, so they cost seconds per page where a title or a `lang` attribute costs milliseconds. The
+default samples them; `--all` does not.
+
+**Sampling is least defensible for exactly the expensive checks.** Reflow and text-spacing failures
+come from one page's content -- a wide table, a long unbroken string -- so eight pages say almost
+nothing about the other hundred and forty. Widening the *cheap* checks took 2.4.2 from "0 failures
+on 8 pages" to **14 on 92**, and the first `--all` run found ten more on the admin and partner
+screens that a single-role pass had never visited.
+
+One definition of each check, with the scope as an argument: a second script for the thorough run
+would be a copy, and a copy drifts.
+
 `wcag22-audit.js` covers the **six criteria WCAG 2.2 added at A and AA**, five of which nothing
 else here checked.
 

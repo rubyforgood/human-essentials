@@ -472,25 +472,25 @@ useful question about a suite reporting zero is not what it found but what it lo
 | 1.4.1 Use of colour | A | design system rule — a status pill carries a word, not only a hue |
 | 1.4.2 Audio control | A | **Not applicable** — no audio |
 | 1.4.3 Contrast (minimum) | AA | axe, on 155 screens |
-| 1.4.4 Resize text | AA | `wcag-manual` (200% zoom) |
+| 1.4.4 Resize text | AA | `wcag-manual --all` (200% zoom), on 139 screens |
 | 1.4.5 Images of text | AA | **Not applicable** — no images of text; the one logo is an upload |
-| 1.4.10 Reflow | AA | `wcag-manual` (320px) · `responsive-audit` |
+| 1.4.10 Reflow | AA | `wcag-manual --all` (320px), on 139 screens · `responsive-audit` |
 | 1.4.11 Non-text contrast | AA | measured per component in this document; axe in part |
-| 1.4.12 Text spacing | AA | `wcag-manual` (the required spacing applied, nothing clipped) |
+| 1.4.12 Text spacing | AA | `wcag-manual --all`, on 139 screens — what is clipped *only after* the spacing is applied |
 | 1.4.13 Content on hover or focus | AA | `tooltip-audit` (hoverable, dismissible, persistent) |
-| 2.1.1 Keyboard | A | `wcag-manual` · `keyboard-audit` on 142 screens |
+| 2.1.1 Keyboard | A | `wcag-manual --all` on 139 screens · `keyboard-audit` on 142 |
 | 2.1.2 No keyboard trap | A | `keyboard-audit` |
 | 2.1.4 Character key shortcuts | A | **Not applicable** — the only document-level key is Escape, which is not a character |
 | 2.2.1 Timing adjustable | A | **Exempt** — the session is 7 days, and 2.2.1 exempts limits over 20 hours |
 | 2.2.2 Pause, stop, hide | A | **Not applicable** — no auto-updating or moving content; no `setInterval` |
 | 2.3.1 Three flashes | A | **Not applicable** — nothing flashes |
-| 2.4.1 Bypass blocks | A | `wcag-manual`, on 92 screens |
-| 2.4.2 Page titled | A | `wcag-manual`, on 92 screens, including uniqueness |
+| 2.4.1 Bypass blocks | A | `wcag-manual`, on 139 screens |
+| 2.4.2 Page titled | A | `wcag-manual`, on 139 screens, including uniqueness across all of them |
 | 2.4.3 Focus order | A | `keyboard-audit` |
 | 2.4.4 Link purpose (in context) | A | `copy-audit` (no "click here") |
 | 2.4.5 Multiple ways | AA | `wayfinding-audit` (nav, breadcrumbs, and every screen reachable and leavable) |
 | 2.4.6 Headings and labels | AA | `page-audit` (sentence case, descriptive) · `copy-audit` |
-| 2.4.7 Focus visible | AA | `wcag-manual` · `keyboard-audit` |
+| 2.4.7 Focus visible | AA | `wcag-manual --all` on 139 screens · `keyboard-audit` |
 | **2.4.11 Focus not obscured (min)** | **AA** | **`wcag22-audit`** — see below |
 | 2.5.1 Pointer gestures | A | `wcag22-audit`'s 2.5.7 check — the rail's drag has a click alternative |
 | 2.5.2 Pointer cancellation | A | the rail acts on `pointerdown`, as a native scrollbar does, and is reversible |
@@ -498,7 +498,7 @@ useful question about a suite reporting zero is not what it found but what it lo
 | 2.5.4 Motion actuation | A | **Not applicable** — nothing is operated by motion |
 | **2.5.7 Dragging movements** | **AA** | **`wcag22-audit`** |
 | 2.5.8 Target size (minimum) | AA | design system rule — 24px minimum, measured per component |
-| 3.1.1 Language of page | A | `wcag-manual`, on 92 screens |
+| 3.1.1 Language of page | A | `wcag-manual`, on 139 screens |
 | 3.1.2 Language of parts | AA | **Not applicable** — one language per document, bound to `I18n.locale` |
 | 3.2.1 On focus | A | `keyboard-audit` (focus alone changes nothing) |
 | 3.2.2 On input | A | the filter bar applies on change into a frame: a change of *content*, not of context, and announced in a live region |

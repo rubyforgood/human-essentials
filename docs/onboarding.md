@@ -1320,6 +1320,14 @@ name, so a row of open tabs was indistinguishable. They are named now &mdash; "I
 Reports - Pawnee Diaper Bank" and so on. This matters most if you use a screen reader, which reads
 the page name on arrival.
 
+### More pages have a name of their own
+
+Following on from the last change: ten more pages were showing someone else's name in your browser
+tab. A partner's **Help** page was titled after the diaper bank rather than the agency; opening one
+family showed "Families", the same as the list; and several admin forms showed their index's title,
+so *New broadcast announcement* and the list of them were indistinguishable in a row of tabs. All
+named now.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

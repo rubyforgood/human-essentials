@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HumanEssentials.app - Modern Inventory Management</title>
     <style>
+        /*
+         * The app's focus ring, on the two pages that are `layout false` -- self-contained
+         * documents on their own stylesheet, which none of the design system reaches.
+         *
+         * **Not a WCAG fix, and it was added believing it was one.** `wcag-manual.js --all`
+         * reported 2.4.7 failing here, and that was the audit reading `getComputedStyle` in the
+         * same tick as `focus()`; with no author rule at all Chromium still paints its own ring,
+         * measured as `auto 1px`. The criterion was always satisfied. What this buys is
+         * consistency: the same 2px indigo indicator as the other 139 screens, instead of the
+         * browser default on two pages and the app's ring everywhere else.
+         */
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid #4F46E5;
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
         * {
             margin: 0;
             padding: 0;
