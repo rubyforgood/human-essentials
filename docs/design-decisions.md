@@ -8881,3 +8881,74 @@ slowest screen in the app, something focusable arrives after the skip link has a
 so the single read caught the intermediate state about one run in three. Reproduced by hand three
 times without failing, which is what a flake looks like from outside. It waits for the condition
 now; a longer pause would only have been a slower guess.
+
+## 2026-09-02 — Auditing the audits: why planting a defect was never enough
+
+Asked how five false positives in two days could be caught earlier. The honest starting point is
+that all five *were* tested, by the method I had been calling rigour: plant the defect the check is
+meant to catch, watch it fire, revert. Every one of them passed that test.
+
+**That method cannot catch a false positive.** It proves a check *can* report. A check that fires
+when it should not still fires when it should — 3.2.6 passed its planted defect while measuring a
+fraction of the page instead of a position, and would have gone on passing it forever.
+
+### The six failure modes, from the five incidents
+
+Naming them mattered more than fixing them one by one, because they recur:
+
+| | Incident |
+| --- | --- |
+| **Vacuous pass** | 3.3.7 named in a header, printed in a pass line, no implementation |
+| **No baseline** | 1.4.12 measured what was clipped, not what the spacing clipped |
+| **Read before settle** | 2.4.7 read `getComputedStyle` in the same tick as `focus()` |
+| **Order dependence** | 2.5.7 tested a region an earlier check had already scrolled |
+| **Fixture assumption** | 2.5.7 clicked 85% of a track whose thumb filled 95% |
+| **Wrong metric** | 3.2.6 measured a fraction of the page, not a position in the nav |
+
+### The fix, and the evidence it is the right one
+
+`bin/design/audit-selftest.js` runs two controls per check. The positive control is what I was
+already doing. The **negative control** — apply a benign change, assert silence — is what was
+missing, and I checked the claim before building on it: all five incidents are cases where a benign
+page was flagged, so all five would have failed a negative control.
+
+The mutations are injected into a live page rather than written to app files. Reversible, fast, and
+they cannot be left behind in a working tree — which matters in this repository more than most.
+
+Building it immediately found three more problems, all in my own **controls** rather than in the
+checks. Worth recording, because each is a way to write a test that tests nothing:
+
+- The 2.4.11 overlay was a `body::after`. `elementFromPoint` never returns a pseudo-element, so the
+  check saw `BODY`, and `BODY.contains(el)` is true for everything. A real sticky bar is a real
+  element; the control uses one. The limitation is real and now written down: no check built on
+  `elementFromPoint` can see a pseudo-element overlay.
+- The 2.5.7 "barely overflows" control widened the *region*, which pushed the rail's far end off
+  screen, so the click landed on nothing. It narrows the table instead. The control was testing the
+  viewport.
+- The 1.4.12 control sized a box from a block element's `scrollWidth`, which is the *container's*
+  width, not the text's — so the box was far wider than the words and nothing ever clipped. It
+  measures the text with `inline-block` first.
+
+That is the same taxonomy again, one level up: fixture assumption, fixture assumption, wrong metric.
+The harness has no harness, and the honest mitigation is that a control which never fails is visible
+in a way a check that never fires is not — a positive control that passes is evidence the mutation
+worked.
+
+### The second half: a check that examined nothing has not passed
+
+Negative controls do not catch the vacuous pass, because a check that does nothing is silent on both
+controls — it fails the positive one only if the positive control is right. So each check in
+`wcag22-audit.js` now counts what it examined and the run prints the tally
+(`2.4.11×150  2.5.7×20  3.2.6×143  3.3.7×1  3.3.8×3`). **A zero is a finding.** Verified by breaking
+a selector: `2.5.7×0`, and the run reports `EXAMINED NOTHING`.
+
+This also catches the quieter version of the same fault, which is the one that actually happened:
+`consistentHelp` matched on an href only one of the three roles has, so it examined 29 pages and
+silently tested nothing on the other 114. A count per check makes that visible; a pass does not.
+
+### What this does not fix
+
+A negative control only covers the benign case somebody thought of. Nothing here would have caught a
+sixth failure mode nobody has met yet. The claim is narrower and checkable: **the five that
+happened cannot happen again silently**, and the next one gets added as a control the day it is
+found.

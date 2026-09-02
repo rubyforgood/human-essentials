@@ -30,8 +30,30 @@ const TARGETS = JSON.parse(fs.readFileSync(process.env.TARGETS || "/tmp/targets.
 const PARTNER = (p) => (p.startsWith("/partners/") && !/^\/partners\/\d+/.test(p)) || p === "/partners/profile";
 const ADMIN = (p) => p.startsWith("/admin");
 
+/*
+ * How many things each check actually looked at.
+ *
+ * A check that examines nothing reports no failures, which is indistinguishable from a check that
+ * examined everything and found nothing wrong -- and that is exactly how 3.3.7 came to be printed
+ * in the pass line with no implementation behind it. It is also how `consistentHelp` tested nothing
+ * for two of the three roles while matching on an href only one of them has.
+ *
+ * Every check declares itself here and increments as it goes; a zero at the end is a failure.
+ */
+const EXAMINED = {
+  "2.4.11 Focus not obscured": 0,
+  "2.5.7 Dragging movements": 0,
+  "3.2.6 Consistent help": 0,
+  "3.3.7 Redundant entry": 0,
+  "3.3.8 Accessible authentication": 0
+};
+const saw = (check, n = 1) => { EXAMINED[check] += n; };
+
 const findings = [];
-const record = (criterion, where, detail) => findings.push({ criterion, where, detail });
+// Swappable, so `audit-selftest.js` can run one check in isolation. See the note there.
+let sink = (criterion, where, detail) => findings.push({ criterion, where, detail });
+const record = (...args) => sink(...args);
+const captureInto = (fn) => { sink = fn; };
 
 async function signIn(page, email) {
   await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
@@ -92,6 +114,7 @@ const OBSCURED = () => {
 };
 
 async function focusNotObscured(page, path) {
+  saw("2.4.11 Focus not obscured");
   await page.evaluate(() => document.body.focus());
   for (let i = 0; i < 60; i++) {
     await page.keyboard.press("Tab");
@@ -115,6 +138,7 @@ async function focusNotObscured(page, path) {
 async function draggingHasAnAlternative(page, path) {
   const rail = await page.$(".table-rail-track");
   if (!rail) return;
+  saw("2.5.7 Dragging movements");
 
   const region = await page.$(".table-scroll");
   // Back to the start first. `focusNotObscured` has just tabbed through the page, which scrolls the
@@ -202,7 +226,7 @@ async function consistentHelp(page, path, seen) {
       label: named(help)
     };
   }, HELP_NAMES);
-  if (spot) seen.push({ path, ...spot });
+  if (spot) { saw("3.2.6 Consistent help"); seen.push({ path, ...spot }); }
 }
 
 /*
@@ -229,6 +253,7 @@ async function accessibleAuthentication(browser) {
           el.getAttribute("oncontextmenu"))
       })));
 
+    saw("3.3.8 Accessible authentication", fields.length);
     for (const f of fields) {
       if (f.blocks) record("3.3.8 Accessible authentication", path, `${f.name} blocks paste`);
       if (!f.autocomplete) {
@@ -288,6 +313,7 @@ async function redundantEntry(page, covered) {
   const href = `/distributions/new?request_id=${id}`;
   if (!await visit(page, href)) return;
   await page.waitForTimeout(400);
+  saw("3.3.7 Redundant entry");
   covered.push("request \u2192 distribution");
 
   const blank = await page.evaluate(() => {
@@ -314,6 +340,11 @@ async function redundantEntry(page, covered) {
   }
 }
 
+module.exports = { captureInto, focusNotObscured, draggingHasAnAlternative, consistentHelp, redundantEntry, signIn, visit };
+
+// Requiring this file must not run the audit: `audit-selftest.js` imports the checks
+// above and drives them one at a time against a page it has deliberately broken.
+if (require.main === module) {
 (async () => {
   const browser = await chromium.launch();
 
@@ -371,6 +402,12 @@ async function redundantEntry(page, covered) {
   console.log(`WCAG 2.2 · ${visited} screens · ${railed} with a scroll rail · ` +
     `${helpSpots.length} with a help link\n`);
 
+  // A check that looked at nothing has not passed, whatever its silence suggests.
+  const blind = Object.entries(EXAMINED).filter(([, n]) => n === 0);
+  blind.forEach(([check]) => record(check, "the whole run", "EXAMINED NOTHING — this check is not testing anything"));
+  console.log("examined: " + Object.entries(EXAMINED)
+    .map(([c, n]) => `${c.split(" ")[0]}\u00d7${n}`).join("  ") + "\n");
+
   // What 3.3.7 covered, printed whether or not anything failed. It used to print only in the
   // all-clear branch, so it disappeared exactly when the output was worth reading -- and the line
   // it replaced claimed the criterion passed with no check behind it at all.
@@ -398,3 +435,4 @@ async function redundantEntry(page, covered) {
   }
   process.exit(findings.length ? 1 : 0);
 })();
+}

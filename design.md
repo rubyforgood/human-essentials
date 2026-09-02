@@ -520,6 +520,50 @@ useful question about a suite reporting zero is not what it found but what it lo
 2.1 and reported zero for a long time — accurately, and against a version of the standard superseded
 in October 2023. A clean report is a statement about the questions asked.
 
+<a id="auditing-the-audits"></a>
+#### Every check is tested twice, and the second test is the one that matters
+
+Five checks reported failures the app did not have, in two days. Every one had been "verified" the
+usual way — plant the defect it is meant to catch, watch it fire — and every one passed that test.
+**A check that fires when it should not still fires when it should.** Planting a defect proves a
+check *can* report; it says nothing about whether it reports the right thing.
+
+So `pw bin/design/audit-selftest.js` gives each check two controls:
+
+- **Positive** — the page is broken in the way the criterion is about. The check must report. This
+  catches a check that examines nothing.
+- **Negative** — the page is changed in a way that is *not* a violation. The check must stay silent.
+
+Every one of the five would have been caught by a negative control:
+
+| Check | The benign case it wrongly flagged |
+| --- | --- |
+| 2.5.7 | a table that only just overflows, so the thumb fills the track |
+| 2.5.7 | a region already scrolled to its limit by an earlier check |
+| 3.2.6 | the same navigation on a page carrying five times the content |
+| 1.4.12 | a label hidden with the `sr-only` technique, clipped by design |
+| 2.4.7 | a focus ring that transitions in rather than appearing instantly |
+
+The mutations are injected into a live page rather than written to app files: reversible, fast, and
+impossible to leave behind in a working tree.
+
+**And a check that examined nothing has not passed.** Each check in `wcag22-audit.js` counts what it
+looked at and the run prints the tally — `2.4.11×150  2.5.7×20  3.2.6×143  3.3.7×1  3.3.8×3`. A zero
+is a failure, not a silence. That is the shape 3.3.7 had when it was named in the audit's header and
+printed in its pass line with no implementation at all, and the shape `consistentHelp` had when it
+matched an href that only one of the three roles has.
+
+**The failure modes worth knowing before writing the next check**, all observed here:
+
+| | What it looks like |
+| --- | --- |
+| Vacuous pass | reports nothing because it examined nothing |
+| No baseline | measures an absolute state, not the change the criterion is about |
+| Read before settle | reads computed style in the same tick as the event that changes it |
+| Order dependence | an earlier check left the page in a state this one depends on |
+| Fixture assumption | a geometry or data shape that holds on the page it was written against |
+| Wrong metric | measures a real quantity that is not the one the rule is about |
+
 <a id="focus-not-obscured"></a>
 **Nothing scrolls a focused control under a fixed bar** — `scroll-padding`, on `html` for the scroll
 rail and on `.table-scroll` for the frozen columns. The browser scrolls a newly focused element only
