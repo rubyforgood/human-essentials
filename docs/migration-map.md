@@ -285,7 +285,7 @@ partial. `undefined-classes.py` catches the dead class but cannot tell you the p
 `<h1>`. The browser sweep sees both — but only on the pages it visits, which is why
 `route-sweep.js` asks the router for the list rather than carrying one.
 
-That distinction is not theoretical. `sweep.js` has a hardcoded list of 56 paths and the three
+That distinction is not theoretical. `sweep.js` had a hardcoded list of 56 paths and the three
 historical trend pages were never on it. They were in the sidebar, on a design system layout,
 and rendered a bare chart with no page header and no `<h1>` for the length of the migration.
 Every audit ran clean over them the whole time. `route-sweep.js` covers 140 screens as three

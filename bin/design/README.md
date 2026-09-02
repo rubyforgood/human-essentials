@@ -25,8 +25,8 @@ pw bin/design/route-sweep.js
 ```
 
 It asks Rails for the list (`route-targets.rb`, which substitutes a real record id for `:id`)
-rather than carrying one. **That is the whole point.** `sweep.js`, below, walks a hardcoded list
-of 56 paths, and a list goes stale in silence: the three historical trend pages were in the
+rather than carrying one. **That is the whole point.** Its predecessor `sweep.js` walked a
+hardcoded list of 56 paths, and a list goes stale in silence: the three historical trend pages were in the
 sidebar and never on it, and they sat with no page header and no `<h1>` for the length of the
 migration while every audit reported clean. On its first run `route-sweep.js` found eleven
 unlabelled selects in the partner portal, which the old list never visited.
@@ -485,11 +485,11 @@ this reason. The script copies the mockup into `public/`, where Rails serves it 
 refreshes `mockup.css` for the older ones that link it, warns if the served copy is not gitignored,
 and prints the URL to send.
 
-`sweep.js` is the older 56-path version, kept because it is quicker to run against a subset.
-
-```bash
-pw bin/design/sweep.js
-```
+**`sweep.js` is gone.** It was the older 56-path version, kept because it was quicker to run
+against a subset — but `route-sweep.js` performs every one of its checks, including the console-error
+capture that looked missing until you notice it is called `errors` there rather than
+`consoleErrors`. Keeping a hardcoded-list audit alongside its enumerated replacement was keeping the
+exact thing the replacement exists to remove, and the two would have drifted.
 
 A page is clean when it has no leftover Bootstrap/AdminLTE or Font Awesome classes, exactly one
 `<h1>` and one `<main>`, no skipped heading levels, no unlabelled form controls, no buttons

@@ -38,9 +38,19 @@ IDS = {
 }.compact.transform_values(&:id)
 
 # Not screens: file downloads, exports, PDFs, one-shot state changes, and Devise's plumbing.
+#
+# **Matched on the action name alone, so it has to be a name no screen anywhere uses.** `inventory`
+# was on this list to skip `storage_locations#inventory`, which is a partial -- and it took
+# `items#inventory` with it, which is a full screen with an `<h1>`, a shell, and a place in the item
+# catalogue's tab strip. Every audit built on this file was therefore blind to it, which is the same
+# fault as a hardcoded page list wearing a different hat. Anything controller-specific goes in
+# SKIP_PAIR below.
 SKIP_ACTION = /\A(destroy|deactivate|reactivate|restore|print|print_picklist|print_unfulfilled|
                   export|download|upload_csv|csv|pdf|font|calendar|schedule_ics|resource_ids|
-                  switch_to_role|passthru|failure|cancel|itemized_breakdown|inventory|find)\z/x
+                  switch_to_role|passthru|failure|cancel|itemized_breakdown|find)\z/x
+
+# Not screens, and named by controller because the action name is used elsewhere for one that is.
+SKIP_PAIR = %w[storage_locations#inventory].freeze
 SKIP_PATH = %r{\.csv|\.pdf|/print|active_storage|attachments|action_mailbox|
                /users/(sign_in|sign_up|password|confirmation|unlock|auth)}x
 
@@ -54,6 +64,7 @@ Rails.application.routes.routes.each do |r|
   # meant the sweep never visited the invitation pages, which rendered with no layout at all.
   next if controller.nil? || controller.start_with?("rails/", "turbo/", "active_storage/")
   next if action.to_s.match?(SKIP_ACTION)
+  next if SKIP_PAIR.include?("#{controller}##{action}")
 
   path = r.path.spec.to_s.sub("(.:format)", "")
   next if path.include?("*") || path.match?(SKIP_PATH)
