@@ -1304,6 +1304,22 @@ as text now, and any ZIP that had already lost its leading zero has had it put b
 **ZIP code** everywhere. On the partner profile view, the two program address lines were both
 labelled "Program Address" &mdash; they now say which line is which.
 
+### Keyboard users: nothing hides under the scroll bar any more
+
+If you move through a page with the Tab key, the thing you land on is now always visible. On pages
+with a wide table there is a scroll bar fixed along the bottom of the window, and tabbing to a link
+in the last row used to put it **exactly underneath that bar** &mdash; you could not see what you had
+selected. The same happened at the right-hand edge, where the Actions column stays put. Both leave
+room now.
+
+### Some pages had no name of their own
+
+Every page shows a name in your browser tab and in your history. Fourteen did not have one: the five
+report pages, the account-request screens and a couple of others showed only your organization's
+name, so a row of open tabs was indistinguishable. They are named now &mdash; "Itemized donations -
+Reports - Pawnee Diaper Bank" and so on. This matters most if you use a screen reader, which reads
+the page name on arrival.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

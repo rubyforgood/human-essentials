@@ -273,6 +273,29 @@ on `/events` was never looked at; and a hardcoded list goes stale in silence, so
 targets now, like `route-sweep.js` and `icon-audit.js`, and takes every control whose visible text
 is empty. Currently **640 icon-only controls across 153 screens, 0 defects**.
 
+`wcag22-audit.js` covers the **six criteria WCAG 2.2 added at A and AA**, five of which nothing
+else here checked.
+
+```bash
+bin/rails runner bin/design/route-targets.rb > /tmp/targets.json
+pw bin/design/wcag22-audit.js
+```
+
+2.4.11 Focus Not Obscured, 2.5.7 Dragging Movements, 3.2.6 Consistent Help, 3.3.7 Redundant Entry
+and 3.3.8 Accessible Authentication. (2.5.8 Target Size, the sixth, was already a design system
+rule.) `wcag-audit.js` runs axe against **2.1** and reported zero for months — accurately, against a
+version of the standard superseded in October 2023.
+
+On its first run it found **2.4.11 failing on five screens**: the scroll rail is fixed at the bottom
+of the window, and the browser scrolls a newly focused element only far enough to touch that edge.
+
+**Three of its own first findings were wrong**, and each is written up in the file so the mistake is
+not repeated: a 2.5.7 click aimed at a fixed fraction of the rail landed on the thumb where the
+thumb filled 95% of the track; 3.2.6 measured the help link's position as a *fraction* of the page's
+focusables, so the same link on a long page and a short one looked like two places; and 3.3.7 was
+listed in the header and printed in the pass line with **no check behind it at all**. Every check
+here has since been proved to fire by planting the defect it is meant to catch.
+
 `address-audit.js` checks that **every screen collecting an address asks for it the same way**.
 
 ```bash

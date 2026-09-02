@@ -404,7 +404,7 @@ form", while here it destroyed a record. It says *Cancel request* now, as the sh
 
 ### Accessibility
 
-Target is **WCAG 2.1 AA**. These are the rules this app has actually had to enforce:
+Target is **WCAG 2.2 AA**. These are the rules this app has actually had to enforce:
 
 - **Landmarks.** One `<main id="main-content">` per document. `<nav>` elements are labelled.
   A page never has two of the same landmark with the same name.
@@ -453,6 +453,81 @@ The browser audit (`bin/design/audit.js`) checks the mechanical half of this —
 unlabelled controls, nameless buttons, duplicate landmarks, leftover Bootstrap classes,
 console errors — on any page you point it at. It does not replace reading the page with a
 keyboard.
+
+<a id="wcag-coverage"></a>
+#### What is checked, and by what
+
+**WCAG 2.2 AA is 55 success criteria.** This is all of them, and what verifies each — because the
+useful question about a suite reporting zero is not what it found but what it looked at.
+
+| Criterion | Level | Verified by |
+| --- | --- | --- |
+| 1.1.1 Non-text content | A | axe · `tooltip-audit` (every icon-only control named) |
+| 1.2.1–1.2.5 Media | A/AA | **Not applicable** — 0 `<video>`, `<audio>` elements in the app |
+| 1.3.1 Info and relationships | A | axe · `page-audit` (table headers, `scope`) |
+| 1.3.2 Meaningful sequence | A | axe · `keyboard-audit` (tab order follows the page) |
+| 1.3.3 Sensory characteristics | A | `copy-audit` (no "click the button on the right") |
+| 1.3.4 Orientation | AA | **Not applicable** — no orientation lock in CSS or the viewport tag |
+| 1.3.5 Identify input purpose | AA | `address-audit` · `form-validation-audit` |
+| 1.4.1 Use of colour | A | design system rule — a status pill carries a word, not only a hue |
+| 1.4.2 Audio control | A | **Not applicable** — no audio |
+| 1.4.3 Contrast (minimum) | AA | axe, on 155 screens |
+| 1.4.4 Resize text | AA | `wcag-manual` (200% zoom) |
+| 1.4.5 Images of text | AA | **Not applicable** — no images of text; the one logo is an upload |
+| 1.4.10 Reflow | AA | `wcag-manual` (320px) · `responsive-audit` |
+| 1.4.11 Non-text contrast | AA | measured per component in this document; axe in part |
+| 1.4.12 Text spacing | AA | `wcag-manual` (the required spacing applied, nothing clipped) |
+| 1.4.13 Content on hover or focus | AA | `tooltip-audit` (hoverable, dismissible, persistent) |
+| 2.1.1 Keyboard | A | `wcag-manual` · `keyboard-audit` on 142 screens |
+| 2.1.2 No keyboard trap | A | `keyboard-audit` |
+| 2.1.4 Character key shortcuts | A | **Not applicable** — the only document-level key is Escape, which is not a character |
+| 2.2.1 Timing adjustable | A | **Exempt** — the session is 7 days, and 2.2.1 exempts limits over 20 hours |
+| 2.2.2 Pause, stop, hide | A | **Not applicable** — no auto-updating or moving content; no `setInterval` |
+| 2.3.1 Three flashes | A | **Not applicable** — nothing flashes |
+| 2.4.1 Bypass blocks | A | `wcag-manual`, on 92 screens |
+| 2.4.2 Page titled | A | `wcag-manual`, on 92 screens, including uniqueness |
+| 2.4.3 Focus order | A | `keyboard-audit` |
+| 2.4.4 Link purpose (in context) | A | `copy-audit` (no "click here") |
+| 2.4.5 Multiple ways | AA | `wayfinding-audit` (nav, breadcrumbs, and every screen reachable and leavable) |
+| 2.4.6 Headings and labels | AA | `page-audit` (sentence case, descriptive) · `copy-audit` |
+| 2.4.7 Focus visible | AA | `wcag-manual` · `keyboard-audit` |
+| **2.4.11 Focus not obscured (min)** | **AA** | **`wcag22-audit`** — see below |
+| 2.5.1 Pointer gestures | A | `wcag22-audit`'s 2.5.7 check — the rail's drag has a click alternative |
+| 2.5.2 Pointer cancellation | A | the rail acts on `pointerdown`, as a native scrollbar does, and is reversible |
+| 2.5.3 Label in name | A | `tooltip-audit` (the tooltip and the accessible name agree) |
+| 2.5.4 Motion actuation | A | **Not applicable** — nothing is operated by motion |
+| **2.5.7 Dragging movements** | **AA** | **`wcag22-audit`** |
+| 2.5.8 Target size (minimum) | AA | design system rule — 24px minimum, measured per component |
+| 3.1.1 Language of page | A | `wcag-manual`, on 92 screens |
+| 3.1.2 Language of parts | AA | **Not applicable** — one language per document, bound to `I18n.locale` |
+| 3.2.1 On focus | A | `keyboard-audit` (focus alone changes nothing) |
+| 3.2.2 On input | A | the filter bar applies on change into a frame: a change of *content*, not of context, and announced in a live region |
+| 3.2.3 Consistent navigation | AA | `shell-first-audit` · `wayfinding-audit` |
+| 3.2.4 Consistent identification | AA | `icon-audit` and its lexicon — one meaning per glyph across 124 screens |
+| **3.2.6 Consistent help** | **A** | **`wcag22-audit`** |
+| 3.3.1 Error identification | A | `form-validation-audit` |
+| 3.3.2 Labels or instructions | AA | axe · `form-validation-audit` |
+| 3.3.3 Error suggestion | AA | `form-validation-audit` |
+| 3.3.4 Error prevention | AA | the confirmation dialog on every destructive action, `confirm-audit` |
+| **3.3.7 Redundant entry** | **A** | **`wcag22-audit`**, over the request → distribution flow |
+| **3.3.8 Accessible authentication** | **AA** | **`wcag22-audit`** — paste is not blocked, and the fields carry autocomplete tokens |
+| 4.1.2 Name, role, value | A | axe · `tooltip-audit` · `disclosure-audit` |
+| 4.1.3 Status messages | AA | the live regions on the filter bar and row selection |
+
+4.1.1 Parsing is **not** listed: WCAG 2.2 removed it.
+
+**The five in bold had no check of any kind until 2026-09-02.** The suite was built against WCAG
+2.1 and reported zero for a long time — accurately, and against a version of the standard superseded
+in October 2023. A clean report is a statement about the questions asked.
+
+<a id="focus-not-obscured"></a>
+**Nothing scrolls a focused control under a fixed bar** — `scroll-padding`, on `html` for the scroll
+rail and on `.table-scroll` for the frozen columns. The browser scrolls a newly focused element only
+far enough to touch the edge of the viewport, and the rail is *at* that edge: measured on
+`/items/quantity_and_location` at 1280×900, a focused link at y=876 height 24, rail at y=876,
+entirely covered. Five screens. `scroll-padding` is the remedy the criterion's own understanding
+document names for a sticky bar, and the values are the rail's height and the two column widths the
+scroll controller already measures — so nothing can drift.
 
 ## Components
 

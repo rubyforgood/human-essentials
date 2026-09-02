@@ -61,6 +61,25 @@
     -webkit-text-size-adjust: 100%;
 
     /*
+     * Room at the bottom for the scroll rail, so focus is never scrolled underneath it.
+     *
+     * **WCAG 2.2 2.4.11 Focus Not Obscured (Minimum), AA.** The rail is `position: fixed` at the
+     * fold whenever a table runs past it, and the browser scrolls a newly focused element only far
+     * enough to touch the bottom edge of the window -- which is exactly where the rail is. Measured
+     * on `/items/quantity_and_location` at 1280x900: tabbing reached a link at y=876, height 24,
+     * bottom 900, with the rail at y=876. Entirely covered, on five screens.
+     *
+     * `scroll-padding-bottom` is the remedy the criterion's own understanding document names for a
+     * sticky bar: it tells the browser to leave this much clearance when scrolling anything into
+     * view. Unconditional rather than gated on a rail being present -- 24px of extra scroll on a
+     * page without one changes nothing anybody can see, and a rail that arrives with a Turbo frame
+     * would otherwise need the gate updating from JavaScript.
+     *
+     * The value is the rail's height. If `.table-rail` changes height, this changes with it.
+     */
+    scroll-padding-bottom: calc(var(--spacing) * 6);
+
+    /*
      * The document never scrolls sideways.
      *
      * A data table is allowed to be wider than a phone -- WCAG 1.4.10 exempts content that needs
@@ -643,6 +662,20 @@
   /* Horizontal scroll container for a table inside a card. */
   .table-scroll {
     overflow-x: auto;
+
+    /*
+     * Room at each end for the frozen columns, for the same reason and the same criterion as
+     * `scroll-padding-bottom` on `html`: **2.4.11 Focus Not Obscured (Minimum)**. This region
+     * scrolls sideways, and a focused control scrolled to either edge lands underneath a
+     * `position: sticky` column -- measured on `/requests`, where a link in a comment cell was
+     * entirely covered by `.cell-actions`.
+     *
+     * The two widths are already measured by `table_scroll_controller` for the edge shadows, and
+     * custom properties inherit, so this needs no new JavaScript: the values are set on the
+     * wrapper and read here.
+     */
+    scroll-padding-inline-start: var(--pin-width, 0px);
+    scroll-padding-inline-end: var(--pin-right-width, 0px);
 
     /*
      * A scrollbar that is there before you touch it. The platform default on macOS is an overlay
