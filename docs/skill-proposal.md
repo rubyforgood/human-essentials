@@ -5,6 +5,12 @@ Read `docs/prompt-history.md` first. This is the answer to the second half of th
 
 **Nothing has been built.** This is for a decision.
 
+> **Superseded in part by [skill-proposal-v2.md](skill-proposal-v2.md).** The four open questions at
+> the foot of this document have been answered, and the coupling figures in "What to leave out" were
+> wrong — I measured mentions of app vocabulary and read them as coupling, when almost all of them
+> are hardcoded page lists. The corrected measurement, and the revised scope that follows from it,
+> are in v2. The analysis of *what transferred* still stands.
+
 ## What the evidence says transferred
 
 The 199 prompts are the demand side. What satisfied them was not a design system — it was an
