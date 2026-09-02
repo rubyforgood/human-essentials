@@ -8996,3 +8996,96 @@ slower and they read seeded data, so they answer "is the app accessible today" r
 change sound" — a different question, better asked deliberately than on every push. `wcag22-audit`
 takes 4.5 minutes and `wcag-manual --all` the same; both are documented in `bin/design/README.md`
 for when that is the question.
+
+## 2026-09-02 — Route enumeration everywhere, and what the hardcoded lists were hiding
+
+Step one of the skill proposal, done here because it is worth doing for this app regardless.
+
+**The count was wrong twice before the work started.** The proposal said 17 audits carried a
+hardcoded page list; then, measured more carefully, 14. Both were wrong. `audit.js` takes a path on
+the command line, `audit-selftest.js` deliberately uses one fixture page, and `route-sweep.js`,
+`wcag-audit.js` and others already shell out to `route-targets.rb` — my grep looked for
+`targets.json` and missed every audit that ran the generator directly. The real number was **seven**.
+
+That is the same mistake twice in one analysis: grep for one spelling of a thing, read absence as
+fact. It is exactly what this project has been calling *the audit's scope is a claim*, applied to my
+own measurement rather than to code.
+
+### What the widening found
+
+- **`button-audit`: six real violations.** design.md requires at most three header actions, at most
+  one primary, primary last. `/donations/1` and `/purchases/1` emitted the primary *second* with the
+  record actions after it — the opposite of what their own comments claimed — and `/requests/1` gave
+  the last slot to the destructive *Cancel request*. That last one is precisely the fault reported
+  at prompt `[163]` for `/product_drives`, fixed there and never looked for anywhere else. The old
+  list held index pages only, so no show page had ever been checked.
+- **The enumerator was itself missing a screen.** `SKIP_ACTION` in `route-targets.rb` matches on the
+  bare action name, so `inventory` — added to skip a storage-locations partial — also skipped
+  `items#inventory`, a full screen with an `<h1>`, the app shell, and a place in the item
+  catalogue's tab strip. **Every audit built on route enumeration inherited that blindness**, which
+  is a hardcoded list wearing a different hat. Controller-specific skips are now `SKIP_PAIR`.
+- **`sweep.js` was deleted, not migrated.** `route-sweep.js` performs every check it did, including
+  the console-error capture that only looked missing because the variable is called `errors` there.
+  Migrating it would have produced two identical audits; keeping it as-is was keeping a hardcoded
+  list beside the thing written to replace it.
+- **`table-audit`'s list still named `/users`**, which was deleted in August.
+
+### Three findings that were the audit's fault
+
+Each confirmed by measuring before changing anything, which is the discipline that the self-test
+harness was built for a day earlier:
+
+- A disclosure **trigger inside a collapsed accordion** has a zero-size rect at the origin, so its
+  left edge is 0 and matches no grid column. An element with no box cannot be misaligned.
+- A page can **display a tab strip without being one of its tabs**. `/partners/1/approve_application`
+  shows the Partners strip and is not on it.
+- That same path **redirects to `/partners` carrying a flash bar**, which puts the strip 72px lower.
+  Read first as a tab that does not line up, and then — once deduplicated on the landed path — as
+  `/partners` itself being out. A redirect is skipped now, because the destination is a target in
+  its own right and is measured when its own turn comes.
+
+The landed-versus-requested distinction has now mattered three times, so `visit()` returns where it
+landed and says why in its comment.
+
+### The shared seam
+
+`bin/design/targets.js` holds the list of screens, the three roles, `signIn` and `visit`. It
+replaced **21 hand-copied `signIn` functions**, seven copies of the role predicates and six of the
+targets-file read — and four of those copies had drifted. One did not sign out first, so a second
+role silently audited the first one's pages. One waited on `networkidle`, which never settles on the
+slowest screens here and has already caused two audits to give up mid-run.
+
+That file is also the thing the skill needs: everything above it is a rule about design, everything
+below it is Rails. `TARGETS_CMD` overrides the one command that knows which framework this is.
+
+### Discovery over enumeration, where the audit allows it
+
+`tab-set-audit` did not just get a longer list — it stopped having one. A tab set is identifiable
+from the page: the strip is the `<nav>` inside `main` holding the `aria-current` link, and the set is
+the hrefs in that strip. Pages sharing a strip are one set. It rediscovered the Kits-in-catalogue
+case that the fixture had hand-coded with an explanatory comment, and it will find the next tab set
+without being told.
+
+`overlay-audit` needed the same idea for a different reason: opening every dialog on 150 screens at
+two viewports is slow, so it looks first and works second — one navigation to see whether the page
+has an overlay trigger, and the expensive part only where there is one. The cost is proportional to
+the number of overlays rather than of pages.
+
+### The one that did not work, and the measurement I skipped
+
+`overlay-audit` was widened with the rest and **reverted**. At 150 screens it never returned; four
+attempts to speed it up — cheap discovery before expensive work, a per-screen instance cap, injecting
+axe-core once per page instead of once per dialog, a `Promise.race` time budget — changed nothing
+material.
+
+The reason is the measurement I never took. **The nine-page version takes 525 seconds too** — about
+58 seconds a page. The audit has always been slow and nobody had timed it, so I spent four rounds
+fixing a widening that was never the problem. At 150 screens it would be over two hours.
+
+So the order is the other way round: **make it fast, then widen it.** What is known now, recorded in
+the file so the next attempt starts from evidence: navigation is 203ms a screen and not the cost;
+`checkDialogs` on `/organization` alone is 31 seconds; axe injection was wasteful but not the cost;
+and a `Promise.race` budget resolves the race while leaving the slow work running behind it.
+
+It is the only audit in the directory still carrying a hardcoded page list, and the README says so
+rather than letting the claim "no audit hardcodes its pages" stand at 95% true.
