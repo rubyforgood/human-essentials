@@ -11,22 +11,13 @@ const { chromium } = require("playwright");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 
-const AS_ORG_ADMIN = ["/partners", "/items", "/distributions", "/donations", "/purchases",
-  "/vendors", "/storage_locations", "/transfers", "/requests", "/donation_sites",
-  "/manufacturers", "/product_drives", "/barcode_items", "/audits", "/adjustments", "/kits",
-  "/users", "/product_drive_participants", "/broadcast_announcements"];
+/*
+ * **Every screen, not a list of the tables somebody knew about.** A table on an unlisted page was
+ * not audited, and the list had already gone stale -- `/users` is on it and was deleted in August.
+ * `auditPage` returns nothing for a page with no table, so the widening is free of false findings.
+ */
+const { targets, signIn, visit, RUNS } = require("./targets");
 
-const AS_SUPER_ADMIN = ["/admin/organizations", "/admin/users", "/admin/base_items",
-  "/admin/barcode_items", "/admin/partners", "/admin/broadcast_announcements",
-  "/admin/account_requests", "/admin/questions"];
-
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`);
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
 
 async function auditPage(page, path) {
   const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 20000 });
@@ -77,10 +68,9 @@ async function auditPage(page, path) {
   const page = await browser.newPage({ viewportSize: { width: 1600, height: 1000 } });
   const results = [];
 
-  for (const [email, paths] of [["org_admin1@example.com", AS_ORG_ADMIN],
-                                ["superadmin@example.com", AS_SUPER_ADMIN]]) {
+  for (const [email, wants] of RUNS) {
     await signIn(page, email);
-    for (const path of paths) {
+    for (const { path } of targets().filter((t) => wants(t.path))) {
       try {
         results.push(await auditPage(page, path));
       } catch (e) {

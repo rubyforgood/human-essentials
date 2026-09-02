@@ -14,24 +14,15 @@
 const { chromium } = require("playwright");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
-const PASSWORD = process.env.SEED_PASSWORD || "password!";
 
 // Pages carrying a controller that hides something in `connect()`.
-const PAGES = {
-  bank: ["/distributions/new", "/donations/new", "/purchases/new", "/manage/edit",
-         "/partners/new", "/partner_groups/new", "/audits/new", "/requests"],
-  super: ["/admin/users/1/edit", "/admin/users/new"]
-};
-
-const ROLES = { bank: "org_admin1@example.com", super: "superadmin@example.com" };
-
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
+/*
+ * **Every screen, not the ten that were known to have forms.** A flash is a property of what a page
+ * renders and then un-renders, so any page can have one, and the ten listed here were the ten
+ * somebody had already found. `visit` from `targets` is deliberately *not* used below: this audit
+ * navigates with `commit` because the whole point is to look before scripts have run.
+ */
+const { targets, signIn, RUNS } = require("./targets");
 
 // The controls a *swap* took over, collected from the settled DOM.
 //
@@ -76,12 +67,12 @@ const VISIBLE = () => [...document.querySelectorAll("main *")]
   const findings = [];
   let checked = 0;
 
-  for (const [role, email] of Object.entries(ROLES)) {
+  for (const [email, wants] of RUNS) {
     const context = await browser.newContext({ viewportSize: { width: 1400, height: 900 } });
     const page = await context.newPage();
     await signIn(page, email);
 
-    for (const path of PAGES[role]) {
+    for (const { path } of targets().filter((t) => wants(t.path))) {
       // `commit` rather than `load`: the point is to look before scripts have run.
       const resp = await page.goto(BASE + path, { waitUntil: "commit" }).catch(() => null);
       if (!resp || resp.status() !== 200) continue;

@@ -8,15 +8,21 @@
         subtitle: "Sent on #{request.created_at.to_fs(:distribution_date)}.",
         back: {path: requests_path, label: "Back to requests"},
         actions: capture {
+          # **Primary last, and never the destructive one.** design.md: at most three actions, at
+          # most one primary, primary last -- and "a destructive action must never inherit the last
+          # slot by being last in the list. That is what `/product_drives` did, and it was reported
+          # as the buttons looking reversed." This header had exactly that shape: Print, Fulfill,
+          # Cancel, with the primary in the middle and Cancel on the end. Found once `button-audit`
+          # started visiting show pages instead of a hardcoded list of index pages.
           concat essentials_link_button("Print", print_picklist_request_path(request), variant: :secondary, icon: "bi-printer")
+          if info.cancellable?
+            concat essentials_link_button("Cancel request", new_request_cancelation_path(request_id: request.id),
+                     variant: :ghost_danger, icon: "bi-x-circle")
+          end
           if request.distribution
             concat essentials_link_button("View associated distribution", distribution_path(request.distribution), variant: :secondary, icon: "bi-box-arrow-up-right")
           elsif !request.status_cancelled?
             concat essentials_action_button("Fulfill request", start_request_path(request), method: :post, variant: :primary, icon: "bi-check-circle")
-          end
-          if info.cancellable?
-            concat essentials_link_button("Cancel request", new_request_cancelation_path(request_id: request.id),
-                     variant: :ghost_danger, icon: "bi-x-circle", )
           end
         } %>
 

@@ -17,31 +17,19 @@ const { chromium } = require("playwright");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 
-const ROLES = {
-  "org_admin1@example.com": [
-    "/", "/partners", "/items", "/item_categories", "/items/quantity_and_location",
-    "/items/inventory", "/kits", "/distributions", "/donations", "/purchases", "/vendors",
-    "/storage_locations", "/transfers", "/requests", "/donation_sites", "/manufacturers",
-    "/product_drives", "/product_drive_participants", "/barcode_items", "/audits", "/adjustments",
-    "/users", "/broadcast_announcements", "/reports", "/organization",
-    "/distributions/new", "/donations/new", "/purchases/new", "/transfers/new", "/audits/new",
-    "/partners/new", "/items/new", "/storage_locations/new", "/vendors/new", "/kits/new"
-  ],
-  "user_1@example.com": ["/", "/requests", "/distributions", "/items", "/donations", "/purchases"],
-  "superadmin@example.com": [
-    "/admin/organizations", "/admin/users", "/admin/base_items", "/admin/barcode_items",
-    "/admin/partners", "/admin/broadcast_announcements", "/admin/account_requests",
-    "/admin/questions"
-  ]
-};
+/*
+ * **Every screen, in four passes.** The list here named 43 paths and went stale -- `/users` was on
+ * it and has since been deleted.
+ *
+ * Four rather than the usual three: a plain organization user sees a different set of buttons from
+ * an admin, and half the point of this audit is that the same action looks the same wherever it
+ * appears. The module supplies the three standard passes; the fourth is composed here because it is
+ * this audit's concern, not everybody's.
+ */
+const { targets, signIn, visit, RUNS, BANK } = require("./targets");
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`);
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
+const PASSES = [...RUNS, ["user_1@example.com", BANK]];
+
 
 async function auditPage(page, path) {
   const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 25000 });
@@ -99,10 +87,10 @@ async function auditPage(page, path) {
 (async () => {
   const browser = await chromium.launch();
   const results = [];
-  for (const [email, paths] of Object.entries(ROLES)) {
+  for (const [email, wants] of PASSES) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await signIn(page, email);
-    for (const path of paths) {
+    for (const { path } of targets().filter((t) => wants(t.path))) {
       try {
         results.push({ role: email.split("@")[0], ...(await auditPage(page, path)) });
       } catch (e) {
@@ -127,7 +115,7 @@ async function auditPage(page, path) {
     rows.forEach((r) => console.log(`  ${r.role.padEnd(12)} ${r.path.padEnd(34)} ${describe(r)}`));
   };
 
-  console.log(`page headers checked:      ${seen.length} across ${Object.keys(ROLES).length} roles`);
+  console.log(`page headers checked:      ${seen.length} across ${PASSES.length} roles`);
   console.log(`headers carrying no action: ${results.filter((r) => r.noActions && r.header).length}`);
   console.log(`pages with no h1 at all:   ${results.filter((r) => r.header === false).length}`);
   console.log(`skipped:                   ${results.filter((r) => r.skipped).length}`);
