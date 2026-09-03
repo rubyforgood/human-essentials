@@ -26,6 +26,21 @@ the path the report hit, and that should not be claimed. If it recurs, do **not*
 seed: run to a failure, then `rspec --bisect` on the failing seed, which finds the minimal
 ordering that reproduces it and does not go stale when a spec file is added.
 
+**A second flake, in `request_system_spec`, and this one is non-deterministic.** "when filtering on
+the index page with filters cleared displays all requests" expected 5 table rows and found 1 plus
+six `<<ERROR>>` entries — Capybara's marker for an element going stale while its text is read, which
+is an assertion racing a Turbo frame re-render. It passes on its own (31 examples, 0 failures).
+
+**The same seed produced both a failure and a pass**, so unlike the `43125` entry this is not
+ordering: it is timing. A genuine baseline at that seed with the day's changes removed was clean at
+3,275 examples, and the change that day was shown to be a no-op for every existing callout call site
+by diffing the rendered partial, so it is not obviously attributable to it — but one run each way is
+not enough to say so with confidence.
+
+Worth knowing when chasing it: running a second `rspec` against the same test database while a full
+run is in flight produces `PG::TRDeadlockDetected` in an unrelated system spec. That is an artefact
+of the second process, not a defect, and it cost a run here before being recognised.
+
 ## Design system
 
 **The getting-started step badges repeat their class string five times.**
@@ -61,14 +76,6 @@ and `by_value` permitted in `filter_params` — both are real scopes on `Barcode
 safe, but it is a feature rather than consistency work.
 
 ## Documentation
-
-**The change log's "Current state" table is pinned to 2026-08-28 / `d7543ecff`.** It is dated and
-pinned, so it is not lying, but several of its numbers have moved since: Stimulus controllers reads
-**37** and is now **45**, and the commit and file counts are days out. Left rather than half-refreshed,
-because a table carrying some figures from 2026-08-28 and others from today is worse than one that
-is uniformly old. Refreshing it means re-running the lot — `bundle exec rspec`, `rubocop`,
-`erb_lint`, `page-audit.rb`, `dead-routes.rb` — and restating the date and commit together.
-
 
 **`docs/table-audit.md` has not been re-run since 2026-08-18.** It covers 19 bank-side and 8
 admin tables against a running app, asking how many visual weights a table's row actions use.
