@@ -214,22 +214,25 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
         // same question: `overflow-x: clip` on the root stops the gesture but not the script, and
         // `document.documentElement.scrollWidth` counts clipped content inside a scroll container
         // that no user can reach. Only the gesture answers what a person on a phone experiences.
+        // The anchor is an <h1> where there is one, because a heading sliding off screen is what a
+        // person actually notices, and the distance it moved is a number worth printing. Every
+        // screen in this app has one -- measured, 151 of 151 -- but the gesture no longer depends
+        // on it. It used to sit inside `if (anchor)`, so a page that lost its heading would skip
+        // the swipe silently and be reported clean, which is the one failure this check exists to
+        // prevent. With no heading, `window.scrollX` answers the same question less legibly.
         const anchor = await page.evaluate(() => {
           const h = document.querySelector("main h1, h1");
           return h ? { y: Math.round(h.getBoundingClientRect().top + 8), left: Math.round(h.getBoundingClientRect().left) } : null;
         });
-        let swipe = 0;
-        if (anchor) {
-          await page.mouse.move(Math.round(width / 2), Math.max(anchor.y, 90));
-          await page.mouse.wheel(900, 0);
-          await page.waitForTimeout(220);
-          swipe = await page.evaluate((before) => {
-            const h = document.querySelector("main h1, h1");
-            const moved = h ? before - Math.round(h.getBoundingClientRect().left) : window.scrollX;
-            window.scrollTo(0, 0);
-            return moved;
-          }, anchor.left);
-        }
+        await page.mouse.move(Math.round(width / 2), Math.max(anchor ? anchor.y : 90, 90));
+        await page.mouse.wheel(900, 0);
+        await page.waitForTimeout(220);
+        const swipe = await page.evaluate((before) => {
+          const h = document.querySelector("main h1, h1");
+          const moved = h && before !== null ? before - Math.round(h.getBoundingClientRect().left) : window.scrollX;
+          window.scrollTo(0, 0);
+          return moved;
+        }, anchor ? anchor.left : null);
 
         const problems = [];
         if (swipe > 2) problems.push(`swipes ${swipe}px sideways`);
