@@ -12,7 +12,11 @@
   The `<ul>` below carries the specific errors either way; this sentence is the standing advice
   for the form, so it has to be true of the form.
 %>
+<%# `focusable` plus the controller is the same pairing `essentials_error_summary` uses: a failed
+    submit re-renders the page with focus on <body>, so the partner starts at the top of a form that
+    looks like the one they just sent. See `error_summary_controller`. %>
 <%= render "shared/essentials/callout", tone: :danger, wrapper_class: "mb-6",
+      focusable: true, data: {controller: "error-summary"},
       title: "That request could not be sent" do %>
   <p class="mt-1">
     <% if local_assigns[:guidance].present? %>

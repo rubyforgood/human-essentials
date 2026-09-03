@@ -615,15 +615,30 @@ module EssentialsUiHelper
     # Glyph in its own column, heading and list in the next, so the list aligns under the
     # heading's text rather than under the glyph. The alignment is structural: no padding tuned
     # to the width of an icon, which is a number that goes stale the moment the type scale moves.
-    tag.div(class: "mb-5 flex gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3",
-      role: "alert", data: {error_summary: true}) do
+    #
+    # `tabindex: -1` so `error_summary_controller` can put focus here when the form comes back
+    # failed: on a full page re-render the browser leaves focus on <body>, and `role="alert"` is
+    # defined in terms of a subtree *changing*, which is not what happens when the region is
+    # already in the markup as the page loads. -1 and not 0 -- it is not a tab stop, only a
+    # target for script.
+    #
+    # The live region is the inner div, not this one. Focusing an element that is itself
+    # `role="alert"` is what reads the same content twice on several screen readers; the GOV.UK
+    # error summary wraps its contents for the same reason.
+    # The focus ring is the app's, not the browser's. Chrome matches `:focus-visible` on a
+    # programmatic focus here and paints its own 1px outline; design.md asks for
+    # `outline-2 outline-offset-2` in `brand-600` on everything that takes focus, and a summary the
+    # page has just jumped to is exactly when a keyboard user needs to see where they landed.
+    tag.div(class: "mb-5 flex gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 " \
+                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
+      tabindex: "-1", data: {error_summary: true, controller: "error-summary"}) do
       # A plain glyph, not an icon tile. The inline field errors sit on white and give theirs a
       # rose-50 chip; this one sits on a rose-50 surface, where a rose-50 tile is invisible --
       # design.md says exactly that about the flash bar, and a summary is the same kind of
       # object. It was built as a tile first and the tile could not be seen.
       concat tag.i(nil, class: "bi-exclamation-triangle mt-px shrink-0 text-sm text-rose-600",
         aria: {hidden: true})
-      concat(tag.div(class: "min-w-0") do
+      concat(tag.div(class: "min-w-0", role: "alert") do
         # The words are slate, not rose. The tinted surface and the glyph already say "this
         # failed"; colouring the sentences too is the same signal a third time, and slate-900 on
         # rose-50 is 16.25:1 where rose-900 is 8.71:1. What is red is the frame and the mark.
