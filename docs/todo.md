@@ -45,21 +45,6 @@ says the same.
 
 ## Accessibility
 
-**Server-rendered error summaries are never focused.** A validation failure re-renders the page
-with the summary at the top, and focus stays on `<body>` — measured on
-`/partners/family_requests`, `document.activeElement` is `BODY` after the re-render. `role="alert"`
-is reliable for content *inserted* into a live page; on initial page load screen readers vary,
-because the region is present when the accessibility tree is first built rather than changing
-afterwards. The usual fix is `tabindex="-1"` on the summary plus focusing it on load, which also
-puts a keyboard user at the error instead of at the top of the document.
-
-Not done here because it is app-wide, not one page: `essentials_error_summary` is rendered by 38
-views and `partners/requests/_error` by 3 more, so doing it on one page would make the behaviour
-inconsistent. `essentials_error_summary` already emits `data: {error_summary: true}`; no
-JavaScript reads it, but 30 system-spec assertions use `[data-error-summary]` as their selector,
-so it is a load-bearing test hook rather than dead markup — and it is the hook to hang the focus
-behaviour on.
-
 **`"completely empty request"` reaches partners as user-facing copy.** It is a model validation
 message in `app/models/request.rb:89`, and it renders verbatim as a bullet in the error callout —
 lowercase, unpunctuated, phrased for a developer. Three specs assert the exact string
@@ -76,6 +61,14 @@ and `by_value` permitted in `filter_params` — both are real scopes on `Barcode
 safe, but it is a feature rather than consistency work.
 
 ## Documentation
+
+**The change log's "Current state" table is pinned to 2026-08-28 / `d7543ecff`.** It is dated and
+pinned, so it is not lying, but several of its numbers have moved since: Stimulus controllers reads
+**37** and is now **45**, and the commit and file counts are days out. Left rather than half-refreshed,
+because a table carrying some figures from 2026-08-28 and others from today is worse than one that
+is uniformly old. Refreshing it means re-running the lot — `bundle exec rspec`, `rubocop`,
+`erb_lint`, `page-audit.rb`, `dead-routes.rb` — and restating the date and commit together.
+
 
 **`docs/table-audit.md` has not been re-run since 2026-08-18.** It covers 19 bank-side and 8
 admin tables against a running app, asking how many visual weights a table's row actions use.

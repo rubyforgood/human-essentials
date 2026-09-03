@@ -3618,6 +3618,37 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+**The summary takes focus when the form comes back failed.** `essentials_error_summary` carries
+`tabindex="-1"` and `data-controller="error-summary"`, and the controller focuses it on connect.
+A failed submit re-renders the whole page — Turbo Drive is off app-wide — so the browser puts
+focus on `<body>` and leaves the user at the top of a form that looks like the one they just sent.
+Measured on `/manufacturers`, `/vendors` and `/storage_locations`: `document.activeElement` was
+`BODY` on all three, with `scrollY` 0 whether or not the summary was on screen.
+
+`role="alert"` does not cover this by itself. **A live region is defined in terms of a subtree
+changing**, and on a full page load the summary is already in the markup when the accessibility
+tree is first built — so whether it is announced varies by screen reader. Focus does not depend on
+that timing, and it also puts a keyboard user *at* the errors, which the live region never does.
+
+**The live region goes inside the focused element, never on it.** Focusing something that is itself
+`role="alert"` reads its contents twice on several screen reader and browser pairings. The focused
+container is a plain `<div>`; the `role="alert"` sits on the wrapper within it. This is the shape
+the GOV.UK error summary settled on. What is verified in this repository is the mechanics — focus
+lands, the page scrolls to it — because no screen reader can be driven from here.
+
+The callout has a **`focusable:`** option that does the same two things together, for
+`partners/requests/_error`: `tabindex="-1"` on the root and the role moved to the inner wrapper.
+One local, because the two halves are only correct as a pair.
+
+**It takes focus only from nothing.** The controller returns unless `activeElement` is `<body>` or
+`<html>`. If a summary ever arrives in a frame update while somebody is typing, stealing the caret
+would lose their place.
+
+And it gets the ordinary focus ring — `focus-visible:outline-2 focus-visible:outline-offset-2`
+in `brand-600`. Chrome matches `:focus-visible` on this programmatic focus and would otherwise
+paint its own 1px outline; a keyboard user whose focus has just been moved for them is exactly who
+needs to see where it went.
+
 **A shared error partial must not name fields the page does not have.** Where one error component
 is rendered by several forms, its standing advice — the sentence above the list of specific
 errors — belongs to the *caller*, because only the caller knows what it is asking for. Pass it in

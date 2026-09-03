@@ -9363,3 +9363,79 @@ Three entries in a row have now been wrong about their own subject — the famil
 measured something. What rots is not the measurement but its **scope**: the audit gained a check,
 the file set changed, the layout got narrower. A to-do entry is a claim with a timestamp, and the
 first move on picking one up should be to re-measure it, not to act on it.
+
+## 2026-09-03 — Focusing the error summary, and why `role="alert"` was never enough
+
+The last accessibility item on the list, and the one deferred twice because it belongs to 41 views
+rather than to a page: a validation failure re-rendered the form with the summary at the top and
+left focus on `<body>`.
+
+Measured before changing anything, on `/manufacturers`, `/vendors` and `/storage_locations`:
+`document.activeElement` was `BODY` on all three, `tabindex` was absent, and `window.scrollY` was 0
+whether or not the summary was on screen.
+
+### Why the live region was not doing the job
+
+Every summary already carried `role="alert"`, which is why this looked handled. But **a live region
+is defined in terms of a subtree changing** — the assistive technology watches a node and speaks
+what appears inside it. Turbo Drive is off app-wide here, so a failed submit is a full page load and
+the summary is already in the markup when the accessibility tree is first built. Nothing changes,
+and whether it gets announced varies by screen reader.
+
+Focus has no such dependency on timing. It also does something the live region never does: it puts a
+keyboard user *at* the errors rather than at the top of a document that looks like the one they just
+submitted.
+
+### The live region moved inside the thing that takes focus
+
+Focusing an element that is itself `role="alert"` reads its contents twice on several screen reader
+and browser pairings — once because the region changed, once because focus entered it. So the
+focused container is a plain `<div tabindex="-1">` and the `role="alert"` sits on the wrapper
+within it. That is the shape the GOV.UK error summary arrived at.
+
+**The limit is worth stating.** What was verified here is the mechanics: focus lands on the summary
+and the page scrolls to it, on four forms across both shells. The announcement behaviour follows a
+published pattern, not a measurement — no screen reader can be driven from this environment, and
+claiming otherwise would be the kind of unearned assertion this project has spent three sessions
+removing from its own documents.
+
+### `focusable:` is one local because the halves are only right together
+
+`partners/requests/_error` reaches the same place through `shared/essentials/_callout`. The obvious
+implementation is two locals — a `tabindex` and something to move the role — but they are never
+individually correct: `tabindex` without moving the role produces the double announcement, and
+moving the role without `tabindex` produces a live region nothing can focus. One `focusable:` does
+both.
+
+**Rejected:** giving every callout a `tabindex` local. A callout is mostly page furniture — "this
+purchase is too old to edit" — and a general focus hook invites focusing things that should be read
+in document order.
+
+### It takes focus only from nothing
+
+The controller returns unless `activeElement` is `<body>` or `<html>`. On the full page load this
+was written for, that is always true. The guard exists for the case where a summary arrives in a
+frame update while somebody is typing further down the form: stealing the caret would lose their
+place, and an accessibility fix that interrupts people is not one. Tested by focusing an input and
+injecting a summary into the live page — focus stayed in the field.
+
+### The focus ring is the app's, not Chrome's
+
+Chrome matches `:focus-visible` on this programmatic focus and paints a 1px `auto` outline.
+design.md says focus is always visible as `outline-2 outline-offset-2` in `brand-600`, and the
+moment focus has been moved *for* someone is exactly when they need to see where it went. Measured
+after: `outlineWidth: 2px`, `outlineColor: rgb(79, 70, 229)`, `outlineOffset: 2px`.
+
+Kept `brand-600` rather than tinting it rose to match the component: a focus indicator is something
+users learn once, and it should not change colour with the surface it lands on.
+
+### Verification
+
+Five system examples, each watched failing with the change reverted — including the partner one,
+which first failed on a wrong button label and proved nothing until that was fixed. Two of the five
+are negative assertions (`have_no_css("[data-error-summary][role='alert']")`), because moving the
+role back onto the root leaves every positive assertion passing.
+
+Then: 468 examples across every spec that touches the summary plus all partner specs, 0 failures;
+axe over 156 pages, no violations; `wcag22-audit` over 151 screens, no failures;
+`form-validation-audit` over 26 forms, no findings.
