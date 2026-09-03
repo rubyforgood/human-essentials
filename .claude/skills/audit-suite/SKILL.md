@@ -147,3 +147,6 @@ Say so, in the file, with what you measured. A known gap written down costs the 
 the same gap undiscovered costs them the whole investigation.
 
 Do not narrow the scope quietly to make a run pass.
+
+`evidence-discipline` covers the reporting side of this: measuring before asserting, keeping
+provenance on a figure, and correcting a claim by annotating rather than editing.
