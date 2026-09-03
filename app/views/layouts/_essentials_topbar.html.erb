@@ -21,11 +21,17 @@
         <i class="<%= help_link_icon %> mr-1" aria-hidden="true"></i><%= help_link_label %>
       <% end %>
 
+      <%# The trigger names the panel it opens. `aria-expanded` on its own says that a region
+          opened, not which one, and the panel is a sibling rather than a descendant -- so a DOM
+          relationship is not something a screen reader can infer either. Same pairing as
+          `shared/essentials/row_actions`, and what the ARIA menu-button pattern asks for. %>
+      <% account_menu_id = "account-menu-#{SecureRandom.hex(4)}" %>
       <div class="relative" data-controller="popover">
         <button type="button"
                 class="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 aria-haspopup="menu"
                 aria-expanded="false"
+                aria-controls="<%= account_menu_id %>"
                 aria-label="Account menu for <%= current_user.display_name %>"
                 data-popover-target="trigger" data-account-menu
                 data-action="click->popover#toggle">
@@ -37,6 +43,7 @@
 
         <div class="absolute right-0 z-30 w-64 py-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
              hidden
+             id="<%= account_menu_id %>"
              role="menu"
              data-popover-target="panel">
           <div class="border-b border-slate-100 px-4 pb-2">

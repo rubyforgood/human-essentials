@@ -7,7 +7,10 @@
         back: {path: partners_requests_path, label: "Back to requests"} %>
 
   <% if @errors.present? %>
-    <%= render partial: "partners/requests/error" %>
+    <%# This form's only controls are the child checkboxes below, so it supplies its own guidance
+        rather than taking the partial's default, which is about item lines. %>
+    <%= render partial: "partners/requests/error",
+          locals: {guidance: "Choose at least one child, then send the request again."} %>
   <% end %>
 
   <%# The filter block used the shared filter bar's shape by hand, and closed a div in the

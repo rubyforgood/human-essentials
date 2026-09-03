@@ -17,11 +17,15 @@
         <i class="bi-life-preserver mr-1" aria-hidden="true"></i>Help
       <% end %>
 
+      <%# See the note on the same trigger in `layouts/_essentials_topbar`: `aria-expanded` alone
+          says a region opened without saying which. %>
+      <% account_menu_id = "account-menu-#{SecureRandom.hex(4)}" %>
       <div class="relative" data-controller="popover">
         <button type="button"
                 class="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 aria-haspopup="menu"
                 aria-expanded="false"
+                aria-controls="<%= account_menu_id %>"
                 aria-label="Account menu for <%= current_user.display_name.presence || current_user.email %>"
                 data-popover-target="trigger" data-account-menu
                 data-action="click->popover#toggle">
@@ -33,6 +37,7 @@
 
         <div class="absolute right-0 z-30 w-64 py-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
              hidden
+             id="<%= account_menu_id %>"
              role="menu"
              data-popover-target="panel">
           <div class="border-b border-slate-100 px-4 pb-2">

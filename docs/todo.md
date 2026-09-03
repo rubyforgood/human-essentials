@@ -36,16 +36,28 @@ says the same.
 
 ## Accessibility
 
-**`/partners/family_requests/new` shows only an error summary, with no inline errors and no
-`aria-invalid`.** The change log entry for `fc4e62d32` claims the form audit had no findings; it
-has one now, and it is not from recent work — the form is `form_with` with no `f.input`, so it
-never touches simple_form, and running the pre-change audit against the current app reports the
-same thing. Fix: the form needs per-field error rendering, which for a non-simple_form form means
-doing by hand what the `:essentials` wrapper does.
+**Server-rendered error summaries are never focused.** A validation failure re-renders the page
+with the summary at the top, and focus stays on `<body>` — measured on
+`/partners/family_requests`, `document.activeElement` is `BODY` after the re-render. `role="alert"`
+is reliable for content *inserted* into a live page; on initial page load screen readers vary,
+because the region is present when the accessibility tree is first built rather than changing
+afterwards. The usual fix is `tabindex="-1"` on the summary plus focusing it on load, which also
+puts a keyboard user at the error instead of at the top of the document.
 
-**The account menu trigger has `aria-expanded` with no `aria-controls`.** Both top bars. The
-panel has no `id` for it to point at. design.md's accessibility rules ask for both on anything
-that opens a region. Pre-existing; noticed during the avatar change and not folded into it.
+Not done here because it is app-wide, not one page: `essentials_error_summary` is rendered by 38
+views and `partners/requests/_error` by 3 more, so doing it on one page would make the behaviour
+inconsistent. `essentials_error_summary` already emits `data: {error_summary: true}`; no
+JavaScript reads it, but 30 system-spec assertions use `[data-error-summary]` as their selector,
+so it is a load-bearing test hook rather than dead markup — and it is the hook to hang the focus
+behaviour on.
+
+**`"completely empty request"` reaches partners as user-facing copy.** It is a model validation
+message in `app/models/request.rb:89`, and it renders verbatim as a bullet in the error callout —
+lowercase, unpunctuated, phrased for a developer. Three specs assert the exact string
+(`spec/models/request_spec.rb:143`, `spec/services/partners/request_create_service_spec.rb:35`,
+`spec/services/partners/family_request_create_service_spec.rb:27`) and all three request types
+share it, so rewording it is a model change with a wider blast radius than the copy fix it sits
+next to. Left deliberately; the surrounding guidance sentence now carries the actionable part.
 
 ## Filters and forms
 
