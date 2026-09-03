@@ -54,7 +54,7 @@ Load these when the work reaches them, not before.
 
 | File | Read it when |
 | --- | --- |
-| `reference/audit-discipline.md` | Writing or changing any check. **The most expensive lessons here.** |
+| **the `audit-suite` skill** | Writing or changing any check. It owns that entirely — scope, controls, the six ways a check lies. Not repeated here, because two copies drift |
 | `reference/documenting-decisions.md` | Setting up the documents, or wondering which one a change belongs in |
 | `reference/preview-protocol.md` | About to build a screen |
 | `reference/writing-rules.md` | Adding to the spec; Portable vs Local |
@@ -76,7 +76,7 @@ Then, in order:
    That is the entire coupling for a browser-driven audit. See "The adapter" below.
 3. **Get one audit running end to end** before writing a second. An audit suite nobody can run is
    worth less than one check that runs on every commit.
-4. **Put the audits' self-test in CI**, not the audits. See `reference/audit-discipline.md`.
+4. **Put the audits' control harness in CI**, not the audits. See the `audit-suite` skill.
 
 ## The adapter
 
@@ -109,7 +109,7 @@ Each of these happened, and each cost a day or more.
   plus the sweep plus the audit.
 - **Asserting a number instead of measuring it.** Every figure in the spec was measured in the
   session it was written. Recalled numbers were wrong twice.
-- **Trusting a green test you have not watched go red.** See `reference/audit-discipline.md`.
+- **Trusting a green test you have not watched go red.** See the `audit-suite` skill.
 - **Proposing your own prerequisite and then doing it.** If the work you are about to start is not
   what was asked for, say so and get agreement first — even when it is genuinely worth doing.
 - **Grepping for one spelling and reading absence as fact.** Twice in one analysis in the source
