@@ -1,27 +1,26 @@
 /*
- * **This is the one audit here that still carries a hardcoded page list, and it is unfinished
- * work.** Every other audit in this directory enumerates its screens from the router. This one was
- * widened the same way on 2026-09-02 and reverted, because it does not finish at 150 screens.
+ * **Fixed 2026-09-03, after four earlier attempts at the wrong problem.**
  *
- * **The reason is not the widening. This audit has always been slow and nobody had measured it.**
- * The nine-page version above takes **525 seconds** -- about 58 seconds a page. At 150 screens that
- * is over two hours, which is why the widened run never came back.
+ * This audit took **58 seconds a page** — 525 seconds for nine pages — and had always done so;
+ * nobody had timed it. Widening it to every screen was tried and reverted because it would have
+ * taken two hours, and four rounds of optimisation followed: cheap discovery, an instance cap,
+ * hoisting axe-core's injection out of a loop, a `Promise.race` budget. None helped, because none
+ * of them was the cause.
  *
- * What was measured, so the next attempt starts from evidence rather than from guesses:
+ * **The cause was three `.click().catch(() => {})` calls.** Playwright retries an unclickable
+ * element until its *default 30-second timeout*, and an empty catch hides that it ever happened.
+ * Measured on `/organization`: 30,335ms in `checkNativeConfirms`, for seven triggers that are menu
+ * items inside a closed kebab and so have no box at all. The same pattern on the filter disclosure
+ * cost another 30 seconds on every screen without a filter bar.
  *
- *   - Navigation is not the cost. `visit()` averages **203ms** a screen, ~31s for all 154.
- *   - `checkDialogs` on `/organization` alone costs **31 seconds**. That is the shape of the
- *     problem: a few screens dominate, and a trigger there appears to navigate rather than open,
- *     leaving everything after it waiting on a load.
- *   - `axeOn` injected the whole of axe-core -- about half a megabyte -- **once per dialog**.
- *     Fixing it to once per page changed the runtime not at all, which is how we know axe is not
- *     the cost.
- *   - A `Promise.race` time budget does not help: it resolves the race and leaves the slow work
- *     running behind it, still holding the page.
+ * Bounded clicks, a visibility filter, and condition waits in place of fixed sleeps:
  *
- * So the order of work is the other way round from what I assumed: **make this audit fast, then
- * widen it.** Widening a 58-second-per-page audit was always going to fail, and four attempts to
- * fix the widening were four attempts at the wrong problem.
+ *   525s for 9 screens   ->   254s for 154 screens
+ *   58s per screen       ->   1.6s per screen
+ *
+ * The lesson is in the numbers rather than the fix: **time the thing before optimising it, and
+ * time it per phase.** Guessing produced four wrong answers in a row; one measurement produced the
+ * right one.
  */
 // Every overlay in the app, opened and checked.
 //
@@ -47,25 +46,30 @@ const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
 // Pages that carry an overlay, and who can see them.
-const PAGES = [
-  ["org_admin1@example.com", "/requests"],
-  ["org_admin1@example.com", "/donations"],
-  ["org_admin1@example.com", "/distributions"],
-  ["org_admin1@example.com", "/transfers"],
-  ["org_admin1@example.com", "/donation_sites"],
-  ["org_admin1@example.com", "/vendors"],
-  ["org_admin1@example.com", "/product_drives"],
-  ["org_admin1@example.com", "/manufacturers"],
-  ["org_admin1@example.com", "/dashboard"]
-];
+/*
+ * **Every screen, not the nine somebody knew had overlays.** A dialog on an unlisted page was simply
+ * not audited, which is how a native browser confirm survived on `/product_drives` until somebody
+ * clicked it.
+ *
+ * Widening this was tried once and reverted, because the audit took 58 seconds a page and 150
+ * screens would have been two hours. That was never the widening's fault: three
+ * `.click().catch(() => {})` calls were each waiting Playwright's default 30-second timeout and
+ * swallowing it. With those bounded and the fixed sleeps replaced by condition waits it is 8x
+ * faster, and the widening is affordable.
+ */
+const { targets, signIn, visit, RUNS } = require("./targets");
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
+const PAGES = RUNS.flatMap(([email, wants]) =>
+  targets().filter((t) => wants(t.path)).map((t) => [email, t.path]));
+
+// Anything that could open something over the page. Cheap to ask, before any interaction -- so the
+// expensive work is proportional to the number of overlays rather than the number of screens.
+const HAS_OVERLAY = () => Boolean(document.querySelector(
+  "dialog, [data-confirm], [data-turbo-confirm], [data-controller~='popover'], " +
+  "[data-popover-target='trigger'], [data-action*='dialog#open'], [data-filter-toggle]"
+));
+
+
 
 async function axeOn(page, selector) {
   await page.addScriptTag({ content: fs.readFileSync(AXE, "utf8") });
@@ -81,13 +85,13 @@ async function axeOn(page, selector) {
 }
 
 async function checkDialogs(page, path, findings) {
-  const triggers = await page.$$("[data-action*='dialog#open']");
+  const triggers = await VISIBLE_ONLY(await page.$$("[data-action*='dialog#open']"));
 
   for (const [i, trigger] of triggers.entries()) {
     const id = await trigger.getAttribute("data-dialog-id-param");
     if (!id || !(await page.$(`[id="${id}"]`))) continue;
 
-    await trigger.click().catch(() => {});
+    if (!await clickOrReport(trigger, `${path} dialog#${id}`, "the trigger", findings)) continue;
     await page.waitForTimeout(250);
 
     const state = await page.evaluate((dialogId) => {
@@ -112,7 +116,9 @@ async function checkDialogs(page, path, findings) {
     for (const v of await axeOn(page, `#${id}`)) findings.push(`${where}: ${v}`);
 
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(200);
+    await page
+      .waitForFunction((d) => !document.getElementById(d)?.open, id, { timeout: 1000 })
+      .catch(() => {});
     if (await page.evaluate((d) => document.getElementById(d)?.open, id)) {
       findings.push(`${where}: Escape does not close it`);
     }
@@ -121,12 +127,56 @@ async function checkDialogs(page, path, findings) {
   return triggers.length;
 }
 
+/*
+ * Click something, without the possibility of waiting thirty seconds for it.
+ *
+ * **`element.click().catch(() => {})` is how this audit came to take 58 seconds a page.** Playwright
+ * retries an unclickable element until its *default 30-second timeout*, and the empty catch then
+ * hides that it ever happened. Measured on `/organization`: 30,335ms in `checkNativeConfirms`, for
+ * seven triggers that are menu items inside a closed kebab and therefore have no box at all.
+ *
+ * Two changes. The timeout is explicit and short, so a future unclickable control costs two seconds
+ * rather than thirty. And a failure is **reported**, because a control that is on screen and cannot
+ * be clicked is a real defect -- something is covering it -- and the empty catch was hiding that
+ * finding just as thoroughly as it hid the delay.
+ */
+const CLICK_TIMEOUT = Number(process.env.OVERLAY_CLICK_TIMEOUT || 2000);
+
+async function clickOrReport(handle, where, what, findings) {
+  try {
+    await handle.click({ timeout: CLICK_TIMEOUT });
+    return true;
+  } catch {
+    findings.push(`${where}: ${what} is on screen but could not be clicked within ` +
+      `${CLICK_TIMEOUT}ms -- something is covering it, or it never becomes stable`);
+    return false;
+  }
+}
+
+// Rendered, and therefore actually operable. A control with no box is not on the page as far as a
+// pointer is concerned; `confirm-audit.js` is the one that opens menus and checks what is inside.
+const VISIBLE_ONLY = async (handles) => {
+  const out = [];
+  for (const h of handles) if (await h.evaluate((el) => el.offsetParent !== null)) out.push(h);
+  return out;
+};
+
 async function checkPopovers(page, path, findings) {
-  const triggers = await page.$$("[data-popover-target='trigger']");
+  const triggers = await VISIBLE_ONLY(await page.$$("[data-popover-target='trigger']"));
 
   for (const trigger of triggers) {
-    await trigger.click().catch(() => {});
-    await page.waitForTimeout(250);
+    if (!await clickOrReport(trigger, `${path} popover`, "the trigger", findings)) continue;
+    /*
+     * Wait for the panel to say it is open, not for a quarter of a second.
+     *
+     * A fixed sleep is both slower and less correct: it pays 250ms on every popover whether or not
+     * it needed any, and it would still be too short on a slow one. 100 popovers here spent 57
+     * seconds asleep. The condition is the thing actually being waited for.
+     */
+    await trigger.waitForElementState("stable").catch(() => {});
+    await page
+      .waitForFunction((t) => t.getAttribute("aria-expanded") === "true", trigger, { timeout: 2000 })
+      .catch(() => {});
 
     // Evaluated against THIS trigger, not the first one on the page -- the account menu is also a
     // popover, and checking it instead reported every date range as broken.
@@ -163,7 +213,11 @@ async function checkPopovers(page, path, findings) {
     if (state.role === "menu" && state.items > 1) {
       const before = await page.evaluate(() => document.activeElement?.textContent?.trim());
       await page.keyboard.press("ArrowDown");
-      await page.waitForTimeout(120);
+      // Focus moving into the panel is the thing being waited for.
+      await page
+        .waitForFunction(() => document.activeElement?.getAttribute("role") === "menuitem",
+          null, { timeout: 1000 })
+        .catch(() => {});
       const after = await page.evaluate(() => document.activeElement?.textContent?.trim());
       if (before === after) findings.push(`${where}: role="menu" but ArrowDown does not move focus`);
     }
@@ -195,7 +249,13 @@ const VIEWPORTS = [
 // The only way to see one is to listen for the event the browser raises. Clicking is safe: the
 // handler dismisses, so nothing is submitted.
 async function checkNativeConfirms(page, label, findings) {
-  const triggers = await page.$$("[data-confirm], [data-turbo-confirm]");
+  /*
+   * Visible ones only. Every closed row menu still holds its Reclaim and Delete in the document,
+   * with no box -- and clicking one of those is what cost thirty seconds a page. The confirmations
+   * nested inside menus are `confirm-audit.js`'s job: it opens the panel first, which is the only
+   * way to reach them honestly.
+   */
+  const triggers = await VISIBLE_ONLY(await page.$$("[data-confirm], [data-turbo-confirm]"));
   if (!triggers.length) return 0;
 
   let seen = 0;
@@ -208,7 +268,7 @@ async function checkNativeConfirms(page, label, findings) {
   page.on("dialog", onDialog);
 
   // One is enough to prove the mechanism; they all go through the same Rails attribute.
-  await triggers[0].click().catch(() => {});
+  await clickOrReport(triggers[0], label, "a confirmation trigger", findings);
   await page.waitForTimeout(300);
 
   page.off("dialog", onDialog);
@@ -218,33 +278,54 @@ async function checkNativeConfirms(page, label, findings) {
 (async () => {
   const browser = await chromium.launch();
   const findings = [];
-  let dialogs = 0, natives = 0;
+  let dialogs = 0, natives = 0, screensWithOverlays = 0;
   let popovers = 0;
+
+  // The first pass over every screen records which ones have something to open; later viewports
+  // revisit only those.
+  let withOverlays = null;
 
   for (const viewport of VIEWPORTS) {
     const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
     let signedInAs = null;
 
-    for (const [email, path] of PAGES) {
+    const foundHere = [];
+
+    for (const [email, path] of (withOverlays || PAGES)) {
       if (signedInAs !== email) {
         await signIn(page, email);
         signedInAs = email;
       }
-      await page.goto(BASE + path, { waitUntil: "networkidle" });
+      // `visit` waits for `load`, never `networkidle`.
+      if (!await visit(page, path)) continue;
+      if (!await page.evaluate(HAS_OVERLAY)) continue;
+      if (withOverlays === null) foundHere.push([email, path]);
+      screensWithOverlays++;
 
-      // Filter bars start collapsed, and the date range popover lives inside one.
-      await page.click("[data-filter-toggle]").catch(() => {});
-      await page.waitForTimeout(150);
+      /*
+       * Filter bars start collapsed, and the date range popover lives inside one.
+       *
+       * **The same thirty-second trap as the clicks below, in its third form.**
+       * `page.click(selector).catch(() => {})` waits the default timeout for a selector that will
+       * never appear — and most screens have no filter bar at all. Ask whether it is there first;
+       * a page without one is not a finding, it is just a page without one.
+       */
+      if (await page.$("[data-filter-toggle]")) {
+        await clickOrReport(await page.$("[data-filter-toggle]"),
+          `${path} @${viewport.label}`, "the filter disclosure", findings);
+        await page.waitForTimeout(150);
+      }
 
       popovers += await checkPopovers(page, `${path} @${viewport.label}`, findings);
-      await page.goto(BASE + path, { waitUntil: "networkidle" });
+      if (!await visit(page, path)) continue;
       dialogs += await checkDialogs(page, `${path} @${viewport.label}`, findings);
       natives += await checkNativeConfirms(page, `${path} @${viewport.label}`, findings);
     }
+    if (withOverlays === null) withOverlays = foundHere;
     await page.close();
   }
 
-  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} pages at ${VIEWPORTS.map((v) => v.label).join(" and ")}`);
+  console.log(`\n${dialogs} dialog(s) and ${popovers} popover(s) opened across ${PAGES.length} screens (${screensWithOverlays} with something to open) at ${VIEWPORTS.map((v) => v.label).join(" and ")}`);
   console.log(`${natives} native browser confirm(s) found\n`);
   if (findings.length === 0) {
     console.log("no findings");
