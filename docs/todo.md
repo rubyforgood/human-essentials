@@ -8,14 +8,23 @@ fixed comes out in the same commit as the fix, with a row in [changelog.md](chan
 
 ## Test suite
 
-**`bundle exec rspec --seed 43125` fails 7 examples in
-`spec/services/reports/adult_incontinence_report_service_spec.rb`**, all of them
+**The `--seed 43125` recipe is stale, and the flake is unreproduced.** The entry recorded 7
+failures in `spec/services/reports/adult_incontinence_report_service_spec.rb`, all
 `create(:kit, organization: organization)` raising `Validation failed: Name has already been
-taken`. It is order-dependent, not date-dependent: the file passes 8/8 on its own, and the same
-seed reproduces the same seven failures on a tree with no local changes at all — checked by
-stashing. Something earlier in that ordering leaves a kit name behind, or the kit factory's
-`sequence(:name)` collides with one created through `kit_item`'s `after(:build)`. Reproducible,
-which is the hard part of a flake already done.
+taken`. Re-running the exact command on 2026-09-03 gives **3272 examples, 0 failures**.
+
+A seed is only a reproduction against an identical set of loaded files, because RSpec shuffles the
+groups it loaded. **31 spec files have been added and 1 removed since the entry was written**
+(267 → 297), so seed 43125 stopped selecting that ordering within about a day of it being
+recorded. Four further seeds were tried — 11111, 22222, 33333, 44444 — all **0 failures**, and no
+run contained the string `has already been taken` at all. Five full-suite runs, nothing. That is
+not proof the flake is gone; it is proof the recipe no longer finds it.
+
+One cause of that exact message *was* found and fixed — `Seeds.seed_base_items` was not
+idempotent — but it is guarded in the factory (`if BaseItem.count.zero?`), so it is not obviously
+the path the report hit, and that should not be claimed. If it recurs, do **not** start from a
+seed: run to a failure, then `rspec --bisect` on the failing seed, which finds the minimal
+ordering that reproduces it and does not go stale when a spec file is added.
 
 ## Design system
 

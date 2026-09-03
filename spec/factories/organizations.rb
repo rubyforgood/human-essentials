@@ -46,7 +46,10 @@ FactoryBot.define do
 
     trait :with_items do
       after(:create) do |instance, evaluator|
-        Seeds.seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
+        # 46 from base_items.json plus the global 'Kit' one, so 47. The guard is only to save 47
+        # lookups per organization -- `seed_base_items` is idempotent on its own, and has to be,
+        # because `db/seeds.rb` calls it unguarded on every `db:seed`.
+        Seeds.seed_base_items if BaseItem.count.zero?
         Organization.seed_items(instance) # creates 1 item for each base item
       end
     end
