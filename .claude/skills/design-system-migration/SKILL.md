@@ -48,6 +48,38 @@ Do not stop for conformance. Following the spec is not a decision.
 user choosing between presented options. That is where the quality came from. An agent that builds
 autonomously produces the opposite.
 
+## How the work actually arrives
+
+Almost none of it comes from a backlog. It comes from somebody **opening a page and finding
+something wrong**, and it arrives in a characteristic shape:
+
+> *"On the purchases page, the comments column increases the height of the row exponentially, making
+> it very difficult to parse the information. What is industry standard for handling long free-text
+> fields in a table? Show me a design preview with your recommendation. Then update all tables with
+> open text fields to follow the convention, and update the design system file."*
+
+One report, and it carries four demands: what is standard, show me first, apply it everywhere, write
+it down. **Expect them compounded like this, and answer all of them** — a reply that fixes the
+column and ignores the other three produces the same instruction again next week.
+
+Some further properties of the real thing, all worth planning for:
+
+- **A single message often reports four unrelated faults** on one screen. Padding, a truncated word,
+  a control that does nothing, a component that does not match. Work them all; do not pick the
+  interesting one.
+- **The report usually contains a guess at the cause**, and it is often right. Check it, but check it
+  rather than adopting it.
+- **Frustration is a signal about the process, not the person.** *"Why do I need to point out
+  elements individually on the same page?"* means the sweep was too narrow. *"I have had to prompt
+  multiple times to fix this"* means a rule was applied without being written down, so it did not
+  hold. Both are feedback about method.
+- **The answer is usually a letter and a rider.** *"Go with B, but make sure it matches the
+  destructive styling, and then check every empty state."* **The riders are where the rules come
+  from.** Write them into the spec, not just into the code.
+- **The work moves outward.** Components, then whole screens, then reports, then — if it is going
+  well — the tools themselves. The last stretch of the source project contained no screens at all:
+  it was about whether the checks could be trusted.
+
 ## Reference
 
 Load these when the work reaches them, not before.
@@ -58,6 +90,8 @@ Load these when the work reaches them, not before.
 | `reference/documenting-decisions.md` | Setting up the documents, or wondering which one a change belongs in |
 | `reference/preview-protocol.md` | About to build a screen |
 | `reference/writing-rules.md` | Adding to the spec; Portable vs Local |
+| `reference/copy-and-language.md` | Writing or auditing any user-facing words |
+| `reference/keeping-work-reviewable.md` | Setting up, or when somebody cannot see the app |
 | `reference/retiring-a-legacy-system.md` | **Only if** there is an old UI framework to remove |
 | `templates/` | Starting a new app: empty skeletons for the spec, decision log and change log |
 
