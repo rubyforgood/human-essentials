@@ -86,6 +86,73 @@ tables were rebuilt (`admin/barcode_items`, `admin/ndbn_members`, the item catal
 the count of tables in `app/views` is now 78. Worth re-running rather than re-reading.
 (`docs/view-audit.md` was in the same state and has been brought up to date.)
 
+## Skills: not yet available outside this repo
+
+The five skills in `.claude/skills/` are only active when working *in this repository*. Claude reads
+skills from two places — the current repo, and `~/.claude/skills/` — and nothing has been written to
+the second.
+
+**Asked to be reminded rather than done now.** The proposal is a symlink, not a copy: one set of
+files, in git, visible from every project.
+
+```bash
+mkdir -p ~/.claude/skills
+cd /Users/gia/essentials/worker-toolkit-human-essentials/repo
+for s in audit-suite design-system-migration evidence-discipline wcag-conformance session-durability; do
+  ln -s "$PWD/.claude/skills/$s" ~/.claude/skills/$s
+done
+```
+
+It writes five pointer entries into `/root/.claude/skills/` and nothing else. The risk is that a
+symlink points at a path: if this repo moves or is deleted, the skills silently stop working. A copy
+avoids that and introduces two versions that drift, which is the worse failure.
+
+Unverified: whether this client actually reads `~/.claude/skills/` on this setup — that directory
+has never existed here. Confirm by opening a different project and seeing whether the skills appear.
+
+## 24 Title Case labels on the partner profile forms
+
+House style is sentence case, and `page-audit.rb` enforces it on **headings only** — form field
+labels were never in its scope, so these sat outside a normative rule for the whole migration.
+
+Measured 2026-09-03: **24 distinct labels** across `app/views/partners/profiles/`, from
+`"Agency Age"` to `"Do You Verify The Income Of Your Clients?"`.
+
+Left because it is a large user-visible copy change across **two parallel trees that must stay in
+step** — `profiles/edit/` and `profiles/step/` render the same fields — and because it deserves to
+be a decision of its own rather than a rider on something else. Fixing it means extending the
+sentence-case check to `label:` as well as headings, or it will come back.
+
+## Seven dead anchors in design.md
+
+Seven `](#...)` links point at anchors that do not exist — `#contrast`, `#target-size`, `#pills`,
+`#icons`, `#interaction`, `#reports`, `#behind-a-proxy-or-tunnel`. Down from twelve; the rest were
+fixed in passing.
+
+Each is either a section that was renamed or one that was never written. Fixing means deciding which
+per link, so it is small but not mechanical. Worth a check in `page-audit.rb` afterwards so the next
+one is caught when it is written.
+
+## `ignored_columns` for the dropped address column
+
+`StructuredAddress` still carries `self.ignored_columns += ["address"]`. The column was dropped by
+`20260901200000`, so this is now a no-op.
+
+It was kept deliberately for one release, for the mirror image of the reason the drop was staged:
+new code meeting a database where the migration has not run yet. **Remove it once that migration has
+been deployed everywhere.** This is the last thing left of the address change.
+
+## The design skill has no adapter
+
+`.claude/skills/design-system-migration/templates/adapter.md` describes the shape — five sign-in
+values and a command that lists every screen — but no Rails/Tailwind adapter has been written, and
+none of the 33 audits here have been generalised.
+
+Deliberate, and the reasoning is in `docs/skill-proposal-v2.md`: there is no evidence yet about
+which assumptions are shared between stacks, and inventing an adapter from a sample of one is the
+mistake at prompt `[158]`, which cost 28 unevidenced claims. **Do this after the core has been used
+once on another app**, not before.
+
 ## Seven tables with no empty state, deliberately
 
 A sweep for a `<tbody>` or `.data-table` driven by a `.each` with no
@@ -144,9 +211,15 @@ The measured shape of the problem:
 | … and drop Initial allocation too | 1,118px | fits exactly |
 
 **Dropping columns alone never makes it fit, and the biggest single win is not a data column at
-all**: Actions is **331px**, the second-widest column in the table, holding up to five labelled
-buttons. One action plus an overflow menu is ~80px — a 251px saving that costs no data. That is the
-recommendation, and it needs its own preview because an overflow menu is a component this app does
-not have. It would also fix `/items`, `/vendors` and `/requests`, which carry three to five actions
-each.
+all**: Actions was **331px**, the second-widest column in the table, holding up to five labelled
+buttons.
+
+**That half is done.** `shared/essentials/row_actions` was built and the column is now **76px** —
+measured at 1440 on 2026-09-03, a 255px saving against the 251 predicted. The table is **1,521px**
+against a 1,118px region, down from 1,759.
+
+**It still scrolls, by 403px.** What remains is the column question the table above sets out:
+dropping the three that are one click away, and possibly Initial allocation. That is a data
+decision rather than a layout one and wants its own preview, because removing a column a user reads
+is not the same kind of change as collapsing buttons they can still reach.
 
