@@ -75,7 +75,11 @@ RSpec.describe "The validation error summary takes focus", type: :system do
     it "puts focus on the request error callout" do
       visit new_partners_family_request_path
       # Nothing selected, so the request is empty and the form comes back failed.
-      page.all("input[type=checkbox][id^='child-']").each { |c| c.set(false) }
+      # Collected first, then unchecked. `page.all(...).each` looks like an ActiveRecord relation to
+      # `Rails/FindEach`, and a Capybara result set has no `find_each`. The id, not the value:
+      # `check_box_tag "child-N"` leaves `value` as "1" on every one of them.
+      checkbox_ids = page.all("input[type=checkbox][id^='child-']").map { |box| box[:id] }
+      checkbox_ids.each { |id| uncheck(id) }
       # The button opens a confirmation dialog when the request is valid; with nothing selected the
       # validation runs on the server and the page comes straight back failed.
       click_button "Submit essentials request"

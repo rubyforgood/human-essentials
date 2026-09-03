@@ -319,6 +319,7 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 | `70bdc7a4f` | **The flake's reproduction had gone stale, and a real seeding bug turned up while looking for it.** The to-do carried `rspec --seed 43125` fails 7 examples, all `create(:kit)` raising `Validation failed: Name has already been taken`, and said the hard part was already done. That exact command now gives **3272 examples, 0 failures**; four further seeds (11111, 22222, 33333, 44444) are also clean, and **none of the five runs contains the string anywhere**. **A seed is only a reproduction against an identical set of loaded files** — RSpec shuffles the groups it loaded, so a permutation of a different list is a different order. **31 spec files have been added and 1 removed since the entry was written** (267 → 297), so the seed stopped selecting that ordering at roughly the next commit. The durable tool is `rspec --bisect`, which reduces a *currently failing* run to a minimal list of examples and does not rot when a file is added. **The bug found on the way**: `Item`'s name uniqueness has a custom message, so the default `"has already been taken"` had to come from `BaseItem`, the one model whose name uniqueness is unscoped. `Seeds.seed_base_items` passed `created_at`/`updated_at` to `find_or_create_by!`, which **builds its lookup from every attribute given to it** — so "created at this exact instant" went into the WHERE, no stored row could match, and the find fell through to a create that tripped the unique name. Written in the idiom for idempotency and not idempotent. `db/seeds.rb:27` calls it **unguarded**, so `bin/rails db:seed` raised on any already-seeded database — onboarding's `bin/setup # first time only` was documenting the bug as a design. The suite never hit it because the organization factory guards with `if BaseItem.count.zero?`, which is exactly what let it survive. Fixed by dropping the two timestamps; the guard stays as a 47-query saving and its comment now says **47** (46 JSON entries plus the global `Kit`) instead of 45. `spec/lib/seeds_spec.rb` covers it, watched failing with the real message first. **Not claimed to be the flake** — the factory guard means that path is not reached with a populated table in a spec run, so the to-do stays open with the bisect instructions rather than being closed on a fix that may be unrelated. |
 | `dd6633691` | **The sideways swipe and the audit blind spot: neither existed, and the control that "proved" one was invalid.** **The page does not pan** — 320px and 375px across all 154 routes, nothing swipes; and checked properly by deleting `html { overflow-x: clip }` and rebuilding, still nothing (`root 320/320`, `body 320`). The layout no longer overflows the root, most likely from the `.notes` column cap, so the rule now guards nothing. **The audit was never blind**: the to-do said it "compares `scrollWidth` with `clientWidth`" and asked for a gesture check that watches the `h1` — that check was added in `cfeee9130` on **2026-08-21, three days before the entry claiming its absence was written**. `bodyOverflow` is its `else` branch. **The invalid control is the reusable part.** Deleting the clip rule and running the audit gave *no findings*, which reads exactly like a caught false negative — and is not one: nothing panned because nothing overflowed. **A guard and the condition it suppresses are two things, and a control needs both.** Only clip-off *plus* an injected 2000px element produced a real pan (900px, `h1` from `left: 16` to `left: -884`), which the audit reported as `swipes 900px sideways` first time. Written up in `audit-suite`'s control harness as its own failure mode, since the shape recurs far beyond CSS — a validation with no invalid record, a rate limiter with no traffic. **One real gap hardened**: the gesture sat inside `if (anchor)`, so a screen with no `<h1>` skipped it silently; **0 of 151** screens today, and in the tested case the `bodyOverflow` fallback still flagged it, so the old code was not blind there — the case it would truly miss is stated as reasoning, not measurement, because the pan can no longer be reproduced. Re-verified after: 429 combinations, same 2 findings, no new false positives. **Third to-do entry in a row wrong about its own subject**; what rots is the scope, not the measurement. |
 | `a68fd8c2e` | **The error summary takes focus, across all 41 views that render one.** A validation failure re-rendered the form and left focus on `<body>` — measured first on `/manufacturers`, `/vendors` and `/storage_locations`: `activeElement` `BODY` on all three, no `tabindex`, `scrollY` 0 whether or not the summary was on screen. **`role="alert"` was never enough**, which is why this looked handled: a live region is defined in terms of a subtree *changing*, and with Turbo Drive off app-wide a failed submit is a full page load where the summary is already in the markup as the accessibility tree is built. Focus does not depend on that timing, and it puts a keyboard user *at* the errors. **The live region moved inside the focused element** — focusing something that is itself `role="alert"` reads its contents twice on several screen readers, so the focused container is a plain `div[tabindex=-1]` and the role sits on the wrapper within it, the shape GOV.UK's error summary settled on. New `error_summary_controller`, which **takes focus only from nothing** (`activeElement` must be `<body>` or `<html>`) so a frame update cannot steal a caret mid-typing — tested by focusing an input and injecting a summary. `shared/essentials/_callout` gains **`focusable:`**, one local rather than two because `tabindex` without moving the role gives the double announcement and moving the role without `tabindex` gives a live region nothing can focus; `partners/requests/_error` uses it. Focus ring is the app's `outline-2 outline-offset-2` in `brand-600`, not Chrome's 1px default, since focus moved *for* you is when you most need to see it. **Stated limit**: the mechanics are verified — focus lands, page scrolls, on four forms across both shells — the announcement follows the published pattern, because no screen reader can be driven here. Five system examples, each watched failing reverted, two of them negative assertions; **468 examples 0 failures**, axe **156 pages no violations**, `wcag22-audit` 151 screens no failures, `form-validation-audit` 26 forms no findings. |
+| `PENDING` | **The "Current state" table refreshed, and the two documents that disagreed about it reconciled.** It had been pinned to 2026-08-28 / `d7543ecff` and recorded rather than fixed one commit earlier — the reason given (a table mixing two dates is worse than one uniformly old) argued for doing it properly, not for deferring it. **`migration-map.md` carried a second copy that had drifted further**: 299 of 392 views and 30 Stimulus controllers against the change log's 332 of 367 and 37. Both are now measured together and dated. Current: **624** commits, **1,078** files against `main`, 63 of 65 controllers on a design system layout, **346 of 383** views carrying design system markup, **45** Stimulus controllers, 0 undefined legacy classes, 0 of **350** routes that would raise, **149** dead-code findings. Audits re-run at this commit: `page-audit` 0 defects across 358 views, `route-sweep` 142 screens, axe 156 pages 0 violations, `wcag22` 151 screens, `overlay` 20 dialogs and 456 popovers across 154 screens, `form-validation` 26 forms, `undefined-classes` 0, `dead-routes` 0 of 350 — all clean. **`rubocop` found 1 offence, mine**: `Rails/FindEach` on `page.all(...).each`, a false positive since a Capybara result set has no `find_each`, rewritten rather than silenced. **The suite is not reliably green and the table no longer claims it is.** Three full runs gave a self-inflicted `PG::TRDeadlockDetected` (a second `rspec` against the same test database — an artefact, and it cost a run before being recognised), one `request_system_spec` failure with six `<<ERROR>>` stale-element reads that passes in isolation, and one clean run. **The same seed gave both a failure and a pass**, so it is timing rather than ordering; a genuine baseline at that seed without the day's changes was clean at 3,275. The callout change was proven a **no-op for every existing call site** by diffing the rendered partial — which also caught a stray space from an empty attribute, now gone. Recorded in `todo.md` as a second, distinct flake. |
 
 
 
@@ -333,27 +334,38 @@ zero across these commits; several were pre-existing bugs the old markup had bee
 
 ## Current state
 
-Measured on 2026-08-28 as of `d7543ecff`, the last entry above. Re-run the commands in
+Measured on 2026-09-03 as of `PENDING`, the last entry above. Re-run the commands in
 [migration-map.md](migration-map.md#verifying-a-migration) to check them.
 
 | | |
 | --- | --- |
-| Commits on the branch | 315 |
-| Files changed against `main` | 822 |
+| Commits on the branch | 624 |
+| Files changed against `main` | 1,078 |
 | Controllers on a design system layout | 63 of 65 |
-| Views carrying design system markup | 332 of 367 |
-| Stimulus controllers | 37 |
+| Views carrying design system markup | 346 of 383 |
+| Stimulus controllers | 45 |
 | Undefined legacy classes left in `app/views` | 0 |
-| Routes whose request would raise | 0 of 349 |
-| Code no route, render or caller reaches | 118 findings, documented in design-decisions.md |
+| Routes whose request would raise | 0 of 350 |
+| Code no route, render or caller reaches | 149 findings, documented in design-decisions.md |
 
-Re-run at this commit: `bundle exec rspec` 2962 examples, 0 failures, 1 pending (a pre-existing
-`xit`); `rubocop` no offenses; `erb_lint` 415 files, no errors; `page-audit.rb` 0 defects across
-354 views, 0 with debt; `route-sweep.js` 142 screens
-as three roles, no findings; `wcag-audit.js` 156 pages,
-0 axe violations; `overlay-audit.js` 4 dialogs and 28 popovers at two viewports, no findings;
-`undefined-classes.py` 0 orphans; `dead-routes.rb` 0 dead and 0 shadowed over 349;
-`dead-code.rb` 118 findings, all of them documented rather than removed.
+Re-run at this commit: `bundle exec rspec` **3,280 examples, 1 pending** (a pre-existing `xit`) —
+see the note below on the one failure; `rubocop` no offenses; `erb_lint` 432 files, no errors;
+`page-audit.rb` 0 defects across 358 views, 0 with debt; `route-sweep.js` 142 screens as three
+roles, no findings; `wcag-audit.js` 156 pages, 0 axe violations; `wcag22-audit.js` 151 screens,
+no failures; `overlay-audit.js` 20 dialogs and 456 popovers across 154 screens at two viewports,
+no findings; `form-validation-audit.js` 26 forms, no findings; `undefined-classes.py` 0 orphans;
+`dead-routes.rb` 0 dead and 0 shadowed over 350; `dead-code.rb` 149 findings, all of them
+documented rather than removed.
+
+**The suite is not reliably green, and saying "0 failures" here would be wrong.** Three full runs
+at this commit gave: one deadlock in `distribution_system_spec` (`PG::TRDeadlockDetected`, caused
+by running a second `rspec` against the same test database at the same time — an artefact, not a
+defect); one failure in `request_system_spec` "with filters cleared displays all requests",
+which passes on its own and failed with six `<<ERROR>>` stale-element reads, the signature of an
+assertion racing a Turbo frame re-render; and one clean run. The same seed produced both a failure
+and a pass, so it is non-deterministic rather than order-dependent. A genuine baseline at that seed
+without the day's changes was clean at 3,275 examples. This is tracked in
+[todo.md](todo.md#test-suite) alongside the older `--seed 43125` entry.
 
 Three of those numbers moved for reasons worth naming. **354 views, not 330**: `page-audit.rb`
 only knew four page kinds and a template named after a collection action matched none of them,

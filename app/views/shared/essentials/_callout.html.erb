@@ -54,7 +54,10 @@
      <%= tag.attributes(id: callout_id, role: (focusable ? nil : role),
                         tabindex: (focusable ? "-1" : nil), data: data) %>>
   <i class="<%= icon %> mt-0.5 shrink-0" aria-hidden="true"></i>
-  <div class="min-w-0 flex-1" <%= tag.attributes(role: (focusable ? role : nil)) %>>
+  <%# class and role through one `tag.attributes` so a non-focusable callout -- which is all but one
+      of them -- renders byte-identically to before this option existed. Two separate attributes left
+      a stray space where the empty one had been. %>
+  <div <%= tag.attributes(class: "min-w-0 flex-1", role: (focusable ? role : nil)) %>>
     <% if title %><p class="font-semibold"><%= title %></p><% end %>
     <%= yield %>
   </div>

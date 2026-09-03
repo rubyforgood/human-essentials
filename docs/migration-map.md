@@ -20,11 +20,14 @@ migration](#verifying-a-migration):
 | | |
 | --- | --- |
 | Controllers on a design system layout | 63 of 65 |
-| Views carrying design system markup | 299 of 392 |
+| Views carrying design system markup | 346 of 383 |
 | Undefined Bootstrap/AdminLTE/Font Awesome classes in `app/views` | 0 |
-| Stimulus controllers | 30 |
+| Stimulus controllers | 45 |
 
-The 93 views in neither column are not a backlog — 55 are ten lines or fewer, 12 are mailer
+Measured 2026-09-03. This table had drifted and disagreed with the change log's — it read 299 of
+392 and 30 controllers — which is the reason both are now dated and measured together.
+
+The 37 views in neither column are not a backlog — most are ten lines or fewer, some are mailer
 templates, and the rest carry no markup of their own. [changelog.md](changelog.md#current-state)
 breaks that down.
 
