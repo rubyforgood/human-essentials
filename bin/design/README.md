@@ -293,12 +293,14 @@ screens that a single-role pass had never visited.
 One definition of each check, with the scope as an argument: a second script for the thorough run
 would be a copy, and a copy drifts.
 
-**Almost no audit here carries a list of pages any more.** Three exceptions: `audit.js` takes a path
-on the command line, `audit-selftest.js` uses one fixture page because it is testing the checks
-rather than the app, and **`overlay-audit.js` is unfinished** — it was widened and reverted, because
-it takes 58 seconds a page and would need over two hours. That is not a consequence of the widening:
-its nine-page version takes 525 seconds too, and nobody had ever measured it. Make it fast, then
-widen it; the evidence is in its header comment.
+**No audit here carries a list of pages any more.** Two exceptions, both deliberate: `audit.js`
+takes a path on the command line, and `audit-selftest.js` uses one fixture page because it is
+testing the checks rather than the app.
+
+`overlay-audit.js` was the last, and it was slow rather than merely wide: **58 seconds a page**, and
+always had been. The cause was three `.click().catch(() => {})` calls each waiting Playwright's
+default 30-second timeout and swallowing it. Bounded clicks, a visibility filter and condition waits
+took it from **525s for 9 screens to 254s for 154** — 1.6s a screen.
 
 Getting there widened seven audits and found four things:
 

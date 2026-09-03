@@ -9089,3 +9089,71 @@ and a `Promise.race` budget resolves the race while leaving the slow work runnin
 
 It is the only audit in the directory still carrying a hardcoded page list, and the README says so
 rather than letting the claim "no audit hardcodes its pages" stand at 95% true.
+
+## 2026-09-03 — The overlay audit, and four guesses before one measurement
+
+`overlay-audit` took **58 seconds a page**. Widening it to every screen was tried and reverted
+because 150 screens would have been two hours, and four rounds of optimisation followed — cheap
+discovery before expensive work, a per-screen instance cap, hoisting axe-core's half-megabyte
+injection out of a per-dialog loop, a `Promise.race` time budget. **None of them helped, because
+none of them was the cause.**
+
+### What it actually was
+
+Three calls of the form `element.click().catch(() => {})`.
+
+Playwright retries an unclickable element until its **default 30-second timeout**, and an empty
+catch hides that it ever happened. Measured on `/organization`: **30,335ms** inside
+`checkNativeConfirms`, for seven triggers that are menu items inside a *closed* kebab and therefore
+have no box at all. The same pattern on the filter disclosure — `page.click(selector).catch()` for a
+selector most screens do not have — cost another 30 seconds per screen.
+
+Two page visits per screen, ~30 seconds each, is the 58.
+
+### How it was found, having not been found four times
+
+By timing each phase instead of reasoning about it. The sequence that worked:
+
+1. **Time the baseline.** 525s for 9 screens — which is where the previous attempt should have
+   started, and did not. The widening was never the problem.
+2. **Time each phase.** `pop=1720 dlg=31234` on `/organization`. One phase, thirty seconds.
+3. **Time each step inside that phase.** In isolation every step was fast — 655ms total — which
+   said the cost was contextual, not in the code being read.
+4. **Split what the timer was covering.** The earlier instrumentation had lumped the second
+   navigation, `checkDialogs` and `checkNativeConfirms` into one number. Separated:
+   `checkNativeConfirms` alone, 30,335ms.
+
+Four hypotheses were tested and rejected on the way — `networkidle` (0.7–1.4s here, not 29s), axe
+injection (fixing it changed nothing), the number of overlays per page (9s at worst), and a
+pathological single page (it was every page). **Each rejection was cheap and each was evidence.**
+
+### The fix, and the finding inside it
+
+- **Clicks are bounded and reported.** `clickOrReport` uses an explicit 2-second timeout and pushes
+  a finding on failure, because *a control that is on screen and cannot be clicked is a real
+  defect* — something is covering it. The empty catch was hiding that finding exactly as thoroughly
+  as it hid the delay.
+- **Only rendered triggers are clicked.** A closed row menu still holds its Delete in the document
+  with no box. Those are `confirm-audit.js`'s job; it opens the panel first, which is the only
+  honest way to reach them.
+- **Fixed sleeps became condition waits.** 100 popovers spent 57 seconds asleep on
+  `waitForTimeout(250)`. Waiting for `aria-expanded` is faster *and* correct — a fixed pause is
+  simultaneously too long for the common case and too short for the slow one.
+
+```
+525s for 9 screens   ->   254s for 154 screens
+58s per screen       ->   1.6s per screen
+```
+
+Then widened onto route enumeration like every other audit, and verified by stripping
+`aria-labelledby` from the shared modal partial and confirming the check reports it on every screen
+that renders one.
+
+### What this says about the earlier attempt
+
+The four failed optimisations were not bad ideas; they were answers to a question nobody had asked.
+**"Why is this slow" was never measured — only "why did widening make it slow", which presupposed
+something untrue.** The baseline measurement took ninety seconds and would have redirected the whole
+effort.
+
+`audit-suite`'s "measure before you optimise — including the baseline" now says this in one line.

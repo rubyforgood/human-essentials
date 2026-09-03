@@ -54,29 +54,6 @@ are otherwise the same page now. Adding base item and barcode value would need `
 and `by_value` permitted in `filter_params` — both are real scopes on `BarcodeItem`, so it is
 safe, but it is a feature rather than consistency work.
 
-## `overlay-audit` takes 58 seconds a page, so it still has a hardcoded page list
-
-Every other audit in `bin/design/` enumerates its screens from the router. This one was widened the
-same way on 2026-09-02 and **reverted**, because at 150 screens it never returned.
-
-**The widening is not the problem, and that is the useful part.** The nine-page version takes **525
-seconds** — about 58 a page — and always has; nobody had timed it. Four attempts to speed up the
-widened version were four attempts at the wrong problem.
-
-What is already measured, so picking this up does not start with re-deriving it:
-
-- Navigation is not the cost. `visit()` averages **203ms** a screen, ~31s for all 154.
-- `checkDialogs` on `/organization` alone costs **31 seconds**. A few screens dominate; a trigger
-  there appears to navigate rather than open, leaving everything after it waiting on a load.
-- `axeOn` injected the whole of axe-core — about half a megabyte — **once per dialog**. Fixing that
-  to once per page changed the runtime not at all, which is how we know axe is not the cost.
-- A `Promise.race` time budget does not help: it resolves the race and leaves the slow work running
-  behind it, still holding the page.
-
-**Fixing it means making the audit fast first, then widening it** — the reverse of the order I
-tried. Start by finding what on `/organization` takes 31 seconds. The evidence above is repeated in
-the file's own header comment.
-
 ## Documentation
 
 **`docs/table-audit.md` has not been re-run since 2026-08-18.** It covers 19 bank-side and 8
