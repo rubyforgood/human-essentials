@@ -1,13 +1,27 @@
 <%#
   The request could not be created. This was the 2021 design -- bg-red-200, a 150px inline SVG
   and a text-4xl heading -- and it was the last error UI in the app not on the design system.
+
+  **The guidance sentence belongs to the caller.** Three forms render this partial, and only the
+  caller knows what fields it has. The default describes item lines, which is right for
+  `partners/requests` and `partners/individuals_requests`. `partners/family_requests` has no
+  lines at all -- its only controls are a checkbox per child -- so it passes its own. Until it
+  did, a partner who submitted with no children selected was told to check the item, quantity
+  and pack unit on their lines, on a page that has none of those things.
+
+  The `<ul>` below carries the specific errors either way; this sentence is the standing advice
+  for the form, so it has to be true of the form.
 %>
 <%= render "shared/essentials/callout", tone: :danger, wrapper_class: "mb-6",
       title: "That request could not be sent" do %>
   <p class="mt-1">
-    Every line needs an item selected and a quantity greater than zero.
-    <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
-      Items that come in packs also need a unit chosen.
+    <% if local_assigns[:guidance].present? %>
+      <%= local_assigns[:guidance] %>
+    <% else %>
+      Every line needs an item selected and a quantity greater than zero.
+      <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
+        Items that come in packs also need a unit chosen.
+      <% end %>
     <% end %>
   </p>
   <% if @errors.present? %>

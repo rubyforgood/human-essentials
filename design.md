@@ -3618,6 +3618,19 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+**A shared error partial must not name fields the page does not have.** Where one error component
+is rendered by several forms, its standing advice — the sentence above the list of specific
+errors — belongs to the *caller*, because only the caller knows what it is asking for. Pass it in
+and default to the common case. `partners/requests/_error` is rendered by three forms and told
+every one of them "Every line needs an item selected and a quantity greater than zero. Items that
+come in packs also need a unit chosen"; that is true of the two item-request forms and false of
+`partners/family_requests`, whose only controls are a checkbox per child. A partner who submitted
+with nobody selected was told to go and check the quantity on lines that were not on the screen.
+
+The test for this is the one worth writing: assert the page **does not** contain the other form's
+sentence. The positive assertion passes just as well with the default restored, because the
+specific error in the list is unchanged — only the negative one catches the regression.
+
 <a id="background-downloads"></a>
 ### A long export downloads in the background
 

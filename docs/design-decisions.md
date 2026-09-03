@@ -9157,3 +9157,74 @@ something untrue.** The baseline measurement took ninety seconds and would have 
 effort.
 
 `audit-suite`'s "measure before you optimise — including the baseline" now says this in one line.
+
+## 2026-09-03 — Two accessibility defects, and a to-do that was wrong about both
+
+Two items sat under **Accessibility** in `docs/todo.md`. One was real and one was not, and the
+difference only showed up by driving the page instead of reading it.
+
+### The account menu (real, and already covered by a rule)
+
+The avatar trigger in both top bars carried `aria-expanded` with no `aria-controls`, and the panel
+it opens had no `id`. design.md line 447 has asked for both since the disclosure rules were
+written — *"`aria-expanded` plus `aria-controls` on anything that opens a region"* — so this was a
+conformance gap, not a missing convention, and it needed no new rule. The panel gets a
+`SecureRandom.hex(4)` id because both shells render one per page and a fixed id would collide if a
+layout ever nested them.
+
+`aria-expanded` on its own reports that *a* region opened without saying which; the panel is a
+sibling of the trigger rather than a descendant, so the DOM does not carry the relationship
+either.
+
+### The family request form (not what the to-do said)
+
+The to-do said: *"shows only an error summary, with no inline errors and no `aria-invalid`… the
+form needs per-field error rendering."* Both halves of that turned out to be wrong.
+
+- **There are no per-field errors to render.** Every error on this path is
+  `errors.add(:base, …)` — `app/models/request.rb:89` and
+  `app/services/partners/family_request_create_service.rb:33,57`. Nothing is attached to an
+  attribute.
+- **There is no field to mark invalid.** The form's only controls are 36 checkboxes, one per
+  child. The error is about the *set* being empty, not about any one checkbox. Marking all 36
+  `aria-invalid` would be noise, and marking one would be a lie.
+- **The summary is announced.** `partners/requests/_error` renders a `:danger` callout, and
+  `shared/essentials/_callout` gives danger and warning `role="alert"` by default.
+
+What was actually wrong was the copy. Submitting with nobody selected produced:
+
+> **That request could not be sent**
+> Every line needs an item selected and a quantity greater than zero. Items that come in packs
+> also need a unit chosen.
+> • completely empty request
+
+Three fields are named — item, quantity, pack unit — and **none of them is on the page.** The
+partial is shared with the two item-request forms, where that sentence is exactly right.
+
+So the guidance sentence became a caller-supplied local defaulting to the existing text: the two
+item-request forms render byte-identically, and `partners/family_requests` passes *"Choose at
+least one child, then send the request again."* Only the caller knows what it is asking for.
+
+**Rejected:** giving the partial a `request_type` and branching inside it. That puts knowledge of
+every caller into the shared component and grows a conditional each time a fourth form appears.
+A local defaults cleanly and keeps the component ignorant of who renders it.
+
+**The test that matters is the negative one.** `expect(response.body).not_to include("Every line
+needs an item selected")` is what catches a regression; the positive assertion passes just as
+happily with the default restored, because the specific error in the bullet list never changed.
+Verified by reverting the fix and watching the example fail before trusting it green.
+
+### Left deliberately
+
+- **`"completely empty request"`** still reaches partners verbatim — lowercase, unpunctuated,
+  written for a developer. It is a model validation in `app/models/request.rb:89`, three specs
+  assert the exact string, and all three request types share it, so rewording it is a model change
+  with a much wider blast radius than the copy fix beside it.
+- **No error summary in this app is focused on re-render.** Measured: after the failing submit,
+  `document.activeElement` is `BODY`. `role="alert"` is dependable for content inserted into a
+  live page; on initial load, when the region is already there as the accessibility tree is first
+  built, screen readers vary. The fix is `tabindex="-1"` plus focus on load — but it belongs to all
+  41 views that render a summary at once, not to one page.
+
+Both are in `docs/todo.md` with the measurements, because a known gap that is written down costs
+nothing and the same gap undocumented costs an afternoon.

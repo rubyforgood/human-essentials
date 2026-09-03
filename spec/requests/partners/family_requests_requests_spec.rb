@@ -104,6 +104,20 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       expect(Partners::ChildItemRequest.find_by(child_id: children[1].id)).to be_nil
       expect(Partners::ChildItemRequest.find_by(child_id: children[2].id)).to be_present
     end
+
+    # `partners/requests/_error` is shared with the two item-request forms, and its default
+    # sentence is about item lines, quantities and pack units. This form has none of those --
+    # only a checkbox per child -- so it passes its own guidance. The negative assertion is the
+    # point of the example: dropping the `guidance:` local silently restores advice that names
+    # three fields the partner cannot see.
+    it "tells a partner who picked no children to pick a child, not to check their item lines" do
+      partner.update!(status: :approved)
+
+      post partners_family_requests_path, params: {}
+
+      expect(response.body).to include("Choose at least one child, then send the request again.")
+      expect(response.body).not_to include("Every line needs an item selected")
+    end
   end
 
   describe "POST #validate" do
