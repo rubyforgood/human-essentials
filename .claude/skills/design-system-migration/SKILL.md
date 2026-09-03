@@ -61,6 +61,14 @@ Load these when the work reaches them, not before.
 | `reference/retiring-a-legacy-system.md` | **Only if** there is an old UI framework to remove |
 | `templates/` | Starting a new app: empty skeletons for the spec, decision log and change log |
 
+Three sibling skills carry parts of this that are not about design, and are not repeated here:
+
+| Skill | What it owns |
+| --- | --- |
+| `audit-suite` | Writing checks you can trust — scope, controls, the ways a check lies |
+| `evidence-discipline` | Measuring before asserting, provenance, correcting a claim |
+| `wcag-conformance` | WCAG 2.2 A/AA, and what automation cannot see |
+
 ## Setting up on a new app
 
 **Ask first: is there a legacy system being retired?** If not, skip
