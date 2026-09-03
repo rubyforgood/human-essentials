@@ -80,6 +80,29 @@ Same taxonomy as the checks, one level up: fixture assumption, fixture assumptio
 The mitigation is structural: **a positive control that passes is evidence the mutation worked.** If
 a positive control ever goes quiet, suspect the control before the check.
 
+### Controlling a guard: remove it *and* restore what it suppresses
+
+A distinct mode, and a convincing one, because the false result looks exactly like the defect you
+are hunting.
+
+When the check defends against something a **guard** prevents, deleting the guard is not a control.
+The guard has usually been in place long enough that the underlying condition was fixed too, so
+removing it changes nothing and the audit correctly reports clean — which reads as a false negative
+and is not one.
+
+A CSS rule stopped a page being scrolled sideways. To test whether the audit could see a sideways
+scroll, the rule was deleted and the audit run: **no findings**. That looks damning. The page did
+not scroll, because the layout that used to overflow had since been narrowed; there was nothing for
+the rule to suppress. Only deleting the rule **and** injecting an over-wide element produced an
+actual 900px pan, which the audit reported immediately and correctly.
+
+> Ask what the guard suppresses. Restore *that*, not merely the absence of the guard.
+
+The general form: `guard + condition = safe`. Removing the guard tests nothing unless the condition
+is present. It applies to a validation with no invalid record to reject, a rate limiter with no
+traffic, a sanitiser with nothing dangerous in the input, an `overflow` rule with nothing
+overflowing.
+
 ## In CI
 
 Run the harness on every change; run the audits deliberately.

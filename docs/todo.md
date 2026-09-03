@@ -164,26 +164,37 @@ validates that it has at least one, so the empty branch is unreachable:
 Worth revisiting only if one of those validations is relaxed. Written down so the next sweep does
 not spend an afternoon rediscovering that they are fine.
 
-## The document can be swiped sideways when a table overflows
+## The sideways swipe: closed, both halves of the entry were wrong
 
-`html { overflow-x: clip }` is set for exactly this and **does not work**. Measured on
-`/purchases` at 375px *before* any of the `.notes` work: the `<h1>` could be swiped from
-`left: 16` to `left: -670`, taking the heading and every control off screen. The computed style on
-`html` really is `clip`, no element overflows once clipping ancestors are accounted for, and the
-whole ancestor chain of the table is properly clipped — Chrome still counts the clipped table in
-the root's scrollable overflow and lets the viewport pan.
+Kept as a record because the entry was confidently wrong twice, and the way it was settled is the
+reusable part.
 
-`body { overflow-x: clip }` was tried and did not help; the change was reverted rather than left
-in as dead CSS.
+**The page does not pan.** Checked at 320px and 375px across all 154 routes: nothing swipes. Then
+checked properly, by removing `html { overflow-x: clip }` entirely and rebuilding — still nothing
+pans, `root 320/320`, `body 320`. The layout no longer overflows the root at all, so there is
+nothing left for the rule to clip. The `.notes` column cap is the likely reason. The rule stays as
+a guard; it is simply no longer load-bearing on any screen we have.
 
-**`responsive-audit.js` does not catch it**, which is the more useful half of this finding. It
-compares `scrollWidth` with `clientWidth`, and that is the very number the `clip` rule was written
-to neutralise — so the audit reads a proxy and reports clean while the page pans. The honest check
-is the one used here: scroll the window and see whether the `h1` moves.
+**`responsive-audit.js` was never blind to it.** The entry said it "compares `scrollWidth` with
+`clientWidth` … reads a proxy and reports clean while the page pans", and asked for a check that
+swipes and watches the `h1`. That check was already in the audit — added in `cfeee9130` on
+**2026-08-21**, three days *before* this entry was written on 2026-08-24. It uses a real
+`page.mouse.wheel` gesture, and `bodyOverflow` is only its `else` branch. Proven with a positive
+control: a 2000px element with the clip rule removed pans the page 900px, and the audit reports
+`swipes 900px sideways`.
 
-Not fixed because it is pre-existing and its own piece of work. The `.notes` pass made it
-*reachable at 1440* on `/purchases` for a while by widening the table past its scroll region; the
-column is capped at 16rem specifically so that no longer happens.
+**The first control was invalid, which is the lesson.** Removing the clip rule on its own produced
+no pan and an audit that said "clean" — which looks exactly like a false negative and is not one.
+Nothing overflowed, so there was nothing for clipping to suppress. A control for a *guard* has to
+restore the condition the guard exists to suppress, not just remove the guard. Two changes were
+needed together: clip off **and** overflowing content.
+
+One real gap was found and hardened: the gesture sat inside `if (anchor)`, so a screen with no
+`<h1>` skipped the swipe entirely. That is 0 of 151 screens today. In the case tested, the
+`bodyOverflow` fallback still flagged the page — with the wrong message — so the old code was not
+blind there. The case it would genuinely have missed is the original bug's own signature: clip on,
+body not overflowing, page pans anyway, no heading. That last step is reasoning, not a
+measurement; it could not be reproduced, because the pan itself no longer happens.
 
 ## A column of links has no convention yet
 

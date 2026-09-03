@@ -9299,3 +9299,67 @@ Partner key has already been taken` before the fix went in.
 Naming the limit matters more than the fix here. The tempting write-up — "flake fixed" — would have
 closed a to-do that is still open, and the next person to see those 7 failures would have started
 from the assumption that this had been dealt with.
+
+## 2026-09-03 — The swipe that no longer happens, and the audit that was never blind
+
+Asked to fix two things: a page that could be swiped sideways on a phone, and a `responsive-audit.js`
+that reported clean while it happened. Neither turned out to exist. What the session produced instead
+is a control-design lesson worth more than either fix would have been.
+
+### Neither half of the to-do was true
+
+**The page does not pan.** At 320px and 375px across all 154 routes, nothing swipes. That is weak
+evidence on its own — `overflow-x: clip` is *meant* to stop it — so the rule was removed from
+`app/assets/tailwind/application.css` and Tailwind rebuilt. Still nothing: `root 320/320`,
+`body 320`, the `h1` unmoved by a wheel gesture. The layout no longer overflows the root at all,
+most likely from the `.notes` column cap. The clip rule stays, but it currently guards nothing.
+
+**The audit already had the honest check.** The entry said it "compares `scrollWidth` with
+`clientWidth`" and asked for a check that swipes and watches the heading move. That check was
+already there — `page.mouse.wheel(900, 0)`, then read the `h1`'s `left` — added in `cfeee9130` on
+**2026-08-21**, three days before the entry claiming its absence was written on 2026-08-24.
+`bodyOverflow` is its `else` branch, not its method. design.md has had a table since then spelling
+out why a gesture and `scrollTo` answer different questions.
+
+### The invalid control, which is the reusable part
+
+Removing the clip rule and running the audit gave **no findings**. That reads as a caught false
+negative: the guard is gone, the audit says clean, therefore the audit is blind. It is the
+conclusion the to-do had already reached, arriving with apparent confirmation.
+
+It was wrong. Nothing panned because nothing overflowed. The rule had been in place long enough
+that the layout underneath it had been fixed independently, so deleting it changed nothing.
+
+**A guard and the condition it suppresses are two things, and a control needs both.** Only with the
+rule removed *and* a 2000px element injected did the page actually pan — 900px, `h1` from `left: 16`
+to `left: -884` — and the audit reported `swipes 900px sideways` on the first run.
+
+Generalised into `audit-suite`'s control harness as its own failure mode, because the shape recurs
+well beyond CSS: a validation with no invalid record, a rate limiter with no traffic, a sanitiser
+with nothing dangerous in the input. `guard + condition = safe`; removing the guard tests nothing
+if the condition has gone.
+
+### The one real gap
+
+The gesture sat inside `if (anchor)`, where the anchor is an `<h1>` — so a screen without one
+skipped the swipe silently. Measured: **0 of 151** screens lack an `h1`, so this was latent. It is
+hardened anyway, because silence is the failure this check exists to prevent, and `targets.js`
+already carries the same principle for navigation ("an audit that gives up on a page reports it as
+clean").
+
+Honest about its size: in the case actually tested, the old code still flagged the page through the
+`bodyOverflow` fallback, with a less accurate message — so it was not blind there. The case it would
+truly have missed is the original bug's own signature: clip on, body not overflowing, page panning
+anyway, no heading. That step is reasoning rather than measurement, and it is stated as such,
+because the pan can no longer be reproduced to test it.
+
+Verified after the change: 429 page/width combinations, the same 2 findings as before, both about
+fixed chrome on a landscape phone. No new false positives.
+
+### On to-do entries as evidence
+
+Three entries in a row have now been wrong about their own subject — the family request form, the
+`--seed 43125` flake, and this one. All three were written in good faith by someone who had just
+measured something. What rots is not the measurement but its **scope**: the audit gained a check,
+the file set changed, the layout got narrower. A to-do entry is a claim with a timestamp, and the
+first move on picking one up should be to re-measure it, not to act on it.
