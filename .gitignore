@@ -90,7 +90,15 @@ out/
 
 .vscode/
 .aider*
-.claude
+# Local Claude Code state -- settings, session data, caches. Not shared.
+#
+# `.claude/*` rather than `.claude`, with a negation below: git cannot re-include anything inside a
+# directory that is itself excluded, so the directory has to stay visible for the exception to work.
+.claude/*
+# ...except skills, which are a shared artefact. A skill in the repository is versioned, reviewed in
+# pull requests, and available to anyone who clones -- which is the whole difference between it and
+# one that lives in your home directory.
+!.claude/skills/
 
 # Tailwind v4 build output. Compiled from app/assets/tailwind/application.css by the
 # tailwindcss-rails gem, which hooks assets:precompile, so it is built on deploy.
