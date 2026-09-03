@@ -9228,3 +9228,74 @@ Verified by reverting the fix and watching the example fail before trusting it g
 
 Both are in `docs/todo.md` with the measurements, because a known gap that is written down costs
 nothing and the same gap undocumented costs an afternoon.
+
+## 2026-09-03 — A flake whose recipe had gone stale, and the real bug found on the way
+
+`docs/todo.md` carried a reproduction: `bundle exec rspec --seed 43125` fails 7 examples in
+`adult_incontinence_report_service_spec.rb`, every one of them `create(:kit, organization:
+organization)` raising `Validation failed: Name has already been taken`. The entry said the hard
+part of a flake — reproducing it — was already done.
+
+Running that exact command today: **3272 examples, 0 failures.** Four further seeds — 11111,
+22222, 33333, 44444 — also came back clean, and none of the five runs contained the string
+`has already been taken` anywhere in its output.
+
+### Why a seed stops reproducing
+
+RSpec's `--seed` shuffles **the example groups it loaded**. It is a permutation of a list, so it
+only names the same ordering if the list is the same. The entry was written on 2026-08-23, and
+since then **31 spec files have been added and 1 removed** — 267 to 297. Seed 43125 stopped
+selecting the ordering that failed at roughly the first commit after the entry was recorded, which
+is to say it was stale before anyone read it.
+
+This is a general trap and worth stating plainly: **a seed is not a reproduction, it is a
+reproduction relative to a file set that nobody records.** The durable tool is `rspec --bisect`,
+which takes a currently-failing run and reduces it to the minimal set of examples that still
+reproduces — an ordering expressed as a list of examples, which does not rot when a spec file is
+added. The way to use it is to run until something fails, then bisect *that* seed; never to store
+a seed and expect it to mean the same thing next month.
+
+### The bug found while looking
+
+Tracing which validation could produce that message narrowed it quickly. `Item`'s name uniqueness
+has a **custom** message, so the default `"has already been taken"` had to come from somewhere
+else, and `BaseItem` is the only model whose name uniqueness is **unscoped**. `Seeds.seed_base_items`
+was:
+
+```ruby
+BaseItem.find_or_create_by!(
+  name: entry["name"], category: category, partner_key: entry["key"],
+  updated_at: Time.zone.now, created_at: Time.zone.now
+)
+```
+
+`find_or_create_by!` builds its lookup from **every** attribute handed to it, so
+`created_at: Time.zone.now` put *"created at this exact instant"* into the WHERE clause. No stored
+row can match an instant that has just been generated, so the find missed every time and fell
+through to a create that tripped the unique name. The method was written in the idiom for
+idempotency and was not idempotent.
+
+`db/seeds.rb:27` calls it **unguarded**, with nothing before it but a production check — so
+`bin/rails db:seed` raised on any database that already had base items. The onboarding doc's
+`bin/setup   # first time only` was describing this bug as though it were a design.
+
+The test suite never hit it, because the organization factory guards with
+`if BaseItem.count.zero?`. That guard is why this survived: it made a non-idempotent seeder look
+idempotent everywhere anyone would have noticed.
+
+**Fix:** drop the two timestamps. Rails sets both on create, and their only effect here was to
+break the lookup. The factory guard stays — it now saves 47 queries per organization rather than
+concealing a defect — and its comment, which claimed 45 base items, says 47, which is what the
+JSON's 46 entries plus the global `Kit` one actually produce.
+
+### What is not claimed
+
+**This is not asserted to be the flake.** The factory guard means `seed_base_items` is not reached
+with a populated table in a spec run, so the reported path is probably something else. What can be
+shown is narrower and still worth having: a real defect that emits exactly the reported message,
+proven by a spec that was watched failing with `Validation failed: Name has already been taken,
+Partner key has already been taken` before the fix went in.
+
+Naming the limit matters more than the fix here. The tempting write-up — "flake fixed" — would have
+closed a to-do that is still open, and the next person to see those 7 failures would have started
+from the assumption that this had been dealt with.

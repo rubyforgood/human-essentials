@@ -162,9 +162,15 @@ Conventions worth knowing before your first PR:
 ## Getting it running
 
 ```bash
-bin/setup     # gems, database, seeds. First time only.
+bin/setup     # gems, database, seeds
 bin/start     # web on :3000, job worker, Tailwind watcher
 ```
+
+`bin/rails db:seed` is safe to run again on an already-seeded database. It was not until
+2026-09-03: `Seeds.seed_base_items` passed `created_at`/`updated_at` to `find_or_create_by!`,
+which puts them in the lookup, so the find could never match an existing row and the create it
+fell through to failed on `BaseItem`'s unique name — `Validation failed: Name has already been
+taken`, on the second seed of any database.
 
 Seed logins — every password is `password!`:
 
