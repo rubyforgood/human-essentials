@@ -19,7 +19,7 @@ RSpec.describe "/partners/profiles", type: :request do
       # bare markup.
       page = Nokogiri::HTML(response.body)
       pairs = page.css("dt").to_h { |dt| [dt.text.strip, dt.at_xpath("following-sibling::dd[1]")&.text&.strip] }
-      expect(pairs["Current providing diapers"]).to eq("Unspecified")
+      expect(pairs["Currently providing diapers"]).to eq("Unspecified")
       expect(pairs["Form 990 filed"]).to eq("No")
       expect(pairs["Do you verify the income of your clients"]).to eq("Yes")
     end

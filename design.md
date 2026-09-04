@@ -108,6 +108,12 @@ Not `New Donation`, `Print Unfulfilled Picklists`, `FMV`. Proper nouns keep thei
 (NDBN, Human Essentials, a partner's name). This is the house style across Ruby for Good and
 it is the single most common review note on UI PRs here.
 
+**A cross-reference that goes nowhere is checked too.** `page-audit.rb` resolves every `](#...)`
+in `design.md` and `docs/*.md` against the headings and `<a id>` anchors of the file it points at,
+and reports the ones that miss. Seven had accumulated here, every one a section that had been
+*renamed* rather than never written — `#target-size` became "Tap targets", `#pills` became "Status
+pills" — plus three written as bare fragments while pointing at a heading in another document.
+
 **`page-audit.rb` enforces this on headings *and* labels.** It checked headings only until
 2026-09-04, which is precisely how **52 Title Case labels** survived the whole migration on the
 partner profile forms and two other screens: the rule existed, nothing measured it, and a rule with
@@ -173,6 +179,7 @@ row that is below its minimum quantity says "Below minimum"; an audit's status s
 is; a partner's state is a pill with a label. This is WCAG 1.4.1, and it is also just
 readable — a red cell does not say *why* it is red.
 
+<a id="contrast"></a>
 Text tones use the **-700** step. `rose-600` is 4.51:1 on white, which passes 4.5:1 by a
 hair; -600 is only ever used as a border or a filled background with white text on it.
 
@@ -1384,7 +1391,7 @@ to 16 and truncates beyond that. Below the threshold the dialog is not rendered 
 code ends and the next begins — which is the complaint the zipcode list drew.
 
 **Square, specifically, and that is the whole distinction.** Both chip-shaped things this app already
-has are `rounded-full`: a [status pill](#pills), which carries a tone colour and which is *a state*,
+has are `rounded-full`: a [status pill](#status-pills), which carries a tone colour and which is *a state*,
 and a filter chip, which carries an `×` and means a filter you can remove. A square uncoloured box
 that does nothing when clicked is a third object and reads as one. `font-mono` is the treatment
 barcode values already get — a code you read a character at a time.
@@ -1501,7 +1508,7 @@ come from the bar's own placement.
 
 <a id="rail-bar-alignment"></a>
 **Settled, the bar sits on the bottom edge of its track.** The track must stay 24px for
-[2.5.8](#target-size), and a centred 6px bar leaves 9px of dead space under it — dead space that is
+[2.5.8](#tap-targets), and a centred 6px bar leaves 9px of dead space under it — dead space that is
 still a pointer target, so it cannot be allowed to reach the pager's controls or a click meant for
 *Next* jumps the table sideways. That sets a floor: with the bar centred, the closest it gets to the
 pager without the track overlapping a control is **22px**, against 12px below. Sitting the bar on the
@@ -1597,7 +1604,7 @@ Next are ordinary `:secondary, size: :sm` buttons in the view, driven by `calend
 through `today()`, `prev()` and `next()`. Three filled dark buttons were a page's worth of
 primary-looking chrome for moving the month, on a page whose real action is a quiet secondary; and
 three buttons are cheap to own outright, which means a library upgrade cannot silently revert them.
-"‹ Prev" and "Next ›" rather than bare chevrons, because [icon-only](#icons) is for a repeating row
+"‹ Prev" and "Next ›" rather than bare chevrons, because [icon-only](#iconography) is for a repeating row
 action and this is the shape the pager already uses for the same job.
 
 <a id="calendar-views"></a>
@@ -1944,7 +1951,7 @@ to the subtitle's baseline.
 `:essentials_collection`'s `item_wrapper_class`, so no page decides this for itself.
 
 They were 24px rows with a **0px** gap, flush against each other, in every group in the app. That
-passes [2.5.8](#target-size) on size alone — the row is exactly the 24px minimum — and sits on its
+passes [2.5.8](#tap-targets) on size alone — the row is exactly the 24px minimum — and sits on its
 floor with no separation.
 
 **The gap is what buys the separation; do not inflate the row.** A first pass took the row to 32px
@@ -2067,7 +2074,7 @@ rather than naming the exception:
 **The insecure-origin case is the one to expect in development.** Browsers only expose
 `navigator.mediaDevices` on `https` or `localhost`, so reaching the app through a port forward or a
 tunnel on plain `http` removes the camera API entirely — see
-[the tunnel note](#behind-a-proxy-or-tunnel).
+[the tunnel note](docs/onboarding.md#behind-a-proxy-or-tunnel).
 
 <a id="barcode-scan-field"></a>
 **A barcode field is `shared/essentials/barcode_scan_field`.** One partial, used by the barcode
@@ -2439,7 +2446,7 @@ happen where "Requests as CSV" is a noun phrase. GitHub's Download menu does the
 **How many items before it stops being the right control.** Two to about four closely related
 outputs belong in one menu, each item naming what it produces — the content and the format, as
 "Requests as CSV" and "Unfulfilled picklists, PDF (12)" do. Past that, or for anything that is not a
-straight download, it belongs in the [reports hub](#reports) rather than a page header: `/reports`
+straight download, it belongs in the [reports hub](docs/onboarding.md#reports) rather than a page header: `/reports`
 already carries Distributions, Donations, Purchases, Requests, Compliance and Activity. A page
 header menu is for getting *this page's* data out, not for browsing a catalogue of reports.
 
@@ -3048,7 +3055,7 @@ doing it in JavaScript.
 
 <a id="toolbar-buttons-shrink"></a>
 **The phone bug was flex, not width.** Below 768px Trix narrows the buttons with
-`max-width: calc(0.8em + 3.5vw)` — about 22px at 375, under [2.5.8](#target-size)'s 24. Overriding
+`max-width: calc(0.8em + 3.5vw)` — about 22px at 375, under [2.5.8](#tap-targets)'s 24. Overriding
 the width changed nothing, because width was never what was being ignored: the buttons are flex
 children of `.trix-button-group` inside `.trix-button-row`, and fourteen 32px buttons do not fit a
 375px row, so every one of them **shrank**. `flex: none` is the fix; the row is already
@@ -3627,7 +3634,7 @@ condition stated there still counts as marked.
 - **The summary's items are plain text, not links.** They were anchors to each field once --
   the GOV.UK pattern -- and inside a red box they read as blue underlined links, a third colour
   in a component that already has two. Two rules were being broken at once: the underline,
-  because [Interaction](#interaction) says a link that is its own block takes none, and the
+  because [Interaction](#accessibility) says a link that is its own block takes none, and the
   tone, because brand blue on a danger surface points at nothing the reader can act on. A plain bulleted
   list under a bold line is what Polaris, Carbon and Atlassian are each observed showing for the
   same component. The jump is
@@ -3843,7 +3850,7 @@ stayed visible underneath the chips.
 It replaced select2 in free-tagging mode with `select2-hide-dropdown-value`, which was reported as
 not intuitive and was: it looked like a select, so the first thing anyone did was click it expecting
 a list, and nothing opened. Nothing on screen said the interaction was "type, then comma". Measured
-before: the remove target was **9&times;21** against [2.5.8](#target-size)'s 24&times;24, and the
+before: the remove target was **9&times;21** against [2.5.8](#tap-targets)'s 24&times;24, and the
 chips were select2's own `#aaa` border on `#e4e4e4`, which appear nowhere else here. Now a 24px
 button in a brand-50 chip. Options and reasoning in
 [docs/mockups/request-units.html](docs/mockups/request-units.html).
@@ -4097,7 +4104,7 @@ of the *table*, which on **five of the seven** overflowing tables is below the f
   `role="region"` that the arrow keys scroll, so a focusable rail would be a second tab stop per
   table duplicating a path that already works and is already announced. This is the pointer
   affordance that was missing, and nothing else.
-- **The track is the target, 24px tall** for [2.5.8](#target-size); the bar you see is 6px of it.
+- **The track is the target, 24px tall** for [2.5.8](#tap-targets); the bar you see is 6px of it.
 - **Injected by the controller, not written into 66 views**, and removed again when a table fits or
   goes away.
 
