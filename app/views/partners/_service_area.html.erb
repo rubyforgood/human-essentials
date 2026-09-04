@@ -91,7 +91,7 @@
         <% end %>
       </ul>
       <% if hidden_zipcodes.positive? %>
-        <button type="button" class="mt-2 text-sm font-medium text-brand-700 underline hover:text-brand-800"
+        <button type="button" class="mt-2 text-sm font-medium link-brand underline"
                 data-action="click->dialog#open" data-dialog-id-param="see-zipcodes">
           and <%= pluralize(hidden_zipcodes, "more") %>
         </button>

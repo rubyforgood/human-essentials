@@ -1,7 +1,7 @@
 <tr>
   <td class="font-medium text-slate-900">
     <%= link_to product_drive_participant_row.business_name.presence || product_drive_participant_row.contact_name.presence || "Unnamed participant",
-          product_drive_participant_row, class: "text-brand-700 hover:text-brand-800" %>
+          product_drive_participant_row, class: "link-brand" %>
   </td>
   <td><%= product_drive_participant_row&.contact_name %></td>
   <td><%= product_drive_participant_row&.phone %></td>

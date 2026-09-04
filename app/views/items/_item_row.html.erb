@@ -1,11 +1,11 @@
 <tr data-item-id="<%= item_row.id %>">
   <td>
     <% if item_row.item_category %>
-      <%= link_to item_row.item_category.name, item_category_path(item_row.item_category), class: "font-medium text-brand-700 hover:text-brand-800" %>
+      <%= link_to item_row.item_category.name, item_category_path(item_row.item_category), class: "font-medium link-brand" %>
     <% end %>
   </td>
   <td class="font-medium text-slate-900">
-    <%= link_to item_row.name, item_path(item_row), class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to item_row.name, item_path(item_row), class: "link-brand" %>
     <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless item_row.active? %>
   </td>
   <td><%= item_row.reporting_category_humanized %></td>

@@ -1,6 +1,6 @@
 <tr>
   <td class="font-medium text-slate-900">
-    <%= link_to barcode_item_row.barcodeable.name, barcode_item_path(barcode_item_row), class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to barcode_item_row.barcodeable.name, barcode_item_path(barcode_item_row), class: "link-brand" %>
   </td>
   <td class="quantity"><%= number_with_delimiter(barcode_item_row.quantity) %></td>
   <td class="font-mono text-xs"><%= barcode_item_row.value %></td>

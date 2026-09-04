@@ -222,6 +222,13 @@ kinds.each do |kind, pattern|
     # The test is a capitalised word that is *not* the first word of the label: `Agency Age` fails,
     # `Agency age` passes. Acronyms are left alone (`FPL`, `ZIP`) because an all-caps token is not
     # Title Case, and the proper nouns above are removed before looking.
+    # A hand-written brand link. `.link-brand` carries the colour *and* the underline on hover and
+    # focus, which is the part that matters: measured against the prose these sit in, the brand
+    # colour is 1.04:1 on slate-600, so colour alone marks nothing. 71 of these existed in 13
+    # different shapes before the class did; the pair is the signature.
+    if src.include?("hover:text-brand-800")
+      defects << "hand-written brand link (use .link-brand)"
+    end
     labels = src.scan(/label:\s*"([^"]{3,120})"/).flatten
       .map { |t| LABEL_PROPER_NOUNS.reduce(t) { |acc, n| acc.gsub(n, "") } }
     title_case_labels = labels.filter_map { |t|

@@ -27,13 +27,13 @@
     <%= essentials_detail "NDBN membership ID", @organization.ndbn_member&.full_name %>
     <%= essentials_detail "URL" do %>
       <% if @organization.url.present? %>
-        <%= link_to @organization.url, @organization.url, class: "text-brand-700 hover:text-brand-800" %>
+        <%= link_to @organization.url, @organization.url, class: "link-brand" %>
       <% end %>
     <% end %>
     <%= essentials_detail "Email" do %>
       <% if @organization.email.present? %>
         <%= link_to @organization.email, "mailto:#{@organization.email}",
-              class: "text-brand-700 hover:text-brand-800",
+              class: "link-brand",
               aria: {label: "Email organization"} %>
       <% end %>
     <% end %>

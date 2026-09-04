@@ -40,7 +40,7 @@
             <% @item_categories.each do |item_category| %>
               <tr data-item-category-id="<%= item_category.id %>">
                 <td class="font-medium text-slate-900">
-                  <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
+                  <%= link_to item_category.name, item_category_path(item_category), class: "link-brand" %>
                 </td>
                 <td class="notes text-slate-600"><%= item_category.description %></td>
                 <%#
@@ -62,7 +62,7 @@
                   <% else %>
                     <ul class="space-y-0.5">
                       <% shown.first(EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT).each do |item| %>
-                        <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
+                        <li><%= link_to item.name, item_path(item.id), class: "link-brand" %></li>
                       <% end %>
                       <% if overflow %>
                         <%# The count is the *remaining* items, so it needs the real total rather
@@ -70,7 +70,7 @@
                         <li class="pt-0.5">
                           <%= link_to "+#{item_category.items.size - EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT} more",
                                 item_category_path(item_category),
-                                class: "text-sm font-medium text-brand-700 hover:text-brand-800" %>
+                                class: "text-sm font-medium link-brand" %>
                         </li>
                       <% end %>
                     </ul>

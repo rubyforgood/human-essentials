@@ -12,33 +12,33 @@
         <ol class="mt-4 space-y-3 text-sm text-slate-700">
           <li class="flex gap-2">
             <%= essentials_step_number(1) %>
-            <span><%= link_to "Set up storage locations", storage_locations_path, class: "font-medium text-brand-700 hover:text-brand-800" %></span>
+            <span><%= link_to "Set up storage locations", storage_locations_path, class: "font-medium link-brand" %></span>
           </li>
           <li class="flex gap-2">
             <%= essentials_step_number(2) %>
             <span>
               Set up your inventory —
-              <%= link_to "add any custom items", items_path, class: "font-medium text-brand-700 hover:text-brand-800" %>, then
-              <%= link_to "run an audit to set current levels", audits_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              <%= link_to "add any custom items", items_path, class: "font-medium link-brand" %>, then
+              <%= link_to "run an audit to set current levels", audits_path, class: "font-medium link-brand" %>
               (<%= link_to "user guide", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_inventory.html", class: "underline hover:text-slate-900" %>)
             </span>
           </li>
           <li class="flex gap-2">
             <%= essentials_step_number(3) %>
             <span>
-              <%= link_to "Customize your organization", edit_organization_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              <%= link_to "Customize your organization", edit_organization_path, class: "font-medium link-brand" %>
               (<%= link_to "user guide", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_customization.html", class: "underline hover:text-slate-900" %>)
             </span>
           </li>
           <li class="flex gap-2">
             <%= essentials_step_number(4) %>
-            <span><%= link_to "Add other users at your bank", new_user_path, class: "font-medium text-brand-700 hover:text-brand-800" %></span>
+            <span><%= link_to "Add other users at your bank", new_user_path, class: "font-medium link-brand" %></span>
           </li>
           <li class="flex gap-2">
             <%= essentials_step_number(5) %>
             <span>
-              <%= link_to "Import partners", partners_path, class: "font-medium text-brand-700 hover:text-brand-800" %> or
-              <%= link_to "add a single partner", new_partner_path, class: "font-medium text-brand-700 hover:text-brand-800" %>
+              <%= link_to "Import partners", partners_path, class: "font-medium link-brand" %> or
+              <%= link_to "add a single partner", new_partner_path, class: "font-medium link-brand" %>
             </span>
           </li>
         </ol>

@@ -236,6 +236,38 @@
   }
 
   /*
+   * A link in the brand colour -- the one link style this app has, in 71 places before this class
+   * existed, written by hand in 13 different shapes.
+   *
+   * **The underline on hover and focus is not decoration.** Measured against the prose these links
+   * sit in, the brand colour is **1.04:1** on `slate-600`, 1.31:1 on `slate-700` and 2.26:1 on
+   * `slate-900`. WCAG technique G183 asks for 3:1 when colour is the only thing marking a link, so
+   * colour here is doing essentially no work. Inside a sentence the answer is a permanent
+   * underline, which the call site adds and design.md has always required. Everywhere else -- a
+   * table cell, a list item -- there is no adjacent prose to be confused with, so a permanent
+   * underline would be noise on every row of a column; a cue on hover *and* keyboard focus gives
+   * the affordance without it. Before this, 3 of 78 link strings had any hover cue and 6 had any
+   * focus style.
+   *
+   * **No weight.** It differs by context and the app already gets that right: a table cell is
+   * `font-medium` already, so the link inherits it; a list of nineteen item names should not be
+   * medium on every line; a link in a sentence adds it. Baking a weight in would have bolded six
+   * list links to make the rule tidier than the design is.
+   */
+  .link-brand {
+    color: var(--color-brand-700);
+  }
+
+  .link-brand:hover {
+    color: var(--color-brand-800);
+    text-decoration-line: underline;
+  }
+
+  .link-brand:focus-visible {
+    text-decoration-line: underline;
+  }
+
+  /*
    * An inline token. The email hints name four substitutions -- `%{partner_name}` and friends --
    * and `<code>` had no style at all in this design system, so they rendered as bare monospace in
    * the middle of a sentence and read as a templating bug that had leaked into the page rather

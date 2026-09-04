@@ -17,7 +17,7 @@
     <p class="mt-1 text-sm text-slate-600">
       Attached file:
       <%= link_to attachment.blob.filename, rails_blob_path(attachment),
-            class: "font-medium text-brand-700 hover:text-brand-800" %>
+            class: "font-medium link-brand" %>
     </p>
   <% elsif attachment.attached? %>
     <%= form_builder.hidden_field attachment_name, value: attachment.signed_id %>

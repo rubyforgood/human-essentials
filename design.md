@@ -446,11 +446,26 @@ Target is **WCAG 2.2 AA**. These are the rules this app has actually had to enfo
   `aria-disabled`, and an unavailable form action as a genuinely `disabled` `<button>`.
 - **Focus is always visible**: `focus-visible:outline-2 focus-visible:outline-offset-2`.
   Nothing sets `outline: none` without replacing it.
-- **A link inside a sentence is underlined.** Brand colour alone is not enough to distinguish it
-  from the prose around it — WCAG 1.4.1, and axe reports it as `link-in-text-block`. Use
-  `font-medium text-brand-700 underline hover:text-brand-800`. A link that is its own block —
-  a table cell, a list item, a card row — does not need one, because there is no body text for it
-  to be confused with.
+- **Every brand link is `.link-brand`, and colour is never the only signal.** The class carries the
+  colour and an **underline on hover and on `:focus-visible`**. It carries no weight, because weight
+  belongs to the context: a table cell is already `font-medium` and the link inherits it, a list of
+  nineteen item names should not be medium on every line, and a link in a sentence adds it.
+  Hand-writing `text-brand-700 hover:text-brand-800` is a defect and `page-audit.rb` reports it —
+  there were **71 of them in 13 different shapes** before the class existed.
+
+  **Why the cue is not optional.** Measured against the prose these links sit in, the brand colour
+  is **1.04:1** on `slate-600`, **1.31:1** on `slate-700` and **2.26:1** on `slate-900`. WCAG
+  technique G183 asks for **3:1** when colour is the only thing marking a link, so colour here is
+  doing essentially nothing. Against white it is 7.90:1, so the links are perfectly *readable* —
+  they were simply not *identifiable*. Before the class, 3 of 78 link strings had any hover cue and
+  6 had any focus style.
+
+- **A link inside a sentence is underlined at rest as well.** `class: "link-brand font-medium
+  underline"`. The hover cue is not enough inside prose: a reader scanning a paragraph has to know
+  it is a link before pointing at it — WCAG 1.4.1, and axe reports it as `link-in-text-block`. A
+  link that is its own block — a table cell, a list item, a card row — takes no *permanent*
+  underline, because there is no adjacent body text to be confused with and a whole underlined
+  column is noise; the hover and focus cue covers it.
 <a id="inert-on-arrival"></a>
 - **A control that leads nowhere is disabled only when pressing it would cost something.** Several
   can be pressed before they can do anything: Today on a calendar that opens on today, "Reset

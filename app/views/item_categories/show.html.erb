@@ -35,7 +35,7 @@
       <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
         <% items.each do |item| %>
           <li class="flex items-center gap-2 text-sm">
-            <%= link_to item.name, item_path(item), class: "text-brand-700 hover:text-brand-800" %>
+            <%= link_to item.name, item_path(item), class: "link-brand" %>
             <%# Badging the exception, not every row -- design.md. %>
             <% unless item.active %>
               <%= essentials_status_pill("Inactive", tone: :neutral) %>

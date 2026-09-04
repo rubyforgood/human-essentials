@@ -61,7 +61,7 @@
                 <% total += location_quantity %>
                 <tr>
                   <td class="font-medium text-slate-900">
-                    <%= link_to storage.name, storage_location_path(storage), class: "text-brand-700 hover:text-brand-800" %>
+                    <%= link_to storage.name, storage_location_path(storage), class: "link-brand" %>
                   </td>
                   <td class="quantity"><%= number_with_delimiter(location_quantity) %></td>
                 </tr>
@@ -93,7 +93,7 @@
               <% @barcodes_for.each do |barcode_item| %>
                 <tr>
                   <td class="font-mono text-xs">
-                    <%= link_to barcode_item.value, barcode_item_path(barcode_item), class: "text-brand-700 hover:text-brand-800" %>
+                    <%= link_to barcode_item.value, barcode_item_path(barcode_item), class: "link-brand" %>
                   </td>
                   <td class="quantity"><%= number_with_delimiter(barcode_item.quantity) %></td>
                 </tr>

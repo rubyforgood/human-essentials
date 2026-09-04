@@ -1,6 +1,6 @@
 <tr class="<%= local_assigns[:class] %>">
   <td class="font-medium text-slate-900">
-    <%= link_to donation_site_row.name, donation_site_row, class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to donation_site_row.name, donation_site_row, class: "link-brand" %>
     <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless donation_site_row.active? %>
   </td>
   <td class="notes"><%= donation_site_row.address %></td>

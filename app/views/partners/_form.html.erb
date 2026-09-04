@@ -67,7 +67,7 @@
               <li class="attached-document flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"
                   data-document-id="<%= doc.signed_id %>">
                 <%= link_to doc.blob.filename.to_s, rails_blob_path(doc),
-                      class: "min-w-0 flex-1 truncate font-medium text-brand-700 hover:text-brand-800" %>
+                      class: "min-w-0 flex-1 truncate font-medium link-brand" %>
                 <%= f.hidden_field :documents, multiple: true, value: doc.signed_id %>
                 <%= f.button :button, formmethod: :delete, formaction: attachment_path(doc),
                       class: essentials_button_classes(variant: :ghost_danger, size: :sm, ),

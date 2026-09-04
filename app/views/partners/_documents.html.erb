@@ -4,7 +4,7 @@
       <li class="attached-document flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"
           data-document-id="<%= doc.signed_id %>">
         <%= link_to doc.blob.filename.to_s, rails_blob_path(doc),
-              class: "min-w-0 flex-1 truncate font-medium text-brand-700 hover:text-brand-800" %>
+              class: "min-w-0 flex-1 truncate font-medium link-brand" %>
         <%= essentials_action_button "Remove", attachment_path(doc), method: :delete,
               variant: :ghost_danger, size: :sm, icon: "bi-trash",
               confirm: "Are you sure you want to permanently remove this document?" %>
