@@ -43,6 +43,25 @@ of the second process, not a defect, and it cost a run here before being recogni
 
 ## Design system
 
+**`/partner_groups` pills both states of a boolean column — a design decision, not a defect.**
+Found by re-running the table audit on 2026-09-04. "Send reminders?" renders
+`essentials_status_pill("Yes", tone: :success)` or `("No", tone: :neutral)`, so every row carries a
+badge, which is what design.md's "badges mark the exception" is against — but a neutral grey pill
+is not the shouting the rule exists to prevent. Three readings, set out in
+[table-audit.md](table-audit.md#partner_groups--a-question-rather-than-a-finding): leave it, pill
+only `Yes`, or pill neither. **Not changed, because design decisions get previewed before they get
+built.** Two rows in the seeded database, so it is also the thinnest possible evidence.
+
+**Invitation status is still rendered two ways.** Plain text in
+`users/_organization_user.html.erb:6` and three coloured pills in `partner_users/_users.html.erb`.
+Carried over from the 2026-08-18 audit and re-confirmed on 2026-09-04; it is the last of that
+audit's findings still open.
+
+**One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
+`edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is
+what design.md asks a page's single main action to be — correct output from a legacy call. The
+table-cell grep that found nine of these now returns nothing.
+
 **The getting-started step badges repeat their class string five times.**
 `app/views/dashboard/_getting_started_prompt.html.erb` writes
 `mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700`
@@ -74,15 +93,6 @@ next to. Left deliberately; the surrounding guidance sentence now carries the ac
 are otherwise the same page now. Adding base item and barcode value would need `by_base_item_partner_key`
 and `by_value` permitted in `filter_params` — both are real scopes on `BarcodeItem`, so it is
 safe, but it is a feature rather than consistency work.
-
-## Documentation
-
-**`docs/table-audit.md` has not been re-run since 2026-08-18.** It covers 19 bank-side and 8
-admin tables against a running app, asking how many visual weights a table's row actions use.
-Nothing in the recent work obviously invalidates it — row actions were not touched — but three
-tables were rebuilt (`admin/barcode_items`, `admin/ndbn_members`, the item catalogue's five) and
-the count of tables in `app/views` is now 78. Worth re-running rather than re-reading.
-(`docs/view-audit.md` was in the same state and has been brought up to date.)
 
 ## Skills: not yet available outside this repo
 

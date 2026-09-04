@@ -38,6 +38,7 @@ breaks that down.
 | `donations#add_item`, `donations#remove_item` | Removed in 2026, not migrated: routes with no actions whose only templates were 2018 scaffold stubs. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 | ~~`toastr`~~ | **Gone.** Removed from `config/importmap.rb` and `application.js` after its last caller was migrated — see the defects table. |
+| `edit_button_to` in `organizations/_header.html.erb:23` | The last call to a legacy `UiHelper` button shim anywhere in `app/views`, measured 2026-09-04. It renders `:primary`, and it is a page header's single main action, which is exactly what design.md asks that to be — so the legacy call produces the correct result. Left because changing it alters nothing a user sees. The nine that mattered were table cells, where `:primary` was wrong; that grep now returns zero. |
 
 ### Class names that style nothing
 

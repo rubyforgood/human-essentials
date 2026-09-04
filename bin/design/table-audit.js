@@ -88,7 +88,20 @@ async function auditPage(page, path) {
   console.log(`\ntables audited:            ${results.filter((r) => !r.note).length}`);
   console.log(`more than one weight:      ${mixed.length}  ${mixed.map((r) => r.path).join(" ")}`);
   console.log(`filled button in a row:    ${loud.length}  ${loud.map((r) => r.path).join(" ")}`);
-  console.log(`badge on every row:        ${everyRow.length}  ${everyRow.map((r) => r.path).join(" ")}`);
+  /*
+   * **The row count is printed with it, because the signal is worthless without it.** "Every row
+   * carries a badge" is trivially true of a one-row table -- `badgedRows === rows` cannot tell
+   * "badges mark the exception" from "badge on every row" when there is only one row to look at.
+   * Widening this audit from 27 hand-listed tables to every route took the count from 1 to 6, and
+   * three of the five new ones are single-row tables in a seeded database. Reporting the bare
+   * count invited exactly the wrong conclusion, so the count comes with the evidence.
+   */
+  const withRows = everyRow.map((r) => `${r.path} (${r.rows} row${r.rows === 1 ? "" : "s"})`);
+  const thin = everyRow.filter((r) => r.rows < 3).length;
+  console.log(`badge on every row:        ${everyRow.length}  ${withRows.join(" ")}`);
+  if (thin) {
+    console.log(`${" ".repeat(27)}${thin} of those have fewer than 3 rows, where this says nothing.`);
+  }
 
   await browser.close();
   process.exit(mixed.length || loud.length ? 1 : 0);
