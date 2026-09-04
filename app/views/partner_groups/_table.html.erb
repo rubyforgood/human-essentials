@@ -65,7 +65,11 @@
                   </p>
                 <% end %>
               <% else %>
-                <%= essentials_status_pill("No", tone: :neutral, icon: "bi-bell-slash") %>
+                <%# Plain text, not a pill. "No" is the majority and unremarkable state here, and
+                    design.md's badge rule is that a badge marks the exception -- a neutral grey pill
+                    on the ordinary row is decoration. The affirmative state keeps its pill and its
+                    bell, which is what makes the column scannable. %>
+                <span class="text-sm text-slate-500">No</span>
               <% end %>
             </td>
             <td class="cell-actions">

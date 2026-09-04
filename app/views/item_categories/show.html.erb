@@ -18,4 +18,33 @@
       </div>
     </dl>
   <% end %>
+
+  <%#
+    The full list of items lives here, and the index shows the first three with a "+N more" link
+    pointing at it. The index used to print every item -- 19 links and 710 characters in the worst
+    row, a 439px row, and three categories made that table 979px tall. It cannot take the usual
+    `.notes` clipping either, because clipping would leave focusable links invisible.
+
+    This card is the reason the index can be short: a truncation that links nowhere is a broken
+    promise, so "+N more" needed somewhere to go before the index could stop listing everything.
+  %>
+  <%= render "shared/essentials/card", title: "Items in this category",
+        subtitle: "What a partner is asking for when they request from this category." do %>
+    <% items = @item_category.items.order(:name) %>
+    <% if items.any? %>
+      <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+        <% items.each do |item| %>
+          <li class="flex items-center gap-2 text-sm">
+            <%= link_to item.name, item_path(item), class: "text-brand-700 hover:text-brand-800" %>
+            <%# Badging the exception, not every row -- design.md. %>
+            <% unless item.active %>
+              <%= essentials_status_pill("Inactive", tone: :neutral) %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-slate-500">No items are in this category yet.</p>
+    <% end %>
+  <% end %>
 </div>
