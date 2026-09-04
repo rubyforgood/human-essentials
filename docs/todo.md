@@ -43,13 +43,18 @@ of the second process, not a defect, and it cost a run here before being recogni
 
 ## Design system
 
-**Two routes are still unreachable and every browser audit skips them.**
-`/broadcast_announcements/1/edit` and `/partners/children/new` both return 404, so axe and the rest
-record them as "not reached" and move on. This is the same shape as the `/partners/10/users` bug
-fixed on 2026-09-04 — where a wrong id made a real screen invisible to every audit and let a table
-keep two button weights and Title Case headers — so it is worth establishing whether these are
-genuinely unroutable or another substitution fault. **A skipped page and a clean page read
-identically in a summary line.**
+**`/requests/:id/cancelation/new` loses what you typed when it rejects you.** Found on
+2026-09-04, the first run after that route became reachable — it had never been audited.
+`Requests::CancelationController#create` redirects on failure with
+`flash[:error] = "... could not be removed because #{errors}"`, so the cancellation reason the user
+wrote is gone and they start again. design.md is explicit on both halves: *re-render the record that
+failed, not a new one built from the same params*, and *operational failure gets the flash;
+validation failure gets the summary; never both*.
+
+`form-validation-audit` also reports no inline error and no `aria-invalid` on the field, which
+follows from the form being `essentials_form_for :cancelation` — a symbol, not a record — so
+simple_form has no object to attach an error to. Fixing it properly means giving the action
+something to re-render.
 
 **`/partner_groups` pills both states of a boolean column — a design decision, not a defect.**
 Found by re-running the table audit on 2026-09-04. "Send reminders?" renders
