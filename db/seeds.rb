@@ -767,6 +767,32 @@ end
   end
 end
 
+# **Global barcodes, which /admin/barcode_items lists and nothing else does.**
+#
+# Every barcode above hangs off an `Item` and belongs to an organization; the admin screen shows
+# only `BarcodeItem.global`, the ones attached to a `BaseItem` and shared by every organization. So
+# that page rendered an empty state on a fully seeded database, its filters could not be exercised
+# in a browser at all, and the `by_value` filter added on 2026-09-04 had to be proven by request
+# spec instead.
+#
+# That is also the likeliest reason a filter sat inert on that page for years without anyone
+# noticing: nobody could see it doing nothing.
+#
+# `barcodeable`, not `item`: the polymorphic association is what makes these global.
+[
+  {value: "9781234567897", base_item: "Kids (Size 4)", quantity: 100},
+  {value: "9780987654321", base_item: "Wipes (Baby)", quantity: 12},
+  {value: "9781111222233", base_item: "Adult Briefs (Medium/Large)", quantity: 60}
+].each do |entry|
+  base_item = BaseItem.find_by(name: entry[:base_item])
+  next if base_item.nil?
+
+  BarcodeItem.find_or_create_by!(value: entry[:value]) do |barcode|
+    barcode.barcodeable = base_item
+    barcode.quantity = entry[:quantity]
+  end
+end
+
 # ----------------------------------------------------------------------------
 # Kits
 # ----------------------------------------------------------------------------

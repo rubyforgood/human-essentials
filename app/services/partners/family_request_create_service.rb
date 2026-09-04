@@ -53,8 +53,17 @@ module Partners
     private
 
     def valid?
+      # A submitted item that is not in the partner's requestable set. Every id on this form comes
+      # from the form itself, so a partner cannot reach this by filling it in wrongly -- getting
+      # here means the page and the server disagree, which is a bug on our side.
+      #
+      # The message says that, rather than being tidied into a neater sentence about item ids: it
+      # is rendered verbatim as a bullet in `partners/requests/_error`, and telling someone their
+      # "item_id" was "unknown" invites them to hunt for a mistake they did not make. Naming the
+      # bank is the only useful action available to them.
       if item_requests_attributes.any? { |attr| included_items_by_id[attr[:item_id].to_i].nil? }
-        errors.add(:base, 'detected a unknown item_id')
+        errors.add(:base, "Something went wrong at our end and this request could not be read. " \
+                          "Nothing you did caused it -- please contact your bank.")
       end
 
       check_for_item_visibility
