@@ -32,12 +32,16 @@
                 aria-haspopup="menu"
                 aria-expanded="false"
                 aria-controls="<%= account_menu_id %>"
-                aria-label="Account menu for <%= current_user.display_name %>"
+                <%# `preferred_name`, not `display_name`: the latter returns the literal
+                    "Name Not Provided" for anyone who has not filled in a name, so two different
+                    users announce as the same control. The same fault was found and fixed in
+                    `users/_organization_user` -- four row triggers all called "More actions for
+                    Name Not Provided". `preferred_name` falls back to the email, which every user
+                    has and no two share. %>
+                aria-label="Account menu for <%= current_user.preferred_name %>"
                 data-popover-target="trigger" data-account-menu
                 data-action="click->popover#toggle">
-          <span class="grid h-8 w-8 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700" aria-hidden="true">
-            <%= essentials_avatar_initials(current_user.display_name) %>
-          </span>
+          <%= essentials_avatar_disc(current_user) %>
           <i class="bi-chevron-down text-xs text-slate-500" aria-hidden="true"></i>
         </button>
 

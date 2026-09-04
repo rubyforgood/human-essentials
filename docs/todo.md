@@ -45,10 +45,22 @@ that genuinely mattered were *table cells*, where `type: "primary"` produced a f
 row, and that grep returns zero. `edit_button_to` in a page header renders `:primary`, which is what
 design.md asks a page's main action to be. **There is nothing here to complete.**
 
-**Two hand-rolled copies of the avatar disc remain**, in `layouts/_essentials_topbar` and
-`layouts/_essentials_partner_topbar`: `h-8 w-8` versions of what `essentials_step_number` now
-encapsulates at `h-5 w-5`. Not merged, deliberately — see the note on the helper — but if a third
-size ever appears, that is the moment to make it one component with a size argument.
+**The avatar disc is `essentials_avatar_disc`, and the deferral that kept it duplicated was
+wrong.** The entry said merging it with `essentials_step_number` needed a size and a semantics
+argument — true, and beside the point. The two copies were *identical to each other*, so extracting
+them needed no argument at all; the question about `step_number` was a different question, and
+deferring the first because of the second is how a two-line job survives a migration.
+
+Worse, both copies were **buggy**: they passed `display_name`, which returns the literal
+`"Name Not Provided"`, so a nameless user's avatar read **"NN"** — 9 such users in the development
+database. The partner bar looked like it guarded against that with
+`display_name.presence || email`, but `display_name` is never blank, so the fallback was dead code
+and it showed "NN" too. The trigger's `aria-label` had the same fault, so two different users
+announced as *"Account menu for Name Not Provided"* — the fault this project already found and
+fixed once in `users/_organization_user`.
+
+`essentials_step_number` stays separate, and that half of the reasoning holds: one is a person, the
+other a position in a list.
 
 ## Skills: not yet available outside this repo
 
