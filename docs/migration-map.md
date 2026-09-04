@@ -250,6 +250,7 @@ alone was enough.
 ## Verifying a migration
 
 ```bash
+ruby bin/design/seam-check.rb                  # no new private signIn in the audit suite
 bin/rails runner bin/design/state.rb          # regenerate the "Current state" table
 bin/rails runner bin/design/state.rb --check  # or just fail if it has drifted
 

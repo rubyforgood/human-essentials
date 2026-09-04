@@ -102,6 +102,12 @@ jobs:
           done
           echo "the server never came up"; cat /tmp/server.log; exit 1
 
+      # A ratchet, not a fix: 15 audits still carry their own `signIn` instead of importing
+      # `targets.js`. Migrating them touches every audit and wants its own commit; this makes the
+      # number able to go down and not up. No server or browser needed, so it runs before the rest.
+      - name: No new copies of the audit seam
+        run: ruby bin/design/seam-check.rb
+
       - name: Test the audits
         run: node bin/design/audit-selftest.js
 
