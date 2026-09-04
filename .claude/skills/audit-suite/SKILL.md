@@ -62,6 +62,14 @@ of three user roles because its selector only matched the third.
 breaking something hides it from the audit. Ask that of your own code: what does this do with input
 it cannot handle, and does the run get quieter or louder?
 
+**Read the DOM with the retrying finder, never with a snapshot.** A single
+`Nokogiri.parse(page.body)` is a photograph of whatever existed at that instant, and every
+conclusion drawn from it inherits that timing. One helper took a widget's starting id that way;
+when the snapshot preceded the widget's initialisation the attribute was absent, `nil.to_i` gave
+**0**, and the helper then waited ten seconds for an id of `1` that never arrives. It failed once
+in fifteen suite runs and passed every time the file was run alone — the signature of a read taken
+before the thing settled. Same rule as an assertion: if it can be early, it must retry.
+
 **A lookup that fails is not a pass.** The same shape, one level down, and it bit the check written
 to catch the previous paragraph. A documentation link checker resolved `../design.md#anchor` against
 the *working directory* rather than the file holding the link, found no such file, and its guard

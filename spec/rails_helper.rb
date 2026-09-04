@@ -244,14 +244,31 @@ end
 #     # Perform actions that trigger a change in the Select2 dropdown
 #   end
 def await_select2(select2, container = nil, &block)
-  page_html = Nokogiri::HTML.parse(page.body)
-  page_html = page_html.css(container).first unless container.nil?
-  select2_element = page_html.css(select2).first
-  current_id = select2_element.children.first["data-select2-id"]
+  #
+  # **The starting id is read with a retrying finder, not a Nokogiri snapshot.** This used to do
+  # `Nokogiri::HTML.parse(page.body)` and take `children.first["data-select2-id"]`. That is a
+  # single non-retrying read of whatever the DOM happened to be: select2 stamps the attribute when
+  # it initialises, so if the snapshot was taken first the attribute was absent, `nil.to_i` gave
+  # **0**, and the wait below looked for id "1" — which never arrives — until it timed out ten
+  # seconds later. It surfaced once in fifteen full-suite runs and passed every time the file was
+  # run on its own.
+  #
+  # **The wait is anchored to the element it was given.** The old selector was
+  # `"#{container} select option[...]"`, which dropped `select2` and matched *any* `select` on the
+  # page; with `container` nil — which is how all eight call sites use it — it rendered as
+  # `" select option[...]"`, leading space and all.
+  #
+  scope = container ? "#{container} " : ""
+  first_option = find("#{scope}#{select2} option[data-select2-id]",
+    match: :first, visible: :all, wait: 10)
+  current_id = first_option["data-select2-id"].to_i
 
   yield
 
-  find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
+  # select2 re-stamps the options when it rebuilds them, so the next id appearing means the
+  # rebuild has happened.
+  find("#{scope}#{select2} option[data-select2-id=\"#{current_id + 1}\"]",
+    visible: :all, wait: 10)
 end
 
 # TODO: Remove the following workaround once the following commit is in

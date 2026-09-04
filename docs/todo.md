@@ -38,12 +38,17 @@ Seen so far, and what each looked like:
 | Example | Signature |
 | --- | --- |
 | `request_system_spec:119` | six `<<ERROR>>` stale reads after `click_on "Clear all"` — **a real missing wait, fixed** |
-| `audit_system_spec:74` | `await_select2` exhausting a 10-second wait |
+| ~~`audit_system_spec:74`~~ | `await_select2` exhausting a 10-second wait — **diagnosed and fixed** |
 | ~~`donation_site_spec:198`~~ | a *model* spec, so not browser timing — **diagnosed and fixed**, see below |
 
-**One had a genuine identifiable cause** and is fixed. The other two have not been diagnosed. The
-select2 one looks like the container being slow rather than a spec fault; ten seconds is already
-generous, and it is the only one still open.
+**All three had genuine, identifiable causes, and all three are fixed** — including the select2
+one, which was written off here as "the container being slow" before anyone read it. It was not:
+`await_select2` took the starting `data-select2-id` from a single non-retrying
+`Nokogiri::HTML.parse(page.body)`, so when the snapshot preceded select2's initialisation the
+attribute was absent, `nil.to_i` gave **0**, and it waited ten seconds for an id of `1` that never
+comes. Its wait selector also dropped the element it was given and matched any `select` on the
+page. Proven by rebuilding the old selector from a nil id and getting the failure message back
+byte-for-byte.
 
 **The donation-site one is fixed.** It called a bare `DonationSite.active` where the app runs
 `current_organization.donation_sites.alphabetized.active` — unscoped by organization, and unordered
