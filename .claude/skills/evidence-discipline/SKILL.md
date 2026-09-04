@@ -81,6 +81,48 @@ Every piece of work has an edge. State it:
 "Not done, deliberately, because X" is a complete and respectable outcome. "Done" when four of five
 things are done is not.
 
+## A recorded finding is a claim with a timestamp
+
+Your own notes decay, and they decay in a specific place: **not in the measurement, in the scope
+around it.**
+
+One project re-measured every open item on its own to-do list. The pattern was clean:
+
+| Kind of claim | Held up? |
+| --- | --- |
+| Counts of strings in files — dead links, label casing, call sites | **All correct**, weeks later |
+| Claims about behaviour — what a form does, what an audit can see, what a test ordering produces | **Three in a row wrong** |
+
+Nobody had been careless. Each was written immediately after measuring something true. What changed
+was the world around the sentence: the audit gained a check, the test file set grew, the layout got
+narrower — so a note saying "the audit cannot see this" became false without anyone touching the
+note.
+
+**Re-measure before acting on a recorded finding**, and put the date and the commit next to any
+number you write down. It usually costs minutes. Acting on a stale one costs a day building
+something that is already there — or, worse, produces a confident write-up of a fix for a problem
+that no longer exists.
+
+## A seed is not a reproduction
+
+Randomised test orderings are seeded, and a seed is only a permutation **of the list of files that
+happened to be loaded**. Record the seed and nothing else and you have recorded a permutation of a
+list you did not record.
+
+One project carried "`rspec --seed 43125` fails these seven examples" as a working reproduction. It
+had stopped reproducing within about a day: **31 spec files were added and 1 removed**, so the same
+seed selected an entirely different order. The note stayed on the list for two weeks looking
+actionable.
+
+The durable form of an order-dependent reproduction is a **minimal list of examples**, which most
+runners can bisect for you from a currently-failing run. That does not rot when a file is added. If
+all you have is a seed, record the file count with it, and expect it to expire.
+
+**A corollary for flakes**: same seed, same tree, different outcomes means the failure is *timing*,
+not ordering, and bisecting will not help. Establish which you have before spending a day on it —
+and beware that running a second test process against the same database can manufacture failures
+(deadlocks, in one case) that look exactly like a defect in the code.
+
 ## Reporting outcomes
 
 - **If a check failed, say so, with the output.** Not "mostly passing".

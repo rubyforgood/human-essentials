@@ -77,6 +77,28 @@ Beyond the 2.2 additions, these need a browser driven deliberately:
 | **2.4.7 Focus visible** | Focus, wait for the style to settle, then measure |
 | **1.3.5 Identify input purpose** | Every field collecting the user's own data has the right `autocomplete` token |
 
+### `role="alert"` on a page that has just loaded may announce nothing
+
+Worth its own entry, because it is the most common way a form is *believed* to be accessible while
+failing 3.3.1 in practice — and an automated checker finds nothing wrong, because the markup is
+correct.
+
+**A live region is defined in terms of a subtree changing.** The assistive technology watches a node
+and speaks what appears inside it. When a failed submit re-renders the whole page, the error summary
+is already in the markup as the accessibility tree is first built. Nothing changed, so support for
+announcing it varies between screen readers. The region only reliably does its job for content
+inserted into a page that is already live.
+
+Check what actually happens to **focus** after a failed submit. In one app it stayed on `<body>` on
+every form, leaving a keyboard user at the top of a page that looked like the one they had just
+sent. The fix is `tabindex="-1"` on the summary and focusing it on load, with the live region moved
+*inside* the focused element — see `design-system-migration/reference/error-and-failure-states.md`
+for the full pattern and its two traps.
+
+**Be honest about what you verified.** Without a real screen reader you can measure the mechanics —
+focus lands, the page scrolls to it, the roles are where you put them — and you are following a
+published pattern for the announcement. Say that, rather than reporting the announcement as tested.
+
 ## Two measurement traps
 
 Both produced false failures in the source project, and both are easy to repeat.
