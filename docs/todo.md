@@ -87,15 +87,6 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## `ignored_columns` for the dropped address column
-
-`StructuredAddress` still carries `self.ignored_columns += ["address"]`. The column was dropped by
-`20260901200000`, so this is now a no-op.
-
-It was kept deliberately for one release, for the mirror image of the reason the drop was staged:
-new code meeting a database where the migration has not run yet. **Remove it once that migration has
-been deployed everywhere.** This is the last thing left of the address change.
-
 ## The design skill has no adapter
 
 `.claude/skills/design-system-migration/templates/adapter.md` describes the shape — five sign-in

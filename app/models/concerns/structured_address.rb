@@ -24,10 +24,24 @@ module StructuredAddress
   ZIP = /\s*(\d{5}(?:-\d{4})?)\z/
 
   included do
-    # The old column. Reads and writes go through the four new ones from here on; the column itself
-    # is dropped in a later *release*, because strong_migrations rightly wants a deploy in between --
-    # an old process still running the previous code would otherwise read a column that has just
-    # vanished. The follow-up is recorded in docs/migration-map.md.
+    # The old freeform column. Reads and writes go through the four new ones; `#address` below
+    # composes it back for the geocoder, the PDFs and the CSV exports.
+    #
+    # **The column itself is already gone**, dropped by `20260901200000`, so on any database that
+    # has run that migration this line does nothing. It stays anyway, and deliberately.
+    #
+    # Un-ignore it against a database where the drop has *not* run and ActiveRecord generates an
+    # `address` attribute accessor, which collides with the `#address` method defined below.
+    # Depending on load order the raw, empty column can win -- so every address on those four models
+    # renders blank, with nothing raising. A silent wrong answer is the worst kind, and it costs one
+    # line to prevent.
+    #
+    # Safe to delete once `20260901200000` has been deployed everywhere. There is no hurry: the only
+    # standing cost is that a *new* `address` column added to these models for some other purpose
+    # would be hidden without a word. If that ever happens, this line is the reason.
+    #
+    # Kept as a code comment rather than a to-do entry, on purpose -- it is a fact about this line,
+    # and it belongs where someone reading the line will find it. History in docs/migration-map.md.
     self.ignored_columns += ["address"]
   end
 
