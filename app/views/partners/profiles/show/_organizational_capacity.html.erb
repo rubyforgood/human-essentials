@@ -1,12 +1,12 @@
 <%= render "shared/essentials/card", title: "Organizational capacity", card_class: "mb-4" do %>
     <dl class="space-y-3">
-      <dt class="text-xs font-medium text-slate-500">Client Capacity</dt>
+      <dt class="text-xs font-medium text-slate-500">Client capacity</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.client_capacity %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Storage Space</dt>
+      <dt class="text-xs font-medium text-slate-500">Storage space</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.storage_space) %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Storage Space Description</dt>
+      <dt class="text-xs font-medium text-slate-500">Storage space description</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.describe_storage_space %></dd>
     </dl>
 <% end %>

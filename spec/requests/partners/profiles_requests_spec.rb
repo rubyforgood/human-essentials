@@ -19,9 +19,9 @@ RSpec.describe "/partners/profiles", type: :request do
       # bare markup.
       page = Nokogiri::HTML(response.body)
       pairs = page.css("dt").to_h { |dt| [dt.text.strip, dt.at_xpath("following-sibling::dd[1]")&.text&.strip] }
-      expect(pairs["Current Providing Diapers"]).to eq("Unspecified")
-      expect(pairs["Form 990 Filed"]).to eq("No")
-      expect(pairs["Do You Verify The Income Of Your Clients"]).to eq("Yes")
+      expect(pairs["Current providing diapers"]).to eq("Unspecified")
+      expect(pairs["Form 990 filed"]).to eq("No")
+      expect(pairs["Do you verify the income of your clients"]).to eq("Yes")
     end
 
     it "renders show partner settings partial with enabled request types only" do
@@ -29,8 +29,8 @@ RSpec.describe "/partners/profiles", type: :request do
       get partners_profile_path(partner)
       expect(response).to render_template(partial: "partners/profiles/show/_partner_settings")
       terms = Nokogiri::HTML(response.body).css("dt").map { |dt| dt.text.strip }
-      expect(terms).to include("Uses Quantity Based Requests")
-      expect(terms).not_to include("Uses Child Based Requests")
+      expect(terms).to include("Uses quantity based requests")
+      expect(terms).not_to include("Uses child based requests")
     end
   end
 

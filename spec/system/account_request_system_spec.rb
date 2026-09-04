@@ -30,7 +30,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       fill_in 'Email', with: account_request_attrs[:email]
       fill_in 'Organization name', with: account_request_attrs[:organization_name]
       fill_in 'Organization website', with: account_request_attrs[:organization_website]
-      fill_in 'Request Details (min 50 characters)', with: account_request_attrs[:request_details]
+      fill_in 'Request details (min 50 characters)', with: account_request_attrs[:request_details]
       select "#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}", from: 'account_request[ndbn_member_id]'
 
       expect(AccountRequest.count).to eq(0)

@@ -1,5 +1,5 @@
 <%= render "shared/essentials/card", title: "Agency stability" do %>
-  <%= form.input :founded, label: "Year Founded" %>
+  <%= form.input :founded, label: "Year founded" %>
   <%= form.input :form_990, label: "Form 990 Filed", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
 
   <%= render "shared/custom_file_input",
@@ -9,12 +9,12 @@
     label_for: "partner_profile_proof_of_form_990",
     label_text: "Form 990" %>
 
-  <%= form.input :program_name, label: "Program Name(s)" %>
-  <%= form.input :program_description, label: "Program Description(s)" %>
-  <%= form.input :program_age, label: "Agency Age" %>
-  <%= form.input :evidence_based, label: "Evidence Based?", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
-  <%= form.input :case_management, label: "Case Management", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
-  <%= form.input :essentials_use, label: "How Are Essentials (e.g. diapers, period supplies) Used In Your Program?", as: :text %>
-  <%= form.input :receives_essentials_from_other, label: "Do You Receive Essentials From Other Sources?" %>
-  <%= form.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
+  <%= form.input :program_name, label: "Program name(s)" %>
+  <%= form.input :program_description, label: "Program description(s)" %>
+  <%= form.input :program_age, label: "Agency age" %>
+  <%= form.input :evidence_based, label: "Evidence based?", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
+  <%= form.input :case_management, label: "Case management", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
+  <%= form.input :essentials_use, label: "How are essentials (e.g. diapers, period supplies) used in your program?", as: :text %>
+  <%= form.input :receives_essentials_from_other, label: "Do you receive essentials from other sources?" %>
+  <%= form.input :currently_provide_diapers, label: "Currently providing diapers?", as: :radio_buttons, wrapper_html: {}, input_html: {} %>
 <% end %>
