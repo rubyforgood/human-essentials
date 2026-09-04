@@ -22,7 +22,12 @@ IDS = {
   "product_drive_participants" => org&.product_drive_participants&.first,
   "item_categories" => org&.item_categories&.first,
   "barcode_items" => org&.barcode_items&.first,
-  "broadcast_announcements" => BroadcastAnnouncement.first,
+  # Org-scoped, not `.first`. `BroadcastAnnouncement.first` is a *global* announcement with a nil
+  # organization_id, and `broadcast_announcements#edit` does
+  # `where(organization_id: current_organization.id).find(params[:id])` -- so the global one raised
+  # RecordNotFound and the edit screen was logged as a 404 by every audit. The admin controller is
+  # the one that wants an unscoped record, and it has its own entry below.
+  "broadcast_announcements" => BroadcastAnnouncement.where(organization_id: org&.id).first,
   "partner_groups" => org&.partner_groups&.first,
   "users" => org&.users&.first, "partner_users" => partner&.users&.first,
   "admin/organizations" => org, "admin/users" => User.first,
@@ -51,6 +56,18 @@ SKIP_ACTION = /\A(destroy|deactivate|reactivate|restore|print|print_picklist|pri
 
 # Not screens, and named by controller because the action name is used elsewhere for one that is.
 SKIP_PAIR = %w[storage_locations#inventory].freeze
+
+# **Screens scoped by a query parameter rather than a path segment.** No amount of id substitution
+# reaches these, because there is nothing in the path to substitute into.
+# `partners/children#new` does `current_partner.families.find_by!(id: params[:family_id])`, which
+# raises on a missing param -- and a RecordNotFound 404 reads exactly like a route that does not
+# exist, so every audit logged it as "not reached" and moved on.
+#
+# Deliberately a short explicit list rather than a general mechanism: one screen needs this, and a
+# guessing scheme would quietly produce plausible-looking URLs for screens it had got wrong.
+QUERY = {
+  "partners/children#new" => {family_id: partner&.families&.first&.id}
+}.reject { |_, params| params.values.any?(&:nil?) }.freeze
 SKIP_PATH = %r{\.csv|\.pdf|/print|active_storage|attachments|action_mailbox|
                /users/(sign_in|sign_up|password|confirmation|unlock|auth)}x
 
@@ -93,6 +110,9 @@ Rails.application.routes.routes.each do |r|
     end
     next unless resolved
     next if path.include?(":")
+  end
+  if (query = QUERY["#{controller}##{action}"])
+    path += "?" + query.map { |k, v| "#{k}=#{v}" }.join("&")
   end
   next if seen[path]
   seen[path] = true
