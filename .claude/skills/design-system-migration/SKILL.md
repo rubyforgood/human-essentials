@@ -95,6 +95,7 @@ Load these when the work reaches them, not before.
 | `reference/keeping-work-reviewable.md` | Setting up, or when somebody cannot see the app |
 | `reference/retiring-a-legacy-system.md` | **Only if** there is an old UI framework to remove |
 | `templates/` | Starting a new app: empty skeletons for the spec, decision log and change log |
+| `templates/adapter-rails.md` | Wiring the audits to a Rails/Devise/Tailwind app — one worked example of `adapter.md`, with the faults each line was written to fix |
 
 Three sibling skills carry parts of this that are not about design, and are not repeated here:
 

@@ -95,16 +95,28 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## The design skill has no adapter
+## The audit seam exists and most audits do not use it
 
-`.claude/skills/design-system-migration/templates/adapter.md` describes the shape — five sign-in
-values and a command that lists every screen — but no Rails/Tailwind adapter has been written, and
-none of the 33 audits here have been generalised.
+`bin/design/targets.js` is the one place that knows this is a Rails app. Measured 2026-09-04, well
+after it was introduced:
 
-Deliberate, and the reasoning is in `docs/skill-proposal-v2.md`: there is no evidence yet about
-which assumptions are shared between stacks, and inventing an adapter from a sample of one is the
-mistake at prompt `[158]`, which cost 28 unevidenced claims. **Do this after the core has been used
-once on another app**, not before.
+| | |
+| --- | --- |
+| Browser audits importing it | **7** |
+| Audits shelling out to `route-targets.rb` directly | **13** |
+| Files still defining their own `signIn` | **16** (at least two byte-identical) |
+
+The change log row for the commit that added it said it was "replacing 21 hand-copied `signIn`
+functions". It made 21 *replaceable* and converted seven; the row is corrected. **A seam nobody
+adopts is not a seam** — it is a ninth way of doing something with none removed.
+
+Two things worth doing, in this order. **A check that fails on a new private `signIn` in
+`bin/design/`**, so the number can only go down — cheap, and it stops the gap widening while the
+rest waits. Then the migration of the remaining 13, which is mechanical but touches every audit and
+wants its own commit.
+
+Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in configuration.
+That is the one part of the seam that is not actually a seam.
 
 ## Seven tables with no empty state, deliberately
 
