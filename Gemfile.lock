@@ -240,7 +240,8 @@ GEM
       rubocop (>= 1)
       smart_properties
     erubi (1.13.1)
-    execjs (2.10.0)
+    execjs (2.10.2)
+      json (>= 2)
     factory_bot (6.5.5)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
@@ -722,7 +723,7 @@ GEM
     stringio (3.2.0)
     strong_migrations (2.8.0)
       activerecord (>= 7.2)
-    terser (1.2.7)
+    terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
     tilt (2.2.0)
