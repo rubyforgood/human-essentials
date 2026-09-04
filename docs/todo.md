@@ -110,10 +110,13 @@ The change log row for the commit that added it said it was "replacing 21 hand-c
 functions". It made 21 *replaceable* and converted seven; the row is corrected. **A seam nobody
 adopts is not a seam** — it is a ninth way of doing something with none removed.
 
-Two things worth doing, in this order. **A check that fails on a new private `signIn` in
-`bin/design/`**, so the number can only go down — cheap, and it stops the gap widening while the
-rest waits. Then the migration of the remaining 13, which is mechanical but touches every audit and
-wants its own commit.
+**The ratchet is done.** `bin/design/seam-check.rb` counts the private copies — **15**, once
+`targets.js` itself is excluded, which an earlier count of 16 did not — fails when that goes up, and
+fails when it goes down without `BASELINE` being lowered, so a migration cannot be quietly undone.
+It runs in CI without a browser.
+
+**What is left is the migration itself**: 15 audits importing the seam instead of copying it.
+Mechanical, touches every audit, wants its own commit. Lower `BASELINE` by one with each.
 
 Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in configuration.
 That is the one part of the seam that is not actually a seam.

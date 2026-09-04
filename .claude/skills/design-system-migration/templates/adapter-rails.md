@@ -124,5 +124,13 @@ until somebody counts, and the row has been corrected.
 
 So the lesson to carry, which is worth more than the code above: **introducing the seam is the
 easy tenth of the work.** Budget for the migration of every existing caller, or accept that you have
-added a ninth way of doing something and removed none. If you cannot migrate them all at once, put
-a check in the audit suite that fails on a new private `signIn`, so the number can only go down.
+added a ninth way of doing something and removed none.
+
+If you cannot migrate them all at once, ratchet it. The source project's `seam-check.rb` counts the
+private copies, fails when the count goes **up**, and also fails when it goes **down** without the
+baseline being lowered — so a migration cannot be done and then quietly un-done. Twenty lines, and
+it runs in CI without a browser.
+
+Test it in both directions. The first version matched `/async function signIn/` without a word
+boundary, so `signIn_MIGRATED` still counted and the control that migrates one by renaming it passed
+in silence. A ratchet that cannot see the direction it is supposed to protect is not a ratchet.
