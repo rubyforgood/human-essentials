@@ -671,8 +671,8 @@ GEM
       tilt
     securerandom (0.4.1)
     shellany (0.0.1)
-    shoulda-matchers (7.0.1)
-      activesupport (>= 7.1)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     simple_form (5.4.0)
       actionpack (>= 7.0)
       activemodel (>= 7.0)
@@ -845,7 +845,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails (~> 2.34.3)
   sass-rails
-  shoulda-matchers (~> 7.0)
+  shoulda-matchers (~> 8.0)
   simple_form
   simplecov
   solid_cache (~> 1.0)
