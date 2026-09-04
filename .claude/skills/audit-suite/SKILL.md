@@ -62,6 +62,39 @@ of three user roles because its selector only matched the third.
 breaking something hides it from the audit. Ask that of your own code: what does this do with input
 it cannot handle, and does the run get quieter or louder?
 
+**A skipped page and a clean page produce the same summary line.** This is the sharpest version of
+the rule, and it cost a project an entire unmigrated screen. Its route enumerator substituted a
+record id into every `:*_id` segment by looking up *the controller's own* model — so a nested route
+`/parents/:parent_id/children` received a **child** id, pointed at a parent that did not exist, and
+returned 404. Every audit logged it under "not reached" and moved on. That screen sat outside the
+migration for its whole duration and kept three stacked buttons in two weights, a 264px actions
+column against 76–198px elsewhere, and title-case headers — while the table audit reported the app
+clean and was *telling the truth about every page it looked at*.
+
+Two habits follow:
+
+- **Read the skipped list every run, and treat a persistent entry as a bug in the enumerator**
+  rather than a fact about the app. Better still, exit non-zero on unexpected skips.
+- **Some resources are addressed by query parameter, not by path segment**, so no amount of id
+  substitution reaches them. Keep a short explicit map for those. Resist a general guessing scheme:
+  it will quietly produce plausible-looking URLs for screens it got wrong, which is the same failure
+  with more confidence.
+
+## Two audits disagreeing about one tree means one of them is caching
+
+Generated inventories get cached — a routes list, a schema dump, a component index. **A cache may
+not be older than anything that determines its contents**, and the file that generates it obviously
+qualifies.
+
+One suite invalidated its route cache against the *routes file* but not against the *generator that
+reads it*. After fixing a bug in the generator, one audit reported the old list and a clean run
+while another — which shelled out to the generator directly rather than using the cache — saw the
+new screen immediately and found a real defect on it. Same tree, same commit, two answers.
+
+The disagreement is the signal, and it is easy to miss because the cached run is the reassuring one.
+When two checks that should agree do not, **suspect staleness before you suspect either check**, and
+list every input in the freshness test rather than the obvious one.
+
 ## A green check proves nothing until you have watched it go red
 
 Revert the fix. Run the check. If it still passes, it is decorative.

@@ -91,6 +91,7 @@ Load these when the work reaches them, not before.
 | `reference/preview-protocol.md` | About to build a screen |
 | `reference/writing-rules.md` | Adding to the spec; Portable vs Local |
 | `reference/copy-and-language.md` | Writing or auditing any user-facing words |
+| `reference/error-and-failure-states.md` | Touching what a screen does when something goes wrong: where a failed submit lands, error summaries and focus, required markers, shared error components |
 | `reference/keeping-work-reviewable.md` | Setting up, or when somebody cannot see the app |
 | `reference/retiring-a-legacy-system.md` | **Only if** there is an old UI framework to remove |
 | `templates/` | Starting a new app: empty skeletons for the spec, decision log and change log |
