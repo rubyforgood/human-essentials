@@ -26,20 +26,16 @@ the path the report hit, and that should not be claimed. If it recurs, do **not*
 seed: run to a failure, then `rspec --bisect` on the failing seed, which finds the minimal
 ordering that reproduces it and does not go stale when a spec file is added.
 
-**A second flake, in `request_system_spec`, and this one is non-deterministic.** "when filtering on
-the index page with filters cleared displays all requests" expected 5 table rows and found 1 plus
-six `<<ERROR>>` entries — Capybara's marker for an element going stale while its text is read, which
-is an assertion racing a Turbo frame re-render. It passes on its own (31 examples, 0 failures).
+**A second flake, caught on 2026-09-04 and not yet characterised.**
+`spec/models/donation_site_spec.rb:198` — "CSV export attributes when both donation sites are
+active includes both active donation sites in the CSV export" — failed once on seed 51001 and
+passed on 38162 (twice) and 62777. A **model** spec, so no browser timing: the likely candidates
+are `DonationSite.active` being unscoped by organization while the example expects exactly two
+rows, and the assertions indexing `.first` and `.second` off a query with **no `ORDER BY`**, which
+Postgres does not promise. Both are faults in the spec rather than the model.
 
-**The same seed produced both a failure and a pass**, so unlike the `43125` entry this is not
-ordering: it is timing. A genuine baseline at that seed with the day's changes removed was clean at
-3,275 examples, and the change that day was shown to be a no-op for every existing callout call site
-by diffing the rendered partial, so it is not obviously attributable to it — but one run each way is
-not enough to say so with confidence.
-
-Worth knowing when chasing it: running a second `rspec` against the same test database while a full
-run is in flight produces `PG::TRDeadlockDetected` in an unrelated system spec. That is an artefact
-of the second process, not a defect, and it cost a run here before being recognised.
+Not yet diagnosed because the run that caught it had its output deleted by the hunt script — a
+mistake worth not repeating: **keep the output of a failing run, the seed alone is not enough.**
 
 ## Design system
 
