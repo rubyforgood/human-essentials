@@ -3,17 +3,17 @@
       <dt class="text-xs font-medium text-slate-500">Name</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.partner.name %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Agency Type</dt>
+      <dt class="text-xs font-medium text-slate-500">Agency type</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= t profile.agency_type, scope: :partners_profile %></dd>
       <% if profile.agency_type&.to_sym == :other %>
-        <dt class="text-xs font-medium text-slate-500">Other Agency Type</dt>
+        <dt class="text-xs font-medium text-slate-500">Other agency type</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= profile.other_agency_type %></dd>
       <% end %>
 
       <dt class="text-xs font-medium text-slate-500">Status</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.partner.display_status %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">501(c)(3) IRS Determination Letter or other Proof of Agency Status</dt>
+      <dt class="text-xs font-medium text-slate-500">501(c)(3) IRS determination letter or other proof of agency status</dt>
       <% if profile.proof_of_partner_status.attached? %>
         <dd class="mt-0.5 text-sm text-slate-900">Attached
           file: <%= link_to profile.proof_of_partner_status.blob['filename'], rails_blob_path(profile.proof_of_partner_status), class: "font-medium text-brand-700 hover:text-brand-800" %></dd>
@@ -21,7 +21,7 @@
         <dd class="mt-0.5 text-sm text-slate-900">Documentation not on file</dd>
       <% end %>
 
-      <dt class="text-xs font-medium text-slate-500">Agency Mission</dt>
+      <dt class="text-xs font-medium text-slate-500">Agency mission</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.agency_mission %></dd>
 
       <%# The two <address> elements sat directly inside the <dl>, which is not a permitted

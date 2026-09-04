@@ -23,6 +23,13 @@ AUTH = %w[users/sessions users/passwords users/confirmations users/unlocks
 # heading naming the product is not a style violation.
 PROPER_NOUNS = ["Human Essentials", "Code for GoodOps", "Ruby for Good"].freeze
 
+# Capitalised runs inside a *label* that are names, not Title Case. Ethnicity and nationality
+# terms are proper adjectives and keep their capitals in sentence case exactly as a place name
+# does; `Form 990` is the name of an IRS form. Without this list the population-served fields
+# would be reported forever and the check would be the kind people learn to ignore.
+LABEL_PROPER_NOUNS = ["African American", "American Indian", "Pacific Island", "Native Hawaiian",
+  "Alaska Native", "Middle Eastern", "Form 990"].freeze
+
 UNDEFINED = %w[text-bold text-italic form-horizontal form-group control-label help-block
   collapsed-card card-body].freeze
 
@@ -205,6 +212,25 @@ kinds.each do |kind, pattern|
       .map { |t| PROPER_NOUNS.reduce(t) { |acc, n| acc.gsub(n, "") } }
     title_case = heading_text.filter_map { |t| t[/[A-Z][a-z]+(?: [A-Z][a-z]+){1,}/] }.uniq
     defects << "Title Case: #{title_case.first}" if title_case.any?
+    #
+    # **Labels too, not only headings.** design.md asks for sentence case on "headings, buttons,
+    # labels, table headers, nav items, flash messages, empty states", and this check covered the
+    # first of those -- so 30 Title Case labels sat on the partner profile forms for the whole
+    # migration without ever being reported. A rule with no audit is a suggestion.
+    #
+    # The test is a capitalised word that is *not* the first word of the label: `Agency Age` fails,
+    # `Agency age` passes. Acronyms are left alone (`FPL`, `ZIP`) because an all-caps token is not
+    # Title Case, and the proper nouns above are removed before looking.
+    labels = src.scan(/label:\s*"([^"]{3,120})"/).flatten
+      .map { |t| LABEL_PROPER_NOUNS.reduce(t) { |acc, n| acc.gsub(n, "") } }
+    title_case_labels = labels.filter_map { |t|
+      words = t.scan(/[A-Za-z][A-Za-z']*/)
+      next if words.size < 2
+      t if words.drop(1).any? { |w| w[0] == w[0].upcase && w != w.upcase }
+    }.uniq
+    if title_case_labels.any?
+      defects << "Title Case label: #{title_case_labels.first} (#{title_case_labels.size})"
+    end
     if %w[show index form].include?(kind) && src.match?(/<h1[^>]*>/) &&
         !src.include?("shared/essentials/page_header") && !(auth && src.include?(DS_H1))
       defects << "no page_header"

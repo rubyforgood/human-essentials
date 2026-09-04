@@ -108,6 +108,26 @@ Not `New Donation`, `Print Unfulfilled Picklists`, `FMV`. Proper nouns keep thei
 (NDBN, Human Essentials, a partner's name). This is the house style across Ruby for Good and
 it is the single most common review note on UI PRs here.
 
+**`page-audit.rb` enforces this on headings *and* labels.** It checked headings only until
+2026-09-04, which is precisely how **52 Title Case labels** survived the whole migration on the
+partner profile forms and two other screens: the rule existed, nothing measured it, and a rule with
+no audit is a suggestion. The check reports any capitalised word that is not the first word of the
+label, and holds two allow-lists — `PROPER_NOUNS` for headings and `LABEL_PROPER_NOUNS` for labels,
+the latter carrying ethnicity and nationality terms (`African American`, `Pacific Islander`) and
+`Form 990`. All-caps tokens are skipped, because an acronym is not Title Case: `% at FPL or below`
+passes.
+
+**Field names appear in more places than the form.** Fixing the labels alone would have left the
+same fields Title Case where they are *read back*: the partner profile has a read-only `show/` tree
+and the bank sees the same profile through `profiles/_show.html.erb`, both rendering the names as
+`<dt>` terms rather than labels. That was another **54** terms. When you rename a field, search for
+the string, not for the construct.
+
+**A CSV export header is not a UI label.** `export_partners_csv_service.rb` holds `"Year Founded"`,
+`"Agency Age"` and the rest as literals, independent of the views, and they were deliberately left
+alone. Sentence case is a rule about what a person reads on a screen; an export header is an
+interchange format that something downstream may key on.
+
 **That includes `uppercase`, which is how it keeps coming back.** Sentence case is about what the
 reader sees, so a `text-transform` breaks the rule exactly as much as typing the capitals would.
 The only `text-transform` in the stylesheet is `.data-table thead th { text-transform: none }`,

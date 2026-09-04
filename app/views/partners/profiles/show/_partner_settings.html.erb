@@ -1,15 +1,15 @@
 <%= render "shared/essentials/card", title: "Settings", card_class: "mb-4" do %>
     <dl class="space-y-3">
       <% if profile.organization.enable_quantity_based_requests? %>
-        <dt class="text-xs font-medium text-slate-500">Uses Quantity Based Requests</dt>
+        <dt class="text-xs font-medium text-slate-500">Uses quantity based requests</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_quantity_based_requests) %></dd>
       <% end %>
       <% if profile.organization.enable_child_based_requests? %>
-        <dt class="text-xs font-medium text-slate-500">Uses Child Based Requests</dt>
+        <dt class="text-xs font-medium text-slate-500">Uses child based requests</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_child_based_requests) %></dd>
       <% end %>
       <% if profile.organization.enable_individual_requests? %>
-        <dt class="text-xs font-medium text-slate-500">Uses Individual Requests</dt>
+        <dt class="text-xs font-medium text-slate-500">Uses individual requests</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(profile.enable_individual_requests) %></dd>
       <% end %>
     </dl>

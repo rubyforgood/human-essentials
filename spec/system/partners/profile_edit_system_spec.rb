@@ -60,7 +60,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # Open Pick up person section and fill in 4 email addresses
       find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
-        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+        fill_in "Pick up person's email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
 
       # Open Partner Settings section and uncheck all options
@@ -202,7 +202,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # Open Pick up person section and fill in 4 email addresses which will generate a validation error
       find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
-        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+        fill_in "Pick up person's email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
 
       # Save Progress
@@ -222,7 +222,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Fix validation error in Pick up person section: It's already open due to having a validation error
       within "#pick_up_person" do
-        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com"
+        fill_in "Pick up person's email", with: "email1@example.com, email2@example.com, email3@example.com"
       end
 
       # Save Progress
@@ -242,7 +242,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       # Open Pick up person section and fill in 4 email addresses which will generate a validation error
       find("button[aria-controls='pick_up_person']").click
       within "#pick_up_person" do
-        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+        fill_in "Pick up person's email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
       end
 
       # Open attached documents section
@@ -284,7 +284,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Fix validation error in Pick up person section: It's already open due to having a validation error
       within "#pick_up_person" do
-        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com"
+        fill_in "Pick up person's email", with: "email1@example.com, email2@example.com, email3@example.com"
       end
 
       # Save Progress

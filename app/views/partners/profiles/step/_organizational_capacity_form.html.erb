@@ -1,13 +1,13 @@
 <%= f.fields_for :profile, profile do |pf| %>
   <div class="mb-4">
-    <%= pf.input :client_capacity, label: "Client Capacity", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :client_capacity, label: "Client capacity", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :storage_space, label: "Storage Space", as: :radio_buttons, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :storage_space, label: "Storage space", as: :radio_buttons, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :describe_storage_space, label: "Storage Space Description", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :describe_storage_space, label: "Storage space description", class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

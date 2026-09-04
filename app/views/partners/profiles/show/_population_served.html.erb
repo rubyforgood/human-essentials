@@ -1,9 +1,9 @@
 <%= render "shared/essentials/card", title: "Population served", card_class: "mb-4" do %>
     <dl class="space-y-3">
-      <dt class="text-xs font-medium text-slate-500">Clients Have An Income Requirement to Work With You</dt>
+      <dt class="text-xs font-medium text-slate-500">Clients have an income requirement to work with you</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_requirement_desc) %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Do You Verify The Income Of Your Clients</dt>
+      <dt class="text-xs font-medium text-slate-500">Do you verify the income of your clients</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.income_verification) %></dd>
 
     </dl>
@@ -50,7 +50,7 @@
       <dt class="text-xs font-medium text-slate-500">Greater than 2 times FPL</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.greater_2_times_fpl || t(:not_provided) %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
+      <dt class="text-xs font-medium text-slate-500">Poverty unknown</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.poverty_unknown || t(:not_provided) %></dd>
     </dl>
 <% end %>

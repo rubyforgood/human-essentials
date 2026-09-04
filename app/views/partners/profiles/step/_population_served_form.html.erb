@@ -1,12 +1,12 @@
 <%= f.fields_for :profile, profile do |pf| %>
   <div class="mb-4">
-    <%= pf.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
+    <%= pf.input :income_requirement_desc, label: "Do clients have an income requirement to work with you?",
               as: :radio_buttons, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
               wrapper_html: {}, input_html: {} %>
   </div>
 
   <div class="mb-4">
-    <%= pf.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
+    <%= pf.input :income_verification, label: "Do you verify the income of your clients?",
               as: :radio_buttons, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES,
               wrapper_html: {}, input_html: {} %>
   </div>
@@ -44,7 +44,7 @@
   <h3 class="pt-3"><strong>Poverty information of those served</strong></h3>
 
   <div class="mb-4">
-    <%= pf.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :at_fpl_or_below, label: "% at FPL or below", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
   <div class="mb-4">
     <%= pf.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
@@ -53,6 +53,6 @@
     <%= pf.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
   <div class="mb-4">
-    <%= pf.input :poverty_unknown, label: "% Poverty Unknown", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
+    <%= pf.input :poverty_unknown, label: "% poverty unknown", as: :integer, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES %>
   </div>
 <% end %>

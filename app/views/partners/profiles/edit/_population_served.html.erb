@@ -2,10 +2,10 @@
     next card's, which left the page's tag depth wrong from here down. %>
 <div class="grid gap-6">
   <%= render "shared/essentials/card", title: "Population served" do %>
-    <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
+    <%= form.input :income_requirement_desc, label: "Do clients have an income requirement to work with you?",
     as: :radio_buttons,
     wrapper_html: {}, input_html: {} %>
-    <%= form.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
+    <%= form.input :income_verification, label: "Do you verify the income of your clients?",
     as: :radio_buttons,
     wrapper_html: {}, input_html: {} %>
   <% end %>
@@ -21,9 +21,9 @@
   <%= form.input :population_other, label: "% Other", as: :integer %>
   <%= form.input :zips_served, label: "ZIP codes served" %>
   <h3 class="pt-3 font-semibold">Poverty information of those served</h3>
-  <%= form.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer %>
+  <%= form.input :at_fpl_or_below, label: "% at FPL or below", as: :integer %>
   <%= form.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer %>
   <%= form.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer %>
-  <%= form.input :poverty_unknown, label: "% Poverty Unknown", as: :integer %>
+  <%= form.input :poverty_unknown, label: "% poverty unknown", as: :integer %>
   </div>
 <% end %>

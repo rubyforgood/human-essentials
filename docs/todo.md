@@ -118,18 +118,14 @@ avoids that and introduces two versions that drift, which is the worse failure.
 Unverified: whether this client actually reads `~/.claude/skills/` on this setup — that directory
 has never existed here. Confirm by opening a different project and seeing whether the skills appear.
 
-## 24 Title Case labels on the partner profile forms
+## A typo in a partner profile field name
 
-House style is sentence case, and `page-audit.rb` enforces it on **headings only** — form field
-labels were never in its scope, so these sat outside a normative rule for the whole migration.
-
-Measured 2026-09-03: **24 distinct labels** across `app/views/partners/profiles/`, from
-`"Agency Age"` to `"Do You Verify The Income Of Your Clients?"`.
-
-Left because it is a large user-visible copy change across **two parallel trees that must stay in
-step** — `profiles/edit/` and `profiles/step/` render the same fields — and because it deserves to
-be a decision of its own rather than a rider on something else. Fixing it means extending the
-sentence-case check to `label:` as well as headings, or it will come back.
+`profiles/_show.html.erb` and `partners/profiles/show/_agency_stability.html.erb` render
+**"Current providing diapers"** where the form asks **"Currently providing diapers?"**. Same field,
+and the show side is missing the "ly". Spotted on 2026-09-04 while converting these screens to
+sentence case, and left because it is a copy fix rather than a casing one — the sentence-case pass
+had already grown from 30 labels to 106 strings and this deserves its own line rather than a rider.
+`spec/requests/partners/profiles_requests_spec.rb:22` asserts the current spelling.
 
 ## Seven dead anchors in design.md
 

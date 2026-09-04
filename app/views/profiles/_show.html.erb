@@ -20,7 +20,7 @@
   <% end %>
     </p>
     <dl>
-      <dt class="text-xs font-medium text-slate-500">Agency Mission</dt>
+      <dt class="text-xs font-medium text-slate-500">Agency mission</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.agency_mission %></dd>
     </dl>
     <dl>
@@ -86,7 +86,7 @@
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.instagram %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">No Social Media Presence</dt>
+        <dt class="text-xs font-medium text-slate-500">No social media presence</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.no_social_media_presence) %></dd>
       </dl>
     <% end %>
@@ -104,44 +104,44 @@
     <% end %>
       </p>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program Name(s)</dt>
+        <dt class="text-xs font-medium text-slate-500">Program name(s)</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_name %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Program Description(s)</dt>
+        <dt class="text-xs font-medium text-slate-500">Program description(s)</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_description %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Agency Age</dt>
+        <dt class="text-xs font-medium text-slate-500">Agency age</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.program_age %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Case Management</dt>
+        <dt class="text-xs font-medium text-slate-500">Case management</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.case_management) %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Evidence Based</dt>
+        <dt class="text-xs font-medium text-slate-500">Evidence based</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.evidence_based) %></dd>
       </dl>
       <p class="text-sm text-slate-700">How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p class="text-sm text-slate-700">Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Currently Providing Diapers</dt>
+        <dt class="text-xs font-medium text-slate-500">Currently providing diapers</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></dd>
       </dl>
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Organizational capacity</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Client Capacity</dt>
+        <dt class="text-xs font-medium text-slate-500">Client capacity</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.client_capacity %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Storage Space</dt>
+        <dt class="text-xs font-medium text-slate-500">Storage space</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.storage_space) %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Storage Space Description</dt>
+        <dt class="text-xs font-medium text-slate-500">Storage space description</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.describe_storage_space %></dd>
       </dl>
     <% end %>
@@ -153,11 +153,11 @@
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Population served</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Income Requirement</dt>
+        <dt class="text-xs font-medium text-slate-500">Income requirement</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Income Verification</dt>
+        <dt class="text-xs font-medium text-slate-500">Income verification</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(partner_profile.income_verification) %></dd>
       </dl>
     <% end %>
@@ -190,7 +190,7 @@
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_island %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Multi-Racial</dt>
+        <dt class="text-xs font-medium text-slate-500">Multi-racial</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.population_multi_racial %></dd>
       </dl>
       <dl>
@@ -204,7 +204,7 @@
       </dl>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Poverty information of those served</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">At FPL or Below</dt>
+        <dt class="text-xs font-medium text-slate-500">At FPL or below</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.at_fpl_or_below %></dd>
       </dl>
       <dl>
@@ -218,7 +218,7 @@
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.greater_2_times_fpl %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Poverty Unknown</dt>
+        <dt class="text-xs font-medium text-slate-500">Poverty unknown</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.poverty_unknown %></dd>
       </dl>
     <% end %>
@@ -226,78 +226,78 @@
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Contacts</h2>
       <strong>Executive Director</strong>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Executive Director Name</dt>
+        <dt class="text-xs font-medium text-slate-500">Executive director name</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_name %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Executive Director Phone</dt>
+        <dt class="text-xs font-medium text-slate-500">Executive director phone</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_phone %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Executive Director Email</dt>
+        <dt class="text-xs font-medium text-slate-500">Executive director email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.executive_director_email %></dd>
       </dl>
       <h3 class="mt-6 text-sm font-semibold text-slate-900">Primary contact person</h3>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Primary Contact Name</dt>
+        <dt class="text-xs font-medium text-slate-500">Primary contact name</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_name %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Primary Contact Phone</dt>
+        <dt class="text-xs font-medium text-slate-500">Primary contact phone</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_phone %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Primary Contact Mobile</dt>
+        <dt class="text-xs font-medium text-slate-500">Primary contact mobile</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_mobile %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Primary Contact Email</dt>
+        <dt class="text-xs font-medium text-slate-500">Primary contact email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.primary_contact_email %></dd>
       </dl>
     <% end %>
     <% if partner_profile_fields.include?('pick_up_person') || partner_profile_fields.empty? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Pick-up person</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Pick Up Name</dt>
+        <dt class="text-xs font-medium text-slate-500">Pick up name</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_name %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Pick Up Phone</dt>
+        <dt class="text-xs font-medium text-slate-500">Pick up phone</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_phone %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Pick Up Email</dt>
+        <dt class="text-xs font-medium text-slate-500">Pick up email</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.pick_up_email %></dd>
       </dl>
     <% end %>
     <% if partner_profile_fields.include?('agency_distribution_information') || partner_profile_fields.empty? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Agency distribution information</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Distribution Times</dt>
+        <dt class="text-xs font-medium text-slate-500">Distribution times</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.distribution_times %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">New Client Times</dt>
+        <dt class="text-xs font-medium text-slate-500">New client times</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.new_client_times %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">More Docs Required</dt>
+        <dt class="text-xs font-medium text-slate-500">More docs required</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.more_docs_required %></dd>
       </dl>
     <% end %>
     <% if partner_profile_fields.include?('sources_of_funding') || partner_profile_fields.empty? %>
       <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Sources of Funding</h2>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Sources of Funding</dt>
+        <dt class="text-xs font-medium text-slate-500">Sources of funding</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.sources_of_funding %></dd>
       </dl>
       <p class="text-sm text-slate-700">How do you currently obtain diapers? <%= partner_profile.sources_of_diapers %> </p>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Essentials Budget</dt>
+        <dt class="text-xs font-medium text-slate-500">Essentials budget</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.essentials_budget %></dd>
       </dl>
       <dl>
-        <dt class="text-xs font-medium text-slate-500">Essentials Funding Source</dt>
+        <dt class="text-xs font-medium text-slate-500">Essentials funding source</dt>
         <dd class="mt-0.5 text-sm text-slate-900"><%= partner_profile.essentials_funding_source %></dd>
       </dl>
     <% end %>
@@ -309,19 +309,19 @@
     <h2 class="mt-6 text-base font-semibold text-slate-900 first:mt-0">Settings</h2>
         <% if partner_profile.organization.enable_child_based_requests? %>
           <dl>
-            <dt class="text-xs font-medium text-slate-500">Uses Child Based Requests</dt>
+            <dt class="text-xs font-medium text-slate-500">Uses child based requests</dt>
             <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_child_based_requests) %></dd>
           </dl>
         <% end %>
         <% if partner_profile.organization.enable_individual_requests? %>
           <dl>
-            <dt class="text-xs font-medium text-slate-500">Uses Individual Requests</dt>
+            <dt class="text-xs font-medium text-slate-500">Uses individual requests</dt>
             <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_individual_requests) %></dd>
           </dl>
         <% end %>
         <% if partner_profile.organization.enable_quantity_based_requests? %>
           <dl>
-            <dt class="text-xs font-medium text-slate-500">Uses Quantity Based Requests</dt>
+            <dt class="text-xs font-medium text-slate-500">Uses quantity based requests</dt>
             <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean(partner_profile.enable_quantity_based_requests) %></dd>
           </dl>
         <% end %>

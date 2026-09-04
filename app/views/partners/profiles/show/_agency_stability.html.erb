@@ -1,9 +1,9 @@
 <%= render "shared/essentials/card", title: "Agency stability", card_class: "mb-4" do %>
     <dl class="space-y-3">
-      <dt class="text-xs font-medium text-slate-500">Year Founded</dt>
+      <dt class="text-xs font-medium text-slate-500">Year founded</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.founded %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Form 990 Filed</dt>
+      <dt class="text-xs font-medium text-slate-500">Form 990 filed</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.form_990) %></dd>
 
       <dt class="text-xs font-medium text-slate-500">Form 990</dt>
@@ -14,28 +14,28 @@
         <dd class="mt-0.5 text-sm text-slate-900">Form 990 not on file</dd>
       <% end %>
 
-      <dt class="text-xs font-medium text-slate-500">Program Name(s)</dt>
+      <dt class="text-xs font-medium text-slate-500">Program name(s)</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_name %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Program Description(s)</dt>
+      <dt class="text-xs font-medium text-slate-500">Program description(s)</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_description %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Agency Age</dt>
+      <dt class="text-xs font-medium text-slate-500">Agency age</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.program_age %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Case Management</dt>
+      <dt class="text-xs font-medium text-slate-500">Case management</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.case_management) %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Evidence Based</dt>
+      <dt class="text-xs font-medium text-slate-500">Evidence based</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.evidence_based) %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
+      <dt class="text-xs font-medium text-slate-500">How are essentials (e.g. diapers, period supplies) used in your program?</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.essentials_use %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Do You Receive Essentials From Other Sources?</dt>
+      <dt class="text-xs font-medium text-slate-500">Do you receive essentials from other sources?</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= profile.receives_essentials_from_other %></dd>
 
-      <dt class="text-xs font-medium text-slate-500">Current Providing Diapers</dt>
+      <dt class="text-xs font-medium text-slate-500">Current providing diapers</dt>
       <dd class="mt-0.5 text-sm text-slate-900"><%= humanize_boolean_3state(profile.currently_provide_diapers) %></dd>
     </dl>
 <% end %>
