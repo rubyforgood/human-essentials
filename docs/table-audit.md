@@ -1,7 +1,14 @@
 # Table audit — row actions and status badges
 
-Audited 2026-08-18 against the running app, signed in as both an organization admin and a
+Audited 2026-09-04 against the running app, signed in as an organization admin, a partner and a
 super admin. Counts are what a browser rendered, not what the source suggests.
+
+**Re-run from 2026-08-18, and the row-action half of this document is now history.** All seven
+deviations are gone and there is nothing left to fix: `more than one weight: 0`,
+`filled button in a row: 0`, across **152** screens rather than the 27 that were hand-listed.
+The sections below keep the old findings because the reasoning still explains why the rules are
+what they are — but they describe a state the app is no longer in. Only the badge section still
+reports live findings.
 
 The two questions: **how many visual weights does a table use for its row actions**, and
 **how many badges does a row carry**.
@@ -36,7 +43,23 @@ this audit does *not* recommend changing it: see the note at the end.
 
 ## Row actions — measured
 
-19 bank-side tables and 8 admin tables. `maxActs` is the most actions rendered on any one row.
+**2026-09-04: 152 screens, 0 tables using more than one weight, 0 filled buttons in a row.**
+Every actions column is consistent within its table and across the app —
+`bin/design/row-actions-audit.js` reports the same, with every trigger at 28px and column widths
+from 76px to 198px.
+
+Two advisories, neither a defect:
+
+- **A menu holding two or fewer actions** on `/storage_locations`, `/donation_sites`, `/kits`,
+  `/items`, `/partners`, `/partner_groups` and `/organization`. Correct when the action *set*
+  varies by row state, which a single render cannot see.
+- **Some rows carry no action** on `/events`. Correct where the row has no record to act on.
+
+### The 2026-08-18 state, kept for the reasoning
+
+19 bank-side tables and 8 admin tables were measured then; **17 conformed and 7 did not.** All
+seven are fixed. The table and the explanation below are retained because they record why the
+one-weight rule exists, not because anything still deviates.
 
 | Table | Rows | Max actions | Weights used | |
 | --- | --- | --- | --- | --- |
@@ -48,19 +71,20 @@ this audit does *not* recommend changing it: see the note at the end.
 | `/donations`, `/transfers`, `/kits`, `/manufacturers`, `/product_drive_participants` | 1–5 | 2 | ghost | ✓ |
 | `/purchases`, `/adjustments`, `/product_drives` | 2–5 | 1 | ghost | ✓ |
 | `/users` | 4 | 3 | ghost (source) | ✓ |
-| **`/partners`** | 8 | 2 | **bordered + ghost** | ✗ |
-| **`/broadcast_announcements`** | 1 | 2 | **filled + danger** | ✗ |
-| **`/admin/organizations`** | 3 | 2 | **bordered + danger** | ✗ |
-| **`/admin/users`** | 5 | 2 | **bordered + filled** | ✗ |
-| **`/admin/base_items`** | 47 | 2 | **bordered + filled** | ✗ |
-| **`/admin/partners`** | 7 | 2 | **bordered + filled** | ✗ |
-| **`/admin/broadcast_announcements`** | 1 | 2 | **filled + danger** | ✗ |
+| ~~`/partners`~~ | 8 | 2 | ~~bordered + ghost~~ | fixed |
+| ~~`/broadcast_announcements`~~ | 1 | 2 | ~~filled + danger~~ | fixed |
+| ~~`/admin/organizations`~~ | 3 | 2 | ~~bordered + danger~~ | fixed |
+| ~~`/admin/users`~~ | 5 | 2 | ~~bordered + filled~~ | fixed |
+| ~~`/admin/base_items`~~ | 47 | 2 | ~~bordered + filled~~ | fixed |
+| ~~`/admin/partners`~~ | 7 | 2 | ~~bordered + filled~~ | fixed |
+| ~~`/admin/broadcast_announcements`~~ | 1 | 2 | ~~filled + danger~~ | fixed |
 
-**17 conform, 7 do not.** The convention is not in doubt; these are the exceptions to it.
+### Why the seven deviated
 
-### Why the seven deviate
+*Past tense throughout: all seven are fixed and the grep below returns nothing. Kept because it
+records why the one-weight rule exists and how a helper can be the cause of a styling problem.*
 
-Six of the seven are not a styling choice at all. They still call the legacy `UiHelper`
+Six of the seven were not a styling choice at all. They still called the legacy `UiHelper`
 shims — `edit_button_to`, `delete_button_to`, `view_button_to`, `invite_button_to` — and
 `UiHelper::VARIANT_FOR_TYPE` maps `"primary" => :primary` and `"danger" => :danger`, both of
 which are **filled**. That mapping is right for a page header and wrong for a table row, and
@@ -85,7 +109,45 @@ broadcast_announcements/_broadcast_announcement.html.erb    delete_button_to, ed
 
 ## Status badges — measured
 
-The dominant pattern is already the right one. Twelve tables badge **only the exception** and
+**2026-09-04: six tables badge every row, and four of them have fewer than three rows, where the
+measurement says nothing at all.**
+
+| Table | Rows | Badge on each | Reading |
+| --- | --- | --- | --- |
+| `/partners` | 6 | Approved, Awaiting review, Approved, Invited, Recertification required, Approved | Deliberate. See below. |
+| `/partners/1/approve_application` | 6 | the same six | The same table, on the approval screen. Newly visible only because the audit widened to every route. |
+| `/partner_groups` | 2 | No, No | **The one worth a decision.** A boolean column, pilled in both states. |
+| `/adjustments/1` | 1 | Added | One row. Says nothing. |
+| `/broadcast_announcements` | 1 | Expired | One row. Says nothing. |
+| `/admin/broadcast_announcements` | 1 | Expired | One row. Says nothing. |
+
+**The count went from 1 to 6 without anything getting worse.** The audit used to visit 27
+hand-listed tables and now visits every route, so five of the six are newly *looked at* rather
+than newly wrong. `badgedRows === rows` is trivially true of a one-row table: it cannot tell
+"badges mark the exception" from "badge on every row" with one row to go on. The script prints the
+row count beside each path now, and says how many are below three, because the bare number invited
+precisely the wrong conclusion.
+
+### `/partner_groups` — a question rather than a finding
+
+The "Send reminders?" column pills both states: `Yes` in success tone with a bell,
+`No` in neutral tone with a struck-through bell. So every row carries a badge, which is what the
+rule is against — but the rule exists to stop a badge shouting on a row that is not exceptional,
+and a neutral grey pill is not shouting.
+
+Three ways to read it, and it is a design call rather than a defect:
+
+1. **Leave it.** A two-state column where both states are real information, and the neutral tone
+   already marks "No" as unremarkable. Pill plus icon scans faster than a bare word.
+2. **Pill only `Yes`.** "No" becomes plain text, and the badge marks the row that has something
+   switched on. Most consistent with the rule as written.
+3. **Pill neither.** A tick and a dash, which is what a boolean column usually gets.
+
+Not changed, because design decisions get shown before they get built.
+
+### The 2026-08-18 badge survey, kept
+
+The dominant pattern was already the right one. Twelve tables badge **only the exception** and
 attach it to the name rather than giving it a column:
 
 | Table | Badges | When |
@@ -94,9 +156,9 @@ attach it to the name rather than giving it a column:
 | `/broadcast_announcements`, `admin/…` | "Expired" | only when expired |
 | dashboard low inventory, item inventory rows | "Below minimum" | only when below |
 
-Five tables badge **every row**. Only `/partners` is an index page the script visits; the
-other four were found by reading the row partials, and are reached from a partner's or a
-group's page rather than from a top-level list:
+Five tables badge **every row**. Only `/partners` was an index page the script visited then; the
+other four were found by reading the row partials, and are reached from a partner's or a group's
+page rather than from a top-level list:
 
 | Table | Badges per row | Distinct badge kinds |
 | --- | --- | --- |
@@ -108,35 +170,43 @@ group's page rather than from a top-level list:
 
 ### `/partners` specifically
 
-Measured on the seeded org: **6 rows, 6 row badges, plus a 7-badge filter strip = 13 badges on
-one screen.** At a realistic 100 partners it is 107. Two problems, and the second is the one
-that matters:
+**2026-09-04: the filter strip is gone, and with it the problem that mattered.**
+`partners/_statuses.html.erb` no longer exists and nothing in the app renders `#partner-status`
+— the audit reports **0** filter chips where it used to find 7. So a screen that carried 13
+badges now carries 6, one per row.
 
-1. Every row is badged, including the majority "Approved" state.
-2. **The filter strip and the status column share a visual language.** The strip in
-   `_statuses.html.erb` builds its chips from `EssentialsUiHelper::PILL_TONES` — literally the
-   status palette — so a control that filters the list and a badge that reports a row's state
-   are the same shape, size and colour. design.md says a pill is a state and "does not look
-   pressable"; here half of them are links. A reader cannot tell by looking which pills do
-   something.
+What remains is the first point only, and it is deliberate: every row is badged, including the
+majority "Approved" state, because the column *is* the status. Measured: Approved, Awaiting
+review, Approved, Invited, Recertification required, Approved — five distinct values across six
+rows. A status column whose values genuinely vary is not the thing the "badge the exception"
+rule is aimed at.
+
+The 2026-08-18 finding, for the record:
+
+> 6 rows, 6 row badges, plus a 7-badge filter strip = 13 badges on one screen. **The filter strip
+> and the status column share a visual language.** The strip built its chips from
+> `EssentialsUiHelper::PILL_TONES` — literally the status palette — so a control that filters the
+> list and a badge that reports a row's state were the same shape, size and colour. design.md says
+> a pill is a state and "does not look pressable"; half of them were links.
 
 ## Two further inconsistencies found while auditing
 
-- **The same concept is rendered two ways.** Invitation status is plain text in
-  `users/_organization_user.html.erb` (`<td><%= user.invitation_status %></td>`) and three
-  coloured pills in `partner_users/_users.html.erb`.
-- **A partner in `recertification_required` has no row action, and that is correct.** The
-  `case status` in `_partner_row.html.erb` covers the other five statuses and falls through for
-  this one, which looks like an oversight and is not. While a partner is in this state the bank
-  has genuinely nothing to do: `Partner#approvable?` is `invited? || awaiting_review?`, so the
-  show page offers no "Approve partner" either, and
-  `PartnerRequestRecertificationService#valid?` refuses to run against a partner already in the
-  state, so the request cannot be re-sent. The ball is with the partner until they resubmit,
-  which moves them to `awaiting_review` and the row grows a "Review profile" button.
+- **The same concept is rendered two ways.** Still true on 2026-09-04. Invitation status is plain
+  text in `users/_organization_user.html.erb:6` (`<td><%= user.invitation_status %></td>`) and
+  three coloured pills in `partner_users/_users.html.erb`.
+- **~~A partner in `recertification_required` has no row action.~~ No longer true.** The `case` in
+  `_partner_row.html.erb` still falls through for that status, but the partial now ends with
+  `row_items += [{label: "View partner", ...}] if row_items.empty?`, so the row gets one action
+  instead of an empty column. Measured across the six seeded rows: Approved → "Request
+  recertification", Awaiting review → "Review profile", Invited → "Review profile" and "Re-send
+  invite", Recertification required → **"View partner"**.
 
-  Worth knowing rather than fixing. If a nudge is ever wanted — `invited` has "Re-send invite"
-  for the same "waiting on the partner" situation — it needs a service change first, not a view
-  change.
+  The reasoning behind the original note still holds and is worth keeping: while a partner is in
+  this state the bank genuinely has nothing to *do*. `Partner#approvable?` is
+  `invited? || awaiting_review?`, so the show page offers no "Approve partner" either, and
+  `PartnerRequestRecertificationService#valid?` refuses to run against a partner already in the
+  state. The ball is with the partner until they resubmit. The fallback gives the row a way in
+  without inventing an action that would fail.
 
 ## Not recommended
 
@@ -148,29 +218,45 @@ records why its dropdown was removed in the migration. Revisit if a table reache
 
 ## Verifying
 
-`bin/design/table-audit.js` visits all 27 index tables in a real browser, reports the weights
-and badge counts per table, and exits non-zero if any table uses more than one weight. Against
-a seeded development server it currently reports:
+`bin/design/table-audit.js` enumerates every route rather than a hand-kept list, visits each in a
+real browser as all three roles, reports weights and badge counts per table, and exits non-zero if
+any table uses more than one weight. On 2026-09-04, against a seeded development server:
 
 ```
-tables audited:            27
-more than one weight:      7  /partners /broadcast_announcements /admin/organizations
-                              /admin/users /admin/base_items /admin/partners
-                              /admin/broadcast_announcements
-filled button in a row:    6  /broadcast_announcements /admin/organizations /admin/users
-                              /admin/base_items /admin/partners /admin/broadcast_announcements
-badge on every row:        1  /partners
+tables audited:            152
+more than one weight:      0
+filled button in a row:    0
+badge on every row:        6  /adjustments/1 (1 row) /partners/1/approve_application (6 rows)
+                              /partners (6 rows) /partner_groups (2 rows)
+                              /broadcast_announcements (1 row) /admin/broadcast_announcements (1 row)
+                           4 of those have fewer than 3 rows, where this says nothing.
+```
+
+`bin/design/row-actions-audit.js` answers the other half — the shape of the actions column rather
+than the weight of what is in it:
+
+```
+every actions column is consistent within its table and across the app
+advisory -- a menu holding 2 or fewer actions:  /storage_locations /donation_sites /kits
+                                                /items /partners /partner_groups /organization
+advisory -- some rows carry no action:          /events
 ```
 
 ```bash
 bin/start                      # then, with the app running:
 pw bin/design/table-audit.js
+pw bin/design/row-actions-audit.js
 
 # The source-level version: table views still calling the legacy filled-button helpers.
-# Currently 9, all listed above.
 grep -rlE '(view|edit|delete|deactivate|reactivate|invite)_button_to' app/views/ |
   xargs grep -l '<td'
 ```
+
+**That grep now returns nothing.** It found 9 views on 2026-08-18. One call to a legacy helper
+survives anywhere in `app/views` — `organizations/_header.html.erb:23`, `edit_button_to` — and it
+is in a page header rather than a table cell, where it renders `:primary`. That is what design.md
+asks a page's single main action to be, so it is correct output from a legacy call: worth knowing
+about, not worth changing on its own.
 
 The static check and the browser check answer different halves. A grep finds the legacy helper
 calls; only the browser shows what variant they resolved to, which is the thing a user sees.
