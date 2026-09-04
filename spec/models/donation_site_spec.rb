@@ -167,9 +167,29 @@ RSpec.describe DonationSite, type: :model do
     let!(:active_donation_site) { create(:donation_site, name: "Active Site", address: "1500 Remount Road, Front Royal, VA 22630", active: true, organization: organization) }
     let!(:inactive_donation_site) { create(:donation_site, name: "Inactive Site", address: "1500 Remount Road, Front Royal, VA 22630", active: false, organization: organization) }
 
+    # The query the CSV export actually runs. `DonationSitesController#index` builds
+    # `current_organization.donation_sites.alphabetized.active` and hands that to `generate_csv`.
+    #
+    # These examples used a bare `DonationSite.active`, which differed from the app in two ways,
+    # and both made them flaky rather than stably wrong:
+    #
+    #   * **Unscoped by organization**, so any donation site belonging to another one changes the
+    #     count. Nothing leaks today, but the assertion was one stray record from failing and said
+    #     nothing about the export, which is always scoped.
+    #   * **Unordered**, while the assertions index `.first` and `.second`. Postgres promises no
+    #     order without `ORDER BY`; a sequential scan happens to return heap order, and the
+    #     `before` blocks below `update` a row, which writes a new tuple at the end of the heap.
+    #     So the expected order held by accident of MVCC until, on one run in fifteen, it did not.
+    #
+    # Caught by a full-suite run on 2026-09-04, not by this file, which passes on its own every
+    # time.
+    def exported_donation_sites
+      organization.donation_sites.alphabetized.active.map(&:csv_export_attributes)
+    end
+
     context "when there are active and inactive donation sites" do
       it "includes only active donation sites in the CSV export" do
-        csv_data = DonationSite.active.map(&:csv_export_attributes)
+        csv_data = exported_donation_sites
 
         expect(csv_data.count).to eq(1)
 
@@ -183,12 +203,35 @@ RSpec.describe DonationSite, type: :model do
       end
     end
 
+    # The two guards below are the point of the change: each one fails against the bare
+    # `DonationSite.active` these examples used to call, and passes against the query the app
+    # actually runs. Without them the fix is invisible -- every example here passed before it too.
+    context "when another organization has donation sites" do
+      it "excludes them, because the export is always organization-scoped" do
+        create(:donation_site, name: "Someone Else's Site", active: true,
+          organization: create(:organization))
+
+        expect(exported_donation_sites.count).to eq(1)
+        expect(exported_donation_sites.first.first).to eq("Active Site")
+      end
+    end
+
+    context "when a site sorts before one created earlier" do
+      it "returns them by name rather than by insertion order" do
+        # Created last, sorts first. Insertion order would put it at the end, which is what an
+        # unordered query returns on a sequential scan.
+        create(:donation_site, name: "AAA Site", active: true, organization: organization)
+
+        expect(exported_donation_sites.map(&:first)).to eq(["AAA Site", "Active Site"])
+      end
+    end
+
     context "when all donation sites are inactive" do
       it "returns no donation sites in the CSV export" do
-        csv_data = DonationSite.active.map(&:csv_export_attributes)
+        csv_data = exported_donation_sites
         expect(csv_data).to be_empty
       end
-      # Deactivate both :active_donation_site and :inactive_donation_site
+      # Only the active one needs deactivating; the other is created inactive.
       before do
         active_donation_site.update(active: false)
       end
@@ -196,7 +239,7 @@ RSpec.describe DonationSite, type: :model do
 
     context "when both donation sites are active" do
       it "includes both active donation sites in the CSV export" do
-        csv_data = DonationSite.active.map(&:csv_export_attributes)
+        csv_data = exported_donation_sites
 
         expect(csv_data.count).to eq(2)
 
