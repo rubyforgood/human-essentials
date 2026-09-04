@@ -84,9 +84,15 @@ class Request < ApplicationRecord
     end
   end
 
+  # **This message is shown to partners verbatim.** `partners/requests/_error` prints every base
+  # error as a bullet, so it has to be a sentence rather than the note-to-self it was
+  # ("completely empty request"). It describes the *state* and not the remedy, because the
+  # remedy differs by form and the callout's guidance line above the list already gives it:
+  # "Choose at least one child" on the family form, "every line needs an item selected" on the
+  # other two.
   def not_completely_empty
     if comments.blank? && item_requests.blank?
-      errors.add(:base, "completely empty request")
+      errors.add(:base, "The request is empty: it has no items and no comment.")
     end
   end
 

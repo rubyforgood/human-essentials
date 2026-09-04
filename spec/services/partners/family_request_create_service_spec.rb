@@ -24,7 +24,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
-          expect(result.errors[:base]).to eq(["completely empty request"])
+          expect(result.errors[:base]).to eq(["The request is empty: it has no items and no comment."])
         end
       end
 
