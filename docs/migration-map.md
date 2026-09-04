@@ -250,6 +250,9 @@ alone was enough.
 ## Verifying a migration
 
 ```bash
+bin/rails runner bin/design/state.rb          # regenerate the "Current state" table
+bin/rails runner bin/design/state.rb --check  # or just fail if it has drifted
+
 bundle exec rspec                 # system specs included -- they catch what a sweep cannot
 bundle exec rubocop
 bundle exec erb_lint --lint-all

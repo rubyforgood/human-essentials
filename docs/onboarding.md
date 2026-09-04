@@ -260,6 +260,11 @@ bin/design/serve-mockup <name>       # serve a design preview and print its URL
 python3 bin/design/undefined-classes.py   # classes that render as nothing
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
+
+`bin/rails runner bin/design/state.rb` regenerates the change log's "Current state" table, and
+`--check` fails if it has drifted — which CI runs, so the figures cannot quietly fall behind the
+code. It excludes the commit and file counts from the check, because gating on numbers that change
+every commit is how a check gets switched off.
 pw bin/design/form-validation-audit.js    # required marking and error handling
 pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
 bin/rails runner bin/design/dead-routes.rb   # routes whose request would raise
