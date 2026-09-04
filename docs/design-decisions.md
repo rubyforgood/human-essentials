@@ -9439,3 +9439,83 @@ role back onto the root leaves every positive assertion passing.
 Then: 468 examples across every spec that touches the summary plus all partner specs, 0 failures;
 axe over 156 pages, no violations; `wcag22-audit` over 151 screens, no failures;
 `form-validation-audit` over 26 forms, no findings.
+
+## 2026-09-04 — One inconsistency, and the blind spot that had been protecting it
+
+The ask was small: invitation status is plain text in the bank's user table and coloured pills in
+the partner's. Make them agree. The fix is a helper. Getting to it turned up why the inconsistency
+had survived a whole migration.
+
+### The screen no audit could see
+
+`partner_users/_users.html.erb` lives at `/partners/:partner_id/users`. `route-targets.rb`
+substituted ids like this:
+
+```ruby
+id = IDS[controller] or next
+path = path.gsub(/:[a-z_]*id/, id.to_s)
+```
+
+`IDS["partner_users"]` is `partner&.users&.first.id` — a **User** id — and the regex put it in the
+`:partner_id` slot. The generated target was `/partners/10/users`. There is no partner 10. It 404'd,
+and every browser audit dutifully logged it under "not reached" and moved on.
+
+**A skipped page and a clean page produce the same summary line.** So this table sat outside the
+migration's reach and kept: three stacked `button_to`s in two weights where design.md asks for one
+and a menu, a 264px actions column against 76–198px elsewhere, 38px triggers against 28px, Title
+Case headers, `scope="col"` on one of four `<th>`s, and a status column drawn differently from its
+counterpart. `table-audit.js` reported the app clean throughout, and was telling the truth about
+every page it looked at.
+
+Fixed by resolving each named segment against the model it names — `:partner_id` → `IDS["partners"]`
+— and skipping the route entirely when a record is missing, because a guessed id is a 404 wearing a
+screen's name. 154 targets, and `/requests/1/cancelation/new` became reachable too.
+
+### The cache that hid the fix
+
+Making the change was not enough. `table-audit.js` still reported 152 tables and no findings, while
+`row-actions-audit.js` immediately saw `/partners/1/users` and reported two weights on it. Two
+audits, one tree, different answers.
+
+`targets.js` caches the generated list in `/tmp/targets.json` and regenerates when it is older than
+`config/routes.rb`. **The generator was not in that list.** Editing `route-targets.rb` left a stale
+cache that looked fresh; `row-actions-audit.js` escaped it only because it shells out to the
+generator directly instead of using the cache at all.
+
+The freshness check now covers `route-targets.rb` as well. The general rule: *a cache may not be
+older than anything that determines its contents*, and the file that generates it obviously
+qualifies.
+
+### The fix that was actually asked for
+
+`essentials_invitation_status_pill(user)`, used by both tables. The two sides were not merely
+styled differently, they **disagreed**: `User#invitation_status` separates *accepted* (took the
+invitation) from *joined* (has signed in since), and the partner side recomputed from
+`invitation_accepted_at` alone, collapsing both into "Accepted". The same user read "joined" on one
+screen and "Accepted" on the other. The bank's model carries more information, so it is the one
+kept.
+
+Joined and Accepted are `:success`; Invited is `:warning`, because it is the row an admin might act
+on; a never-invited account gets a neutral "Not invited" instead of the empty cell the bank table
+used to show.
+
+**Pills rather than plain text**, converging on the partner side's treatment, because
+`docs/table-audit.md` already settles this case: a status column whose values genuinely vary is not
+what the "badge the exception" rule is aimed at — the same reasoning that leaves `/partners` badging
+every row. Measured across both tables afterwards: Invited, Joined, Joined, Accepted, Accepted on
+`/organization`; Accepted, Joined on `/partners/1/users`.
+
+One spec asserted `have_content("invited")` on the raw lowercase value. Capybara's failure message
+pointed it out precisely — *"it was found 1 time using a case insensitive search"* — and the
+assertion now names the label a user actually sees.
+
+### Scope, and what was left
+
+Fixing the row actions on that table was not the request, and it is done anyway: the audit exits
+non-zero on a mixed-weight table, and `migration-map.md` already argues that a permanently red audit
+is one people learn to ignore. Converting it changes nothing about the design — it adopts the
+component every other table in the app already uses.
+
+Not done: `/broadcast_announcements/1/edit` and `/partners/children/new` still 404 and are still
+skipped by every audit. They are in `docs/todo.md`, because after today the reasonable prior is that
+a skipped route is hiding something.

@@ -326,6 +326,39 @@ module EssentialsUiHelper
     end
   end
 
+  # Where a user is between being invited and using the account.
+  #
+  # **One concept, one rendering.** This was drawn two ways for the same `User` class. The bank's
+  # organization table printed `user.invitation_status` raw -- the lowercase words "joined",
+  # "accepted", "invited", and an empty cell for a user who had never been invited. The partner's
+  # user table ignored that method, recomputed the state from `invitation_accepted_at` alone, and
+  # drew two pills.
+  #
+  # They also disagreed. `invitation_status` distinguishes *accepted* (took the invitation) from
+  # *joined* (has actually signed in since), and the partner side collapsed both into "Accepted" --
+  # so the same user read "joined" on one screen and "Accepted" on the other. The bank side is the
+  # one with more information, so it is the one kept.
+  #
+  # A pill and not text: this is a status column whose values genuinely vary, which
+  # docs/table-audit.md settles as the case the "badge the exception" rule is not aimed at -- the
+  # same reasoning that leaves `/partners` badging every row.
+  INVITATION_STATUS_PILLS = {
+    # Signed in at least once. The only state that says the account is actually in use.
+    "joined" => {label: "Joined", tone: :success, icon: "bi-person-check"},
+    # Took the invitation but has not signed in since.
+    "accepted" => {label: "Accepted", tone: :success, icon: "bi-check-circle"},
+    # Waiting on them. Amber because it is the row an admin might act on.
+    "invited" => {label: "Invited", tone: :warning, icon: "bi-hourglass-split"}
+  }.freeze
+
+  def essentials_invitation_status_pill(user)
+    # `invitation_status` returns nil when no invitation was ever sent -- a directly created
+    # account. An empty cell left the reader to guess; neutral says "nothing has happened yet".
+    pill = INVITATION_STATUS_PILLS.fetch(user.invitation_status.to_s,
+      {label: "Not invited", tone: :neutral, icon: "bi-dash-circle"})
+    essentials_status_pill(pill[:label], tone: pill[:tone], icon: pill[:icon])
+  end
+
   # --- Stats ----------------------------------------------------------------
   #
   # A figure and the words that say what it counts. A description list, because that is the

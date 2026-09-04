@@ -30,12 +30,27 @@ const ROOT = path.resolve(__dirname, "../..");
 // The one Rails-shaped line in this file. Override it and the rest works unchanged.
 const GENERATE = process.env.TARGETS_CMD ||
   "bin/rails runner bin/design/route-targets.rb";
-const ROUTES_FILE = path.join(ROOT, "config/routes.rb");
+/*
+ * **What the cache is allowed to be older than: nothing that decides its contents.**
+ *
+ * This checked `config/routes.rb` alone, and the list is produced by `route-targets.rb` reading
+ * those routes -- so editing the *generator* left a stale cache that looked fresh. Fixing the id
+ * substitution there changed `/partners/10/users` (a 404) into `/partners/1/users` (a real screen),
+ * and `table-audit.js` went on auditing the 404 and reporting the app clean, while
+ * `row-actions-audit.js` -- which shells out to the generator directly instead of using this cache
+ * -- saw the new screen immediately and found two button weights on it.
+ *
+ * Two audits, one tree, different answers, because one of them trusted a cache whose freshness
+ * check did not cover the thing that had changed.
+ */
+const SOURCES = [path.join(ROOT, "config/routes.rb"),
+                 path.join(__dirname, "route-targets.rb")];
 
 function stale() {
   if (!fs.existsSync(TARGETS_FILE)) return true;
-  if (!fs.existsSync(ROUTES_FILE)) return false;
-  return fs.statSync(TARGETS_FILE).mtimeMs < fs.statSync(ROUTES_FILE).mtimeMs;
+  const built = fs.statSync(TARGETS_FILE).mtimeMs;
+  return SOURCES.filter((f) => fs.existsSync(f))
+                .some((f) => built < fs.statSync(f).mtimeMs);
 }
 
 let cached = null;

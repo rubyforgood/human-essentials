@@ -4,10 +4,12 @@
     <% if users.any? %>
       <table class="data-table whitespace-nowrap">
         <thead>
+          <%# Sentence case, and `scope="col"` on all four rather than one -- both design.md rules,
+              missed here for the same reason as the row actions: nothing audited this page. %>
           <tr>
-            <th>Name & Email</th>
-            <th>Last Login</th>
-            <th>Invitation Status</th>
+            <th scope="col">Name and email</th>
+            <th scope="col">Last login</th>
+            <th scope="col">Invitation status</th>
             <th scope="col" class="cell-actions">Actions</th>
           </tr>
         </thead>
@@ -29,31 +31,46 @@
                   <% end %>
                 </small>
               </td>
+              <%# One helper for both this table and the bank's, rather than recomputing the state
+                  from `invitation_accepted_at`. That local version could not tell *accepted* from
+                  *joined*, so a user who had signed in read "Accepted" here and "joined" on
+                  /organization. The "last invite sent" line stays: it is the detail this screen
+                  has that the other does not, and it is what the Resend button acts on. %>
               <td>
-                <% if user.invitation_accepted_at %>
-                  <%= essentials_status_pill("Accepted", tone: :success, icon: "bi-check-circle") %>
-                <% else %>
-                  <div class='flex flex-col justify-center items-start'>
-                    <%= essentials_status_pill("Waiting acceptance", tone: :warning, icon: "bi-hourglass-split") %>
+                <div class="flex flex-col items-start justify-center">
+                  <%= essentials_invitation_status_pill(user) %>
+                  <% if user.invitation_accepted_at.nil? && user.invitation_sent_at.present? %>
                     <small class="text-xs text-slate-500">
                       Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago on <%= user.invitation_sent_at.strftime('%b %d %Y') %></strong>
                     </small>
-                  </div>
-                <% end %>
-              </td>
-              <td class='flex flex-col'>
-                <% unless user.invitation_accepted_at %>
-                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, data: { disable_with: "Please wait..." }, class: essentials_button_classes(variant: :secondary) do %>
-                    <i class="bi-envelope"></i> Resend Invitation
                   <% end %>
-                <% end %>
-                <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: essentials_button_classes(variant: :secondary) do %>
-                     Reset Password
-                <% end %>
-                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?", disable_with: "Please wait..." }, class: essentials_button_classes(variant: :ghost_danger) do %>
-                    <i class="bi-slash-circle"></i> Remove Access
-                <% end %>
+                </div>
+              </td>
+              <%#
+                The one table in the app that never went through the row-actions pass, because no
+                audit could reach it: `route-targets.rb` put a *user* id in the `:partner_id` slot,
+                so this page was `/partners/10/users`, a 404, and every browser audit recorded it as
+                "not reached". It kept three stacked `button_to`s in two weights -- two `:secondary`
+                and one `:ghost_danger` -- where design.md asks for one weight and a menu, and the
+                column measured 264px against 76-198px elsewhere with 38px triggers against 28px.
 
+                Two of the three destroy or reset something, so both keep a confirmation. Resend is
+                offered only while the invitation is outstanding, which is the same condition that
+                puts "Invited" in the status column beside it.
+              %>
+              <td class="cell-actions">
+                <%= render "shared/essentials/row_actions", label: user.name.presence || user.email, items: [
+                      (if user.invitation_accepted_at.nil?
+                         {label: "Resend invitation", path: resend_invitation_partner_user_path(partner, user),
+                          icon: "bi-envelope", method: :post}
+                       end),
+                      {label: "Reset password", path: reset_password_partner_user_path(partner, user),
+                       icon: "bi-key", method: :post,
+                       confirm: "Send #{user.name.presence || user.email} a link to reset their password?"},
+                      {label: "Remove access", path: partner_user_path(partner, user),
+                       icon: "bi-slash-circle", method: :delete, tone: :danger,
+                       confirm: "Remove #{user.name.presence || user.email}'s access to #{partner.name}? They will no longer be able to sign in."}
+                    ].compact %>
               </td>
             </tr>
           <% end %>
