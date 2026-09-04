@@ -13,12 +13,26 @@ module Requests
       svc.call
 
       if svc.errors.none?
-        flash[:notice] = "Request #{params[:request_id]} has been removed!"
+        flash[:notice] = "Request #{params[:request_id]} has been cancelled."
         redirect_to requests_path
       else
-        errors = svc.errors.full_messages.join(", ")
-        flash[:error] = "Request #{params[:request_id]} could not be removed because #{errors}"
-        redirect_to new_request_cancelation_path(request_id: params[:request_id])
+        #
+        # **Not back to the cancellation form.** It used to redirect there, which put the user in
+        # front of a control that could never succeed while silently discarding the reason they had
+        # written: `RequestDestroyService` fails only on states -- the request is already cancelled,
+        # or it is gone -- and no amount of retyping changes either. Someone whose colleague
+        # cancelled the request first would type their reason again and get the same error forever.
+        #
+        # The request's own page is where reality is: it shows the Cancelled status and whatever
+        # reason was actually recorded. If the request cannot be found at all there is nothing to
+        # show, so the list is the fallback.
+        #
+        # The flash stays. design.md: operational failure gets the flash, validation failure gets
+        # the summary -- this is the former, and it was the destination that was wrong, not the
+        # flash.
+        flash[:error] = "Request #{params[:request_id]} could not be cancelled -- " \
+                        "#{svc.errors.full_messages.to_sentence}."
+        redirect_to(request_exists? ? request_path(params[:request_id]) : requests_path)
       end
     end
 
@@ -26,6 +40,13 @@ module Requests
 
     def cancelation_params
       params.require(:cancelation).permit(:reason)
+    end
+
+    # A cancelled request still has a page -- `requests#show` renders it and displays the Cancelled
+    # status -- so "already cancelled" has somewhere to go. "We could not find it" does not, and
+    # `request_path` on a missing id would answer the failure with a 404.
+    def request_exists?
+      Request.exists?(id: params[:request_id])
     end
   end
 end

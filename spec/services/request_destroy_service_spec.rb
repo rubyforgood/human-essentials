@@ -12,7 +12,7 @@ RSpec.describe RequestDestroyService, type: :service do
       let(:request_id) { 0 }
 
       it 'should not be successful and have errors indicating request id is invalid' do
-        expect(subject.errors.full_messages).to eq(['request_id is invalid'])
+        expect(subject.errors.full_messages).to eq(['we could not find it'])
       end
     end
 
@@ -22,7 +22,7 @@ RSpec.describe RequestDestroyService, type: :service do
       end
 
       it 'should not be successful and have errors' do
-        expect(subject.errors.full_messages).to eq(['request already cancelled'])
+        expect(subject.errors.full_messages).to eq(['it has already been cancelled'])
       end
     end
 
