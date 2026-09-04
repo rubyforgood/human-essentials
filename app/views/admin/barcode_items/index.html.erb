@@ -16,6 +16,13 @@
       <%= filter_select(label: "Base item", scope: :barcodeable_id, collection: @items,
             key: :id, value: :name, selected: @selected_barcodeable_id) %>
     </div>
+    <%# Same control and same label as the non-admin page: scanning a barcode into the box is the
+        fastest way to answer "is this one already registered", which is the question this screen
+        exists for. It was the only filter genuinely missing here -- a base item filter was already
+        present above, and `by_base_item_partner_key` would have duplicated it. %>
+    <div class="min-w-0">
+      <%= filter_text(label: "Barcode (boop it!)", scope: :by_value, selected: @selected_barcode_value) %>
+    </div>
   <% end %>
   <%= turbo_frame_tag "admin-barcode-items-results", target: "_top", data: {turbo_action: "advance"} do %>
 

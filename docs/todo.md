@@ -87,10 +87,12 @@ next to. Left deliberately; the surrounding guidance sentence now carries the ac
 
 ## Filters and forms
 
-**`admin/barcode_items` offers one filter where its non-admin twin offers three.** The two pages
-are otherwise the same page now. Adding base item and barcode value would need `by_base_item_partner_key`
-and `by_value` permitted in `filter_params` — both are real scopes on `BarcodeItem`, so it is
-safe, but it is a feature rather than consistency work.
+**`/admin/barcode_items` has no seeded data, so it cannot be eyeballed.** `BarcodeItem.global.count`
+is **0** in the development database while 13 org-scoped barcodes exist, so the admin page renders
+an empty state and its filters cannot be exercised in a browser — the `by_value` filter added on
+2026-09-04 had to be verified by request spec instead. A couple of global barcodes in `db/seeds.rb`
+would make the screen reviewable. Small, but it is the reason a filter sat inert on this page for
+years without anyone noticing.
 
 ## Skills: not yet available outside this repo
 

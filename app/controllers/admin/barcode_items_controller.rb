@@ -21,6 +21,7 @@ class Admin::BarcodeItemsController < AdminController
   def index
     @items = BaseItem.alphabetized.all
     @selected_barcodeable_id = filter_params[:barcodeable_id]
+    @selected_barcode_value = filter_params[:by_value]
     # `class_filter` was never called here, so the filter select on this page had no effect at
     # all: choosing a base item reloaded the same full list with the choice in the query string.
     @barcode_items = BarcodeItem.global.includes(:barcodeable).class_filter(filter_params)
@@ -69,11 +70,20 @@ class Admin::BarcodeItemsController < AdminController
   # for each of these, so a key that is not a scope raises -- and this list used to carry four
   # that are not: less_than_quantity, greater_than_quantity, equal_to_quantity and base_item_id.
   # Harmless only for as long as nothing called `class_filter`, which nothing did.
+  #
+  # **`by_base_item_partner_key` is deliberately not here, though it is a real scope.** On this page
+  # it is the same filter as `barcodeable_id`: these barcodes are `barcodeable_type: "BaseItem"`,
+  # and `partner_key` is unique on BaseItem, so both select the barcodes of exactly one base item.
+  # Verified by filtering a fixture both ways and comparing the results. Its non-admin twin needs
+  # both because barcodes there hang off `Item`, and several items map to one base item.
+  #
+  # Two controls doing one thing is a worse page, and a permitted filter nobody uses is how this
+  # list previously came to carry four names that were not scopes at all.
   helper_method \
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:barcodeable_id)
+    params.require(:filters).permit(:barcodeable_id, :by_value)
   end
 
   def load_barcode_item
