@@ -56,15 +56,6 @@ follows from the form being `essentials_form_for :cancelation` — a symbol, not
 simple_form has no object to attach an error to. Fixing it properly means giving the action
 something to re-render.
 
-**`/partner_groups` pills both states of a boolean column — a design decision, not a defect.**
-Found by re-running the table audit on 2026-09-04. "Send reminders?" renders
-`essentials_status_pill("Yes", tone: :success)` or `("No", tone: :neutral)`, so every row carries a
-badge, which is what design.md's "badges mark the exception" is against — but a neutral grey pill
-is not the shouting the rule exists to prevent. Three readings, set out in
-[table-audit.md](table-audit.md#partner_groups--a-question-rather-than-a-finding): leave it, pill
-only `Yes`, or pill neither. **Not changed, because design decisions get previewed before they get
-built.** Two rows in the seeded database, so it is also the thinnest possible evidence.
-
 **One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
 `edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is
 what design.md asks a page's single main action to be — correct output from a legacy call. The
@@ -213,40 +204,4 @@ One real gap was found and hardened: the gesture sat inside `if (anchor)`, so a 
 blind there. The case it would genuinely have missed is the original bug's own signature: clip on,
 body not overflowing, page pans anyway, no heading. That last step is reasoning, not a
 measurement; it could not be reproduced, because the pan itself no longer happens.
-
-## A column of links has no convention yet
-
-`item_categories/index` renders "Items in category" as a `<ul>` of anchors — 651 characters in the
-worst row, making it 439px tall. It cannot take `.notes`: clipping would leave focusable links
-invisible. It needs a count, or the first few and a "+N more". One table, so it is recorded rather
-than invented.
-
-## The distributions table has more columns than it has room for
-
-Analysed in `docs/mockups/distributions-columns.html` with per-column evidence. **Two claims
-previously recorded here were wrong** and are corrected there: shipping cost is present on **50%**
-of rows, not empty on all of them, and the created and issued dates **differ on all 24 rows**, so
-they are two facts rather than a duplicate.
-
-The measured shape of the problem:
-
-| Change | Table width | Against the 1,118px region |
-| --- | --- | --- |
-| Today | 1,759px | scrolls |
-| Actions as one action + a menu | 1,508px | scrolls |
-| … and drop the three that are one click away | 1,153px | scrolls (35px over) |
-| … and drop Initial allocation too | 1,118px | fits exactly |
-
-**Dropping columns alone never makes it fit, and the biggest single win is not a data column at
-all**: Actions was **331px**, the second-widest column in the table, holding up to five labelled
-buttons.
-
-**That half is done.** `shared/essentials/row_actions` was built and the column is now **76px** —
-measured at 1440 on 2026-09-03, a 255px saving against the 251 predicted. The table is **1,521px**
-against a 1,118px region, down from 1,759.
-
-**It still scrolls, by 403px.** What remains is the column question the table above sets out:
-dropping the three that are one click away, and possibly Initial allocation. That is a data
-decision rather than a layout one and wants its own preview, because removing a column a user reads
-is not the same kind of change as collapsing buttons they can still reach.
 

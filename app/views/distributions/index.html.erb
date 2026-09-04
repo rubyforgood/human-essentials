@@ -68,13 +68,24 @@
         <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
             <caption>Distributions to partner agencies</caption>
+            <%#
+              Three columns were dropped on 2026-09-04 so this table fits: **source inventory**
+              (202px), **shipping cost** (108px) and **comments** (146px). Measured at 1440px, the
+              table was 1,521px against 1,118px of visible width and scrolled by 403px; the actions
+              column had already come down from 331px to 76px, so the rest had to come out of data.
+
+              Each is still on the distribution's own page, and all three remain in the CSV export --
+              this is a decision about what is worth *scanning a list* for, not about what is worth
+              recording. Shipping cost also applies to only one of three delivery methods, so it was
+              blank on most rows; comments is free text that is usually empty and never scannable in
+              a column.
+            %>
             <thead>
               <tr>
                 <th scope="col" class="pin-col">ID</th>
                 <th scope="col" class="name">Partner</th>
                 <th scope="col" class="date">Initial allocation</th>
                 <th scope="col" class="date">Date of distribution</th>
-                <th scope="col" class="name">Source inventory</th>
                 <th scope="col" class="quantity">
                   <%= filtered_item_name ? "Total #{filtered_item_name}" : (filtered_category_name ? "Total in #{filtered_category_name}" : (filtered_reporting_category_name ? "Total #{filtered_reporting_category_name}" : "Total items")) %>
                 </th>
@@ -82,8 +93,6 @@
                   <%= filtered_item_name ? "Value of #{filtered_item_name}" : (filtered_category_name ? "Value of #{filtered_category_name}" : (filtered_reporting_category_name ? "Value of #{filtered_reporting_category_name}" : "Total value")) %>
                 </th>
                 <th scope="col">Delivery method</th>
-                <th scope="col" class="numeric">Shipping cost</th>
-                <th scope="col" class="notes">Comments</th>
                 <th scope="col">Status</th>
                 <th scope="col" class="cell-actions">Actions</th>
               </tr>

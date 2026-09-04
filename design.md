@@ -2803,6 +2803,42 @@ its meaning instead of re-deciding alignment cell by cell:
 Every table gets a `<caption>` (visually hidden) saying what it lists. `.table-scroll` is the
 horizontal scroll container — a wide table scrolls, it does not squeeze.
 
+<a id="column-of-links"></a>
+**A column of links shows the first three, then "+N more".** `.notes` clipping is not available to
+a cell of links: clipping leaves focusable anchors invisible, which is a keyboard trap rather than a
+tidy column. `/item_categories` printed every item in a category — **19 links, 710 characters and a
+439px row**, and three categories made the table 979px tall. Three names say what kind of category
+it is; the link carries the rest. Measured after: **127px** a row.
+
+The count is `EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT`. **The "+N more" link must lead
+somewhere that actually lists them** — a truncation pointing at a page that does not show the
+remainder is a broken promise, so the category page grew an "Items in this category" card before
+the index was allowed to stop printing everything.
+
+<a id="badge-the-exception"></a>
+**In a two-state column, badge the affirmative and leave the other as text.** A badge marks the
+exception; a neutral pill on the ordinary row is decoration that makes every row look flagged.
+`/partner_groups` pilled both states of "Send reminders?" — `Yes` in success with a bell, `No` in
+neutral with a struck bell. `No` is now plain `text-sm text-slate-500`. The affirmative keeps its
+pill *and its icon*, which is what makes the column scannable at a glance.
+
+This does not contradict a **status** column whose values genuinely vary — `/partners` badges every
+row across five distinct statuses, and that is right. The test is whether the values divide into
+"normal" and "worth noticing", not how many rows carry a badge.
+
+<a id="columns-worth-scanning"></a>
+**A column earns its width by being worth scanning, not by being worth recording.** When a table
+does not fit, the question is which columns someone reads *down a list* — not which data matters.
+`/distributions` was **1,521px against 1,118px** and scrolled by 403px with the actions column
+already down to 76px, so the remainder had to come out of data. Dropped: **source inventory**
+(202px), **shipping cost** (108px) and **comments** (146px) — 456px, and the table now fits exactly
+at 1,118px.
+
+Each is still on the distribution's own page, and **all three remain in the CSV export**. Shipping
+cost applies to only one of three delivery methods, so it was blank on most rows; comments is free
+text that is usually empty and never scannable in a column. Deleting a column from an index is not
+deleting the data, and the export is what makes that true — check it before dropping anything.
+
 <a id="selection"></a>
 **Selection, where a batch action genuinely exists.** Freezing the actions column removed the
 *travel* to a row's actions; selection removes the *repetition*.

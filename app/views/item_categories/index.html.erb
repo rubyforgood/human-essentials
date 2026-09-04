@@ -43,13 +43,38 @@
                   <%= link_to item_category.name, item_category_path(item_category), class: "text-brand-700 hover:text-brand-800" %>
                 </td>
                 <td class="notes text-slate-600"><%= item_category.description %></td>
-                <%# `wrap`: this cell is a list, not a value, and a list on one line is unusable. %>
+                <%#
+                  Three, then a link to the rest.
+
+                  This printed every item, which made the worst row **19 links, 710 characters and
+                  439px tall** -- three categories and the table was 979px. `.notes` clipping is not
+                  available to a cell of links: clipping would leave focusable anchors invisible,
+                  which is a keyboard trap rather than a tidy column.
+
+                  Three is enough to say what kind of category it is, and "+N more" goes to the
+                  category page, which lists all of them. See design.md, "A column of links".
+                %>
                 <td class="wrap">
-                  <ul class="space-y-0.5">
-                    <% item_category.items.each do |item| %>
-                      <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
-                    <% end %>
-                  </ul>
+                  <% shown = item_category.items.order(:name).first(EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT + 1) %>
+                  <% overflow = shown.size > EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT %>
+                  <% if shown.empty? %>
+                    <span class="text-sm text-slate-500">&mdash;</span>
+                  <% else %>
+                    <ul class="space-y-0.5">
+                      <% shown.first(EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT).each do |item| %>
+                        <li><%= link_to item.name, item_path(item.id), class: "text-brand-700 hover:text-brand-800" %></li>
+                      <% end %>
+                      <% if overflow %>
+                        <%# The count is the *remaining* items, so it needs the real total rather
+                            than the four that were loaded to detect the overflow. %>
+                        <li class="pt-0.5">
+                          <%= link_to "+#{item_category.items.size - EssentialsUiHelper::ITEM_CATEGORY_PREVIEW_COUNT} more",
+                                item_category_path(item_category),
+                                class: "text-sm font-medium text-brand-700 hover:text-brand-800" %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
                 </td>
                 <td class="cell-actions">
                   <div class="flex justify-end gap-1.5">

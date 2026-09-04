@@ -311,6 +311,11 @@ module EssentialsUiHelper
   # Never colour alone: every tone pairs its colour with a word, and callers may add an
   # icon. Text tones are the -700 step because -600 fails 4.5:1 for small text.
 
+  # How many links a column of links shows before it collapses to "+N more". Three: enough to say
+  # what kind of category it is, few enough that the row stays one line tall per item. `/item_categories`
+  # is the only such column in the app -- see design.md, "A column of links".
+  ITEM_CATEGORY_PREVIEW_COUNT = 3
+
   PILL_TONES = {
     neutral: "bg-slate-100 text-slate-700",
     info: "bg-sky-50 text-sky-700",
