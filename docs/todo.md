@@ -43,18 +43,17 @@ of the second process, not a defect, and it cost a run here before being recogni
 
 ## Design system
 
-**`/requests/:id/cancelation/new` loses what you typed when it rejects you.** Found on
-2026-09-04, the first run after that route became reachable — it had never been audited.
-`Requests::CancelationController#create` redirects on failure with
-`flash[:error] = "... could not be removed because #{errors}"`, so the cancellation reason the user
-wrote is gone and they start again. design.md is explicit on both halves: *re-render the record that
-failed, not a new one built from the same params*, and *operational failure gets the flash;
-validation failure gets the summary; never both*.
+**The cancellation reason claims to be required and is not.** On
+`/requests/:id/cancelation/new` the label carries a `*` and the textarea carries
+`aria-required="true"`, but there is no HTML `required` attribute and
+`RequestDestroyService` does not validate the reason — a blank one saves, and the partner's email
+reads "Reason Provided: N/A". Found on 2026-09-04 while fixing the redirect on that form.
 
-`form-validation-audit` also reports no inline error and no `aria-invalid` on the field, which
-follows from the form being `essentials_form_for :cancelation` — a symbol, not a record — so
-simple_form has no object to attach an error to. Fixing it properly means giving the action
-something to re-render.
+The form is lying either way round, so it needs a product call rather than a patch: **make it
+genuinely required** (validate in the service, add the attribute) or **genuinely optional** (drop
+the `*` and the `aria-required`). Recommendation: required. A cancelled request with no recorded
+reason is the case the partner email handles worst, and the field is already presented as
+mandatory, so enforcing it changes no one's expectations.
 
 **One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
 `edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is

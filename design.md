@@ -3654,6 +3654,23 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+**A failure nobody can retry does not go back to the form.** Re-rendering is right when the user
+can change something and try again. When the failure is a *state* — the record is already gone,
+already cancelled, already claimed by someone else — returning them to the form puts them in front
+of a control that can never succeed, and silently discards whatever they had typed into it.
+
+`/requests/:id/cancelation` did this. `RequestDestroyService` fails only on "we could not find it"
+and "it has already been cancelled", neither of which retyping can fix, and the controller
+redirected back to the cancellation form with a flash. Someone whose colleague cancelled the
+request first would write their reason again and get the same error, forever. It goes to the
+request's own page now, which shows the Cancelled status and the reason that *was* recorded — and
+to the list when there is no request to show, because `request_path` on a missing id would answer
+the failure with a 404.
+
+The flash was never the problem: an operational failure is exactly what a flash is for. The
+destination was. **Ask what the user should do next, and send them there** — if the answer is
+"nothing, it is already done", the form is the one place they should not be.
+
 **The summary takes focus when the form comes back failed.** `essentials_error_summary` carries
 `tabindex="-1"` and `data-controller="error-summary"`, and the controller focuses it on connect.
 A failed submit re-renders the whole page — Turbo Drive is off app-wide — so the browser puts

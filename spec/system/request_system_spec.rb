@@ -335,7 +335,9 @@ RSpec.describe "Requests", type: :system, js: true do
         fill_in 'Cancellation reason *', with: reason
         click_on 'Yes, cancel this request'
 
-        expect(page).to have_content("Request #{request.id} has been removed")
+        # "cancelled", not "removed": the action is Cancel and the status it leaves behind is
+        # Cancelled. The record is discarded, not deleted, and its page still exists.
+        expect(page).to have_content("Request #{request.id} has been cancelled")
         expect(request.reload.discarded_at).not_to eq(nil)
         expect(request.reload.discard_reason).to eq(reason)
       end
