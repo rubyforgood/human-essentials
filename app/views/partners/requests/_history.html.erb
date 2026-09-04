@@ -49,7 +49,7 @@
                     <p class="mt-1 max-w-prose text-sm text-slate-600"><%= comment %></p>
                   </details>
                 <% end %>
-                <%= mail_to partner_request.requester.email, class: "font-medium text-brand-700 hover:text-brand-800" %>
+                <%= mail_to partner_request.requester.email, class: "font-medium link-brand" %>
               </td>
             </tr>
           <% end %>

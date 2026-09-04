@@ -2,7 +2,7 @@
       card_id: "outstanding",
       title: "Outstanding requests",
       padded: @outstanding_requests.any? ? false : true,
-      actions: link_to("View all requests", requests_path, class: "text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600") do %>
+      actions: link_to("View all requests", requests_path, class: "text-sm font-medium link-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600") do %>
   <% if @outstanding_requests.empty? %>
     <%= render "shared/essentials/empty_state",
           kind: :all_clear,
@@ -25,7 +25,7 @@
             <tr>
               <td class="date">
                 <%= link_to request.created_at.strftime("%m/%d/%Y"), request,
-                      class: "font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+                      class: "font-medium link-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
               </td>
               <td class="font-medium text-slate-900"><%= request.partner.name %></td>
               <td><%= request.partner_user&.formatted_email %></td>

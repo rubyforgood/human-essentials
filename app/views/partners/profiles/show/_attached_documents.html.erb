@@ -7,7 +7,7 @@
         <% profile.documents.each do |doc| %>
           <dd class="mt-0.5 text-sm text-slate-900">
             <%= link_to doc.blob["filename"], rails_blob_path(doc),
-                  class: "font-medium text-brand-700 hover:text-brand-800" %>
+                  class: "font-medium link-brand" %>
           </dd>
         <% end %>
       <% else %>

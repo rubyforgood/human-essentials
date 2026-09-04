@@ -14,17 +14,17 @@
         a number with no explanation. %>
     <td><%= event.type.sub(/Event/, '') %></td>
     <td>
-      <%= link_to event.eventable_id, event.eventable, class: "font-medium text-brand-700 hover:text-brand-800" %>
+      <%= link_to event.eventable_id, event.eventable, class: "font-medium link-brand" %>
     </td>
     <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
     <td>
       <% if from_loc %>
-        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc), class: "font-medium text-brand-700 hover:text-brand-800" %>
+        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc), class: "font-medium link-brand" %>
       <% end %>
     </td>
     <td>
       <% if to_loc %>
-        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc), class: "font-medium text-brand-700 hover:text-brand-800" %>
+        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc), class: "font-medium link-brand" %>
       <% end %>
     </td>
     <td>
@@ -35,7 +35,7 @@
       <% sorted_entries.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id } %>
         <% if item %>
-          <%= link_to item.name, item_path(item.id), class: "font-medium text-brand-700 hover:text-brand-800" %>:
+          <%= link_to item.name, item_path(item.id), class: "font-medium link-brand" %>:
         <% else %>
           Item <%= entry.item_id %> (deleted)
         <% end %>

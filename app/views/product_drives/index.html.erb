@@ -63,7 +63,7 @@
               <% @paginated_product_drives.each do |product_drive| %>
                 <tr>
                   <td class="font-medium text-slate-900">
-                    <%= link_to product_drive.name, product_drive_path(product_drive.id), class: "text-brand-700 hover:text-brand-800" %>
+                    <%= link_to product_drive.name, product_drive_path(product_drive.id), class: "link-brand" %>
                   </td>
                   <td class="date"><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
                   <td class="date"><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>

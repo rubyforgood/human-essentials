@@ -15,7 +15,7 @@
     </button>
   </td>
   <td class="font-medium text-slate-900">
-    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "link-brand" %>
   </td>
   <td class="quantity" data-column="total">
     <% if below_minimum %>
@@ -35,7 +35,7 @@
     <ul class="space-y-1 text-sm text-slate-700">
       <% row_item[:locations].each do |location| %>
         <li>
-          <%= link_to location[:name], storage_location_url(location[:id]), class: "font-medium text-brand-700 hover:text-brand-800" %>
+          <%= link_to location[:name], storage_location_url(location[:id]), class: "font-medium link-brand" %>
           — <%= number_with_delimiter(location[:quantity]) %> units
         </li>
       <% end %>

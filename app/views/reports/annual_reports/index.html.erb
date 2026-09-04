@@ -18,7 +18,7 @@
         <% @years.each do |year| %>
           <li>
             <%= link_to year, reports_annual_report_path(year),
-                  class: "block px-5 py-3 text-sm font-medium text-brand-700 transition-colors hover:bg-slate-50 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
+                  class: "block px-5 py-3 text-sm font-medium link-brand transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
           </li>
         <% end %>
       </ul>

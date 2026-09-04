@@ -20,7 +20,7 @@
   filter_url: reports_manufacturer_donations_summary_path,
   actions: capture { concat essentials_link_button("New donation", new_donation_path, variant: :primary, icon: "bi-plus-lg") },
   padded: false,
-  footer: link_to("View all manufacturer donations", donations_path(filters: {by_source: "Manufacturer"}), class: "text-sm font-medium text-brand-700 hover:text-brand-800")
+  footer: link_to("View all manufacturer donations", donations_path(filters: {by_source: "Manufacturer"}), class: "text-sm font-medium link-brand")
 ) do %>
   <div class="border-b border-slate-200 px-5 py-4">
     <%#

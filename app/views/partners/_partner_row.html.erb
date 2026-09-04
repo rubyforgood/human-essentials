@@ -2,9 +2,9 @@
 <% one_step = partner_row.organization.one_step_partner_invite %>
 <tr>
   <td class="pin-col name font-medium text-slate-900">
-    <%= link_to partner_row.name, partner_path(partner_row), class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to partner_row.name, partner_path(partner_row), class: "link-brand" %>
   </td>
-  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}", class: "text-brand-700 hover:text-brand-800" %></td>
+  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}", class: "link-brand" %></td>
   <td><%= partner_row.partner_group&.name %></td>
   <td class="quantity"><%= partner_row.quota %></td>
   <td><%= essentials_partner_status_pill(status) %></td>

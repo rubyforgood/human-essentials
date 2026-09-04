@@ -1,7 +1,7 @@
 <% below_minimum = quantity_below_minimum?(row_item) %>
 <tr>
   <td class="font-medium text-slate-900">
-    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to row_item[:item_name], item_url(row_item[:item_id]), class: "link-brand" %>
   </td>
   <% @storages.each do |storage| %>
     <td class="quantity">

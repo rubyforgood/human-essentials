@@ -13,7 +13,7 @@
               announcement it belongs to. WCAG 2.4.4 with 2.5.3. %>
           <%= link_to "More info", announcement.link,
                 aria: {label: "More info about the announcement of #{announcement.created_at.strftime("%B %-d")}"},
-                class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800" %>
+                class: "mt-2 inline-flex items-center gap-1 text-sm font-medium link-brand" %>
         <% end %>
       </li>
     <% end %>

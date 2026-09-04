@@ -40,7 +40,7 @@
         <%# h-14 matches the sidebar's bottom strip, so the two rules meet across the page. %>
         <footer class="flex h-14 shrink-0 items-center border-t border-slate-200 px-4 text-xs text-slate-500 sm:px-6 lg:px-8">
           <div>
-            Built by <%= link_to "Ruby for Good", "https://rubyforgood.org", class: "font-medium text-brand-700 hover:text-brand-800" %>.
+            Built by <%= link_to "Ruby for Good", "https://rubyforgood.org", class: "font-medium link-brand" %>.
             <% if ENV["GIT_SHA"].present? %>
               <span class="ml-2 text-slate-400">Version <%= ENV["GIT_SHA"] %></span>
             <% end %>

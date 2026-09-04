@@ -90,7 +90,7 @@
                   <tbody>
                     <% rows.each do |item| %>
                       <tr>
-                        <td><%= link_to item.name, item_path(item.item_id), class: "font-medium text-brand-700 hover:text-brand-800" %></td>
+                        <td><%= link_to item.name, item_path(item.item_id), class: "font-medium link-brand" %></td>
                         <td class="quantity"><%= number_with_delimiter(item.quantity) %></td>
                       </tr>
                     <% end %>

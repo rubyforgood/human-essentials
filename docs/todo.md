@@ -45,16 +45,6 @@ that genuinely mattered were *table cells*, where `type: "primary"` produced a f
 row, and that grep returns zero. `edit_button_to` in a page header renders `:primary`, which is what
 design.md asks a page's main action to be. **There is nothing here to complete.**
 
-**The brand link class has two shapes, and unifying them is a decision rather than a refactor.**
-Measured 2026-09-04: `font-medium text-brand-700 hover:text-brand-800` **40 times across 26 views**,
-and `text-brand-700 hover:text-brand-800` — the same colours *without* the weight — **23 more**.
-So 63 hand-written link styles in two variants, and no rule anywhere says which a link should take.
-
-Collapsing them to one component class in `application.css`, next to `.data-table` and
-`.card-surface`, is the right shape. What makes it a decision and not a sweep: **it would change the
-weight of 23 links**, or preserve a distinction nobody has articulated. Someone has to say which
-links are `font-medium` and why, and that answer belongs in design.md before any of the 63 move.
-
 **Two hand-rolled copies of the avatar disc remain**, in `layouts/_essentials_topbar` and
 `layouts/_essentials_partner_topbar`: `h-8 w-8` versions of what `essentials_step_number` now
 encapsulates at `h-5 w-5`. Not merged, deliberately — see the note on the helper — but if a third

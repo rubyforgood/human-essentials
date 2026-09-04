@@ -1,7 +1,7 @@
 <% quantity = @inventory.quantity_for(storage_location: storage_location.id) %>
 <tr>
   <td class="pin-col name font-medium text-slate-900">
-    <%= link_to storage_location.name, storage_location, class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to storage_location.name, storage_location, class: "link-brand" %>
     <% if storage_location.discarded? %>
       <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") %>
     <% end %>

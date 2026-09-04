@@ -20,7 +20,7 @@
                 the accessible name, which is what WCAG 2.5.3 Label in Name requires. %>
             <%= link_to "More info", announcement.link,
                   aria: {label: "More info about the announcement of #{announcement.created_at.strftime("%B %-d")}"},
-                  class: "mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
+                  class: "mt-2 inline-flex items-center gap-1 text-sm font-medium link-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           <% end %>
         </li>
       <% end %>

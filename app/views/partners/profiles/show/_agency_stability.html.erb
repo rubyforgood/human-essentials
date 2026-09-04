@@ -9,7 +9,7 @@
       <dt class="text-xs font-medium text-slate-500">Form 990</dt>
       <% if profile.proof_of_form_990.attached? %>
         <dd class="mt-0.5 text-sm text-slate-900">Attached
-          file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-medium text-brand-700 hover:text-brand-800" %></dd>
+          file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-medium link-brand" %></dd>
       <% else %>
         <dd class="mt-0.5 text-sm text-slate-900">Form 990 not on file</dd>
       <% end %>

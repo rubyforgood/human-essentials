@@ -1,6 +1,6 @@
 <tr>
   <td class="pin-col name font-medium text-slate-900">
-    <%= link_to vendor_row.business_name.presence || "Unnamed vendor", vendor_row, class: "text-brand-700 hover:text-brand-800" %>
+    <%= link_to vendor_row.business_name.presence || "Unnamed vendor", vendor_row, class: "link-brand" %>
     <%= essentials_status_pill("Inactive", tone: :neutral, icon: "bi-slash-circle") unless vendor_row.active? %>
   </td>
   <td class="name"><%= vendor_row&.contact_name %></td>

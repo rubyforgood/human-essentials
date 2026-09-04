@@ -72,7 +72,7 @@
             <tbody>
               <% @product_drive.donations.each do |donation| %>
                 <tr>
-                  <td><%= link_to donation.id, donation, class: "font-medium text-brand-700 hover:text-brand-800" %></td>
+                  <td><%= link_to donation.id, donation, class: "font-medium link-brand" %></td>
                   <td><%= donation.product_drive_participant&.business_name %></td>
                   <td><%= donation.storage_location.name %></td>
                   <td class="quantity"><%= donation.line_items.count(&:quantity) %></td>
