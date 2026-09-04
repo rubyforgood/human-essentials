@@ -40,6 +40,35 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
           expect(listed_barcodes.join(' ')).to include('WANTED-BARCODE')
           expect(listed_barcodes.join(' ')).not_to include('OTHER-BARCODE')
         end
+
+        # The filter this page was missing. Its non-admin twin has had it since the migration;
+        # scanning a barcode into the box is the fastest way to answer "is this one already
+        # registered", which is what this screen is for.
+        it 'narrows the list to a scanned barcode value' do
+          get admin_barcode_items_path(filters: {by_value: 'OTHER-BARCODE'})
+          expect(listed_barcodes.join(' ')).to include('OTHER-BARCODE')
+          expect(listed_barcodes.join(' ')).not_to include('WANTED-BARCODE')
+        end
+
+        it 'shows nothing for a barcode that is not registered' do
+          get admin_barcode_items_path(filters: {by_value: 'NO-SUCH-BARCODE'})
+          expect(listed_barcodes).to be_empty
+        end
+
+        # `by_base_item_partner_key` is a real scope and is deliberately *not* permitted here: on
+        # this page it selects exactly what `barcodeable_id` selects, because these barcodes hang
+        # off BaseItem and `partner_key` is unique on it. This pins that equivalence, so anyone
+        # tempted to add a second control sees why it would be redundant rather than rediscovering
+        # it.
+        it 'would duplicate the base item filter, which is why the partner key one is not offered' do
+          by_id = BarcodeItem.global.includes(:barcodeable)
+            .class_filter({'barcodeable_id' => wanted.id}).map(&:value)
+          by_key = BarcodeItem.global.includes(:barcodeable)
+            .class_filter({'by_base_item_partner_key' => wanted.partner_key}).map(&:value)
+
+          expect(by_id).to eq(['WANTED-BARCODE'])
+          expect(by_key).to eq(by_id)
+        end
       end
     end
 
