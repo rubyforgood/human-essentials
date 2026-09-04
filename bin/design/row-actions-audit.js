@@ -17,6 +17,7 @@
 // Usage: pw bin/design/row-actions-audit.js
 const { chromium } = require("playwright");
 const { execSync } = require("child_process");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -26,13 +27,6 @@ const ROLES = {
   super: process.env.SUPER_EMAIL || "superadmin@example.com"
 };
 
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
 
 // Reads one table's actions column: how many controls each row shows, whether there is a menu
 // trigger, and the distinct heights. Only the *last* cell, which is where a row's actions live.

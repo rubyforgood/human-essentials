@@ -25,6 +25,7 @@
 // Usage: bin/rails runner bin/design/route-targets.rb > /tmp/targets.json && pw bin/design/tooltip-audit.js
 const { chromium } = require("playwright");
 const fs = require("fs");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -38,13 +39,6 @@ const RUNS = [
   ["superadmin@example.com", ADMIN]
 ];
 
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
 
 const COLLECT = () => [...document.querySelectorAll("main a, main button")]
   .filter((el) => !el.closest("[role='menu']"))          // menu items carry visible labels

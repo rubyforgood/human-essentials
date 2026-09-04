@@ -16,6 +16,7 @@
  */
 const { chromium } = require("playwright");
 const { execSync } = require("child_process");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -27,14 +28,6 @@ const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.r
   encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
 })).filter((t) => !ONLY || ONLY.includes(t.path));
 
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill('input[name="user[email]"]', email);
-  await page.fill('input[name="user[password]"]', PASSWORD);
-  await page.click('form[action="/users/sign_in"] button[type="submit"]');
-  await page.waitForURL((u) => !u.pathname.includes("/sign_in"), { timeout: 60000 });
-}
 
 const inspect = () => {
   const FOCUSABLE = "a[href], button, input:not([type=hidden]), select, textarea, [tabindex], " +

@@ -22,6 +22,7 @@
 // Usage: bin/rails runner bin/design/route-targets.rb > /tmp/targets.json && pw bin/design/wcag22-audit.js
 const { chromium } = require("playwright");
 const fs = require("fs");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -55,13 +56,6 @@ let sink = (criterion, where, detail) => findings.push({ criterion, where, detai
 const record = (...args) => sink(...args);
 const captureInto = (fn) => { sink = fn; };
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle").catch(() => {});
-}
 
 async function visit(page, path) {
   const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 })

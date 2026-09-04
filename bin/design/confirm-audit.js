@@ -19,6 +19,7 @@
 // Run against a seeded development server: bin/start, then `pw bin/design/confirm-audit.js`.
 const { chromium } = require("playwright");
 const fs = require("fs");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const TARGETS = JSON.parse(fs.readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8"));
@@ -26,13 +27,6 @@ const TARGETS = JSON.parse(fs.readFileSync(process.env.TARGETS || "/tmp/targets.
 const PARTNER = (p) => (p.startsWith("/partners/") && !/^\/partners\/\d+/.test(p)) || p === "/partners/profile";
 const ADMIN = (p) => p.startsWith("/admin");
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
 
 // What is on the page that will ask for a confirmation, and how to reach it again after a reload.
 //

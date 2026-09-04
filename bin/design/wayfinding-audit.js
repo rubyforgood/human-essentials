@@ -1,4 +1,5 @@
 const { chromium } = require("playwright");
+const { signIn } = require("./targets");
 
 // Every screen must be reachable *and* leavable. A page that is not in the sidebar and has no
 // breadcrumb has one way out: the browser's back button. The five report pages were all like that,
@@ -28,13 +29,6 @@ const ROLES = {
   partner: process.env.PARTNER_EMAIL || "verified@example.com"
 };
 
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
 
 (async () => {
   const { execSync } = require("child_process");

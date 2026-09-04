@@ -24,6 +24,7 @@
 const { chromium } = require("playwright");
 const fs = require("fs");
 const nodePath = require("path");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const LIST = process.argv.includes("--list");
@@ -50,13 +51,6 @@ const WORD = [
   [/\buploads?\b/i, "out"], [/\bdownloads?\b/i, "in"]
 ];
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
 
 async function collect(page, path) {
   const res = await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 25000 });

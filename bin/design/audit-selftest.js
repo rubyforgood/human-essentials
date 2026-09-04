@@ -30,6 +30,7 @@ const nodePath = require("path");
 
 const manual = require(nodePath.join(__dirname, "wcag-manual.js"));
 const wcag22 = require(nodePath.join(__dirname, "wcag22-audit.js"));
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -37,13 +38,6 @@ const PASSWORD = process.env.SEED_PASSWORD || "password!";
 // A page with a wide table, a scroll rail and the full app shell: everything these checks look at.
 const RAILED = "/distributions";
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle").catch(() => {});
-}
 
 /*
  * Guarantee the structures the checks look for, rather than hoping the page has them.
