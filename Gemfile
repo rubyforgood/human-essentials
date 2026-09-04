@@ -114,6 +114,10 @@ gem "sprockets", "~> 4.4.1"
 gem "prawn", "~> 2.4.0"
 gem "matrix" # Used by prawn
 gem "ttfunk", "~>1.7.0"
+# `benchmark` was removed from Ruby's default gems in Ruby 4.0. delayed_job
+# requires it at load time but does not declare it as a dependency, so we pin
+# it here to keep the app loadable under Ruby 4.0.
+gem "benchmark"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -146,6 +150,10 @@ group :development, :test do
   gem "pry-rails"
   # Connect to a remotely running command line instance.
   gem "pry-remote"
+  # `readline` was removed from Ruby's default gems in Ruby 4.0. pry-remote
+  # requires it without declaring it as a dependency, so we pin it in the
+  # dev/test group to keep the app loadable under Ruby 4.0.
+  gem "readline"
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
