@@ -1830,6 +1830,21 @@ diapers: $412" as document structure. They also set the figure in a `<p>` at `te
 the real headings were `text-base`, so the visual hierarchy ran opposite to the semantic one.
 A heading names a section; if the thing is data, it is a `<dt>`/`<dd>` pair.
 
+### Numbered steps
+
+`essentials_step_number(n)` is the brand-tinted disc beside a step in an ordered list of
+instructions. It exists because its eleven classes were written out **five times** in
+`dashboard/_getting_started_prompt` — the case this document argues against when it explains why
+`.data-table` is a component class and not a utility string.
+
+It is `aria-hidden`, because the number is already carried by the `<ol>`; without that a screen
+reader reads the list semantics twice — *"1, 1, Set up storage locations"*.
+
+The avatar disc in the two top bars is the same idea at `h-8 w-8` holding initials rather than an
+index, and is deliberately **not** the same helper: near enough to look like one component, far
+enough apart in purpose that merging them would need a size and a semantics argument at every call
+site.
+
 ### Status pills
 
 A pill is a **state**, not a control: not focusable, does not look pressable. It is also

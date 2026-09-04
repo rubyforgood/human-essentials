@@ -67,14 +67,18 @@ mandatory, so enforcing it changes no one's expectations.
 what design.md asks a page's single main action to be — correct output from a legacy call. The
 table-cell grep that found nine of these now returns nothing.
 
-**The getting-started step badges repeat their class string five times.**
-`app/views/dashboard/_getting_started_prompt.html.erb` writes
-`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700`
-once per step, for five steps. It is a numbered badge rather than an icon tile — `rounded-full`,
-which is the line `page-audit.rb` draws between the two — so the tile sweep correctly leaves it
-alone, and five copies in one file is a milder problem than one copy hiding in another component.
-Fix: a small helper or a loop over the five steps. The steps carry different markup in their
-labels (links, parenthetical user-guide links), so a loop needs the label as a block.
+**The brand link class is written out 40 times across 26 views.**
+`font-medium text-brand-700 hover:text-brand-800` — measured 2026-09-04 while extracting the step
+badge from the getting-started guide. Unlike that badge it is genuinely app-wide, so it is a
+convention rather than a local copy-paste, and collapsing it means either a helper at 40 call sites
+or a component class in `application.css`. The second is closer to how `.data-table` and
+`.table-scroll` already work here. Left because it is a 26-file change with no visual effect, which
+is the kind that wants its own commit and its own review.
+
+**Two hand-rolled copies of the avatar disc remain**, in `layouts/_essentials_topbar` and
+`layouts/_essentials_partner_topbar`: `h-8 w-8` versions of what `essentials_step_number` now
+encapsulates at `h-5 w-5`. Not merged, deliberately — see the note on the helper — but if a third
+size ever appears, that is the moment to make it one component with a size argument.
 
 **The item list's pager could move to the card's `footer:` slot.**
 `app/views/items/_item_list.html.erb` renders its pagination chrome inline. That was forced while
