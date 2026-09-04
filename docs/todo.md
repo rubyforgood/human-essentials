@@ -36,18 +36,24 @@ a record rather than a task: if those seven ever return, this paragraph is the c
 
 ## Design system
 
-**One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
-`edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is
-what design.md asks a page's single main action to be — correct output from a legacy call. The
-table-cell grep that found nine of these now returns nothing.
+**`UiHelper` is a retained shim, not outstanding work — the entry that said otherwise was wrong.**
+It read "one legacy button helper survives", which implies a straggler in an otherwise finished
+migration. Measured 2026-09-04: **11 of its 27 methods are live**, `submit_button` alone in 18
+files, and `migration-map.md:180` records the decision to keep them — "unchanged API, design system
+output; `type:`/`size:` map onto variants". It emits design system classes, not Bootstrap. The nine
+that genuinely mattered were *table cells*, where `type: "primary"` produced a filled button in a
+row, and that grep returns zero. `edit_button_to` in a page header renders `:primary`, which is what
+design.md asks a page's main action to be. **There is nothing here to complete.**
 
-**The brand link class is written out 40 times across 26 views.**
-`font-medium text-brand-700 hover:text-brand-800` — measured 2026-09-04 while extracting the step
-badge from the getting-started guide. Unlike that badge it is genuinely app-wide, so it is a
-convention rather than a local copy-paste, and collapsing it means either a helper at 40 call sites
-or a component class in `application.css`. The second is closer to how `.data-table` and
-`.table-scroll` already work here. Left because it is a 26-file change with no visual effect, which
-is the kind that wants its own commit and its own review.
+**The brand link class has two shapes, and unifying them is a decision rather than a refactor.**
+Measured 2026-09-04: `font-medium text-brand-700 hover:text-brand-800` **40 times across 26 views**,
+and `text-brand-700 hover:text-brand-800` — the same colours *without* the weight — **23 more**.
+So 63 hand-written link styles in two variants, and no rule anywhere says which a link should take.
+
+Collapsing them to one component class in `application.css`, next to `.data-table` and
+`.card-surface`, is the right shape. What makes it a decision and not a sweep: **it would change the
+weight of 23 links**, or preserve a distinction nobody has articulated. Someone has to say which
+links are `font-medium` and why, and that answer belongs in design.md before any of the 63 move.
 
 **Two hand-rolled copies of the avatar disc remain**, in `layouts/_essentials_topbar` and
 `layouts/_essentials_partner_topbar`: `h-8 w-8` versions of what `essentials_step_number` now
