@@ -8,6 +8,7 @@
 // Run:           pw bin/design/wcag-audit.js [--json]
 const { chromium } = require("playwright");
 const fs = require("fs");
+const { signIn } = require("./targets");
 
 const AXE = "/tmp/axe/node_modules/axe-core/axe.min.js";
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -90,13 +91,6 @@ const PARTNER = [
   ["partner help", "/partners/help"]
 ];
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
 
 async function audit(page, label, path) {
   const res = await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 30000 });

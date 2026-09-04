@@ -17,6 +17,7 @@
 // nothing about the other hundred and forty. Widening the cheap checks took 2.4.2 from "0 failures
 // on 8 pages" to 14 on 92, which is the same lesson arriving early.
 const { chromium } = require("playwright");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 
@@ -59,13 +60,6 @@ const BROAD = (() => {
   }
 })();
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`);
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle");
-}
 
 const fails = [];
 // The sink is swappable so `audit-selftest.js` can run one check in isolation and see exactly

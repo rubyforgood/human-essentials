@@ -95,31 +95,23 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## The audit seam exists and most audits do not use it
+## Two audit-suite leftovers, both smaller than they were
 
-`bin/design/targets.js` is the one place that knows this is a Rails app. Measured 2026-09-04, well
-after it was introduced:
+**13 audits still shell out to `route-targets.rb` directly** rather than using the seam's cached
+list. They get correct targets — this is not the id-substitution fault — they just miss the cache,
+which is the mechanism that went stale in September and made two audits disagree about one tree.
+Smaller than the `signIn` duplication that was closed on 2026-09-04, and the same shape: capture
+output, migrate, compare.
 
-| | |
-| --- | --- |
-| Browser audits importing it | **7** |
-| Audits shelling out to `route-targets.rb` directly | **13** |
-| Files still defining their own `signIn` | **16** (at least two byte-identical) |
-
-The change log row for the commit that added it said it was "replacing 21 hand-copied `signIn`
-functions". It made 21 *replaceable* and converted seven; the row is corrected. **A seam nobody
-adopts is not a seam** — it is a ninth way of doing something with none removed.
-
-**The ratchet is done.** `bin/design/seam-check.rb` counts the private copies — **15**, once
-`targets.js` itself is excluded, which an earlier count of 16 did not — fails when that goes up, and
-fails when it goes down without `BASELINE` being lowered, so a migration cannot be quietly undone.
-It runs in CI without a browser.
-
-**What is left is the migration itself**: 15 audits importing the seam instead of copying it.
-Mechanical, touches every audit, wants its own commit. Lower `BASELINE` by one with each.
+**`responsive-audit` is non-deterministic.** Three runs on identical code gave **9, 9 and 8**
+findings; the one that flickers is `/items/inventory` at 320px, *"50 target(s) under 24px, smallest
+20x28"*. Found while verifying the `signIn` migration — the before-and-after comparison flagged a
+change, and chasing it showed the audit rather than the change was at fault. A tap-target count that
+moves between runs is a measurement taken before the page has settled; that is the thing to look at
+first.
 
 Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in configuration.
-That is the one part of the seam that is not actually a seam.
+One place now rather than fifteen, which is the point of a seam, but still not configuration.
 
 ## Seven tables with no empty state, deliberately
 

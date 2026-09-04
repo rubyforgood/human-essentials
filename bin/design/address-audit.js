@@ -21,6 +21,7 @@
 // Usage: bin/rails runner bin/design/route-targets.rb > /tmp/targets.json && pw bin/design/address-audit.js
 const { chromium } = require("playwright");
 const fs = require("fs");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const TARGETS = JSON.parse(fs.readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8"));
@@ -50,13 +51,6 @@ const ROLES = {
   whole: { label: "Address", token: "street-address", obsolete: true }
 };
 
-async function signIn(page, email) {
-  await page.goto(`${BASE}/users/sign_in`, { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", process.env.SEED_PASSWORD || "password!");
-  await page.click("input[type=submit], button[type=submit]");
-  await page.waitForLoadState("networkidle").catch(() => {});
-}
 
 const COLLECT = () => [...document.querySelectorAll("main input, main select, main textarea")]
   .filter((el) => el.type !== "hidden")

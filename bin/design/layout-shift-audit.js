@@ -21,6 +21,7 @@
 //        pw bin/design/layout-shift-audit.js --all          list every page, not only the offenders
 //        pw bin/design/layout-shift-audit.js --width=390    a phone, where tables stack into cards
 const { chromium } = require("playwright");
+const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -42,13 +43,6 @@ const ROLES = {
 // Screens with no app chrome; nothing here is part of the design system's layout.
 const SKIP = [/^\/$/, /^\/privacypolicy$/, /^\/termsofservice$/, /^\/admin$/];
 
-async function signIn(page, email) {
-  await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill("#user_email", email);
-  await page.fill("#user_password", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("input[type=submit], button[type=submit]")]);
-}
 
 // Installed before any document script, so the observer is watching from the first frame.
 const OBSERVE = () => {

@@ -28,7 +28,12 @@ DESIGN = Pathname.new(__dir__)
 SEAM = "targets.js".freeze
 
 # Lower this when you migrate one. Never raise it.
-BASELINE = 15
+#
+# **Zero, as of 2026-09-04.** All fifteen were migrated in one pass, each verified against output
+# captured before the change: thirteen byte-identical, and the fourteenth -- `responsive-audit` --
+# differing only because it is non-deterministic on its own, which the comparison is what caught.
+# The ratchet stays: at zero it is the thing that keeps a new audit from copying `signIn` again.
+BASELINE = 0
 
 private_sign_ins = DESIGN.glob("*.js")
   .reject { |f| f.basename.to_s == SEAM }

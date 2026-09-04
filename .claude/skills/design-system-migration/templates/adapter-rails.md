@@ -110,17 +110,29 @@ an index *with a flash bar*, which one audit read as a second, differently-posit
 
 ## The honest part: a seam nobody adopts is not a seam
 
-Measured in the source project on 2026-09-04, well after the seam was introduced:
+Measured in the source project on 2026-09-04, well after the seam was introduced — and then again
+after finishing the job the same day:
 
-| | |
-| --- | --- |
-| Browser audits using the seam | **7** |
-| Audits shelling out to the generator directly | **13** |
-| Files still carrying their own `signIn` | **16** (at least two byte-identical) |
+| | before | after |
+| --- | --- | --- |
+| Browser audits importing the seam | **7** | **21** |
+| Files carrying their own `signIn` | **15** | **0** |
+| Audits still shelling out for the route list | 13 | 13 |
 
-The change log for the commit that introduced it said it was "replacing 21 hand-copied `signIn`
-functions". It was not: it made 21 *replaceable* and converted seven. The distinction is invisible
-until somebody counts, and the row has been corrected.
+The change log for the commit that introduced the seam said it was "replacing 21 hand-copied
+`signIn` functions". It was not: it made 21 *replaceable* and converted seven. The distinction is
+invisible until somebody counts, and the row has been corrected.
+
+**How the fifteen were migrated safely.** Capture every audit's output first, migrate, compare.
+Thirteen came back byte-identical. The fourteenth changed — and the comparison is what made it worth
+investigating rather than shrugging at: running it three times on *identical* code gave 9, 9 and 8
+findings, so the audit is non-deterministic and the migration had nothing to do with it. Without the
+before-and-after, that would have been recorded as "the migration changed a result" and either
+reverted or waved through. Both would have been wrong.
+
+The remaining 13 shell out to the route generator directly rather than using the seam's cached list.
+That is a smaller fault -- they get correct targets, just not the cache -- and it is the next thing
+to close.
 
 So the lesson to carry, which is worth more than the code above: **introducing the seam is the
 easy tenth of the work.** Budget for the migration of every existing caller, or accept that you have
