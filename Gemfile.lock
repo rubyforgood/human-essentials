@@ -136,7 +136,7 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.6, < 3)
       sassc-rails (>= 2.0.0)
-    brakeman (8.0.5)
+    brakeman (8.0.6)
       racc
     bugsnag (6.30.0)
       concurrent-ruby (~> 1.0)
@@ -204,7 +204,6 @@ GEM
     diff-lcs (1.6.2)
     discard (2.0.0)
       activerecord (>= 7.0, < 9.0)
-    docile (1.4.0)
     dotenv (3.2.0)
     dotenv-rails (3.2.0)
       dotenv (= 3.2.0)
@@ -241,7 +240,8 @@ GEM
       rubocop (>= 1)
       smart_properties
     erubi (1.13.1)
-    execjs (2.10.0)
+    execjs (2.10.2)
+      json (>= 2)
     factory_bot (6.5.5)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
@@ -436,7 +436,7 @@ GEM
       timeout
     net-smtp (0.5.1)
       net-protocol
-    newrelic_rpm (10.6.0)
+    newrelic_rpm (10.7.1)
       logger
     nio4r (2.7.5)
     nokogiri (1.19.4)
@@ -532,7 +532,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (7.2.0)
+    puma (8.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.7)
@@ -672,17 +672,12 @@ GEM
       tilt
     securerandom (0.4.1)
     shellany (0.0.1)
-    shoulda-matchers (7.0.1)
-      activesupport (>= 7.1)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     simple_form (5.4.0)
       actionpack (>= 7.0)
       activemodel (>= 7.0)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.12.3)
-    simplecov_json_formatter (0.1.4)
+    simplecov (1.1.1)
     sinatra (4.2.1)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
@@ -699,8 +694,8 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
-    sprockets (4.2.2)
-      concurrent-ruby (~> 1.0)
+    sprockets (4.4.1)
+      concurrent-ruby (~> 1.1)
       logger
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.4.2)
@@ -728,7 +723,7 @@ GEM
     stringio (3.2.0)
     strong_migrations (2.8.0)
       activerecord (>= 7.2)
-    terser (1.2.7)
+    terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
     tilt (2.2.0)
@@ -851,11 +846,11 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails (~> 2.34.3)
   sass-rails
-  shoulda-matchers (~> 7.0)
+  shoulda-matchers (~> 8.0)
   simple_form
   simplecov
   solid_cache (~> 1.0)
-  sprockets (~> 4.2.2)
+  sprockets (~> 4.4.1)
   stackprof
   standard (~> 1.56)
   standard-performance
