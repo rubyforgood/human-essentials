@@ -105,6 +105,18 @@ jobs:
       - name: Test the audits
         run: node bin/design/audit-selftest.js
 
+      # The "Current state" table in docs/changelog.md, checked rather than trusted. It was
+      # hand-maintained and went stale the moment anyone stopped typing -- wrong by 42 commits two
+      # days after being refreshed, and at one point disagreeing with a second copy in
+      # migration-map.md. This fails when a figure that should not drift has drifted; the commit and
+      # file counts are excluded, because gating on numbers that change every commit is how a check
+      # gets switched off.
+      # No `env:` of its own -- the job already sets RAILS_ENV and the PG_* variables the app
+      # connects with, and inventing a DATABASE_URL here would be a second, divergent way to reach
+      # the same database.
+      - name: Current state table is up to date
+        run: bin/rails runner bin/design/state.rb --check
+
       - name: Server log
         if: ${{ failure() }}
         run: tail -100 /tmp/server.log
