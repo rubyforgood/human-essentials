@@ -126,6 +126,12 @@ RSpec.describe "Requests", type: :system, js: true do
           select(item2.name, from: "filters[by_request_item_id]")
           wait_for_filters
           click_on "Clear all"
+          # Clearing re-renders the results frame exactly as selecting does, so it needs the same
+          # wait. Without it this counted rows while the frame was being swapped and Capybara
+          # reported six `<<ERROR>>` stale-element reads beside one surviving row -- a flake that
+          # took a full-suite run to catch and passed on its own every time. This was the only
+          # `click_on "Clear all"` in the suite not followed by `wait_for_filters`.
+          wait_for_filters
 
           expect(page).to have_css("table tbody tr", count: 5)
         end
