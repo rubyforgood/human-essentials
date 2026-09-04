@@ -8,59 +8,31 @@ fixed comes out in the same commit as the fix, with a row in [changelog.md](chan
 
 ## Test suite
 
-**The `--seed 43125` recipe is stale, and the flake is unreproduced.** The entry recorded 7
-failures in `spec/services/reports/adult_incontinence_report_service_spec.rb`, all
-`create(:kit, organization: organization)` raising `Validation failed: Name has already been
-taken`. Re-running the exact command on 2026-09-03 gives **3272 examples, 0 failures**.
+**Three flakes fixed on 2026-09-04, and eight consecutive clean runs since.** Before them, 15
+full-suite runs produced 5 failures across 4 distinct examples, never the same one twice — about
+one run in three. Afterwards: **3,298 examples, 0 failures, 1 pending, on eight fresh seeds.**
 
-A seed is only a reproduction against an identical set of loaded files, because RSpec shuffles the
-groups it loaded. **31 spec files have been added and 1 removed since the entry was written**
-(267 → 297), so seed 43125 stopped selecting that ordering within about a day of it being
-recorded. Four further seeds were tried — 11111, 22222, 33333, 44444 — all **0 failures**, and no
-run contained the string `has already been taken` at all. Five full-suite runs, nothing. That is
-not proof the flake is gone; it is proof the recipe no longer finds it.
-
-One cause of that exact message *was* found and fixed — `Seeds.seed_base_items` was not
-idempotent — but it is guarded in the factory (`if BaseItem.count.zero?`), so it is not obviously
-the path the report hit, and that should not be claimed. If it recurs, do **not** start from a
-seed: run to a failure, then `rspec --bisect` on the failing seed, which finds the minimal
-ordering that reproduces it and does not go stale when a spec file is added.
-
-**The suite has low-rate background flakiness, and a seed is not a handle on it.**
-Characterised on 2026-09-04 across **15 full-suite runs**: 5 failures, **4 distinct examples, and
-never the same example twice**. Seed 20085 gave a failure then two clean runs on identical code;
-seed 51001 gave `donation_site_spec:198` on one run and `audit_system_spec:74` on the next. So it
-is **timing, not ordering** — which also means `--bisect` is the wrong tool, since it assumes a
-failure that an ordering reproduces.
-
-Seen so far, and what each looked like:
-
-| Example | Signature |
+| Example | Cause |
 | --- | --- |
-| `request_system_spec:119` | six `<<ERROR>>` stale reads after `click_on "Clear all"` — **a real missing wait, fixed** |
-| ~~`audit_system_spec:74`~~ | `await_select2` exhausting a 10-second wait — **diagnosed and fixed** |
-| ~~`donation_site_spec:198`~~ | a *model* spec, so not browser timing — **diagnosed and fixed**, see below |
+| `request_system_spec:119` | no `wait_for_filters` after `click_on "Clear all"` — the only clear-all in the suite without one |
+| `donation_site_spec:198` | the spec queried `DonationSite.active`, unscoped and unordered, where the app queries `current_organization.donation_sites.alphabetized.active` |
+| `audit_system_spec:74` | `await_select2` took the starting `data-select2-id` from a non-retrying `Nokogiri` snapshot; before select2 initialised that read nil, so it waited for id `1` |
+| *(one more)* | `PG::TRDeadlockDetected` — self-inflicted, a second `rspec` against the same test database |
 
-**All three had genuine, identifiable causes, and all three are fixed** — including the select2
-one, which was written off here as "the container being slow" before anyone read it. It was not:
-`await_select2` took the starting `data-select2-id` from a single non-retrying
-`Nokogiri::HTML.parse(page.body)`, so when the snapshot preceded select2's initialisation the
-attribute was absent, `nil.to_i` gave **0**, and it waited ten seconds for an id of `1` that never
-comes. Its wait selector also dropped the element it was given and matched any `select` on the
-page. Proven by rebuilding the old selector from a nil id and getting the failure message back
-byte-for-byte.
+**What eight clean runs does and does not support.** At the previous rate it would happen about
+**4%** of the time, so that rate almost certainly no longer holds. It does *not* establish zero: a
+5% residual rate would still give eight clean runs two times in three. If a failure appears, treat
+it as new, keep the output, and diagnose by reading — all three above were solved that way, none by
+bisecting.
 
-**The donation-site one is fixed.** It called a bare `DonationSite.active` where the app runs
-`current_organization.donation_sites.alphabetized.active` — unscoped by organization, and unordered
-while the assertions indexed `.first` and `.second`. Postgres promises no order without `ORDER BY`;
-a sequential scan returns heap order, and the `before` blocks `update` a row, which writes a new
-tuple at the end of the heap, so the expected order held by accident until one run in fifteen. The
-spec now runs the query the app runs, with two guards that each fail against the old one.
-
-**How to work on this, learned the expensive way**: run to a failure and *keep the output* — the
-seed alone is worthless here. Do not run a second `rspec` against the same test database while a
-run is in flight; it manufactures `PG::TRDeadlockDetected` in an unrelated system spec, which cost
-a run before it was recognised.
+**The `--seed 43125` entry is closed as unreproducible.** It recorded 7 failures in
+`adult_incontinence_report_service_spec` from `create(:kit)` raising `Name has already been taken`.
+It has not reproduced in **23 full-suite runs** across 2026-09-03 and 04, and no run has contained
+that string at all. A seed is only a reproduction against an identical set of loaded files, and 31
+spec files were added within a day of it being written, so it stopped selecting that ordering almost
+immediately. `Seeds.seed_base_items` was found non-idempotent in the same area and fixed, which may
+or may not be related — it is guarded in the factory, so it should not have been reachable. Kept as
+a record rather than a task: if those seven ever return, this paragraph is the context.
 
 ## Design system
 
