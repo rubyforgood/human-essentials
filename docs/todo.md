@@ -118,25 +118,6 @@ avoids that and introduces two versions that drift, which is the worse failure.
 Unverified: whether this client actually reads `~/.claude/skills/` on this setup — that directory
 has never existed here. Confirm by opening a different project and seeing whether the skills appear.
 
-## A typo in a partner profile field name
-
-`profiles/_show.html.erb` and `partners/profiles/show/_agency_stability.html.erb` render
-**"Current providing diapers"** where the form asks **"Currently providing diapers?"**. Same field,
-and the show side is missing the "ly". Spotted on 2026-09-04 while converting these screens to
-sentence case, and left because it is a copy fix rather than a casing one — the sentence-case pass
-had already grown from 30 labels to 106 strings and this deserves its own line rather than a rider.
-`spec/requests/partners/profiles_requests_spec.rb:22` asserts the current spelling.
-
-## Seven dead anchors in design.md
-
-Seven `](#...)` links point at anchors that do not exist — `#contrast`, `#target-size`, `#pills`,
-`#icons`, `#interaction`, `#reports`, `#behind-a-proxy-or-tunnel`. Down from twelve; the rest were
-fixed in passing.
-
-Each is either a section that was renamed or one that was never written. Fixing means deciding which
-per link, so it is small but not mechanical. Worth a check in `page-audit.rb` afterwards so the next
-one is caught when it is written.
-
 ## `ignored_columns` for the dropped address column
 
 `StructuredAddress` still carries `self.ignored_columns += ["address"]`. The column was dropped by

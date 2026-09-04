@@ -4139,7 +4139,7 @@ not the caller, so every future caller gets it right — the caller cannot know 
 conditional items will survive.
 
 **It collapses to the menu's label, not the item's.** "Export", not "Requests as CSV". Safe only
-because a menu here is [named after its contents](#menu-button), so its name fits any one of them,
+because a menu here is [named after its contents](../design.md#menu-button), so its name fits any one of them,
 and it is the one that is a verb — design.md requires a button's label to say what will happen.
 GitHub's Download menu behaves the same way.
 
@@ -5223,7 +5223,7 @@ already places the rail.
 
 The hairline that returns with it is an **inset shadow, not a border**. Under `box-sizing:
 border-box` a 1px border is drawn inside the box, which would take the track from 24px to 23 and put
-[2.5.8](../design.md#target-size) a pixel short in precisely the state where the control is hardest
+[2.5.8](../design.md#tap-targets) a pixel short in precisely the state where the control is hardest
 to hit — a moving target over a moving table. A shadow paints without occupying.
 
 **Alternatives rejected.** *Never float* removes the complaint completely and was offered, but it

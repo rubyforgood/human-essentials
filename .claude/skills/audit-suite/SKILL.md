@@ -62,6 +62,14 @@ of three user roles because its selector only matched the third.
 breaking something hides it from the audit. Ask that of your own code: what does this do with input
 it cannot handle, and does the run get quieter or louder?
 
+**A lookup that fails is not a pass.** The same shape, one level down, and it bit the check written
+to catch the previous paragraph. A documentation link checker resolved `../design.md#anchor` against
+the *working directory* rather than the file holding the link, found no such file, and its guard
+read `SLUGS[target] ? SLUGS[target].include?(frag) : !File.exist?(target)` — so "I cannot find the
+file" evaluated to **true**, meaning fine. It passed a link whose anchor was being renamed out from
+under it in the same commit. Wherever a check consults a map, ask what it does on a miss, and make
+the miss loud.
+
 **A skipped page and a clean page produce the same summary line.** This is the sharpest version of
 the rule, and it cost a project an entire unmigrated screen. Its route enumerator substituted a
 record id into every `:*_id` segment by looking up *the controller's own* model — so a nested route
