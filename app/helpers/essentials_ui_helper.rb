@@ -331,6 +331,26 @@ module EssentialsUiHelper
     end
   end
 
+  # The numbered disc beside a step in an ordered list of instructions.
+  #
+  # Eleven classes, written out five times in `dashboard/_getting_started_prompt` -- the exact case
+  # design.md argues against when it explains why `.data-table` is a component class rather than a
+  # utility string: a repeated multi-class string drifts on the first hurried edit.
+  #
+  # `aria-hidden`, because the number is already carried by the `<ol>`. A screen reader announcing
+  # "1, 1, Set up storage locations" is the list semantics read twice.
+  #
+  # Not shared with the avatar disc in the two top bars, which is the same idea at `h-8 w-8` holding
+  # initials rather than an index. They are near enough to look like one component and far enough
+  # apart in purpose that merging them would need a size and a semantics argument on every call --
+  # noted in docs/todo.md rather than done.
+  def essentials_step_number(index)
+    tag.span(index,
+      class: "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-100 " \
+             "text-xs font-semibold text-brand-700",
+      aria: {hidden: true})
+  end
+
   # Where a user is between being invited and using the account.
   #
   # **One concept, one rendering.** This was drawn two ways for the same `User` class. The bank's
