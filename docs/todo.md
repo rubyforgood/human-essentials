@@ -96,12 +96,17 @@ years without anyone noticing.
 
 ## Skills: not yet available outside this repo
 
-The five skills in `.claude/skills/` are only active when working *in this repository*. Claude reads
-skills from two places — the current repo, and `~/.claude/skills/` — and nothing has been written to
-the second.
+**Standing item, asked for twice.** The five skills in `.claude/skills/` — **17 files, 1,383 lines**
+as of 2026-09-04 — are only active when working *in this repository*. Claude reads skills from the
+current repo and from `~/.claude/skills/`, and **nothing has ever been written to the second**:
+that directory does not exist on this machine (checked 2026-09-04).
 
-**Asked to be reminded rather than done now.** The proposal is a symlink, not a copy: one set of
-files, in git, visible from every project.
+Most of what is in them is not specific to this app, this stack, or even to design —
+`audit-suite`, `evidence-discipline` and `wcag-conformance` are about method — so the whole of it
+is currently unavailable to every other project.
+
+**The proposal is a symlink, not a copy**: one set of files, versioned in this repo, visible from
+everywhere.
 
 ```bash
 mkdir -p ~/.claude/skills
@@ -111,12 +116,16 @@ for s in audit-suite design-system-migration evidence-discipline wcag-conformanc
 done
 ```
 
-It writes five pointer entries into `/root/.claude/skills/` and nothing else. The risk is that a
-symlink points at a path: if this repo moves or is deleted, the skills silently stop working. A copy
-avoids that and introduces two versions that drift, which is the worse failure.
+It writes five pointer entries into `/root/.claude/skills/` and nothing else. **The tradeoff**: a
+symlink points at a path, so if this repo moves or is deleted the skills silently stop working. A
+copy avoids that and introduces two versions that drift — which is the worse failure, and the one
+this project has spent a week finding in its own documents.
 
-Unverified: whether this client actually reads `~/.claude/skills/` on this setup — that directory
-has never existed here. Confirm by opening a different project and seeing whether the skills appear.
+**Still unverified**, and it is the one thing worth checking before relying on it: whether this
+client reads `~/.claude/skills/` on this setup at all. Confirm by running the loop, opening a
+different project, and seeing whether the skills are offered. If they are not, the answer is a copy
+into whatever directory this client does read, and the drift problem comes back and needs a
+different solution.
 
 ## `ignored_columns` for the dropped address column
 
