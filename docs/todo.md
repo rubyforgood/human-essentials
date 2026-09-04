@@ -36,25 +36,6 @@ a record rather than a task: if those seven ever return, this paragraph is the c
 
 ## Design system
 
-**`"detected a unknown item_id"` is the last developer-facing error string partners can see.**
-`app/services/partners/family_request_create_service.rb:57`. Unlike the two fixed on 2026-09-04 it
-is a should-never-happen guard — it fires when a submitted `item_id` is not in the partner's
-requestable set — so a partner reaching it has hit a bug rather than made a mistake, and the copy
-should probably say that and ask them to contact the bank, rather than being tidied into a sentence
-about item ids. Grammatically wrong as well ("a unknown").
-
-**The cancellation reason claims to be required and is not.** On
-`/requests/:id/cancelation/new` the label carries a `*` and the textarea carries
-`aria-required="true"`, but there is no HTML `required` attribute and
-`RequestDestroyService` does not validate the reason — a blank one saves, and the partner's email
-reads "Reason Provided: N/A". Found on 2026-09-04 while fixing the redirect on that form.
-
-The form is lying either way round, so it needs a product call rather than a patch: **make it
-genuinely required** (validate in the service, add the attribute) or **genuinely optional** (drop
-the `*` and the `aria-required`). Recommendation: required. A cancelled request with no recorded
-reason is the case the partner email handles worst, and the field is already presented as
-mandatory, so enforcing it changes no one's expectations.
-
 **One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
 `edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is
 what design.md asks a page's single main action to be — correct output from a legacy call. The
@@ -72,21 +53,6 @@ is the kind that wants its own commit and its own review.
 `layouts/_essentials_partner_topbar`: `h-8 w-8` versions of what `essentials_step_number` now
 encapsulates at `h-5 w-5`. Not merged, deliberately — see the note on the helper — but if a third
 size ever appears, that is the moment to make it one component with a size argument.
-
-**The item list's pager could move to the card's `footer:` slot.**
-`app/views/items/_item_list.html.erb` renders its pagination chrome inline. That was forced while
-the card wrapped five tab panels; the card wraps one table now, so `footer:` would work. Left
-because it renders identically and the move was not part of the tabs change. Comment in the file
-says the same.
-
-## Filters and forms
-
-**`/admin/barcode_items` has no seeded data, so it cannot be eyeballed.** `BarcodeItem.global.count`
-is **0** in the development database while 13 org-scoped barcodes exist, so the admin page renders
-an empty state and its filters cannot be exercised in a browser — the `by_value` filter added on
-2026-09-04 had to be verified by request spec instead. A couple of global barcodes in `db/seeds.rb`
-would make the screen reviewable. Small, but it is the reason a filter sat inert on this page for
-years without anyone noticing.
 
 ## Skills: not yet available outside this repo
 

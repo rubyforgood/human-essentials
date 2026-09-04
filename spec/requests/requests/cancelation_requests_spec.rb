@@ -16,6 +16,24 @@ RSpec.describe "Requests::Cancelation", type: :request do
       expect(request_record.discard_reason).to eq("Partner withdrew it")
     end
 
+    # The form has always claimed this field is required -- an asterisk on the label and
+    # `aria-required="true"` -- with nothing enforcing it, so a blank reason saved and the partner's
+    # cancellation email read "Reason Provided: N/A". A missing reason is retryable, unlike the two
+    # state failures below, so it re-renders rather than redirecting and what was typed survives.
+    context "when the reason is blank" do
+      it "re-renders the form instead of cancelling" do
+        expect {
+          post request_cancelation_path(request_id: request_record.id),
+            params: {cancelation: {reason: "   "}}
+        }.not_to change { request_record.reload.discarded_at }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("is needed")
+        # The negative assertion: redirecting is the old behaviour and would discard the input.
+        expect(response).not_to have_http_status(:redirect)
+      end
+    end
+
     # The defect this covers: it used to redirect back to the cancellation form. Neither of
     # `RequestDestroyService`'s failures is retryable -- both are states -- so that left the user in
     # front of a control that could never succeed, with the reason they had written discarded. The

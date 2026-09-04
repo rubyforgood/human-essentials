@@ -39,7 +39,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
-          expect(result.errors[:base]).to eq(["detected a unknown item_id"])
+          expect(result.errors[:base]).to eq(["Something went wrong at our end and this request could not be read. Nothing you did caused it -- please contact your bank."])
         end
       end
     end

@@ -15,7 +15,14 @@
 
     <% end %>
 
-    <%= essentials_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+    <%# `@cancelation`, not the bare `:cancelation` symbol this used to pass. A symbol gives
+    simple_form no object, so there was no inline error, no `aria-invalid` and no summary -- and
+    the reason could not be made required without a flash-and-redirect that discarded it. %>
+<%# `as: :cancelation` keeps the parameter key. `Requests::Cancelation.model_name.param_key` is
+    `requests_cancelation`, so without this the form posts a key the controller does not require --
+    and every existing request spec posts `cancelation: {reason: ...}`. %>
+<%= essentials_form_for @cancelation, as: :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+      <%= essentials_error_summary(@cancelation) %>
       <%= render "shared/essentials/card" do %>
         <%= f.input :reason, label: "Cancellation reason", as: :text, input_html: {rows: 3},
               hint: "This is included in the email notification sent to the partner. Cancellation emails are not sent to deactivated partners." %>

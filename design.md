@@ -3696,6 +3696,23 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+**Do not mark a field required unless something enforces it, and put the rule in one place.** A
+label asterisk and `aria-required="true"` with no validation behind them is a promise the form does
+not keep — the cancellation reason carried both for years while a blank one saved and the partner's
+email read "Reason Provided: N/A".
+
+Making it true needed an **object to attach the error to**. The form was `essentials_form_for
+:cancelation`, a bare symbol, so simple_form had nothing to hang an error on: no inline message, no
+`aria-invalid`, no summary, and no way to report a fault except a flash and a redirect that
+discarded what was typed. `Requests::Cancelation` is a three-line `ActiveModel::Model` that fixes
+all of it. Pass `as: :cancelation` so the param key survives — `model_name.param_key` would
+otherwise be `requests_cancelation`.
+
+The validation lives on the form object and **not** in `RequestDestroyService`, which validates
+states. That is the same retryable/not split as above: a missing reason is something the user can
+fix, so it re-renders; "already cancelled" is not, so it redirects. One rule, one owner, and the
+owner is the one that can re-render.
+
 **A model or service message reaches the user verbatim.** `partners/requests/_error` prints every
 base error as a bullet and the flash interpolates `full_messages` straight in, so a validation
 string is UI copy whether or not it was written as one. Read them as a partner would:

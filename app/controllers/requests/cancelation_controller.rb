@@ -5,10 +5,22 @@ module Requests
 
     def new
       @request = Request.find(params[:request_id])
+      @cancelation = Cancelation.new
     end
 
     def create
-      svc = RequestDestroyService.new(request_id: params[:request_id], reason: cancelation_params[:reason])
+      @cancelation = Cancelation.new(reason: cancelation_params[:reason])
+
+      # Retryable, so it re-renders and the reason the user typed survives -- unlike the service's
+      # two failures below, which are states nothing they type can change. design.md: ask what the
+      # user should do next and send them there.
+      unless @cancelation.valid?
+        @request = Request.find(params[:request_id])
+        render :new, status: :unprocessable_content
+        return
+      end
+
+      svc = RequestDestroyService.new(request_id: params[:request_id], reason: @cancelation.reason)
 
       svc.call
 

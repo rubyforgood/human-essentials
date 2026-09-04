@@ -25,6 +25,12 @@ class RequestDestroyService
 
   attr_reader :request_id, :reason
 
+  # **States only.** Whether the reason is present is input validation and belongs to
+  # `Requests::Cancelation`, the form object the controller validates first -- one owner for the
+  # rule, and it is the owner that can re-render the form with what the user typed still in it.
+  # Duplicating it here would also have made this service refuse a cancellation in four existing
+  # examples that legitimately do not care about the reason.
+  #
   # Both of these are *states*, not validation of what the user typed, and neither is retryable:
   # nothing the person filling in the cancellation form can change will make a second attempt
   # succeed. The controller relies on that when it decides where to send them. The messages are

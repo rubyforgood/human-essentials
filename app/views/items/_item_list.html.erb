@@ -27,8 +27,13 @@
 
     The chrome is inline rather than the card's `footer:` slot. That was forced while the card
     wrapped five panels -- a card footer would have shown the item pager under the Kits tab too.
-    Now that the tabs are pages the card wraps one table, so this could move to `footer:`; it is
-    left inline because it renders identically and the move is not this change.
+    Now that the tabs are pages the card wraps one table, so it *could* move to `footer:`.
+
+    **Decided on 2026-09-04 not to.** It renders identically either way, so the move buys nothing a
+    user or a reader can see, and `footer:` is not a rule the design system enforces -- other pages
+    use both. A change with no observable effect is one nobody can review and nobody can regression
+    test; the only argument for it was tidiness, and this comment serves that more cheaply. Revisit
+    only if the card gains a footer for some other reason, at which point having two is the fault.
   %>
   <% if (pager = essentials_pagination_footer(items)) %>
     <div class="border-t border-slate-200 px-5 py-3"><%= pager %></div>
