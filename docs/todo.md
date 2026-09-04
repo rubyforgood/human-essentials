@@ -39,15 +39,18 @@ Seen so far, and what each looked like:
 | --- | --- |
 | `request_system_spec:119` | six `<<ERROR>>` stale reads after `click_on "Clear all"` — **a real missing wait, fixed** |
 | `audit_system_spec:74` | `await_select2` exhausting a 10-second wait |
-| `donation_site_spec:198` | a *model* spec, so not browser timing — see below |
+| ~~`donation_site_spec:198`~~ | a *model* spec, so not browser timing — **diagnosed and fixed**, see below |
 
 **One had a genuine identifiable cause** and is fixed. The other two have not been diagnosed. The
 select2 one looks like the container being slow rather than a spec fault; ten seconds is already
-generous. The donation-site one is the odd one out and the best next candidate, because a model
-spec cannot be slow-browser flaky: `DonationSite.active` is unscoped by organization while the
-example expects exactly two rows, and the assertions index `.first`/`.second` off a query with **no
-`ORDER BY`**, which Postgres does not promise. Both are faults in the spec, and both are readable
-without reproducing anything.
+generous, and it is the only one still open.
+
+**The donation-site one is fixed.** It called a bare `DonationSite.active` where the app runs
+`current_organization.donation_sites.alphabetized.active` — unscoped by organization, and unordered
+while the assertions indexed `.first` and `.second`. Postgres promises no order without `ORDER BY`;
+a sequential scan returns heap order, and the `before` blocks `update` a row, which writes a new
+tuple at the end of the heap, so the expected order held by accident until one run in fifteen. The
+spec now runs the query the app runs, with two guards that each fail against the old one.
 
 **How to work on this, learned the expensive way**: run to a failure and *keep the output* — the
 seed alone is worthless here. Do not run a second `rspec` against the same test database while a
