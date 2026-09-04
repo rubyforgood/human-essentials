@@ -43,6 +43,13 @@ of the second process, not a defect, and it cost a run here before being recogni
 
 ## Design system
 
+**`"detected a unknown item_id"` is the last developer-facing error string partners can see.**
+`app/services/partners/family_request_create_service.rb:57`. Unlike the two fixed on 2026-09-04 it
+is a should-never-happen guard — it fires when a submitted `item_id` is not in the partner's
+requestable set — so a partner reaching it has hit a bug rather than made a mistake, and the copy
+should probably say that and ask them to contact the bank, rather than being tidied into a sentence
+about item ids. Grammatically wrong as well ("a unknown").
+
 **The cancellation reason claims to be required and is not.** On
 `/requests/:id/cancelation/new` the label carries a `*` and the textarea carries
 `aria-required="true"`, but there is no HTML `required` attribute and
@@ -74,16 +81,6 @@ labels (links, parenthetical user-guide links), so a loop needs the label as a b
 the card wrapped five tab panels; the card wraps one table now, so `footer:` would work. Left
 because it renders identically and the move was not part of the tabs change. Comment in the file
 says the same.
-
-## Accessibility
-
-**`"completely empty request"` reaches partners as user-facing copy.** It is a model validation
-message in `app/models/request.rb:89`, and it renders verbatim as a bullet in the error callout —
-lowercase, unpunctuated, phrased for a developer. Three specs assert the exact string
-(`spec/models/request_spec.rb:143`, `spec/services/partners/request_create_service_spec.rb:35`,
-`spec/services/partners/family_request_create_service_spec.rb:27`) and all three request types
-share it, so rewording it is a model change with a wider blast radius than the copy fix it sits
-next to. Left deliberately; the surrounding guidance sentence now carries the actionable part.
 
 ## Filters and forms
 

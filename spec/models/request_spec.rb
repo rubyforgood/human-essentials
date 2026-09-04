@@ -140,7 +140,7 @@ RSpec.describe Request, type: :model do
 
       it "is not valid" do
         expect(empty_request).to_not be_valid
-        expect(empty_request.errors[:base]).to include("completely empty request")
+        expect(empty_request.errors[:base]).to include("The request is empty: it has no items and no comment.")
       end
     end
 

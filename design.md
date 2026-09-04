@@ -3681,6 +3681,17 @@ the shared admin user partial, where the label said "Name *" and the input said 
 Rebuilding loses the errors, so every field comes back clean and the only sign of trouble is a
 sentence at the top. `items`, `kits` and `admin/users` each did this.
 
+**A model or service message reaches the user verbatim.** `partners/requests/_error` prints every
+base error as a bullet and the flash interpolates `full_messages` straight in, so a validation
+string is UI copy whether or not it was written as one. Read them as a partner would:
+`"completely empty request"`, `"request_id is invalid"`, `"detected a unknown item_id"`.
+
+Two of those are fixed. `Request#not_completely_empty` now says *"The request is empty: it has no
+items and no comment."* — a sentence, describing the **state** rather than the remedy, because the
+remedy differs by form and the callout's guidance line already gives it ("Choose at least one
+child" on the family form, "every line needs an item selected" on the other two). Changing it meant
+updating the three specs that assert the exact string, which is the whole cost and worth paying.
+
 **A failure nobody can retry does not go back to the form.** Re-rendering is right when the user
 can change something and try again. When the failure is a *state* — the record is already gone,
 already cancelled, already claimed by someone else — returning them to the form puts them in front
