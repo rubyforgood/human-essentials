@@ -422,6 +422,13 @@ reason. See docs/design-decisions.md for why that beat a tidier template.
 **The `address` column is gone**, dropped by `20260901200000`. Nothing on these four tables stores a
 freeform address any more.
 
+**`ignored_columns` stays, and is no longer tracked as a task.** It is a no-op wherever the drop has
+run, and removing it against a database where it has *not* lets ActiveRecord generate an `address`
+attribute accessor that collides with `StructuredAddress#address` — the raw empty column can win and
+every address renders blank with nothing raising. Decided on 2026-09-04 to keep the reasoning in the
+code comment beside the line rather than on a to-do list, because it is a fact about that line and
+that is where a reader meets it.
+
 It was meant to be a later *release* than the one that set `ignored_columns`, so that a rolling
 deploy finishes with an old process still finding the column it expects. Run in the same release,
 that protection is not there and the window is the length of the deploy. It was collapsed
