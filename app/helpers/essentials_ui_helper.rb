@@ -598,6 +598,32 @@ module EssentialsUiHelper
   # --- Identity -------------------------------------------------------------
 
   # Up to two initials. Presentation only -- never mutate the stored name.
+  # The account menu's avatar: the disc, and the initials inside it.
+  #
+  # **It takes the user, not a name string, and that is the point.** Both top bars built the disc by
+  # hand -- byte-identical spans, eleven classes each -- and passed a name in, and both got the name
+  # wrong. `User#display_name` returns the literal `"Name Not Provided"` when the name is blank, so a
+  # nameless user's initials were **"NN"**; there are 9 such users in the development database. The
+  # partner bar looked like it handled that with `display_name.presence || email`, but
+  # `display_name` is never blank, so the fallback was dead code and it rendered "NN" too.
+  #
+  # `preferred_name` is the method that does what both call sites were reaching for: the name, or the
+  # email when there is no name. Owning the choice here means neither call site can get it wrong
+  # again.
+  #
+  # `aria-hidden`, because the trigger already carries "Account menu for <name>" -- the initials are
+  # a picture of something already said.
+  #
+  # Not shared with `essentials_step_number`, which is the same shape at `h-5 w-5` holding an index
+  # rather than initials. One is a person, the other is a position in a list; a single helper would
+  # need a size argument *and* a semantics argument at every call site to serve both.
+  def essentials_avatar_disc(user)
+    tag.span(essentials_avatar_initials(user.preferred_name),
+      class: "grid h-8 w-8 place-items-center rounded-full bg-brand-100 text-xs font-semibold " \
+             "text-brand-700",
+      aria: {hidden: true})
+  end
+
   def essentials_avatar_initials(name)
     return "?" if name.blank?
 
