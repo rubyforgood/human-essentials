@@ -3649,6 +3649,18 @@ in `brand-600`. Chrome matches `:focus-visible` on this programmatic focus and w
 paint its own 1px outline; a keyboard user whose focus has just been moved for them is exactly who
 needs to see where it went.
 
+**One concept gets one rendering, and the helper is where that is enforced.** Invitation status was
+drawn two ways for the same `User`: the bank's organization table printed `user.invitation_status`
+raw — the lowercase words "joined", "accepted", "invited", and an empty cell for a user never
+invited — while the partner's user table ignored that method, recomputed from
+`invitation_accepted_at`, and drew two pills. They disagreed as well as differed: a user who had
+signed in read "joined" on one screen and "Accepted" on the other.
+
+`essentials_invitation_status_pill(user)` is the single rendering. Joined and Accepted are
+`:success`, Invited is `:warning` because it is the row an admin might act on, and a never-invited
+account gets a neutral "Not invited" rather than an empty cell. When two screens show the same
+state, the fix is a helper, not two views kept in step by hand.
+
 **A shared error partial must not name fields the page does not have.** Where one error component
 is rendered by several forms, its standing advice — the sentence above the list of specific
 errors — belongs to the *caller*, because only the caller knows what it is asking for. Pass it in

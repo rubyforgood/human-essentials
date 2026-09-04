@@ -155,7 +155,9 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content(admin_user_params[:name])
       expect(page).to have_content(admin_user_params[:email])
-      expect(page).to have_content("invited")
+      # "Invited", not the raw `invitation_status` value "invited": the column is a status pill
+      # shared with the partner user table, and the pill carries a capitalised label.
+      expect(page).to have_content("Invited")
     end
 
     it "can view organization details", :aggregate_failures do

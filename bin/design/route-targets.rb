@@ -69,9 +69,29 @@ Rails.application.routes.routes.each do |r|
   path = r.path.spec.to_s.sub("(.:format)", "")
   next if path.include?("*") || path.match?(SKIP_PATH)
 
+  # **A named segment resolves against the model it names, not against the controller.**
+  # `/partners/:partner_id/users` belongs to `partner_users`, so `IDS[controller]` is a *user*
+  # id -- and the old `gsub(/:[a-z_]*id/, id)` put it in the `:partner_id` slot, producing
+  # `/partners/10/users`. There is no partner 10, so it 404'd, and every browser audit reported it
+  # as "not reached" and moved on. That screen -- the partner's user table -- was invisible to all
+  # of them, which is how it kept a status column drawn differently from the bank's and three
+  # inline row buttons in two weights while `table-audit.js` reported the app clean.
+  #
+  # `:partner_id` -> `IDS["partners"]`, `:id` -> the controller's own record. Skipped entirely when
+  # either is missing, because a guessed id is a 404 wearing a screen's name.
   if path.include?(":")
-    id = IDS[controller] or next
-    path = path.gsub(/:[a-z_]*id/, id.to_s)
+    resolved = true
+    path = path.gsub(/:([a-z_]+)_id/) do
+      parent = IDS[Regexp.last_match(1).pluralize]
+      resolved &&= !parent.nil?
+      parent.to_s
+    end
+    if path.include?(":id")
+      own = IDS[controller]
+      resolved &&= !own.nil?
+      path = path.sub(":id", own.to_s)
+    end
+    next unless resolved
     next if path.include?(":")
   end
   next if seen[path]

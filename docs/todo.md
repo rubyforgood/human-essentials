@@ -43,6 +43,14 @@ of the second process, not a defect, and it cost a run here before being recogni
 
 ## Design system
 
+**Two routes are still unreachable and every browser audit skips them.**
+`/broadcast_announcements/1/edit` and `/partners/children/new` both return 404, so axe and the rest
+record them as "not reached" and move on. This is the same shape as the `/partners/10/users` bug
+fixed on 2026-09-04 — where a wrong id made a real screen invisible to every audit and let a table
+keep two button weights and Title Case headers — so it is worth establishing whether these are
+genuinely unroutable or another substitution fault. **A skipped page and a clean page read
+identically in a summary line.**
+
 **`/partner_groups` pills both states of a boolean column — a design decision, not a defect.**
 Found by re-running the table audit on 2026-09-04. "Send reminders?" renders
 `essentials_status_pill("Yes", tone: :success)` or `("No", tone: :neutral)`, so every row carries a
@@ -51,11 +59,6 @@ is not the shouting the rule exists to prevent. Three readings, set out in
 [table-audit.md](table-audit.md#partner_groups--a-question-rather-than-a-finding): leave it, pill
 only `Yes`, or pill neither. **Not changed, because design decisions get previewed before they get
 built.** Two rows in the seeded database, so it is also the thinnest possible evidence.
-
-**Invitation status is still rendered two ways.** Plain text in
-`users/_organization_user.html.erb:6` and three coloured pills in `partner_users/_users.html.erb`.
-Carried over from the 2026-08-18 audit and re-confirmed on 2026-09-04; it is the last of that
-audit's findings still open.
 
 **One legacy button helper survives in `app/views`.** `organizations/_header.html.erb:23` calls
 `edit_button_to`. It is in a page header rather than a table cell and renders `:primary`, which is
