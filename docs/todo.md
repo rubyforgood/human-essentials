@@ -26,16 +26,33 @@ the path the report hit, and that should not be claimed. If it recurs, do **not*
 seed: run to a failure, then `rspec --bisect` on the failing seed, which finds the minimal
 ordering that reproduces it and does not go stale when a spec file is added.
 
-**A second flake, caught on 2026-09-04 and not yet characterised.**
-`spec/models/donation_site_spec.rb:198` — "CSV export attributes when both donation sites are
-active includes both active donation sites in the CSV export" — failed once on seed 51001 and
-passed on 38162 (twice) and 62777. A **model** spec, so no browser timing: the likely candidates
-are `DonationSite.active` being unscoped by organization while the example expects exactly two
-rows, and the assertions indexing `.first` and `.second` off a query with **no `ORDER BY`**, which
-Postgres does not promise. Both are faults in the spec rather than the model.
+**The suite has low-rate background flakiness, and a seed is not a handle on it.**
+Characterised on 2026-09-04 across **15 full-suite runs**: 5 failures, **4 distinct examples, and
+never the same example twice**. Seed 20085 gave a failure then two clean runs on identical code;
+seed 51001 gave `donation_site_spec:198` on one run and `audit_system_spec:74` on the next. So it
+is **timing, not ordering** — which also means `--bisect` is the wrong tool, since it assumes a
+failure that an ordering reproduces.
 
-Not yet diagnosed because the run that caught it had its output deleted by the hunt script — a
-mistake worth not repeating: **keep the output of a failing run, the seed alone is not enough.**
+Seen so far, and what each looked like:
+
+| Example | Signature |
+| --- | --- |
+| `request_system_spec:119` | six `<<ERROR>>` stale reads after `click_on "Clear all"` — **a real missing wait, fixed** |
+| `audit_system_spec:74` | `await_select2` exhausting a 10-second wait |
+| `donation_site_spec:198` | a *model* spec, so not browser timing — see below |
+
+**One had a genuine identifiable cause** and is fixed. The other two have not been diagnosed. The
+select2 one looks like the container being slow rather than a spec fault; ten seconds is already
+generous. The donation-site one is the odd one out and the best next candidate, because a model
+spec cannot be slow-browser flaky: `DonationSite.active` is unscoped by organization while the
+example expects exactly two rows, and the assertions index `.first`/`.second` off a query with **no
+`ORDER BY`**, which Postgres does not promise. Both are faults in the spec, and both are readable
+without reproducing anything.
+
+**How to work on this, learned the expensive way**: run to a failure and *keep the output* — the
+seed alone is worthless here. Do not run a second `rspec` against the same test database while a
+run is in flight; it manufactures `PG::TRDeadlockDetected` in an unrelated system spec, which cost
+a run before it was recognised.
 
 ## Design system
 

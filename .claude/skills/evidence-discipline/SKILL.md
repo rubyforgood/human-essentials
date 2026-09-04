@@ -119,7 +119,14 @@ runners can bisect for you from a currently-failing run. That does not rot when 
 all you have is a seed, record the file count with it, and expect it to expire.
 
 **A corollary for flakes**: same seed, same tree, different outcomes means the failure is *timing*,
-not ordering, and bisecting will not help. Establish which you have before spending a day on it —
+not ordering, and bisecting will not help. Establish which you have before spending a day on it: run
+the suite enough times to see whether the *same example* fails twice. Across 15 runs of one suite,
+5 failures produced **4 distinct examples and never a repeat** — which is a property of the suite,
+not a bug to bisect, and worth writing down as such rather than filing four tickets.
+
+**Keep the output of a failing run.** A hunt script that logs the seed and deletes the run is
+useless for a timing flake, because re-running the seed gives a different failure. The output is the
+only artefact. Establish which you have before spending a day on it —
 and beware that running a second test process against the same database can manufacture failures
 (deadlocks, in one case) that look exactly like a defect in the code.
 
