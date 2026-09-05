@@ -4,7 +4,7 @@ As an Essentials Bank, you distribute materials (diapers, period products, etc.)
 
 Depending on factors like how well-established your processes are and the capabilities of your Partners, you might or might not allow/require your Partners to make Requests to get materials distributed to them.
 
-There are three Partner statuses, which have different impacts on how you interact with your Partners.
+There are five Partner statuses, which have different impacts on how you interact with your Partners: Uninvited, Invited, Awaiting review, Approved, and Recertification required.  (A Partner can also be deactivated -- see [Making a partner inactive](pm_making_a_partner_inactive.md).)
 
 ## Uninvited
 You can add Partners without inviting them to the system.  In this case, you can make Distributions to them in the system.  The Partners can not sign in to the system,  and so will not directly provide the information in the Partner Profile.  This is the status of freshly imported Partners.

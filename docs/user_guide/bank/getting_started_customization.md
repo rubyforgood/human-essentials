@@ -123,11 +123,8 @@ Note that if any Partner limits themselves to a single type,  you won't be able 
 
 #### Enable Partners to make quantity-based Requests?
 
-#### Custom Request units
-
-NOTE:  This is not yet implemented as of Oct 12, 2024. We expect it to be implemented before this guide is launched.
-
-This is a special topic that has its own guide page [here](special_custom_units.md).
+#### Custom request units
+Here you list the units (e.g. "pack", "box") that Partners can request Items in, instead of individual items.  Use the singular form.  This is a special topic that has its own guide page [here](special_custom_units.md).
 
 
 ## Other emails
@@ -242,6 +239,10 @@ You can configure whether the exports for donations and distributions include th
 Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
 
 [!NOTE] Setting this affects both the donation and distribution exports.
+
+### Include packages in distribution export?
+
+If "Yes", the Distributions export also includes a package count column for each Item (calculated from the Item's package size).  See [Exports](exports.md#add-package-counts-for-each-item).
 
 ## Annual Survey
 These two fields are only here to be reported on the Annual Survey.

@@ -36,6 +36,8 @@ When you have have selected your filters,  press "Filter" to do the filtering.  
 
 Clicking "Clear filters" will blank out the filters that are drop-down selection, and revert the date range to the default period.
 
+If there are a lot of Donations in your filtered list, they are split into pages -- use the page numbers under the list to move between them.  The totals row shows the totals for the current page and for the whole filtered list.
+
 ## New Donations
 
 To enter a new Donation, click "Donations", then "New Donation" on the left hand menu, or click the +New Donation button on the Donations list.
@@ -105,7 +107,7 @@ To view the details of a Donation, click on the "View" button beside the donatio
 Here you'll see the Donation, including:
 - Date
 - Source
-- Donation Site
+- Donation Site and Product Drive Participant (if applicable)
 - Storage Location
 - for each Item in the donation
   - Item name

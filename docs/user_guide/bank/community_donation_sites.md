@@ -37,11 +37,15 @@ Clicking on the "Edit" button beside a Donation Site in the Donation Site list l
 
 ## Deactivating a Donation Site
 
-Use the "Deactivate" button to hide a Donation Site that is no longer active.
-
-##### (NB) at time of writing there is no way for you to undo this.
+Use the "Deactivate" button to hide a Donation Site that is no longer active.  Click "OK" to confirm.  Deactivated sites don't appear in the Donation Site drop-down when you enter a Donation.
 
 ![Deactivate Donation Sites](images/community/donation_sites/deactivate_donation_site.png)
+
+### Reactivating a Donation Site
+
+To see (and reactivate) deactivated Donation Sites, check "Also include inactive donation sites" (1), click "Filter" (2), and then click "Restore" (3) beside the site.
+
+![Reactivate Donation Sites](images/community/donation_sites/reactivate_donation_site.png)
 
 ## Exporting Donation Sites
 

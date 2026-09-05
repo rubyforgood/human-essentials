@@ -25,12 +25,15 @@ The list contains:
 - Request sender -- the user that sent the Request
 - #of Items (Request limit) -- the number of items in the Request, and, if you have entered it, the quota for the partner (see [Partners](getting_started_partners.md)
 - Comments -- the comments the partner entered on the Request
+- Type -- Quantity, Child, or Individual, depending on how the Partner made the Request (see [The request/distribution cycle](pm_request_distribution_cycle.md))
 - Status
   - pending -- haven't started fulfilling it yet
   - started -- have started fulfilling, but haven't saved the resulting distribution
   - fulfilled -- have created the distribution for this Request
   - cancelled -- have cancelled the Request
-- and the actions you can take on that Request
+- and the actions you can take on that Request -- View, Cancel, and Print (a picklist for that Request)
+
+If there are more than a handful of Requests, the list is split into pages -- use the page numbers under the list to move between them.
 
 ### Filtering your Requests
 
@@ -38,6 +41,7 @@ You can filter the Request list by:
 
 - Item
 - Partner
+- Request type (Quantity, Child, or Individual)
 - Status
 - Date range
 
@@ -61,15 +65,18 @@ This brings up details of the Request including:
 - Partner
 - Date the Request was sent
 - Who sent the Request
+- Request type
 - Request status
 - Comments
 - and, for each Item in the Request:
   - Item
   - Quantity
-    - If you are using [custom units](special_custom_units.md), those custom units will appear here.
+  - Units (if applicable) -- if you are using [custom units](special_custom_units.md), the unit the Partner requested in will appear here.
   - Total Inventory (across all Storage Locations)
-    At the bottom of the screen are buttons letting you start to fulfill the Request, or to cancel it.
-    ![Request view](images/essentials/requests/essentials_requests_view.png)
+- the total quantity requested, and the Partner's quota, if you have set one.
+
+At the bottom of the screen are buttons letting you start to fulfill the Request, print a picklist for it, or cancel it.
+![Request view](images/essentials/requests/essentials_requests_view.png)
 
 ## Fulfilling a Request
 
@@ -117,8 +124,10 @@ To cancel a Request from the Requests list, click the "cancel" button beside it.
 You can also cancel a Request from the single Request view by clicking the "cancel" button at the bottom of that page.
 
 In either case,  
-You will be prompted to provide a reason for the cancellation.
+you will be taken to a page asking you to provide a reason for the cancellation.  Enter the reason and click "Yes. Cancel Request".
 ![cancel Request confirmation](images/essentials/requests/essentials_requests_cancel_confirm.png)
+
+The reason you enter is included in the email notification to the Partner.  (Cancellation emails are not sent to deactivated Partners.)
 
 The Partner will receive an email notifying them of the cancellation.
 ![cancel Request email](images/essentials/requests/essentials_requests_cancel_email.png)

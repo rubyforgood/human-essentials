@@ -17,15 +17,18 @@ This screen includes filters so you can narrow down your search to a particular 
 - Variety of items -- the number of different Items in the Purchase
 - Amount spent (in dollars)
 - FMV -- this is the Fair Market Value of the Purchase using the current fair market value of the Items in it.  Fair Market Value can be entered on the item in [Inventory -- Items](inventory_items.md)
+- Purchased Date
 - Actions - you can view more details on each Purchase from this screen.
 
+If there are a lot of Purchases in your filtered list, they are split into pages -- use the page numbers under the list to move between them.  The totals row shows the totals for the current page and for the whole filtered list.
+
 ### Filters
-You can filter your Purchases by single Storage Location , by Single vendor, or by date range.
+You can filter your Purchases by a single Storage Location, a single Vendor, an Item Category, or by date range.
 
 ![filter section](images/essentials/purchases/essentials_purchases_2.png)
 The Vendors, Storage Locations, and Item Categories are selected using drop-down lists from your bank's information.
 Date range is selected using a little calendar gizmo with several presets.   We highly recommend using the calendar gizmo instead of typing in the field, as the text field is very particular as to the format - we have a few people experiencing problems there every month.
-Once you have selected your values,  click Filter to make the list conform to your selection.  To reset the selection, just click "Clear Filters".  This will set the list to all the Purchases from the current calendar year.
+Once you have selected your values,  click Filter to make the list conform to your selection.  To reset the selection, just click "Clear Filters".  This will set the list back to the default date range (60 days in the past to 30 days in the future).
 
 ## Entering a new Purchase
 To enter a new Purchase,  you can either click "Purchases -- New Purchase" on the left hand menu, or click the +New Purchase button on the Purchases list
@@ -40,10 +43,10 @@ Select the Vendor from a drop-down list of all your vendors. If you choose "Not 
 Select the storage location from a drop-down list of all your active storage locations.
 ### Purchase Total *, and broken down Purchase totals
 The Purchase total has to be greater than 0,  and it should equal the sum of the 4 fields that break down the Purchase into categories:
-- Amount spent on diapers,
-- Amount spent on adult incontinence,
-- Amount spent on period supplies, and   
-- Amount spent on other.
+- Purchase Total for Diapers,
+- Purchase Total for Adult Incontinence Products,
+- Purchase Total for Period Supplies, and   
+- Purchase Total for Other Products.
 
 These are used in the Annual Survey report.
 ### Comment
