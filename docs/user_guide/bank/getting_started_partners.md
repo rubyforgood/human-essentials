@@ -25,7 +25,7 @@ For your first partner, you can Click on the "Add a single partner" link in your
 ![navigation](images/getting_started/partners/gs_add_partner_1.png)
 
 
-For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
+For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "New Partner Agency".
 
 ![add a partner navigation](images/partners/partners_add_navigation.png)
 

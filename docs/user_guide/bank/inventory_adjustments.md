@@ -24,7 +24,7 @@ Choose the Storage Location, add any notes you have in the comments section,  an
 
 Click save to finish entering the adjustment.  This will change the inventory levels on those items.
 
-In this sample there are both negative adjustments (showing in red, with "Removed") and positive adjustments (showing in green, with "Added)
+In this sample there are both negative adjustments (showing in red, with "Removed") and positive adjustments (showing in green, with "Added")
 
 ![Result of entering adjustment](images/inventory/inventory_adjustments_result.png)
 

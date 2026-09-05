@@ -100,9 +100,9 @@ Clicking "Edit" beside an Item on the Item list lets you edit the Item definitio
 To add a new Item,  click the "+ New Item" button on this page.   It will bring up the same page as "Editing an Item", above (only, of course, with none of the fields completed).
 
 #### Deleting or Deactivating an Item
-The button "delete" will appear beside an Item if there hasn't been any activity on it at all. (A) Deleting an Item is permanent
+The button "Delete" will appear beside an Item if there hasn't been any activity on it at all (A). Deleting an Item is permanent.
 
-The button "deactivate" will appear if there has been activity.  But it will be greyed out unless your bank-wide level of inventory on that Item is 0. (B))
+The button "Deactivate" will appear if there has been activity (B).  But it will be greyed out unless your bank-wide level of inventory on that Item is 0.
 Deactivating an Item removes it whenever you are entering a new distribution/donation/purchase/transfer/audit, and removes it from the partner's new requests.
 You can still see deactivated items in most reports, and can include them in your filtered lists.
 
@@ -110,7 +110,7 @@ You can still see deactivated items in most reports, and can include them in you
 
 #### Reactivating an Item
 To reactivate an Item,  you'll need to
-(1) click "Also include inactive Items"
+(1) click "Also include inactive items"
 (2) click "Filter", then
 (3) click "Restore" beside the Item you wish to reactivate.
 

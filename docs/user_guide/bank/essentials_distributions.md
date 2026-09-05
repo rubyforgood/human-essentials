@@ -21,7 +21,7 @@ If you pick several things,  you will get only the Distributions that match all 
 
 Except for date range,  all the filters are specified by picking from a drop-down list as follows:
 - Item: all of your bank's Items.  This will filter to only the distributions that contain that Item.
-- Item Category:  Item Categories (as specified in [Items & Inventory -- Item Categories](inventory_items.md)).  This will filter the list to the distributions that contain items that are in the chosen item category.
+- Item Category:  Item Categories (as specified in [Items & Inventory -- Item Categories](inventory_items.md#item-categories)).  This will filter the list to the distributions that contain items that are in the chosen item category.
 - Partner:  This will filter the lists to just the distributions to the chosen partner.
 - Source Inventory:  This will limit the list to the distributions from the chosen storage location.
 - Status:  Distributions can be Scheduled or Complete. This will limit the list to those with the given status.
@@ -102,7 +102,7 @@ Please note that your logo (also configurable on the [Organization](getting_star
 
 ## Reclaiming a Distribution
 What do you do if, for some reason, the Distribution that was entered was not picked up?   You can reclaim it,  adding the items back into your inventory.
-To do this,  click "Reclaim" beside the Distribution in question, and cliock "Ok" in the confirmation screen that appears.
+To do this,  click "Reclaim" beside the Distribution in question, and click "OK" in the confirmation screen that appears.
 
 [!WARN]  You can not reverse a reclaim.  If you reclaim by accident, you will have to re-enter the Distribution.  If that happens,  you should be able to grab the Item quantities from the [History Report](reports_history.md), but we don't retain the rest of the information.
 

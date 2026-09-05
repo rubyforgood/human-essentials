@@ -32,7 +32,7 @@ To enter a new Purchase,  you can either click "Purchases -- New Purchase" on th
 
 ![Navigation to new Purchase](images/essentials/purchases/essentials_purchases_3.png)
 
-![new Purchase screen](images/essentials/purchases/essential_purchases_4.png)
+![new Purchase screen](images/essentials/purchases/essentials_purchases_4.png)
 Enter the following information (starred items are mandatory):
 ### Vendor *
 Select the Vendor from a drop-down list of all your vendors. If you choose "Not Listed", you can enter a new vendor on the fly.  The Business Name is mandatory.
@@ -52,7 +52,7 @@ This is optional.
 This should be the date the Purchase was made - it is defaulted to today's date.  This is used for filtering,  but also for what year the Purchase is included in for the annual survey.
 ### Items in this Purchase
 There are a couple of ways to get items into the Purchase quickly:  
-(1)You can "bloop" a barcode in to get your items into the system -- that requires some initial setup, as detailed in [Inventory -- Barcodes] or (2)  You can pick the item from the drop-down of all *active* items in your system, and enter the quantity of that item.  
+(1)You can "bloop" a barcode in to get your items into the system -- that requires some initial setup, as detailed in [Inventory -- Barcodes](inventory_barcodes.md) or (2)  You can pick the item from the drop-down of all *active* items in your system, and enter the quantity of that item.  
 In either case,  you can click "Add Another Item" (3)  to open up another item for entry, or "Remove" (4) if you've added too many!
 The quantity here is meant to be individual items (e.g. diapers), rather than packs.   The reason behind this is that, ultimately, your reporting will be based on the number of individual items,  and package size is inconsistent across brands.
 
@@ -62,7 +62,7 @@ When you are done entering your Items,  click "Save".  Barring any errors, this 
 
 ## Viewing a Purchase
 To view Purchase details, click the "View" button beside the Purchase on the All Purchases list.
-[ Navigational screenshot for view Purchase](images/essentials/purchases/essential_purchases_4.png)
+![Navigational screenshot for view Purchase](images/essentials/purchases/essentials_purchases_4.png)
 This brings up a page with the Purchase's details, including all the information you entered and the entry date.   From here you can make a correction to the Purchase or delete it.
 
 

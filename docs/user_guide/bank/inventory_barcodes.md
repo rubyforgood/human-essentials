@@ -43,4 +43,4 @@ To export a list of the Barcodes, just click "Export Barcodes" on the Barcodes p
 ![Export Barcodes sample](images/inventory/inventory_barcodes_export.png)
 
 
-[Prior: Audits](inventory_audits.md) [Next: Adjustments](inventory_adjustments.md)
+[Prior: Kits](inventory_kits.md) [Next: Adjustments](inventory_adjustments.md)

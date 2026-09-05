@@ -15,4 +15,4 @@ This will bring you to a list of Users for that Partner.   Here you can invite n
 
 ![](images/partners/partners_user_management.png)
 
-[Prior - Partner reactivation](pm_Partner_reactivation.md)  [Next: Other Partner information](pm_other_information.md)
+[Prior - Partner reactivation](pm_partner_reactivation.md)  [Next: Other Partner information](pm_other_information.md)
