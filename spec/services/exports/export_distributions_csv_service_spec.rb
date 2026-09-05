@@ -151,8 +151,8 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         end
       end
 
-      context 'when a distribution contains an item with the other_categories reporting category' do
-        let(:other_item) { create(:item, name: "Other Item", reporting_category: "other_categories", organization: organization) }
+      context 'when a distribution contains an item with the other reporting category' do
+        let(:other_item) { create(:item, name: "Other Item", reporting_category: "other", organization: organization) }
         before { distributions.first.line_items << create(:line_item, item: other_item, quantity: 1) }
 
         it 'displays "Other" rather than "Other Categories"' do

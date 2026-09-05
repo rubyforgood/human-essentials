@@ -77,8 +77,10 @@ class Item < ApplicationRecord
     period_other: "period_other",
     period_underwear: "period_underwear",
     tampons: "tampons",
-    other_categories: "other"
+    other: "other"
   }, instance_methods: false, validate: { allow_nil: true }
+
+
 
   def self.reporting_categories_for_select
     reporting_categories.map do |key, value|
