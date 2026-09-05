@@ -95,31 +95,36 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## Two audits report a number that changes between runs
+## `responsive-audit` still flickers at 320px, after three attempts
 
-Found while verifying the seam migrations, by comparing each audit's output against a capture taken
-before the change. Both would have been read as "the migration changed a result" without that.
+**`layout-shift-audit` is fixed** — see the change log. **This one is not**, and the honest record of
+three failed attempts is worth more than another guess.
 
-**`responsive-audit`** — three runs on identical code gave **9, 9, 8** findings. The one that
-flickers is `/items/inventory` at 320px, *"50 target(s) under 24px"*. A tap-target count that moves
-between runs is a measurement taken before the page has settled.
+**What it is.** Findings alternate between 8 and 9 across runs. The difference is always
+`/items/inventory` at **320px** — flagged at 767, 769, 1023, 1025, 1280 and 1440 every time, and at
+320 only sometimes. 320 is the *first* width measured after navigation and after the largest resize
+(1440 → 320), so it has the least settled layout of any measurement the audit takes.
 
-**`layout-shift-audit`** — four runs gave three different answers for the worst page:
-`/admin/questions/1/edit at 0.011`, `/admin/questions/new at 0.011`, then
-`/partners/children/1/edit at 0.007` twice. CLS measures shifts *during* load, so it moves with
-machine load; the audit may need several runs and the median, or a threshold rather than a ranking.
+**What it is not**, each ruled out by measurement:
 
-Neither is urgent — both report real problems — but **an audit whose number moves cannot be used
-for before-and-after comparison**, which is the thing that made the seam migration safe. Worth
-fixing before the next change that needs verifying that way.
+- **Not a stale or slow measurement of the page.** Probed `/items/inventory` at 320px directly at
+  0, 150, 350, 700, 1200, 2000 and 3000ms after resize: `52` under-24 targets at every single point.
+  The number does not move with time on a freshly loaded page.
+- **Not a skipped page.** It appears in the measured set in every run.
+- **Not the fixed 350ms sleep**, which was replaced with a condition anyway. Still flickers.
+- **Not a two-frame geometry check being too short.** Replaced with three identical tap-target
+  readings 120ms apart, capped at 4s. Still flickers.
 
-`row-actions-audit` looked like a third: an actions column measured 129px, then 125px, then 129px
-again. That is sub-pixel rendering variance rather than a scope change — same page, same action
-count, same trigger height — and it is recorded so the next person does not chase it.
+**Where to look next.** The count is stable on a *fresh* page but not in a full run, so the state
+that differs is carried by the reused page object — the audit visits 155 paths and ten widths on one
+page per role. Scroll position, a `select2` instance left initialised, or the drawer's open state
+would all survive navigation in ways a fresh probe does not reproduce. The next attempt should
+diff the actual `smallTargets` element list between a flickering pair of runs rather than the count,
+which would name the elements that come and go.
 
-Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in
-configuration. One place now rather than fifteen, which is the point of a seam, but still not
-configuration.
+**It is not urgent**: the finding is real at six other widths, so the defect is reported either way.
+What it costs is the ability to use this audit for before-and-after comparison, which is the tool
+that made the seam migrations safe.
 
 ## Seven tables with no empty state, deliberately
 
