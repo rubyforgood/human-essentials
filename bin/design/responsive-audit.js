@@ -33,6 +33,60 @@ const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 const TARGETS = targets().filter((t) => !ONLY || ONLY.includes(t.path));
 
 
+/*
+ * Wait for the layout to stop moving after a viewport change, rather than sleeping.
+ *
+ * This was `waitForTimeout(350)`, chosen to clear the sidebar's `duration-200` slide -- measured
+ * mid-transition the sidebar is a full-height element part-way on screen, which reads as "the
+ * sidebar is on screen below lg". A fixed pause is the wrong tool twice over: too long on the
+ * common case, and too short on a loaded machine. It made this audit **non-deterministic** --
+ * three runs of the whole suite gave 9, 9 and 8 findings, the flicker being 50 tap targets on
+ * `/items/inventory` at 320px whose smallest measured 20x28 instead of its settled size. The page
+ * never reproduced it alone, only in a full run, which is the signature of a timing budget being
+ * eaten by everything before it.
+ *
+ * Two conditions, because either alone is insufficient:
+ *
+ *   1. **No transition still running.** `getAnimations()` covers CSS transitions, so this is the
+ *      sidebar slide asked about directly. Capped, because a page with a spinner never reaches
+ *      zero and waiting forever is worse than measuring.
+ *   2. **Geometry stable across two frames.** Transitions are not the only thing that moves a box:
+ *      a web font swapping in resizes text after the transition has finished. Comparing the
+ *      document height and the widest element twice catches that.
+ */
+async function settled(page) {
+  await page.waitForFunction(
+    () => document.getAnimations().every((a) => a.playState !== "running"),
+    { timeout: 2000 }
+  ).catch(() => {});
+  /*
+   * **Wait on the thing being measured, not on a proxy for it.** Document size stable across two
+   * frames is ~32ms, which is nothing: a font swapping in or a table reflowing after a 1440->320
+   * resize lands well outside it. The flicker this was written for is a *tap target count*, so that
+   * is what has to hold still.
+   *
+   * Three identical readings 120ms apart. 320px is the first width measured after navigation and
+   * the largest resize, so it has the least settled layout of any -- which is exactly why it was
+   * the only width that flickered.
+   */
+  await page.waitForFunction(() => {
+    const vis = (el) => {
+      const r = el.getBoundingClientRect();
+      return r.width && r.height && getComputedStyle(el).visibility !== "hidden";
+    };
+    const n = [...document.querySelectorAll(
+      "a[href], button, input:not([type=hidden]), select, textarea, [role=button]")]
+      .filter(vis)
+      .filter((e) => { const r = e.getBoundingClientRect(); return r.width < 24 || r.height < 24; })
+      .length;
+    const seen = (window.__settleProbe ||= []);
+    if (seen[seen.length - 1] !== n) { seen.length = 0; }
+    seen.push(n);
+    return seen.length >= 3;
+  }, { timeout: 4000, polling: 120 }).catch(() => {});
+  await page.evaluate(() => { delete window.__settleProbe; });
+}
+
 const measure = () => {
   const vw = document.documentElement.clientWidth;
 
@@ -176,6 +230,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   const browser = await chromium.launch();
   const users = { super: "superadmin@example.com", bank: "org_admin1@example.com",
                   partner: process.env.PARTNER_EMAIL || "verified@example.com" };
+  const notChecked = [];
   const findings = [];
   let checks = 0;
 
@@ -184,23 +239,50 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     await signIn(page, email).catch(() => {});
     for (const t of TARGETS) {
       if (roleFor(t.controller) !== role) continue;
+      /*
+       * **A page that does not load is recorded, not dropped.**
+       *
+       * This was a bare `continue`: a 4xx, a redirect, or a timeout removed the screen from the run
+       * with nothing counted and nothing printed. That made the audit *non-deterministic* -- three
+       * runs gave 9, 9 and 8 findings, and the missing one was `/items/inventory` at 320px, a page
+       * with 332 table rows that occasionally exceeds the 45s budget on a loaded machine. The
+       * finding vanished and the summary still read like a clean run.
+       *
+       * The audit cannot make a slow page fast. What it can do is stop pretending it looked.
+       */
       let ok = true;
       try {
         const resp = await page.goto(BASE + t.path, { waitUntil: "domcontentloaded", timeout: 45000 });
-        if (resp.status() >= 400 || new URL(page.url()).pathname !== t.path) ok = false;
-      } catch {
+        if (resp.status() >= 400) { ok = false; notChecked.push(`${t.path} — HTTP ${resp.status()}`); }
+        else if (new URL(page.url()).pathname !== t.path) {
+          /*
+           * A redirect is only a gap if it lands somewhere nothing else visits. `/` goes to
+           * `/dashboard`, `/kits/143` to its allocations, `/partners/1/approve_application` back to
+           * `/partners` -- all of which are targets in their own right, so the screen *is* measured,
+           * just under its landing path. Reporting those as "not checked" would be as misleading as
+           * the silence they replaced.
+           *
+           * `targets.js` makes the same distinction and says why: an audit that counts pages should
+           * key on where it landed.
+           */
+          ok = false;
+          const landed = new URL(page.url()).pathname;
+          if (!TARGETS.some((x) => x.path.split("?")[0] === landed)) {
+            notChecked.push(`${t.path} — redirected to ${landed}, which nothing else visits`);
+          }
+        }
+      } catch (e) {
         try { await page.close(); } catch {}
         page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
         await signIn(page, email).catch(() => {});
         ok = false;
+        notChecked.push(`${t.path} — ${e.message.split("\n")[0].slice(0, 60)}`);
       }
       if (!ok) continue;
 
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
-        // Past the sidebar's `duration-200` slide. Measured mid-transition it is a full-height
-        // element part-way on screen, which reads as "the sidebar is on screen below lg".
-        await page.waitForTimeout(350);
+        await settled(page);
         const m = await page.evaluate(measure);
         checks++;
 
@@ -289,6 +371,14 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   }
 
   console.log(`${checks} page/width combinations checked (${TARGETS.length} routes x ${WIDTHS.join(", ")})\n`);
+
+  // Printed even when empty is wrong -- but printed loudly when not, because a screen the audit
+  // could not reach and a screen with no defects produce the same silence otherwise.
+  if (notChecked.length) {
+    console.log(`\n${notChecked.length} screen(s) NOT CHECKED -- these are absent from every ` +
+      `figure above:`);
+    [...new Set(notChecked)].sort().forEach((n) => console.log(`   ${n}`));
+  }
   if (!findings.length) { console.log("no responsive findings"); await browser.close(); return; }
 
   // Group by problem shape: one layout bug usually shows up on many pages at one width.
