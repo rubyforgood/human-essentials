@@ -80,8 +80,6 @@ class Item < ApplicationRecord
     other: "other"
   }, instance_methods: false, validate: { allow_nil: true }
 
-
-
   def self.reporting_categories_for_select
     reporting_categories.map do |key, value|
       Option.new(id: key, name: value.titleize)
