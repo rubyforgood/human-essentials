@@ -21,10 +21,13 @@
 // Usage: bin/rails runner bin/design/route-targets.rb > /tmp/targets.json && pw bin/design/address-audit.js
 const { chromium } = require("playwright");
 const fs = require("fs");
-const { signIn } = require("./targets");
+const { signIn, targets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
-const TARGETS = JSON.parse(fs.readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8"));
+// Targets come from the seam, which regenerates the list when it is older than the routes
+// file *or* the generator. Reading /tmp/targets.json directly meant a stale list silently, or
+// ENOENT on a machine that had never run another audit.
+const TARGETS = targets();
 
 const PARTNER = (p) => (p.startsWith("/partners/") && !/^\/partners\/\d+/.test(p)) || p === "/partners/profile";
 const ADMIN = (p) => p.startsWith("/admin");

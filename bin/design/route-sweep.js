@@ -16,13 +16,14 @@
  */
 const { chromium } = require("playwright");
 const { execSync } = require("child_process");
-const { signIn } = require("./targets");
+const { signIn, targets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
-const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-  encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
-}));
+// Targets come from the seam, which regenerates the list when it is older than the routes
+// file *or* the generator. Reading /tmp/targets.json directly meant a stale list silently, or
+// ENOENT on a machine that had never run another audit.
+const TARGETS = targets();
 
 const LEGACY = ["card-body", "card-header", "card-footer", "btn-primary", "btn-secondary",
   "btn-danger", "btn-success", "btn-info", "btn-warning", "form-group", "form-control",
@@ -78,7 +79,7 @@ const roleFor = (controller) =>
     page.on("pageerror", (e) => errors.push(String(e).slice(0, 100)));
     await signIn(page, email).catch(() => {});
 
-    for (const t of targets) {
+    for (const t of TARGETS) {
       if (roleFor(t.controller) !== role) continue;
       errors = [];
       let resp;

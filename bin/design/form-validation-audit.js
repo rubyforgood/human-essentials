@@ -20,15 +20,16 @@
  */
 const { chromium } = require("playwright");
 const { execSync } = require("child_process");
-const { signIn } = require("./targets");
+const { signIn, targets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
 const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 
-const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-  encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
-})).filter((t) => t.action === "new" && (!ONLY || ONLY.includes(t.path)));
+// Targets come from the seam, which regenerates the list when it is older than the routes
+// file *or* the generator. Reading /tmp/targets.json directly meant a stale list silently, or
+// ENOENT on a machine that had never run another audit.
+const TARGETS = targets().filter((t) => t.action === "new" && (!ONLY || ONLY.includes(t.path)));
 
 
 // A form in an open <dialog> is the one the reader is looking at, and it is not inside <main> on
@@ -197,7 +198,7 @@ const MODALS = [
       modalRows.push({ name: m.name, path: m.path, marking });
     }
 
-    for (const t of targets) {
+    for (const t of TARGETS) {
       if (roleFor(t.controller) !== role) continue;
       try {
         const r = await page.goto(BASE + t.path, { waitUntil: "domcontentloaded", timeout: 40000 });
