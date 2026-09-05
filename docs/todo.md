@@ -95,23 +95,31 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## Two audit-suite leftovers, both smaller than they were
+## Two audits report a number that changes between runs
 
-**13 audits still shell out to `route-targets.rb` directly** rather than using the seam's cached
-list. They get correct targets — this is not the id-substitution fault — they just miss the cache,
-which is the mechanism that went stale in September and made two audits disagree about one tree.
-Smaller than the `signIn` duplication that was closed on 2026-09-04, and the same shape: capture
-output, migrate, compare.
+Found while verifying the seam migrations, by comparing each audit's output against a capture taken
+before the change. Both would have been read as "the migration changed a result" without that.
 
-**`responsive-audit` is non-deterministic.** Three runs on identical code gave **9, 9 and 8**
-findings; the one that flickers is `/items/inventory` at 320px, *"50 target(s) under 24px, smallest
-20x28"*. Found while verifying the `signIn` migration — the before-and-after comparison flagged a
-change, and chasing it showed the audit rather than the change was at fault. A tap-target count that
-moves between runs is a measurement taken before the page has settled; that is the thing to look at
-first.
+**`responsive-audit`** — three runs on identical code gave **9, 9, 8** findings. The one that
+flickers is `/items/inventory` at 320px, *"50 target(s) under 24px"*. A tap-target count that moves
+between runs is a measurement taken before the page has settled.
 
-Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in configuration.
-One place now rather than fifteen, which is the point of a seam, but still not configuration.
+**`layout-shift-audit`** — four runs gave three different answers for the worst page:
+`/admin/questions/1/edit at 0.011`, `/admin/questions/new at 0.011`, then
+`/partners/children/1/edit at 0.007` twice. CLS measures shifts *during* load, so it moves with
+machine load; the audit may need several runs and the median, or a threshold rather than a ranking.
+
+Neither is urgent — both report real problems — but **an audit whose number moves cannot be used
+for before-and-after comparison**, which is the thing that made the seam migration safe. Worth
+fixing before the next change that needs verifying that way.
+
+`row-actions-audit` looked like a third: an actions column measured 129px, then 125px, then 129px
+again. That is sub-pixel rendering variance rather than a scope change — same page, same action
+count, same trigger height — and it is recorded so the next person does not chase it.
+
+Also still hardcoded: the Devise sign-in selectors, which `adapter.md` says belong in
+configuration. One place now rather than fifteen, which is the point of a seam, but still not
+configuration.
 
 ## Seven tables with no empty state, deliberately
 

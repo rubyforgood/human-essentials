@@ -15,7 +15,7 @@
  */
 const { chromium } = require("playwright");
 const { execSync } = require("child_process");
-const { signIn } = require("./targets");
+const { signIn, targets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -27,9 +27,10 @@ const WIDTHS = (process.env.WIDTHS || "320,375,639,641,767,769,1023,1025,1280,14
 const SHORT = { width: 740, height: 360 };
 const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 
-const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-  encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
-})).filter((t) => !ONLY || ONLY.includes(t.path));
+// Targets come from the seam, which regenerates the list when it is older than the routes
+// file *or* the generator. Reading /tmp/targets.json directly meant a stale list silently, or
+// ENOENT on a machine that had never run another audit.
+const TARGETS = targets().filter((t) => !ONLY || ONLY.includes(t.path));
 
 
 const measure = () => {
@@ -181,7 +182,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   for (const [role, email] of Object.entries(users)) {
     let page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await signIn(page, email).catch(() => {});
-    for (const t of targets) {
+    for (const t of TARGETS) {
       if (roleFor(t.controller) !== role) continue;
       let ok = true;
       try {
@@ -287,7 +288,7 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     await page.close();
   }
 
-  console.log(`${checks} page/width combinations checked (${targets.length} routes x ${WIDTHS.join(", ")})\n`);
+  console.log(`${checks} page/width combinations checked (${TARGETS.length} routes x ${WIDTHS.join(", ")})\n`);
   if (!findings.length) { console.log("no responsive findings"); await browser.close(); return; }
 
   // Group by problem shape: one layout bug usually shows up on many pages at one width.

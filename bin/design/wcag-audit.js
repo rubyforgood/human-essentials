@@ -8,7 +8,7 @@
 // Run:           pw bin/design/wcag-audit.js [--json]
 const { chromium } = require("playwright");
 const fs = require("fs");
-const { signIn } = require("./targets");
+const { signIn, targets: allTargets } = require("./targets");
 
 const AXE = "/tmp/axe/node_modules/axe-core/axe.min.js";
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -125,10 +125,10 @@ async function audit(page, label, path) {
   // Every screen the router knows, not the four hand-kept lists below. Those covered 61 pages
   // while route-targets.rb enumerates 163 -- and a hardcoded list is what let three unmigrated
   // pages hide from every audit for the length of the design system migration.
-  const { execSync } = require("child_process");
-  const routed = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-    encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"],
-  }));
+  // From the seam, which regenerates when the list is older than the routes file or the
+  // generator. This shelled out on every run: correct, but it spawned Rails each time and
+  // skipped the cache whose staleness rule is the point.
+  const routed = allTargets();
   const forRole = (role) => routed
     .filter((t) => (t.controller.startsWith("partners/") ? "partner"
       : t.controller.startsWith("admin") ? "super" : "bank") === role)

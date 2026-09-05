@@ -1,5 +1,5 @@
 const { chromium } = require("playwright");
-const { signIn } = require("./targets");
+const { signIn, targets: allTargets } = require("./targets");
 
 // Every screen must be reachable *and* leavable. A page that is not in the sidebar and has no
 // breadcrumb has one way out: the browser's back button. The five report pages were all like that,
@@ -32,9 +32,10 @@ const ROLES = {
 
 (async () => {
   const { execSync } = require("child_process");
-  const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-    encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"]
-  }));
+  // From the seam, which regenerates when the list is older than the routes file or the
+  // generator. This shelled out on every run: correct, but it spawned Rails each time and
+  // skipped the cache whose staleness rule is the point.
+  const targets = allTargets();
 
   // route-targets.rb does not carry a role; the controller namespace decides it, the same way
   // route-sweep.js works it out.

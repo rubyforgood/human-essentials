@@ -17,7 +17,7 @@
 // nothing about the other hundred and forty. Widening the cheap checks took 2.4.2 from "0 failures
 // on 8 pages" to 14 on 92, which is the same lesson arriving early.
 const { chromium } = require("playwright");
-const { signIn } = require("./targets");
+const { signIn, targets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 
@@ -40,8 +40,7 @@ const PAGES = [
   ["pick ups", "/distributions/schedule"]
 ];
 
-// Every screen, for the checks that cost nothing. Falls back to the sample if the file is missing,
-// so this still runs without `route-targets.rb` having been generated.
+// Every screen, for the checks that cost nothing.
 const ALL = process.argv.includes("--all");
 
 const PARTNER = (p) => (p.startsWith("/partners/") && !/^\/partners\/\d+/.test(p)) || p === "/partners/profile";
@@ -52,13 +51,17 @@ const ROLES = [
   ["superadmin@example.com", ADMIN]
 ];
 
-const BROAD = (() => {
-  try {
-    return require("fs").readFileSync(process.env.TARGETS || "/tmp/targets.json", "utf8");
-  } catch {
-    return null;
-  }
-})();
+// From the seam, which regenerates the list rather than returning nothing.
+//
+// This used to read /tmp/targets.json in a try/catch and fall back to `null`, which made the cheap
+// per-page checks run over **zero** screens when the file was absent -- leaving the eight-page
+// sample and a summary line that looked like a pass. Narrowing scope on a missing file is the
+// failure this suite exists to catch, and it was in the suite.
+//
+// It costs the property named in the comment above -- running with no `route-targets.rb` -- and
+// that property was protecting a case that does not arise: every audit here already needs the Rails
+// server up, because it drives it.
+const BROAD = targets();
 
 
 const fails = [];
@@ -381,7 +384,7 @@ if (require.main === module) {
    * `route-targets.rb` already carries the controller and action.
    */
   const byAction = new Map();
-  (BROAD ? JSON.parse(BROAD) : []).forEach((t) => {
+  BROAD.forEach((t) => {
     const key = `${t.controller}#${t.action}`;
     if (!byAction.has(key)) byAction.set(key, t.path);
   });

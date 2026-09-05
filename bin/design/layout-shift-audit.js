@@ -21,7 +21,7 @@
 //        pw bin/design/layout-shift-audit.js --all          list every page, not only the offenders
 //        pw bin/design/layout-shift-audit.js --width=390    a phone, where tables stack into cards
 const { chromium } = require("playwright");
-const { signIn } = require("./targets");
+const { signIn, targets: allTargets } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const PASSWORD = process.env.SEED_PASSWORD || "password!";
@@ -87,9 +87,10 @@ const COLLECT = () => {
 
 (async () => {
   const { execSync } = require("child_process");
-  const targets = JSON.parse(execSync("bin/rails runner bin/design/route-targets.rb", {
-    encoding: "utf8", maxBuffer: 8 << 20, stdio: ["ignore", "pipe", "ignore"]
-  }));
+  // From the seam, which regenerates when the list is older than the routes file or the
+  // generator. This shelled out on every run: correct, but it spawned Rails each time and
+  // skipped the cache whose staleness rule is the point.
+  const targets = allTargets();
 
   const roleFor = (controller) =>
     controller.startsWith("partners/") ? "partner"
