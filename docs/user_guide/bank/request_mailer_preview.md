@@ -1,6 +1,8 @@
 From: <no-reply@humanessentials.app>
 
-To: <director@communityoutreach.org>
+To: <director@communityoutreach.org>, <requester@communityoutreach.org>
+
+(This email goes to the Partner's main email address and to the Partner user who submitted the Request.)
  
 Subject: Your essentials request (#1042) has been canceled.
 

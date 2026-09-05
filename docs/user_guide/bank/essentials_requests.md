@@ -123,7 +123,7 @@ You will be prompted to provide a reason for the cancellation.
 The Partner will receive an email notifying them of the cancellation.
 ![cancel Request email](images/essentials/requests/essentials_requests_cancel_email.png)
 
-NOTE: This email goes to the Partner, rather than to the User who sent the request.
+NOTE: This email goes to the Partner's main email address *and* to the Partner user who sent the Request (if they are different).  The Partner's main email is often a director or a general mailbox, so this makes sure the person who actually placed the Request hears about the cancellation too.
 
 ## Exporting Requests
 
@@ -132,7 +132,10 @@ To export the Requests from the Request list, click "Export Requests"
 This will create a .csv file with the following information for each filtered Request:
 
 - Date
-- Requestor (partner)
+- Requestor (the Partner's name)
+- Request Sender (the Partner's email address)
+- Comments
+- Type (Quantity, Child, or Individual)
 - Status
 - For each of the bank's items.
   - the quantity requested
