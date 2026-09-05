@@ -6,7 +6,9 @@ From time to time, perhaps annually, you may want to confirm that the informatio
 
 If you request recertification from a Partner,  they will receive an email requesting that they update their information, and their status will change to "Recertification required".
 
-Here is the text of that email 
+Here is the text of that email:
+
+![Recertification request email](images/partners/partners_recertification_email.png)
 
 ---------
 Hi [Partner name]
