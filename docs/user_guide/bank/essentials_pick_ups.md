@@ -15,7 +15,7 @@ Once the partner has the distributed goods, clicking "Distribution Complete" cha
 
 Click "View" for details on the Distribution's source Storage Location, agency representative, delivery method, shipping cost, comments, and status. This also shows a list of items included in the Distribution.
 
-![Distribution from Source Inventory to Partner](images/essentials/pick_ups/distribution_from_source_to_partner.jpg)
+![Distribution view](images/essentials/distributions/essentials_distributions_view.png)
 
 If you want to print the details of the Distribution to use as a contents list or receipt, click on "Print".
 

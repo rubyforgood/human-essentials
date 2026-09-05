@@ -92,6 +92,8 @@ There are a couple of ways to get Items into the donation quickly:
 
 In either case,  you can click "Add Another Item" (3)  to open up another item for entry, or "Remove" (4) if you've added too many!
 
+![Items in this donation section of the New Donation form](images/essentials/donations/essentials_donations_7.png)
+
 The quantity here is meant to be individual items (e.g. diapers), rather than packs.   The reason behind this is that, ultimately, your reporting will be based on the number of individual items,  and package size is inconsistent across brands.
 
 Note:  If you make two entries with the same Item, they will be added together when you view them later.
