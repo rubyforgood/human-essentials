@@ -215,6 +215,23 @@ const measure = () => {
     bodyOverflow: document.body.scrollWidth - vw,
     spilling,
     smallTargets: smallTargets.length,
+    /*
+     * Debug only, off unless `DUMP` is set:
+     *
+     *     DUMP=/items/inventory DUMP_WIDTH=320 pw bin/design/responsive-audit.js
+     *
+     * It names the elements rather than counting them, which is what a flickering count needs --
+     * four attempts at the `/items/inventory` flicker failed while comparing counts. What it has
+     * already established: `undersized` is stable at 52, so the swing is entirely in the *spacing
+     * exception*, and it is bimodal (0 or 50) rather than marginal, so one global factor flips all
+     * of them at once. Left in place because the next attempt starts here.
+     */
+    smallTargetList: smallTargets.map((t) =>
+      `${t.el.tagName.toLowerCase()}.${(t.el.className || "").toString().trim().split(/\s+/)[0]}` +
+      `|${Math.round(t.r.width)}x${Math.round(t.r.height)}` +
+      `|${(t.el.textContent || "").trim().slice(0, 20)}`).sort(),
+    allTargetCount: allTargets.length,
+    undersizedCount: undersized.length,
     smallestTarget: smallTargets.length
       ? (() => { const w = smallTargets.sort((a, b) => a.r.width * a.r.height - b.r.width * b.r.height)[0];
                  return `${Math.round(w.r.width)}x${Math.round(w.r.height)} ${w.el.tagName.toLowerCase()}` +
@@ -284,6 +301,10 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
         await page.setViewportSize({ width, height: 900 });
         await settled(page);
         const m = await page.evaluate(measure);
+        if (process.env.DUMP && t.path === process.env.DUMP && width === Number(process.env.DUMP_WIDTH || 320)) {
+          console.log(`DUMP ${t.path} @${width}  all=${m.allTargetCount} undersized=${m.undersizedCount} small=${m.smallTargets}`);
+          m.smallTargetList.forEach((x) => console.log(`DUMPEL ${x}`));
+        }
         checks++;
 
         // Whether the page can be swiped sideways, by swiping it. `window.scrollTo` is not the

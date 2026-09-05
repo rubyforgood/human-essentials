@@ -95,36 +95,39 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## `responsive-audit` still flickers at 320px, after three attempts
+## `responsive-audit` still flickers at 320px, after four attempts
 
-**`layout-shift-audit` is fixed** — see the change log. **This one is not**, and the honest record of
-three failed attempts is worth more than another guess.
+**`layout-shift-audit` is fixed.** This one is not, and the record of what has been eliminated is
+worth more than a fifth guess.
 
-**What it is.** Findings alternate between 8 and 9 across runs. The difference is always
-`/items/inventory` at **320px** — flagged at 767, 769, 1023, 1025, 1280 and 1440 every time, and at
-320 only sometimes. 320 is the *first* width measured after navigation and after the largest resize
-(1440 → 320), so it has the least settled layout of any measurement the audit takes.
+**What it is.** Findings alternate 8/9. The difference is always `/items/inventory` at **320px** —
+flagged at 767, 769, 1023, 1025, 1280 and 1440 every run, at 320 only sometimes.
 
-**What it is not**, each ruled out by measurement:
+**The decisive narrowing.** `DUMP=/items/inventory DUMP_WIDTH=320 pw bin/design/responsive-audit.js`
+prints the element list. It shows `all=133 undersized=52 small=0`: the **undersized count is stable
+at 52**, so the swing is entirely inside the *spacing exception* — and it is **bimodal, 0 or 50**,
+not marginal. One global factor flips all fifty at once.
 
-- **Not a stale or slow measurement of the page.** Probed `/items/inventory` at 320px directly at
-  0, 150, 350, 700, 1200, 2000 and 3000ms after resize: `52` under-24 targets at every single point.
-  The number does not move with time on a freshly loaded page.
-- **Not a skipped page.** It appears in the measured set in every run.
-- **Not the fixed 350ms sleep**, which was replaced with a condition anyway. Still flickers.
-- **Not a two-frame geometry check being too short.** Replaced with three identical tap-target
-  readings 120ms apart, capped at 4s. Still flickers.
+**Eliminated, each by measurement:**
 
-**Where to look next.** The count is stable on a *fresh* page but not in a full run, so the state
-that differs is carried by the reused page object — the audit visits 155 paths and ten widths on one
-page per role. Scroll position, a `select2` instance left initialised, or the drawer's open state
-would all survive navigation in ways a fresh probe does not reproduce. The next attempt should
-diff the actual `smallTargets` element list between a flickering pair of runs rather than the count,
-which would name the elements that come and go.
+| Hypothesis | How it was ruled out |
+| --- | --- |
+| A measurement taken too early | 52 undersized at 0, 150, 350, 700, 1200, 2000, 3000ms after resize |
+| The page being skipped | present in the measured set every run |
+| The fixed `waitForTimeout(350)` | replaced with a condition; still flickers |
+| Geometry not settled | settle now waits for three identical readings 120ms apart; still flickers |
+| A web font swapping in | `document.fonts.status` is already `loaded` at measurement |
+| Scroll position moving sticky columns | forced page scroll *and* `.table-scroll` scroll: `small` stayed 1 |
 
-**It is not urgent**: the finding is real at six other widths, so the defect is reported either way.
-What it costs is the ability to use this audit for before-and-after comparison, which is the tool
-that made the seam migrations safe.
+**The thing to chase next, and the reason four attempts missed it.** A standalone probe of that page
+gives `small=1`. The audit gives **0 or 50**. Nothing outside the audit reproduces either number, so
+the cause is in the audit's own environment — one page object reused across 155 paths and ten
+widths per role — and not in the page. The next attempt should dump the element list from two
+*consecutive* runs and diff the names, which the `DUMP` flag now makes a one-liner. Comparing counts
+has been tried four times.
+
+**Not urgent**: the defect is reported at six other widths regardless. What it costs is using this
+audit for before-and-after comparison.
 
 ## Seven tables with no empty state, deliberately
 

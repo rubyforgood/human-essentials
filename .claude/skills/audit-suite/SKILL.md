@@ -62,6 +62,13 @@ of three user roles because its selector only matched the third.
 breaking something hides it from the audit. Ask that of your own code: what does this do with input
 it cannot handle, and does the run get quieter or louder?
 
+**When a count flickers, stop comparing counts.** Four attempts at one non-deterministic audit
+failed while comparing "8 findings" against "9 findings". The fix was to make it print the *names*
+of the things it counted — at which point the answer arrived in one run: the underlying set was
+stable at 52, and the swing was entirely inside a downstream filter, bimodal at 0 or 50 rather than
+marginal. A count is a hash of the thing you actually want to diff, and it discards exactly the
+information that identifies the cause. Build the dump before the third guess, not after the fourth.
+
 **Read the DOM with the retrying finder, never with a snapshot.** A single
 `Nokogiri.parse(page.body)` is a photograph of whatever existed at that instant, and every
 conclusion drawn from it inherits that timing. One helper took a widget's starting id that way;
