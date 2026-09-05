@@ -20,7 +20,11 @@ What Partner Group, if any, does the Partner belong to.  Partner Groups are very
 ### Do you want this Partner to receive emails for Distributions and Reminders from the system?
 If enabled, the Partner may receive reminders if your organization, or the Partner's Partner Group is configured with a reminder schedule.
 
-This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and partner group level (see [Adding a single Partner](pm_adding_a_partner.md)).
+This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and partner group level (see [Partner Groups](pm_partner_groups.md)).
+
+[!NOTE] If your organization has turned off both kinds of reminder emails in "My Organization", you'll see a notice here that reminder emails are turned off for your organization, and this checkbox won't have any effect.
+
+![Notice shown on the Partner form when reminder emails are turned off](images/partners/partners_reminders_off_notice.png)
 
 For a full description of how the reminder schedules work, and how the different configurations interact, see [Partner Reminder Emails](pm_partner_reminders.md).
 

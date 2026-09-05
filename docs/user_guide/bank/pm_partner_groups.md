@@ -31,6 +31,10 @@ For clarity - if you do not choose any categories, they will not be able to choo
 ### Do you want to send deadline reminders to them every month?
 If enabled, you may configure how frequently you would like reminders to be sent to Partners who are part of this Partner Group.
 
+[!NOTE] If your organization has turned off monthly deadline reminder emails (see [Getting Started - Customization](getting_started_customization.md#other-emails)), you'll see a notice here instead of the reminder fields, and no reminders will be sent to the group.
+
+![Partner Group form when deadline reminders are turned off](images/partners/partners_groups_reminders_off_notice.png)
+
 This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and the Partner specific configuration (see [Adding a single Partner](pm_adding_a_partner.md)).
 
 For a full description of how the reminder schedules work, and how the different configurations interact, see [Partner Reminder Emails](pm_partner_reminders.md).
