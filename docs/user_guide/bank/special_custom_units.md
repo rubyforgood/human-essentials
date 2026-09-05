@@ -44,14 +44,25 @@ Next, you need to indicate which Items should have Custom Units.
 
 ![Item config edit button](images/special_custom_units/Item_config_edit_button.png)
 
-- Indicate what units you would like Partners to be able to use when requesting this Item
+- Under "Additional Custom Request Units", check each unit you would like Partners to be able to use when requesting this Item (1)
   - In the example below, we picked "pack" and "flat"
+- Optionally, enter a request limit beside each checked unit (2).  This is the most of that unit a Partner can ask for in a single Request.  (See [Request limits](#request-limits), below.)
 
 ![Item config request units checkboxes](images/special_custom_units/Item_config_request_units_checkboxes.png)
 
 Allowed units are then shown in the "Custom Request Units" column of the Item list.
 
 ![Item config list shows units](images/special_custom_units/Item_config_list_shows_units.png)
+
+### Request limits
+
+Each unit on an Item can have its own request limit, and there is a separate "Request limit (individual items)" field for when the Partner requests in individual items.  A limit is the most a Partner can ask for in one Request. Leave a limit blank if you don't want one.
+
+If a Partner submits a Request that exceeds a limit, the Request is rejected and the Partner sees a message naming the Item, what they asked for, and the limit -- for instance, "Kids Pull-Ups (5T-6T): You requested 10 packs, but are limited to 4 packs."  They can then change the quantity and resubmit.
+
+![Partner's error message when they exceed a request limit](images/special_custom_units/Request_limit_error.png)
+
+[!NOTE] Limits are checked against the unit the Partner chose.  If a Partner asks for 10 packs, we compare that to the "pack" limit, not to the individual-item limit -- we don't know how many items are in a pack!
 
 ## How Partners use Custom Units in Requests
 

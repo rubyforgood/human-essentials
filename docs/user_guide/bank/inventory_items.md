@@ -83,6 +83,8 @@ The fields are:
 - On hand minimum quantity -- This is a bank-wide on-hand minimum quantity of the Item -- being below this triggers the Item appearing in your low inventory report in red.
 - On hand recommended quantity -- This is the amount you want to have on hand -- if you don't have this, it will appear in the low inventory list on your dashboard, just not in red.
 - Package size -- If you use this, the calculated number of packages for the Item will appear on the distribution printout, unless you hide it when [customizing your bank](getting_started_customization.md).
+- Request limit (individual items) -- An optional hard cap on how many of this Item a Partner can ask for in a single Request when they are requesting by individual items.  If a Partner asks for more than this, their Request is rejected with an error telling them the limit, and they'll need to lower the quantity before they can submit.  Leave it blank if you don't want a limit.  See [Request limits](#request-limits), below.
+- Additional Custom Request Units -- This only appears if your bank has set up [custom units](special_custom_units.md).  Check each unit (e.g. "pack") that Partners should be able to request this Item in.  Beside each checked unit you can also enter a request limit for that unit.
 - Item visible to partners -- This is useful if you have Items that you do not want the partners directly requesting.   Uses include: Items you don't get very often,  or Items you only have because they are going into kits you haven't assembled yet. You can uncheck this to hide those Items from all your partners.
 
 #### Filtering your item list
@@ -95,6 +97,23 @@ Clicking "Edit" beside an Item on the Item list lets you edit the Item definitio
 ![Navigation to edit an Item](images/inventory/inventory_items_edit_navigation.png)
 ![Edit Item page](images/inventory/inventory_items_edit.png)
 [!NOTE]  Value per Item is in dollars on this screen. 
+
+#### Request limits
+Some banks find that a Partner will occasionally request far more of an Item than the bank can supply.  The Partner's [Quota](pm_adding_a_partner.md#quota) only gives a friendly warning, and applies to the whole Request. If you need an actual limit on a specific Item, use the request limit fields on the Item.
+
+![Request limit fields on the Item edit page](images/inventory/inventory_items_request_limits.png)
+
+1. "Request limit (individual items)" is the most a Partner can ask for in one Request when they request the Item by individual items (i.e. "units").
+2. If the Item has [custom units](special_custom_units.md), each checked unit has its own "limit" field.  In this example, a Partner can request at most 4 packs of this Item.
+3. The limit field is disabled for units that aren't checked.
+
+Leave a limit blank if you don't want one -- a blank limit means there is no limit for that way of requesting.
+
+When a Partner submits a Request that goes over a limit, the Request is not saved, and they see an error like this at the top of their Request form, so they can adjust the quantity and try again:
+
+![Partner's error message when they exceed a request limit](images/special_custom_units/Request_limit_error.png)
+
+[!NOTE]  Request limits apply to each Request on its own -- they are not a monthly or yearly allowance.  They apply to quantity-based Requests (including ones you enter on a Partner's behalf), but not to child-based or individual-based Requests, and they don't restrict what you can put in a Distribution.
 
 #### Adding a new Item
 To add a new Item,  click the "+ New Item" button on this page.   It will bring up the same page as "Editing an Item", above (only, of course, with none of the fields completed).
