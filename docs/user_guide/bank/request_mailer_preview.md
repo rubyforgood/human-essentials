@@ -1,3 +1,7 @@
+# Request Mailer
+
+This is an example of the email Human Essentials sends in this situation.  Names and addresses are made up.
+
 From: <no-reply@humanessentials.app>
 
 To: <director@communityoutreach.org>, <requester@communityoutreach.org>

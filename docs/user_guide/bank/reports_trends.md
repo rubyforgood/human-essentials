@@ -3,7 +3,7 @@ The trends reports (one each for Distributions, Donations, and Purchases) give y
 
 The examples below will use the Distributions - Trends report, but everything is basically the same for Donations- Trends and Purchases - Trends.
 
-Please note that the levels for these reports may be up to 24 hours old -- we generate the overnight because it would be a very slow report otherwise.
+Please note that the levels for these reports may be up to 24 hours old (the report says "Cached Data, may be up to 24 hours old") -- we generate them overnight because it would be a very slow report otherwise.
 
 ## Navigation
 To bring up the Distributions - Trends Report,  click on "Reports", then "Distributions - Trends" 
