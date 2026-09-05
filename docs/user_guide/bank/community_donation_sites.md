@@ -7,7 +7,7 @@ You can manage the sites' information on the "Donation Sites" page under the "Co
 
 ![Donation Sites](images/community/donation_sites/donation_sites.png)
 
-Previously recorded information about Donation Sites appears on this page including the name of the Donation Site name, address, contact name, e-mail and phone number.
+Previously recorded information about Donation Sites appears on this page including the Donation Site name, address, contact name, email and phone number.
 
 ### Adding a Donation Site
 

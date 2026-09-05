@@ -13,7 +13,7 @@ The Distribution Schedule page shows details including the Partner,the time of D
 
 Once the partner has the distributed goods, clicking "Distribution Complete" changes the status of the distribution from "Scheduled" to "Complete", so you can track what is still in your hands and what is with your partners in the community. It does not, at this time, remove it from the calendar.
 
-Click "View" for details on the Distribution's source Storage Location, agency representative, delivery method, shipping cost, comments, and state. This also shows a list of items included in the Distribution.
+Click "View" for details on the Distribution's source Storage Location, agency representative, delivery method, shipping cost, comments, and status. This also shows a list of items included in the Distribution.
 
 ![Distribution from Source Inventory to Partner](images/essentials/pick_ups/distribution_from_source_to_partner.jpg)
 

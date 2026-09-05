@@ -27,10 +27,10 @@ See [Partner profiles](pm_partner_profiles.md#viewing-a-partner-profile) for det
 
 Once you have reviewed the Partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
 
-![](images/partners/partners_approving_1.png)
+![Approve Partner button](images/partners/partners_approving_1.png)
 
-You should see a "Partner Approved!" message,  and the status of the Partner will show as "Approved"
+You should see a "Partner approved!" message,  and the status of the Partner will show as "Approved"
 
-![](images/partners/partners_approving_2.png)
+![Partner approved message](images/partners/partners_approving_2.png)
 
 [Prior - Partner Profiles](pm_partner_profiles.md) [Next - Requesting Recertification](pm_requesting_recertification.md)

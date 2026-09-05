@@ -1,6 +1,6 @@
 # Manufacturers Donations Report
 
-To access this report,  click 'Reports", then "Donations - Manufacturers"
+To access this report,  click "Reports", then "Donations - Manufacturer"
 
 ![manufacturer_donations_report_default](images/reports/reports_manufacturer_donations_1.png)
 

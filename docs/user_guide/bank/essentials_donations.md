@@ -10,7 +10,7 @@ To view a list of all your Donations, click on 'Donations', then "All Donations"
 ![Navigating to Donations](images/essentials/donations/essentials_donations_1.png)
 
 This screen includes a filter so you can narrow down your search for a Donation, and some basic information on each Donation:
-- Source -- Whether this comes from a [Product Drive](product_drives.md),  [Manufacturer](community_manufacturers.md), [Donation Site](community_donation_sites.md), or Miscellaneous Donation
+- Source -- Whether this comes from a [Product Drive](community_product_drives.md),  [Manufacturer](community_manufacturers.md), [Donation Site](community_donation_sites.md), or Miscellaneous Donation
 - Date --  The date of the Donation
 - Details -- this depends on the source -- it is the name of the Product drive, or Manufacturer, or Donation site
 - Storage location -- where the goods from this Donation are stored.
@@ -64,7 +64,7 @@ Here you specify what kind of source the Donation originated from.
 
 For Product Drive, Manufacturer, or Donation Site, you will further specify the specific source.
 ##### *Product Drive
-If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](product_drives.md), and manage the contact info for a Product Drive Participant under [Community -- Product Drive Participants](community_product_drive_participants.md).
+If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](community_product_drives.md), and manage the contact info for a Product Drive Participant under [Community -- Product Drive Participants](community_product_drive_participants.md).
 ##### *Donation Site
 Donation Site is meant to capture the concept of any place you have a more-or-less permanent place people can drop off donations at, such as your main office, or community locations such as fire halls, etc.
 You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Like Product Drives, you can create a new Donation Site 'on the fly' through the fields here too.
@@ -74,7 +74,7 @@ This is for the donations that come straight from a Manufacturer.  You can view 
 Misc. Donation is a catch-all for any Donation without an identified source.
 
 #### Storage Location
-Pick the Storage Location the Donation is going to.  If it will be split among multiple locations, you can either enter separate Donations,  or enter the Donation using one location,  then use the [Inventory -- Transfers] function to move the appropriate inventory to other locations.
+Pick the Storage Location the Donation is going to.  If it will be split among multiple locations, you can either enter separate Donations,  or enter the Donation using one location,  then use the [Inventory -- Transfers](inventory_transfers.md) function to move the appropriate inventory to other locations.
 
 #### Money raised in dollars
 This number is used in the Annual Survey, and the Donations - Summary report as well as being shown in the main Donations page.
@@ -85,7 +85,7 @@ This is the date we use for any and all date filtering that you might do on Dona
 #### Items in this donation
 
 There are a couple of ways to get Items into the donation quickly:
-(1) You can "bloop" a barcode -- that requires some initial setup, as detailed in [Inventory -- Barcodes], or
+(1) You can "bloop" a barcode -- that requires some initial setup, as detailed in [Inventory -- Barcodes](inventory_barcodes.md), or
 (2) You can pick the item from the drop-down of all *active* items in your system, and enter the quantity of that item.
 
 In either case,  you can click "Add Another Item" (3)  to open up another item for entry, or "Remove" (4) if you've added too many!

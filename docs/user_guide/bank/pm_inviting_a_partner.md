@@ -3,7 +3,7 @@
 Before a Partner can make Requests,  they have to be invited and approved.
 
 When they are invited,  they will receive an email with a link so that they can set up their password.
-These links expire in a couple of weeks,  but if they don't respond in time,  
+These links expire,  so if they don't respond in time,  
 you can direct them to use the "Forgot your password?" function on the sign-in page
 (https://humanessentials.app/signin) to get a new link to set their password.
 
@@ -16,7 +16,7 @@ The first, default, option is:
 
 2/  They click on the link and set up their password.
 
-3/  They then sign in and go into their "My Organization", update whatever profile information you need (se [profile](pm_partner_profiles.md).
+3/  They then sign in and click "Edit My Profile", and update whatever profile information you need (see [profile](pm_partner_profiles.md)).
 
 4/  They submit it for your approval
 

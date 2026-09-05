@@ -8,7 +8,7 @@ There are three Partner statuses, which have different impacts on how you intera
 
 ## Uninvited
 You can add Partners without inviting them to the system.  In this case, you can make Distributions to them in the system.  The Partners can not sign in to the system,  and so will not directly provide the information in the Partner Profile.  This is the status of freshly imported Partners.
-The Partners will still get emails regarding deadlines and Distributions (assuming you have set them up to do so through your bank's [customization](getting_started_customization.md#reminder-emails-optional) and any [Partner Groups](pm_partner_groups.md#do-you-want-to-send-deadline-reminders-to-them-every-month) they belong to.
+The Partners will still get emails regarding deadlines and Distributions (assuming you have set them up to do so through your bank's [customization](getting_started_customization.md#other-emails) and any [Partner Groups](pm_partner_groups.md#do-you-want-to-send-deadline-reminders-to-them-every-month) they belong to.
 
 If you import your Partners, they will be imported as Uninvited.
 
@@ -30,7 +30,7 @@ The 'standard' sequence is for the Partners to fill in some information in the P
 However, many banks get the information from their Partners in other ways.  Some, for instance, will fill in the information themselves while on a call with the Partner.
 
 ## Awaiting review
-Once a Partner has been invited, they will use the "Edit my Profile" function in their view of the system to provide the information.  They can save their progress, and then "save and review",  then "submit for approval" - which changes the status to "Awaiting review.   This Partner will now appear on your dashboard, in the "Partner Approvals" section.  The Partner will not be able to make Requests until they are approved.
+Once a Partner has been invited, they will use the "Edit my Profile" function in their view of the system to provide the information.  They can save their progress, and then "save and review",  then "submit for approval" - which changes the status to "Awaiting review".   This Partner will now appear on your dashboard, in the "Partner Approvals" section.  The Partner will not be able to make Requests until they are approved.
 
 ## Approved
 Approved Partners can make Requests.

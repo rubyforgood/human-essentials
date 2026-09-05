@@ -11,7 +11,7 @@ Click on "Partner Agencies" in the left hand menu, then "Partner Announcement". 
 
 ![all announcements screen](images/partners/partners_announcements_1.png)
 
-Click the "New Announcements" button to bring up a form for a new Announcement
+Click the "New Announcement" button to bring up a form for a new Announcement
 
 ![new announcement screen](images/partners/partners_announcements_2.png)
 

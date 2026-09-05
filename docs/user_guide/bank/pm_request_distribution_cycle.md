@@ -12,11 +12,11 @@ So,  how does working with Requests from Partners work?
 
 2/  They get an email confirming that the Request has been sent to you.
 
-3/  This Request appears in the system in the following places:  a) your [dashbboard](essentials_dashboard.md), under "Outstanding Requests", and in the [Requests](essentials_requests.md) view.
+3/  This Request appears in the system in the following places:  a) your [dashboard](essentials_dashboard.md), under "Outstanding Requests", and in the [Requests](essentials_requests.md) view.
 
 4/  You view the Request, and click "Fulfill Request" (you also have the option of cancelling it)
 
-5/  That marks the Request as "started" -- so other staff don't grab the same Request to start working on it,  and brings up a new [Distribution] for the partner, with the information we can pre-fill, pre-filled. 
+5/  That marks the Request as "started" -- so other staff don't grab the same Request to start working on it,  and brings up a new [Distribution](essentials_distributions.md) for the partner, with the information we can pre-fill, pre-filled. 
 
 6/  You fill in the rest of the information, and make any adjustments required.
 
