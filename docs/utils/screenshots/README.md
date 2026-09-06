@@ -9,7 +9,7 @@ Files:
 | File | Purpose |
 | --- | --- |
 | `shot.tmpl.js` | Playwright snippet template. Logs in, sets up the page, grows the viewport, draws the boxes, crops, saves. |
-| `mkshot.py` | Inlines a JSON spec into the template and writes `.playwright-mcp/run.js`. |
+| `mkshot` | Inlines a JSON spec into the template and writes `.playwright-mcp/run.js`. |
 | `example_spec.json` | A spec showing the common shapes: sidebar navigation, a button on a list page, cropping to a dashboard card, a modal. |
 | `../check_guide_images.sh` | Finds markdown image references with no file, and image files no page references. |
 
@@ -19,7 +19,7 @@ Files:
 2. Write a spec (see below), then generate the snippet:
 
    ```sh
-   docs/utils/screenshots/mkshot.py my_spec.json
+   docs/utils/screenshots/mkshot my_spec.json
    ```
 
 3. Run it. From Claude Code with the Playwright MCP plugin, call `browser_run_code_unsafe` with `filename` set to the generated `.playwright-mcp/run.js`. The tool only reads files under the repository, and `.playwright-mcp/` is where the plugin keeps its own logs, so it is a good untracked home for specs and generated snippets.

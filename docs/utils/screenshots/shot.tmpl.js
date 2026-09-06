@@ -1,6 +1,6 @@
 // Playwright snippet for capturing annotated user-guide screenshots.
 //
-// This file is a TEMPLATE: `mkshot.py` replaces the PARAMS placeholder below with the JSON
+// This file is a TEMPLATE: `mkshot` replaces the PARAMS placeholder below with the JSON
 // contents of a spec file and writes the result to .playwright-mcp/run.js,
 // which is then executed with the Playwright MCP tool
 // `browser_run_code_unsafe` (pass the file via its `filename` argument).
