@@ -143,7 +143,7 @@ If "No", the "Send email reminder the day before?" checkbox on the Distribution 
 
 ![Distribution form when day-before reminders are turned off](images/essentials/distributions/essentials_distributions_reminders_off_notice.png)
 
-Banks that were already using Human Essentials when these switches were added have both set to "Yes", so nothing changed for them.  If you never want either kind of email, set them to "No" -- this is simpler than turning reminders off Partner by Partner.  If both are "No", the Partner form will show a notice that reminder emails are turned off for your organization.
+If you never want either kind of email, set them to "No" -- this is simpler than turning reminders off Partner by Partner.  If both are "No", the Partner form will show a notice that reminder emails are turned off for your organization.
 
 ![Organization edit page with deadline reminders turned off](images/getting_started/customization/gs_customization_other_emails_off.png)
 
