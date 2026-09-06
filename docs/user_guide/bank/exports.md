@@ -246,6 +246,7 @@ You can export different groups of partners by clicking the partner filters whic
 For each partner in the filtered list the following fields will be exported:
 - Agency Name,
 - Agency Email,
+- Agency Phone Number,
 - Notes
 - Agency Type,
 - Other Agency Type,

@@ -7,6 +7,8 @@ To add a single Partner,  you can either Click on the "Add a Partner" button in 
 This is the name of the agency.  It will appear in dropdowns for you to select when filtering Requests or Distributions, or when entering a new Distribution.
 ### E-mail(mandatory)
 This is the primary contact for the Partner.  Any system emails regarding the Partner, such as notifications of Distributions or reminders of Request deadlines, will be sent to this address.
+### Phone Number
+An optional phone number for the agency.  This is shown in your Partner list (under "Contact Information"), on the Partner's page, and in the Partner export.  It is for your reference only -- the system doesn't call or text anyone.
 ### Default Storage Location
 Choosing a default Storage Location here is a short-cut that will automatically fill in the Storage Location when you fulfill a Request from this Partner.  (Don't worry, you can change it.)
 ### Group
