@@ -86,9 +86,9 @@ The email sent to the Partner will also indicate the requested units.
 
 <img src="images/special_custom_units/Email_with_units.png" border=1>
 
-The Request History page shows the units alongside the Item quantities.
+From the Request History page, the Partner can open any Request to see the units alongside the Item quantities.
 
-![Request history units](images/special_custom_units/Request_history_units.png)
+![Request detail showing units](images/special_custom_units/Request_history_units.png)
 
 ## Processing Requests with Custom Units
 
@@ -105,6 +105,8 @@ When you create a Distribution from a Request, you must enter the distributed qu
 [!NOTE] The "Quantity - Total Units" is individual units! 
 
 So if the Partner requested "9 boxes" of Pads, and each box has 10 Pads, then you would put "90" in the "Quantity - Total Units" field (assuming you are providing the full 9 boxes).
+
+In the example below, the Partner asked for 29 packs of Pads (2), so the "Quantity - Total Units" field (1) is left for you to fill in with the number of individual Pads you are sending.
 
 ![Distribution creation from a request](images/special_custom_units/Distribution_creation_from_a_request.png)
 
