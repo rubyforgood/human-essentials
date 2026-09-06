@@ -9,11 +9,25 @@ Some things to know:
 To view a list of your Distributions,  click on 'Distributions' in the left hand menu.  This brings up a list of all your Distributions for the default period of 60 days in the past, 30 days in the future.   You can change what Distributions are displayed using the filters at the top of the list.
 ![Navigation to distributions](images/essentials/distributions/essentials_distributions_navigation.png)
 
+The list shows, for each Distribution:
+- ID -- a number we use to identify the Distribution (handy if you need to ask us for support)
+- Partner
+- Initial Allocation -- the date the Distribution was entered
+- Date of Distribution -- the scheduled pickup, delivery or shipping date
+- Source Inventory -- the Storage Location the Items came from
+- Total Items and Total Value
+- Delivery Method and Shipping Cost
+- Comments
+- Status -- Scheduled or Complete
+- Actions -- View, Edit, Print, and Reclaim (see below).  If a Distribution contains an Item that has since been deactivated, Edit and Reclaim are disabled and you'll see "Has Inactive Items".
+
+If there are more than a handful of Distributions, the list is split into pages -- use the page numbers under the list to move between them.  The totals row shows the totals for the current page and for the whole filtered list.
+
 ### Filtering the Distribution list
 
 Your Distribution list may grow to the point that you really need to be able to narrow things down to find a particular Distribution.
 
-To help with that, you can filter the Distribution list by several aspects: Item, Item Category, Partner, source inventory (i.e. Storage Location), status, and date range.
+To help with that, you can filter the Distribution list by several aspects: Item, Item Category, Reporting Category, Partner, source inventory (i.e. Storage Location), status, and date range.
 If you pick several things,  you will get only the Distributions that match all of them.
 
 
@@ -22,6 +36,7 @@ If you pick several things,  you will get only the Distributions that match all 
 Except for date range,  all the filters are specified by picking from a drop-down list as follows:
 - Item: all of your bank's Items.  This will filter to only the distributions that contain that Item.
 - Item Category:  Item Categories (as specified in [Items & Inventory -- Item Categories](inventory_items.md#item-categories)).  This will filter the list to the distributions that contain items that are in the chosen item category.
+- Reporting Category:  the NDBN reporting category of the Items (e.g. Disposable Diapers, Period Supplies).  This will filter the list to the distributions that contain items in that reporting category.
 - Partner:  This will filter the lists to just the distributions to the chosen partner.
 - Source Inventory:  This will limit the list to the distributions from the chosen storage location.
 - Status:  Distributions can be Scheduled or Complete. This will limit the list to those with the given status.
@@ -37,7 +52,7 @@ To enter a new Distribution,  click on "New Distribution" in the Distributions l
 Here, you will enter some information about the whole Distribution,  then add the all the items that make it up.
 The fields include:
 - Partner (mandatory)
-- Distribution date and time -- this is defaulted to midnight of the current day.  If you want to change it (if, for example, you have a specific time you are scheduling the pickup for), we recommend you use the little calendar gizmo at the right of the field.
+- Distribution date and time -- this is defaulted to 11:59 PM of the current day.  If you want to change it (if, for example, you have a specific time you are scheduling the pickup for), we recommend you use the little calendar gizmo at the right of the field.
 
 - Send email reminder the day before  --> causes an email to be sent the day before.  (If your organization has turned off day-before reminder emails in "My Organization", you'll see a notice here instead of the checkbox -- see [Getting Started - Customization](getting_started_customization.md#other-emails).)
   
@@ -84,7 +99,7 @@ To edit a Distribution,  click on "Edit" beside the Distribution in the list,  o
 ![Edit Distribution navigation](images/essentials/distributions/essentials_distributions_edit_navigation.png)
 
 [!NOTE] When you edit a Distribution -- if is was in the past,  you will see a warning to that effect -- because we assumed that you wouldn't normally need to change the Distribution once it had been put together! Some banks will add things when the Partners come to pick up the distributions, based on additional needs and/or supply opportunities.
-However,  We will give you a stern warning if there has been an Audit since the Distribution was entered, and you may be prevented from changing some Distribution information (such as the storage location), because we just don't know how to handle some of those cases.
+However,  if there has been an Audit of the Storage Location since the Distribution was entered, you'll see a warning that "This distribution is too old to edit inventory", and you will only be able to change the non-inventory fields (partner, date, delivery method, comment, and so on) -- not the Items or quantities.
 
 ![Distributions edit](images/essentials/distributions/essentials_distributions_edit.png)
 ## Printing a Distribution

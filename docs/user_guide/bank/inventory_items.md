@@ -63,7 +63,7 @@ To bring up your Items & Inventory view,  click "Inventory", then "Items & Inven
 ![Navigation to Items & Inventory](images/inventory/inventory_items_navigation.png)
 This brings up a multi-tabbed view - you have several different ways to look at your Items and bank-wide inventory (if you want to see everything that's in a particular Storage Location, that's under [Storage Locations](inventory_storage_locations.md))
 ### Item List
-This shows all of your Items, and allows you access to view/edit/and delete them.
+This shows all of your Items, and allows you access to view/edit/and delete them.  The "Export Items" button gives you the list as a .csv file (see [Exports](exports.md)).
 #### Viewing an Item
 Clicking "View" will bring up details on the Item, including all the things you can change, and a breakdown of the inventory at each location you currently have stock at.
 
@@ -86,6 +86,7 @@ The fields are:
 - Request limit (individual items) -- An optional hard cap on how many of this Item a Partner can ask for in a single Request when they are requesting by individual items.  If a Partner asks for more than this, their Request is rejected with an error telling them the limit, and they'll need to lower the quantity before they can submit.  Leave it blank if you don't want a limit.  See [Request limits](#request-limits), below.
 - Additional Custom Request Units -- This only appears if your bank has set up [custom units](special_custom_units.md).  Check each unit (e.g. "pack") that Partners should be able to request this Item in.  Beside each checked unit you can also enter a request limit for that unit.
 - Item visible to partners -- This is useful if you have Items that you do not want the partners directly requesting.   Uses include: Items you don't get very often,  or Items you only have because they are going into kits you haven't assembled yet. You can uncheck this to hide those Items from all your partners.
+- Additional Information (Bank Use Only) -- up to 500 characters of notes about the Item for your own staff.  Partners don't see this.  It shows up in the "Add. Info" column of the Item list.
 
 #### Filtering your item list
 The most common thing you'll when filtering your item list is to include inactive items.  If you have deactivated an item, but are going to offer it again,  you'll need to check the "Also include inactive Items" box in the filter, and then click "Filter" to show it, so that you can reactivate it.
