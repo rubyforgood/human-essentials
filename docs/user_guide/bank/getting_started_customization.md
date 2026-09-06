@@ -131,6 +131,24 @@ This is a special topic that has its own guide page [here](special_custom_units.
 
 
 ## Other emails
+Human Essentials can send two kinds of reminder emails to your Partners: a monthly reminder of the deadline for submitting Requests, and a reminder the day before a scheduled Distribution.  The first two fields in this section are bank-wide on/off switches for each kind.
+
+![Other emails section of the organization edit page](images/getting_started/customization/gs_customization_other_emails.png)
+
+#### Send monthly deadline reminder emails to partners? (1)
+If "No", no monthly deadline reminders are sent to any of your Partners, regardless of any schedules set up on your Partner Groups or on individual Partners, and the schedule fields below (3) are hidden.  The Partner Group form will show a notice that these emails are turned off instead of the reminder schedule fields.
+
+#### Send day-before distribution reminder emails to partners? (2)
+If "No", the "Send email reminder the day before?" checkbox on the Distribution form is replaced with a notice that these emails are turned off, and no day-before reminders are sent.
+
+![Distribution form when day-before reminders are turned off](images/essentials/distributions/essentials_distributions_reminders_off_notice.png)
+
+If you never want either kind of email, set them to "No" -- this is simpler than turning reminders off Partner by Partner.  If both are "No", the Partner form will show a notice that reminder emails are turned off for your organization.
+
+![Organization edit page with deadline reminders turned off](images/getting_started/customization/gs_customization_other_emails_off.png)
+
+The rest of the fields in this section (3) only appear if you have said "Yes" to monthly deadline reminders.
+
 #### Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?
 You may configure when you would like reminder emails to be sent to your Partners.
 

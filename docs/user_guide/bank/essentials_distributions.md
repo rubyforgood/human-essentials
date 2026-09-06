@@ -39,7 +39,7 @@ The fields include:
 - Partner (mandatory)
 - Distribution date and time -- this is defaulted to midnight of the current day.  If you want to change it (if, for example, you have a specific time you are scheduling the pickup for), we recommend you use the little calendar gizmo at the right of the field.
 
-- Send email reminder the day before  --> causes an email to be sent the day before
+- Send email reminder the day before  --> causes an email to be sent the day before.  (If your organization has turned off day-before reminder emails in "My Organization", you'll see a notice here instead of the checkbox -- see [Getting Started - Customization](getting_started_customization.md#other-emails).)
   
 - Agency representative - for information only.  This is defaulted to the email of the person who sent the request.
 - Delivery method -- we default this to pickup because it's the most common across banks.
