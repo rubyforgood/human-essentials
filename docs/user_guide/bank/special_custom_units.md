@@ -86,9 +86,9 @@ The email sent to the Partner will also indicate the requested units.
 
 <img src="images/special_custom_units/Email_with_units.png" border=1>
 
-From the Request History page, the Partner can open any Request to see the units alongside the Item quantities.
+The Request History page shows the units alongside the Item quantities.
 
-![Request detail showing units](images/special_custom_units/Request_history_units.png)
+![Request History showing units](images/special_custom_units/Request_history_units.png)
 
 ## Processing Requests with Custom Units
 
