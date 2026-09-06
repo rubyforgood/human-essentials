@@ -7,9 +7,11 @@ Each year's annual survey becomes available January 1 of the following year.
 
 1. Click on “Reports”
 2. Click on “Annual Survey”
-3. Click on "Export Yearly Reports
+3. Click on "Export Yearly Reports" (2)
 
 ![Annual Report Yearly](images/reports/reports-anual-survey-yearly-export.png)
+
+This gives you one .csv file with a column for each year you have been on the system.  It recalculates all the yearly reports first, so it may take a little while.
 
 ## How to get single year report
 
