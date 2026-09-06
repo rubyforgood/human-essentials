@@ -54,8 +54,10 @@ The fields include:
 - Partner (mandatory)
 - Distribution date and time -- this is defaulted to 11:59 PM of the current day.  If you want to change it (if, for example, you have a specific time you are scheduling the pickup for), we recommend you use the little calendar gizmo at the right of the field.
 
-- Send email reminder the day before  --> causes an email to be sent the day before.  (If your organization has turned off day-before reminder emails in "My Organization", you'll see a notice here instead of the checkbox -- see [Getting Started - Customization](getting_started_customization.md#other-emails).)
-  
+- Send email reminder the day before (1, below) --> causes an email to be sent the day before.  (If your organization has turned off day-before reminder emails in "My Organization", you'll see a notice here instead of the checkbox -- see [Getting Started - Customization](getting_started_customization.md#other-emails).)
+
+  ![Top of the New Distribution form](images/essentials/distributions/essentials_distributions_reminder_checkbox.png)
+
 - Agency representative - for information only.  This is defaulted to the email of the person who sent the request.
 - Delivery method -- we default this to pickup because it's the most common across banks.
 - From storage location:  The storage location the distribution is coming from.  Mandatory.
@@ -118,6 +120,8 @@ Please note that your logo (also configurable on the [Organization](getting_star
 ## Reclaiming a Distribution
 What do you do if, for some reason, the Distribution that was entered was not picked up?   You can reclaim it,  adding the items back into your inventory.
 To do this,  click "Reclaim" beside the Distribution in question, and click "OK" in the confirmation screen that appears.
+
+![Reclaim button on the Distributions list](images/essentials/distributions/essentials_distributions_reclaim_navigation.png)
 
 [!WARN]  You can not reverse a reclaim.  If you reclaim by accident, you will have to re-enter the Distribution.  If that happens,  you should be able to grab the Item quantities from the [History Report](reports_history.md), but we don't retain the rest of the information.
 

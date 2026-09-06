@@ -146,6 +146,10 @@ If you never want either kind of email, set them to "No" -- this is simpler than
 
 The rest of the fields in this section (3) only appear if you have said "Yes" to monthly deadline reminders.
 
+When you view your organization (rather than editing it), the same section shows which reminder emails are on, and -- if deadline reminders are on -- when the next reminder will go out.
+
+![Reminder settings on the organization view](images/getting_started/customization/gs_customization_view_reminders.png)
+
 #### Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?
 You may configure when you would like reminder emails to be sent to your Partners.
 

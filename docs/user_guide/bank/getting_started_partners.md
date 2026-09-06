@@ -16,6 +16,9 @@
 
 
 ## Importing Partners
+If you're just getting started, there is an "Import Partners" link in the "Getting Started" section of your dashboard.
+
+![Import Partners link in Getting Started](images/getting_started/partners/gs_just_starting_step_2_import.png)
 
 For details on how to do a bulk import of your partners, please click [here](pm_importing_partners.md)
 
