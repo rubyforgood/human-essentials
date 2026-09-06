@@ -90,3 +90,6 @@ out/
 .vscode/
 .aider*
 .claude
+
+# Playwright MCP plugin scratch space (screenshot specs, console logs)
+.playwright-mcp/
