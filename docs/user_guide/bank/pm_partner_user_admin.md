@@ -7,12 +7,12 @@ Partners can add Users themselves,  but occasionally a bank may need to step in 
 If you need to administer a Partner's Users,  click on "Partner Agencies" in the left-hand menu,  then "All Partners",
 then click on the specific Partner you want to administer. 
 
-![](images/partners/partners_user_management_navigation_1.png)
+![Navigation to a Partner from the Partner list](images/partners/partners_user_management_navigation_1.png)
 Then  click "Manage Users" below Edit details button.
-![](images/partners/partners_user_management_navigation_2.png)
+![Manage Users button on the Partner page](images/partners/partners_user_management_navigation_2.png)
 
-This will bring you to a list of Users for that Partner.   Here you can invite new Users, start a reset password process (B) (they will receive an email with a link to reset their password), or remove access to that Partner from the User(C).  
+This will bring you to a list of Users for that Partner.   Here you can invite new Users (A), start a reset password process (B) (they will receive an email with a link to reset their password), or remove access to that Partner from the User (C).  
 
-![](images/partners/partners_user_management.png)
+![Partner user management page](images/partners/partners_user_management.png)
 
 [Prior - Partner reactivation](pm_partner_reactivation.md)  [Next: Other Partner information](pm_other_information.md)

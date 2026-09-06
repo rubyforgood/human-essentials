@@ -44,7 +44,6 @@ The high level sections of the partner profile are:
 - Population Served
 - Contacts
 - Pick up Person
-- Race/Ethnicity of Client Base
 - Agency Distribution Information
 - Additional Documents
 - Settings (not configurable)
@@ -132,19 +131,15 @@ The sum of the client share has to be either 0 or 100, and the numbers have to b
 You start out with space for 1 county, but can add more with the "Add Another County button"
 
 ### Population Served
-![screenshot of top part of expanded population served question](images/partners/partners_profile_edit_population_1.png)
-![screenshot of bottom part of expanded population served question](images/partners/partners_profile_edit_population_2.png)
+![screenshot of expanded population served section](images/partners/partners_profile_edit_population_1.png)
 
-This section has three broad questions plus two subsections of of demographic questions:
-
-> [!NOTE]
-> We have an issue in our queue to rework this, so the order may change.
+This section has two broad questions plus two subsections of demographic questions:
 
 - Clients Have An Income Requirement to Work With You?
 - Do You Verify The Income Of Your Clients?
 
 #### Race/Ethnicity of Client Base
-This subsection is comprised of questions about the race/ethnicity of the client base and the poverty level of the Partner's client base.
+This subsection is comprised of questions about the race/ethnicity of the Partner's client base.
 There is no check on whether the numbers add up to 100 -- because there may be overlap.
 
 - % African American
@@ -166,21 +161,14 @@ There is no check on whether the numbers add up to 100 -- because there may be o
 
 ### Contacts
 ![screenshot of expanded executive director section](images/partners/partners_profile_edit_executive.png)
-![NOTE] This section currently contains both Executive Director and Primary Contact for the partner.  We have splitting them up in our queue.
-Contact information for the head of the agency:
--
+This section holds contact information for the head of the agency, and for your bank's day-to-day contact at the agency.
+
+Executive Director:
 - Executive Director Name
 - Executive Director Phone
 - Executive Director Email
-- Primary Contact Name
-- Primary Contact Phone
-- Primary Contact Cell
-- Primary Contact Email
 
-This is for your information only.  It is not used for any emails.
-
-#### Primary Contact
-Contact information for your bank's primary contact
+Primary Contact:
 - Primary Contact Name
 - Primary Contact Phone
 - Primary Contact Cell
