@@ -103,6 +103,35 @@ number you write down. It usually costs minutes. Acting on a stale one costs a d
 something that is already there — or, worse, produces a confident write-up of a fix for a problem
 that no longer exists.
 
+## Verify a mechanism with a canary, not with a self-report
+
+When the question is "does this system read that file", asking the system is the weakest available
+evidence: it will answer plausibly either way, and a plausible answer to a question about your own
+plumbing is indistinguishable from a correct one.
+
+Plant a **canary** with a value nothing could produce by inference — a random token — and ask for
+the token back. One project needed to know whether a tool loaded skills from a user-level directory,
+a premise a planned change rested on and which had never been tested because the directory had
+never existed there. The check was a file carrying **two different tokens, one in the metadata and
+one in the body**, because they answer different questions: the metadata token proves the thing was
+*registered*, the body token proves the file was *read*. Both came back.
+
+**Then remove the pointer and leave the file.** That is the control that turns it into evidence. The
+confound is that the file sat inside the working directory, so a positive result alone is also
+consistent with it being found some entirely different way. Deleting only the symlink — file still
+on disk, same prompt — returned the "no such thing" answer, which excludes that and nothing else
+would have.
+
+Where the mechanism has an artefact you can read directly, read it, and rank it honestly. Grepping
+the tool's binary found fourteen references to the path, which establishes that the path is *known*
+to it. It does not establish that anything *loads* from it. String evidence and behavioural evidence
+answer different questions, and the weaker one is worth recording as corroboration rather than
+proof.
+
+Two habits that go with it: make the canary's value random, so a lucky guess is not a pass; and
+**remove the artefacts afterwards and say so**, because a test that leaves a directory behind has
+quietly falsified the note you are about to write about the machine's state.
+
 ## A seed is not a reproduction
 
 Randomised test orderings are seeded, and a seed is only a permutation **of the list of files that

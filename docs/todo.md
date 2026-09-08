@@ -92,11 +92,34 @@ symlink points at a path, so if this repo moves or is deleted the skills silentl
 copy avoids that and introduces two versions that drift — which is the worse failure, and the one
 this project has spent a week finding in its own documents.
 
-**Still unverified**, and it is the one thing worth checking before relying on it: whether this
-client reads `~/.claude/skills/` on this setup at all. Confirm by running the loop, opening a
-different project, and seeing whether the skills are offered. If they are not, the answer is a copy
-into whatever directory this client does read, and the drift problem comes back and needs a
-different solution.
+**Verified 2026-09-08, and it was the one thing worth checking before relying on it.** The premise
+had never been tested here — the directory has never existed on this machine, so "Claude also reads
+`~/.claude/skills/`" was an assumption the whole plan rested on. It holds, and **symlinks are
+followed**, which was the second half and the half that could have failed silently.
+
+How it was checked, because a self-report from a model is weak evidence on its own. A canary skill
+was written to `/tmp/canary-skill/SKILL.md` carrying **two different random tokens** — one in the
+frontmatter `description`, one in the body — and installed the way the plan proposes, as a symlink:
+`~/.claude/skills/canary-probe -> /tmp/canary-skill`. Then `claude -p` was run from `/tmp`, a
+directory with no `.claude/skills` of its own, asking for both tokens. Both came back. Two tokens
+rather than one because they answer different questions: the description token proves the skill was
+*registered*, the body token proves the file was actually *read*.
+
+**The negative control is what makes it evidence.** The symlink was removed while
+`/tmp/canary-skill/SKILL.md` was left on disk inside the working directory, and the same prompt
+returned `NO-CANARY-SKILL`. So discovery came through `~/.claude/skills/` and not from the file
+happening to sit near the session's cwd — which is exactly the confound a positive result alone
+would not have excluded.
+
+Corroborating, though not sufficient by itself: the client binary
+(`~/.local/share/claude/versions/2.1.250`) contains 14 references to `~/.claude/skills/`, including
+operational ones like a `synced` subdirectory named in help text about a skills-sync setting. String
+evidence shows the path is *known*; only the canary shows it is *loaded*.
+
+Both test artefacts were removed afterwards and `~/.claude/skills/` was left absent, so this entry
+still describes the machine as it stands. **The remaining tradeoff is unchanged** and is the only
+open question: a symlink points at a path, so if this repo moves or is deleted the skills stop
+working silently.
 
 ## `responsive-audit` flicker: closed, and it was hiding two real defects
 
