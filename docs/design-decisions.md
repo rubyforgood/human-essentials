@@ -9577,3 +9577,67 @@ The `responsive-audit` flicker, which is what led here, is still open. It is at
 `46352abf8` in the change log with six eliminated hypotheses, and the button on `/organization`
 was not its cause — the flicker is bimodal across all fifty spacing-exception targets, and this
 was one control.
+
+## 2026-09-08 — A target's own ancestor is not a neighbour, and what the noise was hiding
+
+The `responsive-audit` flicker, closed at the fifth attempt. The decision worth recording is not
+the predicate; it is what to do about the two defects underneath it.
+
+### The predicate
+
+WCAG 2.5.8's spacing exception excuses an undersized target when a 24px circle centred on it
+reaches no *other* target's hit area. The audit implemented "other" as `o.el !== t.el`, which is
+true of the target's own parent — and a parent's box necessarily contains the child's centre, so
+any target inside a focusable container could never pass. On `/items/inventory`,
+`clipped_text_controller` gives a truncated `<td>` `tabindex="0"` so a keyboard user can reach its
+tooltip, and that cell wraps each row's disclosure button. Fifty buttons, reported at every width.
+
+`separate = (a, b) => a !== b && !a.contains(b) && !b.contains(a)`. Rejected: excluding `<td>` from
+the target selector, which would have fixed this page and quietly stopped the check seeing a
+genuinely focusable cell; and excluding elements marked `data-clipped`, which ties a WCAG check to
+one controller's implementation detail.
+
+Verified in the way that matters for a non-deterministic thing: the *underlying* population still
+swings between runs — `allTargets` is 133 or 183 on that page — and the reported output is now
+byte-identical across three full runs anyway. That is a better result than removing the swing,
+because the audit no longer depends on it. Four isolated controls, one of which corrected my
+expectation rather than the code: a small focusable *wrapper* that is itself under 24px is a real
+target and is still reported.
+
+### Why four attempts missed it
+
+They compared counts, then positions. Neither is wrong as a technique and neither could see this,
+because the number that moved was the size of the *comparison set* — the other elements the rule
+consults. A rule that takes a neighbourhood has the neighbourhood as an input, and inputs have to
+be dumped, not just outputs.
+
+### The two defects it was hiding, and why they were not "out of scope"
+
+Fixing the flicker changed 8 findings into 2, and every removed line was the same page and the same
+message. That is the point at which a fix stops being a fix and starts being a suppression, unless
+you read what vanished. Two things came out of it:
+
+**The button really was 20×28**, from a hand-written near-copy of `ROW_ICON_CLASSES` missing
+`size-7`, against design.md's own rule that every control in an actions column is 28×28. The audit
+had been saying so at every width for as long as it had been flickering, and it was read as more
+flicker. **A permanently noisy check is a check whose true findings get filed as noise** — the cost
+of a red check is not the ignored run, it is the true positive wearing its clothes.
+
+**The clipped-cell scan counted `sr-only` text.** `scrollWidth > clientWidth && textContent !== ""`
+marked any cell whose only text was a screen-reader label — measured at 320px, 55 cells marked and
+50 holding nothing but "Show storage locations for …", each a tab stop raising a bubble repeating a
+string that is deliberately invisible, over a cell showing a chevron. The controller's own comment
+says it exists to avoid exactly that ("a tab stop per row — 42 of them on /adjustments"); it had
+arrived at the thing from the other side. Text that cannot be seen cannot have been truncated.
+After: 5 cells marked, 0 of them unreadable.
+
+Both were fixed rather than logged, because both were one-line changes with a spec each, and
+because the honest reading of "the audit was wrong about this control" is not "there was nothing
+wrong with this control".
+
+### Left open on purpose
+
+`allTargets` on that page is 133 after a fresh wide load and 183 after a fresh narrow one, and
+resizing between them does not converge — the clipped scan runs on `resize` while the stacking
+labels arrive on a `matchMedia` change. It no longer affects any audit result and has no reported
+user symptom, so it is in `docs/todo.md` with the mechanism written down rather than chased.

@@ -95,39 +95,50 @@ different project, and seeing whether the skills are offered. If they are not, t
 into whatever directory this client does read, and the drift problem comes back and needs a
 different solution.
 
-## `responsive-audit` still flickers at 320px, after four attempts
+## `responsive-audit` flicker: closed, and it was hiding two real defects
 
-**`layout-shift-audit` is fixed.** This one is not, and the record of what has been eliminated is
-worth more than a fifth guess.
+Fixed on 2026-09-08 at the fifth attempt. Recorded in full because four attempts failed for the
+same reason and the shape is worth recognising.
 
-**What it is.** Findings alternate 8/9. The difference is always `/items/inventory` at **320px** —
-flagged at 767, 769, 1023, 1025, 1280 and 1440 every run, at 320 only sometimes.
+**What it was.** Findings alternated 8/9, always `/items/inventory`. The audit reported "50
+target(s) under 24px" on that page at six or seven widths, and whether 320 was among them varied
+per run.
 
-**The decisive narrowing.** `DUMP=/items/inventory DUMP_WIDTH=320 pw bin/design/responsive-audit.js`
-prints the element list. It shows `all=133 undersized=52 small=0`: the **undersized count is stable
-at 52**, so the swing is entirely inside the *spacing exception* — and it is **bimodal, 0 or 50**,
-not marginal. One global factor flips all fifty at once.
+**The cause.** `clipped_text_controller` gives a truncated `<td>` `tabindex="0"` so a keyboard user
+can reach its tooltip, which makes the cell match the audit's target selector. On that page the
+marked cell is the 40×28 one **wrapping** each row's disclosure button, and WCAG 2.5.8's spacing
+exception asks whether a 24px circle on the target reaches *another* target's hit area. A container
+that encloses the target always intersects that circle, so the exception was unpassable and all
+fifty buttons were reported. Whether the cell was marked depended on how the page had been reached,
+which is where the run-to-run variation came from.
 
-**Eliminated, each by measurement:**
+**A target's own ancestor is not a neighbour.** One predicate — `!a.contains(b) && !b.contains(a)`
+— and three runs of the full audit now produce byte-identical output. Verified the honest way: the
+underlying population still swings (`allTargets` 133 or 183 between runs) and the reported result no
+longer moves with it, which is better than suppressing the swing, because the audit no longer
+depends on it.
 
-| Hypothesis | How it was ruled out |
-| --- | --- |
-| A measurement taken too early | 52 undersized at 0, 150, 350, 700, 1200, 2000, 3000ms after resize |
-| The page being skipped | present in the measured set every run |
-| The fixed `waitForTimeout(350)` | replaced with a condition; still flickers |
-| Geometry not settled | settle now waits for three identical readings 120ms apart; still flickers |
-| A web font swapping in | `document.fonts.status` is already `loaded` at measurement |
-| Scroll position moving sticky columns | forced page scroll *and* `.table-scroll` scroll: `small` stayed 1 |
+**Why four attempts missed it.** They compared counts, then positions. The number that moved was
+neither the sizes (`undersized` sat at 52 throughout) nor the geometry, but the count of *other*
+elements considered — and nothing printed that. The `DUMP` flag added at the fourth attempt is what
+finally answered it, in one run.
 
-**The thing to chase next, and the reason four attempts missed it.** A standalone probe of that page
-gives `small=1`. The audit gives **0 or 50**. Nothing outside the audit reproduces either number, so
-the cause is in the audit's own environment — one page object reused across 155 paths and ten
-widths per role — and not in the page. The next attempt should dump the element list from two
-*consecutive* runs and diff the names, which the `DUMP` flag now makes a one-liner. Comparing counts
-has been tried four times.
+**Two real defects found underneath, both fixed the same day:**
 
-**Not urgent**: the defect is reported at six other widths regardless. What it costs is using this
-audit for before-and-after comparison.
+- The disclosure button was **20×28**, from a hand-written near-copy of `ROW_ICON_CLASSES` that
+  dropped `size-7`, against design.md's rule that every control in an actions column is 28×28. The
+  audit had been reporting it at every width and it read as noise. **A permanently noisy check is
+  a check whose true findings get filed as noise.**
+- `clipped_text_controller` measured `textContent`, which counts `sr-only` text, so a cell whose
+  only text is a screen-reader label counted as clipped: **55 cells marked at 320px, 50 of them
+  holding nothing but "Show storage locations for …"**, each a tab stop raising a bubble that
+  repeated a deliberately hidden string. After: 5 marked, 0 unreadable. Both pinned by
+  `item_system_spec.rb`, each watched failing first.
+
+**Still open, and deliberately left**: `allTargets` on that page is 133 on a fresh wide load and 183
+on a fresh narrow one, and a resize between them does not converge. That is the clipped-cell scan
+reacting to `resize` while stacking labels arrive on a `matchMedia` change, and it no longer affects
+any audit result. It is worth a look if a *user-facing* symptom ever points at it.
 
 ## Seven tables with no empty state, deliberately
 

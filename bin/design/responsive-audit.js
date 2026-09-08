@@ -159,10 +159,29 @@ const measure = () => {
     return Math.hypot(c.x - nx, c.y - ny) < 12;
   };
 
+  /*
+   * **A target's own ancestor is not a neighbouring target.** The spacing exception asks whether a
+   * 24px circle on this target reaches *someone else's* hit area; a container that encloses the
+   * target is not someone else, and its box necessarily intersects the circle, so counting it makes
+   * the exception unpassable.
+   *
+   * This was the `/items/inventory` flicker, after five attempts. `clipped_text_controller` gives a
+   * truncated `<td>` `tabindex="0"` so a keyboard user can read its tooltip, which makes the cell
+   * match this check's target selector. On that page the clipped cell is the 40x28 one *wrapping*
+   * each row's 20x28 disclosure button, so all fifty buttons were reported -- and only when the cell
+   * happened to be marked, which is a resize-order bug in the app (see docs/todo.md). Hence a count
+   * that moved 133/183 in `allTargets` and 0/50 here while `undersized` sat at 52 throughout: the
+   * sizes never changed, the *population* did.
+   *
+   * Four attempts compared counts and a fifth compared positions. Neither could see it, because the
+   * number that moved was the number of *other* elements considered.
+   */
+  const separate = (a, b) => a !== b && !a.contains(b) && !b.contains(a);
+
   const smallTargets = undersized.filter((t) => {
     const c = centre(t.r);
-    return allTargets.some((o) => o.el !== t.el && circleHitsBox(c, o.r)) ||
-           undersized.some((o) => o.el !== t.el && Math.hypot(c.x - centre(o.r).x, c.y - centre(o.r).y) < 24);
+    return allTargets.some((o) => separate(o.el, t.el) && circleHitsBox(c, o.r)) ||
+           undersized.some((o) => separate(o.el, t.el) && Math.hypot(c.x - centre(o.r).x, c.y - centre(o.r).y) < 24);
   });
 
   const tiny = [...document.querySelectorAll("main p, main span, main td, main th, main li, main label")]

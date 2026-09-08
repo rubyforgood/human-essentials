@@ -1073,11 +1073,18 @@ column mixing the two does not step by 2px — that was visible on `/vendors` an
 28 is ours**, derived from that trigger; Carbon and Salesforce both ship uniform icon-only row
 actions, which is the part they evidence, at their own sizes.
 
-**One control escaped this rule for the whole migration, and it is worth knowing why.** The
-re-send invitation button on `/organization` is built in `UsersHelper`, not in a template, and the
-check for classes that style nothing read `app/views` only — so it stayed at **14×20** with
+**Two controls escaped this rule for the whole migration, each hidden by a different blind spot.**
+The re-send invitation button on `/organization` is built in `UsersHelper`, not in a template, and
+the check for classes that style nothing read `app/views` only — so it stayed at **14×20** with
 `btn btn-outline-primary btn-xs` until 2026-09-08 while every audit reported clean. Markup built in
 a helper is bound by every rule on this page, and `undefined-classes.py` reads `app/helpers` now.
+
+The row disclosure on `/items/inventory` is the other, and it was *not* hidden — `responsive-audit`
+reported it at every width. It hand-wrote a near-copy of `ROW_ICON_CLASSES` that dropped `size-7`,
+giving **20×28**, and the report was ignored as noise because the same audit flickered between 8
+and 9 findings for an unrelated reason. **A permanently noisy check is a check whose true findings
+get filed as noise**; both were fixed the same day, the flicker first. `item_system_spec.rb` now
+pins the 28×28.
 
 <a id="row-actions-live-in-the-actions-column"></a>
 **And it lives in the actions column, not loose in a data cell.** `/events` put its funnel inline in
@@ -4391,11 +4398,19 @@ Three things about it:
 - **A clipped cell reveals its text on hover and focus**, from `clipped_text_controller`. This is
   the second half of the pattern and the systems ship both: Carbon has a documented tooltip for
   truncated table text, Ant Design pairs `ellipsis` with a Tooltip, AG Grid has `tooltipField`.
-  Three things about ours:
+  Four things about ours:
   - **Only where the text is actually clipped**, from `scrollWidth > clientWidth` per cell. A
     tooltip repeating text you can already read is noise, and only clipped cells take a
     `tabindex`, so a table of short comments adds no tab stops — `/adjustments` has 42 notes cells
     and 0 of either.
+  - **And only text you can see.** `sr-only` content does not count, because a string that is
+    visually hidden was never on screen to be truncated. The measurement used `textContent`, which
+    includes it, so any cell whose only text was a screen-reader label qualified: on
+    `/items/inventory` at 320px, **55 cells marked clipped and 50 of them holding nothing but
+    "Show storage locations for …"** — fifty tab stops, each raising a bubble that repeated a
+    deliberately hidden string, over a cell showing a chevron. Exactly the tab-stop-per-row the
+    rule above exists to prevent, arrived at from the other side. Pinned by
+    `item_system_spec.rb`, "does not turn the disclosure's own cell into a tab stop".
   - **The bubble is `aria-hidden` and the cell gets no `aria-describedby`.** The whole string is
     already in the DOM and has already been read; describing the cell with a copy of its own text
     would announce it twice, which is the main fault of `title` and no better for being ours.

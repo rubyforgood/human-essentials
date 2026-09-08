@@ -91,6 +91,20 @@ stable at 52, and the swing was entirely inside a downstream filter, bimodal at 
 marginal. A count is a hash of the thing you actually want to diff, and it discards exactly the
 information that identifies the cause. Build the dump before the third guess, not after the fourth.
 
+It took a fifth attempt, and the last mile is its own lesson. **Dump the inputs to the rule, not
+just its output.** The names of the flagged elements were identical every run; what moved was the
+*population the rule compared them against* — a set of 50 elements that appeared and vanished — and
+nothing printed that. The rule was "is another target within 24px", and one of the others was the
+flagged element's own **ancestor**, which by definition overlaps it, so the exception it was
+testing could never be met. When a predicate takes a neighbourhood, the neighbourhood is a term in
+the comparison and has to be dumped like any other.
+
+**A permanently noisy check is a check whose true findings get filed as noise.** That audit had
+been reporting a real defect at every width — a control drawn at 20×28 against a documented 28×28
+— for as long as it had been flickering, and it was read as more of the flicker. Fixing the noise
+first, then re-reading what remained, is what surfaced it. This is the actual cost of tolerating a
+red check: not the ignored run, but the true positive that arrives wearing its clothes.
+
 **Read the DOM with the retrying finder, never with a snapshot.** A single
 `Nokogiri.parse(page.body)` is a photograph of whatever existed at that instant, and every
 conclusion drawn from it inherits that timing. One helper took a widget's starting id that way;
