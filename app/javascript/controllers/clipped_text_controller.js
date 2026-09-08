@@ -76,11 +76,9 @@ export default class extends Controller {
   scan() {
     this.hide();
     const cells = [...this.element.querySelectorAll(".data-table td")];
-    const clipped = cells.map(
-      (cell) => cell.scrollWidth > cell.clientWidth && cell.textContent.trim() !== ""
-    );
+    const clipped = cells.map((cell) => cell.scrollWidth > cell.clientWidth);
     cells.forEach((cell, i) => {
-      if (clipped[i]) {
+      if (clipped[i] && this.readableText(cell) !== "") {
         cell.dataset.clipped = "true";
         cell.tabIndex = 0;
       } else {
@@ -88,6 +86,28 @@ export default class extends Controller {
         cell.removeAttribute("tabindex");
       }
     });
+  }
+
+  /*
+   * The cell's text *as a sighted reader meets it*. `textContent` includes `sr-only` content, and
+   * a cell whose only text is visually hidden has nothing to reveal -- there is no truncation to
+   * undo, because there was never anything on screen to truncate.
+   *
+   * Measured on `/items/inventory` at 320px: **55 cells marked clipped, 50 of them holding nothing
+   * but an `sr-only` label** on the disclosure column. Each was a tab stop raising a bubble that
+   * repeated a deliberately hidden string -- "Show storage locations for Adult Briefs" -- over a
+   * cell showing a chevron. That is the tab-stop-per-row this controller's own comment says it
+   * exists to avoid, and `responsive-audit` was reporting all fifty of the buttons inside those
+   * cells for a different reason: a focusable cell is a target, and it wraps its own button.
+   *
+   * The clone is in the write pass on purpose. It reads no geometry, so it cannot re-trigger the
+   * layout that the measure-then-write split above is there to avoid.
+   */
+  readableText(cell) {
+    if (!cell.querySelector(".sr-only")) return cell.textContent.trim();
+    const copy = cell.cloneNode(true);
+    copy.querySelectorAll(".sr-only").forEach((node) => node.remove());
+    return copy.textContent.trim();
   }
 
   cellFor(target) {

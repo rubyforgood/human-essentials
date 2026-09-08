@@ -4,9 +4,15 @@
 <tr>
   <td class="w-10">
     <%# The AdminLTE widget put aria-expanded on the <tr> and the affordance on a ::before
-        glyph, which no keyboard user could reach. This is a real button. %>
+        glyph, which no keyboard user could reach. This is a real button.
+
+        The classes were a hand-written near-copy of `ROW_ICON_CLASSES` that dropped `size-7`,
+        so it measured **20x28** where design.md requires every control in an actions column to
+        be 28x28. `responsive-audit` reported it at every width, but for the wrong reason -- the
+        clipped-text controller had made the wrapping cell focusable, and a target's own ancestor
+        was counting against its spacing exception. The size was real; the report was not. %>
     <button type="button"
-            class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+            class="<%= essentials_row_icon_classes %>"
             aria-expanded="false"
             aria-controls="<%= detail_id %>"
             data-action="click->expandable#toggle">

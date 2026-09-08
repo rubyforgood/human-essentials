@@ -1128,6 +1128,15 @@ that was never going to happen. Where the action *can* be done, the confirmation
 The one exception is your own row on the organization's Users table, which stays greyed out — there
 is nothing to attempt there, so there is nothing to explain afterwards.
 
+### The arrow that opens a row on Item inventory
+
+**It is bigger, and its cell no longer takes keyboard focus.** Two small things on one control. The
+arrow was drawn a few pixels narrower than every other row button, which made it fiddly to hit; it
+is the standard size now. And on a narrow window the *cell* around each arrow had become focusable,
+so tabbing through the page stopped once per row — fifty times in a table of fifty items — each stop
+showing a tooltip that repeated text meant only for screen readers. Tabbing now goes straight down
+the arrows. What the arrow does has not changed.
+
 ### Table actions look the same on every table now
 
 **The items in the "..." menu line up now.** An action that submits a form — *Deactivate*,

@@ -160,6 +160,40 @@ RSpec.describe "Item management", type: :system do
       expect(expanded_row).to have_content num_tampons_in_donation
       expect(expanded_row).to have_content num_tampons_second_donation
     end
+
+    # design.md: "Every visible control in an actions column is an icon at `size-7`." This one was
+    # a hand-written near-copy of `ROW_ICON_CLASSES` that dropped `size-7`, so it drew 20x28 --
+    # under the 24px WCAG 2.5.8 asks for, on the narrow axis, in every row of the table.
+    it "draws the row disclosure at the actions-column size", js: true do
+      click_on "Item inventory"
+      expect(page).to have_current_path(inventory_items_path)
+
+      size = page.evaluate_script(<<~JS)
+        (function () {
+          const r = document.querySelector("td.w-10 button[aria-controls]").getBoundingClientRect();
+          return [Math.round(r.width), Math.round(r.height)];
+        })()
+      JS
+      expect(size).to eq([28, 28])
+    end
+
+    # `clipped_text_controller` marks a cell whose text is truncated and gives it a tab stop, so a
+    # keyboard user can reach the tooltip that reveals it. It measured `textContent`, which counts
+    # `sr-only` content -- and the disclosure cell's only text is "Show storage locations for ...",
+    # which no sighted reader can see and which is therefore never truncated. Measured on
+    # /items/inventory at 320px before the fix: 55 cells marked, 50 of them holding nothing but
+    # that label. Fifty tab stops, each raising a bubble repeating a hidden string over a chevron.
+    it "does not turn the disclosure's own cell into a tab stop", js: true do
+      page.driver.resize(360, 800)
+      click_on "Item inventory"
+      expect(page).to have_current_path(inventory_items_path)
+
+      # The control is there -- so a passing assertion below is the cell being left alone, not the
+      # page having failed to render.
+      expect(page).to have_css("td.w-10 button[aria-controls]", visible: :all)
+      expect(page).to have_no_css("td.w-10[tabindex]", visible: :all)
+      expect(page).to have_no_css("td.w-10[data-clipped]", visible: :all)
+    end
   end
 
   describe 'Item Category Management' do
