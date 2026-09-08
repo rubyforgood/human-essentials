@@ -261,8 +261,101 @@ const measure = () => {
   };
 };
 
+/*
+ * --- The short-viewport chrome check ---------------------------------------------------------
+ *
+ * A page "works" only if its own content is reachable with the fixed and sticky chrome in place,
+ * and a 740x360 landscape phone is where that stops being free.
+ *
+ * Module level and exported, so `audit-selftest.js` can drive it against a page broken on purpose.
+ * That is not tidiness: **its reporting arm has no live positive in this app.** Once the frozen
+ * actions column stopped being counted, no screen crosses the 50% threshold -- a full run considers
+ * 30 pinned elements across 146 page visits, every one of them `.table-rail` at 24px of 360, about
+ * 7% -- so nothing in the app would notice if the threshold arm broke. The controls are the only
+ * thing exercising it, and they were five shell scripts in /tmp until now.
+ */
+
+// Swappable, so the self-test can collect what this reports instead of the run collecting it.
+// Same pattern as `wcag22-audit.js`; see the note there.
+let sink = null;
+const captureInto = (fn) => { sink = fn; };
+
+const chromeProbe = () => {
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  const onScreen = [...document.querySelectorAll("body *")].filter((el) => {
+    const cs = getComputedStyle(el);
+    if (cs.position !== "fixed" && cs.position !== "sticky") return false;
+    if (el.closest(".profiler-results, #rack-mini-profiler")) return false;
+    // Third-party overlays are not this app's chrome: rack-mini-profiler's badge sits at
+    // z-index 2147483643 and reCAPTCHA's containers in the same range. The app's own
+    // highest is z-40, so anything past 100 belongs to somebody else.
+    if (Number(cs.zIndex) > 100) return false;
+    /*
+     * **Sticky sideways is not chrome.** This measures how much of a short viewport is eaten by
+     * chrome pinned *down* the screen. A `sticky` element with `top` and `bottom` both `auto` is
+     * pinned on a horizontal edge instead, and its vertical band scrolls away with the content --
+     * it occludes no fixed strip of the viewport at all.
+     *
+     * The frozen actions column is exactly that: `position: sticky; right: 0` on every cell.
+     * Measured on `/admin/partners` at 740x360, the counted elements were eight `td.cell-actions`
+     * at `top: auto, bottom: auto, right: 0px` in consecutive bands (216..269, 269..322,
+     * 322..375), unioned to **186px of 360** -- past the threshold, on two pages, for a column
+     * that eats no height whatever. Same family as the ancestor bug in the spacing exception
+     * above: a geometric rule reading an element whose geometry does not mean what it assumes.
+     */
+    if (cs.position === "sticky" && cs.top === "auto" && cs.bottom === "auto") return false;
+    const r = el.getBoundingClientRect();
+    // Only chrome that is actually over the content. The nav drawer below lg is
+    // `fixed inset-y-0` translated off-canvas: full height, and covering nothing.
+    return r.height > 0 && r.width > 0 && r.right > 0 && r.left < vw && r.bottom > 0 && r.top < vh;
+  });
+  // Union of the vertical bands, not the sum: a topbar and a sticky sub-bar that overlap must
+  // not be counted twice.
+  const bands = onScreen
+    .map((el) => { const r = el.getBoundingClientRect(); return [Math.max(0, r.top), Math.min(vh, r.bottom)]; })
+    .sort((a, b) => a[0] - b[0]);
+  let eaten = 0, cursor = 0;
+  for (const [top, bottom] of bands) {
+    if (bottom <= cursor) continue;
+    eaten += bottom - Math.max(top, cursor);
+    cursor = Math.max(cursor, bottom);
+  }
+  const h1 = document.querySelector("main h1, h1");
+  return {
+    eaten: Math.round(eaten), vh,
+    // What the filter kept, so a zero can be read. A correct "nothing crosses the threshold" and
+    // a check that looked at nothing produce the same pass line otherwise -- and a four-page spot
+    // check convinced me of the second before a full run printed 30 across 146 page visits.
+    considered: onScreen.length,
+    h1Hidden: h1 ? h1.getBoundingClientRect().bottom < 0 || h1.getBoundingClientRect().top > vh : false
+  };
+};
+
+// `resize: false` lets the self-test set up its own viewport and mutate the page before measuring;
+// the run needs the resize, and the 400ms with it.
+async function shortViewportChrome(page, where, { resize = true } = {}) {
+  if (resize) {
+    await page.setViewportSize(SHORT);
+    // 400ms, not 120: the sidebar slides back off-canvas with `duration-200`, and measured
+    // mid-flight it is a full-height element on screen covering the entire short viewport.
+    await page.waitForTimeout(400);
+  }
+  const short = await page.evaluate(chromeProbe);
+  // One definition of the threshold. The run swaps a sink in that pushes onto its findings list.
+  if (short.eaten > short.vh * 0.5 && sink) {
+    sink("short-viewport", where, `fixed/sticky chrome covers ${short.eaten}px of a ${short.vh}px viewport`);
+  }
+  return short;
+}
+
 const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("admin") ? "super" : "bank");
 
+module.exports = { shortViewportChrome, captureInto, SHORT };
+
+// Requiring this file must not run the audit: `audit-selftest.js` imports the check above and
+// drives it against a page it has deliberately broken. Same guard as `wcag22-audit.js`.
+if (require.main === module) {
 (async () => {
   const browser = await chromium.launch();
   const users = { super: "superadmin@example.com", bank: "org_admin1@example.com",
@@ -272,6 +365,12 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   let checks = 0;
   // How much the short-viewport chrome check had to look at, so a zero can be read.
   let shortConsidered = 0, shortPages = 0;
+
+  // The run collects what the exported check reports. `audit-selftest.js` swaps this for its own
+  // collector, which is the whole reason the threshold lives in one place.
+  captureInto((_check, where, detail) => {
+    findings.push({ path: where, width: `${SHORT.width}x${SHORT.height}`, problems: [detail] });
+  });
 
   for (const [role, email] of Object.entries(users)) {
     let page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -363,72 +462,11 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
         if (m.drawer) problems.push(m.drawer);
         if (problems.length) findings.push({ path: t.path, width, problems });
       }
-      // Landscape phone. A page "works" only if its own content is reachable with the fixed and
-      // sticky chrome in place, and a 360px-tall viewport is where that stops being free.
-      await page.setViewportSize(SHORT);
-      // 400ms, not 120: the sidebar slides back off-canvas with `duration-200`, and measured
-      // mid-flight it is a full-height element on screen covering the entire short viewport.
-      await page.waitForTimeout(400);
-      const short = await page.evaluate(() => {
-        const vh = window.innerHeight;
-        const vw = window.innerWidth;
-        const onScreen = [...document.querySelectorAll("body *")].filter((el) => {
-          const cs = getComputedStyle(el);
-          if (cs.position !== "fixed" && cs.position !== "sticky") return false;
-          if (el.closest(".profiler-results, #rack-mini-profiler")) return false;
-          // Third-party overlays are not this app's chrome: rack-mini-profiler's badge sits at
-          // z-index 2147483643 and reCAPTCHA's containers in the same range. The app's own
-          // highest is z-40, so anything past 100 belongs to somebody else.
-          if (Number(cs.zIndex) > 100) return false;
-          /*
-           * **Sticky sideways is not chrome.** This measures how much of a short viewport is eaten
-           * by chrome pinned *down* the screen. A `sticky` element with `top` and `bottom` both
-           * `auto` is pinned on a horizontal edge instead, and its vertical band scrolls away with
-           * the content -- it occludes no fixed strip of the viewport at all.
-           *
-           * The frozen actions column is exactly that: `position: sticky; right: 0` on every cell.
-           * Measured on `/admin/partners` at 740x360, the counted elements were eight
-           * `td.cell-actions` at `top: auto, bottom: auto, right: 0px` in consecutive bands
-           * (216..269, 269..322, 322..375), unioned to **186px of 360** -- past the 50% threshold,
-           * on two pages, for a column that eats no height whatever. Same family as the ancestor
-           * bug in the spacing exception above: a geometric rule reading an element whose geometry
-           * does not mean what the rule assumes.
-           */
-          if (cs.position === "sticky" && cs.top === "auto" && cs.bottom === "auto") return false;
-          const r = el.getBoundingClientRect();
-          // Only chrome that is actually over the content. The nav drawer below lg is
-          // `fixed inset-y-0` translated off-canvas: full height, and covering nothing.
-          return r.height > 0 && r.width > 0 && r.right > 0 && r.left < vw && r.bottom > 0 && r.top < vh;
-        });
-        // Union of the vertical bands, not the sum: a topbar and a sticky sub-bar that overlap
-        // must not be counted twice.
-        const bands = onScreen
-          .map((el) => { const r = el.getBoundingClientRect(); return [Math.max(0, r.top), Math.min(vh, r.bottom)]; })
-          .sort((a, b) => a[0] - b[0]);
-        let eaten = 0, cursor = 0;
-        for (const [top, bottom] of bands) {
-          if (bottom <= cursor) continue;
-          eaten += bottom - Math.max(top, cursor);
-          cursor = Math.max(cursor, bottom);
-        }
-        const h1 = document.querySelector("main h1, h1");
-        return {
-          eaten: Math.round(eaten), vh,
-          // What the filter kept. Printed in the summary, because this check now measures 0 on
-          // every screen in this app -- the topbar is `position: relative` and the nav drawer is
-          // off-canvas below `lg`, so there is no chrome pinned down a short viewport at all. A
-          // correct zero and a check that looks at nothing read the same in a pass line.
-          considered: onScreen.length,
-          h1Hidden: h1 ? h1.getBoundingClientRect().bottom < 0 || h1.getBoundingClientRect().top > vh : false,
-        };
-      });
+      // Landscape phone, measured by the exported check so the self-test drives the same code.
+      const short = await shortViewportChrome(page, t.path);
       checks++;
       shortConsidered += short.considered;
       shortPages++;
-      if (short.eaten > short.vh * 0.5) {
-        findings.push({ path: t.path, width: `${SHORT.width}x${SHORT.height}`,
-          problems: [`fixed/sticky chrome covers ${short.eaten}px of a ${short.vh}px viewport`] });
-      }
 
       await page.setViewportSize({ width: 1440, height: 900 });
     }
@@ -474,3 +512,4 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   console.log(`${findings.length} findings across ${new Set(findings.map((f) => f.path)).size} pages`);
   await browser.close();
 })();
+}

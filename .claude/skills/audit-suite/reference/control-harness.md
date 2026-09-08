@@ -107,7 +107,7 @@ overflowing.
 
 Run the harness on every change; run the audits deliberately.
 
-The harness is fast — the source project's was 11 seconds for 11 controls — and deterministic. The
+The harness is fast — the source project's was 12 seconds for 13 controls — and deterministic. The
 audits are slow and read real data.
 
 Two things that will bite in CI:

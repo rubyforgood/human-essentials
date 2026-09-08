@@ -384,7 +384,15 @@ overflows and grows a scroll rail; on a freshly seeded database it does not, `.t
 null, and half the controls threw. A self-test that depends on how much data happens to exist is not
 a test — and in CI it would have been a red build about nothing.
 
-Currently **11 controls over 5 checks, 0 wrong**.
+Currently **13 controls over 6 checks, 0 wrong**, in 12 seconds.
+
+The sixth check is the **short-viewport chrome** measure out of `responsive-audit.js`, and it is here
+for a reason worth stating: it has **no live positive anywhere in the app**. Once the frozen actions
+column stopped counting as vertical chrome, no screen crosses the 50% threshold — a full run
+considers 30 pinned elements across 146 page visits, all of them `.table-rail` at 24px of 360 — so
+the run exercises the measurement and never the reporting. These two controls are the only thing
+that would notice if the threshold arm broke, which is exactly the case for putting a check in here
+rather than trusting a green run.
 
 `wcag22-audit.js` covers the **six criteria WCAG 2.2 added at A and AA**, five of which nothing
 else here checked.

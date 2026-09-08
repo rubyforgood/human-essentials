@@ -247,6 +247,27 @@ All five would have been caught by a negative control:
 | A label hidden by the standard visually-hidden technique, clipped by design |
 | An indicator that transitions in rather than appearing instantly |
 
+**A control has to be sited where the check looks.** Both halves can be written correctly and prove
+nothing, and this is easy to miss because the control *passes*. A negative control for a
+short-viewport check injected a right-pinned sticky table and expected silence; it was silent, and
+it was silent with the fix removed too, because `document.body.append` put the table below a page
+far taller than the 360px window and every cell failed the check's own "is it on screen" test. The
+control measured nothing and read as a pass. **Verify a control by removing the fix and watching it
+go red** — the same discipline as an assertion, applied to the thing asserting. The identical
+mistake, made twice in one day: an earlier "a target alone in open space" control was placed over a
+dense table, so it was crowded by real page content and reported the opposite of what it claimed to
+show.
+
+**Then break the reporting arm and watch the positive go red as well.** Silencing the threshold —
+`> vh * 0.5` to `> vh * 5` — must make the positive control fail. Otherwise a check that measures
+perfectly and never reports still passes both controls.
+
+**Reset shared state in the harness, not in each control.** One page object usually serves every
+control, so a control that has to resize the viewport leaves the rest running at that size and
+quietly changes what they measure. Put the reset in the per-control setup where a future control
+cannot forget it — the alternative is the class of bug where an earlier check scrolls a region and
+the next one reports it as already at its limit, which is on the list above.
+
 See `reference/control-harness.md` for how to build this.
 
 ## Six ways a check lies
