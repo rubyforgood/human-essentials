@@ -35,7 +35,9 @@
     "adjust an allocation": "bi-sliders",
     "copy to the clipboard": "bi-clipboard",
     "total something up": "bi-calculator",
-    "more actions": "bi-three-dots-vertical"
+    "more actions": "bi-three-dots-vertical",
+    "compare with another period": "bi-arrow-left-right",
+    "reset a password": "bi-key"
   },
   "structural": [
     "bi-x-lg",
