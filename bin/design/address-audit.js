@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Checks that every screen collecting an address asks for it the same way.
 //
 // Seven screens collect one, and before this they did it in five different shapes: `state` was a

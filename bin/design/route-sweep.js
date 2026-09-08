@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 /*
  * Every HTML screen the router knows about, in a real browser, as three different users.
  *

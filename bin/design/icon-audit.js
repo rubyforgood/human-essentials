@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER, bin/design/icon-lexicon.json
 // Every button and menu item in the app, with the glyph it carries, checked against the lexicon.
 //
 // design.md said how to *mark up* an icon -- `aria-hidden` beside a label, `aria-label` when alone,

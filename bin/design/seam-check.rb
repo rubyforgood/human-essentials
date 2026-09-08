@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# AUDIT-READS: AUDITS
 # A ratchet on the audit suite's one seam to the application.
 #
 #     ruby bin/design/seam-check.rb

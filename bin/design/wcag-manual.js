@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // The WCAG criteria axe cannot check, checked by driving the browser.
 //
 // axe is static: it inspects a rendered tree. These need something to happen first -- a key

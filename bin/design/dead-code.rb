@@ -1,3 +1,4 @@
+# AUDIT-READS: RENDER
 # Code that exists and cannot run: actions no route reaches, templates nothing renders, helpers
 # nothing calls, files nothing links to.
 #

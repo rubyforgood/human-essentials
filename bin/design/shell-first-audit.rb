@@ -1,3 +1,4 @@
+# AUDIT-READS: VIEWS, ROUTES
 # Finds pages whose *shell* was migrated and whose *body* was not.
 #
 # Every other audit in this directory asks: is anything from the old system still present? A

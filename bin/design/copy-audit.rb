@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# AUDIT-READS: VIEWS, app/helpers/, app/models/, app/services/, app/controllers/, app/javascript/, config/locales/
+
 # Copy audit: inclusive language, and the WCAG success criteria that are about *words*.
 #
 # The other audits look at markup and geometry. This one looks at what the words say, which axe
