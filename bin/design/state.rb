@@ -42,8 +42,12 @@ routes_dead = routes_out[/(\d+) dead/, 1]
 
 dead_code = capture("cd #{Rails.root} && bin/rails runner bin/design/dead-code.rb")[/(\d+) finding/, 1]
 
+# Read the count the script prints, rather than counting the tokens it lists. It only lists a
+# token when it has one to list, so a line-counting parse cannot tell "nothing undefined" from
+# "the audit did not run" -- and it answered 0 to both, which is the shape of a false clean.
 undefined_classes = capture("cd #{Rails.root} && python3 bin/design/undefined-classes.py")
-undefined_count = undefined_classes.include?("reports zero") ? 0 : undefined_classes.scan(/^\s+\S+$/).size
+undefined_count = undefined_classes[/^(\d+) class tokens style nothing/, 1] ||
+  "n/a (audit produced no count)"
 
 # `1,078` not `1078`: the table has always delimited these, so a diff is about the figure changing
 # rather than about formatting.
@@ -66,7 +70,7 @@ rows = {
   "Controllers on a design system layout" => controllers,
   "Views carrying design system markup" => views,
   "Stimulus controllers" => Rails.root.glob("app/javascript/controllers/*_controller.js").size.to_s,
-  "Undefined legacy classes left in `app/views`" => undefined_count.to_s,
+  "Undefined legacy classes left in `app/views` and `app/helpers`" => undefined_count.to_s,
   "Routes whose request would raise" => "#{routes_dead} of #{routes_total}",
   "Code no route, render or caller reaches" => "#{dead_code} findings, documented in design-decisions.md"
 }

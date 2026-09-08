@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Class tokens in the views that the compiled stylesheet does not define.
+"""Class tokens in the views and helpers that the compiled stylesheet does not define.
 
 A class nothing defines renders as nothing. That is how the last Bootstrap and AdminLTE
 leftovers were found, and it catches what the browser sweep cannot: the sweep only visits the
@@ -15,6 +15,12 @@ Two things this script is careful about, both of which produced a wrong answer f
   * A class can be deliberate without being styled: a Stimulus target, a spec selector, or a
     hook belonging to a gem. `filterrific-periodically-observed` and `form-inputs` are the
     filterrific and simple_form gems' own. Those are separated out rather than reported.
+
+  * Helpers emit markup too, and both halves of this script had to change to see them. Reading
+    only `app/views/**/*.erb` missed them outright; and the "is it a deliberate hook" grep reads
+    `*.rb` under `app/`, so once helpers were read, the helper's own `class:` counted as a
+    reference to itself and the token was filed as a hook instead of reported. `reinvite_user_link`
+    kept `btn btn-outline-primary btn-xs` through the whole migration behind those two gaps.
 """
 import re, glob, subprocess, sys, pathlib
 from collections import defaultdict
@@ -43,9 +49,13 @@ SKIP = re.compile(r"app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/u
 # A token containing any of these came out of an ERB expression, not a literal class list.
 NOT_A_CLASS = re.compile(r"[<>#{}%\"'()?:=,.]")
 
+# Every file that writes a class attribute: templates, and the helpers that build markup for them.
+SOURCES = (sorted(glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True)) +
+           sorted(glob.glob(str(ROOT / "app/helpers/**/*.rb"), recursive=True)))
+
 hits = defaultdict(set)
 markup_tokens = set()
-for path in sorted(glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True)):
+for path in SOURCES:
     rel = path[len(str(ROOT)) + 1:]
     if SKIP.search(rel): continue
     src = pathlib.Path(path).read_text(errors="replace")
@@ -60,10 +70,20 @@ for path in sorted(glob.glob(str(ROOT / "app/views/**/*.erb"), recursive=True)):
             hits[tok].add(rel.replace("app/views/", ""))
 
 def referenced_elsewhere(tok):
-    """Deliberate hook: something other than the class attribute selects it."""
-    for cmd in (["grep", "-rqF", "--include=*.js", "--include=*.rb", "--include=*.css", tok,
-                 str(ROOT / "app"), str(ROOT / "lib"), str(ROOT / "config")],
-                ["grep", "-rqF", tok, str(ROOT / "spec")],
+    """Deliberate hook: something other than a class attribute we read selects it.
+
+    The app grep names its file types rather than searching everything, which is what kept a
+    view's own `class="foo"` from counting as a reference to `foo`: `.erb` is not in the list.
+    Helpers write class attributes in `.rb`, which is, so the files we extracted from are
+    subtracted here for exactly the same reason -- otherwise every helper-only class is its
+    own justification and can never be reported.
+    """
+    app = subprocess.run(["grep", "-rlF", "--include=*.js", "--include=*.rb", "--include=*.css", tok,
+                          str(ROOT / "app"), str(ROOT / "lib"), str(ROOT / "config")],
+                         capture_output=True, text=True)
+    if {line for line in app.stdout.splitlines() if line} - set(SOURCES):
+        return True
+    for cmd in (["grep", "-rqF", tok, str(ROOT / "spec")],
                 ["bash", "-lc", f"grep -rqF -- {tok!r} /usr/local/bundle/gems/*/app /usr/local/bundle/gems/*/vendor /usr/local/bundle/gems/*/lib 2>/dev/null"]):
         if subprocess.run(cmd, capture_output=True).returncode == 0:
             return True

@@ -257,7 +257,7 @@ ruby bin/design/page-audit.rb        # defects and debt, per view
 ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
 pw bin/design/wayfinding-audit.js    # screens that can be reached but not left
 bin/design/serve-mockup <name>       # serve a design preview and print its URL
-python3 bin/design/undefined-classes.py   # classes that render as nothing
+python3 bin/design/undefined-classes.py   # classes that render as nothing (views *and* helpers)
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
 
@@ -1089,6 +1089,12 @@ take. Nothing has been lost — it was the smaller of two lists of the same thin
 account-menu tidy-up nothing linked to it.
 
 *Add a user* still works and now returns you to the organization page.
+
+**The re-send invitation button on that table is now the size of every other row action.** It
+appears beside anyone whose invitation has been outstanding for more than a week, and it had been
+drawn at 14×20 pixels — a target small enough to miss on a laptop trackpad and well under the 24×24
+this project holds itself to. It is 28×28 now, hovering tells you what it does, and a screen reader
+announces it as "Re-send invitation" instead of reading nothing. What it does has not changed.
 
 ### The account menu is shorter
 

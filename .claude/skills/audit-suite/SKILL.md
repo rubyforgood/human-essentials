@@ -47,6 +47,28 @@ bare name, so a filter meant for one controller's internal endpoint also hid a r
 another — and *every* audit built on it inherited the gap. Filter by fully qualified identifier,
 never by a name fragment.
 
+**Widening what a check reads can require widening what it discounts.** An audit that finds dead
+CSS classes read the templates and not the helpers, and reported zero for an entire migration while
+a live page rendered three classes the stylesheet did not define. Adding the helpers to its file
+list changed the result by nothing — because the same audit decides whether a class is *deliberate*
+by grepping for it outside the class attribute, that grep names its file types, and the type it had
+always excluded was the templates', for exactly the right reason: a view writing `class="foo"` is
+not evidence that `foo` means anything. Helpers write class attributes in a file type the grep does
+read, so every helper-only class became its own justification and was filed as intentional.
+
+The shape to watch for: a check with an **inclusion** rule and a **suppression** rule that overlap.
+Widen the first and the second silently eats the new findings. The intermediate run is the dangerous
+artefact — it reports clean, it is the number you were hoping for, and it reads as confirmation that
+there was nothing there. **After widening a scope, plant a defect in the newly covered region.** Not
+in the region that already worked; that control passes either way and tells you nothing about the
+change you just made.
+
+Fix it by restoring the suppression rule's *intent* rather than special-casing the new input. Here
+that meant subtracting the files the audit extracts from — "something other than a class attribute
+*we read* refers to it" — which keeps working when the next input type is added. Excluding the
+helper directory by name would have passed the same control and lied the first time a helper
+legitimately referenced a class.
+
 **Count what you examined and print it.** A check that examined nothing reports no failures, which
 is indistinguishable from a check that examined everything and found nothing:
 

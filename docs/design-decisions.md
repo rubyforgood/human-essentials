@@ -9519,3 +9519,61 @@ component every other table in the app already uses.
 Not done: `/broadcast_announcements/1/edit` and `/partners/children/new` still 404 and are still
 skipped by every audit. They are in `docs/todo.md`, because after today the reasonable prior is that
 a skipped route is hiding something.
+
+## 2026-09-08 — An audit that read half the markup, and when to delete an unused helper
+
+Two decisions here. The second is the reusable one.
+
+### Widening an audit's inputs can require widening its exclusions
+
+`undefined-classes.py` globbed `app/views/**/*.erb` and reported zero orphans for the whole
+migration. It was right about the views and blind to `app/helpers`, where `reinvite_user_link`
+had been rendering `btn btn-outline-primary btn-xs` on `/organization` since Bootstrap was
+removed — a 14×20 target named only by `title`.
+
+Adding the glob changed nothing, and the reason is more interesting than the bug. The script
+separates orphans from *deliberate hooks* by grepping for the token outside the class attribute:
+a Stimulus target, a spec selector, a gem's own class. That grep names its file types —
+`--include=*.js --include=*.rb --include=*.css` — and `.erb` is deliberately absent, because a
+view writing `class="foo"` is not evidence that `foo` means anything. Helpers write class
+attributes in `.rb`, which *is* in the list. So every helper-only token was its own justification
+and got filed as a hook. The intermediate run reported clean and looked like confirmation.
+
+The files the script extracts from are now subtracted from that grep's matches, which restores
+the original intent — "something *other than* a class attribute we read selects it" — rather than
+special-casing helpers. Rejected: excluding `app/helpers` from the hook grep, which would have
+worked today and lied the moment a helper legitimately referenced a class by name.
+
+Both directions are proven, because only one of them was ever in doubt: a class planted in a
+helper is reported, and a class planted in a view still is. The second control is the one that
+would have caught a fix that traded one blind spot for another.
+
+### An unused helper stays if it renders design system output, and goes if it does not
+
+The audit found four undefined tokens in two helpers. One was live and got migrated. The other
+three — `PartnersHelper#partner_status_label`, `#partner_status_badge`, `#show_header_column_class`
+— had no callers anywhere, and emitted `label label-teal`, `badge badge-pill bg-primary` and
+`col-sm-3 col-3`. They were deleted.
+
+That looks inconsistent with a decision already on file, and the distinction is worth stating
+because the next person will meet it. `migration-map.md` keeps eleven unreferenced `*_button_to`
+shims in `ui_helper.rb` on the grounds that documented dead weight costs nothing. Removing
+`partner_status_label` also left `UiHelper#status_label` with no callers, and that one stays.
+
+The difference is what a future caller gets. The shims were **migrated**: `status_label` renders
+an `essentials_status_pill`, so calling it produces a correct pill. The three deleted methods were
+**never migrated**, so calling one produces markup the browser draws as nothing, silently, with no
+error and no failing spec. An unused migrated helper is inert; an unused unmigrated helper is a
+loaded gun with the safety off. `essentials_partner_status_pill` was already the live replacement
+and is used by the partner list, the partner row and the dashboard.
+
+Rejected: deleting all of them for consistency, which is a much larger change to `ui_helper.rb`
+with no defect behind it; and keeping all of them for consistency, which is what left a Bootstrap
+button on a live page for three weeks.
+
+### What this did not fix
+
+The `responsive-audit` flicker, which is what led here, is still open. It is at
+`46352abf8` in the change log with six eliminated hypotheses, and the button on `/organization`
+was not its cause — the flicker is bimodal across all fifty spacing-exception targets, and this
+was one control.

@@ -42,7 +42,11 @@ breaks that down.
 
 ### Class names that style nothing
 
-**None.** `bin/design/undefined-classes.py` reports zero.
+**None.** `bin/design/undefined-classes.py` reports zero — and since 2026-09-08 that zero means
+more than it used to, because the script reads `app/helpers` as well as `app/views`. It had
+reported zero for the whole migration while `reinvite_user_link` rendered a `btn
+btn-outline-primary btn-xs` button on `/organization`. Helpers build markup too, and nothing was
+reading them; two helpers gave up four Bootstrap tokens the moment it could see them.
 
 Twenty-three inert class names were removed in August 2026 — AdminLTE-era layout hooks
 (`form-yesno`, `radio-yesno`, `col-w`), hooks for a served-areas script that no longer exists
@@ -187,6 +191,8 @@ What to write when you meet the old thing.
 | `fa_icon "floppy-o"` | **nothing** — a form's generic verbs carry no glyph. `UiHelper::ICON_FOR_FA` no longer maps the name, so `bi-save` (a floppy disk) is used nowhere. `IconHelper::FA_TO_BI` still maps it, because that table translates Font Awesome for whatever still calls `fa_icon` |
 | `fa_icon "upload"` on an **Import** button | `bi-box-arrow-in-down` — the arrow goes *into* the box. `bi-upload` stays, and means uploading a file |
 | `fa_icon "download"` on an **Export** button | `bi-box-arrow-up` — the arrow comes *out of* the box. `bi-download` stays, and means downloading one |
+| `UsersHelper#reinvite_user_link`'s hand-written `button_to ... class: "btn btn-outline-primary btn-xs"` | `essentials_action_button "Re-send invitation", …, icon: "bi-envelope", icon_only: true`. Measured on `/organization`: 14×20 before, 28×28 after, and the name moved from `title` to `aria-label`. It also carried `alt:` on a `<button>`, where that attribute does nothing |
+| `PartnersHelper#partner_status_label`, `#partner_status_badge`, `#show_header_column_class` | **removed.** Unreferenced, and each emitted classes the stylesheet does not define (`label label-teal`, `badge badge-pill bg-primary`, `col-sm-3 col-3`). Unlike the `ui_helper.rb` shims below, these were never migrated, so leaving them would hand the next caller invisible markup. `essentials_partner_status_pill` is the live replacement |
 
 ## Defects the conversion exposed
 
@@ -351,6 +357,12 @@ findings that belong to this migration rather than to the app's own history:
   `submit_button` (19), `add_element_button` (11) and `remove_element_button` (5). The file's own
   comment claiming "~60 call sites pass `type:`/`size:`" is left as written but was true of the
   AdminLTE version, not this one.
+- **`UiHelper#status_label` has no callers either**, measured 2026-09-08. Its only one was
+  `PartnersHelper#partner_status_label`, removed the same day. It stays, for the reason the
+  `*_button_to` shims stay: it was migrated, so it renders an `essentials_status_pill` and a
+  future caller gets a correct pill. That is the whole line between staying and going here — an
+  unused helper that renders design system output is inert, an unused helper that renders classes
+  nothing defines is a trap, and the three deleted from `partners_helper.rb` were the second kind.
 
 **`data-stack` is gone.** A narrow table became a list of cards from an attribute
 `table_stack_controller` wrote after measuring the container; it is a media query now, at
