@@ -31,6 +31,7 @@ const nodePath = require("path");
 
 const manual = require(nodePath.join(__dirname, "wcag-manual.js"));
 const wcag22 = require(nodePath.join(__dirname, "wcag22-audit.js"));
+const responsive = require(nodePath.join(__dirname, "responsive-audit.js"));
 const { signIn } = require("./targets");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -63,7 +64,14 @@ async function ensureRail(page) {
   await page.waitForTimeout(200);
 }
 
+// The viewport every control starts from. One page object serves all of them, so a control that
+// resizes -- the short-viewport chrome check has to -- would otherwise leave the next eleven
+// running at 740x360 and quietly change what they measure. Reset here rather than in each control,
+// so a future control cannot forget.
+const VIEWPORT = { width: 1280, height: 900 };
+
 async function settle(page, path) {
+  await page.setViewportSize(VIEWPORT);
   await page.goto(BASE + path, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {});
   await page.waitForTimeout(400);
@@ -242,12 +250,62 @@ const CONTROLS = [
       main a:focus-visible, main button:focus-visible {
         outline: 3px solid #4F46E5 !important; outline-offset: 2px !important; }` }),
     run: (page) => manual.keyboard(page, "selftest")
+  },
+
+  // ---- short-viewport chrome -------------------------------------------------------------------
+  //
+  // These are here because this check has **no live positive anywhere in the app**. Once the
+  // frozen actions column stopped being counted as vertical chrome, no screen crosses the 50%
+  // threshold -- a full run considers 30 pinned elements across 146 page visits, all of them
+  // `.table-rail` at 24px of 360 -- so the run exercises the measurement and never the reporting.
+  // Nothing but these two would notice if the threshold arm broke.
+  //
+  // The negative is the one that matters, and it is the bug that was actually shipped: eight
+  // right-pinned `td.cell-actions` on /admin/partners unioned to 186px of 360 and were reported
+  // as chrome, for a column that eats no height at all.
+  {
+    check: "chrome", kind: "positive", path: RAILED,
+    what: "a fixed bar over half of a 740x360 window",
+    mutate: (page) => page.evaluate(() => {
+      const bar = document.createElement("div");
+      // 200 of 360 is 56%: past the threshold without being so large that a check reading
+      // anything at all would pass. A control that overshoots proves less.
+      bar.style.cssText = "position:fixed;top:0;left:0;right:0;height:200px;background:#000;z-index:10;";
+      bar.id = "selftest-chrome";
+      document.body.append(bar);
+    }),
+    run: (page) => responsive.shortViewportChrome(page, "selftest")
+  },
+  {
+    check: "chrome", kind: "negative", path: RAILED,
+    what: "a frozen actions column: sticky, right-pinned, taller than the window in total",
+    mutate: (page) => page.evaluate(() => {
+      // Deliberately more than 360px of cells in total, so a check that sums vertical bands
+      // without asking which edge the element is pinned to reports it. Sticky with `top` and
+      // `bottom` both `auto` is pinned sideways: the band scrolls with the content.
+      const host = document.createElement("div");
+      host.id = "selftest-chrome";
+      // **Pinned to the top of the document, not appended to the end of it.** Appending put the
+      // table below a page far taller than 360px, so every cell failed the check's own `top < vh`
+      // test and the control measured nothing -- it passed with the fix removed, which is a
+      // control with no teeth. The cells stay `position: sticky` because that is the thing under
+      // test; only where they sit changed.
+      host.style.cssText = "position:absolute;top:0;left:0;z-index:5;background:#fff;" +
+        "overflow-x:auto;width:300px";
+      host.innerHTML = "<table style='width:900px'>" +
+        Array.from({ length: 10 }, () =>
+          "<tr><td style='height:53px'>wide</td>" +
+          "<td style='position:sticky;right:0;width:80px;height:53px'>act</td></tr>").join("") +
+        "</table>";
+      document.body.append(host);
+    }),
+    run: (page) => responsive.shortViewportChrome(page, "selftest")
   }
 ];
 
 (async () => {
   const browser = await chromium.launch();
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const ctx = await browser.newContext({ viewport: VIEWPORT });
   const page = await ctx.newPage();
   await signIn(page, "org_admin1@example.com");
 
@@ -260,6 +318,7 @@ const CONTROLS = [
     const reported = [];
     manual.captureInto((criterion, where, detail) => reported.push(`${criterion}: ${detail}`));
     wcag22.captureInto((criterion, where, detail) => reported.push(`${criterion}: ${detail}`));
+    responsive.captureInto((criterion, where, detail) => reported.push(`${criterion}: ${detail}`));
 
     /*
      * 3.2.6 compares one page against the others, so a single page cannot fail it. The control

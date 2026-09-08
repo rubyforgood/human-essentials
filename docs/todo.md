@@ -166,7 +166,7 @@ on a fresh narrow one, and a resize between them does not converge. That is the 
 reacting to `resize` while stacking labels arrive on a `matchMedia` change, and it no longer affects
 any audit result. It is worth a look if a *user-facing* symptom ever points at it.
 
-## The short-viewport chrome check: live input, no live positive
+## The short-viewport chrome check: extracted, and its controls now live in the harness
 
 `responsive-audit` reports when fixed or sticky chrome covers more than half of a 740x360 window.
 Until 2026-09-08 it fired on `/admin/base_items` and `/admin/partners` at "186px of a 360px
@@ -188,16 +188,24 @@ no screen in this app reaches it, because the topbar is `position: relative` and
 the nav drawer below `lg` is `fixed inset-y-0` translated off-canvas. Nothing here would notice if
 the threshold arm broke.
 
-**What is left.** Five controls were run against the filter by hand on 2026-09-08 and all five were
-right — a right-pinned column over eight rows scores 0; a sticky topbar scores 64; a fixed bottom
-bar 56; both together 120, unioned not summed; a topbar plus a pinned column scores only the
-topbar's 64. Those controls live nowhere. `audit-selftest` is the place for them, and it cannot
-hold them yet because this check is inline in `responsive-audit.js`'s main loop rather than an
-exported function, and requiring that file runs the whole audit.
+**Done on 2026-09-08.** The measurement is `shortViewportChrome(page, where)`, exported from
+`responsive-audit.js` behind a `require.main === module` guard, with a swappable sink so the
+threshold has one definition and `audit-selftest` can collect what it reports. The harness is
+**13 controls over 6 checks, 0 wrong** in 12 seconds, and the full run's output is byte-identical
+either side of the extraction — same 1,606 combinations, same 30 pinned elements across 146 page
+visits, same findings.
 
-The work is: extract the measurement as `shortViewportChrome(page)`, guard the script entry with
-`require.main === module`, and add a positive and a negative control alongside the existing 11.
-Nothing depends on it today, which is exactly why it will rot quietly if it is not written down.
+**Both controls were verified by breaking the code, and the negative one had no teeth at first.**
+It injected a right-pinned sticky table and expected silence; it was silent, and *still silent with
+the fix removed*, because `document.body.append` put the table below a page far taller than the
+360px window, so every cell failed the check's own on-screen test and the control measured nothing.
+Sited at the top of the document it fails correctly without the fix — `covers 360px of a 360px
+viewport` — and the positive fails when the threshold is made unreachable. A control has to be
+sited where the check looks, which is the second time that exact mistake was made in a day.
+
+One thing fixed on the way: `settle` in the harness did not reset the viewport, and one page object
+serves all thirteen controls, so a control that resizes would have left the other twelve running at
+740x360. The reset is central now, where a future control cannot forget it.
 
 ## Seven tables with no empty state, deliberately
 
