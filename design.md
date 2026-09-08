@@ -379,6 +379,10 @@ fails on any glyph it does not recognise, which makes a one-off a decision rathe
 | upload a file | `bi-upload` | | ask for it again | `bi-arrow-repeat` |
 | invite a person | `bi-person-plus` | | promote / demote | `bi-arrow-up-circle` / `bi-arrow-down-circle` |
 | remove a person | `bi-person-dash` | | more actions | `bi-three-dots-vertical` |
+| manage people | `bi-people` | | change a person's access | `bi-person-gear` |
+| reset a password | `bi-key` | | compare with another period | `bi-arrow-left-right` |
+| a CSV | `bi-filetype-csv` | | copy to the clipboard | `bi-clipboard` |
+| adjust an allocation | `bi-sliders` | | total something up | `bi-calculator` |
 
 **Import points in, export points out** — because import and export are movements in and out of a
 box, and the box is the app. This app had them the other way round for the length of the migration:
@@ -674,6 +678,14 @@ collapse.** Both halves were learned the hard way, from a column that was report
 
 - **If any row in a table can reach three actions, every row in that table gets the menu.** Applied
   per row, one table ends up with three inline buttons on some rows and one on others.
+- **Or drop to two, where one of the three was a View the first cell already provides.** The rule is
+  about reaching three, not about the menu being the only cure, and both barcode tables show the
+  cheaper answer: `/barcode_items` and then `/admin/barcode_items` carried View, Edit and Delete
+  inline — 349px, once the widest actions column in the app — and the View goes because the record's
+  name in the first cell links to it. That leaves a settled pair, always both present, so they stay
+  inline: two clicks saved over a menu, and the column cannot move because nothing in it is
+  conditional. Prefer this where it applies; a menu holding two unconditional actions is the thing
+  `row-actions-audit` files as an advisory.
 - **If *which* actions exist depends on status, role or state, use the menu whatever the count.**
   `/partners` chose its actions from a five-branch `case` on partner status, so reading down one
   screen the column measured **170, 120, 170, 241, 0 and 170px** — a different label, a different

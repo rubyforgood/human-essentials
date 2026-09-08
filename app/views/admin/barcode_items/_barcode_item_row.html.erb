@@ -1,13 +1,23 @@
 <tr>
-  <td><%= barcode_item_row.barcodeable.name %></td>
+  <td class="font-medium text-slate-900">
+    <%= link_to barcode_item_row.barcodeable.name, admin_barcode_item_path(barcode_item_row), class: "link-brand" %>
+  </td>
   <td><%= barcode_item_row.quantity %></td>
   <td><%= barcode_item_row.value %></td>
   <td class="cell-actions">
-    <div class="flex justify-end gap-1.5">
-      <%= essentials_row_icon_link "View", admin_barcode_item_path(barcode_item_row), icon: "bi-eye" %>
+    <%# Was View, Edit and Delete inline, which design.md settles: "if any row in a table can reach
+        three actions, every row in that table gets the menu". `row-actions-audit` reported it and
+        the report went unread while the audit was noisy for an unrelated reason.
+
+        The fix is the one its own sibling already took -- `/barcode_items` had this exact shape and
+        the reasoning is recorded there: the View goes because the name in the first cell links to
+        the record, which leaves a settled pair that is always both present, so they stay inline.
+        Two clicks saved over a menu, and the column cannot move because nothing here is
+        conditional. Collapsing to a menu would have satisfied the rule and left the two tables
+        looking different for no reason. %>
+    <div class="flex justify-end gap-1.5 whitespace-nowrap">
       <%= essentials_row_icon_link "Edit", edit_admin_barcode_item_path(barcode_item_row), icon: "bi-pencil" %>
       <%= essentials_row_icon_action "Delete", admin_barcode_item_path(barcode_item_row), method: :delete, icon: "bi-trash", tone: :danger,
-
             confirm: confirm_delete_msg(barcode_item_row.item.name) %>
     </div>
   </td>

@@ -166,16 +166,23 @@ if selected.empty?
   exit 0
 end
 
+# How to invoke each one. Three Ruby audits need the app booted -- `dead-code`, `dead-routes` and
+# `template-compile-audit` -- and the first draft of this script printed `ruby bin/design/dead-code.rb`,
+# which simply fails. Inferred rather than listed: those three are exactly the ones that mention
+# `Rails.`, and the four that run standalone never do, so a new audit reaching for Rails gets the
+# runner without anyone maintaining a list. Verified by running all seven both ways. A wrong guess
+# fails on the first line of output, which is the acceptable direction for it to be wrong in.
+def runner_for(name)
+  return "pw" if name.end_with?(".js")
+  return "python3" if name.end_with?(".py")
+
+  File.read(File.join(ROOT, "bin/design", name)).include?("Rails.") ? "bin/rails runner" : "ruby"
+end
+
 puts "Run these #{selected.size}:"
 selected.sort_by { |name, hits| [-hits.size, name] }.each do |name, hits|
-  runner = if name.end_with?(".js")
-    "pw"
-  elsif name.end_with?(".py")
-    "python3"
-  else
-    "ruby"
-  end
-  puts format("  %-34s matched %d: %s", "#{runner} bin/design/#{name}", hits.size, hits.first(3).join(", "))
+  puts format("  %-42s matched %d: %s", "#{runner_for(name)} bin/design/#{name}", hits.size,
+    hits.first(3).join(", "))
 end
 
 quiet = audits.keys - selected.keys
@@ -190,9 +197,18 @@ end
 puts
 puts "All of them, sequentially, output per audit in /tmp:"
 puts
-puts "  for a in #{selected.keys.sort.join(" ")}; do \\"
-puts "    case $a in *.js) r=pw;; *.py) r=python3;; *) r=ruby;; esac; \\"
-puts "    echo \"== $a\"; $r bin/design/$a > /tmp/aud-$a.txt 2>&1; tail -4 /tmp/aud-$a.txt; done"
+# Emitted as runner+path pairs rather than a `case` on the extension, because the extension does
+# not determine the runner -- see `runner_for`.
+# Each pair is quoted, because one of the runners is `bin/rails runner` -- two words -- and an
+# unquoted list would split it and try to execute `bin/rails`.
+pairs = selected.keys.sort.map { |n| %("#{runner_for(n)}|bin/design/#{n}") }
+# The exit code is printed, not just the tail. Several of these say something reassuring in prose
+# while exiting non-zero, and one -- `dead-code` -- exits 1 on its 147 documented findings and is
+# *expected* to. Reading only the last four lines of a 30-audit run is how a red check gets filed
+# as a green one.
+puts "  for p in #{pairs.join(" ")}; do \\"
+puts "    r=\"${p%%|*}\"; a=\"${p##*|}\"; o=\"/tmp/aud-$(basename \"$a\").txt\"; \\"
+puts "    $r \"$a\" > \"$o\" 2>&1; echo \"== $a  exit=$?\"; tail -4 \"$o\"; done"
 
 # **Expect this to say "most of them" for anything on the render path, and do not treat that as the
 # tool being unhelpful.** A browser audit renders real pages, so a changed view or Stimulus

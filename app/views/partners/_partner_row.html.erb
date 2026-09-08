@@ -32,7 +32,7 @@
           end
         when "invited"
           [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-eye"},
-           {label: "Re-send invite", path: invite_partner_path(partner_row), icon: "bi-envelope", method: :post,
+           {label: "Re-send invitation", path: invite_partner_path(partner_row), icon: "bi-envelope", method: :post,
             confirm: "Re-send an invitation to #{partner_row.name}?"}]
         when "awaiting_review"
           [{label: "Review profile", path: partner_path(partner_row, anchor: "partner-information"), icon: "bi-eye"}]

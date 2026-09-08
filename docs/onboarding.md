@@ -1138,6 +1138,21 @@ that was never going to happen. Where the action *can* be done, the confirmation
 The one exception is your own row on the organization's Users table, which stays greyed out — there
 is nothing to attempt there, so there is nothing to explain afterwards.
 
+### "Re-send invite" is "Re-send invitation" everywhere
+
+**The same button said two different things depending on which page you were on.** Re-sending
+someone's invitation is offered in three places — your organization's user list, the super admin's
+user list, and the partner list — and two of them called it *Re-send invite* while the third called
+it *Re-send invitation*. All three say **Re-send invitation** now, which is the word the rest of the
+app already uses for the thing being re-sent. Nothing about what the button does has changed.
+
+### The barcode admin list: the name is a link, and there is one button fewer
+
+**On the super admin's barcode list, each row had View, Edit and Delete.** The barcode's name in the
+first column is now a link to the same place the View button went, so the button is gone — one
+action fewer to read past on every row, and the same page one click away. The organization-level
+barcode list already worked this way; the two lists just did not match.
+
 ### The arrow that opens a row on Item inventory
 
 **It is bigger, and its cell no longer takes keyboard focus.** Two small things on one control. The

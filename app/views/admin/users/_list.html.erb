@@ -22,7 +22,7 @@
           <td class="cell-actions">
             <div class="flex justify-end gap-1.5">
               <% if user.invitation_sent_at.present? %>
-                <%= essentials_row_icon_action "Re-send invite", admin_user_resend_invitation_path(user), method: :post, icon: "bi-envelope",
+                <%= essentials_row_icon_action "Re-send invitation", admin_user_resend_invitation_path(user), method: :post, icon: "bi-envelope",
                       confirm: "Re-send an invitation to #{user.preferred_name}?" %>
               <% end %>
               <%= essentials_row_icon_link "Edit", edit_admin_user_path(user), icon: "bi-pencil" %>
