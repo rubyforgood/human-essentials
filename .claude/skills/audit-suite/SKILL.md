@@ -107,6 +107,52 @@ flagged element's own **ancestor**, which by definition overlaps it, so the exce
 testing could never be met. When a predicate takes a neighbourhood, the neighbourhood is a term in
 the comparison and has to be dumped like any other.
 
+## After a change, do not choose the audits from memory
+
+The suite grows past the point where you can hold it in your head, and then the question "which of
+these does my change affect?" gets answered by recall. Recall omits.
+
+A change removed **fifty keyboard tab stops** and altered two control sizes. The audits re-run
+afterwards were the ones that came to mind — and `keyboard-audit`, `wcag22-audit`,
+`row-actions-audit`, `tooltip-audit`, the axe run, `icon-audit` and `table-audit` were all skipped.
+Every one of them measures exactly what had just changed. Nothing failed; nobody was careless; the
+selection was simply made by the same faculty that had already mislaid a 20×28 button for weeks.
+
+**A checklist does not fix this**, and it is worth being clear why, because a checklist is the
+obvious answer. A checklist is memory written down: correct on the day it is written, silently
+wrong the day an audit is added, and it fails in the direction that produces silence.
+
+What fixes it is making omission impossible *by construction*:
+
+1. **Enumerate the audits from the filesystem**, never from a list inside the tool. A tool holding
+   its own list of audits has the same staleness problem one level up.
+2. **Make every audit declare what it reads**, in the audit file itself so the declaration cannot
+   drift from the code — `# AUDIT-READS: RENDER` or `// AUDIT-READS: VIEWS, DOCS`. Use a few named
+   bundles rather than per-audit path lists, so no audit restates the render path and gets it
+   subtly different.
+3. **Fail the run when a file is neither declared nor explicitly excused**, with the excuse
+   carrying a reason. This is the whole mechanism: a newly added audit cannot be quietly left out
+   of every future selection, because it cannot be silent about itself. Non-audits — the seam, the
+   generators, a one-off inspector — are named with a sentence each, because an unexplained absence
+   reads identically to an oversight.
+4. **Print what was considered and not selected.** "Three audits to run" and "three audits, having
+   considered thirty" are different claims, and only the second one is evidence.
+
+Prove it in three directions, because the failure it prevents is silence:
+
+| Control | Must |
+| --- | --- |
+| A change to a view or a script | select the audits that render pages |
+| A change to documentation only | select the doc readers and **no browser audits** — otherwise it is not selecting, it is saying "everything" |
+| A new file in the audit directory with no declaration | **fail**, naming the file |
+
+**Expect the honest answer to be "most of them" for anything on the render path**, and do not treat
+that as the tool being useless. A browser audit drives real pages, so a changed view or Stimulus
+controller genuinely can move any of them. The value is not precision; it is that the number stops
+coming from intuition. Asked by hand about a change to one view and one controller I picked six; the
+truthful answer was twenty-eight. Print a single pasteable command that runs the selected set, too —
+"it was too much effort to run them all" ends in the same place as "I forgot".
+
 **A permanently noisy check is a check whose true findings get filed as noise.** That audit had
 been reporting a real defect at every width — a control drawn at 20×28 against a documented 28×28
 — for as long as it had been flickering, and it was read as more of the flicker. Fixing the noise
@@ -233,6 +279,8 @@ the rest cost 800ms — which no amount of reasoning would have produced.
 
 ## Running them
 
+- **Ask which ones, do not remember which ones.** A `which-audits` that reads the diff and each
+  audit's own `AUDIT-READS` declaration, as above. Run it before committing, not after.
 - **Put the control harness in CI, not the audits.** The harness is fast and deterministic. The
   audits read real data and answer "is the system good today" rather than "is this change sound".
   Different question, better asked deliberately. See `reference/control-harness.md`.

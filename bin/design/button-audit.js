@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Audits every page header against the rule design.md already settles:
 //
 //   "At most three actions, exactly one of them primary, primary last."

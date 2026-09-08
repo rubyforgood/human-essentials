@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Every confirmation in the app, opened and checked for being the app's own dialog.
 //
 // The app replaces `window.confirm` with a styled `<dialog>`: `confirm_dialog_controller.js`

@@ -1,3 +1,4 @@
+# AUDIT-READS: VIEWS, DOCS
 # Audits every view for design system conformance, by page kind.
 require "set"
 #

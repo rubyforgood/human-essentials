@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 const { chromium } = require("playwright");
 const { signIn, targets: allTargets } = require("./targets");
 

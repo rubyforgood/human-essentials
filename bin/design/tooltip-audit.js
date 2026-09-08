@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Checks that an icon-only control says what it is, and says it the app's way.
 //
 // Once an inline actions column became two 28px icons, the label had to come back somehow. The

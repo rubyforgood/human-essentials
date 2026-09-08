@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Finds content that is painted and then hidden by JavaScript -- a flash of something the reader
 // was never meant to see.
 //

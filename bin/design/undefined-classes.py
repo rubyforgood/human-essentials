@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# AUDIT-READS: VIEWS, app/helpers/, app/javascript/, CSS
 """Class tokens in the views and helpers that the compiled stylesheet does not define.
 
 A class nothing defines renders as nothing. That is how the last Bootstrap and AdminLTE

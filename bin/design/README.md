@@ -1,5 +1,33 @@
 # Design tooling
 
+## Start here: which audits does my change affect?
+
+```bash
+ruby bin/design/which-audits.rb              # the last commit, plus anything uncommitted
+ruby bin/design/which-audits.rb HEAD~3       # a range you name
+ruby bin/design/which-audits.rb --staged     # what you are about to commit
+```
+
+There are **30 audits** here, which is more than anyone holds in their head, and the failure this
+prevents is a real one: a change removed fifty keyboard tab stops and altered two control sizes,
+and the seven audits that measure exactly those things — `keyboard-audit`, `wcag22-audit`,
+`row-actions-audit`, `tooltip-audit`, `wcag-audit`, `icon-audit`, `table-audit` — were all skipped,
+because the re-run list was chosen from memory.
+
+It is **not** a checklist, deliberately. A checklist is memory written down and goes stale the day
+an audit is added. Instead every audit declares its inputs in its own header —
+`# AUDIT-READS: RENDER` — the script enumerates `bin/design/` itself rather than carrying a list,
+and **a file that neither declares nor is named as a non-audit fails the run**. That last part is
+the whole mechanism: a new audit cannot be quietly left out of every future selection.
+
+The bundles (`RENDER`, `VIEWS`, `RUBY`, `CSS`, `ROUTES`, `DOCS`, `AUDITS`) are coarse on purpose. A
+browser audit drives real pages, so a changed view or Stimulus controller really can move any of
+them — **expect "most of them" for anything on the render path**, and a much shorter list for a
+documentation change. It prints what it considered and did not select, and a single pasteable
+command to run the selected set.
+
+---
+
 `audit.js` renders a page in headless Chromium as a signed-in bank admin and reports the
 things a design migration silently gets wrong: sidebar geometry, the computed h1/card/active-nav
 tokens, leftover Bootstrap/AdminLTE class names, Font Awesome icons that render as nothing on a

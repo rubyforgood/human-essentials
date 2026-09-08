@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // WCAG 2.1 A/AA audit of every significant page, using axe-core in a real browser.
 //
 // axe-core is the industry-standard engine and finds roughly a third to a half of WCAG issues --

@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Checks that a set of page tabs behaves as one place.
 //
 // Reported on Partner agencies: "the group tab does not have a filter so the card jumps up and

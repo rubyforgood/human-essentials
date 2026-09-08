@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // The six criteria WCAG 2.2 added at A and AA, which nothing else here checks.
 //
 // `wcag-audit.js` runs axe against **WCAG 2.1** and `wcag-manual.js` names 2.1 criteria. WCAG 2.2

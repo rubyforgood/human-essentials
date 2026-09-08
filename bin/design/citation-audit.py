@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# AUDIT-READS: design.md, docs/design-decisions.md, bin/design/citation-baseline.json
 """Audits the industry citations in design.md and docs/design-decisions.md.
 
 Written after a real error: design.md justified the selection bar covering the filter row with

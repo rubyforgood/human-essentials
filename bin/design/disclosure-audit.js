@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Checks every conditionally revealed field against the rule in design.md: a field that only
 // applies to one answer is revealed **under the answer that needs it**, marked with an indent and
 // a left rule, and is never painted before being hidden.

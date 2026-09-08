@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 /*
  * Keyboard navigation, on every screen.
  *

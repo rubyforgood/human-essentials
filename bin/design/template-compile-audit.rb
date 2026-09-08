@@ -1,3 +1,4 @@
+# AUDIT-READS: VIEWS
 # Does every view template actually compile?
 #
 # Run: bin/rails runner bin/design/template-compile-audit.rb

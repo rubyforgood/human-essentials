@@ -252,6 +252,7 @@ sentence case, components as partials in `app/views/shared/essentials/` and help
 page exactly one `<h1>`, name every control, and never let colour be the only signal.
 
 ```bash
+ruby bin/design/which-audits.rb       # FIRST: which of the 30 does my change affect?
 ruby bin/design/status.rb            # which controllers are on a design system layout
 ruby bin/design/page-audit.rb        # defects and debt, per view
 ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
@@ -260,16 +261,25 @@ bin/design/serve-mockup <name>       # serve a design preview and print its URL
 python3 bin/design/undefined-classes.py   # classes that render as nothing (views *and* helpers)
 pw bin/design/route-sweep.js         # every screen the router knows, in a real browser
 pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
-
-`bin/rails runner bin/design/state.rb` regenerates the change log's "Current state" table, and
-`--check` fails if it has drifted — which CI runs, so the figures cannot quietly fall behind the
-code. It excludes the commit and file counts from the check, because gating on numbers that change
-every commit is how a check gets switched off.
 pw bin/design/form-validation-audit.js    # required marking and error handling
 pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
 bin/rails runner bin/design/dead-routes.rb   # routes whose request would raise
 bin/rails runner bin/design/dead-code.rb     # code no route, render or caller reaches
 ```
+
+**Run `which-audits.rb` before committing, not after.** There are thirty audits, which is more
+than anyone holds in their head — and choosing the re-run set from memory has already gone wrong:
+a change that removed fifty keyboard tab stops and altered two control sizes was followed by a
+re-run list that omitted all seven audits measuring those things. Each audit declares its inputs
+in its own header (`AUDIT-READS:`), the script enumerates `bin/design/` itself rather than
+carrying a list, and a file that neither declares nor is named a non-audit fails the run — so a
+new audit cannot quietly drop out of every future selection. Expect it to say "most of them" for
+a render-path change; that is the honest answer, not a defect.
+
+`bin/rails runner bin/design/state.rb` regenerates the change log's "Current state" table, and
+`--check` fails if it has drifted — which CI runs, so the figures cannot quietly fall behind the
+code. It excludes the commit and file counts from the check, because gating on numbers that change
+every commit is how a check gets switched off.
 
 `route-sweep.js` asks Rails for the page list rather than carrying one. That matters: the
 version with a hardcoded list of 56 paths missed three pages that were in the sidebar the whole

@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 /*
  * **Fixed 2026-09-03, after four earlier attempts at the wrong problem.**
  *

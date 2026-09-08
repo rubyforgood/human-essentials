@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Audits how a table's *actions column* behaves, which no other check here asks about.
 //
 // `table-audit.js` checks the visual weight of a row action (`:ghost`) and how many badges a row

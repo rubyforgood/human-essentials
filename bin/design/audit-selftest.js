@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER, AUDITS
 // Tests the audits, by breaking a page on purpose and by leaving it alone on purpose.
 //
 // Over two days, five checks in the WCAG audits reported failures the app did not have. Every one

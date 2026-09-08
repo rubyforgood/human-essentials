@@ -1,3 +1,4 @@
+// AUDIT-READS: RENDER
 // Audits every index table for two things design.md already settles:
 //   - row actions use one visual weight (`:ghost`), and
 //   - badges mark the exception rather than every row.
