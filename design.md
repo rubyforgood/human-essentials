@@ -1073,6 +1073,12 @@ column mixing the two does not step by 2px — that was visible on `/vendors` an
 28 is ours**, derived from that trigger; Carbon and Salesforce both ship uniform icon-only row
 actions, which is the part they evidence, at their own sizes.
 
+**One control escaped this rule for the whole migration, and it is worth knowing why.** The
+re-send invitation button on `/organization` is built in `UsersHelper`, not in a template, and the
+check for classes that style nothing read `app/views` only — so it stayed at **14×20** with
+`btn btn-outline-primary btn-xs` until 2026-09-08 while every audit reported clean. Markup built in
+a helper is bound by every rule on this page, and `undefined-classes.py` reads `app/helpers` now.
+
 <a id="row-actions-live-in-the-actions-column"></a>
 **And it lives in the actions column, not loose in a data cell.** `/events` put its funnel inline in
 the *Refers to* cell: a 34×30 ghost button three pixels from a 24px record link, in the table's

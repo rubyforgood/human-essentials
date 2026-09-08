@@ -619,9 +619,9 @@ It knows three things a naive version gets wrong: a radio or checkbox group is m
 has no `aria-required`; and a form that accepts an empty submit had no errors to show, which is
 not the same as failing to show them.
 
-`undefined-classes.py` reports every class token in the views that the compiled stylesheet does
-not define. A class nothing defines renders as nothing, and this is the only check that finds
-one on a page no sweep visits.
+`undefined-classes.py` reports every class token in the views *and the helpers* that the compiled
+stylesheet does not define. A class nothing defines renders as nothing, and this is the only check
+that finds one on a page no sweep visits.
 
 ```bash
 python3 bin/design/undefined-classes.py
@@ -633,6 +633,15 @@ such utility undefined — the first version produced 186 findings, most of whic
 working correctly. It also separates deliberate hooks from orphans, because a class can be
 meaningful without being styled: `filterrific-periodically-observed` and `form-inputs` belong
 to gems and must stay.
+
+Reading `app/helpers` was added on 2026-09-08, and it needed **two** changes rather than one,
+which is the interesting part. Adding the glob found nothing: the "is this a deliberate hook?"
+test greps `*.rb` under `app/`, so the helper's own `class:` counted as a reference to itself and
+every helper-only token was filed as a hook. That test had always excluded `.erb` for exactly this
+reason — a view writing `class="foo"` is not evidence that `foo` is meaningful — and helpers write
+class attributes in a file type it does read. The files the script extracts from are now
+subtracted from that grep's matches. Widening what an audit reads can require widening what it
+discounts; the run in between reports clean and looks like proof.
 
 `status.rb` reports which controllers render on a design system layout, resolving layout
 inheritance.

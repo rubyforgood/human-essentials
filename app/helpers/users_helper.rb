@@ -6,11 +6,18 @@ module UsersHelper
     "http://gravatar.com/avatar/#{gravatar}.png?s=#{size}"
   end
 
+  # A table-row action, so it takes the shared icon-button chrome. It was a hand-written
+  # `btn btn-outline-primary btn-xs` -- three classes the stylesheet has not defined since
+  # Bootstrap was removed -- which left a 14x20 target carrying `title` as its only accessible
+  # name, and `alt` on a `<button>`, where that attribute means nothing. `essentials_action_button`
+  # supplies the 24x24 target, the `aria-label` and the tooltip.
+  #
+  # It survived the whole migration because the class scan read `app/views` and not `app/helpers`.
   def reinvite_user_link(user)
-    if user.reinvitable?
-      button_to resend_user_invitation_organization_path(user_id: user.id), class: "btn btn-outline-primary btn-xs", data: {disable_with: "Please wait..."}, alt: "Re-send invitation", title: "Re-send invitation" do
-        fa_icon "envelope"
-      end
-    end
+    return unless user.reinvitable?
+
+    essentials_action_button "Re-send invitation",
+      resend_user_invitation_organization_path(user_id: user.id),
+      method: :post, variant: :ghost, icon: "bi-envelope", icon_only: true
   end
 end
