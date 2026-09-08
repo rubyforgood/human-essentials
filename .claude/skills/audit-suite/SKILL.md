@@ -76,6 +76,14 @@ is indistinguishable from a check that examined everything and found nothing:
 examined: 2.4.11×150  2.5.7×20  3.2.6×143  3.3.7×1  3.3.8×3
 ```
 
+Printing that number is also how you catch *your own* wrong conclusion. After removing a false
+positive from one check, a **four-page spot check** showed it now considered nothing, and I wrote
+down that it had gone inert on that codebase. The very next full run printed "30 pinned element(s)
+considered across 146 page(s)" — all of them one component I had not happened to sample. The
+measurement was live; only the threshold was never crossed. **A spot check is evidence about the
+pages you sampled and nothing else**, and the distinction between "nothing to measure" and "nothing
+over the line" is the difference between a dead check and a healthy one reporting good news.
+
 Make a zero a finding. In that project a criterion was named in an audit's header and printed in its
 pass line **with no implementation behind it at all**, and a second silently tested nothing for two
 of three user roles because its selector only matched the third.
