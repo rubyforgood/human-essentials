@@ -269,6 +269,8 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
   const notChecked = [];
   const findings = [];
   let checks = 0;
+  // How much the short-viewport chrome check had to look at, so a zero can be read.
+  let shortConsidered = 0, shortPages = 0;
 
   for (const [role, email] of Object.entries(users)) {
     let page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -377,6 +379,21 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
           // z-index 2147483643 and reCAPTCHA's containers in the same range. The app's own
           // highest is z-40, so anything past 100 belongs to somebody else.
           if (Number(cs.zIndex) > 100) return false;
+          /*
+           * **Sticky sideways is not chrome.** This measures how much of a short viewport is eaten
+           * by chrome pinned *down* the screen. A `sticky` element with `top` and `bottom` both
+           * `auto` is pinned on a horizontal edge instead, and its vertical band scrolls away with
+           * the content -- it occludes no fixed strip of the viewport at all.
+           *
+           * The frozen actions column is exactly that: `position: sticky; right: 0` on every cell.
+           * Measured on `/admin/partners` at 740x360, the counted elements were eight
+           * `td.cell-actions` at `top: auto, bottom: auto, right: 0px` in consecutive bands
+           * (216..269, 269..322, 322..375), unioned to **186px of 360** -- past the 50% threshold,
+           * on two pages, for a column that eats no height whatever. Same family as the ancestor
+           * bug in the spacing exception above: a geometric rule reading an element whose geometry
+           * does not mean what the rule assumes.
+           */
+          if (cs.position === "sticky" && cs.top === "auto" && cs.bottom === "auto") return false;
           const r = el.getBoundingClientRect();
           // Only chrome that is actually over the content. The nav drawer below lg is
           // `fixed inset-y-0` translated off-canvas: full height, and covering nothing.
@@ -396,10 +413,17 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
         const h1 = document.querySelector("main h1, h1");
         return {
           eaten: Math.round(eaten), vh,
+          // What the filter kept. Printed in the summary, because this check now measures 0 on
+          // every screen in this app -- the topbar is `position: relative` and the nav drawer is
+          // off-canvas below `lg`, so there is no chrome pinned down a short viewport at all. A
+          // correct zero and a check that looks at nothing read the same in a pass line.
+          considered: onScreen.length,
           h1Hidden: h1 ? h1.getBoundingClientRect().bottom < 0 || h1.getBoundingClientRect().top > vh : false,
         };
       });
       checks++;
+      shortConsidered += short.considered;
+      shortPages++;
       if (short.eaten > short.vh * 0.5) {
         findings.push({ path: t.path, width: `${SHORT.width}x${SHORT.height}`,
           problems: [`fixed/sticky chrome covers ${short.eaten}px of a ${short.vh}px viewport`] });
@@ -410,7 +434,22 @@ const roleFor = (c) => (c.startsWith("partners/") ? "partner" : c.startsWith("ad
     await page.close();
   }
 
-  console.log(`${checks} page/width combinations checked (${TARGETS.length} routes x ${WIDTHS.join(", ")})\n`);
+  console.log(`${checks} page/width combinations checked (${TARGETS.length} routes x ${WIDTHS.join(", ")})`);
+  /*
+   * The short-viewport check, stated rather than assumed: it reports when fixed or sticky chrome
+   * covers more than half of a 740x360 window, and printing what it looked at is the difference
+   * between "no page crosses the threshold" and "nothing was measured", which read the same in a
+   * pass line.
+   *
+   * This line immediately earned itself. Having removed the frozen actions column from the count,
+   * a four-page spot check found nothing pinned and I concluded the check had gone inert on this
+   * app. **It has not**: a full run considers **30 elements across 146 page visits**, every one of
+   * them `.table-rail` -- the fixed 24px horizontal scroll rail on a wide table -- at 24px of 360,
+   * about 7%. Live input, negative verdict. What is genuinely unexercised is the *reporting* path
+   * above the 50% threshold, which no real screen reaches; its controls are in docs/todo.md.
+   */
+  console.log(`short viewport ${SHORT.width}x${SHORT.height}: ` +
+    `${shortConsidered} pinned element(s) considered across ${shortPages} page(s)\n`);
 
   // Printed even when empty is wrong -- but printed loudly when not, because a screen the audit
   // could not reach and a screen with no defects produce the same silence otherwise.

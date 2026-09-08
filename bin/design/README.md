@@ -586,6 +586,24 @@ activates its control. Without those, the first version reported 28 failures on 
 every one of them fine, and 109 across the app of which most were select2's leftover 1×1
 `<select>`.
 
+The spacing rule asks whether a 24px circle on the target reaches **another** target's hit area,
+and "another" excludes the target's own ancestors and descendants. A container that encloses a
+control always intersects that circle, so counting it makes the exception unpassable: a truncated
+`<td>` takes `tabindex="0"` from `clipped_text_controller` and wraps its row's disclosure button,
+which is how fifty buttons came to be reported on `/items/inventory` at every width. That was this
+audit's 8/9 flicker, and it took five attempts because four of them compared counts.
+
+**The two geometric checks here both read positions that do not mean what they look like**, and
+both were wrong the same way. The short-viewport one sums the vertical bands of anything `fixed`
+or `sticky` — but a `sticky` element with `top` and `bottom` both `auto` is pinned to a horizontal
+edge, and its band scrolls away with the content. The frozen actions column is exactly that, and
+unioned across eight rows it read as **186px of a 360px viewport** on two admin pages, for a
+column that eats no height at all. Sideways-pinned elements are excluded now, and the run prints
+how many pinned elements it did consider — **30 across 146 page visits, all of them `.table-rail`**
+at 24px of 360 — because "no page crosses the threshold" and "nothing was measured" are the same
+pass line otherwise. A four-page spot check convinced me it was the latter; the printed count
+corrected that in one run.
+
 `keyboard-audit.js` checks what axe cannot: that tabbing never walks into something invisible,
 that everything clickable can be operated from a keyboard, and that nothing uses a positive
 `tabindex`.

@@ -38,12 +38,13 @@ a record rather than a task: if those seven ever return, this paragraph is the c
 
 **`UiHelper` is a retained shim, not outstanding work — the entry that said otherwise was wrong.**
 It read "one legacy button helper survives", which implies a straggler in an otherwise finished
-migration. Measured 2026-09-04: **11 of its 27 methods are live**, `submit_button` alone in 18
-files, and `migration-map.md:180` records the decision to keep them — "unchanged API, design system
-output; `type:`/`size:` map onto variants". It emits design system classes, not Bootstrap. The nine
-that genuinely mattered were *table cells*, where `type: "primary"` produced a filled button in a
-row, and that grep returns zero. `edit_button_to` in a page header renders `:primary`, which is what
-design.md asks a page's main action to be. **There is nothing here to complete.**
+migration. Measured 2026-09-04 and re-measured 2026-09-08, unchanged: **11 of its 27 methods are
+live**, `submit_button` alone in 18 files, and `migration-map.md:180` records the decision to keep
+them — "unchanged API, design system output; `type:`/`size:` map onto variants". It emits design
+system classes, not Bootstrap. The nine that genuinely mattered were *table cells*, where `type:
+"primary"` produced a filled button in a row, and that grep returns zero. `edit_button_to` in a
+page header renders `:primary`, which is what design.md asks a page's main action to be. **There
+is nothing here to complete.**
 
 **The avatar disc is `essentials_avatar_disc`, and the deferral that kept it duplicated was
 wrong.** The entry said merging it with `essentials_step_number` needed a size and a semantics
@@ -64,10 +65,12 @@ other a position in a list.
 
 ## Skills: not yet available outside this repo
 
-**Standing item, asked for twice.** The five skills in `.claude/skills/` — **17 files, 1,383 lines**
-as of 2026-09-04 — are only active when working *in this repository*. Claude reads skills from the
-current repo and from `~/.claude/skills/`, and **nothing has ever been written to the second**:
-that directory does not exist on this machine (checked 2026-09-04).
+**Standing item, asked for three times.** The five skills in `.claude/skills/` — **18 files, 1,599
+lines**, re-measured 2026-09-08 — are only active when working *in this repository*. Claude reads
+skills from the current repo and from `~/.claude/skills/`, and **nothing has ever been written to
+the second**: that directory still does not exist on this machine (re-checked 2026-09-08). The
+earlier figures here said 17 files and 1,383 lines, which was true on 2026-09-04 and drifted as the
+audit and evidence skills were extended.
 
 Most of what is in them is not specific to this app, this stack, or even to design —
 `audit-suite`, `evidence-discipline` and `wcag-conformance` are about method — so the whole of it
@@ -139,6 +142,39 @@ finally answered it, in one run.
 on a fresh narrow one, and a resize between them does not converge. That is the clipped-cell scan
 reacting to `resize` while stacking labels arrive on a `matchMedia` change, and it no longer affects
 any audit result. It is worth a look if a *user-facing* symptom ever points at it.
+
+## The short-viewport chrome check: live input, no live positive
+
+`responsive-audit` reports when fixed or sticky chrome covers more than half of a 740x360 window.
+Until 2026-09-08 it fired on `/admin/base_items` and `/admin/partners` at "186px of a 360px
+viewport", and that was a false positive: it counted the frozen actions column, `position: sticky;
+right: 0` on every cell, whose vertical band scrolls away with the content and occludes no fixed
+strip at all. Sticky elements with `top` and `bottom` both `auto` are pinned sideways and are
+excluded now.
+
+The run now prints how many pinned elements it considered, so "no page crosses the threshold" can
+be told apart from "nothing was measured" — and that line immediately corrected me. Having removed
+the column from the count, a four-page spot check found nothing pinned and I wrote down that the
+check had gone inert on this app. **It has not.** A full run considers **30 elements across 146
+page visits**, identical on three consecutive runs, and every one of them is `.table-rail` — the
+fixed 24px horizontal scroll rail on a wide table, at 24px of a 360px viewport, about 7%. Genuine
+vertical chrome, correctly counted, comfortably under the threshold.
+
+So the *measurement* has live input. What has no live positive is the **reporting path** above 50%:
+no screen in this app reaches it, because the topbar is `position: relative` and so scrolls, and
+the nav drawer below `lg` is `fixed inset-y-0` translated off-canvas. Nothing here would notice if
+the threshold arm broke.
+
+**What is left.** Five controls were run against the filter by hand on 2026-09-08 and all five were
+right — a right-pinned column over eight rows scores 0; a sticky topbar scores 64; a fixed bottom
+bar 56; both together 120, unioned not summed; a topbar plus a pinned column scores only the
+topbar's 64. Those controls live nowhere. `audit-selftest` is the place for them, and it cannot
+hold them yet because this check is inline in `responsive-audit.js`'s main loop rather than an
+exported function, and requiring that file runs the whole audit.
+
+The work is: extract the measurement as `shortViewportChrome(page)`, guard the script entry with
+`require.main === module`, and add a positive and a negative control alongside the existing 11.
+Nothing depends on it today, which is exactly why it will rot quietly if it is not written down.
 
 ## Seven tables with no empty state, deliberately
 

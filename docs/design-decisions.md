@@ -9520,6 +9520,16 @@ Not done: `/broadcast_announcements/1/edit` and `/partners/children/new` still 4
 skipped by every audit. They are in `docs/todo.md`, because after today the reasonable prior is that
 a skipped route is hiding something.
 
+> **Superseded the next day, by `3403c72b7`.** Both were fixed and the paragraph above is no longer
+> true of the code — left as written because this is a dated record, not a status page. The first
+> 404'd because `IDS` used `BroadcastAnnouncement.first`, a *global* announcement with a nil
+> `organization_id`, where the controller scopes to the org; the second is scoped by a **query
+> parameter** rather than a path segment, and `find_by!` raising `RecordNotFound` reads exactly like
+> a route that does not exist. The prior held: the first run of the newly reachable screens found a
+> defect on `/requests/1/cancelation/new`. **155 targets, none skipped** — re-verified 2026-09-08,
+> when a full `responsive-audit` run reported `1606 page/width combinations checked (155 routes)`
+> with an empty not-reached list.
+
 ## 2026-09-08 — An audit that read half the markup, and when to delete an unused helper
 
 Two decisions here. The second is the reusable one.
