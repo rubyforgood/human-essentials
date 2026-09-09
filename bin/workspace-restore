@@ -36,6 +36,7 @@ else
   puts "         ...and #{back.size - 12} more" if back.size > 12
 end
 puts "\n  #{new_work.size} untracked file(s) of your own will be left alone." if new_work.any?
+skipped_dirs.each { |dir, n| puts "  #{dir} was not scanned (#{n} files, over the #{WorkspaceDrift::DIR_BOUND} bound)." }
 
 unless CONFIRMED
   puts "\nNothing done. Re-run with --yes to carry this out."

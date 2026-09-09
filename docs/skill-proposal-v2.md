@@ -112,7 +112,7 @@ own repository — by then you will know which parts are general, which is preci
 know yet.
 
 The alternative, writing straight into `~/.claude/skills/`, loses history on the artefact that most
-needs it. This working tree has been rolled back six times.
+needs it. This working tree has been rolled back nine times.
 
 ---
 

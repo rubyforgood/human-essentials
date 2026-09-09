@@ -140,7 +140,7 @@ because the next person will trust it.
 The cadence: **work, then document, then commit and push, at every checkpoint.** Not batched at
 the end. The documentation and the change it describes belong in the same commit, and a
 checkpoint that is not pushed is a checkpoint that can be lost — **this working tree has been
-rolled back to the session's starting commit five times**, without `HEAD` ever moving.
+rolled back to the session's starting commit nine times**, without `HEAD` ever moving.
 
 Committing is the only protection for work in progress; nothing here can prevent the rollback.
 What is here makes it *visible*, because twice it arrived disguised as a bug report about a fix
