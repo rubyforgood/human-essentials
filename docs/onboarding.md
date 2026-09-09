@@ -229,6 +229,19 @@ Two things that will save you an afternoon:
   Stimulus controllers toggling classes that no longer exist, and forms whose fields had ended
   up outside the form.
 
+**On a case-insensitive mount, `bin/rails` cannot run a rake task.** Rake tries four spellings for
+its rakefile and `rakefile` comes first; on a macOS host bind-mounted into the container
+`File.exist?("rakefile")` answers true for `Rakefile`, so Rake picks the lowercase name and then
+fails to load it — `LoadError: cannot load such file -- .../rakefile`. It affects every rake task,
+`db:test:prepare` and `tailwindcss:build` included, and nothing else. Name the file:
+
+```bash
+bundle exec rake -f Rakefile tailwindcss:build
+RAILS_ENV=test bundle exec rake -f Rakefile db:test:prepare
+```
+
+`bin/rails runner`, `bin/rails server` and `rspec` are unaffected — none of them is rake.
+
 **Do not run `assets:precompile` locally.** The pipeline is Propshaft (ADR 0012), which serves
 assets straight from the load path in development and test — precompiling *freezes* them behind
 `public/assets/.manifest.json` until you delete that file. If a stylesheet or a module looks
