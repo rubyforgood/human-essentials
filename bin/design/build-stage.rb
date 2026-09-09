@@ -115,6 +115,15 @@ STAGES = {
         ].join("\n") + "\n"
       }
     },
+    # `design.md` links to `docs/design-decisions.md`, which is 9,700 lines covering every stage and
+    # has no business arriving with the first one. The link becomes a plain code span; the document
+    # turns up later and the reference is still true.
+    replace: {
+      "design.md" => [
+        ["> [`docs/design-decisions.md`](docs/design-decisions.md).",
+          "> `docs/design-decisions.md`, which arrives with the stages that make those decisions."]
+      ]
+    },
     # The Tailwind build is generated. `main`'s .gitignore does not cover it, so without this the
     # stage commits a 120KB artifact.
     ignore: ["/app/assets/builds/*.css"],
@@ -256,6 +265,19 @@ stage[:insert]&.each do |file, rule|
   puts "  #{file}: composed from main's, plus #{rule[:text].lines.size} line(s)"
 end
 
+# Text this stage's copy of a file should not carry -- a link to something a later stage brings.
+stage[:replace]&.each do |file, pairs|
+  path = File.join(ROOT, file)
+  content = File.read(path)
+  pairs.each do |from, to|
+    abort "cannot rewrite #{file}: #{from[0, 40]}... not found" unless content.include?(from)
+    content = content.sub(from, to)
+  end
+  File.write(path, content)
+  git!("add", "--", file)
+  puts "  #{file}: #{pairs.size} forward reference(s) rewritten"
+end
+
 # Generated files main's .gitignore does not cover. Without this the stage commits the 120KB
 # Tailwind build as though it were source.
 if stage[:ignore]
@@ -307,6 +329,32 @@ if stage[:gems]
   puts "  rails:   #{rails_version} (main is on #{git("show", "origin/main:Gemfile.lock")[/^    rails \((\S+)\)/, 1]})"
 end
 
+# Step 0 of the checklist in docs/review-plan.md, run rather than remembered: does every relative
+# link in a file this stage touches resolve against the files this stage has? Only the stage's own
+# files are checked -- `main` carries 19 broken links of its own in docs/user_guide and elsewhere,
+# and a check that reports those every time is a check people stop reading.
+changed_md = git("diff", "--cached", "--name-only", "origin/main").split("\n").grep(/\.md\z/)
+broken = changed_md.flat_map do |md|
+  File.read(File.join(ROOT, md)).scan(/\]\(([^)#][^)]*)\)/).flatten.filter_map do |target|
+    link = target.split("#").first.to_s.strip
+    next if link.empty? || link.start_with?("http://", "https://", "mailto:")
+    resolved = File.expand_path(link, File.dirname(File.join(ROOT, md)))
+    [md, link] unless File.exist?(resolved)
+  end
+end
+if broken.empty?
+  puts "  links:   every relative link in this stage's #{changed_md.size} markdown file(s) resolves"
+else
+  warn "\n#{broken.size} relative link(s) in this stage point at files it does not contain:"
+  broken.each { |md, link| warn "  #{md} -> #{link}" }
+  warn "Add the target to this stage, or rewrite the link with a replace: entry."
+  # Go back before exiting, or a failed build strands the caller on a half-built branch where
+  # bin/design/ does not exist -- the same trap the success path already avoids.
+  git!("checkout", "-q", current)
+  warn "\nBack on #{current}. The half-built #{stage[:branch]} is uncommitted and disposable."
+  exit 4
+end
+
 # **Commit it.** A stage left staged-but-uncommitted is a trap that has now been sprung twice: the
 # next `git checkout design` is refused, `-q` swallows the message, and the commit meant for
 # `design` lands on the stage branch instead. A built stage is meant to be a reviewable commit
@@ -322,4 +370,9 @@ puts "Next, in order:"
 puts "  rm -rf tmp/cache                       # Sprockets caches the manifest across branches"
 puts "  bundle exec rake -f Rakefile tailwindcss:build"
 puts "  RAILS_ENV=test bin/rails db:test:prepare   # the test DB still holds the last branch's schema"
-puts "Return with: git checkout #{current}"
+# **Go back.** Leaving the caller standing on the stage branch is the third variant of the same
+# trap: `bin/design/` does not exist there, so the next edit to this script writes into a branch
+# that has no such directory, and the next `git checkout design` looks like the failure. Printing
+# "Return with:" was not enough -- it was printed all three times.
+git!("checkout", "-q", current)
+puts "Back on #{current}. Review the stage with: git checkout #{stage[:branch]}"
