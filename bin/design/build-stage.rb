@@ -76,9 +76,14 @@ STAGES = {
       app/views/shared/essentials/
       app/helpers/essentials_ui_helper.rb
       app/javascript/
+      public/vendor/
       spec/assets/asset_resolution_spec.rb
-      spec/system/essentials_shell_spec.rb
     ],
+    # `spec/system/essentials_shell_spec.rb` is deliberately NOT here. It asserts that real pages
+    # render the essentials chrome -- Tailwind stylesheet and no Bootstrap one, one `<main>`,
+    # `aria-current="page"`, self-hosted fonts -- and stage 1 switches no controller to the new
+    # layout, so all ten of its examples fail against main's `application.html.erb`. It belongs to
+    # the first stage that switches a controller to `essentials_app`.
     # Composed, not taken. `main` still has bootstrap, sass-rails and sprockets, so stage 1's
     # Gemfile is main's plus one line -- and taking COEXIST's instead would drag Rails back to
     # 8.0.2.1 against main's 8.1.3.1. `Gemfile.lock` then falls out of `bundle install`.

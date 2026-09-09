@@ -188,7 +188,15 @@ What the stage was actually missing:
 | `config/initializers/simple_form_essentials.rb` | the `:essentials` wrapper the components use |
 | `config/application.rb` | `config.assets.css_compressor = nil`; libsass cannot parse Tailwind v4 output |
 | `spec/assets/asset_resolution_spec.rb` | pins which `application.css` wins — the guard for exactly this |
-| `spec/system/essentials_shell_spec.rb` | the new shell has no other coverage |
+| `public/vendor/` | the Figtree and Bootstrap Icons woff2 files the built stylesheet points at |
+
+And one file that looked like it belonged and does not. `spec/system/essentials_shell_spec.rb`
+asserts that real pages render the essentials chrome — the Tailwind stylesheet and *not* the
+Bootstrap one, one `<main>`, `aria-current="page"`, self-hosted fonts. **Stage 1 switches no
+controller to the new layout**, so all ten of its examples fail against main's
+`application.html.erb`. It belongs to the first stage that switches a controller to
+`essentials_app`, not to the one that merely creates it. Adding a stage's specs is right; adding
+the specs of the stage *after* it only looks right.
 
 Three rules came out of it, all now enforced by `build-stage.rb` rather than written down and
 hoped for.
