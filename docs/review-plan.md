@@ -52,8 +52,27 @@ exactly what makes area-by-area PRs possible.
 `main` render `link_to broadcast_announcement.link, broadcast_announcement.link`. **The
 vulnerability is live on `main` today**, independent of anything on this branch.
 
-The model half of the fix applies to `main` unchanged. The render guard depends on
-`EssentialsUiHelper` and travels with stage 2.
+**Built and verified against `main` on 2026-09-09**, seven files: the `HttpUrlValidatable` concern,
+the three models, `safe_http_url` in `ApplicationHelper`, and two specs. 41 examples, rubocop clean,
+**brakeman 0 warnings**, and `javascript:alert(1)` rejected where `http://` is accepted. Reproduce
+it with `ruby bin/design/build-stage.rb 0`.
+
+**What it does not contain, and this is the third thing building the plan corrected.** The two
+views that render `BroadcastAnnouncement#link` are the widest exposure and are vulnerable on `main`
+— they were the reason for including a render guard at all. They cannot be extracted: the migration
+rewrote them completely, into `essentials_status_pill`, `essentials_row_icon_link` and
+`essentials_row_icon_action`, so taking the file drags the migration into a security PR. The check
+for that caught it — **8 design-system references in a stage that must not have any**.
+
+So stage 0 stops every *new* bad row, and there are **0** bad rows today across all three fields.
+`main`'s two render sites stay as they are until the announcements area is converted. If the
+maintainers want them guarded sooner, that is a two-line hand-written patch against `main`, not an
+extract from this branch, and it is deliberately not in the script.
+
+**Verifying a stage costs a `bundle install` each way.** `main`'s lockfile wants `sprockets`,
+`terser` and `execjs`, which this branch removed, so the gems have to be installed to run the
+stage's specs and reinstalled to come back. Budget for it; do not skip the verification because of
+it.
 
 **The question, which is not mine to answer**: there is no `SECURITY.md` and no disclosure channel
 in `CONTRIBUTING.md`. Opening a public pull request titled "fix stored XSS" tells everyone watching
