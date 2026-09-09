@@ -93,6 +93,7 @@ Load these when the work reaches them, not before.
 | `reference/copy-and-language.md` | Writing or auditing any user-facing words |
 | `reference/error-and-failure-states.md` | Touching what a screen does when something goes wrong: where a failed submit lands, error summaries and focus, required markers, shared error components |
 | `reference/keeping-work-reviewable.md` | Setting up, or when somebody cannot see the app |
+| `reference/merging-upstream.md` | Taking upstream's work into the branch. Which side owns markup and which owns behaviour, what to do with their specs, and the two failures that look like merge damage and are not |
 | `reference/retiring-a-legacy-system.md` | **Only if** there is an old UI framework to remove |
 | `templates/` | Starting a new app: empty skeletons for the spec, decision log and change log |
 | `templates/adapter-rails.md` | Wiring the audits to a Rails/Devise/Tailwind app — one worked example of `adapter.md`, with the faults each line was written to fix |

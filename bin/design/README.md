@@ -561,6 +561,28 @@ This complements the specs rather than repeating them. It catches what renders w
 a Stimulus controller toggling a class that no longer exists, a confirmation that never
 appears. Neither on its own is enough; that is the lesson of this migration.
 
+`route-shadow.rb` asks the neighbouring question and needs no browser either: is there a file in
+`public/` that answers a route before the router sees it? Rails serves static files first, so
+`public/vendors.csv` answers `GET /vendors.csv` and the controller never runs — with a 200 and
+plausible content, so nothing looks wrong.
+
+```bash
+bin/rails runner bin/design/route-shadow.rb
+```
+
+It exists because of one afternoon. A CSV export request spec failed with three unfiltered rows and
+the wrong headers, while the controller, view model, concern, model, factory and spec were all
+byte-identical to before the change under investigation — and the cause was
+`public/product_drive_participants.csv`, untracked debris from a workspace rollback.
+`bin/workspace-restore` removes files a commit deleted and leaves untracked ones alone, which is
+correct because it cannot know which you meant to keep; this makes the consequence visible.
+
+It says whether each shadow is tracked, because that decides what to do: an untracked one is debris
+and can be deleted, a tracked one is somebody's decision and the fix is a name — which is why every
+import template here ends in `_template.csv`. Only extensions the app actually routes are checked
+(`csv html json pdf xml txt`), and the count of candidates is printed either way, so "nothing
+shadows a route" cannot be confused with "nothing was looked at".
+
 `dead-routes.rb` needs no browser and no server. It asks of every route whether the request
 would raise, and exits non-zero if any would.
 

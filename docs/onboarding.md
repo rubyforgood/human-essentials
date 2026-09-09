@@ -264,6 +264,7 @@ pw bin/design/responsive-audit.js    # the same screens at 320 to 1440
 pw bin/design/form-validation-audit.js    # required marking and error handling
 pw bin/design/keyboard-audit.js       # tab order, and again with WIDTH=375
 bin/rails runner bin/design/dead-routes.rb   # routes whose request would raise
+bin/rails runner bin/design/route-shadow.rb  # files in public/ that answer a route first
 bin/rails runner bin/design/dead-code.rb     # code no route, render or caller reaches
 ```
 
@@ -359,6 +360,61 @@ after changing it, or you will spend an afternoon watching an audit report a def
 request would raise — 28 did before it existed, nearly all of them actions `resources :x`
 generates and the controller never implemented. Run it after touching `config/routes.rb`; it
 exits non-zero when anything is dead.
+
+## Merging `main` into this branch
+
+This branch has been diverged from `main` for weeks and has rewritten most of the views, so a merge
+is not a routine one. **The rule that makes the conflicts tractable: design owns the markup, main
+owns the behaviour.** For each conflicted view, take this branch's file, then find what `main`
+actually changed against the merge base and re-apply *that* in design-system terms:
+
+```bash
+git merge origin/main --no-commit --no-ff
+git diff --name-only --diff-filter=U | wc -l          # how many conflicts
+BASE=$(git merge-base HEAD origin/main)
+git diff -w $BASE origin/main -- <file>               # per file, whitespace ignored
+```
+
+`-w` matters. On the 2026-09-09 merge, `partners/individuals_requests/new` looked like a 19-line
+conflict and was pure reindentation; `items/_form` looked much the same and carried a whole feature.
+
+**Stage each file the moment you resolve it.** `git checkout --ours` on a still-unmerged path
+silently discards edits you already made to it — that happened twice on the same merge, to
+`audits/show.html.erb` and `audits/_form.html.erb`.
+
+Then, in this order, because most of these found something:
+
+1. **`ruby -c` / `node --check` every file you touched.** A conflict region rarely lines up with a
+   block boundary, and a leftover `end` reads as a merge that went fine.
+2. **`bundle install`, then check the lock's `PLATFORMS`.** Taking `main`'s `Gemfile.lock` dropped
+   `aarch64-linux` and broke `tailwindcss:build`, which nothing noticed because a stale
+   `tailwind.css` was still on disk. `bundle lock --add-platform aarch64-linux aarch64-linux-gnu`.
+   Watch for bumps of gems this branch *removed* — `sprockets` and `terser` are ADR 0012 casualties
+   and must not come back.
+3. **`bin/rails db:migrate`, and let it rewrite `db/schema.rb`.** Do not hand-merge the schema; both
+   sides add migrations and the file is generated. Then `RAILS_ENV=test bin/rails db:test:prepare`,
+   or every spec touching a new column raises `UnknownAttributeError`.
+4. **`bin/rails tailwindcss:build`.** Before any class audit, or it reads a stale stylesheet — that
+   reported `max-w-28` as a class that styles nothing when the real fault was step 2.
+5. **Restart the dev server.** After a `bundle install` that changes the gem set, the running server
+   is not to be trusted: three pages reported HTTP 500 from `route-sweep` and rendered 200 by hand.
+6. **`python3 bin/design/undefined-classes.py`.** Its JavaScript arm catches a Stimulus controller
+   toggling a class the stylesheet no longer defines. `main` has now sent `d-none` five times, and
+   nothing upstream knows the class is gone.
+7. **`bin/rails runner bin/design/route-shadow.rb`.** Rails serves `public/` before routing, so a
+   file there can answer a route and the controller never runs.
+8. **`bundle exec rspec`**, then `ruby bin/design/which-audits.rb <merge-base>` and run what it
+   names. Expect it to say most of them.
+
+**Two traps, both of which look exactly like merge damage.** A stale dev server (step 5), and
+untracked debris in `public/` (step 7) — the second cost an hour on a CSV export spec whose entire
+code path was byte-identical to before the merge.
+
+**On `main`'s specs.** They assert `main`'s markup and copy: Font Awesome names, Bootstrap
+attributes, Title Case labels. Update the assertion to what ships here and keep the behaviour it
+pins — and port their regression tests rather than dropping them, because the bug is usually still
+real even when the markup moved. Delete one only when it duplicates a spec here with the older
+expectations, and say so where it was.
 
 ## Where decisions live
 
