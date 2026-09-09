@@ -51,13 +51,16 @@ STAGES = {
       app/models/broadcast_announcement.rb
       app/models/account_request.rb
       app/helpers/application_helper.rb
-      app/views/broadcast_announcements/_broadcast_announcement.html.erb
-      app/views/admin/broadcast_announcements/_broadcast_announcement.html.erb
       spec/models/concerns/http_url_validatable_spec.rb
       spec/helpers/safe_http_url_helper_spec.rb
     ],
-    note: "Both layers, and no design system anywhere in it. See docs/review-plan.md, stage 0 -- " \
-          "there is a disclosure question to settle before this is opened anywhere public."
+    note: "The validation, and the render guard as a helper -- but NOT the two announcement " \
+          "views. Those are vulnerable on main and the migration rewrote them completely " \
+          "(essentials_status_pill, essentials_row_icon_link), so the one-line guard cannot be " \
+          "extracted from them by checkout. Patching them on main is two hand-written lines and " \
+          "is not this script's job. The validation alone stops any new bad row, and there are " \
+          "none today. See docs/review-plan.md, stage 0 -- and settle the disclosure question " \
+          "before this is opened anywhere public."
   },
   "1" => {
     branch: "design-stage-1-foundation",
