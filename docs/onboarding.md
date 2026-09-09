@@ -405,6 +405,12 @@ Then, in this order, because most of these found something:
    file there can answer a route and the controller never runs.
 8. **`bundle exec rspec`**, then `ruby bin/design/which-audits.rb <merge-base>` and run what it
    names. Expect it to say most of them.
+9. **The CI gates the audits do not cover**: `bundle exec brakeman` and
+   `RAILS_ENV=test bundle exec rake factory_bot:lint`. Six workflows run on a pull request and the
+   design suite covers four of them; these two are the gap. Brakeman matters most after a merge
+   because **`main` bumps it** — 8.0.5 to 8.0.6 on the 2026-09-09 merge — and a new version brings
+   new checks. That bump surfaced a real stored XSS: `Organization#url` accepted
+   `javascript:alert(document.cookie)` and the organization page rendered it with `link_to`.
 
 **Two traps, both of which look exactly like merge damage.** A stale dev server (step 5), and
 untracked debris in `public/` (step 7) — the second cost an hour on a CSV export spec whose entire

@@ -306,6 +306,33 @@ module EssentialsUiHelper
     end
   end
 
+  # A user-supplied URL, rendered as a link only if it is safe to click.
+  #
+  # `HttpUrlValidatable` stops a `javascript:` or `data:` URL being *saved*, and this stops one
+  # that was saved before that validation existed being *rendered* as a live link. Belt and
+  # braces on purpose: the validation guards one write path, and a row can arrive by import, by
+  # console, or from a database restored from before the fix.
+  #
+  # Falls back to plain text rather than dropping the value: the reader should still see what the
+  # field contains, and a bank looking at a nonsense URL is how it gets corrected.
+  # The URL if it is safe to put in an `href`, otherwise nil. Call sites that build their own
+  # link -- the dashboard's "More info" carries its own classes and accessible name -- guard the
+  # href with this and keep their markup.
+  def essentials_safe_href(url)
+    url if url.present? && url.match?(HttpUrlValidatable::HTTP_URL)
+  end
+
+  def essentials_external_link(url, **html_attrs)
+    return if url.blank?
+
+    href = essentials_safe_href(url)
+    # Plain text rather than nothing: the reader should still see what the field holds, and a bank
+    # looking at a nonsense URL is how it gets corrected.
+    return tag.span(url, class: "text-slate-600") if href.nil?
+
+    link_to href, href, class: "link-brand", rel: "nofollow noopener", **html_attrs
+  end
+
   # --- Status pills ---------------------------------------------------------
   #
   # Never colour alone: every tone pairs its colour with a word, and callers may add an

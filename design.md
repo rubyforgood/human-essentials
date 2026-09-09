@@ -471,6 +471,30 @@ Target is **WCAG 2.2 AA**. These are the rules this app has actually had to enfo
   link that is its own block — a table cell, a list item, a card row — takes no *permanent*
   underline, because there is no adjacent body text to be confused with and a whole underlined
   column is noise; the hover and focus cue covers it.
+<a id="user-supplied-links"></a>
+- **A URL a user typed is never put straight into an `href`.** `essentials_external_link` for a
+  link that is nothing but the URL, `essentials_safe_href` where the call site builds its own link
+  and needs to keep its classes and accessible name. Both accept `http` and `https` and nothing
+  else.
+
+  This is not theoretical. `Organization#url` validated with `URI::DEFAULT_PARSER.make_regexp` and
+  no scheme argument, which accepts **any** scheme, so `javascript:alert(document.cookie)` was a
+  valid organization URL — and the organization page rendered that field with `link_to`. An
+  organization admin sets it; anyone who views the page and clicks runs script in their own
+  session. Brakeman's `LinkToHref` found it, at weak confidence, once a merge from `main` bumped
+  its version.
+
+  **And restricting the scheme is not enough on its own.** `format:` is not anchored, so the
+  pattern matches a *substring*: `BroadcastAnnouncement#link` already restricted the scheme to
+  `http https` and still accepted `"javascript:alert(1) http://decoy.example.com"` — a field
+  rendered as the "More info" link on every user's dashboard. `HttpUrlValidatable::HTTP_URL` is
+  anchored.
+
+  Two layers, deliberately. The validation guards one write path; the helper guards the render, for
+  a row that arrived by import, by console, or from a database restored from before the validation
+  existed. A dangerous URL renders as **plain text rather than nothing**, because the reader should
+  still see what the field holds — a bank looking at a nonsense URL is how it gets corrected.
+
 <a id="inert-on-arrival"></a>
 - **A control that leads nowhere is disabled only when pressing it would cost something.** Several
   can be pressed before they can do anything: Today on a calendar that opens on today, "Reset

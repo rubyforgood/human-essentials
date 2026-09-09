@@ -13,12 +13,15 @@
             <%= announcement.created_at.strftime(announcement.created_at.year == Date.current.year ? "%B %-d" : "%B %-d %Y") %>
           </p>
           <p class="mt-0.5 text-sm text-slate-700"><%= announcement.message %></p>
-          <% if announcement.link.present? %>
+          <%# The href is guarded rather than the whole link: this one carries its own classes
+              and accessible name. An announcement link is the widest exposure of the three --
+              every user's dashboard renders it. %>
+          <% if (announcement_href = essentials_safe_href(announcement.link)) %>
             <%# The visible words stay short because the card is a compact grid cell, and the
                 accessible name carries the context WCAG 2.4.4 wants -- "More info" on its own
                 says nothing in a screen reader's list of links. The visible text is a prefix of
                 the accessible name, which is what WCAG 2.5.3 Label in Name requires. %>
-            <%= link_to "More info", announcement.link,
+            <%= link_to "More info", announcement_href,
                   aria: {label: "More info about the announcement of #{announcement.created_at.strftime("%B %-d")}"},
                   class: "mt-2 inline-flex items-center gap-1 text-sm font-medium link-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" %>
           <% end %>

@@ -42,6 +42,8 @@
 #
 
 class Organization < ApplicationRecord
+  include HttpUrlValidatable
+
   has_paper_trail
   resourcify
 
@@ -51,7 +53,9 @@ class Organization < ApplicationRecord
   self.ignored_columns += ["short_name"]
 
   validates :name, presence: true
-  validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
+  # Rendered with `link_to` on the organization page, so the scheme has to be restricted --
+  # see HttpUrlValidatable.
+  validates_http_url :url, message: "it should look like 'http://www.example.com'"
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
