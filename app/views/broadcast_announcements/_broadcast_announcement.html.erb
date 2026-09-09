@@ -1,6 +1,12 @@
 <tr id="<%= dom_id broadcast_announcement %>">
   <td><%= broadcast_announcement.message %></td>
-  <td><%= essentials_external_link broadcast_announcement.link %></td>
+  <%# `safe_http_url`, not the design system's link component: this is the vulnerable render site
+      on main too, and the guard must not depend on the design system being present. %>
+  <% if (href = safe_http_url(broadcast_announcement.link)) %>
+    <td><%= link_to href, href, class: "link-brand", rel: "nofollow noopener" %></td>
+  <% else %>
+    <td class="text-slate-600"><%= broadcast_announcement.link %></td>
+  <% end %>
   <td><%= broadcast_announcement.user&.name || "N/A" %></td>
   <td class="date text-left"><%= broadcast_announcement.expiry %>
     <% if broadcast_announcement.expired? %>

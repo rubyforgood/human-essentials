@@ -315,17 +315,14 @@ module EssentialsUiHelper
   #
   # Falls back to plain text rather than dropping the value: the reader should still see what the
   # field contains, and a bank looking at a nonsense URL is how it gets corrected.
-  # The URL if it is safe to put in an `href`, otherwise nil. Call sites that build their own
-  # link -- the dashboard's "More info" carries its own classes and accessible name -- guard the
-  # href with this and keep their markup.
-  def essentials_safe_href(url)
-    url if url.present? && url.match?(HttpUrlValidatable::HTTP_URL)
-  end
+  # `ApplicationHelper#safe_http_url` owns the rule; this name is kept because the call sites read
+  # better with it and because the guard is not a design system concern -- see the note there.
+  def essentials_safe_href(url) = safe_http_url(url)
 
   def essentials_external_link(url, **html_attrs)
     return if url.blank?
 
-    href = essentials_safe_href(url)
+    href = safe_http_url(url)
     # Plain text rather than nothing: the reader should still see what the field holds, and a bank
     # looking at a nonsense URL is how it gets corrected.
     return tag.span(url, class: "text-slate-600") if href.nil?
