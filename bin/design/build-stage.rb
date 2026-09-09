@@ -266,8 +266,13 @@ end
 # and donations_modal_controller.js had been rewritten from Bootstrap's modal to the native
 # <dialog>, and stage 1 migrates no views, so main's `<div class="modal">` would have reached
 # `showModal()`, which is not a function on a div.
+# The allowlist includes what this script composed a moment ago, or it reverts its own work: the
+# first run undid the .gitignore entry the ignore: step had written, and the Tailwind build came
+# back as an untracked 120KB artifact.
+allowed = Array(stage[:overwrite]) + stage.fetch(:insert, {}).keys +
+  (stage[:ignore] ? [".gitignore"] : [])
 clobbered = git("diff", "--cached", "--name-only", "--diff-filter=M", "origin/main")
-  .split("\n").reject(&:empty?) - Array(stage[:overwrite])
+  .split("\n").reject(&:empty?) - allowed
 unless clobbered.empty?
   git!("checkout", "origin/main", "--", *clobbered)
   puts "  reverted #{clobbered.size} overwrite(s) of main's files, keeping the stage additive:"
@@ -297,7 +302,17 @@ if stage[:gems]
   puts "  rails:   #{rails_version} (main is on #{git("show", "origin/main:Gemfile.lock")[/^    rails \((\S+)\)/, 1]})"
 end
 
-puts "\nBuilt #{stage[:branch]} off origin/main. Nothing has been pushed."
+# **Commit it.** A stage left staged-but-uncommitted is a trap that has now been sprung twice: the
+# next `git checkout design` is refused, `-q` swallows the message, and the commit meant for
+# `design` lands on the stage branch instead. A built stage is meant to be a reviewable commit
+# anyway.
+git!("add", "--", "Gemfile", "Gemfile.lock") if stage[:gems]
+git!("commit", "-q", "-m", "Stage #{number}: #{stage[:title]}\n\n" \
+  "Assembled by bin/design/build-stage.rb from #{stage[:source]} onto origin/main.\n" \
+  "Local only -- this script never pushes.\n\n#{stage[:note]}")
+
+puts "\nBuilt #{stage[:branch]} off origin/main as #{git("rev-parse", "--short=9", "HEAD").strip}."
+puts "Nothing has been pushed."
 puts "Next, in order:"
 puts "  rm -rf tmp/cache                       # Sprockets caches the manifest across branches"
 puts "  bundle exec rake -f Rakefile tailwindcss:build"
