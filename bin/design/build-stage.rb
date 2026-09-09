@@ -68,8 +68,6 @@ STAGES = {
     paths: %w[
       docs/architecture/
       design.md
-      Gemfile
-      Gemfile.lock
       app/assets/
       config/importmap.rb
       app/views/layouts/
@@ -77,7 +75,12 @@ STAGES = {
       app/helpers/essentials_ui_helper.rb
       app/javascript/
     ],
-    note: "Taken from #{COEXIST}, not from the tip: the tip's Gemfile has Propshaft and no Sass."
+    # Composed, not taken. `main` still has bootstrap, sass-rails and sprockets, so stage 1's
+    # Gemfile is main's plus one line -- and taking #{COEXIST}'s instead would drag Rails back to
+    # 8.0.2.1 against main's 8.1.3.1. `Gemfile.lock` then falls out of `bundle install`.
+    gems: ['gem "tailwindcss-rails", "~> 4.6"'],
+    note: "Views and assets from #{COEXIST}, not from the tip: the tip's Gemfile has Propshaft " \
+          "and no Sass, and the tip's layouts have the old stack already removed."
   }
 }.freeze
 
@@ -121,13 +124,31 @@ def check_stale_shared_files(stage)
   end
 end
 
+# What this stage's copy of a file will actually say -- which is not always the source commit's
+# copy. A composed file is main's version plus the stage's additions, and checking the source
+# commit's instead would have been checking a file the stage does not use.
+def stage_content(stage, file)
+  if stage[:gems] && file == "Gemfile"
+    main = git("show", "origin/main:Gemfile")
+    return nil unless $?.success?
+    compose_gemfile(main, stage[:gems])
+  elsif stage[:paths].any? { |p| file == p || file.start_with?(p) }
+    content = git("show", "#{stage[:source]}:#{file}")
+    $?.success? ? content : nil
+  end
+end
+
+# Appended at the end, which is safe here: main's Gemfile closes its last block on the final line.
+def compose_gemfile(main, gems)
+  "#{main.rstrip}\n\n# Added by docs/review-plan.md stage 1: Tailwind alongside the existing\n" \
+    "# Sprockets pipeline. Nothing is removed at this stage.\n#{gems.join("\n")}\n"
+end
+
 def check_markers(stage)
   problems = []
   LATER_STAGE_MARKERS.each do |file, rules|
-    next unless stage[:paths].any? { |p| file == p || file.start_with?(p) }
-
-    content = git("show", "#{stage[:source]}:#{file}")
-    next unless $?.success?
+    content = stage_content(stage, file)
+    next unless content
 
     rules[:absent].each { |t| problems << "#{file} contains #{t}, which belongs to a later stage" if content.include?(t) }
     rules[:present].each { |t| problems << "#{file} is missing #{t}, which this stage must keep" unless content.include?(t) }
@@ -184,5 +205,22 @@ abort "working tree is dirty; commit or stash first" unless git("status", "--por
 git("branch", "-D", stage[:branch])
 git!("checkout", "-q", "-b", stage[:branch], "origin/main")
 git!("checkout", source_sha, "--", *stage[:paths])
+
+# The composed files, which no checkout can produce. `bundle install` is what writes Gemfile.lock,
+# and it has to run here rather than be left to the reader: a stage whose lock still says Rails
+# 8.0.2.1 fails 878 examples and blames the design system.
+if stage[:gems]
+  path = File.join(ROOT, "Gemfile")
+  File.write(path, compose_gemfile(File.read(path), stage[:gems]))
+  puts "\n  Gemfile: main's, plus #{stage[:gems].size} line(s). Resolving..."
+  abort "bundle install failed -- the stage is half-built" unless system("cd #{ROOT} && bundle install --quiet")
+  locked = git("diff", "--stat", "--", "Gemfile.lock").split("\n").last.to_s.strip
+  puts "  Gemfile.lock: #{locked.empty? ? "unchanged" : locked}"
+  rails_version = File.read(File.join(ROOT, "Gemfile.lock"))[/^    rails \((\S+)\)/, 1]
+  puts "  rails:   #{rails_version} (main is on #{git("show", "origin/main:Gemfile.lock")[/^    rails \((\S+)\)/, 1]})"
+end
+
 puts "\nBuilt #{stage[:branch]} off origin/main. Nothing has been pushed."
+puts "Next: RAILS_ENV=test bin/rails db:test:prepare -- the test database still holds the last"
+puts "      branch's schema, which is the other half of that 878-failure run."
 puts "Return with: git checkout #{current}"
