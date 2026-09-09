@@ -389,6 +389,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.datetime "created_at", null: false
     t.bigint "item_id"
     t.string "name", null: false
+    t.integer "request_limit"
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_item_units_on_item_id"
   end
@@ -409,6 +410,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.string "partner_key"
     t.string "reporting_category"
     t.string "type", default: "ConcreteItem", null: false
+    t.integer "unit_request_limit"
     t.datetime "updated_at", precision: nil, null: false
     t.integer "value_in_cents", default: 0
     t.boolean "visible_to_partners", default: true, null: false
@@ -472,8 +474,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.string "city"
     t.datetime "created_at", precision: nil, null: false
     t.integer "deadline_day"
+    t.boolean "deadline_reminders_enabled", default: false, null: false
     t.integer "default_storage_location"
     t.boolean "distribute_monthly", default: false, null: false
+    t.boolean "distribution_reminders_enabled", default: false, null: false
     t.string "email"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
@@ -622,6 +626,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.text "notes"
     t.integer "organization_id"
     t.bigint "partner_group_id"
+    t.string "phone_number"
     t.integer "quota"
     t.boolean "send_reminders", default: false, null: false
     t.integer "status", default: 0

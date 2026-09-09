@@ -7,6 +7,8 @@
       <%= essentials_field_row do %>
         <%= f.input :name, label: "Name" %>
         <%= f.input :email, label: "Email" %>
+        <%# main's #5674. Sentence case, as design.md asks of every label. %>
+        <%= f.input :phone_number, label: "Phone number" %>
       <% end %>
 
       <%# Both say where this partner sits in the bank's arrangements. %>
@@ -18,6 +20,12 @@
       <% end %>
 
       <div>
+        <%# main's #5668: with both reminder kinds off for the organization, this choice decides
+            nothing. The field stays -- the setting is still recorded against the partner -- and
+            the notice explains why it will not take effect. %>
+        <% unless current_organization.deadline_reminders_enabled || current_organization.distribution_reminders_enabled %>
+          <%= render "shared/reminders_disabled_notice", reminder_type: :all %>
+        <% end %>
         <%= f.input :send_reminders, as: :boolean,
               label: "Do you want this partner to receive emails for distributions and reminders from the system?",
               input_html: {

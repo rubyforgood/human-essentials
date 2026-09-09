@@ -33,11 +33,48 @@
         <%= f.input :package_size, label: "Package size", input_html: {min: 0} %>
       <% end %>
 
-      <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
-        <%= f.association :request_units, as: :check_boxes, label: "Additional custom request units",
-              collection: current_organization.request_units,
-              checked: selected_item_request_units(@item),
-              label_method: :name, value_method: :id %>
+      <%# main's #5386: a request can be capped per item, both for plain units and for each custom
+          unit the item offers.
+
+          **The param names are main's contract, not a choice.** `items_controller` reads
+          `item[unit_ids][]` and `item[unit_limits][<unit_id>]` and hands them to
+          `Item#sync_request_units!`. This form previously used `f.association :request_units`,
+          which emits `item[request_unit_ids][]` -- a name the merged controller does not read, so
+          the units would have silently stopped saving. Written out by hand for that reason.
+
+          The trailing hidden field is main's too: unticking every box has to send an empty list,
+          or the controller sees no `unit_ids` key and leaves the old ones in place. %>
+      <%= essentials_field_row do %>
+        <%= f.input :unit_request_limit, label: "Request limit (individual items)",
+              input_html: {min: 0},
+              hint: "The most a partner may request of this item at once. Leave blank for no limit." %>
+      <% end %>
+
+      <% if current_organization.request_units.present? %>
+        <fieldset class="mb-4" data-controller="unit-limit">
+          <legend class="mb-1.5 block text-sm font-medium text-slate-700">
+            Additional custom request units
+          </legend>
+          <p class="mb-2 text-xs text-slate-500">
+            Tick a unit to offer it, and give it its own limit if it needs one.
+          </p>
+          <% current_organization.request_units.each do |unit| %>
+            <% item_unit = @item.request_units.find { |candidate| candidate.name == unit.name } %>
+            <% selected = item_unit.present? %>
+            <div class="mb-2 flex min-h-6 items-center gap-3">
+              <%= check_box_tag "item[unit_ids][]", unit.id, selected, id: "unit_#{unit.id}",
+                    class: "h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30",
+                    data: {unit_limit_target: "toggle", action: "change->unit-limit#sync"} %>
+              <%= label_tag "unit_#{unit.id}", unit.name, class: "py-0.5 text-sm text-slate-700" %>
+              <%= number_field_tag "item[unit_limits][#{unit.id}]", item_unit&.request_limit,
+                    min: 0, placeholder: "Limit", autocomplete: "off", disabled: !selected,
+                    "aria-label": "Request limit for #{unit.name}",
+                    class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} max-w-28 disabled:bg-slate-50 disabled:text-slate-400",
+                    data: {unit_limit_target: "limit"} %>
+            </div>
+          <% end %>
+          <%= hidden_field_tag "item[unit_ids][]", "" %>
+        </fieldset>
       <% end %>
 
       <%= f.input :visible_to_partners, label: "Item is visible to partners?", as: :boolean %>

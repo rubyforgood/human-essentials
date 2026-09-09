@@ -6,10 +6,22 @@ RSpec.describe ReminderDeadlineMailer, type: :job do
     let(:partner) { create(:partner, organization: organization) }
     before(:each) do
       organization.reminder_email_text = "Custom reminder message"
-      organization.update!(deadline_day: 1)
+      organization.update!(deadline_day: 1, deadline_reminders_enabled: true)
     end
 
     subject { described_class.notify_deadline(partner) }
+
+    context 'when the organization has disabled monthly deadline reminders' do
+      before do
+        partner.update!(send_reminders: true)
+        organization.update!(deadline_reminders_enabled: false)
+      end
+
+      it 'does not send even though the partner has reminders enabled' do
+        expect(subject.body).to be_blank
+        expect(subject.to).to be_nil
+      end
+    end
 
     it 'renders the subject' do
       expect(subject.subject).to eq("#{organization.name} Deadline Reminder")

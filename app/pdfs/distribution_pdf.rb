@@ -288,7 +288,7 @@ class DistributionPdf
   end
 
   def request_display_qty(item_request)
-    if Flipper.enabled?(:enable_packs) && item_request&.request_unit
+    if item_request&.request_unit
       "#{item_request.quantity} #{item_request.request_unit.pluralize(item_request.quantity.to_i)}"
     else
       item_request&.quantity || ""

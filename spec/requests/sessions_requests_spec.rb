@@ -93,6 +93,22 @@ RSpec.describe "Sessions", type: :request, order: :defined do
       end
     end
 
+    context "when a different user signs in on the same browser session" do
+      let(:first_org) { create(:organization) }
+      let(:second_org) { create(:organization) }
+      let(:first_user) { create(:user, organization: first_org) }
+      let(:second_user) { create(:user, organization: second_org) }
+
+      it "does not retain the previous user's role" do
+        post user_session_path, params: {user: {email: first_user.email, password: "password!"}}
+        post user_session_path, params: {user: {email: second_user.email, password: "password!"}}
+
+        get dashboard_path
+        expect(response).to be_successful
+        expect(session[:current_role]).to eq(second_user.roles.first.id)
+      end
+    end
+
     context "without a previously used role" do
       before do
         partner_user.add_role(Role::ORG_ADMIN, organization)

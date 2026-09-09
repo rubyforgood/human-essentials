@@ -140,20 +140,9 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include("Default Center")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       context "with a reminder schedule" do
@@ -164,7 +153,7 @@ RSpec.describe "Organizations", type: :request do
             every_nth_month: 1,
             day_of_month: 20
           }).to_ical
-          organization.update(reminder_schedule_definition: valid_reminder_schedule)
+          organization.update(reminder_schedule_definition: valid_reminder_schedule, deadline_reminders_enabled: true)
         end
 
         it "reports the next date a reminder email will be sent" do
@@ -178,6 +167,19 @@ RSpec.describe "Organizations", type: :request do
           get organization_path
           expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
           expect(response.body).to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+        end
+
+        context "but monthly deadline reminders are disabled" do
+          before do
+            organization.update!(deadline_day: 25, deadline_reminders_enabled: false)
+            get organization_path
+          end
+
+          it "hides the reminder schedule details" do
+            expect(response.body).not_to include "Reminder emails are sent"
+            expect(response.body).not_to include "Deadline day in reminder email"
+            expect(response.body).not_to include "Additional text for reminder email"
+          end
         end
       end
 
@@ -233,20 +235,9 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Packages in the distribution export")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       it "can see 'Demote to User' button for admins" do
@@ -280,6 +271,7 @@ RSpec.describe "Organizations", type: :request do
 
       it { is_expected.to render_template(:edit) }
       it { expect(response).to be_successful }
+
       it 'initializing the given organization' do
         expect(assigns(:organization)).to be_a(Organization) &
                                           have_attributes(
@@ -289,22 +281,14 @@ RSpec.describe "Organizations", type: :request do
                                           )
       end
 
-      context "when enable_packs flipper is on" do
-        it "should display custom units and units form" do
-          Flipper.enable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to include("Custom request units")
-          expect(response.body).to include "WolfPack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "should not display custom units and units form" do
-          Flipper.disable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to_not include("Custom request units")
-          expect(response.body).to_not include "WolfPack"
-        end
+      # `enable_packs` is gone (main's #5251), so there is no longer an on/off pair to test --
+      # main collapsed the two contexts into one and this follows. The asserted text is this
+      # branch's label: main's was one long sentence, "Custom request units used. Please use
+      # singular form...", which design.md splits into a short label and a hint.
+      it "displays custom units and the units form" do
+        get edit_organization_path
+        expect(response.body).to include("Custom request units")
+        expect(response.body).to include "WolfPack"
       end
     end
 
@@ -347,6 +331,19 @@ RSpec.describe "Organizations", type: :request do
           expect(response).to redirect_to(organization_path)
           follow_redirect!
           expect(response.body).to include("Updated")
+        end
+      end
+
+      context "toggles the reminder email settings" do
+        let(:update_param) do
+          { organization: { deadline_reminders_enabled: true, distribution_reminders_enabled: false } }
+        end
+
+        it "persists both flags" do
+          subject
+          organization.reload
+          expect(organization.deadline_reminders_enabled).to be true
+          expect(organization.distribution_reminders_enabled).to be false
         end
       end
 

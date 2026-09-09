@@ -161,6 +161,12 @@ module UiHelper
     _link_to "", {icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md"}.merge(options), properties
   end
 
+  # main fixed #5632 here by opting this button out of rails-ujs' `data-disable-with`: a
+  # modal toggle never navigates, so the button stayed stuck on "Please wait..." once the
+  # modal was dismissed. **That fix is not carried across, because the bug cannot occur in
+  # this version** -- it is a `button_tag` opening a native <dialog> through Stimulus, and this
+  # helper sets no `disable_with` on its own (the three others in this file are `submit_button`
+  # and the `_link_to` family, which do navigate). Recorded so the absence reads as a decision.
   # Opens a dialog. `target_id` keeps the AdminLTE "#someModal" form so call sites did not
   # have to change; the leading # is stripped and handed to the dialog Stimulus controller,
   # which calls showModal() on the matching native <dialog>.

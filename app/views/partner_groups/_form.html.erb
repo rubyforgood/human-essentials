@@ -26,6 +26,13 @@
         </div>
       </fieldset>
 
+      <%# main's #5668: with the organization's monthly deadline reminders off, this whole
+          fieldset configures emails that will not be sent, so say so instead of collecting a
+          schedule nobody will use. %>
+      <% unless current_organization.deadline_reminders_enabled %>
+        <%= render "shared/reminders_disabled_notice", reminder_type: :deadline %>
+      <% end %>
+
       <fieldset class="mb-4" data-controller="checkbox-with-nested-element">
         <legend class="text-sm font-semibold text-slate-900">
           Send deadline reminders every month?

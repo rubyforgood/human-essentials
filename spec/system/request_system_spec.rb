@@ -225,6 +225,15 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
 
+        it "keeps its label after the dialog is dismissed" do
+          expect(page).to have_select("partner_id")
+          within("#new-request") { find("button[aria-label='Close dialog']").click }
+
+          trigger = find("button[data-dialog-id-param='new-request']")
+          expect(trigger).to have_text("New quantity request")
+          expect(trigger).to have_no_text("Please wait...")
+        end
+
         context "selecting a partner" do
           it "redirects to new partner request page" do
             select(partner1.name, from: "partner_id")
@@ -345,6 +354,23 @@ RSpec.describe "Requests", type: :system, js: true do
         # Cancelled. The record is discarded, not deleted, and its page still exists.
         expect(page).to have_content("Request #{request.id} has been cancelled")
         expect(request.reload.discarded_at).not_to eq(nil)
+        expect(request.reload.discard_reason).to eq(reason)
+      end
+
+      it 'will not cancel without a reason, and says so on the form' do
+        click_row_action "Cancel request"
+
+        click_on 'Yes, cancel this request'
+
+        # Back on the form with the summary, not redirected and not cancelled.
+        expect(page).to have_content("is needed")
+        expect(page).to have_field('Cancellation reason *')
+        expect(request.reload.discarded_at).to eq(nil)
+
+        fill_in 'Cancellation reason *', with: reason
+        click_on 'Yes, cancel this request'
+
+        expect(page).to have_content("Request #{request.id} has been cancelled")
         expect(request.reload.discard_reason).to eq(reason)
       end
 

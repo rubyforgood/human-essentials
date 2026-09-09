@@ -49,7 +49,8 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(duplicated_name_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      response = DonationSite.import_csv(csv, organization.id)
+      errors = response[:errors]
       expect(errors).not_to be_empty
       expect(errors.first).to match(/Row/)
       expect(errors.first).to include("Name must be unique within the organization")
@@ -61,7 +62,8 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(valid_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      response = DonationSite.import_csv(csv, organization.id)
+      errors = response[:errors]
       expect(errors).to be_empty
       expect(DonationSite.count).to eq 1
 
@@ -79,7 +81,7 @@ RSpec.describe DonationSite, type: :model do
         Site,"1500 Remount Road, Front Royal, VA 22630",Joanna,jo@example.com,123-456-7890
       CSV
 
-      expect(DonationSite.import_csv(csv, organization.id)).to be_empty
+      expect(DonationSite.import_csv(csv, organization.id)[:errors]).to be_empty
 
       site = DonationSite.last
       expect(site.street).to eq "1500 Remount Road"
@@ -94,7 +96,8 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(invalid_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      response = DonationSite.import_csv(csv, organization.id)
+      errors = response[:errors]
       expect(errors).not_to be_empty
       expect(errors.first).to match(/Row/)
       expect(errors.first).to include("can't be blank")
@@ -106,7 +109,9 @@ RSpec.describe DonationSite, type: :model do
       import_file_path = Rails.root.join("spec", "fixtures", "files", "donation_sites.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
-      DonationSite.import_csv(csv, organization.id)
+      response = DonationSite.import_csv(csv, organization.id)
+      errors = response[:errors]
+      expect(errors).to be_empty
       expect(DonationSite.count).to eq 1
     end
   end

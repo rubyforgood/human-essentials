@@ -91,7 +91,6 @@ RSpec.describe "Items", type: :request do
 
     describe "GET #new" do
       it "shows the organization request_units options if they exist" do
-        Flipper.enable(:enable_packs)
         organization_units = create_list(:unit, 3, organization: organization)
         get new_item_path
         organization_units.each do |unit|
@@ -102,7 +101,6 @@ RSpec.describe "Items", type: :request do
 
     describe "GET #edit" do
       it "shows the selected request_units" do
-        Flipper.enable(:enable_packs)
         organization_units = create_list(:unit, 3, organization: organization)
         selected_unit = organization_units.first
         item = create(:item, organization: organization)
@@ -111,7 +109,7 @@ RSpec.describe "Items", type: :request do
         get edit_item_path(item)
 
         parsed_body = Nokogiri::HTML(response.body)
-        checkboxes = parsed_body.css("input[type='checkbox'][name='item[request_unit_ids][]']")
+        checkboxes = parsed_body.css("input[type='checkbox'][name='item[unit_ids][]']")
         expect(checkboxes.length).to eq organization_units.length
         checkboxes.each do |checkbox|
           if checkbox['value'] == selected_unit.id.to_s
@@ -338,8 +336,6 @@ RSpec.describe "Items", type: :request do
       end
 
       context "custom request items" do
-        before(:each) { Flipper.enable(:enable_packs) }
-
         it "does not show the column if the organization does not use custom request units" do
           get items_path
           expect(response.body).not_to include("Custom Request Units")
@@ -385,14 +381,15 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('2348')
         expect(response.body).to include('Package size')
         expect(response.body).to include('100')
-        expect(response.body).not_to include('Custom units')
+        # `enable_packs` is gone (main's #5251), so this row always renders. Sentence case
+        # because that is what the view says -- design.md, and `items/show.html.erb`.
+        expect(response.body).to include('Custom units')
         expect(response.body).not_to include("#ITEM1; ITEM2")
         expect(response.body).to include('Visible to partners')
         expect(response.body).to include('Yes')
       end
 
-      it 'shows custom request units when flipper enabled' do
-        Flipper.enable(:enable_packs)
+      it 'shows custom request units' do
         get item_path(id: item.id)
 
         expect(response.body).to include('Custom units')

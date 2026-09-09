@@ -23,7 +23,7 @@
       <%= local_assigns[:guidance] %>
     <% else %>
       Every line needs an item selected and a quantity greater than zero.
-      <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
+      <% if (current_partner&.organization || current_organization).request_units.any? %>
         Items that come in packs also need a unit chosen.
       <% end %>
     <% end %>

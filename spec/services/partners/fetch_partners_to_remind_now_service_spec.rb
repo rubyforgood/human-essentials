@@ -6,6 +6,9 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
     context "when there is a partner" do
       let!(:partner) { create(:partner) }
+      # New organizations have reminders disabled by default; these specs exercise
+      # the scheduling logic, so opt the partner's organization in.
+      before { partner.organization.update(deadline_reminders_enabled: true) }
       context "that has an organization with a global reminder & deadline" do
         context "that is for today" do
           before do
@@ -54,6 +57,17 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             end
 
             it "should NOT include that partner" do
+              expect(subject).not_to include(partner)
+            end
+          end
+
+          context "but the organization has disabled deadline reminders" do
+            before do
+              partner.update!(send_reminders: true)
+              partner.organization.update(deadline_reminders_enabled: false)
+            end
+
+            it "should NOT include that partner even though the partner has send_reminders enabled" do
               expect(subject).not_to include(partner)
             end
           end
@@ -152,6 +166,16 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
               it "should include that partner" do
                 expect(subject).to include(partner)
+              end
+            end
+
+            context "but the organization has disabled deadline reminders" do
+              before do
+                partner.organization.update(deadline_reminders_enabled: false)
+              end
+
+              it "should NOT include that partner" do
+                expect(subject).not_to include(partner)
               end
             end
           end

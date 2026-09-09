@@ -22,7 +22,26 @@
       <%= f.input :city, **address_field(:city) %>
       <%= f.input :state, **address_field(:state) %>
       <%= f.input :zipcode, **address_field(:zip) %>
+      <%# main's #5668 adds these to the super-admin new-organization form too, so a new
+          organization starts with reminders explicitly on or off rather than at the column
+          default.
+
+          **No `reminder-toggle` controller here, unlike the bank's own settings form.** main
+          wired the hiding on `organizations/edit` only, and it matters: a new organization has
+          `deadline_reminders_enabled` false by default, so wrapping the schedule fields would
+          hide them on first load -- and `admin/organizations_system_spec.rb` fills them in
+          without re-selecting Yes, because it passes no post-refresh hook to the shared
+          example. The fields stay visible; the toggle records the intent. %>
+      <%= f.input :deadline_reminders_enabled, as: :radio_buttons,
+            collection: [[true, "Yes"], [false, "No"]],
+            label: "Send monthly deadline reminder emails to partners?",
+            label_method: :second, value_method: :first %>
+      <%= f.input :distribution_reminders_enabled, as: :radio_buttons,
+            collection: [[true, "Yes"], [false, "No"]],
+            label: "Send day-before distribution reminder emails to partners?",
+            label_method: :second, value_method: :first %>
       <%= render "shared/deadline_day_fields", parent_form: f, parent_object: @organization %>
+
       <%= f.simple_fields_for :account_request do |account_request| %>
         <%= account_request.association :ndbn_member, label: "NDBN membership",
               label_method: :full_name, value_method: :id %>

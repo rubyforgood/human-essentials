@@ -7,8 +7,13 @@
   <td class="cell-actions">
     <div class="flex justify-end gap-1.5">
       <%= essentials_row_icon_link "View", transfer_row, icon: "bi-eye" %>
-      <%= essentials_row_icon_action "Delete", transfer_path(transfer_row.id), method: :delete, icon: "bi-trash", tone: :danger,
-            confirm: "Are you sure you want to permanently remove this transfer?" %>
+      <%# main's #5560 relabelled this from Delete to Undo, which is what it does: a transfer moved
+          stock between locations and this puts it back. The glyph follows the label -- design.md
+          maps "undo or reclaim" to `bi-arrow-counterclockwise`, so main's `icon: "undo"` becomes
+          that rather than `bi-trash`, which would promise a deletion. %>
+      <%= essentials_row_icon_action "Undo", transfer_path(transfer_row.id), method: :delete,
+            icon: "bi-arrow-counterclockwise", tone: :danger,
+            confirm: "Are you sure you want to undo this transfer?" %>
     </div>
   </td>
 </tr>

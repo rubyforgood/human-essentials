@@ -96,39 +96,47 @@
           humanize_boolean(@organization.enable_individual_requests) %>
     <%= essentials_detail "Quantity-based requests",
           humanize_boolean(@organization.enable_quantity_based_requests) %>
-    <% if Flipper.enabled?(:enable_packs) %>
-      <%= essentials_detail "Custom request units", wide: true do %>
-        <% if @organization.request_units.any? %>
-          <%= @organization.request_units.map { |unit| unit.name.titlecase }.to_sentence %>
-        <% end %>
+    <%# `enable_packs` removed in main's #5251. %>
+    <%= essentials_detail "Custom request units", wide: true do %>
+      <% if @organization.request_units.any? %>
+        <%= @organization.request_units.map { |unit| unit.name.titlecase }.to_sentence %>
       <% end %>
     <% end %>
   <% end %>
 
   <%= render "organizations/details_band", title: "Emails" do %>
-    <%= essentials_detail "Reminder emails are sent" do %>
-      <%= @organization.reminder_schedule&.show_description.presence %>
-      <% if @organization.reminder_schedule.valid? %>
-        <span class="mt-0.5 block text-xs text-slate-500">
-          Your next reminder date is <%= @organization.reminder_schedule.next_occurrence&.strftime("%a %b %d %Y") %>.
-        </span>
-      <% end %>
+    <%# main's #5668: the two toggles are part of what this page reports about the org. %>
+    <%= essentials_detail "Monthly deadline reminder emails" do %>
+      <%= humanize_boolean(@organization.deadline_reminders_enabled) %>
     <% end %>
-    <%= essentials_detail "Deadline day in reminder email" do %>
-      <% if @organization.deadline_day.present? %>
-        The <%= @organization.deadline_day.ordinalize %> after the reminder.
+    <%= essentials_detail "Day-before distribution reminder emails" do %>
+      <%= humanize_boolean(@organization.distribution_reminders_enabled) %>
+    <% end %>
+    <% if @organization.deadline_reminders_enabled %>
+      <%= essentials_detail "Reminder emails are sent" do %>
+        <%= @organization.reminder_schedule&.show_description.presence %>
         <% if @organization.reminder_schedule.valid? %>
-          <%# One interpolation, not a sentence split across lines: the rendered text has to read
-              contiguously, and a spec asserts the whole sentence. %>
           <span class="mt-0.5 block text-xs text-slate-500">
-            <%= "The deadline on your next reminder email will be #{DeadlineService.new(
-                  deadline_day: @organization.deadline_day,
-                  today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime("%a %b %d %Y")}." %>
+            Your next reminder date is <%= @organization.reminder_schedule.next_occurrence&.strftime("%a %b %d %Y") %>.
           </span>
         <% end %>
       <% end %>
+      <%= essentials_detail "Deadline day in reminder email" do %>
+        <% if @organization.deadline_day.present? %>
+          The <%= @organization.deadline_day.ordinalize %> after the reminder.
+          <% if @organization.reminder_schedule.valid? %>
+            <%# One interpolation, not a sentence split across lines: the rendered text has to read
+                contiguously, and a spec asserts the whole sentence. %>
+            <span class="mt-0.5 block text-xs text-slate-500">
+              <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                    deadline_day: @organization.deadline_day,
+                    today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime("%a %b %d %Y")}." %>
+            </span>
+          <% end %>
+        <% end %>
+      <% end %>
+      <%= essentials_detail "Additional text for reminder email", @organization.reminder_email_text, wide: true %>
     <% end %>
-    <%= essentials_detail "Additional text for reminder email", @organization.reminder_email_text, wide: true %>
     <%= essentials_detail "Distribution email content", @organization.default_email_text, wide: true %>
     <%= essentials_detail "Email when a partner makes a request",
           humanize_boolean(@organization.receive_email_on_requests) %>

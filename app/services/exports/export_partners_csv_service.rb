@@ -27,6 +27,7 @@ module Exports
       table = {
         "Agency Name" => ->(partner) { partner.name },
         "Agency Email" => ->(partner) { partner.email },
+        "Agency Phone Number" => ->(partner) { partner.phone_number },
         "Notes" => ->(partner) { partner.notes },
         "Agency Type" => ->(partner) { I18n.t(partner.profile.agency_type, scope: :partners_profile) }, # Columns from the agency_information partial
         "Other Agency Type" => ->(partner) { partner.profile.other_agency_type },

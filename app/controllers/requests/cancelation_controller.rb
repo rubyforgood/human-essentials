@@ -12,8 +12,11 @@ module Requests
       @cancelation = Cancelation.new(reason: cancelation_params[:reason])
 
       # Retryable, so it re-renders and the reason the user typed survives -- unlike the service's
-      # two failures below, which are states nothing they type can change. design.md: ask what the
-      # user should do next and send them there.
+      # *state* failures below, which nothing they type can change. design.md: ask what the user
+      # should do next and send them there.
+      #
+      # The service checks the reason too, since main's #5641 fix went in at that level. This runs
+      # first, so that check is unreachable from this form and is a backstop for other callers.
       unless @cancelation.valid?
         @request = Request.find(params[:request_id])
         render :new, status: :unprocessable_content

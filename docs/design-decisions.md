@@ -9651,3 +9651,90 @@ wrong with this control".
 resizing between them does not converge — the clipped scan runs on `resize` while the stacking
 labels arrive on a `matchMedia` change. It no longer affects any audit result and has no reported
 user symptom, so it is in `docs/todo.md` with the mechanism written down rather than chased.
+
+## 2026-09-09 — Merging 151 commits of `main`: design owns the markup, main owns the behaviour
+
+`main` had moved 12 days and 151 commits, touching 180 files — 88 of which this branch had also
+changed, and 33 of those were views it had rewritten from scratch. That shape is not a line-by-line
+merge: on almost every conflicted view, one side was migrated Tailwind markup and the other was the
+old Bootstrap markup with a new feature embedded in it.
+
+### The rule
+
+**Design owns the markup; main owns the behaviour.** For each conflict: take this branch's file,
+then find what main's side actually *changed* against the merge base and re-apply that change in
+design-system terms. `git diff -w <base> origin/main -- <file>` per file, so a reindentation is
+visibly not a feature.
+
+That distinction did real work. `partners/individuals_requests/new` looked like a 19-line conflict
+and was pure reindentation. `items/_form` looked similar and carried a whole feature.
+
+### Where main's version won outright
+
+Copy and behaviour are not symmetrical, and neither is always the newer one.
+
+- **Both branches fixed the same bug** — a cancellation could be saved with no reason (#5641). main
+  put the check in `RequestDestroyService`; this branch built a `Requests::Cancelation` form object
+  so the message lands beside the field. This branch's code carried a comment arguing *against* the
+  service-level check, on the grounds that it would break four examples that pass no reason. main
+  answered that objection by threading a reason through those four examples. **Both layers kept**,
+  and the comment rewritten to say the objection was wrong rather than left to look considered.
+- **`sprockets` and `terser`** are dependency bumps of gems ADR 0012 removed. Not re-added.
+- **The audit status rename** (`confirmed` → `pending_finalization`) is a model enum change, so
+  every view calling `@audit.confirmed?` had to follow it or raise — and the guidance text naming
+  the button had to follow the button.
+
+### Where this branch's version won, and the specs moved
+
+main's specs assert main's markup and copy. Where they asserted Font Awesome (`fa-undo`,
+`fa-search`), Bootstrap (`data-bs-toggle`, `btn btn-success`, `.alert-info`) or Title Case
+("Submit Essentials Request", "All Human Essentials Organizations", "From Location"), the spec was
+updated to what ships here and the *behaviour being pinned* was preserved. Two of main's regression
+tests were ported rather than dropped, because the bug they guard is real even though the markup
+moved: #5632's "a modal toggle must not carry `data-disable-with`" and #5641's "the form must not
+cancel without a reason".
+
+One of main's blocks was **removed** rather than ported: it duplicated
+`spec/requests/requests/cancelation_requests_spec.rb` with the pre-design expectations, and keeping
+it would have meant two request specs asserting opposite things about one endpoint.
+
+### Four defects the merge introduced or exposed
+
+| What | Why it mattered |
+| --- | --- |
+| main's new `reminder_toggle_controller` toggled `d-none` | Defined nowhere since ADR 0011, so the dependent fields would never hide. `migration-map.md` records **four** earlier controllers with the identical fault; this was the fifth |
+| `items/_form` emitted `item[request_unit_ids][]` | The merged controller reads `item[unit_ids][]`, so custom units would have silently stopped saving |
+| main's unit-limit behaviour was an inline `<script>` | No inline scripts here; it became `unit_limit_controller` |
+| `_reminders_disabled_notice` arrived as `callout callout-info` | Three dead classes; migrated to the callout component |
+
+### Two failures that were not the merge
+
+Worth recording because both looked exactly like merge damage.
+
+**Three pages reported HTTP 500** by `route-sweep`, and rendered 200 when visited by hand. The dev
+server had been running since before the merge, across a `bundle install` that changed the gem set.
+A fresh server sweeps 145 screens with no findings. **After a `bundle install` that changes the gem
+set, restart the server before believing any browser audit.**
+
+**One spec failed on a CSV export whose entire path was byte-identical to pre-merge** — controller,
+view model, concern, model, factory and spec. The cause was `public/product_drive_participants.csv`,
+untracked debris from rollback #8: Rails serves `public/` before routing, so it shadowed
+`/product_drive_participants.csv` and returned three unfiltered rows with the wrong headers.
+`bin/workspace-restore` removes files a commit deleted and deliberately leaves untracked files
+alone, which is right — but an untracked file in `public/` can shadow a route, and that is worth
+knowing before attributing the failure to whatever you happened to be doing.
+
+### `Gemfile.lock`
+
+Regenerated rather than hand-merged, and it needed two corrections. Taking main's lock dropped this
+machine's `aarch64-linux` platform, so `tailwindcss-ruby` had no executable and `tailwindcss:build`
+failed. Nothing noticed immediately, because a *stale* `tailwind.css` was still on disk — which the
+class audit then read, reporting `max-w-28` as a class that styles nothing when the real fault was
+that nothing had rebuilt. **A class audit is only as current as the stylesheet it reads.**
+
+### Schema
+
+Regenerated by running the migrations, not by resolving 14 conflict hunks by hand. Both sides had
+added three; the merged `schema.rb` is version `2026_09_01_200000` with main's four columns and this
+branch's structured address, and `address` correctly absent because `StructuredAddress` composes it
+from `street`/`city`/`state`/`zipcode` and ignores the dropped column.

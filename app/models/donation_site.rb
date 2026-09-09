@@ -47,6 +47,7 @@ class DonationSite < ApplicationRecord
 
   def self.import_csv(csv, organization)
     errors = []
+
     csv.each_with_index do |row, index|
       loc = DonationSite.new(row.to_hash)
       loc.organization_id = organization
@@ -56,7 +57,8 @@ class DonationSite < ApplicationRecord
         errors << "Row #{index + 2}, #{row.to_hash["name"]} - #{loc.errors.full_messages.join(", ")}"
       end
     end
-    errors
+
+    {errors: errors, warnings: []}
   end
 
   def self.csv_export_headers

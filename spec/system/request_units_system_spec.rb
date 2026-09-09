@@ -10,8 +10,6 @@ RSpec.describe "Custom request units", type: :system, js: true do
     visit edit_organization_path
   end
 
-  after { Flipper.disable(:enable_packs) }
-
   # Capybara does not match `aria-label` unless `enable_aria_label` is on, and it is not --
   # `distribution_system_spec.rb` carries the same workaround. The button's whole content is an
   # icon, so its name lives there.

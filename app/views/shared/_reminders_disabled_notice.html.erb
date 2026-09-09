@@ -1,0 +1,33 @@
+<%#
+  Shown in place of reminder-configuration fields when the organization has turned the relevant
+  reminder emails off on its settings page.
+
+  Locals:
+    reminder_type - :deadline, :distribution, or :all
+
+  From main's #5668. Migrated to the design system on merge: it arrived as `callout callout-info`
+  with an `h5.font-weight-bold`, three classes ADR 0011 left defined nowhere, so it would have
+  rendered as unstyled text. `shared/essentials/callout` is the component, and it takes the title
+  rather than a heading of its own -- design.md, one h1 per page and no stray heading levels
+  inside a form.
+
+  `:info`, not `:warning`. Nothing is wrong: the bank has configured it this way on purpose, and
+  amber here would read as a problem to fix on a page the reader cannot fix it from.
+%>
+<%
+  title =
+    case reminder_type
+    when :distribution then "Day-before distribution reminder emails are turned off"
+    when :all then "Reminder emails are turned off for your organization"
+    else "Monthly deadline reminder emails are turned off"
+    end
+%>
+<%= render "shared/essentials/callout", tone: :info, title: title, wrapper_class: "mb-4" do %>
+  Your organization has turned this off, so these emails will not be sent.
+  <% if can_administrate? %>
+    <%= link_to "Change this in your organization settings", edit_organization_path,
+          class: "link-brand" %>.
+  <% else %>
+    Contact your organization administrator to change this.
+  <% end %>
+<% end %>

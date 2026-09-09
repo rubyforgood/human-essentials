@@ -25,13 +25,19 @@ class RequestDestroyService
 
   attr_reader :request_id, :reason
 
-  # **States only.** Whether the reason is present is input validation and belongs to
-  # `Requests::Cancelation`, the form object the controller validates first -- one owner for the
-  # rule, and it is the owner that can re-render the form with what the user typed still in it.
-  # Duplicating it here would also have made this service refuse a cancellation in four existing
-  # examples that legitimately do not care about the reason.
+  # **Two layers, on purpose, and this branch was wrong about that.** The blank-reason check was
+  # left out here on the grounds that the rule has one owner -- `Requests::Cancelation`, the form
+  # object the controller validates first, which is the only one that can re-render the form with
+  # what the user typed still in it -- and that adding it would refuse a cancellation in four
+  # existing examples that do not pass a reason.
   #
-  # Both of these are *states*, not validation of what the user typed, and neither is retryable:
+  # main fixed the same bug (#5641) at this level and answered the objection: it threads a reason
+  # through those four examples rather than leaving them reasonless. Both layers are kept. The form
+  # object still owns the *user-facing* error, because it is the one that can put the message beside
+  # the field; this is the backstop for every caller that is not that form, which the form object by
+  # construction cannot cover.
+  #
+  # The first two are *states*, not validation of what the user typed, and neither is retryable:
   # nothing the person filling in the cancellation form can change will make a second attempt
   # succeed. The controller relies on that when it decides where to send them. The messages are
   # shown to users verbatim in a flash, so they read as sentence fragments that follow "could not
@@ -41,6 +47,8 @@ class RequestDestroyService
       errors.add(:base, 'we could not find it')
     elsif request.discarded_at.present?
       errors.add(:base, 'it has already been cancelled')
+    elsif reason.blank?
+      errors.add(:base, 'a cancellation reason is required')
     end
 
     errors.none?

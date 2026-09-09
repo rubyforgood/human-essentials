@@ -383,6 +383,7 @@ fails on any glyph it does not recognise, which makes a one-off a decision rathe
 | reset a password | `bi-key` | | compare with another period | `bi-arrow-left-right` |
 | a CSV | `bi-filetype-csv` | | copy to the clipboard | `bi-clipboard` |
 | adjust an allocation | `bi-sliders` | | total something up | `bi-calculator` |
+| a child | `bi-person-arms-up` | | | |
 
 **Import points in, export points out** — because import and export are movements in and out of a
 box, and the box is the app. This app had them the other way round for the length of the migration:
