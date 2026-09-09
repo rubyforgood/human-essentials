@@ -48,5 +48,5 @@ time, not only when it seems relevant.
 **Work, document, commit, push — at every checkpoint.** Not batched at the end.
 
 A checkpoint that is not pushed is a checkpoint that can be lost. In the source project the working
-tree was rolled back six times without `HEAD` ever moving, and twice it arrived disguised as a bug
+tree was rolled back nine times without `HEAD` ever moving, and twice it arrived disguised as a bug
 report about a fix that had already been made. Committing is the only protection.

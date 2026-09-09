@@ -9724,6 +9724,13 @@ untracked debris from rollback #8: Rails serves `public/` before routing, so it 
 alone, which is right — but an untracked file in `public/` can shadow a route, and that is worth
 knowing before attributing the failure to whatever you happened to be doing.
 
+> **Corrected 2026-09-09.** The reasoning above is right about `public/` and wrong about why the
+> file survived. `workspace-restore` was not exercising its policy on untracked work: the path is
+> gitignored, the scan read only `git status`, and **the tool never saw the file at all**. It would
+> also have misclassified it if it had, because the predicate was "does this path have history" and
+> `git log` reports none for it. Both are fixed, and the reasoning is in *The recovery tool could
+> not see the file that broke a spec* at the end of this document.
+
 ### `Gemfile.lock`
 
 Regenerated rather than hand-merged, and it needed two corrections. Taking main's lock dropped this
@@ -9861,3 +9868,87 @@ The audits in `bin/design/` are thorough and they are not the whole gate. Four o
 were covered; the two that were not are exactly where this was hiding, and one of them only found
 it because **`main` bumped brakeman 8.0.5 → 8.0.6** in the merge and the new version brought a new
 check. `docs/onboarding.md`'s post-merge routine has a step 9 now, naming both.
+
+## 2026-09-09 — The recovery tool could not see the file that broke a spec
+
+Rollback #9 landed mid-session: `HEAD` at `814c03f77` and pushed, the disk exactly `548db78f6` —
+the same target as the eight before it, 551 commits back, **0 differing paths**, so nothing on disk
+was unique to it and the restore was lossless. Recovery took a minute. What was worth the rest of
+the hour was that **thirteen files came back and `bin/workspace-restore` could only see eleven**.
+
+### The two it could not see
+
+`public/product_drive_participants.csv` and `public/vendors.csv`. Both were on disk. Both were
+absent from `HEAD`. Neither appeared in `git status`, because `.gitignore` gained `/public/*.csv` at
+`db64bbec9` — and **a rollback restores an old tree without consulting the ignore rules of the tree
+it overwrites**. `WorkspaceDrift#untracked` read `git status --porcelain -uall`, which never lists
+an ignored path, so the files were invisible to the tool whose entire job is to find them.
+
+This is the second time that exact file has done damage. After rollback #8 it shadowed a route —
+Rails serves `public/` before routing — and failed a CSV export spec that nothing in the code path
+had touched. The change log recorded it then as "untracked debris that `workspace-restore`
+deliberately leaves alone". **That attribution was wrong**, and worth correcting rather than
+quietly fixing: the restore was not exercising a policy about untracked work, it never saw the file.
+
+And it would have missed it twice over. The old predicate was `git log --oneline -1 -- <path>`,
+"does this path have history". For that path it returns **0 commits**, so even had the file been
+visible it would have been filed as somebody's work in progress and spared.
+
+### Why "has history" is the wrong question
+
+Two independent failures, both measured:
+
+**History simplification.** `git log -- <path>` prunes, and reported no history at all for a file
+whose blob is plainly in `548db78f6`. `--full-history` finds two commits. Nothing about the
+prose form of the query suggests it can answer "never existed" about a file you are looking at.
+
+**Merges.** The obvious sharpening is `--diff-filter=D` — literally "paths some commit deleted",
+which is the module's own definition of resurrected. It is worse. A log without `-m` shows no diff
+for a merge commit, and these files were removed *by the merge of `main`*. Run over the whole
+history it produced 7,815 paths, intersected with the disk to exactly one — `spec/example_failures.txt`,
+the false positive — and **none of the three real cases**. The result inverted.
+
+### The predicate that holds
+
+The file on disk is **byte-for-byte a version git once held at that path**. Exact, and it earns
+three things at once:
+
+- It tells a reverted file from a runtime artifact squatting on a deleted path.
+  `spec/example_failures.txt` has history *and* a deleting commit, and rspec rewrites it every run.
+  Deleting a live artifact on the word of the tool that exists to make the tree trustworthy is how
+  that tool loses its nerve.
+- Matching bytes is the **licence to delete**: git can give the file back.
+- It survives widening the scan to ignored paths, which the cheap test could not.
+
+### Making it cheap, and the wrong turn on the way
+
+First attempt ran the content test on every candidate: **156.7 seconds**, and `new_work` timed out.
+The cause is instructive. Propshaft's digested output in `public/assets/` is byte-identical to its
+source in `app/assets`, so all 163 files passed a "does git know this blob" pre-filter and each one
+then cost a full-history walk that finds nothing.
+
+The filter that works is one command: `git log --full-history --name-only --format=` lists every
+path git ever touched, 10,550 of them, in 0.95s. It takes 212 candidates to **4**, and the scan to
+**5.8s**. All three real files survive it; `tailwind.css` and all 163 digests do not.
+
+### What was bounded, and said out loud
+
+`--ignored=matching` collapses a wholly-ignored directory to `dir/`, which would have hidden
+`public/assets/` — precompiled output Rails serves in preference to any route, and the one
+CLAUDE.md already warns goes stale invisibly. So collapsed directories are expanded, under a
+**500-file bound**: `tmp/` holds 36,127 and none of them change what renders. Both scripts now
+*print* what they skipped. An unscanned directory nobody mentions is the blind spot this entry is
+about, one level up.
+
+### Controls
+
+Run before the change with both CSVs planted: `resurrected` = 1, both `seen=false`, the tracked-path
+case `seen=true`. After: `resurrected` = 3, all three real files seen, `spec/example_failures.txt`
+and `app/assets/builds/tailwind.css` correctly rejected, `tmp/` reported as skipped.
+`bin/workspace-check` names all three end to end and exits 2.
+
+### The counts were stale in three places
+
+`CLAUDE.md` said five, `docs/skill-proposal-v2.md` and a migration-skill reference said six, and the
+change log had already numbered one #8. All now say nine. A number in prose about an ongoing event
+goes stale silently; the change log numbering them is what makes it checkable.

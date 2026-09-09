@@ -9,7 +9,7 @@ description: >
 
 # Not losing the work
 
-From a project where the working tree was silently reverted **six times** over twelve days, without
+From a project where the working tree was silently reverted **nine times** over three weeks, without
 `HEAD` ever moving. Twice it arrived as a bug report about a fix that had already been made.
 
 ## Commit and push at every checkpoint
@@ -58,6 +58,44 @@ Worth building, once, in any project where this happens:
 
 Snapshot before restoring, always. The revert may have taken something real with it, and a stash is
 cheap.
+
+## The resurrection scan must not respect `.gitignore`
+
+A revert restores an old tree wholesale. It does not consult the ignore rules of the tree it is
+overwriting. So a path `HEAD` has *started* ignoring since lands on disk and **never appears in
+`git status`** — the check reports clean and the restore leaves it there.
+
+In the source project this happened to the same file twice.
+`public/product_drive_participants.csv` came back and shadowed a route both times, because Rails
+serves `public/` before routing; the second time it failed a spec while the tooling said the tree
+matched `HEAD`. The change log had recorded that as a file the restore "deliberately leaves alone",
+which was a policy explanation for what was really a blind spot.
+
+So scan `git status --porcelain -uall --ignored=matching` as well. Expand the directories it
+collapses to `dir/` — build output like `public/assets/` is exactly where this bites — but bound the
+expansion, because `tmp/` held 36,127 files and not one of them changes what renders. **Print which
+directories you skipped.** A silently unscanned directory is the same blind spot again.
+
+## "The path has history" is the wrong test
+
+The tempting predicate for *resurrected* is "this path has history, so some commit deleted it".
+Two separate things go wrong, and both were measured rather than reasoned about:
+
+- `git log -- <path>` applies history simplification and can report **no history at all** for a file
+  whose blob is plainly in an ancestor commit. Use `--full-history`.
+- `--diff-filter=D` — "paths some commit deleted", which sounds like the definition itself —
+  **misses everything a merge removed**, because a log without `-m` shows no diff for merge commits.
+  Run against three genuinely resurrected files it found *none* of them, and returned only the one
+  false positive. That is the result exactly inverted.
+
+The predicate that holds: the file on disk is **byte-for-byte a version git once held at that
+path**. It is exact; it separates a reverted file from a runtime artifact that happens to occupy a
+deleted path (`spec/example_failures.txt` has history *and* a deleting commit, and rspec rewrites it
+every run); and matching bytes is also the licence to delete, because git can give the file back.
+
+Make it cheap with one filter before any per-path work: a single
+`git log --full-history --name-only --format=` lists every path git ever touched, which cut 212
+candidates on disk down to 4 and the scan from 157 seconds to 6.
 
 ## Assume tooling can be removed too
 

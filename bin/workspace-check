@@ -51,6 +51,10 @@ if back.any?
   say "      ...and #{back.size - 10} more" if back.size > 10
 end
 
+# Say out loud where this did not look. A silently skipped directory is the same blind spot as the
+# gitignored one it just took two rollbacks to notice.
+skipped_dirs.each { |dir, n| say "\n  not scanned: #{dir} (#{n} files, over the #{WorkspaceDrift::DIR_BOUND} bound)" }
+
 rolled_back = rollback?(drifted.size, back.size)
 if rolled_back
   say "\n  This is a ROLLBACK, not an edit. Nobody changes #{drifted.size} files by hand," if drifted.size >= 50

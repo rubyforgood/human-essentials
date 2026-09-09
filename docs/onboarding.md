@@ -780,7 +780,12 @@ Two symptoms worth recognising:
 
 - **A file a commit deleted is back on disk.** `git checkout .` will not remove it, so the app goes
   on rendering it. `bin/workspace-check` lists these separately, and tells them apart from your own
-  new files by whether the path has any history.
+  new files by whether the bytes on disk are a version git once held *at that path*.
+  **It reads gitignored paths too.** A rollback restores an old tree without consulting the ignore
+  rules of the tree it overwrites, so a path `HEAD` has since started ignoring lands on disk and
+  never shows up in `git status`. `public/product_drive_participants.csv` came back that way twice
+  and shadowed a route both times, because Rails serves `public/` before routing. Directories over
+  500 files are skipped and named — `tmp/` holds 36,127 and none of them change what renders.
 - **The fix you just made is "not working".** Check the file on disk before reading the code.
 
 ### Manufacturer donations is a table now
