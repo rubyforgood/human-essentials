@@ -720,11 +720,36 @@ subtracted from that grep's matches. Widening what an audit reads can require wi
 discounts; the run in between reports clean and looks like proof.
 
 `status.rb` reports which controllers render on a design system layout, resolving layout
-inheritance.
+inheritance — and, since 2026-09-09, **which views still use the old one**.
 
 ```bash
 ruby bin/design/status.rb
 ```
+
+**The view measure is inverted, and it is worth knowing why.** It used to count views carrying
+design system markup, and that pattern was widened three times: 51 pages the first time, 17 the
+second, 3 the third, and the files remaining after that would have needed a fourth. Every one of
+them was already migrated. Three were bare `f.input`, which is the *finished* state because
+`config.default_wrapper = :essentials` means the wrapper supplies the classes; the rest carried a
+data-table cell class, a Stimulus controller, or a helper call whose argument was a variable rather
+than a symbol literal.
+
+**A positive-marker test cannot be finished**: the design system gains vocabulary with every
+component, so the check is always one component behind, and every miss reports completed work as
+outstanding. The legacy vocabulary is closed — ADR 0011 deleted both frameworks, and they cannot
+gain new words. So the primary question is now "does this view still use the old system?", which is
+what "is the migration done" actually means, and the answer is stable.
+
+Thirteen controls, one per legacy group — `btn`, `card`, `form-group`, the Bootstrap grid, Font
+Awesome, `table-striped`, `d-none`, `label label-*`, `callout callout-*`, `data-bs-*`, `fa_icon` —
+plus two that must stay **silent**, because the first draft flagged three migrated pages:
+`card-surface` is ours and `\bcard\b` matches the "card" inside it, and `float-right` is a Tailwind
+utility as much as a Bootstrap one, so its presence says nothing.
+
+The positive count is still printed as an indicator, labelled as one: a four-line table row can be
+fully migrated and have nothing to mark. Files that cannot carry a marker for the system they *are*
+— the components in `shared/essentials/`, plus gem and framework partials — are reported separately
+rather than counted as failures.
 
 `copy-audit.rb` reads the app's *words* and checks the things axe cannot: link text that says
 nothing out of context (WCAG 2.4.4), instructions that depend on position (WCAG 1.3.3), gendered

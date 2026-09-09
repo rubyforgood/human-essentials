@@ -34,7 +34,14 @@ def count(cmd) = capture(cmd).strip.to_i
 
 status = capture("ruby #{Rails.root.join("bin/design/status.rb")}")
 controllers = status[/controllers on design system:\s*(\d+ \/ \d+)/, 1]&.tr("/", "o")&.sub("o", "of")
-views = status[/views with design-system markup:\s*(\d+ \/ \d+)/, 1]&.tr("/", "o")&.sub("o", "of")
+# **The row this feeds used to be a positive-marker count, and it was wrong six times out of six.**
+# `status.rb` now leads with the inverted measure -- views still carrying Bootstrap or AdminLTE --
+# because the legacy vocabulary is closed and the design system's is not. `nil` rather than a
+# guessed 0 if the line is missing: a parse that fails is not a pass.
+stale = status.match(/views still using the old system:\s*(\d+) of (\d+)/)
+views = stale ? "#{stale[1]} of #{stale[2]}" : "n/a (status.rb produced no count)"
+hit = status.match(/views carrying a positive marker:\s*(\d+) of (\d+)/)
+marked = hit ? "#{hit[1]} of #{hit[2]}" : nil
 
 routes_out = capture("cd #{Rails.root} && bin/rails runner bin/design/dead-routes.rb")
 routes_total = routes_out[/(\d+) routes checked/, 1]
@@ -68,7 +75,9 @@ rows = {
   "Files changed against `main`" =>
     against_main.call("git -C #{Rails.root} diff --name-only main...HEAD | wc -l"),
   "Controllers on a design system layout" => controllers,
-  "Views carrying design system markup" => views,
+  "Views still using Bootstrap or AdminLTE" => views,
+  "Views carrying a design system marker" =>
+    marked ? "#{marked} (indicator; a small partial can be migrated and carry none)" : "n/a",
   "Stimulus controllers" => Rails.root.glob("app/javascript/controllers/*_controller.js").size.to_s,
   "Undefined legacy classes left in `app/views` and `app/helpers`" => undefined_count.to_s,
   "Routes whose request would raise" => "#{routes_dead} of #{routes_total}",

@@ -253,7 +253,7 @@ page exactly one `<h1>`, name every control, and never let colour be the only si
 
 ```bash
 ruby bin/design/which-audits.rb       # FIRST: which of the 30 does my change affect?
-ruby bin/design/status.rb            # which controllers are on a design system layout
+ruby bin/design/status.rb            # which views still use Bootstrap/AdminLTE, and layouts
 ruby bin/design/page-audit.rb        # defects and debt, per view
 ruby bin/design/shell-first-audit.rb # a migrated shell around an unmigrated body
 pw bin/design/wayfinding-audit.js    # screens that can be reached but not left
