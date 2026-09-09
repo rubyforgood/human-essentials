@@ -162,6 +162,60 @@ behind `main` it is. Stage 1 currently reports `Gemfile` 5 behind and `Gemfile.l
 checkouts, so a stage inherits whatever schema the last branch left — which for stage 1 meant
 `main`'s models looking for an `address` column this branch had dropped.
 
+### A stage's *scope* is a guess until you run the suite against it
+
+Stage 1 built cleanly, booted, and then failed **150 examples and climbing** with
+`Sprockets::Rails::Helper::AssetNotPrecompiledError` on `controllers/csv_download_controller.js` —
+an asset that exists on `main`, is declared in `main`'s `manifest.js`, and has nothing to do with
+the design system.
+
+The control is what made it tractable: the same example on **pristine `main` passes**, so the stage
+caused it. Asking Sprockets directly then took a minute — `manifest.js found: false` on the stage
+against `true` with 68 links on `main`, and one extra load path, `app/assets/tailwind`. Tailwind
+v4's source uses `@import "tailwindcss"`, which Sprockets cannot parse; the whole manifest dies with
+it, so *every* asset reports as not precompiled and the error names whichever one the layout asked
+for first.
+
+`cda053539` had solved this — in `config/initializers/assets.rb`, with a comment saying in as many
+words that Sprockets must serve the build and never the source. **Stage 1's file list did not
+include any initializers.** It listed `config/importmap.rb` and stopped.
+
+What the stage was actually missing:
+
+| File | Why |
+| --- | --- |
+| `config/initializers/assets.rb` | precompiles `tailwind.css`; without it the manifest dies |
+| `config/initializers/simple_form_essentials.rb` | the `:essentials` wrapper the components use |
+| `config/application.rb` | `config.assets.css_compressor = nil`; libsass cannot parse Tailwind v4 output |
+| `spec/assets/asset_resolution_spec.rb` | pins which `application.css` wins — the guard for exactly this |
+| `spec/system/essentials_shell_spec.rb` | the new shell has no other coverage |
+
+Three rules came out of it, all now enforced by `build-stage.rb` rather than written down and
+hoped for.
+
+**A stage must carry its own specs.** Stage 1 listed none. A foundation nobody can test is not a
+reviewable stage, and the spec that would have caught this failure was sitting in the source commit
+unlisted.
+
+**Additive by default; every overwrite named.** The stage silently replaced two of `main`'s files —
+`confirmation_controller.js` and `donations_modal_controller.js`, both rewritten at `cda053539` from
+Bootstrap's modal to the native `<dialog>`. Stage 1 migrates no views, so `main`'s
+`<div class="modal">` would have reached `showModal()`, which is not a function on a div, and both
+dialogs would have broken silently. `overwrite:` is now an allowlist and anything else that
+modifies a file `main` has is reverted and reported.
+
+**Some files are neither taken nor composed from a one-line rule.** `config/application.rb` at
+`cda053539` carries the compressor fix *and* switches the Devise layouts to `essentials_auth`, which
+is a later stage. It is an `insert:` — anchor plus text — so only the part that belongs here lands.
+
+Two environment traps went with it, both already on the record elsewhere and both worth the
+checklist:
+
+- **`main`'s `Gemfile.lock` does not list `aarch64-linux`**, so `tailwindcss-ruby` has no executable
+  and the build raises. The builder adds the local platform when the lock lacks it.
+- **Sprockets caches its manifest in `tmp/cache` across branch switches.** `rm -rf tmp/cache` after
+  building a stage, or the first run reports the previous branch's asset graph.
+
 ## What each stage must prove before it is opened
 
 Not a suggestion — this is what the branch itself was held to, and it is why the merge from `main`
@@ -170,8 +224,12 @@ went in cleanly.
 0. **Every relative `.md` link resolves against the files that stage contains.** Four lines of
    shell, and it is what disproved the original stage 1.
 1. **No later stage's removals are present** — check `Gemfile` and `app/assets/` specifically.
-2. **`bundle install`, then `RAILS_ENV=test bin/rails db:test:prepare`** — a stage needs its own
-   gems *and* its own schema, and both persist between checkouts.
+2. **`bundle install`, then `rm -rf tmp/cache`, then `RAILS_ENV=test bin/rails db:test:prepare`** —
+   a stage needs its own gems, its own asset cache *and* its own schema, and all three persist
+   between checkouts.
+2b. **Run one spec on pristine `main` before believing any failure is the stage's.** A branch off
+   `origin/main` with nothing applied is thirty seconds and it is the difference between a defect
+   and an environment.
 3. `bundle exec rspec` green, and the *new* specs watched failing first.
 3. `bundle exec rubocop` and `bundle exec erb_lint --lint-all` clean.
 4. `bundle exec brakeman` — **0 warnings**. Four of the six CI workflows are covered by the design
