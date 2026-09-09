@@ -105,7 +105,13 @@ RSpec.describe "Page layout", type: :system, js: true do
   end
 
   describe "the organization settings form" do
-    before { visit edit_organization_path }
+    before do
+      visit edit_organization_path
+      # The reminder schedule and the reminder email editor are hidden until monthly deadline
+      # reminders are on (main's #5668), and two examples below measure elements inside them --
+      # a hidden element measures 0 and the failure looks like a spacing bug.
+      choose "organization[deadline_reminders_enabled]", option: true
+    end
 
     it "has one page wrapper and the design system's 24px under the heading" do
       expect(page_wrappers).to eq(1)

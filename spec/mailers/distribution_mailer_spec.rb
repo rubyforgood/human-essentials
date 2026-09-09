@@ -143,6 +143,9 @@ RSpec.describe DistributionMailer, type: :mailer do
   describe "#reminder_email" do
     let(:mail) { DistributionMailer.reminder_email(distribution.id) }
 
+    # New organizations have reminders disabled by default; opt in for these specs.
+    before { organization.update!(distribution_reminders_enabled: true) }
+
     context 'HTML format' do
       it "renders the body with organization's email text" do
         html = html_body(mail)
@@ -178,6 +181,18 @@ RSpec.describe DistributionMailer, type: :mailer do
         distribution = create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner, delivery_method: :delivery)
         mail = DistributionMailer.reminder_email(distribution.id)
         expect(mail.body.encoded).to match("delivery")
+      end
+    end
+
+    context "when the organization has disabled distribution reminders" do
+      before do
+        partner.update!(send_reminders: true)
+        organization.update!(distribution_reminders_enabled: false)
+      end
+
+      it "does not send the reminder even though the partner has send_reminders enabled" do
+        expect(mail.body).to be_blank
+        expect(mail.to).to be_nil
       end
     end
   end

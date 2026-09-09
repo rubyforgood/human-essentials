@@ -4,7 +4,16 @@
   <td class="pin-col name font-medium text-slate-900">
     <%= link_to partner_row.name, partner_path(partner_row), class: "link-brand" %>
   </td>
-  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}", class: "link-brand" %></td>
+  <%# Email and phone in one cell, from main's #5674. `<div>`s rather than a `<br>`: the column is
+      "Contact information" now, and two blocks give the phone its own line without a line break
+      doing layout. The phone is plain text -- design.md only makes a link of what a click can
+      act on, and a desktop click on a tel: link does nothing useful here. %>
+  <td>
+    <div><%= link_to partner_row.email, "mailto:#{partner_row.email}", class: "link-brand" %></div>
+    <% if partner_row.phone_number.present? %>
+      <div class="text-slate-600"><%= partner_row.phone_number %></div>
+    <% end %>
+  </td>
   <td><%= partner_row.partner_group&.name %></td>
   <td class="quantity"><%= partner_row.quota %></td>
   <td><%= essentials_partner_status_pill(status) %></td>

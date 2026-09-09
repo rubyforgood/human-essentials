@@ -17,6 +17,8 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     super
+    # discard a role left over from a previously signed-in user
+    session.delete(:current_role) unless current_user.roles.exists?(id: session[:current_role])
     session[:current_role] ||= UsersRole.current_role_for(current_user)&.id
     UsersRole.set_last_role_for(current_user, @role)
   end

@@ -28,8 +28,14 @@
         <%= render partial: "storage_locations/source", object: f, locals: {include_omitted_items: true} %>
       </div>
 
-      <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false,
-            label: "Send email reminder the day before?" %>
+      <%# main's #5668: the organization can switch day-before reminders off entirely, in which
+          case ticking this box would promise an email that never goes out. %>
+      <% if current_organization.distribution_reminders_enabled %>
+        <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false,
+              label: "Send email reminder the day before?" %>
+      <% else %>
+        <%= render "shared/reminders_disabled_notice", reminder_type: :distribution %>
+      <% end %>
 
       <%#
         Shipping cost only applies to one of the three delivery methods, so it is revealed under

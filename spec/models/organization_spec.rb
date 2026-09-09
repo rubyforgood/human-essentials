@@ -6,8 +6,10 @@
 #  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
+#  deadline_reminders_enabled               :boolean          default(FALSE), not null
 #  default_storage_location                 :integer
 #  distribute_monthly                       :boolean          default(FALSE), not null
+#  distribution_reminders_enabled           :boolean          default(FALSE), not null
 #  email                                    :string
 #  enable_child_based_requests              :boolean          default(TRUE), not null
 #  enable_individual_requests               :boolean          default(TRUE), not null
@@ -97,6 +99,20 @@ RSpec.describe Organization, type: :model do
       organization.update(deadline_day: 10)
       organization.reminder_schedule.assign_attributes(day_of_month: 10)
       expect(organization).to be_valid
+    end
+  end
+
+  describe "reminder toggles" do
+    it "defaults deadline_reminders_enabled to false for a new organization" do
+      expect(Organization.new.deadline_reminders_enabled).to be false
+      expect(build(:organization).deadline_reminders_enabled).to be false
+      expect(create(:organization).reload.deadline_reminders_enabled).to be false
+    end
+
+    it "defaults distribution_reminders_enabled to false for a new organization" do
+      expect(Organization.new.distribution_reminders_enabled).to be false
+      expect(build(:organization).distribution_reminders_enabled).to be false
+      expect(create(:organization).reload.distribution_reminders_enabled).to be false
     end
   end
 

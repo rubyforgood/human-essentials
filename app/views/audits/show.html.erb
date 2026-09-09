@@ -9,12 +9,12 @@
           if @audit.in_progress?
             concat essentials_link_button("Resume audit", edit_audit_path(@audit), variant: :primary, icon: "bi-pencil")
           end
-          if @audit.confirmed?
+          if @audit.pending_finalization?
             concat essentials_action_button("Finalize audit", audit_finalize_path(@audit.id), method: :post,
                      variant: :primary, icon: "bi-check-circle",
                      confirm: "This will adjust the inventory permanently. Are you sure that you want to submit this?")
           end
-          if @audit.in_progress? || @audit.confirmed?
+          if @audit.in_progress? || @audit.pending_finalization?
             concat essentials_action_button("Delete audit", audit_path(@audit), method: :delete,
                      variant: :ghost_danger, icon: "bi-trash",
                      confirm: "Are you sure?")

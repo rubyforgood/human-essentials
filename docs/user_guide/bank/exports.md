@@ -415,8 +415,7 @@ For each filtered Request,
 - Date,
 - Requestor (i.e. partner)
 - Status, and
-- the quantity of each Item requested.
-  - Note: If you have packs enabled (upcoming feature), there will be a column for each unit that you have enabled for each Item.  Otherwise, one column per Item.
+- the quantity of each Item requested. There will be a column for each unit that you have enabled for each Item.
 
 ## Storage Locations
 ### Navigating to export Storage Locations

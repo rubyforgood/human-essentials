@@ -1153,6 +1153,39 @@ first column is now a link to the same place the View button went, so the button
 action fewer to read past on every row, and the same page one click away. The organization-level
 barcode list already worked this way; the two lists just did not match.
 
+### New from the main app, on 2026-09-09
+
+Twelve days of work from the main Human Essentials app was merged in. These are the parts you will
+notice; everything else was dependency updates and internal tidying.
+
+**You can switch reminder emails off.** Organization settings now asks two questions — whether to
+send the monthly deadline reminder, and whether to send the day-before distribution reminder. Turn
+the monthly one off and the schedule fields disappear, because there is nothing left to schedule.
+The same notice appears wherever a reminder used to be configured — on a partner group, on a
+partner, and on the distribution form — so you are not filling in a schedule for an email that will
+not be sent. A super admin can set both when creating an organization.
+
+**You can cap how much a partner may request.** An item can carry a request limit, and each custom
+unit that item offers can carry its own. Tick a unit to offer it, and give it a limit if it needs
+one. A partner asking for more than the limit is told, by name and by number.
+
+**Partners have a phone number.** It shows on the partner list beside the email, on the partner's
+own page, and in the CSV export. The partner import takes six columns now, and there is a new
+template to download — the old one keeps working.
+
+**"Delete" on a transfer is "Undo".** That is what it does: a transfer moved stock between
+locations, and this puts it back. The confirmation says so too.
+
+**The annual survey has an "Export all years" button**, which gives you one CSV covering every year
+you have, rather than one download per year.
+
+**An audit says "Submit for final approval" instead of "Confirm".** The status it leaves behind
+reads *Pending finalization*. Nothing about the process changed — an administrator still has to
+finalize it before it affects inventory — the words just say what happens.
+
+**The password reset email greets you by name and is signed.** It used to open with your email
+address and end without a signature.
+
 ### The arrow that opens a row on Item inventory
 
 **It is bigger, and its cell no longer takes keyboard focus.** Two small things on one control. The

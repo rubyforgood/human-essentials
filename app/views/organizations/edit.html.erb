@@ -119,24 +119,45 @@
               label_method: :second, value_method: :first %>
         <%= f.input :enable_quantity_based_requests, as: :radio_buttons, collection: yes_no,
               label: "Quantity-based requests?", label_method: :second, value_method: :first %>
-        <% if Flipper.enabled?(:enable_packs) %>
-          <%= render "shared/essentials/tag_input",
-                id: "organization_request_unit_names",
-                name: "organization[request_unit_names]",
-                label: "Custom request units",
-                hint: "Type a unit and press Enter. Use the singular \u2014 pack, not packs. " \
-                      "Partners can always request a plain \"unit\".",
-                placeholder: "Add a unit\u2026",
-                values: current_organization.request_units.map(&:name) %>
-        <% end %>
+        <%# The `enable_packs` flag is gone -- main removed it in #5251, so custom request units
+            are simply a feature now. %>
+        <%= render "shared/essentials/tag_input",
+              id: "organization_request_unit_names",
+              name: "organization[request_unit_names]",
+              label: "Custom request units",
+              hint: "Type a unit and press Enter. Use the singular \u2014 pack, not packs. " \
+                    "Partners can always request a plain \"unit\".",
+              placeholder: "Add a unit\u2026",
+              values: current_organization.request_units.map(&:name) %>
       <% end %>
 
       <%= render "shared/essentials/form_section", title: "Emails" do %>
-        <%= render "shared/deadline_day_fields", parent_form: f, parent_object: current_organization %>
-        <%= f.input :reminder_email_text, label: "Additional text for the reminder email",
-              hint: "You can use <code>%{partner_name}</code> to include the partner's name.".html_safe do %>
-          <%= f.rich_text_area :reminder_email_text, placeholder: "Enter reminder email content..." %>
-        <% end %>
+        <%# main's #5668: reminders can be switched off per organization, and when the monthly
+            deadline reminder is off, its schedule and its extra email text mean nothing -- so
+            `reminder_toggle_controller` hides them rather than leaving fields that do nothing.
+            The toggles keep main's wording; the collection is this template's own `yes_no`.
+
+            The controller arrived toggling `d-none`, which ADR 0011 left defined nowhere, so it
+            would have added and removed a class that hides nothing. See the note in the
+            controller and the four earlier instances in migration-map.md. %>
+        <div data-controller="reminder-toggle">
+          <%= f.input :deadline_reminders_enabled, as: :radio_buttons, collection: yes_no,
+                label: "Send monthly deadline reminder emails to partners?",
+                label_method: :second, value_method: :first,
+                input_html: {data: {"reminder-toggle-target": "source",
+                                    action: "change->reminder-toggle#toggle"}} %>
+          <%= f.input :distribution_reminders_enabled, as: :radio_buttons, collection: yes_no,
+                label: "Send day-before distribution reminder emails to partners?",
+                label_method: :second, value_method: :first %>
+
+          <div data-reminder-toggle-target="dependentField">
+            <%= render "shared/deadline_day_fields", parent_form: f, parent_object: current_organization %>
+            <%= f.input :reminder_email_text, label: "Additional text for the reminder email",
+                  hint: "You can use <code>%{partner_name}</code> to include the partner's name.".html_safe do %>
+              <%= f.rich_text_area :reminder_email_text, placeholder: "Enter reminder email content..." %>
+            <% end %>
+          </div>
+        </div>
         <%= f.input :default_email_text, label: "Distribution email content",
               hint: "You can use <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code> and <code>%{comment}</code>.".html_safe do %>
           <%= f.rich_text_area :default_email_text, placeholder: "Enter distribution email content..." %>

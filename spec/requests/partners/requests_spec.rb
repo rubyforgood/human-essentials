@@ -51,14 +51,9 @@ RSpec.describe "/partners/requests", type: :request do
       expect(response).to render_template(:new)
     end
 
-    context "when packs are enabled but there are no requestable items" do
+    context "when there are no requestable items" do
       before do
         allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return({})
-        Flipper.enable(:enable_packs)
-      end
-
-      after do
-        Flipper.disable(:enable_packs)
       end
 
       it 'should render without any issues' do
@@ -181,17 +176,10 @@ RSpec.describe "/partners/requests", type: :request do
         ]
       )
 
-      Flipper.enable(:enable_packs)
       get partners_request_path(request)
       expect(response.body).to match(/First item - 125/m)
       expect(response.body).to match(/Second item - 559\s+flats/m)
       expect(response.body).to match(/Third item - 1\s+flat/m)
-
-      Flipper.disable(:enable_packs)
-      get partners_request_path(request)
-      expect(response.body).to match(/First item - 125/m)
-      expect(response.body).to match(/Second item - 559/m)
-      expect(response.body).to match(/Third item - 1/m)
     end
   end
 
@@ -246,7 +234,29 @@ RSpec.describe "/partners/requests", type: :request do
         expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
         expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
         expect(response.body).to include(partner.organization.email)
-        expect(response.body).to include(partner.organization.email)
+      end
+    end
+
+    context "when the quantity exceeds the item's request limit" do
+      let(:limited_item) do
+        create(:item, name: "Kids (Size 1)", organization: organization, unit_request_limit: 50)
+      end
+
+      it "flashes the limit message with the item name's capitalization intact" do
+        expect {
+          post partners_requests_path, params: {
+            request: {
+              comments: "over the limit",
+              item_requests_attributes: {
+                "0" => { item_id: limited_item.id, quantity: 100 }
+              }
+            }
+          }
+        }.not_to change { Request.count }
+
+        expect(response).to be_unprocessable
+        expect(flash[:error]).to include("Kids (Size 1): You requested 100, but are limited to 50")
+        expect(flash[:error]).not_to include("Kids (size 1)")
       end
     end
 
@@ -290,7 +300,6 @@ RSpec.describe "/partners/requests", type: :request do
         end
 
         it "creates without error" do
-          Flipper.enable(:enable_packs)
           expect { subject }.to change { Request.count }.by(1)
           expect(response).to redirect_to(partners_request_path(Request.last.id))
           expect(response.request.flash[:success]).to eql "Request was successfully created."
@@ -319,7 +328,6 @@ RSpec.describe "/partners/requests", type: :request do
         end
 
         it "results in an error" do
-          Flipper.enable(:enable_packs)
           expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
           expect(response).to be_unprocessable
           expect(response.body).to include("Items that come in packs also need a unit chosen")
@@ -349,7 +357,6 @@ RSpec.describe "/partners/requests", type: :request do
         expect(response.body).to include("That request could not be sent")
         expect(response.body).to include("Every line needs an item selected and a quantity greater than zero.")
         expect(response.body).to include("Still stuck? Contact #{partner.organization.name}")
-        expect(response.body).to include(partner.organization.email)
         expect(response.body).to include(partner.organization.email)
       end
     end

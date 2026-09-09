@@ -1,9 +1,21 @@
 <% content_for :title, "Annual surveys - Reports - #{current_organization.name}" %>
 <div class="px-4 py-6 sm:px-6 lg:px-8">
+  <%# main's #4987 adds a range export across every available year. It goes in the page header's
+      actions rather than floating above the card: design.md gives a page one place for its
+      actions, and an export is one. Hidden when there are no years, because the range would be
+      empty and the button would download a file with nothing in it. %>
   <%= render "shared/essentials/page_header",
         title: "Annual survey",
         subtitle: "The yearly figures, one page per year.",
-        back: {path: reports_path, label: "Back to reports"} %>
+        back: {path: reports_path, label: "Back to reports"},
+        actions: capture {
+          if @years.any?
+            concat essentials_link_button(
+              "Export all years",
+              range_reports_annual_reports_path(year_start: @years.first, year_end: @years.last, format: :csv),
+              variant: :secondary, icon: "bi-box-arrow-up")
+          end
+        } %>
 
   <div class="space-y-4">
   <%= render "shared/essentials/callout", tone: :info, role: "note" do %>

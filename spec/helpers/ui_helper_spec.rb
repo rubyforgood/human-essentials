@@ -149,6 +149,34 @@ RSpec.describe UiHelper, type: :helper do
     end
   end
 
+  describe "modal_button_to" do
+    # Ported from main's #5632 regression. main asserted an `<a data-bs-toggle="modal">` with
+    # `btn btn-success`; ADR 0011 removed Bootstrap and this helper renders a `<button>` that
+    # opens a native <dialog> through Stimulus, so the assertions follow that markup. The
+    # behaviour being pinned is the same: a modal toggle never navigates, so it must not carry
+    # rails-ujs' `data-disable-with` or it sticks on "Please wait..." once the modal is dismissed.
+    subject(:markup) { helper.modal_button_to("#newRequest", text: "New quantity request") }
+
+    it "renders a button that opens the dialog" do
+      button = Nokogiri::HTML(markup).at_css("button")
+      expect(button).to be_present
+      expect(button.attributes["data-action"].value).to eq("click->dialog#open")
+      expect(button.attributes["data-dialog-id-param"].value).to eq("newRequest")
+      expect(button.text.strip).to eq("New quantity request")
+    end
+
+    it "does not set data-disable-with" do
+      expect(Nokogiri::HTML(markup).at_css("button").attributes["data-disable-with"]).to be_nil
+    end
+
+    it "keeps data the caller passes, and still omits data-disable-with" do
+      html = helper.modal_button_to("#newRequest", {text: "New quantity request"}, {data: {test: "test"}})
+      button = Nokogiri::HTML(html).at_css("button")
+      expect(button.attributes["data-test"].value).to eq("test")
+      expect(button.attributes["data-disable-with"]).to be_nil
+    end
+  end
+
   describe "an unavailable action" do
     # A link cannot be disabled: it stays focusable and clickable by keyboard and announces
     # nothing. `enabled: false` therefore renders a non-interactive span, not a dead <a>.

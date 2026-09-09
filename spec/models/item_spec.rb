@@ -14,6 +14,7 @@
 #  partner_key                  :string
 #  reporting_category           :string
 #  type                         :string           default("ConcreteItem"), not null
+#  unit_request_limit           :integer
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -491,6 +492,22 @@ RSpec.describe Item, type: :model do
           expect { regular_item.destroy! }.not_to raise_error
         end
       end
+    end
+  end
+
+  describe "#sync_request_units!" do
+    it "creates request units on the item for the given unit_ids" do
+      item = create(:item, organization:)
+      unit_1 = create(:unit, organization:, name: 'Unit 1')
+      unit_2 = create(:unit, organization:, name: 'Unit 2')
+      _unit_3 = create(:unit, organization:, name: 'Not included')
+      create(:item_unit, item:, name: unit_1.name)
+      create(:item_unit, item:, name: unit_2.name)
+      unit_ids = [unit_1.id, unit_2.id]
+
+      item.sync_request_units!(unit_ids)
+
+      expect(item.request_units.pluck(:name)).to contain_exactly('Unit 1', 'Unit 2')
     end
   end
 end

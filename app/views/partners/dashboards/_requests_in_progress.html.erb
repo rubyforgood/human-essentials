@@ -27,7 +27,7 @@
                 <div class="flex flex-wrap gap-1.5">
                   <% request.item_requests.each do |item_request| %>
                     <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-                      <% if Flipper.enabled?(:enable_packs) && item_request.request_unit %>
+                      <% if item_request.request_unit %>
                         <%= pluralize(item_request.quantity, item_request.request_unit) %> — <%= item_request.item.name %>
                       <% else %>
                         <%= number_with_delimiter(item_request.quantity) %> <%= item_request.item.name %>

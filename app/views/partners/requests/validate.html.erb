@@ -11,7 +11,7 @@
 </div>
 
 <div class="max-h-[60vh] overflow-y-auto px-5 py-4">
-  <% show_units = Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?(&:request_unit) %>
+  <% show_units = @partner_request.item_requests.any?(&:request_unit) %>
   <div class="overflow-hidden rounded-xl border border-slate-200">
     <table class="data-table">
       <caption>Items in this request</caption>

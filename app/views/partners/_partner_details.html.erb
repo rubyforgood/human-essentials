@@ -3,6 +3,12 @@
     <dt class="text-xs font-medium text-slate-500">Email</dt>
     <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.email %></dd>
   </div>
+  <%# From main's #5674. An em dash where there is no number, which is this list's convention for
+      an empty value rather than a blank row. %>
+  <div>
+    <dt class="text-xs font-medium text-slate-500">Phone</dt>
+    <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.phone_number.presence || "\u2014" %></dd>
+  </div>
   <div>
     <dt class="text-xs font-medium text-slate-500">Default storage location</dt>
     <dd class="mt-0.5 text-sm text-slate-900"><%= @partner.default_storage_location&.name || "None" %></dd>

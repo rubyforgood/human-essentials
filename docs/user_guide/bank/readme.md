@@ -69,3 +69,11 @@ This user guide is meant for users of Human Essentials at essentials banks.
 10. [But I need to do something different!](asking_for_changes.md)
 11. Special Topics
     1. [Custom Units](special_custom_units.md)
+12. Emails
+    1. [Distribution Mailer](distribution_mailer_Preview.md)
+    2. [Organization Mailer](organization_mailer_preview.md)
+    3. [Partner Mailer ](partner_mailer_preview.md)
+    4. [Reminder Deadline Mailer](reminder_deadline_mailer_preview.md)
+    5. [Request Mailer](request_mailer_preview.md)
+    6. [Requests Confirmation Mailer](requests_confirmation_mailer_preview,md)
+    7. [User Mailer](user_mailer_preview.md)

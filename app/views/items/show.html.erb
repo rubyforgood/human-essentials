@@ -21,9 +21,8 @@
             "Package size" => (@item.package_size || 0).to_s,
             "Visible to partners" => (@item.visible_to_partners ? "Yes" : "No")
           }
-          if Flipper.enabled?(:enable_packs)
-            details["Custom units"] = @item.request_units&.pluck("item_units.name")&.join("; ")
-          end
+          # `enable_packs` removed in main's #5251.
+          details["Custom units"] = @item.request_units&.pluck("item_units.name")&.join("; ")
         %>
         <% details.each do |label, value| %>
           <div>

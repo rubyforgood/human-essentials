@@ -97,15 +97,15 @@ RSpec.describe Audit, type: :model do
       it "does not regress from finalized to another status" do
         finalized_audit = create(:audit, organization:, status: :finalized)
 
-        expect { finalized_audit.update!(status: :confirmed) }
+        expect { finalized_audit.update!(status: :pending_finalization) }
           .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once finalized/)
       end
 
       it "allows normal transitions" do
         in_progress_audit = create(:audit, organization:, status: :in_progress)
-        confirmed_audit = create(:audit, organization:, status: :confirmed)
+        confirmed_audit = create(:audit, organization:, status: :pending_finalization)
 
-        expect { in_progress_audit.update!(status: :confirmed) }.not_to raise_error
+        expect { in_progress_audit.update!(status: :pending_finalization) }.not_to raise_error
         expect { confirmed_audit.update!(status: :finalized) }.not_to raise_error
       end
     end
@@ -135,7 +135,7 @@ RSpec.describe Audit, type: :model do
 
       create(:audit, storage_location: storage_location1, status: "finalized", line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 5}])
       create(:audit, storage_location: storage_location3, status: "finalized", line_items_attributes: [{item_id: storage_location3.items.first.id, quantity: 10}])
-      create(:audit, storage_location: storage_location5, status: "confirmed", line_items_attributes: [{item_id: storage_location5.items.first.id, quantity: 10}])
+      create(:audit, storage_location: storage_location5, status: "pending_finalization", line_items_attributes: [{item_id: storage_location5.items.first.id, quantity: 10}])
 
       expect(Audit.finalized_since?(xfer1, storage_location1.id)).to be true # match items and location and occurs after
       expect(Audit.finalized_since?(xfer1, storage_location1.id, storage_location2.id)).to be true # handles multiple locations
@@ -167,7 +167,7 @@ RSpec.describe Audit, type: :model do
         expect(csv_data).to eq(
           <<~CSV
             Audit Date,Audit Status,Storage Location Name,Baby Diapers,Adult Diapers
-            October 02 2025,confirmed,Diaperhaus,150,0
+            October 02 2025,pending_finalization,Diaperhaus,150,0
             October 03 2025,finalized,Pawnee Diaper Bank,0,250
           CSV
         )

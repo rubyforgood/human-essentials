@@ -2,8 +2,8 @@ class CustomDeviseMailer < Devise::Mailer
   protected
 
   def subject_for(key)
+    return "Reset Password Instructions  #{Time.current.strftime("%B %e, %Y %l:%M:%S %p")}" if key.to_s == "reset_password_instructions"
     return super unless key.to_s == 'invitation_instructions'
-
     # Replace the invitation instruction subject for partner users
     # that were invited by other partner users.
 

@@ -37,7 +37,8 @@
     "total something up": "bi-calculator",
     "more actions": "bi-three-dots-vertical",
     "compare with another period": "bi-arrow-left-right",
-    "reset a password": "bi-key"
+    "reset a password": "bi-key",
+    "a child": "bi-person-arms-up"
   },
   "structural": [
     "bi-x-lg",
