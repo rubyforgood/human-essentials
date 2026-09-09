@@ -248,6 +248,36 @@ went in cleanly.
 7. From stage 3 onwards: `pw bin/design/route-sweep.js` — every screen still renders — and
    `python3 bin/design/undefined-classes.py`, which is what catches a half-converted view.
 
+## Where this has got to
+
+**Stage 0** — built, verified against `main`: 41 examples, rubocop clean, brakeman 0 warnings,
+`javascript:alert(1)` rejected. Waiting on the disclosure decision before it goes anywhere public.
+
+**Stage 1** — built and verified, after five corrections to how a stage is assembled. Against
+`origin/main`, 69 files, `36e927c76`:
+
+| | |
+| --- | --- |
+| `bundle exec rspec` (seed 8576) | **2,962 examples, 0 failures**, 1 pending |
+| `bundle exec rubocop` | 647 files, 0 offenses |
+| `bundle exec erb_lint --lint-all` | 442 files, no errors |
+| `bundle exec brakeman` | 0 errors, **0 security warnings** |
+| `rake factory_bot:lint` | clean |
+| relative markdown links | all resolve within the stage |
+| later-stage markers | none present |
+| Rails | 8.1.3.1, matching `main` |
+
+Seed 8576 is deliberate: it is the seed that produced two date-range-picker failures on an earlier
+build, and produces none on this one.
+
+Neither branch has been pushed. `bin/design/build-stage.rb` rebuilds both from `design` on demand,
+which is the point — an unpushed branch does not survive, and this tree has been rolled back nine
+times.
+
+**Stages 2–5 are not scripted yet.** Stage 1 took five corrections to assemble; the honest estimate
+is that each remaining stage will need one or two of its own, and that finding them is the work
+rather than an obstacle to it.
+
 ## Known risks
 
 **A reviewer cannot hold 456 changed views in their head.** Mitigation: stages 4a–4o are per area,
