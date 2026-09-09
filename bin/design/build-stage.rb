@@ -139,10 +139,15 @@ puts "  markers: no later-stage removals present"
 exit 0 if ARGV.include?("--check")
 
 current = git!("rev-parse", "--abbrev-ref", "HEAD").strip
+# Resolve the source to a SHA *before* switching branches. `HEAD` means "the branch I am on now",
+# and after `checkout -b` off main that is the new empty stage branch -- so the files this stage
+# adds would not exist to check out. Cost: three "pathspec did not match" errors and a branch with
+# nothing in it.
+source_sha = git!("rev-parse", stage[:source]).strip
 abort "working tree is dirty; commit or stash first" unless git("status", "--porcelain").split("\n").reject { |l| l.start_with?("??") }.empty?
 
 git("branch", "-D", stage[:branch])
 git!("checkout", "-q", "-b", stage[:branch], "origin/main")
-git!("checkout", stage[:source], "--", *stage[:paths])
+git!("checkout", source_sha, "--", *stage[:paths])
 puts "\nBuilt #{stage[:branch]} off origin/main. Nothing has been pushed."
 puts "Return with: git checkout #{current}"
