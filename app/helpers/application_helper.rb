@@ -2,6 +2,19 @@ require "active_support/core_ext/module/aliasing"
 
 # Encapsulates view methods that need some business logic
 module ApplicationHelper
+  # A user-supplied URL, returned only if it is safe to put in an `href`, otherwise nil.
+  #
+  # `HttpUrlValidatable` stops a `javascript:` or `data:` URL being *saved*. This stops one that was
+  # saved before that validation existed being *rendered* as a live link -- a row can arrive by CSV
+  # import, from the console, or from a database restored from before the fix.
+  #
+  # It lives here, in a helper the whole app has, rather than beside the design system's link
+  # component: the two views that render `BroadcastAnnouncement#link` are the widest exposure and
+  # they must be safe whether or not a design system is present.
+  def safe_http_url(url)
+    url if url.present? && url.match?(HttpUrlValidatable::HTTP_URL)
+  end
+
   def humanize_boolean(boolean)
     I18n.t((!!boolean).to_s)
   end
