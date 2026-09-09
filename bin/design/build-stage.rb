@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# AUDIT-READS: AUDITS
-#
 # Assembles one stage of docs/review-plan.md as a local branch off `main`.
 #
 # **Why this exists rather than a set of pushed branches.** Branches that are not pushed do not
@@ -26,6 +24,7 @@ require "shellwords"
 
 ROOT = File.expand_path("../..", __dir__)
 def git(*args) = `git -C #{ROOT} #{args.map { |a| Shellwords.escape(a) }.join(" ")} 2>&1`
+
 def git!(*args)
   out = git(*args)
   abort "git #{args.join(" ")} failed:\n#{out}" unless $?.success?

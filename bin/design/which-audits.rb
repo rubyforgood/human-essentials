@@ -61,7 +61,8 @@ NOT_AN_AUDIT = {
   "state.rb" => "regenerates the change log's Current state table; gated by its own --check",
   "status.rb" => "a report, not a check: which controllers render on a design system layout",
   "audit.js" => "a one-off page inspector for a human, documented as an exception in README.md",
-  "which-audits.rb" => "this script"
+  "which-audits.rb" => "this script",
+  "build-stage.rb" => "assembles a review-plan stage as a branch; it reports nothing about the app"
 }.freeze
 
 def matches?(patterns, path)
