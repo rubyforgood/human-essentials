@@ -20,16 +20,36 @@ migration](#verifying-a-migration):
 | | |
 | --- | --- |
 | Controllers on a design system layout | 63 of 65 |
-| Views carrying design system markup | 346 of 383 |
-| Undefined Bootstrap/AdminLTE/Font Awesome classes in `app/views` | 0 |
-| Stimulus controllers | 45 |
+| **Views still using Bootstrap or AdminLTE** | **0 of 350** |
+| Views carrying a design system marker | 345 of 350 — an indicator, not a verdict |
+| Undefined Bootstrap/AdminLTE/Font Awesome classes in `app/views` and `app/helpers` | 0 |
+| Stimulus controllers | 47 |
 
-Measured 2026-09-03. This table had drifted and disagreed with the change log's — it read 299 of
-392 and 30 controllers — which is the reason both are now dated and measured together.
+Measured 2026-09-09. This table is hand-maintained and the change log's is generated, which is why
+they had drifted apart before — it once read 299 of 392 and 30 controllers. Both are dated now.
 
-The 37 views in neither column are not a backlog — most are ten lines or fewer, some are mailer
-templates, and the rest carry no markup of their own. [changelog.md](changelog.md#current-state)
-breaks that down.
+**The headline row is inverted, and that is the point.** It used to count views carrying design
+system markup, and an earlier version of this paragraph said the remainder "are not a backlog —
+most are ten lines or fewer". That was the right instinct and nobody had checked. On 2026-09-09 all
+of them were read: **every single one was already migrated**, and the check was wrong six times out
+of six — three were bare `f.input`, which is the *finished* state because
+`config.default_wrapper = :essentials` makes the wrapper supply every class, and the others carried
+a data-table cell class, a Stimulus controller, or a helper call whose argument was a variable
+rather than a symbol.
+
+Widening the positive pattern recovered 51 pages once, then 17, then 3, and the last three would
+have needed a fourth pass — because **the design system's vocabulary grows with every component, so
+a positive-marker test is always one component behind**, and every miss reports finished work as
+outstanding. The legacy vocabulary cannot grow: Bootstrap and AdminLTE were deleted by ADR 0011.
+So `status.rb` now asks the question with a stable answer — *does this view still use the old
+system?* — which is what "is the migration done" means. Thirteen controls, one per legacy group,
+and two that must stay silent: `card-surface` and `float-right` are ours, and the first draft
+flagged three migrated pages because `\bcard\b` matches the "card" in "card-surface".
+
+The positive count stays as an indicator with that caveat attached, because a four-line table row
+can be fully migrated and have nothing to mark. Thirty-four more files are structural — gem and
+framework partials, and the components themselves, which cannot carry a marker for the system they
+*are*.
 
 | Not migrated | Why |
 | --- | --- |
