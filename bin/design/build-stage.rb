@@ -100,6 +100,27 @@ def report(stage)
   files
 end
 
+# A file the stage *adds* is safe to take from a historical commit. A file that also exists on
+# `main` and has moved there since is not: the historical copy silently reverts main's work.
+#
+# `Gemfile.lock` is the case that proved it. Taken from cda053539 it pins Rails 8.0.2.1 while main
+# is on 8.1.3.1, so the stage downgraded Rails and then could not load main's db/schema.rb, which
+# declares Schema[8.1]. 878 of 1753 examples failed and none of it was the design system.
+#
+# Those files have to be composed -- main's current version plus this stage's additions -- by hand.
+def check_stale_shared_files(stage)
+  files = git("diff", "--name-only", "origin/main...#{stage[:source]}", "--", *stage[:paths])
+    .split("\n").reject(&:empty?)
+
+  files.filter_map do |file|
+    next unless system("git -C #{ROOT} cat-file -e origin/main:#{file} 2>/dev/null")
+
+    moved = git("log", "--oneline", "#{stage[:source]}..origin/main", "--", file)
+      .split("\n").reject(&:empty?)
+    [file, moved.size] unless moved.empty?
+  end
+end
+
 def check_markers(stage)
   problems = []
   LATER_STAGE_MARKERS.each do |file, rules|
@@ -137,6 +158,18 @@ unless problems.empty?
   exit 2
 end
 puts "  markers: no later-stage removals present"
+
+stale = check_stale_shared_files(stage)
+unless stale.empty?
+  warn "\n#{stale.size} file(s) exist on main and have moved there since #{stage[:source]}."
+  warn "Taking the historical copy would revert main's work:"
+  stale.first(12).each { |file, n| warn format("  %-42s %d commit(s) behind main", file, n) }
+  warn "  ... and #{stale.size - 12} more" if stale.size > 12
+  warn "\nCompose these by hand from main's current version plus this stage's additions."
+  warn "Gemfile.lock is the one that bites: a historical copy pins an older Rails, and the stage"
+  warn "then cannot load main's schema. See docs/review-plan.md."
+  exit 3
+end
 
 exit 0 if ARGV.include?("--check")
 

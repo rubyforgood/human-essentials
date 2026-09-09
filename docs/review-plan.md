@@ -131,6 +131,37 @@ So: for each stage, find the commit at which it was complete, and take that stag
 **there**. Check the result for later stages' removals before opening it — the `Gemfile` and
 `app/assets/` are where they hide.
 
+### Historical for what a stage adds; main's for what it shares
+
+The rule above — take a stage's files from the commit where it was finished — is right for files
+the branch **adds**. It is wrong for files that also exist on `main` and have moved there since,
+and the failure is loud but misleading.
+
+Stage 1 took `Gemfile` and `Gemfile.lock` from `cda053539`. That lockfile pins **Rails 8.0.2.1**;
+`main` is on **8.1.3.1**. So the stage quietly downgraded Rails, and then could not load `main`'s
+`db/schema.rb`, which declares `Schema[8.1]`. **878 of 1,753 examples failed**, every one of them
+reporting something like `undefined method 'address=' for StorageLocation` — nothing whatsoever to
+do with the design system, and easy to spend an afternoon on.
+
+So, per file:
+
+| | |
+| --- | --- |
+| The stage **adds** it | take it from the stage's completion commit |
+| It exists on `main` and `main` has changed it since | **compose by hand**: `main`'s current version plus this stage's additions |
+
+For stage 1 that means one line — `gem "tailwindcss-rails", "~> 4.6"` added to `main`'s `Gemfile`,
+then `bundle install` to regenerate the lock against `main`'s Rails. Not a checkout.
+
+`build-stage.rb` detects this now and refuses with exit 3, naming each file and how many commits
+behind `main` it is. Stage 1 currently reports `Gemfile` 5 behind and `Gemfile.lock` 30.
+
+### And a stage needs its own database, not just its own gems
+
+`RAILS_ENV=test bin/rails db:test:prepare` on the stage branch. The test database persists between
+checkouts, so a stage inherits whatever schema the last branch left — which for stage 1 meant
+`main`'s models looking for an `address` column this branch had dropped.
+
 ## What each stage must prove before it is opened
 
 Not a suggestion — this is what the branch itself was held to, and it is why the merge from `main`
@@ -139,7 +170,9 @@ went in cleanly.
 0. **Every relative `.md` link resolves against the files that stage contains.** Four lines of
    shell, and it is what disproved the original stage 1.
 1. **No later stage's removals are present** — check `Gemfile` and `app/assets/` specifically.
-2. `bundle exec rspec` green, and the *new* specs watched failing first.
+2. **`bundle install`, then `RAILS_ENV=test bin/rails db:test:prepare`** — a stage needs its own
+   gems *and* its own schema, and both persist between checkouts.
+3. `bundle exec rspec` green, and the *new* specs watched failing first.
 3. `bundle exec rubocop` and `bundle exec erb_lint --lint-all` clean.
 4. `bundle exec brakeman` — **0 warnings**. Four of the six CI workflows are covered by the design
    suite; brakeman and `factory_bot:lint` are the two that are not, and the stage 0 vulnerability
