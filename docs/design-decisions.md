@@ -9796,3 +9796,68 @@ presence says nothing about which system a view is on.
 
 Thirteen controls, one per legacy group, and two that must stay silent — the two above. Without
 those two, the inverted check would have traded six false negatives for three false positives.
+
+## 2026-09-09 — A stored XSS, found by running the CI gate nobody had run
+
+The branch is 600 commits ahead of `main` with no pull request, so I checked which CI workflows
+would run on one. Six: `rspec`, `rspec-system`, `audit-selftest`, `ruby_lint`, `brakeman`,
+`factory-bot-lint`. The design suite covers the first four and I had been running them all session.
+**I had never run the last two.**
+
+`brakeman` failed. One warning, weak confidence, `LinkToHref` on
+`organizations/_details.html.erb`: "potentially unsafe model attribute in `link_to` href".
+
+### It was real
+
+`Organization#url` validated with `URI::DEFAULT_PARSER.make_regexp` and **no scheme argument**,
+which accepts any scheme. Tested before writing anything down:
+
+```
+ACCEPTED http://example.com
+ACCEPTED javascript:alert(document.cookie)
+ACCEPTED data:text/html,<script>alert(1)</script>
+```
+
+And `organizations/show` renders that field with `link_to`. So an organization admin sets the URL,
+and any user who views the organization page and clicks it runs script in their own session. Weak
+confidence is a statement about static analysis, not about exposure.
+
+### Restricting the scheme was not enough, and that is the more interesting half
+
+`BroadcastAnnouncement#link` **already** restricted the scheme to `http https`. It was still
+bypassable, because `format:` is not anchored and the pattern therefore matches a substring:
+
+```
+unanchored ACCEPTS "javascript:alert(1) http://decoy.example.com"
+anchored   rejects "javascript:alert(1) http://decoy.example.com"
+```
+
+That field is the "More info" link on **every user's dashboard** — the widest exposure of the
+three, and it had looked fixed. Found by testing the fix rather than by trusting the pattern that
+was already there.
+
+### Two layers
+
+`HttpUrlValidatable` — anchored, `http https` — on all three fields that take a URL from a user.
+And `essentials_external_link` / `essentials_safe_href` at the four render sites.
+
+Both, deliberately. The validation guards one write path; a row can arrive by CSV import, from the
+console, or from a database restored from before the validation existed. The helper is split in two
+because the dashboard link carries its own classes and accessible name, so it needs the href
+checked rather than the whole anchor built for it.
+
+A dangerous URL renders as **plain text, not nothing**. Dropping it hides the problem from the only
+people who can fix it; showing it is how a bank notices its URL is nonsense.
+
+### What was checked before changing it
+
+Existing data, on all three fields: **0 rows** held a non-`http(s)` value, so tightening the
+validation invalidated nothing. Had there been any, the fix would have needed a data migration
+before the validation, not after.
+
+### The lesson, which is not about URLs
+
+The audits in `bin/design/` are thorough and they are not the whole gate. Four of six workflows
+were covered; the two that were not are exactly where this was hiding, and one of them only found
+it because **`main` bumped brakeman 8.0.5 → 8.0.6** in the merge and the new version brought a new
+check. `docs/onboarding.md`'s post-merge routine has a step 9 now, naming both.

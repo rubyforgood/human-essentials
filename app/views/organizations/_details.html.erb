@@ -26,9 +26,9 @@
     <%= essentials_detail "Name", @organization.name %>
     <%= essentials_detail "NDBN membership ID", @organization.ndbn_member&.full_name %>
     <%= essentials_detail "URL" do %>
-      <% if @organization.url.present? %>
-        <%= link_to @organization.url, @organization.url, class: "link-brand" %>
-      <% end %>
+      <%# Guarded: a `javascript:` URL stored before HttpUrlValidatable existed would otherwise
+          render as a live link here. This is the site Brakeman's LinkToHref found. %>
+      <%= essentials_external_link @organization.url %>
     <% end %>
     <%= essentials_detail "Email" do %>
       <% if @organization.email.present? %>

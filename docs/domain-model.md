@@ -221,6 +221,24 @@ to be hardcoded to `"Donation"`, which is the whole reason a purchase could not 
 items are polymorphic and only the query was not. `DistributionsController#new` branches on
 `request_id`, `purchase_id` and `donation_id` in that order.
 
+## A URL a user typed is validated as http(s), and anchored
+
+Three models take a URL from a user: `Organization#url`, `BroadcastAnnouncement#link`,
+`AccountRequest#organization_website`. All three now validate through `HttpUrlValidatable`, which
+is `URI::DEFAULT_PARSER.make_regexp(%w[http https])` **anchored** with `\A...\z`.
+
+Both halves were faults, measured 2026-09-09:
+
+| | |
+| --- | --- |
+| `make_regexp` with no scheme argument | accepts **any** scheme, so `javascript:alert(document.cookie)` was a valid `Organization#url`. That field is rendered with `link_to` on the organization page — stored XSS |
+| `format:` unanchored | matches a *substring*, so `"javascript:alert(1) http://decoy.example.com"` satisfied even the scheme-restricted pattern `BroadcastAnnouncement#link` already had. That field is the "More info" link on every user's dashboard |
+
+Existing data was checked before tightening: **0 rows across all three** held a non-`http(s)` value,
+so nothing was invalidated. The render sites are guarded separately by `essentials_external_link` —
+see design.md, [a URL a user typed](../design.md#user-supplied-links) — because a validation guards
+one write path and a row can arrive by import, by console, or from an old backup.
+
 ## Where the code for each of these lives
 
 | Concern | Where |
