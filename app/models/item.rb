@@ -59,8 +59,10 @@ class Item < ApplicationRecord
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
+  scope :loose, -> { where(type: "ConcreteItem") }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
+  scope :by_name, ->(name) { where(name: name) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :period_supplies, -> {
@@ -76,7 +78,7 @@ class Item < ApplicationRecord
     period_other: "period_other",
     period_underwear: "period_underwear",
     tampons: "tampons",
-    other_categories: "other"
+    other: "other"
   }, instance_methods: false, validate: { allow_nil: true }
 
   def self.reporting_categories_for_select
