@@ -35,6 +35,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
   config.action_mailer.default_url_options = { host: "localhost:3000" }
+  config.action_mailer.asset_host = "http://localhost:3000"
 
   # Enable/disable caching. By default caching is disabled.
   if Rails.root.join("tmp/caching-dev.txt").exist?

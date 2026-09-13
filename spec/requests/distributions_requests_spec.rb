@@ -1049,7 +1049,8 @@ RSpec.describe "Distributions", type: :request do
       context 'with a correct hash id' do
         it 'should render the calendar' do
           get calendar_distributions_path(hash: hashed_id)
-          expect(CalendarService).to have_received(:calendar).with(organization.id)
+          expect(CalendarService).to have_received(:calendar)
+            .with(organization.id, host: "www.example.com", protocol: "http://")
           expect(response.media_type).to include('text/calendar')
           expect(response.body).to eq('SOME ICS STRING')
         end
