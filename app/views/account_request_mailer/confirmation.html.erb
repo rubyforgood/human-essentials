@@ -23,7 +23,7 @@
 </p>
 
 <p>
-  <a href='https://staging.humanessentials.app/users/sign_in'>Human Essentials</a>
+  <%= link_to 'Human Essentials', demo_url('/users/sign_in') %>
 </p>
 <p>
   <strong> Bank user login: </strong>
@@ -43,7 +43,7 @@
 
 <p>
   A couple things to know about the sandbox servers before you start using them:
-      The development team uses the servers for testing our new features and upgrades before putting them on the live site to ensure that no bugs get pushed through to the live site, so if something looks different than the (real) humanessentials.app site that is probably why! Please don’t enter any sensitive information into the demo servers, several users have access to the demo servers and it will be visible to all users.
+      The development team uses the servers for testing our new features and upgrades before putting them on the live site to ensure that no bugs get pushed through to the live site, so if something looks different than the (real) <%= production_host %> site that is probably why! Please don’t enter any sensitive information into the demo servers, several users have access to the demo servers and it will be visible to all users.
 </p>
 
 <p>
