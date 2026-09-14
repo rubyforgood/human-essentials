@@ -1,5 +1,6 @@
 * [User Guide](user_guide/bank/)
 * [Developer Architecture Overview](architecture/overview)
+* [Updating the user guide with an AI agent](agentic_update)
 
 ## Developer Notes
 
