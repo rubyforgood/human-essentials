@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -398,7 +398,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.datetime "created_at", precision: nil, null: false
     t.integer "distribution_quantity"
     t.integer "item_category_id"
-    t.integer "kit_id"
     t.string "name"
     t.integer "on_hand_minimum_quantity", default: 0, null: false
     t.integer "on_hand_recommended_quantity"
@@ -411,7 +410,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "value_in_cents", default: 0
     t.boolean "visible_to_partners", default: true, null: false
-    t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
     t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
@@ -427,18 +425,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
     t.index ["organization_id"], name: "index_kit_allocations_on_organization_id"
     t.index ["storage_location_id"], name: "index_kit_allocations_on_storage_location_id"
-  end
-
-  create_table "kits", force: :cascade do |t|
-    t.boolean "active", default: true
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.integer "organization_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "value_in_cents", default: 0
-    t.boolean "visible_to_partners", default: true, null: false
-    t.index ["name", "organization_id"], name: "index_kits_on_name_and_organization_id", unique: true
-    t.index ["organization_id"], name: "index_kits_on_organization_id"
   end
 
   create_table "line_items", id: :serial, force: :cascade do |t|
@@ -878,11 +864,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
-  add_foreign_key "items", "kits"
-  add_foreign_key "kit_allocations", "kits"
   add_foreign_key "kit_allocations", "organizations"
   add_foreign_key "kit_allocations", "storage_locations"
-  add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
