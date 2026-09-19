@@ -79,7 +79,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
         choose(option: 'partner')
 
-        expect(page).to have_link('here', href: 'https://humanessentials.app/users/sign_in')
+        expect(page).to have_link('here', href: new_user_session_path)
       end
     end
 
