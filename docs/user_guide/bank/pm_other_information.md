@@ -6,5 +6,8 @@ There are a few other things with Partners that didn't fit into any of the secti
 - Children served -- if the partner is using Child requests,  this is a count of active Children (confirm),
 - Zipcodes - these are directly from the zipcodes entered in the Partner Profile
 2/  You can see the prior Distributions for this partner, at the bottom of the view of the Partner.
+3/  The Partner list (Partner Agencies, then All Partners) shows each Partner's email and phone number (if you've entered one) under "Contact Information".  Click a Partner's name to see their full details.
+
+![Partner list showing contact information](images/partners/partners_list_contact_information.png)
 
 [Prior:  Administering partner users](pm_partner_user_admin.md)[Next: Partner announcements](pm_announcements.md)
