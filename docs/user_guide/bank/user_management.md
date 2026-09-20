@@ -68,6 +68,8 @@ To remove admin access from a User,  sign in as someone who has bank admin acces
 (2) Scroll down to the bottom of that page.  You will see a section labelled "Users".
 Find the User you wish to remove admin access from.  (3) Click the "Demote to User" button beside their name and email.
 
+![Demote an admin to User](images/user_management/user_demote_admin.png)
+
 Click "OK" on the confirmation screen.
 
 
