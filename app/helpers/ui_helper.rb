@@ -89,7 +89,11 @@ module UiHelper
   end
 
   def download_button_to(link, options = {})
-    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options)
+    options = { icon: "download", type: "info", text: "Download", size: "md" }.merge(options)
+    # A download link serves a file instead of a new page, so rails-ujs never re-enables the
+    # button and it stays stuck on "Please wait..." (see #5691; same cause as #5632 below).
+    options[:data] = { disable_with: nil }.merge(options[:data] || {})
+    _link_to link, options
   end
 
   def edit_button_to(link, options = {}, properties = {})
