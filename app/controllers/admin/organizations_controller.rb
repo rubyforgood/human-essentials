@@ -37,6 +37,7 @@ class Admin::OrganizationsController < AdminController
       Organization.seed_items(@organization)
       UserInviteService.invite(name: user_params[:name],
                                email: user_params[:email],
+                               phone_number: user_params[:phone_number],
                                roles: [Role::ORG_USER, Role::ORG_ADMIN],
                                resource: @organization)
       SnapshotEvent.publish(@organization) # need one to start with
@@ -82,6 +83,6 @@ class Admin::OrganizationsController < AdminController
   end
 
   def user_params
-    params.require(:organization).require(:user).permit(:name, :email)
+    params.require(:organization).require(:user).permit(:name, :email, :phone_number)
   end
 end

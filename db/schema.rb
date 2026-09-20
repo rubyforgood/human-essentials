@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -803,6 +803,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.boolean "organization_admin"
     t.integer "organization_id"
     t.bigint "partner_id"
+    t.string "phone_number"
     t.string "provider"
     t.datetime "remember_created_at", precision: nil
     t.datetime "reset_password_sent_at", precision: nil

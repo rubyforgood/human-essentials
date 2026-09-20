@@ -15,6 +15,14 @@ RSpec.describe PartnerUsersController, type: :request do
         sign_in(org_admin)
       end
 
+      it "shows each user's phone number" do
+        create(:partner_user, partner: partner, phone_number: "555-987-6543")
+
+        get partner_users_path(default_params.merge(partner_id: partner))
+
+        expect(response.body).to include("555-987-6543")
+      end
+
       it "renders the index template and assigns @users" do
         get partner_users_path(default_params.merge(partner_id: partner))
         expect(response).to render_template(:index)
@@ -40,7 +48,8 @@ RSpec.describe PartnerUsersController, type: :request do
     let(:valid_user_params) do
       {
         email: "meow@example.com",
-        name: "Meow Mix"
+        name: "Meow Mix",
+        phone_number: "555-123-4567"
       }
     end
 
@@ -57,6 +66,7 @@ RSpec.describe PartnerUsersController, type: :request do
 
           expect(response).to redirect_to(root_path)
           expect(flash[:notice]).to include("has been invited. Invitation email sent to")
+          expect(User.find_by(email: "meow@example.com").phone_number).to eq("555-123-4567")
         end
       end
 
