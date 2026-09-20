@@ -1,11 +1,12 @@
 module UserInviteService
   # @param name [String]
+  # @param phone_number [String]
   # @param email [String]
   # @param roles [Array<Symbol>]
   # @param resource [ApplicationRecord]
   # @param force [Boolean]
   # @return [User]
-  def self.invite(email:, resource:, name: nil, roles: [], force: false)
+  def self.invite(email:, resource:, name: nil, phone_number: nil, roles: [], force: false)
     # Because only one resource can be passed, currently the only case where
     # multiple roles being based makes sense is ORG_USER and ORG_ADMIN.
 
@@ -40,6 +41,7 @@ module UserInviteService
     User.invite!(email: email) do |user1|
       name = nil if name.blank?
       user1.name = name.presence || nil
+      user1.phone_number = phone_number.presence
       add_roles(user1, resource: resource, roles: roles)
       user1.skip_invitation = user1.errors[:email].any?
     end
