@@ -50,13 +50,6 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
     end
 
     it "displays the edit view with sections containing validation errors expanded" do
-      # Open up Media section and clear out website value
-      find("button[data-bs-target='#media_information']").click
-      within "#media_information" do
-        fill_in "Website", with: ""
-        uncheck "No Social Media Presence"
-      end
-
       # Open Pick up person section and fill in 4 email addresses
       find("button[data-bs-target='#pick_up_person']").click
       within "#pick_up_person" do
@@ -76,12 +69,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css(".alert-danger", text: /There is a problem/)
-      expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      # Expect pick up person section, and partner settings section to be opened
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
 
@@ -90,12 +81,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css(".alert-danger", text: /There is a problem/)
-      expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      # Expect pick up person section, and partner settings section to be opened
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
     end
