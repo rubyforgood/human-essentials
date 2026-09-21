@@ -30,6 +30,15 @@ RSpec.describe DistributionContentChangeService, type: :service do
       end
     end
 
+    context "when a line item is added" do
+      let(:old_line_items) { [line_item1] }
+      let(:new_line_items) { [line_item1, line_item2] }
+
+      it "returns true" do
+        expect(subject.any_change?).to be true
+      end
+    end
+
     context "when there are line items removed and updated" do
       let(:old_line_items) { [line_item1, line_item2, line_item3, line_item4] }
       let(:new_line_items) { [line_item1.clone, line_item2, line_item3] }
@@ -66,6 +75,7 @@ RSpec.describe DistributionContentChangeService, type: :service do
 
       it "returns true" do
         expected_changes = {
+          added: [],
           removed: [line_item4],
           updates: [
             {
@@ -76,6 +86,19 @@ RSpec.describe DistributionContentChangeService, type: :service do
           ]
         }
         expect(subject.changes).to eq expected_changes
+      end
+    end
+
+    context "when line items are added and updated" do
+      let(:old_line_items) { [line_item1, line_item2] }
+      let(:new_line_items) { [line_item1.merge(quantity: 30), line_item2, line_item3] }
+
+      it "includes the added item and quantity" do
+        expect(subject.changes).to eq(
+          added: [{name: "Wipes (Adult)", quantity: 88}],
+          updates: [{name: "Adult Incontinence Pads", new_quantity: 30, old_quantity: 382}],
+          removed: []
+        )
       end
     end
   end

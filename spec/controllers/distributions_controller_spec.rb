@@ -385,6 +385,7 @@ RSpec.describe DistributionsController, type: :controller do
 
         it "redirects with a flash notice and send send_notification" do
           expected_distribution_changes = {
+            added: [{name: "Item 2", quantity: 4}],
             removed: [],
             updates: [
               {
@@ -403,6 +404,47 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:notice]).to eq("Distribution updated!")
           expect(flash[:error]).to be_nil
           expect(flash[:alert]).to be_nil
+        end
+      end
+
+      context "when only an item is added to a distribution" do
+        let(:existing_item) { create(:item, name: "Adult Diapers", organization: organization) }
+        let(:added_item) { create(:item, name: "Wipes (Adult)", organization: organization) }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:distribution) do
+          create(:distribution, :with_items, organization: organization, partner: partner,
+            storage_location: storage_location, item: existing_item, item_quantity: 10,
+            issued_at: 2.days.from_now)
+        end
+
+        before do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {existing_item.id => 100, added_item.id => 100}
+          })
+        end
+
+        it "sends a change notification listing the added item" do
+          expected_changes = {
+            added: [{name: "Wipes (Adult)", quantity: 5}],
+            updates: [],
+            removed: []
+          }
+
+          expect(PartnerMailerJob).to receive(:perform_now)
+            .with(organization.id, distribution.id, "Your Distribution Has Changed", expected_changes)
+
+          put :update, params: {
+            id: distribution.id,
+            distribution: {
+              storage_location_id: storage_location.id,
+              line_items_attributes: {
+                "0": {item_id: existing_item.id, quantity: 10},
+                "1": {item_id: added_item.id, quantity: 5}
+              }
+            }
+          }
+
+          expect(response).to have_http_status(:redirect)
         end
       end
 
