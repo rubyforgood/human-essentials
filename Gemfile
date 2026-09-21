@@ -33,6 +33,8 @@ gem "paper_trail"
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations"
+# Manages Postgres functions and triggers as versioned files.
+gem "fx"
 # used in events
 gem 'dry-struct'
 # Use solid_cache as a cache store

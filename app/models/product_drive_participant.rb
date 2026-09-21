@@ -34,21 +34,16 @@ class ProductDriveParticipant < ApplicationRecord
   # `business_name` falling back to `contact_name` - rather than on the database
   # collation, which is not the same everywhere: a `C.UTF-8` cluster puts every
   # capitalised name before every lowercase one and the `en_US.utf8` image CI
-  # runs does not. Runs of digits are zero padded so that they compare by value
-  # and "Store 9" comes before "Store 10".
+  # runs does not.
   #
-  # Written as a literal because the schema is maintained as `schema.rb`, which
-  # carries neither a Postgres function nor an ICU collation - both would
-  # disappear on `db:schema:load`.
-  DISPLAY_NAME_ORDER = Arel.sql(<<~SQL.squish)
-    (SELECT string_agg(
-              CASE WHEN chunk[1] ~ '^[0-9]' THEN lpad(chunk[1], 20, '0') ELSE chunk[1] END,
-              '' ORDER BY idx)
-       FROM regexp_matches(
-              lower(coalesce(NULLIF(business_name, ''), contact_name, '')),
-              '[0-9]+|[^0-9]+', 'g')
-       WITH ORDINALITY AS chunks(chunk, idx))
-  SQL
+  # `leading_digit_sort_key` (db/functions/leading_digit_sort_key_v01.sql, added
+  # via the `fx` gem) zero-pads a leading run of digits so "2" sorts before
+  # "10" - it does not natural-sort a digit run in the middle of the name. That
+  # scope was the deliberate tradeoff, over a fuller tokenizing version, agreed
+  # on in https://github.com/rubyforgood/human-essentials/pull/5656.
+  DISPLAY_NAME_ORDER = Arel.sql(
+    "leading_digit_sort_key(coalesce(NULLIF(business_name, ''), contact_name, ''))"
+  )
 
   scope :alphabetized, -> { order(DISPLAY_NAME_ORDER) }
   scope :by_business_name, ->(business_name) { where("business_name ILIKE ?", "%#{business_name}%") }

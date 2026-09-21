@@ -81,12 +81,20 @@ RSpec.describe ProductDriveParticipant, type: :model do
         expect(ProductDriveParticipant.alphabetized).to eq([aardvark, no_business, zebra])
       end
 
-      it "orders numbers by value rather than by digit" do
+      it "orders a leading number by value rather than by digit" do
+        tenth = create(:product_drive_participant, business_name: "10 Warehouse Way")
+        second = create(:product_drive_participant, business_name: "2 Warehouse Way")
+        ninth = create(:product_drive_participant, business_name: "9 Warehouse Way")
+
+        expect(ProductDriveParticipant.alphabetized).to eq([second, ninth, tenth])
+      end
+
+      it "does not natural-sort a number in the middle of the name (leading-digit only, by design - see PR #5656)" do
         tenth = create(:product_drive_participant, business_name: "Store 10")
         second = create(:product_drive_participant, business_name: "Store 2")
         ninth = create(:product_drive_participant, business_name: "Store 9")
 
-        expect(ProductDriveParticipant.alphabetized).to eq([second, ninth, tenth])
+        expect(ProductDriveParticipant.alphabetized).to eq([tenth, second, ninth])
       end
     end
   end
