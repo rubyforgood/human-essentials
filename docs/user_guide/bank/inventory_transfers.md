@@ -6,7 +6,7 @@ That will bring up the Transfers page, which lists all your past Transfers in ch
 ![Navigation to Transfers](images/inventory/inventory_transfers_navigation.png)
 
 You can filter the Transfers based on source (From), destination(to), and date.
-From here you can make a new Transfer, add a Transfer, view the details of a past Transfer or delete it.
+From here you can make a new Transfer, view the details of a past Transfer, or undo it.
 
 ## Adding a Transfer
 To add a Transfer, click the "+New Transfer" button on the Transfers page. 
@@ -29,21 +29,21 @@ To view the details of a Transfer, click the "view" button beside it in the Tran
 ![view Transfer navigation](images/inventory/inventory_transfers_view_navigation.png)
 This lists all the Items in the Transfer, and how much was transferred, as well as your comment.
 ![view Transfer](images/inventory/inventory_transfers_view.png)
-## Deleting a Transfer
+## Undoing a Transfer
 
 This should not happen very often!  
 
-To delete a Transfer, click the "delete" button beside the Transfer.  
-[Delete Transfer navigation](images/inventory/inventory_transfers_delete.png)
+To undo a Transfer, click the "Undo" button beside the Transfer in the Transfers list.  
+![Undo Transfer navigation](images/inventory/inventory_transfers_delete.png)
 
-Then press "OK" to confirm.
-This will check that the inventory levels in the two Storage Locations will allow the change.  If they will, it will roll back the inventory changes that were made when you entered the Transfer.
+Then press "OK" in answer to "Are you sure you want to undo this transfer?".
+This will check that the inventory levels in the two Storage Locations will allow the change.  If they will, it will roll back the inventory changes that were made when you entered the Transfer, and remove the Transfer from your list.
 
-##### ** N.B. This is not undoable  *** 
+##### ** N.B. Undoing a Transfer can't itself be undone  *** 
 
 ----
 
-[!NOTE]  If you do delete the wrong Transfer, you can find a record of any Transfer made since September 2024 in the "History" Report.  There you can find the amount transferred  for each Item, so that you could re-enter them.  The inventory changes in that case will be as of the date you re-enter, though.
+[!NOTE]  If you do undo the wrong Transfer, you can find a record of any Transfer made since September 2024 in the "History" Report.  There you can find the amount transferred  for each Item, so that you could re-enter them.  The inventory changes in that case will be as of the date you re-enter, though.
 
 ----
 

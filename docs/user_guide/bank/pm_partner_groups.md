@@ -4,7 +4,7 @@ You may have reasons that some partners are treated differently than others.  Re
 - Some banks have 'tiers' of partners, where some partners have different rules about what and when they can request.  
 - Some banks have grants that are tied to specific geographic areas, and set up specific Items for those grants (that only Partners in those geographic areas can request)
 
-Partner Groups allow you to manage that.  They allow you to set the item categories (see [Item Categories](inventory_items.md)) that a Partner Group can request
+Partner Groups allow you to manage that.  They allow you to set the item categories (see [Item Categories](inventory_items.md#item-categories)) that a Partner Group can request
 
 If you are going to use Partner Groups, you should 
 1/  Set up your Item Categories 
@@ -17,20 +17,23 @@ In the left-hand menu, click on "Partner Agencies", then "All Partners".   The P
 Then click on "New Partner Group"
 ![Navigation for adding a Partner Group](images/partners/partners_groups_1.png)
 This will bring up a form like this (the categories will be different):
-![New partner Group Gorm](images/partners/partners_groups_2.png)
+![New Partner Group form](images/partners/partners_groups_2.png)
 ## Fields in the partner group form
 ### Name
 This is the name your bank will use to refer to the Partner Group.  It is not visible to the partners, and is not used in any reports.  It must be unique among your Partner Groups.
 ### Which Item Categories Can They Request?
-This lists the item categories you entered (in (see [Item Categories](inventory_items.md)))
+This lists the item categories you entered (see [Item Categories](inventory_items.md#item-categories))
 
-The Partners who are in this Partner Group will only be able to request the items in the categories you check here.  Note that they will not be able 
-they will not be able to request any Items that are not in a category
+The Partners who are in this Partner Group will only be able to request the items in the categories you check here.  Note that they will not be able to request any Items that are not in a category.
 
 For clarity - if you do not choose any categories, they will not be able to choose any items, so if you are using Partner Groups, you have to use Item Categories.
 
 ### Do you want to send deadline reminders to them every month?
 If enabled, you may configure how frequently you would like reminders to be sent to Partners who are part of this Partner Group.
+
+[!NOTE] If your organization has turned off monthly deadline reminder emails (see [Getting Started - Customization](getting_started_customization.md#other-emails)), you'll see a notice here instead of the reminder fields, and no reminders will be sent to the group.
+
+![Partner Group form when deadline reminders are turned off](images/partners/partners_groups_reminders_off_notice.png)
 
 This works in conjunction with the reminder configuration set on an organization level (see [Getting Started - Customization](getting_started_customization.md)) and the Partner specific configuration (see [Adding a single Partner](pm_adding_a_partner.md)).
 
