@@ -5,6 +5,14 @@
       <p>Dashboard</p>
     <% end %>
   </li>
+  <% if Flipper.enabled?(ReplenishmentController::FEATURE_FLAG) %>
+  <li class="nav-item">
+    <%= link_to(replenishment_index_path, class: "nav-link #{active_class(['replenishment'])}") do %>
+      <i class="nav-icon fas fa-chart-line"></i>
+      <p>Replenishment</p>
+    <% end %>
+  </li>
+  <% end %>
   <li class="nav-item has-treeview <%= menu_open?(['donations']) %>">
     <a href="#" class="nav-link <%= active_class(['donations']) %>">
       <i class="nav-icon fa fa-gratipay"></i>
