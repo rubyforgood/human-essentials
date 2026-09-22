@@ -21,8 +21,21 @@ RSpec.describe "Replenishment", type: :request do
     end
   end
 
-  context "when signed in" do
+  context "when the feature flag is off" do
     before { sign_in(user) }
+
+    it "is not available" do
+      Flipper.disable(ReplenishmentController::FEATURE_FLAG)
+      get replenishment_index_path
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  context "when signed in" do
+    before do
+      Flipper.enable(ReplenishmentController::FEATURE_FLAG)
+      sign_in(user)
+    end
 
     it "shows the planner with the item flagged" do
       get replenishment_index_path

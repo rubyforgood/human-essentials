@@ -8,7 +8,7 @@
       <%= @settings.source == :requests ? "partner requests" : "distributions" %>.
       Reorder points are set to cover <%= number_to_percentage(@settings.service_level * 100, precision: 1) %> of likely demand
       during a <%= @settings.lead_time_days %>-day lead time.
-      <%= link_to "How this works", "https://github.com/arnavt687/human-essentials/blob/main/docs/replenishment.md", target: "_blank", rel: "noopener" %>
+      <%= link_to "How this works", "https://github.com/rubyforgood/human-essentials/blob/main/docs/replenishment.md", target: "_blank", rel: "noopener" %>
     </p>
   </div>
 </section>
