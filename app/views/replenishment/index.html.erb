@@ -1,0 +1,94 @@
+<% content_for :title, "Replenishment - #{current_organization.name}" %>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <h1>Replenishment Planner <small>forecast-driven reorder alerts</small></h1>
+    <p class="text-muted mb-0">
+      Demand is forecast from the last <%= @settings.months %> complete months of
+      <%= @settings.source == :requests ? "partner requests" : "distributions" %>.
+      Reorder points are set to cover <%= number_to_percentage(@settings.service_level * 100, precision: 1) %> of likely demand
+      during a <%= @settings.lead_time_days %>-day lead time.
+      <%= link_to "How this works", "https://github.com/arnavt687/human-essentials/blob/main/docs/replenishment.md", target: "_blank", rel: "noopener" %>
+    </p>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 col-6">
+        <div class="small-box bg-danger"><div class="inner"><h3><%= @summary[:critical] %></h3><p>Will run out before a new order arrives</p></div></div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="small-box bg-warning"><div class="inner"><h3><%= @summary[:reorder] %></h3><p>Below reorder point</p></div></div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="small-box bg-success"><div class="inner"><h3><%= @summary[:ok] %></h3><p>Stocked</p></div></div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="small-box bg-info"><div class="inner"><h3><%= forecast_skill_label(@summary[:median_skill]) %></h3><p>Median forecast improvement vs. "same as last month"</p></div></div>
+      </div>
+    </div>
+
+    <div class="card card-outline card-primary">
+      <div class="card-header"><h3 class="card-title">Planning assumptions</h3></div>
+      <div class="card-body">
+        <%= form_with url: replenishment_index_path, method: :get, local: true, class: "form-inline" do %>
+          <label class="mr-2" for="lead_time_days">Lead time (days)</label>
+          <%= number_field_tag :lead_time_days, @settings.lead_time_days, min: 1, max: 365, class: "form-control mr-3", style: "width: 6em", autocomplete: "off" %>
+          <label class="mr-2" for="review_period_days">Review every (days)</label>
+          <%= number_field_tag :review_period_days, @settings.review_period_days, min: 1, max: 180, class: "form-control mr-3", style: "width: 6em", autocomplete: "off" %>
+          <label class="mr-2" for="service_level">Service level</label>
+          <%= select_tag :service_level, options_for_select([["90%", 0.90], ["95%", 0.95], ["97.5%", 0.975], ["99%", 0.99]], @settings.service_level), class: "form-control mr-3" %>
+          <label class="mr-2" for="source">Demand signal</label>
+          <%= select_tag :source, options_for_select([["Distributions", "distributions"], ["Partner requests", "requests"]], @settings.source), class: "form-control mr-3" %>
+          <%= submit_tag "Recalculate", class: "btn btn-primary", name: nil %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <% if @rows.empty? %>
+          <div class="alert alert-info m-3">No items with inventory or recent demand yet.</div>
+        <% else %>
+          <table class="table table-hover table-striped" id="replenishment-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Status</th>
+                <th class="text-right">On hand</th>
+                <th class="text-right">Forecast next month</th>
+                <th class="text-right">Days of supply</th>
+                <th class="text-right">Reorder point</th>
+                <th class="text-right">Your manual minimum</th>
+                <th class="text-right">Suggested order</th>
+                <th>Model</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @rows.each do |row| %>
+                <tr>
+                  <td><%= link_to row.item.name, replenishment_path(row.item, request.query_parameters) %></td>
+                  <td><%= replenishment_status_badge(row.decision.status) %></td>
+                  <td class="text-right"><%= number_with_delimiter(row.on_hand) %></td>
+                  <td class="text-right"><%= number_with_delimiter(row.forecast.next_month.round) %></td>
+                  <td class="text-right">
+                    <%= row.decision.days_of_supply ? number_with_delimiter(row.decision.days_of_supply) : "—" %>
+                    <% if row.decision.stockout_date && row.decision.status != :ok %>
+                      <br><small class="text-muted">out ~<%= row.decision.stockout_date.strftime("%b %-d") %></small>
+                    <% end %>
+                  </td>
+                  <td class="text-right"><%= number_with_delimiter(row.decision.reorder_point) %></td>
+                  <td class="text-right"><%= number_with_delimiter(row.manual_minimum) %></td>
+                  <td class="text-right"><strong><%= row.decision.suggested_order.positive? ? number_with_delimiter(row.decision.suggested_order) : "—" %></strong></td>
+                  <td><small><%= forecast_model_label(row.forecast.model) %></small></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

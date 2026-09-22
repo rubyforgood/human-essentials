@@ -1,0 +1,119 @@
+<% content_for :title, "Replenishment - #{@item.name}" %>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <h1><%= @item.name %> <small>forecast &amp; allocation</small></h1>
+    <%= link_to "← Back to planner", replenishment_index_path(request.query_parameters.except("reserve")) %>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <% if @row.nil? %>
+      <div class="alert alert-info">This item has no inventory and no demand in the selected window.</div>
+    <% else %>
+      <% forecast = @row.forecast; decision = @row.decision %>
+      <div class="card card-outline card-primary">
+        <div class="card-header"><h3 class="card-title">Demand history and forecast</h3></div>
+        <div class="card-body">
+          <%
+            future_months = (1..forecast.forecast.length).map { |i| @months.last.months_since(i) }
+            labels = (@months + future_months).map { |m| m.strftime("%b %y") }
+            history_points = @row.history + Array.new(future_months.length, nil)
+            forecast_points = Array.new(@row.history.length - 1, nil) + [@row.history.last] + forecast.forecast
+            upper = Array.new(@row.history.length, nil) + forecast.forecast.map { |f| (f + 1.645 * forecast.sigma).round }
+            chart = {
+              chart: { type: "line", height: 360 },
+              title: { text: nil },
+              xAxis: { categories: labels },
+              yAxis: { min: 0, title: { text: "Units per month" } },
+              tooltip: { shared: true },
+              series: [
+                { name: "Actual demand", data: history_points },
+                { name: "Forecast", data: forecast_points, dashStyle: "Dash" },
+                { name: "95% upper bound", data: upper, dashStyle: "Dot" }
+              ]
+            }.to_json
+          %>
+          <div data-controller="highchart" data-highchart-config-value="<%= chart %>">
+            <div data-highchart-target="chart"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Why this recommendation</h3></div>
+            <div class="card-body">
+              <p><%= replenishment_status_badge(decision.status) %></p>
+              <dl class="row mb-0">
+                <dt class="col-sm-7">Model chosen by backtest</dt><dd class="col-sm-5"><%= forecast_model_label(forecast.model) %></dd>
+                <dt class="col-sm-7">Typical monthly error (σ)</dt><dd class="col-sm-5">±<%= number_with_delimiter(forecast.sigma.round) %></dd>
+                <dt class="col-sm-7">Error vs. "same as last month"</dt><dd class="col-sm-5"><%= forecast_skill_label(forecast.skill) %> better</dd>
+                <dt class="col-sm-7">Expected daily demand</dt><dd class="col-sm-5"><%= decision.daily_demand %></dd>
+                <dt class="col-sm-7">Safety stock</dt><dd class="col-sm-5"><%= number_with_delimiter(decision.safety_stock) %></dd>
+                <dt class="col-sm-7">Reorder point</dt><dd class="col-sm-5"><%= number_with_delimiter(decision.reorder_point) %></dd>
+                <dt class="col-sm-7">Order-up-to level</dt><dd class="col-sm-5"><%= number_with_delimiter(decision.order_up_to) %></dd>
+                <dt class="col-sm-7">On hand</dt><dd class="col-sm-5"><%= number_with_delimiter(@row.on_hand) %></dd>
+                <dt class="col-sm-7">Suggested order</dt><dd class="col-sm-5"><strong><%= number_with_delimiter(decision.suggested_order) %></strong></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Open partner requests</h3></div>
+            <div class="card-body">
+              <% if @allocation.lines.empty? %>
+                <p class="text-muted">No pending requests include this item.</p>
+              <% else %>
+                <p>
+                  Partners are asking for <strong><%= number_with_delimiter(@allocation.requested) %></strong>;
+                  available to share: <strong><%= number_with_delimiter(@allocation.supply) %></strong>.
+                  <% if @allocation.shortfall? %>
+                    <span class="badge badge-danger">Short by <%= number_with_delimiter(@allocation.requested - @allocation.supply) %></span>
+                  <% else %>
+                    <span class="badge badge-success">Enough to fill every request</span>
+                  <% end %>
+                </p>
+                <%= form_with url: replenishment_path(@item), method: :get, local: true, class: "form-inline mb-3" do %>
+                  <% request.query_parameters.except("reserve").each do |k, v| %><%= hidden_field_tag k, v %><% end %>
+                  <label class="mr-2" for="reserve">Hold back (units)</label>
+                  <%= number_field_tag :reserve, params[:reserve] || 0, min: 0, class: "form-control mr-2", style: "width: 7em", autocomplete: "off" %>
+                  <%= submit_tag "Update", class: "btn btn-sm btn-secondary", name: nil %>
+                <% end %>
+                <% plans = @allocation.plans %>
+                <table class="table table-sm">
+                  <thead>
+                    <tr><th>Partner</th><th class="text-right">Requested</th><th class="text-right">Proportional</th><th class="text-right">Max-min fair</th></tr>
+                  </thead>
+                  <tbody>
+                    <% @allocation.lines.each do |line| %>
+                      <tr>
+                        <td><%= link_to line.partner.name, request_path(line.request) %></td>
+                        <td class="text-right"><%= number_with_delimiter(line.quantity) %></td>
+                        <td class="text-right"><%= number_with_delimiter(plans[:proportional].allocations[line.request.id]) %></td>
+                        <td class="text-right"><%= number_with_delimiter(plans[:max_min].allocations[line.request.id]) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                  <tfoot>
+                    <tr class="text-muted"><td colspan="2">Lowest fill rate</td>
+                      <td class="text-right"><%= number_to_percentage(plans[:proportional].min_fill_rate * 100, precision: 0) %></td>
+                      <td class="text-right"><%= number_to_percentage(plans[:max_min].min_fill_rate * 100, precision: 0) %></td></tr>
+                    <tr class="text-muted"><td colspan="2">Fairness index (Jain)</td>
+                      <td class="text-right"><%= plans[:proportional].jain_index.round(2) %></td>
+                      <td class="text-right"><%= plans[:max_min].jain_index.round(2) %></td></tr>
+                  </tfoot>
+                </table>
+                <small class="text-muted">Proportional gives everyone the same % of their request. Max-min fair fully covers small requests first and makes the smallest allocation as large as possible.</small>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
