@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Turn a screenshot spec (JSON) into a runnable Playwright snippet.
+#
+# Usage:
+#   docs/utils/screenshots/mkshot SPEC.json [--out .playwright-mcp/run.js] [--template PATH]
+#
+# Then run the snippet with the Playwright MCP tool `browser_run_code_unsafe`,
+# passing the output path as its `filename` argument.
+#
+# Relative `out` paths inside the spec are resolved against the repository
+# root, so specs can say "docs/user_guide/bank/images/..." regardless of where
+# they are stored. See README.md for the spec format.
+
+require "json"
+require "optparse"
+require "fileutils"
+
+here = File.expand_path(__dir__)
+options = {out: ".playwright-mcp/run.js", template: File.join(here, "shot.tmpl.js")}
+
+parser = OptionParser.new do |o|
+  o.banner = "Usage: mkshot SPEC.json [options]"
+  o.on("--out PATH", "where to write the runnable snippet (default: #{options[:out]})") { |v| options[:out] = v }
+  o.on("--template PATH", "template to inline the spec into (default: shot.tmpl.js next to this script)") { |v| options[:template] = v }
+end
+parser.parse!
+spec_path = ARGV.first or abort(parser.banner)
+
+root = `git rev-parse --show-toplevel 2>/dev/null`.strip
+root = Dir.pwd if root.empty?
+
+spec = JSON.parse(File.read(spec_path))
+shots = spec["shots"]
+abort "spec must have a top-level 'shots' list" unless shots.is_a?(Array)
+
+shots.each do |shot|
+  abort "shot is missing 'out': #{JSON.generate(shot)[0, 120]}" unless shot["out"]
+  shot["out"] = File.join(root, shot["out"]) unless shot["out"].start_with?("/")
+  FileUtils.mkdir_p(File.dirname(shot["out"]))
+end
+
+out_path = options[:out].start_with?("/") ? options[:out] : File.join(root, options[:out])
+FileUtils.mkdir_p(File.dirname(out_path))
+File.write(out_path, File.read(options[:template]).sub("__PARAMS__") { JSON.generate(spec) })
+
+names = shots.map { |s| File.basename(s["out"]) }
+puts "#{out_path} ready (#{names.size} shots): #{names.join(", ")}"

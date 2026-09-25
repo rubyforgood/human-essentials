@@ -8,7 +8,7 @@ That will bring up this screen. Click "Edit details"  to bring up the Partner ed
 
 ![top of View Partner screen](images/partners/partners_edit_navigation.png)
 
-This is the same selection of information you provided when you initially added the partner.
+This is the same selection of information you provided when you initially added the partner (see [Adding a Partner](pm_adding_a_partner.md) for what each field does).
 
 ![edit page for basic Partner information](images/partners/partners_edit.png)
 
