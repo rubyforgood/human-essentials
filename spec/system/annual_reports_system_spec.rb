@@ -42,8 +42,9 @@ RSpec.describe "Annual Reports", type: :system, js: true do
       click_on("Export Report")
       wait_for_download
 
+      # The download-link controller re-enables the button a few seconds after the click.
       button = find("a[href='#{reports_annual_report_path(year, format: :csv)}']")
-      expect(button).to have_text("Export Report")
+      expect(button).to have_text("Export Report", wait: 10)
       expect(button).to have_no_text("Please wait...")
     end
   end

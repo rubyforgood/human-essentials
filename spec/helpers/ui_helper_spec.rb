@@ -150,22 +150,22 @@ RSpec.describe UiHelper, type: :helper do
         expect(button.text.strip).to eq("Export Report")
       end
 
-      # Regression test for #5691: a download link serves a file without a page load, so it must
-      # not carry rails-ujs' `data-disable-with` attribute, otherwise it stays stuck on
-      # "Please wait..." after the file has downloaded.
-      it 'does not set data-disable-with' do
+      # Regression test for #5691: keep rails-ujs' double-click protection, and hand the link to
+      # the download-link controller, which re-enables it since no page load will.
+      it 'disables on click and uses the download-link controller' do
         button = Nokogiri::HTML(subject).css("a").first
-        expect(button.attributes["data-disable-with"]).to be_nil
+        expect(button.attributes["data-disable-with"].value).to eq("Please wait...")
+        expect(button.attributes["data-controller"].value).to eq("download-link")
       end
     end
 
     context 'when the caller passes custom data' do
       subject { helper.download_button_to("/donations.csv", text: "Export Donations", data: {test: "test"}) }
 
-      it 'keeps the custom data and still omits data-disable-with' do
+      it 'keeps the custom data alongside the download-link controller' do
         button = Nokogiri::HTML(subject).css("a").first
         expect(button.attributes["data-test"].value).to eq("test")
-        expect(button.attributes["data-disable-with"]).to be_nil
+        expect(button.attributes["data-controller"].value).to eq("download-link")
       end
     end
   end
