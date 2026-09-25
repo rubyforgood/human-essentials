@@ -138,6 +138,38 @@ RSpec.describe UiHelper, type: :helper do
     end
   end
 
+  describe 'download_button_to' do
+    context 'with default options' do
+      subject { helper.download_button_to("/reports/annual_reports/2025.csv", text: "Export Report") }
+
+      it 'renders a download link' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button).to_not be_nil
+        expect(button.attributes["href"].value).to eq("/reports/annual_reports/2025.csv")
+        expect(button.attributes["class"].value).to include("btn btn-info")
+        expect(button.text.strip).to eq("Export Report")
+      end
+
+      # Regression test for #5691: keep rails-ujs' double-click protection, and hand the link to
+      # the download-link controller, which re-enables it since no page load will.
+      it 'disables on click and uses the download-link controller' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button.attributes["data-disable-with"].value).to eq("Please wait...")
+        expect(button.attributes["data-controller"].value).to eq("download-link")
+      end
+    end
+
+    context 'when the caller passes custom data' do
+      subject { helper.download_button_to("/donations.csv", text: "Export Donations", data: {test: "test"}) }
+
+      it 'keeps the custom data alongside the download-link controller' do
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button.attributes["data-test"].value).to eq("test")
+        expect(button.attributes["data-controller"].value).to eq("download-link")
+      end
+    end
+  end
+
   describe 'modal_button_to' do
     context 'with default options' do
       subject { helper.modal_button_to("#newRequest", text: "New Quantity Request", icon: "plus", type: "success") }

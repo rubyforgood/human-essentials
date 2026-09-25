@@ -89,7 +89,10 @@ module UiHelper
   end
 
   def download_button_to(link, options = {})
-    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options)
+    # A download link serves a file instead of a new page, so rails-ujs never re-enables the
+    # button on its own (#5691). The download-link controller re-enables it after a delay, which
+    # keeps the double-click protection for slow reports without leaving it stuck.
+    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options), { data: { controller: "download-link" } }
   end
 
   def edit_button_to(link, options = {}, properties = {})
