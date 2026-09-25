@@ -17,7 +17,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_150000) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "category", ["US_County", "Other"]
-  create_enum "kit_allocation_type", ["inventory_in", "inventory_out"]
 
   create_table "account_requests", force: :cascade do |t|
     t.datetime "confirmed_at", precision: nil
@@ -413,18 +412,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_150000) do
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
     t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
-  end
-
-  create_table "kit_allocations", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.enum "kit_allocation_type", default: "inventory_in", null: false, enum_type: "kit_allocation_type"
-    t.bigint "kit_id", null: false
-    t.bigint "organization_id", null: false
-    t.bigint "storage_location_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
-    t.index ["organization_id"], name: "index_kit_allocations_on_organization_id"
-    t.index ["storage_location_id"], name: "index_kit_allocations_on_storage_location_id"
   end
 
   create_table "line_items", id: :serial, force: :cascade do |t|
@@ -864,8 +851,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_150000) do
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
-  add_foreign_key "kit_allocations", "organizations"
-  add_foreign_key "kit_allocations", "storage_locations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
