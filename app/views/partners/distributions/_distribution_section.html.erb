@@ -14,7 +14,6 @@
       <% distributions.each do |dist| %>
         <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
           <td class="p-4 w-40">
-            <i class="text-primary far fa-file-alt mr-1"></i>
             <%= dist.issued_at.strftime("%m/%d/%Y") %>
             <br>
             <%= print_button_to print_partners_distribution_path(dist, format: :pdf) %>

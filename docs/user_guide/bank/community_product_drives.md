@@ -11,6 +11,7 @@ This presents a filterable list of all your Product Drives, including the follow
 - Product Drive Name
 - Start Date
 - End Date (this is optional)
+- Tags
 - Held Virtually?
 - Quantity of Items
 - Variety of Items
@@ -23,6 +24,7 @@ The list initially shows all the Product Drives that are at least partly in our 
 The Product Drives list is filterable by any of the following.
 - Product Drive name
 - Item Category
+- Tag
 - Date range (by starting date)
 
 Provide the information you want to filter by, then click "Filter".  Clicking "Clear Filters"  will return the list to its defaults.
@@ -36,6 +38,7 @@ This will bring up this screen, which contains all the fields you can specify fo
 - Start Date
 - End Date (this is optional)
 - Product Drive is Virtual? (check this if it's a virtual drive)
+- Tags -- optional labels of your own choosing (e.g. "school", "faith", "2026 holiday").  Type a tag and press Enter or comma to add it; tags you've used before are offered as you type.  You can filter the Product Drive list by tag, which is handy for grouping drives for a report.
 
 ![+New Product Drives page](images/community/product_drives/community_product_drives_add.png)
 
@@ -47,6 +50,7 @@ This will bring up the Product Drive view, which includes information about both
 ![Product Drive view page](images/community/product_drives/community_product_drives_view.png)
 Basic info:
 - Name
+- Tags
 - Start Date
 - End Date
 Information about each donation:
@@ -73,7 +77,7 @@ You can also make a correction to your Product Drive or delete it from this page
 If you want to edit the base information in a Product Drive, you can do that by clicking "Community", then "Product Drives" in the left-hand menu,  then clicking "View" beside the product drive you wish to modify, and then clicking "Make a correction".
 ![Navigation to update Product Drive](images/community/product_drives/community_product_drives_modify_navigation.png)
 
-This will bring up the basic information for your Product Drive,  You can rename it, change the dates, or change whether it is a virtual drive.
+This will bring up the basic information for your Product Drive.  You can rename it, change the dates, change the tags, or change whether it is a virtual drive.
 Then click "Update Product Drive" to save your changes.
 
 ![Modify Product Drive page](images/community/product_drives/community_product_drives_modify.png)

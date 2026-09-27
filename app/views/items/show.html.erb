@@ -64,11 +64,9 @@
                 <td><%= @item.package_size || 0 %></td>
               </tr>
               <tr>
-                <% if Flipper.enabled?(:enable_packs) %>
-                  <th>Custom Units</th>
-                  <% item_units = @item.request_units&.pluck("item_units.name") %>
-                  <td><%= item_units&.join("; ") %></td>
-                <% end %>
+                <th>Custom Units</th>
+                <% item_units = @item.request_units&.pluck("item_units.name") %>
+                <td><%= item_units&.join("; ") %></td>
               </tr>
               <tr>
                 <th>Item is visible to partners</th>

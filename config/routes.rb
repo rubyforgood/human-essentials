@@ -109,6 +109,11 @@ Rails.application.routes.draw do
   namespace :reports do
     resources :annual_reports, only: [:index, :show], param: :year do
       post :recalculate, on: :member
+      get 'range/:year_start/:year_end',
+        to: 'annual_reports#range',
+        on: :collection,
+        as: 'range',
+        constraints: { year_start: /\d{4}/, year_end: /\d{4}/ }
     end
     get :donations_summary
     get :manufacturer_donations_summary

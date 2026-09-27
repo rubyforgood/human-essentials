@@ -2,7 +2,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
-  context "While signed in" do
+  context "when signed in" do
     before do
       sign_in(user)
     end
@@ -25,6 +25,44 @@ RSpec.describe "ProductDriveParticipants", type: :request do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+
+        it "exports the filtered results" do
+          create(:product_drive_participant, business_name: "A business named after cats")
+          create(:product_drive_participant, business_name: "Dogs are cool")
+
+          get product_drive_participants_path(format: :csv, params: {filters: { by_business_name: 'cats'}})
+
+          csv = CSV.parse(response.body, headers: true)
+
+          expect(csv.count).to eq(1)
+          expect(csv.first["Business Name"]).to eq("A business named after cats")
+        end
+      end
+
+      context "when filtering by business name" do
+        it 'displays only results that matches the business name' do
+          create(:product_drive_participant, business_name: "A business named after cats")
+          create(:product_drive_participant, business_name: "Dogs are cool")
+
+          get product_drive_participants_path(filters: {by_business_name: 'Cats'})
+
+          expect(response).to be_successful
+          expect(response.body).to include("Cats")
+          expect(response.body).not_to include("Dogs")
+        end
+      end
+
+      context "when filtering by contact name" do
+        it 'displays only results that matches the contact name' do
+          create(:product_drive_participant, contact_name: "Bob Cat")
+          create(:product_drive_participant, contact_name: "Freddie the dog")
+
+          get product_drive_participants_path(filters: {by_contact_name: 'Cats'})
+
+          expect(response).to be_successful
+          expect(response.body).to include("Cats")
+          expect(response.body).not_to include("Dogs")
+        end
       end
     end
 

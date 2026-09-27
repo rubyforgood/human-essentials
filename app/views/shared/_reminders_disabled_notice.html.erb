@@ -1,0 +1,27 @@
+<%#
+  Shown in place of reminder-configuration fields when the organization has
+  turned the relevant reminder emails off on its settings page.
+
+  Locals:
+    reminder_type - :deadline, :distribution, or :all
+%>
+<div class="callout callout-info">
+  <h5 class="font-weight-bold">
+    <% case reminder_type %>
+    <% when :distribution %>
+      Day-before distribution reminder emails are turned off
+    <% when :all %>
+      Reminder emails are turned off for your organization
+    <% else %>
+      Monthly deadline reminder emails are turned off
+    <% end %>
+  </h5>
+  <p class="mb-0">
+    Your organization has turned this off, so these emails will not be sent.
+    <% if can_administrate? %>
+      <%= link_to "Change this in your organization settings", edit_organization_path %>.
+    <% else %>
+      Contact your organization administrator to change this.
+    <% end %>
+  </p>
+</div>

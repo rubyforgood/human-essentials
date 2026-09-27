@@ -1,0 +1,4 @@
+name,email,default_storage_location,send_reminders,quota,notes
+Partner 1,partner1@example.com,"Smithsonian Conservation Center",false,20,"test note 1"
+Partner 2,partner2@example.com,"Smithsonian Conservation Center",false,30,"test note 2"
+Partner 3,partner3@example.com,"Smithsonian Conservation Center",true,10,"test note 3"

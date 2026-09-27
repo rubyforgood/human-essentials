@@ -80,9 +80,9 @@ RSpec.describe "Audit management", type: :system, js: true do
           fill_in "audit_line_items_attributes_0_quantity", with: audit_quantity
 
           accept_confirm do
-            click_button "Confirm Audit"
+            click_button "Submit for final approval"
           end
-          expect(page.find(".alert-info")).to have_content "Audit is confirmed"
+          expect(page.find(".alert-info")).to have_content "Audit is submitted for final approval"
           expect(page).to have_content(item.name)
           expect(page).to have_content(audit_quantity)
 
@@ -184,13 +184,13 @@ RSpec.describe "Audit management", type: :system, js: true do
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
-        expect(page).to have_content("Confirm Audit")
+        expect(page).to have_content("Submit for final approval")
         accept_confirm do
-          click_button "Confirm Audit"
+          click_button "Submit for final approval"
         end
-        expect(page).to have_content("Audit is confirmed.")
+        expect(page).to have_content("Audit is submitted for final approval.")
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Confirmed")
+        expect(page).to have_content("Pending Finalization")
         expect(page).not_to have_content("Resume Audit")
         expect(page).to have_content("Delete Audit")
         expect(page).to have_content("Finalize Audit")
@@ -271,19 +271,19 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Resume Audit")
         click_link "Resume Audit"
         expect(page).to have_content("Edit")
-        expect(page).to have_content("Confirm Audit")
+        expect(page).to have_content("Submit for final approval")
         expect(page).to have_content("Save Progress")
       end
 
       it "should be able to confirm the audit from the #edit page" do
         visit edit_audit_path(audit)
-        expect(page).to have_content("Confirm Audit")
+        expect(page).to have_content("Submit for final approval")
         accept_confirm do
-          click_button "Confirm Audit"
+          click_button "Submit for final approval"
         end
-        expect(page).to have_content("Audit is confirmed.")
+        expect(page).to have_content("Audit is submitted for final approval.")
         expect(page).to have_content(quantity)
-        expect(page).to have_content("Confirmed")
+        expect(page).to have_content("Pending Finalization")
         expect(page).not_to have_content("Resume Audit")
         expect(page).to have_content("Delete Audit")
         expect(page).to have_content("Finalize Audit")
@@ -292,14 +292,14 @@ RSpec.describe "Audit management", type: :system, js: true do
 
     context "with a confirmed audit" do
       subject { audit_path(audit) }
-      let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :confirmed) }
+      let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :pending_finalization) }
 
-      it "should be able to edit the audit that is confirmed" do
+      it "should be able to edit the audit that is submitted for final approval" do
         visit subject
         expect(page).not_to have_content("Resume Audit")
       end
 
-      it "User can delete the audit that is confirmed" do
+      it "User can delete the audit that is submitted for final approval" do
         visit subject
 
         expect(page).to have_content(quantity)

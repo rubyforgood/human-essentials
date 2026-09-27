@@ -1,4 +1,6 @@
 # Partner Reminder Emails 
+[!NOTE] Reminder emails can be switched off for your whole bank in "My Organization" (see [Getting Started - Customization](getting_started_customization.md#other-emails)).  If the monthly deadline reminders are switched off there, nothing on this page applies -- no deadline reminders are sent, whatever the Partner Group or Partner settings say.
+
 You may configure a reminder schedule on an organization and/or Partner Group level. Partners who are covered by these categories, and who individually have reminders enabled, will receive an email based on the schedule, reminding them of the deadline for submitting requests. 
 
 You may configure the date of the month or weekday of the month the reminders are sent, and the deadline date included in the email.

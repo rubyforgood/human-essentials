@@ -30,6 +30,8 @@ class RequestDestroyService
       errors.add(:base, 'request_id is invalid')
     elsif request.discarded_at.present?
       errors.add(:base, 'request already cancelled')
+    elsif reason.blank?
+      errors.add(:base, 'a cancellation reason is required')
     end
 
     errors.none?

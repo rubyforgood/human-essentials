@@ -74,6 +74,30 @@ RSpec.describe AccountRequest, type: :model do
     end
   end
 
+  describe '#status' do
+    it "does not regress from rejected to another status" do
+      rejected_request = create(:account_request, status: 'rejected')
+
+      expect { rejected_request.confirm! }
+        .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once rejected/)
+    end
+
+    it "does not regress from admin_closed to another status" do
+      rejected_request = create(:account_request, status: 'admin_closed')
+
+      expect { rejected_request.confirm! }
+        .to raise_error(ActiveRecord::RecordInvalid, /cannot be changed once closed by an admin/)
+    end
+
+    it "allows normal transitions" do
+      started_request = create(:account_request, status: 'started')
+      user_confirmed_request = create(:account_request, status: 'user_confirmed')
+
+      expect { started_request.confirm! }.not_to raise_error
+      expect { user_confirmed_request.reject!('rejectable request') }.not_to raise_error
+    end
+  end
+
   describe '.get_by_identity_token' do
     subject { described_class.get_by_identity_token(identity_token) }
 

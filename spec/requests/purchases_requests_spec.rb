@@ -355,7 +355,7 @@ RSpec.describe "Purchases", type: :request do
 
         context "when non-finalized audit has been performed on the purchased items" do
           before(:each) do
-            create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+            create(:audit, :with_items, item: item, storage_location: storage_location, status: "pending_finalization")
           end
           it "does not show a warning" do
             get edit_purchase_path(purchase)

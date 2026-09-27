@@ -44,14 +44,25 @@ Next, you need to indicate which Items should have Custom Units.
 
 ![Item config edit button](images/special_custom_units/Item_config_edit_button.png)
 
-- Indicate what units you would like Partners to be able to use when requesting this Item
+- Under "Additional Custom Request Units", check each unit you would like Partners to be able to use when requesting this Item (1)
   - In the example below, we picked "pack" and "flat"
+- Optionally, enter a request limit beside each checked unit (2).  This is the most of that unit a Partner can ask for in a single Request.  (See [Request limits](#request-limits), below.)
 
 ![Item config request units checkboxes](images/special_custom_units/Item_config_request_units_checkboxes.png)
 
 Allowed units are then shown in the "Custom Request Units" column of the Item list.
 
 ![Item config list shows units](images/special_custom_units/Item_config_list_shows_units.png)
+
+### Request limits
+
+Each unit on an Item can have its own request limit, and there is a separate "Request limit (individual items)" field for when the Partner requests in individual items.  A limit is the most a Partner can ask for in one Request. Leave a limit blank if you don't want one.
+
+If a Partner submits a Request that exceeds a limit, the Request is rejected and the Partner sees a message naming the Item, what they asked for, and the limit -- for instance, "Kids Pull-Ups (5T-6T): You requested 10 packs, but are limited to 4 packs."  They can then change the quantity and resubmit.
+
+![Partner's error message when they exceed a request limit](images/special_custom_units/Request_limit_error.png)
+
+[!NOTE] Limits are checked against the unit the Partner chose.  If a Partner asks for 10 packs, we compare that to the "pack" limit, not to the individual-item limit -- we don't know how many items are in a pack!
 
 ## How Partners use Custom Units in Requests
 
@@ -77,7 +88,7 @@ The email sent to the Partner will also indicate the requested units.
 
 The Request History page shows the units alongside the Item quantities.
 
-![Request history units](images/special_custom_units/Request_history_units.png)
+![Request History showing units](images/special_custom_units/Request_history_units.png)
 
 ## Processing Requests with Custom Units
 
@@ -94,6 +105,8 @@ When you create a Distribution from a Request, you must enter the distributed qu
 [!NOTE] The "Quantity - Total Units" is individual units! 
 
 So if the Partner requested "9 boxes" of Pads, and each box has 10 Pads, then you would put "90" in the "Quantity - Total Units" field (assuming you are providing the full 9 boxes).
+
+In the example below, the Partner asked for 29 packs of Pads (2), so the "Quantity - Total Units" field (1) is left for you to fill in with the number of individual Pads you are sending.
 
 ![Distribution creation from a request](images/special_custom_units/Distribution_creation_from_a_request.png)
 

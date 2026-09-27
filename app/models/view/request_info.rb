@@ -27,7 +27,7 @@ module View
     end
 
     def custom_units
-      Flipper.enabled?(:enable_packs) && request.item_requests.any? { |item| item.request_unit }
+      request.item_requests.any? { |item| item.request_unit }
     end
 
     def cancellable?

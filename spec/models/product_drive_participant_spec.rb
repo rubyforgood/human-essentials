@@ -19,6 +19,8 @@
 RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 
+  it { expect(ProductDriveParticipant).to respond_to :class_filter }
+
   context "Validations" do
     it "is invalid unless it has either a phone number or an email" do
       expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry")).not_to be_valid
@@ -47,6 +49,26 @@ RSpec.describe ProductDriveParticipant, type: :model do
         create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd, product_drive_participant: ddp)
 
         expect(subject.first.volume).to eq(10)
+      end
+    end
+
+    describe ".by_business_name" do
+      it "returns the product drive participant with a given business name" do
+        cats_biz = create(:product_drive_participant, business_name: "Cats")
+        another_cats_biz = create(:product_drive_participant, business_name: "I like cats")
+        create(:product_drive_participant, business_name: "Dogs")
+
+        expect(ProductDriveParticipant.by_business_name("Cats")).to match_array([cats_biz, another_cats_biz])
+      end
+    end
+
+    describe ".by_contact_name" do
+      it "returns the product drive participant with a given contact name" do
+        eleanor = create(:product_drive_participant, contact_name: "Eleanor Shellstrop")
+        donna = create(:product_drive_participant, contact_name: "Donna Shellstrop")
+        create(:product_drive_participant, contact_name: "Jason Mendoza")
+
+        expect(ProductDriveParticipant.by_contact_name("Shellstrop")).to match_array([eleanor, donna])
       end
     end
   end

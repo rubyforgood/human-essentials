@@ -320,6 +320,27 @@ RSpec.feature "Distributions", type: :system do
       visit new_distribution_path
       expect(page).to have_no_content "Inactive R Us"
     end
+
+    context "when the organization has disabled day-before distribution reminders" do
+      before { organization.update!(distribution_reminders_enabled: false) }
+
+      it "replaces the reminder checkbox with a notice, linking an admin to settings" do
+        sign_in(organization_admin)
+        visit new_distribution_path
+
+        expect(page).not_to have_field("Send email reminder the day before?")
+        expect(page).to have_content("Day-before distribution reminder emails are turned off")
+        expect(page).to have_link("Change this in your organization settings", href: edit_organization_path)
+      end
+
+      it "tells a non-admin user to contact their administrator" do
+        visit new_distribution_path
+
+        expect(page).not_to have_field("Send email reminder the day before?")
+        expect(page).to have_content("Contact your organization administrator")
+        expect(page).not_to have_link("Change this in your organization settings")
+      end
+    end
   end
 
   it "errors if user does not fill storage_location" do
@@ -365,6 +386,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "sends an email if reminders are enabled" do
+      user.organization.update!(distribution_reminders_enabled: true)
       job = double('fake_job')
       allow(DistributionMailer).to receive(:reminder_email).and_return(job)
       allow(job).to receive(:deliver_later)
@@ -706,8 +728,26 @@ RSpec.feature "Distributions", type: :system do
       expect(@request.distribution_id).to eq @distribution.id
       expect(@request).to be_status_fulfilled
     end
-  end
 
+    it "keeps the item dropdown within the form width when the window is narrowed" do
+      item_id = storage_location.items.first.id
+      request_items = [{ "item_id" => item_id, "quantity" => 10 }]
+      @request = create(:request, organization:, request_items:, partner:)
+      create(:item_request, request: @request, item_id:, quantity: 10)
+
+      visit request_path(id: @request.id)
+      click_on "Fulfill request"
+
+      expect(page).to have_css(".li-name .select2-container")
+
+      current_window.resize_to(600, 800)
+
+      dropdown_width = page.evaluate_script("document.querySelector('.li-name .select2-container').offsetWidth")
+      column_width = page.evaluate_script("document.querySelector('.li-name').offsetWidth")
+
+      expect(dropdown_width).to be <= column_width
+    end
+  end
   context "via barcode entry" do
     let(:existing_barcode) { create(:barcode_item, quantity: 50) }
     let(:item_with_barcode) { existing_barcode.item }

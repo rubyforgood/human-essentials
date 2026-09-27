@@ -16,8 +16,10 @@ class RequestMailer < ApplicationMailer
     end
     @formatted_requested_items.sort_by! { |rt| rt[:name] }
 
+    recipients = [@partner.email, @request.requester.email].uniq
+
     mail(
-      to: @partner.email,
+      to: recipients,
       subject: "Your essentials request (##{@request.id}) has been canceled."
     )
   end

@@ -14,7 +14,7 @@ gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.0"
 
 ###### MODELS / DATABASE #######
 
@@ -110,7 +110,7 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "sprockets", "~> 4.2.2"
+gem "sprockets", "~> 4.4.1"
 gem "prawn", "~> 2.4.0"
 gem "matrix" # Used by prawn
 gem "ttfunk", "~>1.7.0"
@@ -158,9 +158,9 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.34.3"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 7.0"
+  gem "shoulda-matchers", "~> 8.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.54"
+  gem "standard", "~> 1.56"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.

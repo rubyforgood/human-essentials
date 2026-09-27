@@ -14,6 +14,7 @@
 #  partner_key                  :string
 #  reporting_category           :string
 #  type                         :string           default("ConcreteItem"), not null
+#  unit_request_limit           :integer
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -58,8 +59,10 @@ class Item < ApplicationRecord
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
+  scope :loose, -> { where(type: "ConcreteItem") }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
+  scope :by_name, ->(name) { where(name: name) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :period_supplies, -> {
@@ -75,7 +78,7 @@ class Item < ApplicationRecord
     period_other: "period_other",
     period_underwear: "period_underwear",
     tampons: "tampons",
-    other_categories: "other"
+    other: "other"
   }, instance_methods: false, validate: { allow_nil: true }
 
   def self.reporting_categories_for_select
@@ -178,10 +181,12 @@ class Item < ApplicationRecord
     distribution_quantity || 50
   end
 
-  def sync_request_units!(unit_ids)
+  def sync_request_units!(unit_ids, limits = {})
     request_units.clear
-    organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
-      request_units.create!(name:)
+    organization.request_units.where(id: unit_ids).find_each do |unit|
+      item_unit = request_units.create!(name: unit.name)
+      limit = limits[unit.id.to_s]
+      item_unit.update!(request_limit: limit.to_i) if limit.present?
     end
   end
 

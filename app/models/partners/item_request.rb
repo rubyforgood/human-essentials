@@ -22,16 +22,20 @@ module Partners
     has_many :children, through: :child_item_requests
 
     validates :quantity, presence: true
-    validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
+    validates :quantity, numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: 1,
+      message: "quantity must be a whole number greater than or equal to 1"
+    }
     validates :name, presence: true
     validate :request_unit_is_supported
 
     def request_unit_is_supported
-      return if request_unit.blank?
+      return if request_unit.blank? || request_unit == "-1" # nothing selected
 
       names = item.request_units.map(&:name)
       unless names.include?(request_unit)
-        errors.add(:request_unit, "is not supported")
+        errors.add(:base, "#{request_unit} is not a supported unit type")
       end
     end
 
@@ -41,7 +45,7 @@ module Partners
     end
 
     def quantity_with_units
-      if Flipper.enabled?(:enable_packs) && request_unit.present?
+      if request_unit.present?
         "#{quantity} #{request_unit.pluralize(quantity.to_i)}"
       else
         quantity
@@ -49,7 +53,7 @@ module Partners
     end
 
     def name_with_unit(quantity_override = nil)
-      if Flipper.enabled?(:enable_packs) && request_unit.present?
+      if request_unit.present?
         "#{item_name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
       else
         item_name

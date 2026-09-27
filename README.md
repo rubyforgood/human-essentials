@@ -1,4 +1,6 @@
 # Human Essentials
+> _Inventory control for Diaper Banks and other Essentials Banks_
+
 <p align="center">
 <a href="https://app.digitalpublicgoods.net/a/10622">
 <img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
@@ -15,12 +17,11 @@
 <a href="https://github.com/rubyforgood/human-essentials/issues" alt="Contributors"> <img src="https://img.shields.io/github/issues-closed/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/count/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/top/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/pulls" alt="Pull Requests"><img src="https://img.shields.io/github/issues-pr-closed-raw/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
 <a href="https://github.com/badges/shields/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/rubyforgood/human-essentials?logo=github" /></a>
 <a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Last Commit"><img src="https://img.shields.io/github/last-commit/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
 </p>
 
 <p align="center">
@@ -33,17 +34,15 @@
 
 Human Essentials is an inventory management system built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and adapted to meet the needs of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need. This application aims to serve those needs and facilitate the general operations of the Diaper Banks (e.g., using barcode readers, scale weighing, inventory audits).
 
-## Impact 🌟
+Human Essentials is a free hosted service! There is no cost to Essentials banks, and all of the source code ([MIT Licensed](./LICENSE)) is shared and built by volunteers as part of [Ruby for Good](https://rubyforgood.org/). You can find out more about Ruby for Good at [rubyforgood.org](https://rubyforgood.org).
 
-Human Essentials has over 200 registered banks across the United States at **no cost** to them. It is currently helping over **3 million** children receive diapers and over **400k** period supply recipients receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
+### Impact 🌟
 
-We are proud of our achievements up to date but there is much more to do! This is where you come in...
+Human Essentials has over 200 registered banks across the United States at **no cost** to them. It is currently helping over **3 million** children receive diapers and over **400k** period supply recipients receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous non-profit organizations that distribute essential products to people.
 
-## Ruby for Good
+We are proud of our achievements to date but there is much more to do! This is where you come in...
 
-Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
-
-## Digital Public Good 🎉
+### Digital Public Good 🎉
 
 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG). This project supports the following Sustainable Development Goals:
 * [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
@@ -56,50 +55,47 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 ## Welcome Contributors! 👋
 
-Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
+Thanks for checking us out! Here is a quick-start, and also check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) for details on how to contribute.
 
-## Deployment Process
-The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
+### Local development
 
-### Requirements
-- SSH access to our servers (usually granted to core maintainers)
-- Login credentials to our [Mailchimp](https://mailchimp.com/) account
+1. Install Ruby
+   - Install the version specified in [`.ruby-version`](.ruby-version).
+   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOS setup. Follow only the Installing Ruby step, as our project setup differs. It is highly recommended you use a Ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
+   - Verify that your Ruby installation works by running `ruby -v`.
+2. Install Postgres
+   - Follow one of these guides: [macOS](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
+   - Create a `database.yml` file in the `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
+3. Clone the project and switch to its directory
+4. Run `bin/setup`
+5. Run `bin/start` and visit http://localhost:3000/ to see the Human Essentials page.
+6. Log in as a sample user with the default [credentials](#credentials-for-development-and-staging).
 
-### Steps
-#### 1. Merge main into production branch 
-All deploys deploy from the production branch, which keeps track of what is currently in production.
+### Cloud Development
 
-```sh
-git checkout production
-git merge main
-```
+You may also use [GitHub Codespaces](https://github.com/features/codespaces) to start an instant cloud-based dev environment. Click here:
 
-#### 2. Tag & Release
-1. Push a tag with the appropriate date versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if you are deploying on June 23, 2024:
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials?quickstart=1)
 
-    ```sh
-    git tag 2024.06.23
-    git push origin tag 2024.06.23
-    ```
-2. Publish a release, associated to that tag pushed up in the previous step, [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
+Or clone the project and open it locally in a VS Code Dev Container:
 
-### Running delayed jobs
+[![Clone and open in VSCode Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Clone%20and%20Open%20in%20VSCode&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/rubyforgood/human-essentials)
 
-Run delayed jobs locally with the `rake jobs:work` command. This is necessary to view any emails in your browser. Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+### Credentials for development and staging
+The staging server is at [staging.humanessentials.app](https://staging.humanessentials.app/). The database there is reset every night, so feel free to make changes. These are also the test users for local development, with more users in the [Contributing Guidelines](CONTRIBUTING.md#credentials).
 
-```ruby
-Delayed::Job.last.invoke_job
-```
+| Type            | Organization / Group | Role               | Email                  | Password  |
+|-----------------|----------------------|--------------------|------------------------|-----------|
+| Bank User     | Pawnee Diaper Bank   | Organization Admin | org_admin1@example.com | password! |
+| Partner User  | Pawnee Diaper Bank   | Verified Partner   | verified@example.com   | password! |
+| Super User    |                      | Super Admin        | superadmin@example.com | password! |
 
-You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
+
 
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
 
-# License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)
-
-# ✨ Contributors ✨
+# Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 

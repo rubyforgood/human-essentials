@@ -17,6 +17,10 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control" %>
               <% end %>
+              <%= f.input :phone_number, label: "Phone Number", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                <%= f.input_field :phone_number, class: "form-control" %>
+              <% end %>
               <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.active.alphabetized,
                           :label_method => :name,
                           :value_method => :id,
@@ -37,6 +41,9 @@
                    <h5 class='text-uppercase font-weight-bold'>Reminder</h5>
                    <p>Please note that reminders will be sent out according to the settings of their partner group OR organization. This won't work unless you've set up at least one.</p>
                  </div>
+                 <% unless current_organization.deadline_reminders_enabled || current_organization.distribution_reminders_enabled %>
+                   <%= render 'shared/reminders_disabled_notice', reminder_type: :all %>
+                 <% end %>
               </div>
 
               <%= f.input :quota, label: "Quota", wrapper: :input_group do %>

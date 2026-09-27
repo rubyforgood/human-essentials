@@ -35,12 +35,14 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
       expect(AccountRequest.count).to eq(0)
 
-      expect { click_button 'Submit' }.to change(AccountRequest, :count).by(1)
+      click_button 'Submit'
+
+      # Wait for the redirect before asserting on the count, otherwise the
+      # async form submission may not have been processed yet.
+      expect(page).to have_content('Request Received!')
+      expect(AccountRequest.count).to eq(1)
 
       created_account_request = AccountRequest.last
-
-      # Request Received
-      expect(page).to have_content('Request Received!')
       expect(page).to have_content("We've sent you a email with instructions on next steps at #{created_account_request.email}!")
 
       # Access link within email they would have received
@@ -77,7 +79,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
         choose(option: 'partner')
 
-        expect(page).to have_link('here', href: 'https://humanessentials.app/users/sign_in')
+        expect(page).to have_link('here', href: new_user_session_path)
       end
     end
 

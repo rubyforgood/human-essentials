@@ -45,6 +45,7 @@ class DistributionMailer < ApplicationMailer
     requester_email = distribution.request ? distribution.request.requester.email : @partner.email
 
     return if @distribution.past? || !@partner.send_reminders || @partner.deactivated?
+    return unless @distribution.organization.distribution_reminders_enabled
 
     mail(to: requester_email, cc: @partner.email, subject: "#{@partner.name} Distribution Reminder")
   end

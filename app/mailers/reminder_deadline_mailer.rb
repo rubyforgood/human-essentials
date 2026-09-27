@@ -3,6 +3,11 @@ class ReminderDeadlineMailer < ApplicationMailer
   def notify_deadline(partner)
     @partner = partner
     @organization = partner.organization
+
+    # Do not send even if the partner (or its group) has reminders on when the
+    # organization has turned monthly deadline reminders off.
+    return unless @organization.deadline_reminders_enabled
+
     @deadline = deadline_date(partner)
     reminder_email_text = @organization.reminder_email_text
     @reminder_email_text_interpolated = TextInterpolatorService.new(reminder_email_text.body.to_s, {

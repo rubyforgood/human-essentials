@@ -1,0 +1,37 @@
+{
+  "base": "http://localhost:3000",
+  "shots": [
+    {
+      "pre": [{"login": "org_admin1@example.com"}, {"goto": "/storage_locations"}],
+      "width": 1400,
+      "out": "docs/user_guide/bank/images/inventory/inventory_storage_locations_navigation.png",
+      "clip": {"x": 0, "y": 0, "width": 1400, "height": 700},
+      "marks": [{"sel": "a.nav-link[href='/storage_locations']", "pad": 2, "side": "right"}]
+    },
+    {
+      "out": "docs/user_guide/bank/images/inventory/inventory_storage_locations_new_navigation.png",
+      "clip": {"x": 250, "y": 60, "width": 1150, "height": 500},
+      "marks": [{"contains": "New Storage Location", "sel": "a.btn", "pad": 6, "side": "left"}]
+    },
+    {
+      "url": "http://localhost:3000/dashboard",
+      "pre": [{"eval": "const h=[...document.querySelectorAll('.card-header,.card-title,h3,h5')].find(e=>e.innerText.trim().startsWith('Partner Approvals')); if(h){(h.closest('.card')||h.parentElement).classList.add('__target');}"}],
+      "out": "docs/user_guide/bank/images/partners/partners_review_application_from_dashboard.png",
+      "clipTo": ".__target",
+      "clipPad": 12,
+      "marks": [{"contains": "Review Applicant's Profile", "sel": ".__target a.btn", "pad": 4, "side": "left"}]
+    },
+    {
+      "url": "http://localhost:3000/partners",
+      "pre": [{"click": "a.btn:has-text('Add a Partner')", "wait": 600}],
+      "viewport": true,
+      "height": 1300,
+      "out": "docs/user_guide/bank/images/partners/partners_add_partner_modal.png",
+      "clipTo": ".modal-content",
+      "marks": [
+        {"sel": "input[name='partner[name]']", "pad": 4, "side": "left", "label": "1"},
+        {"sel": "input[name='partner[email]']", "pad": 4, "side": "left", "label": "2"}
+      ]
+    }
+  ]
+}

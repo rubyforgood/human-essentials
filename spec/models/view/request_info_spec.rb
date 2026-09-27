@@ -105,47 +105,21 @@ RSpec.describe View::RequestInfo do
 
   describe "#custom_units" do
     context "when there are request units for an item request" do
-      context "when enable_packs is disabled" do
-        it "returns false" do
-          organization = build(:organization)
-          item = build(:item, name: "First item")
-          create(:item_unit, item: item, name: "flat")
-          request = create(
-            :request,
-            :with_item_requests,
-            organization:,
-            request_items: [
-              {item_id: item.id, quantity: "559", request_unit: "flat"}
-            ]
-          )
+      it "returns true" do
+        organization = build(:organization)
+        item = build(:item, name: "First item")
+        create(:item_unit, item: item, name: "flat")
+        request = create(
+          :request,
+          :with_item_requests,
+          organization:,
+          request_items: [
+            {item_id: item.id, quantity: "559", request_unit: "flat"}
+          ]
+        )
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
-          request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
-
-          expect(request_info.custom_units).to be_falsey
-        end
-      end
-
-      context "when enable_packs is enabled" do
-        it "returns true" do
-          Flipper.enable(:enable_packs)
-
-          organization = build(:organization)
-          item = build(:item, name: "First item")
-          create(:item_unit, item: item, name: "flat")
-          request = create(
-            :request,
-            :with_item_requests,
-            organization:,
-            request_items: [
-              {item_id: item.id, quantity: "559", request_unit: "flat"}
-            ]
-          )
-          request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
-
-          expect(request_info.custom_units).to be_truthy
-
-          Flipper.disable(:enable_packs)
-        end
+        expect(request_info.custom_units).to be_truthy
       end
     end
   end

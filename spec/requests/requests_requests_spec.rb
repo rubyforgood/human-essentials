@@ -153,40 +153,28 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
-      context 'When packs are enabled' do
-        before { Flipper.enable(:enable_packs) }
-        let(:item) { create(:item, name: "Item", organization: organization) }
-        let(:request) { create(:request, organization: organization) }
+      it 'shows a units column and custom unit if any item has custom units' do
+        item = create(:item, name: "Item", organization: organization)
+        request = create(:request, organization: organization)
+        create(:item_unit, item: item, name: "Pack")
+        create(:item_request, request: request, request_unit: "Pack", item: item)
 
-        it 'shows a units column and custom unit if any item has custom units' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: "Pack", item: item)
+        get request_path(request)
 
-          get request_path(request)
-
-          expect(response.body).to include('Units (if applicable)')
-          expect(response.body).to include('<td>Packs</td>')
-        end
-
-        it 'does not show a units column or any unit if no items have custom units' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: nil, item: item)
-
-          get request_path(request)
-
-          expect(response.body).to_not include('Units (if applicable)')
-          expect(response.body).to_not include('<td>Packs</td>')
-        end
+        expect(response.body).to include('Units (if applicable)')
+        expect(response.body).to include('<td>Packs</td>')
       end
 
-      context 'When packs are not enabled' do
-        let(:request) { create(:request, organization: organization) }
+      it 'does not show a units column or any unit if no items have custom units' do
+        item = create(:item, name: "Item", organization: organization)
+        request = create(:request, organization: organization)
+        create(:item_unit, item: item, name: "Pack")
+        create(:item_request, request: request, request_unit: nil, item: item)
 
-        it 'does not show a units column' do
-          get request_path(request)
+        get request_path(request)
 
-          expect(response.body).not_to include('Units (if applicable)')
-        end
+        expect(response.body).to_not include('Units (if applicable)')
+        expect(response.body).to_not include('<td>Packs</td>')
       end
 
       context 'when the request has a Fulfilled status' do
@@ -196,7 +184,7 @@ RSpec.describe 'Requests', type: :request do
           get requests_path(fulfilled_request)
 
           page = Nokogiri::HTML(response.body)
-          cancel_button = page.at_css('button') { |el| el.text.strip == 'Cancel' }
+          cancel_button = page.at_css('button[data-disable-with="Please wait..."], input[value="Cancel"]')
 
           expect(cancel_button).not_to be_present
         end
@@ -258,6 +246,34 @@ RSpec.describe 'Requests', type: :request do
           end.not_to change { other_request.reload.status }
 
           expect(response).to have_http_status(:not_found)
+        end
+      end
+    end
+
+    describe 'POST #create for cancelation' do
+      let(:request) { create(:request, organization: organization) }
+
+      context 'when a cancellation reason is given' do
+        it 'cancels the request and redirects to the index', :aggregate_failures do
+          expect do
+            post request_cancelation_path(request_id: request.id), params: { cancelation: { reason: 'Partner closed for the season' } }
+          end.to change { request.reload.status }.from('pending').to('cancelled')
+
+          expect(request.reload.discard_reason).to eq('Partner closed for the season')
+          expect(flash[:notice]).to eq("Request #{request.id} has been removed!")
+          expect(response).to redirect_to(requests_path)
+        end
+      end
+
+      context 'when the cancellation reason is blank' do
+        it 'does not cancel the request and redirects back with an error', :aggregate_failures do
+          expect do
+            post request_cancelation_path(request_id: request.id), params: { cancelation: { reason: '' } }
+          end.not_to change { request.reload.status }
+
+          expect(request.reload.discarded?).to be false
+          expect(flash[:error]).to eq("Request #{request.id} could not be removed because a cancellation reason is required")
+          expect(response).to redirect_to(new_request_cancelation_path(request_id: request.id))
         end
       end
     end

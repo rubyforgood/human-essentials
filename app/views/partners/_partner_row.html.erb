@@ -3,7 +3,10 @@
 
 <tr>
   <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
-  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
+  <td>
+    <%= link_to partner_row.email, "mailto:#{partner_row.email}" %><br>
+    <%= partner_row.phone_number %>
+  </td>
   <td><%= partner_row.partner_group&.name %></td>
   <td class="text-right"><%= partner_row.quota %></td>
   <td>

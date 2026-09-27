@@ -104,6 +104,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         agency_information: [
           "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
+          "Agency Phone Number",
           "Notes",
           "Agency Type", # Columns from the agency_information partial
           "Other Agency Type",
@@ -201,6 +202,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         agency_information: [
           "Jane Doe", # Technically not part of the agency_information partial, but come at the start of the export
           "jane@doe.com",
+          "",
           "Some notes",
           I18n.t("partners_profile.other"), # Columns from the agency_information partial
           "Another Agency Name",
@@ -322,7 +324,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         # profile, so they won't be completely empty
         expected_values += case partial
         when :agency_information
-          ["Jane Doe", "jane@doe.com", "Some notes", "", "", "", "", "", "", "", "", "", "", ""]
+          ["Jane Doe", "jane@doe.com", "", "Some notes", "", "", "", "", "", "", "", "", "", "", ""]
         when :partner_settings
           [
             "true",

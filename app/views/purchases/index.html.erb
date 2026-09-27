@@ -102,7 +102,7 @@
               </tbody>
               <tfoot>
               <tr>
-                <td colspan="2" style="text-align: left"><strong>Total</strong></td>
+                <td colspan="3" style="text-align: left"><strong>Total</strong></td>
                 <td class="numeric">
                   <%= @paginated_purchases_quantity %> (This page)
                   <br>
@@ -117,14 +117,15 @@
                   <strong>
                     <%= dollar_value(@total_value_all_purchases) %> (Total)
                   </strong>
-                  </td>
-                  <td class="numeric">
-                    <%= dollar_value(@paginated_fair_market_values) %> (This page)
+                </td>
+                <td class="numeric">
+                  <%= dollar_value(@paginated_fair_market_values) %> (This page)
                   <br>
                   <strong>
                     <%= dollar_value(@total_fair_market_values) %> (Total)
                   </strong>
-                  </td>
+                </td>
+                <td></td>
                 <td></td>
               </tr>
               </tfoot>
