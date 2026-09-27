@@ -273,7 +273,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
         before do
           create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
           Event.last.update(event_time: start_date)
-          fill_in "filters[date_range]", with: "#{start_date} - #{end_date}"
+          fill_in "filters[date_range]", with: "#{start_date.strftime("%B %d, %Y")} - #{end_date.strftime("%B %d, %Y")}"
           click_button "Filter"
           find("#custom-tabs-inventory-flow-tab").click
         end

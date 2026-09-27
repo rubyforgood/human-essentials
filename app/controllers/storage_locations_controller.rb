@@ -58,14 +58,8 @@ class StorageLocationsController < ApplicationController
     setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
-    @items = ItemsFlowQuery.new(storage_location: @storage_location, organization: current_organization, filter_params: date_range).call.to_a
-    totals = @items.first || {}
-    @total_quantity_start = totals["total_quantity_start"].to_i
-    @total_quantity_in = totals["total_quantity_in"].to_i
-    @total_quantity_out = totals["total_quantity_out"].to_i
-    @total_quantity_adjustment = totals["total_quantity_adjustment"].to_i
-    @total_quantity_change = totals["total_change"].to_i
-    @total_quantity_end = totals["total_quantity_end"].to_i
+    @flow = ItemsFlowQuery.new(organization: current_organization, storage_location: @storage_location,
+      date_range: helpers.selected_range).call
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
@@ -159,18 +153,9 @@ class StorageLocationsController < ApplicationController
   end
 
   helper_method \
-  def filter_params
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:containing, :date_range, :date_range_label)
-  end
-
-  def date_range
-    return if filter_params[:date_range].blank?
-
-    date_range = filter_params[:date_range].split(" - ")
-    start_date = Date.parse(date_range[0]).beginning_of_day
-    end_date = Date.parse(date_range[1]).end_of_day
-    [start_date, end_date]
+    params.require(:filters).permit(:containing)
   end
 end
