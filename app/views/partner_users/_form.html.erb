@@ -13,10 +13,6 @@
     } do |f| %>
     <div class="card-body">
       <div class="form-group">
-        <%= f.input :name, label: "Name", placeholder: "Name", required: true,
-          input_html: {data: {existing_user_target: "name"}} %>
-      </div>
-      <div class="form-group">
         <%= f.input :email, label: "Email", placeholder: "Email", required: true,
           input_html: {
             data: {
@@ -25,6 +21,10 @@
             }
           } %>
         <small class="form-text text-muted" data-existing-user-target="message" role="status" aria-live="polite" aria-atomic="true"></small>
+      </div>
+      <div class="form-group">
+        <%= f.input :name, label: "Name", placeholder: "Name", required: false,
+          input_html: {data: {existing_user_target: "name"}} %>
       </div>
     </div>
 
