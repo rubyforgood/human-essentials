@@ -14,7 +14,7 @@
 # end quantities are then the current quantity minus the changes attributed
 # after those times, so start + change always equals end.
 class ItemsFlowQuery
-  Result = Struct.new(:rows, :totals, keyword_init: true)
+  Result = Struct.new(:rows, :totals)
 
   ADJUSTMENT_TYPES = %w[AdjustmentEvent AuditEvent].freeze
   # These events stand alone rather than being a version of their record, so
@@ -66,7 +66,7 @@ class ItemsFlowQuery
 
   private
 
-  Change = Struct.new(:key, :time, :adjustment, :item_id, :quantity, keyword_init: true)
+  Change = Struct.new(:key, :time, :adjustment, :item_id, :quantity)
 
   # Replays the inventory, recording the change each event made to each item
   # at this location.
