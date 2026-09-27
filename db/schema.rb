@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_27_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -479,6 +479,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
+    t.boolean "enable_replenishment_planner", default: false, null: false
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "hide_value_columns_on_receipt", default: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false

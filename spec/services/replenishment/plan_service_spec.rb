@@ -28,6 +28,18 @@ RSpec.describe Replenishment::PlanService do
       expect(history.last_month).to eq(Date.new(2026, 8, 1))
     end
 
+    it "can count only one storage location's distributions" do
+      other = create(:storage_location, organization:, name: "Annex")
+      extra = create(:distribution, organization:, storage_location: other, partner:, issued_at: today.beginning_of_month.months_ago(1) + 3.days)
+      extra.line_items.create!(item: diapers, quantity: 500)
+
+      all = described_class.new(organization, months: 12, today:).series_by_item[diapers.id]
+      annex = described_class.new(organization, months: 12, storage_location: other, today:).series_by_item[diapers.id]
+      expect(all.last).to eq(1500)
+      expect(annex.last).to eq(500)
+      expect(annex.first(11)).to all(eq(0))
+    end
+
     it "can use partner requests as the demand signal" do
       create(:request, organization:, partner:, created_at: today.beginning_of_month.months_ago(1),
         request_items: [{"item_id" => diapers.id, "quantity" => 1500}])

@@ -6,14 +6,18 @@ module Replenishment
   class PlanService
     STATUS_ORDER = {critical: 0, reorder: 1, ok: 2, no_demand: 3}.freeze
 
-    Settings = Data.define(:lead_time_days, :review_period_days, :service_level, :source, :months) do
-      def self.from_params(params)
+    Settings = Data.define(:lead_time_days, :review_period_days, :service_level, :source, :months, :storage_location) do
+      # storage_location is looked up within the organization, so a location id
+      # from another bank is ignored rather than trusted.
+      def self.from_params(params, organization: nil)
+        location_id = params[:storage_location_id].presence
         new(
           lead_time_days: params.fetch(:lead_time_days, 30).to_i.clamp(1, 365),
           review_period_days: params.fetch(:review_period_days, 14).to_i.clamp(1, 180),
           service_level: params.fetch(:service_level, 0.95).to_f.clamp(0.5, 0.999),
           source: (DemandHistory::SOURCES.map(&:to_s).include?(params[:source].to_s) ? params[:source].to_sym : :distributions),
-          months: params.fetch(:months, 24).to_i.clamp(6, 60)
+          months: params.fetch(:months, 24).to_i.clamp(6, 60),
+          storage_location: (location_id && organization) ? organization.storage_locations.find_by(id: location_id) : nil
         )
       end
     end
@@ -33,7 +37,8 @@ module Replenishment
     attr_reader :settings
 
     def history
-      @history ||= DemandHistory.new(@organization, months: @settings.months, source: @settings.source, today: @today)
+      @history ||= DemandHistory.new(@organization, months: @settings.months, source: @settings.source,
+        storage_location: @settings.storage_location, today: @today)
     end
 
     def rows
@@ -59,7 +64,7 @@ module Replenishment
       inventory = View::Inventory.new(@organization.id)
 
       @organization.items.active.order(:name).filter_map do |item|
-        on_hand = inventory.quantity_for(item_id: item.id).to_i
+        on_hand = inventory.quantity_for(storage_location: @settings.storage_location&.id, item_id: item.id).to_i
         demand = series.fetch(item.id, Array.new(@settings.months, 0))
         next if on_hand.zero? && demand.all?(&:zero?)
 

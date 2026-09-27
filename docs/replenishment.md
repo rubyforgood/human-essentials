@@ -1,8 +1,10 @@
 # Replenishment Planner
 
 A demand-forecasting and inventory-policy module for Human Essentials. It is
-read-only (no migrations, no changes to inventory events) and sits behind the
-`replenishment_planner` Flipper flag.
+read-only (no changes to inventory events). It lives under **Reports** and
+needs two switches: the global `replenishment_planner` Flipper flag, and the
+bank's own "Show the Replenishment Planner report" setting on its
+organization settings page (one boolean column, off by default).
 
 Everything described here lives in:
 
@@ -120,13 +122,21 @@ max-min is fair by *units*. Staff can hold back a reserve before splitting.
 
 ![Item detail](images/replenishment-item.png)
 
+## Per-location view
+
+The planner can be narrowed to one storage location (demand = distributions
+shipped from it; stock = what it holds). Each item page also has a
+"By storage location" table: on hand, units shipped per month over the last
+3 complete months, and days of supply at each warehouse, so staff can see a
+location running out even when the bank-wide total looks fine.
+
 ## Running it
 
 ```bash
 bin/setup                              # upstream setup
 bin/rake replenishment:demo_data       # DEV ONLY: 24 months of synthetic history
 bin/rake "replenishment:backtest[1]"   # forecast accuracy report for org 1
-bin/rails runner "Flipper.enable(:replenishment_planner)"
+bin/rails runner "Flipper.enable(:replenishment_planner); Organization.first.update!(enable_replenishment_planner: true)"
 bin/start                              # then open /replenishment
 bundle exec rspec spec/services/replenishment spec/requests/replenishment_requests_spec.rb
 ```

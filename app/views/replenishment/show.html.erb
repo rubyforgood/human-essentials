@@ -60,6 +60,30 @@
               </dl>
             </div>
           </div>
+
+          <% if @locations.any? %>
+            <div class="card" id="replenishment-locations">
+              <div class="card-header"><h3 class="card-title">By storage location</h3></div>
+              <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                  <thead>
+                    <tr><th>Location</th><th class="text-right">On hand</th><th class="text-right">Shipped / month</th><th class="text-right">Days of supply</th></tr>
+                  </thead>
+                  <tbody>
+                    <% @locations.each do |loc| %>
+                      <tr>
+                        <td><%= loc.storage_location.name %></td>
+                        <td class="text-right"><%= number_with_delimiter(loc.on_hand) %></td>
+                        <td class="text-right"><%= number_with_delimiter(loc.monthly_demand.round) %></td>
+                        <td class="text-right"><%= loc.days_of_supply ? number_with_delimiter(loc.days_of_supply) : "—" %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer text-muted small">Average of the last 3 complete months of distributions from each location.</div>
+            </div>
+          <% end %>
         </div>
 
         <div class="col-md-6">

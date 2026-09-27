@@ -14,15 +14,20 @@ module Replenishment
   #
   # Only complete months are used. The current, partial month is excluded so
   # it doesn't look like demand suddenly dropped.
+  #
+  # Pass a storage_location to count only distributions shipped from that
+  # warehouse. Partner requests aren't tied to a location, so the request
+  # signal is always bank-wide.
   class DemandHistory
     SOURCES = %i[distributions requests].freeze
 
-    def initialize(organization, months: 24, source: :distributions, today: Date.current)
+    def initialize(organization, months: 24, source: :distributions, storage_location: nil, today: Date.current)
       raise ArgumentError, "unknown source #{source}" unless SOURCES.include?(source.to_sym)
 
       @organization = organization
       @months = months
       @source = source.to_sym
+      @storage_location = storage_location
       @last_month = today.beginning_of_month.prev_month
       @first_month = @last_month.months_ago(months - 1)
     end
@@ -54,6 +59,7 @@ module Replenishment
       LineItem
         .joins("INNER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'")
         .where(distributions: {organization_id: @organization.id, issued_at: range})
+        .then { |scope| @storage_location ? scope.where(distributions: {storage_location_id: @storage_location.id}) : scope }
         .group(:item_id, Arel.sql("date_trunc('month', distributions.issued_at)"))
         .sum(:quantity)
     end
