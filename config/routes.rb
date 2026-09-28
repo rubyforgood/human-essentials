@@ -106,6 +106,8 @@ Rails.application.routes.draw do
     post :finalize
   end
 
+  resources :replenishment, only: %i(index show)
+
   namespace :reports do
     resources :annual_reports, only: [:index, :show], param: :year do
       post :recalculate, on: :member
