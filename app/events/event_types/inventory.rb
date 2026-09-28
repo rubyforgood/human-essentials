@@ -25,6 +25,15 @@ module EventTypes
     end
 
     # @param item_id [Integer]
+    # @param quantity [Integer] positive to reserve, negative to release
+    # @param location [Integer]
+    # @param validate [Boolean]
+    def adjust_reserved_item(item_id:, quantity:, location:, validate: true)
+      storage_locations[location] ||= EventTypes::EventStorageLocation.new(id: location, items: {})
+      storage_locations[location].adjust_reserved(item_id, quantity, validate: validate)
+    end
+
+    # @param item_id [Integer]
     # @param quantity [Integer]
     # @param from_location [Integer]
     # @param to_location [Integer]
