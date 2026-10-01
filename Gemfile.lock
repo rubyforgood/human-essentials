@@ -487,11 +487,10 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
-    pdf-reader (2.15.1)
+    pdf-reader (2.16.0)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
       afm (>= 0.2.1, < 2)
       hashery (~> 2.0)
-      ruby-rc4
       ttfunk
     pg (1.6.3)
     pg (1.6.3-arm64-darwin)
@@ -657,7 +656,6 @@ GEM
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.44.0, < 2.0)
     ruby-progressbar (1.13.0)
-    ruby-rc4 (0.1.5)
     ruby2_keywords (0.0.5)
     sanitize (7.0.0)
       crass (~> 1.0.2)
