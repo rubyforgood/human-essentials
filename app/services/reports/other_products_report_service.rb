@@ -29,7 +29,7 @@ module Reports
         .distributions
         .for_year(year)
         .joins(line_items: :item)
-        .merge(Item.other_categories)
+        .merge(Item.other)
         .sum('line_items.quantity')
     end
 
@@ -54,13 +54,13 @@ module Reports
 
     # @return [String]
     def product_list
-      organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+      organization.items.other.map(&:name).sort.uniq.join(', ')
     end
 
     # @return [Integer]
     def purchased_products
       @purchased_products ||= LineItem.joins(:item)
-                                      .merge(Item.other_categories)
+                                      .merge(Item.other)
                                       .where(itemizable: organization.purchases.for_year(year))
                                       .sum(:quantity)
     end
@@ -73,7 +73,7 @@ module Reports
     # @return [Integer]
     def donated_products
       @donated_products ||= LineItem.joins(:item)
-                                    .merge(Item.other_categories)
+                                    .merge(Item.other)
                                     .where(itemizable: organization.donations.for_year(year))
                                     .sum(:quantity)
     end
