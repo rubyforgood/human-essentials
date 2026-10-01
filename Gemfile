@@ -14,7 +14,7 @@ gem "pg", "~> 1.6.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.1.0"
+gem "rails", "~> 8.1.4"
 
 ###### MODELS / DATABASE #######
 
