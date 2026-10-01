@@ -18,19 +18,21 @@ RSpec.describe "/partners/users", type: :request do
       patch partners_user_path(
         id: partner_user.id,
         user: {
-          name: "New name"
+          name: "New name",
+          phone_number: "555-123-4567"
         }
       )
       expect(response).to be_redirect
       expect(response.request.flash[:success]).to eq "User information was successfully updated!"
       partner_user.reload
       expect(partner_user.name).to eq "New name"
+      expect(partner_user.phone_number).to eq "555-123-4567"
     end
   end
 
   describe "POST #create" do
     let(:params) do
-      {user: {name: "New User", email: "new_partner_email@example.com"}}
+      {user: {name: "New User", email: "new_partner_email@example.com", phone_number: "555-123-4567"}}
     end
 
     it "creates a new user" do
@@ -39,6 +41,7 @@ RSpec.describe "/partners/users", type: :request do
       aggregate_failures do
         expect(response.request.flash[:success]).to eq "You have invited New User to join your organization!"
         expect(response).to redirect_to(partners_users_path)
+        expect(User.find_by(email: "new_partner_email@example.com").phone_number).to eq "555-123-4567"
       end
     end
 
