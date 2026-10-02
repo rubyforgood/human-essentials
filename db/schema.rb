@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_234706) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -898,4 +898,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_29_112930) do
   add_foreign_key "tags", "organizations"
   add_foreign_key "units", "organizations"
   add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
+
+  create_function :leading_digit_sort_key, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.leading_digit_sort_key(value text)
+       RETURNS text
+       LANGUAGE sql
+       IMMUTABLE PARALLEL SAFE
+      AS $function$
+        SELECT CASE
+          WHEN lower(coalesce(value, '')) ~ '^[0-9]+'
+          THEN lpad(substring(lower(value) from '^[0-9]+'), 20, '0')
+               || substring(lower(value) from '^[0-9]+(.*)$')
+          ELSE lower(coalesce(value, ''))
+        END;
+      $function$
+  SQL
 end
