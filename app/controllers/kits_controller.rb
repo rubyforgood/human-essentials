@@ -19,6 +19,20 @@ class KitsController < ApplicationController
     @kit.line_items.build
   end
 
+  def validate
+    @kit = current_organization.kits.new(kit_params)
+    @kit.line_items.combine!
+    @kit.valid?
+    @kit.errors.add(:base, "At least one item is required") if @kit.line_items.empty?
+
+    if @kit.errors.none?
+      body = render_to_string(template: "kits/validate", formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: {valid: false}
+    end
+  end
+
   def create
     kit_creation = KitCreateService.new(organization_id: current_organization.id, kit_params: kit_params)
     kit_creation.call
