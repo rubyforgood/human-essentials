@@ -6,7 +6,7 @@ There is a *lot* of information in the profiles, and the information that is nee
 ## How does a Partner fill in and submit their profile
 
 In the Partner's view of the system,  they can click on "Edit My Profile" to fill in all the information you want.
-Once they have saved this,  they will also see a "Submit for Approval" button.   Clicking that changes their status to "Waiting for Approval", and makes them appear in your [dashboard](essentials_dashboard.md)  list of partners waiting for approval, as well as making a "Review Partner's application" button appear beside them in your view of all the Partners.
+Once they have saved this,  they will also see a "Submit for Approval" button.   Clicking that changes their status to "Awaiting review", and makes them appear in your [dashboard](essentials_dashboard.md)  list of partners waiting for approval, as well as making a "Review Applicant's Profile" button appear beside them in your view of all the Partners.
 
 # Viewing a Partner Profile
 The Partner's profile is viewable by clicking Partner Agencies in the left hand menu, then All Partners, then the name of the Partner. Scroll down to "Partner Profile"
@@ -17,7 +17,7 @@ The Partner's profile is viewable by clicking Partner Agencies in the left hand 
 
 More information about the partner profile can be found under "Editing a Partner's Profile", below.
 # Editing a Partner's Profile
-You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit partner profile"
+You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit Partner Profile"
 
 
 ![Partner Profile Edit Navigation 1](images/partners/partners_profile_edit_navigation_1.png)
@@ -44,7 +44,6 @@ The high level sections of the partner profile are:
 - Population Served
 - Contacts
 - Pick up Person
-- Race/Ethnicity of Client Base
 - Agency Distribution Information
 - Additional Documents
 - Settings (not configurable)
@@ -132,19 +131,15 @@ The sum of the client share has to be either 0 or 100, and the numbers have to b
 You start out with space for 1 county, but can add more with the "Add Another County button"
 
 ### Population Served
-![screenshot of top part of expanded population served question](images/partners/partners_profile_edit_population_1.png)
-![screenshot of bottom part of expanded population served question](images/partners/partners_profile_edit_population_2.png)
+![screenshot of expanded population served section](images/partners/partners_profile_edit_population_1.png)
 
-This section has three broad questions plus two subsections of of demographic questions:
-
-> [!NOTE]
-> We have an issue in our queue to rework this, so the order may change.
+This section has two broad questions plus two subsections of demographic questions:
 
 - Clients Have An Income Requirement to Work With You?
 - Do You Verify The Income Of Your Clients?
 
 #### Race/Ethnicity of Client Base
-This subsection is comprised of questions about the race/ethnicity of the client base and the poverty level of the Partner's client base.
+This subsection is comprised of questions about the race/ethnicity of the Partner's client base.
 There is no check on whether the numbers add up to 100 -- because there may be overlap.
 
 - % African American
@@ -166,21 +161,14 @@ There is no check on whether the numbers add up to 100 -- because there may be o
 
 ### Contacts
 ![screenshot of expanded executive director section](images/partners/partners_profile_edit_executive.png)
-![NOTE] This section currently contains both Executive Director and Primary Contact for the partner.  We have splitting them up in our queue.
-Contact information for the head of the agency:
--
+This section holds contact information for the head of the agency, and for your bank's day-to-day contact at the agency.
+
+Executive Director:
 - Executive Director Name
 - Executive Director Phone
 - Executive Director Email
-- Primary Contact Name
-- Primary Contact Phone
-- Primary Contact Cell
-- Primary Contact Email
 
-This is for your information only.  It is not used for any emails.
-
-#### Primary Contact
-Contact information for your bank's primary contact
+Primary Contact:
 - Primary Contact Name
 - Primary Contact Phone
 - Primary Contact Cell
@@ -189,7 +177,7 @@ Contact information for your bank's primary contact
 This is for your information only.  It is not used for any emails.
 
 ### Pick Up Person
-![screenshot of expanded pick up person section]
+![screenshot of expanded pick up person section](images/partners/partners_profile_edit_pick_up.png)
 The Pick up person (as well as the person who made the Request) will receive an email  when a Distribution is scheduled, if the Distribution type is "Pick up"
 - Pick Up Person Name
 - Pick Up Person's Phone #

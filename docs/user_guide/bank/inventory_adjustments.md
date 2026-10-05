@@ -13,6 +13,8 @@ You can not edit Inventory Adjustments.
 You can manage your Inventory Adjustments through the inventory adjustment page.  Click on "Inventory" in the left-hand menu, then "Inventory Adjustments"
 ![Navigation to Inventory Adjustments](images/inventory/inventory_adjustments_navigation.png)
 
+The list shows when each adjustment was made, its Storage Location, comment, and how many Items it changed.  You can filter it by Storage Location, by the user who made the adjustment, and by date range (the default is 60 days in the past to 30 days in the future), and you can export the filtered list with "Export Adjustments".  If there are a lot of adjustments the list is split into pages.
+
 ## Making an inventory adjustment
 
 To enter a new inventory adjustment,  click on "New Adjustment"
@@ -24,7 +26,7 @@ Choose the Storage Location, add any notes you have in the comments section,  an
 
 Click save to finish entering the adjustment.  This will change the inventory levels on those items.
 
-In this sample there are both negative adjustments (showing in red, with "Removed") and positive adjustments (showing in green, with "Added)
+In this sample there are both negative adjustments (showing in red, with "Removed") and positive adjustments (showing in green, with "Added")
 
 ![Result of entering adjustment](images/inventory/inventory_adjustments_result.png)
 

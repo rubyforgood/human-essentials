@@ -12,7 +12,11 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
-  config.action_mailer.default_url_options = { host: "staging.humanessentials.app" }
+  app_host = ENV.fetch('APP_HOST', 'staging.humanessentials.app')
+
+  routes.default_url_options[:host] = app_host
+  config.action_mailer.default_url_options = { host: app_host }
+  config.action_mailer.asset_host = "https://#{app_host}"
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     user_name: ENV['MAILTRAP_USERNAME'],

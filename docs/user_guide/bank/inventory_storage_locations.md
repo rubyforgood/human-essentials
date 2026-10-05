@@ -32,19 +32,19 @@ That shows the inventory at the beginning of the day.
 ![Storage Location - Inventory tab](images/inventory/inventory_storage_location_view_inventory.png)
 
 ### Inventory Coming In
-This shows the sum of all the inventory coming in ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and  [positive changes for kit allocations.deallocations](inventory_kits.md)) for the given Storage Location for all time
+This shows the sum of all the inventory coming in ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and [Kit](inventory_kits.md) allocations and de-allocations that add inventory) for the given Storage Location for all time
 
 ![Inventory coming in](images/inventory/inventory_storage_locations_coming_in.png)
 
 
 ### Inventory Going Out
-This shows the sum of all the inventory going out ([Distributions](essentials_purchases.md), [Adjustments](inventory_adjustments.md), and  [Transfers](inventory_transfers.md), and  [positive changes for kit allocations.deallocations](inventory_kits.md)) for the given Storage Location for all time
+This shows the sum of all the inventory going out ([Distributions](essentials_distributions.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and [Kit](inventory_kits.md) allocations and de-allocations that remove inventory) for the given Storage Location for all time
 
 ![Inventory going out](images/inventory/inventory_storage_locations_going_out.png)
 
 ## Editing a Storage Location
 You can edit your Storage Location (though it seems a very rare event), by clicking "Edit" beside the Storage Location in the Storage Location Summary Page.
-The same fields are as available as for [New Storage Locations](inventory_storage_locations.md).  Make your updates and click save.
+The same fields are available as for [new Storage Locations](#adding-a-storage-location).  Make your updates and click save.
 
 ## Deactivating a Storage Location
 You can only deactivate a Storage Location if the inventory for all its items is 0.
@@ -52,7 +52,7 @@ To deactivate the Storage Location, click "Deactivate" beside it on the Storage 
 
 ## Reactivating a Storage Location
 If you need to reactivate a Storage Location that was deactivated,  go to the Storage Locations summary screen (Inventory -- Storage Locations),  then click "include inactive Storage Locations", then Filter.
-This will include inactive Storage Locations in the list.   Find the Storage Location you want to use again and clic "Reactivate" beside it.
+This will include inactive Storage Locations in the list.   Find the Storage Location you want to use again and click "Reactivate" beside it.
 ![Storage Location reactivation](images/inventory/inventory_storage_location_reactivation.png)
 
 

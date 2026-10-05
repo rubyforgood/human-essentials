@@ -27,7 +27,7 @@
       </style>
 
       <div class="text-sm text-slate-700" id='partner_info'>
-        <p class="mt-2">Already a partner to a diaper or period supply bank? <a href='https://humanessentials.app/users/sign_in'>Sign in to Human Essentials</a>.</p>
+        <p class="mt-2">Already a partner to a diaper or period supply bank? <%= link_to 'Sign in to Human Essentials', new_user_session_path %>.</p>
         <p class="mt-2">To receive diapers or period supplies as a partner, contact your local bank directly. Only they can create your account.</p>
         <p class="mt-2">To find an essentials bank that distributes diapers, use the <a href='https://nationaldiaperbanknetwork.org/member-directory/'>NDBN member directory</a>. For period supplies, use the <a href='https://allianceforperiodsupplies.org/allied-programs/'>Alliance for Period Supplies directory</a>.</p>
       </div>
@@ -93,7 +93,7 @@
         <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
         <p>
           To request an account, go to
-          <%= link_to "request an account on humanessentials.app", "https://humanessentials.app/account_requests/new",
+          <%= link_to "request an account on #{production_host}", production_url("/account_requests/new"),
                 class: "font-medium link-brand underline" %>.
         </p>
       </div>

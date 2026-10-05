@@ -8,22 +8,26 @@
 <div class="px-4 py-6 sm:px-6 lg:px-8">
   <%= render "shared/essentials/page_header",
         title: "Estimated distributions by county",
-        subtitle: "Counties are estimated from the served areas your partner agencies declared, so a distribution is spread across the counties its partner covers.",
+        subtitle: "Counties are estimated from the served areas your partner agencies declared, so a distribution is spread across the counties its partner covers. Items inside kits are counted; the kits themselves are not. Totals can differ slightly from other distribution reports because of rounding when they are divided between counties.",
         back: {path: reports_path, label: "Back to reports"} %>
 
   <%= render "shared/essentials/filter_bar",
         url: distributions_by_county_report_path(current_organization),
         frame: "county-results" do %>
+    <% if @dbc_info.items.present? %>
+      <div class="min-w-0"><%= filter_select(label: "Item", scope: :by_item_id, collection: @dbc_info.items, selected: @dbc_info.selected_item) %></div>
+    <% end %>
+    <div class="min-w-0"><%= filter_select(label: "NDBN reporting category", scope: :by_reporting_category, collection: @dbc_info.reporting_categories, selected: @dbc_info.selected_reporting_category) %></div>
     <div class="min-w-0"><%= render partial: "shared/date_range_picker" %></div>
   <% end %>
 
   <%= turbo_frame_tag "county-results", target: "_top", data: {turbo_action: "advance"} do %>
     <%= render "shared/essentials/card", padded: false do %>
-      <% if @breakdown.blank? %>
+      <% if @dbc_info.breakdown.blank? %>
         <%= render "shared/essentials/empty_state",
               kind: :no_results,
               title: "No distributions #{date_range_label}",
-              body: "Try a wider date range. Counties only appear once a partner in them has received a distribution." %>
+              body: "Try a wider date range or fewer filters. Counties only appear once a partner in them has received a distribution." %>
       <% else %>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Table, scrollable">
           <table class="data-table">
@@ -36,7 +40,7 @@
               </tr>
             </thead>
             <tbody>
-              <% @breakdown.each do |bd| %>
+              <% @dbc_info.breakdown.each do |bd| %>
                 <tr>
                   <td><%= bd.name %></td>
                   <td class="numeric"><%= number_with_delimiter(bd.quantity) %></td>

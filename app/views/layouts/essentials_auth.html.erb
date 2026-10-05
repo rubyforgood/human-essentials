@@ -47,13 +47,13 @@
             This site is for testing only.
             </p>
             <p class="mt-2">
-            You are on staging.humanessentials.app, a demo site for
-            <%= link_to "humanessentials.app", "https://humanessentials.app", class: "font-medium underline" %>.
+            You are on <%= request.host %>, a demo site for
+            <%= link_to production_host, production_url, class: "font-medium underline" %>.
             It is not safe to upload, enter or save any sensitive data here.
             </p>
             <p class="mt-2">
             To sign in to your live account, go to
-            <%= link_to "humanessentials.app/users/sign_in", "https://humanessentials.app/users/sign_in", class: "font-medium underline" %>.
+            <%= link_to "#{production_host}/users/sign_in", production_url("/users/sign_in"), class: "font-medium underline" %>.
             </p>
 
           <% end %>

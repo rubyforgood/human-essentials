@@ -8,7 +8,7 @@ Here are some questions that will help you when you are setting up Human Essenti
 - Do you run on a monthly cycle, or on more of an adhoc basis?
 - What information do you need from our partners (see [Partner Profile](pm_partner_profiles.md) for what you *can* collect in the system - this is somewhat configurable)?
   - Do you need to get all that information from your partners before they can enter requests? 
-- Do you have different groups of partners allowed to request different items? (if so, you'll want to look at [Partner Groups](pm_))
+- Do you have different groups of partners allowed to request different items? (if so, you'll want to look at [Partner Groups](pm_partner_groups.md))
 - Who should have admin access?  (See [Access Levels](getting_started_access_levels.md))
 - Do you repackage items into 'kits'? (common for period-focused banks)
 - How do you want your partners requesting from you?  (By # of individuals for each item, by quantity of each item, or by specific child (we don't recommend that unless they really have the need.) This is covered more in ["The Request Distribution Cycle"](pm_request_distribution_cycle.md))

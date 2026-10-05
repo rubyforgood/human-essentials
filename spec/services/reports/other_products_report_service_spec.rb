@@ -14,7 +14,7 @@ RSpec.describe Reports::OtherProductsReportService, type: :service do
                                       '% other products donated' => "0%",
                                       '% other products bought' => "0%",
                                       'Money spent on other products' => '$0.00',
-                                      'List of other products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+                                      'List of other products' => organization.items.other.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })
@@ -24,8 +24,8 @@ RSpec.describe Reports::OtherProductsReportService, type: :service do
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
-      other_item = organization.items.other_categories.first
-      non_other_item = organization.items.where.not(id: organization.items.other_categories).first
+      other_item = organization.items.other.first
+      non_other_item = organization.items.where.not(id: organization.items.other).first
 
       # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
       # Spec will ensure that only the required data is included.
@@ -83,7 +83,7 @@ RSpec.describe Reports::OtherProductsReportService, type: :service do
                                       '% other products donated' => "40%",
                                       '% other products bought' => "60%",
                                       'Money spent on other products' => '$30.00',
-                                      'List of other products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+                                      'List of other products' => organization.items.other.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })

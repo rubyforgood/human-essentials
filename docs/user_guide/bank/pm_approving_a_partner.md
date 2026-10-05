@@ -21,16 +21,16 @@ or
 
 ----------------------------------
 
-In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Information" button,  or the Partner can make the change.   
+In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Partner Profile" button,  or the Partner can make the change.   
 
 See [Partner profiles](pm_partner_profiles.md#viewing-a-partner-profile) for details on the Partner Profile.
 
-Once you have reviewed the Partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
+Once you have reviewed the Partner's info, and want to approve them to make requests,  click the "Approve Partner" button.  (There is one at the top of the page, under "Partner Status", and another at the top of the Partner Profile section -- they do the same thing.)
 
-![](images/partners/partners_approving_1.png)
+![Approve Partner button](images/partners/partners_approving_1.png)
 
-You should see a "Partner Approved!" message,  and the status of the Partner will show as "Approved"
+You should see a "Partner approved!" message,  and the status of the Partner will show as "Approved"
 
-![](images/partners/partners_approving_2.png)
+![Partner approved message](images/partners/partners_approving_2.png)
 
 [Prior - Partner Profiles](pm_partner_profiles.md) [Next - Requesting Recertification](pm_requesting_recertification.md)

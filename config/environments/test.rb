@@ -19,6 +19,7 @@ Rails.application.configure do
   config.eager_load = ENV["CI"] == "true"
 
   config.action_mailer.default_url_options = { host: "localhost" }
+  config.action_mailer.asset_host = "http://localhost"
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true

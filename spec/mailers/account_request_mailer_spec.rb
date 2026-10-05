@@ -27,7 +27,7 @@ RSpec.describe AccountRequestMailer, type: :mailer do
     context 'HTML format' do
       it 'should include the staging/demo account information' do
         html = html_body(mail)
-        expect(html).to match(%r{<a href='https://staging.humanessentials.app/users/sign_in'>Human Essentials</a>})
+        expect(html).to match(%r{<a href="https://staging.humanessentials.app/users/sign_in">Human Essentials</a>})
         expect(html).to match('Username: org_admin1@example.com')
         expect(html).to match('Password: password!')
 

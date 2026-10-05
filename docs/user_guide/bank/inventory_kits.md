@@ -18,7 +18,7 @@ Then you distribute those period Kits.
 
 ## Creating a Kit
 
-[!WARN]  You can't edit a Kit -- once you've defined it, it's set in stone.  So do be careful! 
+[!WARNING]  You can't edit a Kit -- once you've defined it, it's set in stone.  So do be careful! 
 
 To create a Kit,  click on "Inventory", then "Kits" in your left hand menu.  This brings up a page that shows all your current Kits.  
 Then click the "+New Kit" button on the right hand side of the page.
@@ -29,14 +29,14 @@ This brings up the "New Kit" form, which has the following info:
 ![New Kit](images/inventory/inventory_kits_new.png)
 - Name:  This is the Item name for the Kit -- what it will appear as in the drop-down lists and in any reports
 - Item is Visible to Partners?  Check this if you allow Partners to order the Kit.  
-[!INFO] If you need to control which Partners can request a Kit,  you'll need to put it in a category once you've defined it, through the Item page, after creation, and use Partner Groups to control which Partners can request the Item.
+[!NOTE] If you need to control which Partners can request a Kit,  you'll need to put it in a category once you've defined it, through the Item page, after creation, and use Partner Groups to control which Partners can request the Item.
 [(see Editing an Item)](inventory_items.md#editing-an-item), [Item Categories](inventory_items.md#item-categories) and [Partner Groups](pm_partner_groups.md)
 - Value for Kit:  This is the Fair Market Value for the Kit.  We don't sum up the Items within the Kits for FMV calculations.
 - Items in this Kit:
   You can enter multiple Items,  adding each Item with the following
     - Barcode Entry -- if you have already entered [Barcode Items](inventory_barcodes.md), you can just "boop" the Item into the Kit.
   OR
-    - Choose an Item from the list of all [Items](inventory_Items.md) you have, and add the quantity of the Item that will be in the Kit.
+    - Choose an Item from the list of all [Items](inventory_items.md) you have, and add the quantity of the Item that will be in the Kit.
 
 
 To add the rest of your Items,  click "+Add Another Item."  If you need to remove an Item, click "Remove" under it.
@@ -50,16 +50,16 @@ Once you have created your Kit,  you can allocate it.   This represents assembli
 
 From the Kits page (Inventory -- Kits),  click "Modify Allocation" on your Kit
 
-![Navigation to Kit alloocation](images/inventory/inventory_kits_modify_allocation_navigation.png)
+![Navigation to Kit allocation](images/inventory/inventory_kits_modify_allocation_navigation.png)
 This takes you to the Kit Allocation page
 This lists your current on-hand quantity for each storage location you have Kits in, and lets you change the allocation.
 
-Pick the Storage Location (A) and the amount you want to increase the Kits by (B).  When you put a number in the "Change Kit quantity ",  you'll see what effect the allocation will have on your inventory.
+Pick the Storage Location (A) and the amount you want to increase the Kits by (B).  When you put a number in "Change Kit quantity by",  you'll see what effect the allocation will have on your inventory.
 
 ![Kit Allocation](images/inventory/inventory_kits_allocation.png)
 
 
-[!NOTE] you can also 'deallocate' Kits if need be, by putting a negative number in the "Change Kit quantity by" field.   When you deallocation Kits, the contents will be returned to the appropriate Items' inventory.
+[!NOTE] you can also 'deallocate' Kits if need be, by putting a negative number in the "Change Kit quantity by" field.   When you deallocate Kits, the contents will be returned to the appropriate Items' inventory.
 
 Then click "Save".   The system will check if there are enough of each component Item in the storage location.  If there isn't, it will give you an error.  If there is,  it will adjust the inventory appropriately, and return to this screen, which will reflect the new on-hand quantity.
 
@@ -82,23 +82,3 @@ Then click "Reactivate" beside the Kit you wish to reactivate and click "OK" to 
 
 [Prior: Audits](inventory_audits.md)
 [Next: Barcodes](inventory_barcodes.md)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
