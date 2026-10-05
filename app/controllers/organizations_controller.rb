@@ -106,6 +106,7 @@ class OrganizationsController < ApplicationController
       :bank_is_set_up,
       :include_in_kind_values_in_exported_files,
       :include_packages_in_distribution_export,
+      :enable_replenishment_planner,
       partner_form_fields: [],
       request_unit_names: []
     )

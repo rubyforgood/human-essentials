@@ -14,6 +14,7 @@
 #  enable_child_based_requests              :boolean          default(TRUE), not null
 #  enable_individual_requests               :boolean          default(TRUE), not null
 #  enable_quantity_based_requests           :boolean          default(TRUE), not null
+#  enable_replenishment_planner             :boolean          default(FALSE), not null
 #  hide_package_column_on_receipt           :boolean          default(FALSE)
 #  hide_value_columns_on_receipt            :boolean          default(FALSE)
 #  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null

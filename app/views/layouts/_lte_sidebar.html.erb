@@ -161,8 +161,8 @@
       </li>
     </ul>
   </li>
-  <li class='nav-item has-treeview <%= menu_open?(['distributions_by_county', 'reports', 'reports/annual_reports', 'events', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
-    <a href='#' class='nav-link <%= active_class(['events', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives_summary', 'reports/purchases_summary', 'reports/distributions_summary', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
+  <li class='nav-item has-treeview <%= menu_open?(['distributions_by_county', 'reports', 'replenishment', 'reports/annual_reports', 'events', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
+    <a href='#' class='nav-link <%= active_class(['events', 'replenishment', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives_summary', 'reports/purchases_summary', 'reports/distributions_summary', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
       <i class="nav-icon fa fa-tasks"></i>
       <p>Reports
         <i class="fas fa-angle-left right"></i>
@@ -239,6 +239,13 @@
           <i class="nav-icon fa fa-circle-o"></i> Purchases - Trends
         <% end %>
       </li>
+      <% if ReplenishmentController.available_for?(current_organization) %>
+        <li class="nav-item <%= active_class(['replenishment']) %>">
+          <%= link_to(replenishment_index_path, class: "nav-link #{active_class(['replenishment'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Replenishment Planner
+          <% end %>
+        </li>
+      <% end %>
       <li class="nav-item <%= active_class(['reports/itemized_requests']) %>">
         <%= link_to(reports_itemized_requests_path, class: "nav-link #{active_class(['reports/itemized_requests'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Requests - Itemized
