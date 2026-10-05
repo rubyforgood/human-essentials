@@ -1,9 +1,10 @@
 class DistributionContentChangeService
-  attr_reader :updates, :removed
+  attr_reader :added, :updates, :removed
 
   def initialize(old_line_items, new_line_items)
     @old_line_items = to_hash(old_line_items)
     @new_line_items = to_hash(new_line_items)
+    @added = []
     @updates = []
     @removed = []
   end
@@ -14,13 +15,14 @@ class DistributionContentChangeService
   end
 
   def any_change?
-    updates.any? || removed.any?
+    added.any? || updates.any? || removed.any?
   end
 
   def changes
     return {} unless any_change?
 
     {
+      added: added,
       updates: updates,
       removed: removed
     }
@@ -37,6 +39,10 @@ class DistributionContentChangeService
   end
 
   def identify_changes
+    new_line_items.each do |key, item|
+      added << item.slice(:name, :quantity) unless old_line_items.key?(key)
+    end
+
     old_line_items.each do |k, v|
       if new_line_items[k]
         if new_line_items[k][:quantity] != v[:quantity]

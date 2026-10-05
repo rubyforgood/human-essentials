@@ -6,7 +6,7 @@ Note that only people with admin status can administer Users, and that Partners 
 
 To manage the rights for your Essentials Bank's Users:
 
-Click on the My Organisation view, then  scroll down to the bottom. There is a User administration section there.
+Click on "My Organization" in the left-hand menu, then scroll down to the bottom. There is a "Users" section there.
 
 You can also manage the Users in your Partners, see [Administering Partner Users](pm_partner_user_admin.md).
 

@@ -246,6 +246,7 @@ You can export different groups of partners by clicking the partner filters whic
 For each partner in the filtered list the following fields will be exported:
 - Agency Name,
 - Agency Email,
+- Agency Phone Number,
 - Notes
 - Agency Type,
 - Other Agency Type,
@@ -413,7 +414,10 @@ The default is all Requests in the last 60 days
 ### Contents of Requests export
 For each filtered Request,
 - Date,
-- Requestor (i.e. partner)
+- Requestor (i.e. the Partner's name),
+- Request Sender (the Partner's email address),
+- Comments (the comments the Partner entered on the Request),
+- Type (Quantity, Child, or Individual -- see [Requests](essentials_requests.md)),
 - Status, and
 - the quantity of each Item requested. There will be a column for each unit that you have enabled for each Item.
 

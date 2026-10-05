@@ -16,6 +16,9 @@
 
 
 ## Importing Partners
+If you're just getting started, there is an "Import Partners" link in the "Getting Started" section of your dashboard.
+
+![Import Partners link in Getting Started](images/getting_started/partners/gs_just_starting_step_2_import.png)
 
 For details on how to do a bulk import of your partners, please click [here](pm_importing_partners.md)
 
@@ -25,7 +28,7 @@ For your first partner, you can Click on the "Add a single partner" link in your
 ![navigation](images/getting_started/partners/gs_add_partner_1.png)
 
 
-For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
+For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "New Partner Agency".
 
 ![add a partner navigation](images/partners/partners_add_navigation.png)
 

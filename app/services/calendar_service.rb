@@ -4,8 +4,10 @@ require "icalendar/tzinfo"
 module CalendarService
   # Prints out a calendar in ICS format for use e.g. in adding to Google Calendar.
   # @param organization_id [Integer]
+  # @param url_options [Hash] host/protocol to build event links with, so the
+  #   calendar points back at the domain the subscriber is using.
   # @return [String]
-  def self.calendar(organization_id)
+  def self.calendar(organization_id, url_options = {})
     distributions = Organization.find(organization_id)
       .distributions
       .includes(:storage_location, :partner)
@@ -27,7 +29,7 @@ module CalendarService
         e.dtend = Icalendar::Values::DateTime.new(dist.issued_at + 15.minutes, "tzid" => tz_id)
         e.summary = "Pickup from #{dist.partner.name}"
         e.location = dist.storage_location.address
-        e.url = "https://humanessentials.app/diaper_bank/distributions/schedule"
+        e.url = Rails.application.routes.url_helpers.schedule_distributions_url(**url_options)
       end
     end
     cal.publish

@@ -12,8 +12,16 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
-  routes.default_url_options[:host] = 'humanessentials.app'
-  config.action_mailer.default_url_options = { host: "humanessentials.app" }
+  # The app is served on several domains (humanessentials.app,
+  # humanessentialsapp.com, humanessentialsapp.org). Links generated during a
+  # request already follow the domain the visitor arrived on -- the request host
+  # takes precedence over routes.default_url_options -- so this only sets the
+  # fallback used outside of a request (mailers, jobs, rake tasks).
+  app_host = ENV.fetch('APP_HOST', 'humanessentials.app')
+
+  routes.default_url_options[:host] = app_host
+  config.action_mailer.default_url_options = { host: app_host }
+  config.action_mailer.asset_host = "https://#{app_host}"
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: ENV['SMTP_SERVER'],
@@ -21,7 +29,9 @@ Rails.application.configure do
     authentication: :plain,
     user_name: ENV['SMTP_USERNAME'],
     password: ENV['SMTP_PASSWORD'],
-    domain: 'humanessentials.app',
+    # HELO domain for the SMTP conversation -- tied to where mail is sent from
+    # (SPF/DKIM), not to which domain the site is being browsed on.
+    domain: ENV.fetch('SMTP_DOMAIN', 'humanessentials.app'),
     enable_starttls_auto: true
   }
 

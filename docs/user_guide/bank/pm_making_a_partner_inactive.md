@@ -8,8 +8,7 @@ Go to the All Partners list (click on "Partner Agencies", then "All Partners" in
 
 ![Partner deactivate screenshot 1](images/partners/partners_deactivate_1.png)
 
-Then click on "Deactivate Partner".  A confirmation screen will appear.  Click "OK".
-
+Then click on "Deactivate Partner" (1).  A confirmation window will appear.  Click "OK".
 
 ![Partner deactivate screenshot 2](images/partners/partners_deactivate_2.png)
 

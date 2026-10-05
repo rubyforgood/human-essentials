@@ -1266,6 +1266,24 @@ finalize it before it affects inventory — the words just say what happens.
 **The password reset email greets you by name and is signed.** It used to open with your email
 address and end without a signature.
 
+### New from the main app, on 2026-10-05
+
+**Estimated distributions by county counts what was inside your kits.** A distributed kit now adds
+its contents to each county's totals; the kit itself is not counted as an item. The report also has
+two new filters beside the date range, **Item** and **NDBN reporting category**. The item list shows
+loose items only, though the totals still include the ones inside kits. The figures are still
+estimates and can differ a little from other distribution reports, because of rounding when a
+distribution is split between counties. The note under the page title says so.
+
+**Links stay on the address you came in on.** Human Essentials can now be reached at more than one
+address, because some networks block `.app` addresses. Links that used to send you to
+humanessentials.app no matter what, like *Sign in to Human Essentials* on the account request page,
+now keep you on the address you are using. Links in emails go to the one address the app is set up
+to send from.
+
+**A distribution change email lists items that were added**, as well as the ones changed or
+removed.
+
 ### The arrow that opens a row on Item inventory
 
 **It is bigger, and its cell no longer takes keyboard focus.** Two small things on one control. The

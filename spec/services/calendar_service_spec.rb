@@ -17,7 +17,7 @@ RSpec.describe CalendarService do
           partner: partner2, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2022, 3, 17),
           partner: partner2, storage_location: storage_location)
-        result = described_class.calendar(organization.id)
+        result = described_class.calendar(organization.id, host: "humanessentials.app", protocol: "https")
         expected = <<~ICAL
           BEGIN:VCALENDAR
           VERSION:2.0
@@ -46,24 +46,21 @@ RSpec.describe CalendarService do
           DTEND;TZID=America/New_York:20220317T071500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
-          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-           e
+          URL;VALUE=URI:https://humanessentials.app/distributions/schedule
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20220217T060000
           DTEND;TZID=America/New_York:20220217T061500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
-          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-           e
+          URL;VALUE=URI:https://humanessentials.app/distributions/schedule
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20220316T210000
           DTEND;TZID=America/New_York:20220316T211500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 2
-          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-           e
+          URL;VALUE=URI:https://humanessentials.app/distributions/schedule
           END:VEVENT
           END:VCALENDAR
         ICAL
@@ -71,6 +68,17 @@ RSpec.describe CalendarService do
         result = result.gsub(/\r\nDTSTAMP:.*\r\n/, "\r\n").gsub(/\r\nUID:.*\r\n/, "\r\n")
         expect(result).to eq(expected.gsub("\n", "\r\n"))
       end
+    end
+
+    it "builds event links for whichever domain the subscriber is using" do
+      storage_location = create(:storage_location, time_zone: "America/New_York", organization: organization)
+      partner = create(:partner, organization: organization)
+      create(:distribution, issued_at: 1.day.ago, partner: partner, storage_location: storage_location)
+
+      result = described_class.calendar(organization.id, host: "humanessentialsapp.org", protocol: "https")
+
+      expect(result).to include("https://humanessentialsapp.org/distributions/schedule")
+      expect(result).not_to include("humanessentials.app")
     end
   end
 
