@@ -40,5 +40,12 @@ module View
     def selected_item
       filters[:by_item_id].presence
     end
+
+    # The query always appends an "Unspecified" row, so the breakdown is never empty -- a range or
+    # filter that matches nothing comes back as one row of zeros. This is the question the empty
+    # state actually needs answered.
+    def distributions?
+      breakdown.any? { |county| county.quantity.positive? || county.value.positive? }
+    end
   end
 end

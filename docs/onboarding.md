@@ -1271,9 +1271,11 @@ address and end without a signature.
 **Estimated distributions by county counts what was inside your kits.** A distributed kit now adds
 its contents to each county's totals; the kit itself is not counted as an item. The report also has
 two new filters beside the date range, **Item** and **NDBN reporting category**. The item list shows
-loose items only, though the totals still include the ones inside kits. The figures are still
-estimates and can differ a little from other distribution reports, because of rounding when a
-distribution is split between counties. The note under the page title says so.
+loose items only, though the totals still include the ones inside kits; the note under the Item
+filter says so. The figures are still estimates and can differ a little from other distribution
+reports, because of rounding when a distribution is split between counties. The note under the
+table says so. A filter that matches nothing now says *No distributions*. It used to show a table
+with one row of zeros.
 
 **Links stay on the address you came in on.** Human Essentials can now be reached at more than one
 address, because some networks block `.app` addresses. Links that used to send you to

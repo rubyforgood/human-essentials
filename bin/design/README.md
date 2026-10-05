@@ -771,3 +771,8 @@ because it would otherwise be a hole.
 Its probe table caught a bug review would not have: in a Ruby `/x` regex literal spaces are
 stripped, so `VAGUE_LINK` was quietly looking for `clickhere`. Every multi-word branch now uses
 `\s+`, and every branch has a probe. Break any check and the script refuses to run.
+
+**The probes test the checks, not what the checks are given.** Until 2026-10-05 `COPY_KEYS` had no
+`body`, so no empty-state message in the app was read. A planted *"Please try the button below"*
+reported 0 findings while every probe passed. To prove the audit read your file, plant a violation
+in it.

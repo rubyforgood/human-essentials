@@ -9952,3 +9952,61 @@ and `app/assets/builds/tailwind.css` correctly rejected, `tmp/` reported as skip
 `CLAUDE.md` said five, `docs/skill-proposal-v2.md` and a migration-skill reference said six, and the
 change log had already numbered one #8. All now say nine. A number in prose about an ongoing event
 goes stale silently; the change log numbering them is what makes it checkable.
+
+## 2026-10-05 — The by-county report, held to the spec after the merge
+
+The merge brought `main`'s rebuilt by-county report across and passed every audit. Read against
+`design.md` section by section, it still broke four rules. None of them involved a class that
+doesn't exist, so the class audits had nothing to find.
+
+### The empty state could not be reached
+
+The view tested `@dbc_info.breakdown.blank?`. `DistributionSummaryByCountyQuery` always `UNION`s in
+an "Unspecified" row of zeros, so the breakdown is never blank: a range or filter matching nothing
+drew a one-row table reading *Unspecified · 0 · $0.00*. That breaks *never render bare empty table
+chrome* in [Empty states](../design.md#empty-states). This predates the merge, but the merge made it
+easy to hit, because a new reporting-category filter can match nothing far more often than a date
+range can. `View::DistributionsByCounty#distributions?` asks whether any county has a quantity or a
+value.
+
+**Rejected: drop the row from the query.** The row is deliberate. The query's own comment calls it
+"previous behavior", and a request spec asserts "Unspecified" for a partner with no served areas.
+The view object decides what counts as nothing to show. The query keeps its contract.
+
+The body takes the wording the donations and purchases indexes use when filters match nothing ("Try
+a wider date range, or clear the filters to see every …") and keeps this page's own second
+sentence.
+
+### A rule about the item list went in the hint, not the page subtitle
+
+`main` added text saying the item filter lists loose items only. [Filters](../design.md#filters)
+puts a rule the control cannot show in `hint:`, under the control and wired to it with
+`aria-describedby`. The hint says what choosing an item counts — *"Counted whether it went out on
+its own or inside a kit."* That is the thing a reader can get wrong. "Loose items only" describes
+how the list is built.
+
+### The rounding caveat qualifies the figures, so it sits under them
+
+The page subtitle says what the page is. "Totals can differ because of rounding" is a note about
+the numbers, like the manufacturer donations report's line under its table, so it went into the
+card's `footer:`. It is not rendered when the empty state is showing, because there are no figures
+for it to qualify. The kit sentence stayed in the subtitle, because it is about what the page
+counts.
+
+### The filter bar was posting to a format
+
+`distributions_by_county_report_path(current_organization)` — the route has no segment for an
+organization, so Rails appended it as the format, and every filtered view lived at
+`/distributions_by_county/report.1`. Both branches had it. The reports hub already called the
+helper without an argument. Now the bar does too, and a request spec checks the form's `action`.
+
+### Also from the merge
+
+- **The distribution change email's headings are sentence case** — *Items added*, *Items updated*,
+  *Items removed*. `main` added the first in the Title Case of the other two, which design had never
+  converted. Mailers are exempt from the markup audits, but not from
+  [Sentence case](../design.md#sentence-case).
+- **`copy-audit.rb` was not reading empty-state bodies.** `COPY_KEYS` had `empty_body` but not
+  `body`, which is the local every empty state actually passes. *"Please try the button below"*
+  planted in this page's body gave **0 findings**. With `body` added it gives 2, and the app as a
+  whole still gives 0, so no existing body was failing.

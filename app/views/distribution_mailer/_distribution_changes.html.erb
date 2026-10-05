@@ -1,7 +1,7 @@
 <p>Some items on your distribution have changed</p>
 <ul style="list-style-type:none">
 <% if @distribution_changes[:added].present? %>
-    <li>Items Added</li>
+    <li>Items added</li>
     <ol style="list-style-type:none">
         <% @distribution_changes[:added].each do |item| %>
         <li>
@@ -12,7 +12,7 @@
     </li>
 <% end %>
 <% if @distribution_changes[:updates].any? %>
-    <li>Items Updated</li>
+    <li>Items updated</li>
     <ol style="list-style-type:none">
         <% @distribution_changes[:updates].each do |item| %>
         <li>
@@ -23,7 +23,7 @@
     </li>
 <% end %>
 <% if @distribution_changes[:removed].any? %>
-    <li>Items Removed</li>
+    <li>Items removed</li>
     <ol style="list-style-type:none">
         <% @distribution_changes[:removed].each do |item| %>
         <li>

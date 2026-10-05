@@ -110,7 +110,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       end
 
       it "shows the added item and its quantity" do
-        expect(html_body(mail)).to include("Items Added", "Wipes (Adult): 88")
+        expect(html_body(mail)).to include("Items added", "Wipes (Adult): 88")
       end
     end
 

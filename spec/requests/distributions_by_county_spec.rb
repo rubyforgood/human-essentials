@@ -21,6 +21,32 @@ RSpec.describe "DistributionsByCounties", type: :request do
       expect(response.body).to include("$1,050.00")
     end
 
+    # The query always appends a zero "Unspecified" row, so a breakdown is never empty; testing it
+    # for emptiness left the empty state unreachable and drew one row of zeros instead.
+    it "shows the empty state, not a row of zeros, when nothing matches" do
+      create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1, issued_at: issued_at_present)
+      get distributions_by_county_report_path(filters: {by_reporting_category: "tampons"})
+
+      expect(response.body).to include("No distributions")
+      expect(response.body).to include("clear the filters")
+      expect(response.body).not_to include("<table")
+      expect(response.body).not_to include("These are estimates")
+    end
+
+    it "says what the item filter counts, and notes the rounding under the figures" do
+      create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1, issued_at: issued_at_present)
+      get distributions_by_county_report_path
+
+      expect(response.body).to include("Counted whether it went out on its own or inside a kit.")
+      expect(response.body).to include("These are estimates. Each county&#39;s share is rounded")
+    end
+
+    it "submits its filters to the report itself, not to a format" do
+      get distributions_by_county_report_path
+      expect(response.body).to include(%(action="#{distributions_by_county_report_path}"))
+      expect(response.body).not_to include("report.#{organization.id}")
+    end
+
     it "includes loose items, but not kits in item dropdown" do
       create(:distribution, :with_items, item: kit_a, organization: organization, partner: partner_1, issued_at: issued_at_present) # This is just to make sure the system creates the kit and items within it
       get distributions_by_county_report_path
