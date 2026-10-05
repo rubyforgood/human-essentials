@@ -1,6 +1,5 @@
 # AUDIT-READS: VIEWS, DOCS
 # Audits every view for design system conformance, by page kind.
-require "set"
 #
 # `status.rb` asks whether a view contains design system markup. Every page here does, which is
 # why it reports them all as migrated. The layout is not the page: a view can sit in the right
