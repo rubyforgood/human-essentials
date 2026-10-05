@@ -36,9 +36,12 @@ VERBOSE = ARGV.include?("--verbose")
 # web page, "the link below" is literally true there, and most of the templates are Devise's.
 MAILER = %r{app/views/\w*mailer\w*/|app/views/users/mailer/|_mailer\.}
 
+# `body` is the empty state's message. It was missing, so every empty-state sentence in the app
+# went unread: "Please try the button below" planted in one reported 0 findings. Adding it found
+# none already there, which is the only reason it is safe to say they were all fine.
 COPY_KEYS = %w[
   label title subtitle placeholder hint confirm caption legend prompt heading
-  aria-label empty_title empty_body
+  aria-label empty_title empty_body body
 ].freeze
 
 NBSP = "\u00A0"
