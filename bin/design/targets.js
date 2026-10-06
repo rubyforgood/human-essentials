@@ -95,14 +95,43 @@ const RUNS = [
  *
  * Waits for the URL to stop being the sign-in page rather than for `networkidle`, which never
  * settles on the slowest screens here.
+ *
+ * **It checks what it is about to submit, and says why when sign-in fails.** `audit-selftest`
+ * failed in CI on this function, intermittently, as a bare 60-second `waitForURL` timeout. The
+ * server log held the real answer: `401 Unauthorized ... (0 queries)`. Devise only skips the user
+ * lookup when the password is blank -- a wrong password costs one query, a blank one none,
+ * measured locally both ways -- so the form went up with an empty password field, on the first
+ * request to a freshly booted development server. Hence: fill once the page has finished
+ * loading rather than at `domcontentloaded`, read both fields back before submitting, and
+ * wait on the POST itself. One retry, then fail with what was sent and what the page said.
  */
 async function signIn(page, email, password = PASSWORD) {
   await page.goto(BASE + "/users/sign_out", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.goto(BASE + "/users/sign_in", { waitUntil: "domcontentloaded" });
-  await page.fill('input[name="user[email]"]', email);
-  await page.fill('input[name="user[password]"]', password);
-  await page.click('form[action="/users/sign_in"] button[type="submit"], input[type=submit]');
-  await page.waitForURL((u) => !u.pathname.includes("/sign_in"), { timeout: 60000 });
+  let lastProblem = "";
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    await page.goto(BASE + "/users/sign_in", { waitUntil: "load" });
+    const emailField = page.locator('input[name="user[email]"]');
+    const passwordField = page.locator('input[name="user[password]"]');
+    await emailField.fill(email);
+    await passwordField.fill(password);
+    const sent = { email: await emailField.inputValue(), passwordLength: (await passwordField.inputValue()).length };
+    if (sent.email !== email || sent.passwordLength !== password.length) {
+      lastProblem = `fields did not hold what was typed: ${JSON.stringify(sent)}`;
+      continue;
+    }
+    const response = page.waitForResponse(
+      (r) => r.request().method() === "POST" && new URL(r.url()).pathname === "/users/sign_in", { timeout: 60000 });
+    await page.click('form[action="/users/sign_in"] button[type="submit"]');
+    const status = (await response).status();
+    if (status >= 300 && status < 400) {
+      await page.waitForURL((u) => !u.pathname.includes("/sign_in"), { timeout: 60000 });
+      return;
+    }
+    await page.waitForLoadState("load");
+    const said = (await page.locator("[role=alert], [role=status]").allInnerTexts()).join(" ").trim();
+    lastProblem = `POST /users/sign_in answered ${status} for ${JSON.stringify(sent)}; the page said: ${said || "(nothing)"}`;
+  }
+  throw new Error(`could not sign in as ${email} after 2 attempts -- ${lastProblem}`);
 }
 
 /*
