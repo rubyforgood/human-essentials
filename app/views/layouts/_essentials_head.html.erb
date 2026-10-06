@@ -24,15 +24,25 @@
   browser from `new Date()` -- the reminder and deadline dates, for one -- would still be on
   real time, and the two would disagree by however far the spec travelled. Navigate to the
   page under test AFTER spoofing, or the fake timer is initialised with the wrong instant.
+
+  **The instant is in a <meta>, so the script's text is the same in every response.** It used to
+  be interpolated into the script. A filter bar applying into a frame with `turbo_action:
+  "advance"` makes Turbo merge the response's <head>, even though it renders nothing there, and
+  Turbo re-runs any head script whose text is new. So whenever a response was rendered in a later
+  second than the page, this ran again mid-filter: `restore()` threw away every timer queued on
+  the old clock -- including the animation frame Turbo was awaiting to render the *next* filter --
+  and the table stayed on the previous result for good. Specs failed with the filter chip set and
+  the table unfiltered, intermittently in CI and in 6 of 8 runs at 8x CPU throttling.
 %>
 <% if Rails.env.test? %>
+  <meta name="test-clock-now" content="<%= Time.now.to_i * 1000 %>">
   <script type="module">
     import sinon from "sinon"
     if (window.fakeTimerClock) {
       window.fakeTimerClock.restore();
     }
     window.fakeTimerClock = sinon.useFakeTimers({
-      now: <%= Time.now.to_i * 1000 %>,
+      now: Number(document.querySelector('meta[name="test-clock-now"]').content),
       shouldAdvanceTime: true
     })
   </script>

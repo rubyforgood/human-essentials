@@ -17,6 +17,7 @@ one run in three. Afterwards: **3,298 examples, 0 failures, 1 pending, on eight 
 | `request_system_spec:119` | no `wait_for_filters` after `click_on "Clear all"` — the only clear-all in the suite without one |
 | `donation_site_spec:198` | the spec queried `DonationSite.active`, unscoped and unordered, where the app queries `current_organization.donation_sites.alphabetized.active` |
 | `audit_system_spec:74` | `await_select2` took the starting `data-select2-id` from a non-retrying `Nokogiri` snapshot; before select2 initialised that read nil, so it waited for id `1` |
+| `distributions_by_county_system_spec` (2026-10-05) | the test layout's sinon script interpolated `Time.now`, so a Turbo frame `advance` re-ran it from the merged `<head>` and `restore()` dropped the render Turbo was awaiting. Reproduce with `Emulation.setCPUThrottlingRate` 8: 6 of 8 runs failed before the fix, 0 of 8 after. **Any test-only head script must have the same text in every response.** |
 | *(one more)* | `PG::TRDeadlockDetected` — self-inflicted, a second `rspec` against the same test database |
 
 **What eight clean runs does and does not support.** At the previous rate it would happen about
