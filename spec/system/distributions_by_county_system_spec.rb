@@ -165,19 +165,29 @@ RSpec.feature "Distributions by County", type: :system do
     find("#essentials-sidebar").click_link("Reports")
     within("#reports-distributions") { click_on "By county" }
 
+    # Each step waits for the URL to carry the filter, not only for the network to go quiet.
+    # `turbo_action: "advance"` rewrites the URL once the frame has *rendered* that response, so
+    # this is the point at which the table on screen is the one the filter asked for. Network idle
+    # alone let this spec fail in CI with the category chip showing and the table still the
+    # all-time totals without it -- and a URL assertion that fails names the step that did not land.
     select_date_range_preset date_range_string
+    expect_filter_applied("date_range_label", date_range_string)
 
-    # The filter bar applies each change as it is made; there is no Filter button.
     if reporting_category
       open_filters
       select reporting_category, from: "NDBN reporting category"
-      wait_for_filters
+      expect_filter_applied("by_reporting_category", find_field("NDBN reporting category").value)
     end
 
     if item_name
       open_filters
       select item_name, from: "Item"
-      wait_for_filters
+      expect_filter_applied("by_item_id", find_field("Item").value)
     end
+  end
+
+  def expect_filter_applied(name, value)
+    wait_for_filters
+    expect(page).to have_current_path(/#{Regexp.escape(URI.encode_www_form("filters[#{name}]" => value))}(&|\z)/)
   end
 end
