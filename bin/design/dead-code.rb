@@ -76,7 +76,10 @@ ApplicationController.descendants.each do |klass|
   rescue
     nil
   end
-  next unless source&.start_with?(Rails.root.to_s)
+  # `app/`, not `Rails.root`: CI installs gems into `vendor/bundle`, which is *inside* the root, so
+  # Devise's own Unlocks and Confirmations controllers were reported there and nowhere else --
+  # 149 findings in CI against 147 locally, and the state table could never match both.
+  next unless source&.start_with?(Rails.root.join("app").to_s + "/")
   name = klass.controller_path
   own = klass.action_methods.select { |m| klass.instance_method(m).owner == klass }
   if routed[name].empty?

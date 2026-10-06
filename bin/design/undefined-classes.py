@@ -84,11 +84,29 @@ def referenced_elsewhere(tok):
                          capture_output=True, text=True)
     if {line for line in app.stdout.splitlines() if line} - set(SOURCES):
         return True
-    for cmd in (["grep", "-rqF", tok, str(ROOT / "spec")],
-                ["bash", "-lc", f"grep -rqF -- {tok!r} /usr/local/bundle/gems/*/app /usr/local/bundle/gems/*/vendor /usr/local/bundle/gems/*/lib 2>/dev/null"]):
-        if subprocess.run(cmd, capture_output=True).returncode == 0:
-            return True
-    return False
+    if subprocess.run(["grep", "-rqF", tok, str(ROOT / "spec")], capture_output=True).returncode == 0:
+        return True
+    dirs = [d for g in gem_dirs() for d in (f"{g}/app", f"{g}/vendor", f"{g}/lib") if pathlib.Path(d).is_dir()]
+    return bool(dirs) and subprocess.run(["grep", "-rqF", "--", tok, *dirs], capture_output=True).returncode == 0
+
+_gem_dirs = None
+def gem_dirs():
+    """Where the bundle's gems actually are, asked of Bundler rather than assumed.
+
+    This was hard-coded to `/usr/local/bundle/gems`, the path inside the Docker image. Anywhere
+    else -- a laptop, or CI, which installs into `vendor/bundle` -- the grep found nothing, so
+    `filterrific-periodically-observed` and `form-inputs` were reported as dead classes rather
+    than filed as the gems' own hooks. The state table read 0 where it was generated and 2
+    everywhere it was checked, and CI failed on the difference.
+    """
+    global _gem_dirs
+    if _gem_dirs is None:
+        out = subprocess.run(["bundle", "list", "--paths"], cwd=ROOT, capture_output=True, text=True)
+        _gem_dirs = [l for l in out.stdout.splitlines() if l.startswith("/")]
+        if not _gem_dirs:
+            sys.exit("could not list the bundle's gem paths (`bundle list --paths`); refusing to "
+                     "guess, because every gem's hook would then be reported as a dead class")
+    return _gem_dirs
 
 hooks, orphans = [], []
 for tok, files in hits.items():
