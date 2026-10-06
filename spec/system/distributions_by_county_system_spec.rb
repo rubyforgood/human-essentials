@@ -165,11 +165,11 @@ RSpec.feature "Distributions by County", type: :system do
     find("#essentials-sidebar").click_link("Reports")
     within("#reports-distributions") { click_on "By county" }
 
-    # Each step waits for the URL to carry the filter, not only for the network to go quiet.
-    # `turbo_action: "advance"` rewrites the URL once the frame has *rendered* that response, so
-    # this is the point at which the table on screen is the one the filter asked for. Network idle
-    # alone let this spec fail in CI with the category chip showing and the table still the
-    # all-time totals without it -- and a URL assertion that fails names the step that did not land.
+    # Each step checks the URL carries its filter, so a filter that never applied fails at its own
+    # step instead of later on a table count. Turbo writes the URL just *before* it renders the
+    # frame, so this confirms the response arrived, not that the table is up to date -- the content
+    # assertions retry for that. (The CI failure that prompted this was not a wait at all: see the
+    # comment on the fake clock in layouts/_essentials_head.html.erb.)
     select_date_range_preset date_range_string
     expect_filter_applied("date_range_label", date_range_string)
 
