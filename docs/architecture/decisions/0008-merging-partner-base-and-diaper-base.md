@@ -18,6 +18,6 @@ Change came into effective after https://github.com/rubyforgood/human-essentials
 
 ## Consequences
 
-Merging the two applications has the benefit of reducing complexity for ease of maintaince. However, a great deal of refactor work is
+Merging the two applications has the benefit of reducing complexity for ease of maintenance. However, a great deal of refactor work is
 needed to remove old concepts that were based on two applications (aka redundant models). In the interim, the data modeling is confusing
 until we refactor.

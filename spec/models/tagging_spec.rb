@@ -10,7 +10,7 @@
 #  taggable_id   :bigint           not null
 #
 RSpec.describe Tagging, type: :model do
-  describe "assocations" do
+  describe "associations" do
     it { should belong_to(:tag) }
     it { should belong_to(:taggable) }
   end

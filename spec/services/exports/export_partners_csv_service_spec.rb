@@ -76,7 +76,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         enable_quantity_based_requests: true)
     end
 
-    let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") } # Information for the area_served parital
+    let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") } # Information for the area_served partial
     let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
     let(:county_3) { create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana") }
     let!(:served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50) }
