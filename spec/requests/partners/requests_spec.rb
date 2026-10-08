@@ -329,6 +329,16 @@ RSpec.describe "/partners/requests", type: :request do
           expect(response).to be_unprocessable
           expect(response.body).to include("Please ensure a single unit is selected for each item")
         end
+
+        it "renders a single blank row in the Add Another Item template" do
+          post partners_requests_path, params: request_attributes
+
+          template = Nokogiri::HTML(response.body).at_css('template[data-form-input-target="addTemplate"]')
+          rows = template.css("tr")
+          expect(rows.size).to eq(1)
+          expect(rows.css("option[selected]")).to be_empty
+          expect(rows.at_css('input[name$="[quantity]"]')["value"]).to be_blank
+        end
       end
     end
 
