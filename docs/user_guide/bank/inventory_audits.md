@@ -7,7 +7,7 @@ The big thing you need to remember is that Audits have to be 'finalized' by an o
 ## Starting an Audit
 
 Click on "Inventory", then "Inventory Audit" in the left hand menu,  then "+New Audit".
-![Navigaton to new Audit](images/inventory/inventory_audits_new_navigation.png)
+![Navigation to new Audit](images/inventory/inventory_audits_new_navigation.png)
 
 This brings up the new Audit page.  
 

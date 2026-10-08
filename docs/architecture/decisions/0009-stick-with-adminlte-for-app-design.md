@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-The application's design is mainly based on [AdminLTE](https://adminlte.io/) which is a open source design library based off of boostrap. In 2022, TailwindCSS 
+The application's design is mainly based on [AdminLTE](https://adminlte.io/) which is a open source design library based off of bootstrap. In 2022, TailwindCSS 
 was introduced in hopes to make the application easier to maintain. And subsequently, a theme was picked out to replace AdminLTE that is based on TailwindCSS.
 However, the team decided in a meeting that the benefits that TailwindCSS could offer does not outweigh the efforts to migrating to a new framework. 
 
