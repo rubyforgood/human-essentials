@@ -18,9 +18,17 @@ class PicklistsPdf < ApplicationPdf
     "Picklist"
   end
 
+  # The table, with a Total row under the quantity column -- the request page's table ends the
+  # same way, and it is the figure a volunteer checks the pallet against.
   def line_item_table(request)
     line_items = request.item_requests
-    has_custom_units?(line_items) ? data_with_units(line_items) : data_no_units(line_items)
+    table = has_custom_units?(line_items) ? data_with_units(line_items) : data_no_units(line_items)
+    total = line_items.sum { |line_item| line_item.quantity.to_i }
+    table.with(totals: table.columns.each_with_index.map { |column, index|
+      if index.zero? then "Total"
+      elsif column.kind == :quantity then total
+      end
+    })
   end
 
   def has_custom_units?(line_items)

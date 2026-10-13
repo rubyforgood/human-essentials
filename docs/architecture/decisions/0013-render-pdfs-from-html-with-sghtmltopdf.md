@@ -62,6 +62,12 @@ browser, no subprocess and no Node.
 letterhead, title, fact tiles and line item table are partials shared by all four.
 `ApplicationPdf#to_html` returns the HTML on its own, so a layout can be inspected in a browser.
 
+> Amended 2026-10-12, the same day: the fact tiles and title figure were replaced by banded
+> sections before any of this was pushed. The shared partials are now the letterhead, page
+> header, details, line items and signatures. The decision this record makes, rendering with
+> sghtmltopdf, is unchanged. See `docs/design-decisions.md`, "The printed documents became the
+> app's record page".
+
 **The engine supports a subset of CSS.** It has no `!important`, no gradients, no `font`
 shorthand and no percentage `border-radius`. `gap` works on flex containers only, weights of 600
 and above all print bold, and fonts must be TrueType. `pdf.css` records each limit where it

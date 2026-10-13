@@ -1,57 +1,55 @@
-                                                                                                        Essentials Bank 1
+                                                                                                Essentials Bank 1
+                                                                                             1500 Remount Road
 
-                                                                                                       1500 Remount Road
-                                                                                                      Front Royal, VA 22630
-
-                                                                                                      email1@example.com
-
-
-
-Picklist
-
-Leslie Sue
-                                                                                                                       3
-Request 456                                                                                                   items to pick
-
-
-
-  Primary contact                Pickup person                Requested on                   Items received year-to-date
-  Jaqueline Kihn DDS             Pickup Person                December 30, 2024              0
-
-  van@durgan.example             pickup@example.com
-                                 1234567890
-
-
-
-  Quota
-  100
+                                                                                            Front Royal, VA 22630
+                                                                                            email1@example.com
 
 
 
 
-Items · 3 items
+Picklist for Leslie Sue
 
-  Item                          Quantity  Unit                   Picked       Differences / comments
-
-  Item 2                            30
-
-
-  Item 3                            50
-
-
-  Item 4                           120    packs
+Request 456 · Requested on December 30, 2024
 
 
 
+  Request details
+
+
+  Primary contact                                      Pickup person
+
+  Jaqueline Kihn DDS                                   Pickup Person
+  van@durgan.example                                   pickup@example.com
+
+                                                       1234567890
+
+  Items received year-to-date                          Quota
+
+  0                                                    100
+
+  Comments
+
+  —
 
 
 
 
+  Items requested
 
 
+  Item                     Quantity   Unit                Picked       Differences / comments
 
 
+  Item 2                        30
 
+
+  Item 3                        50
+
+
+  Item 4                       120    packs
+
+
+  Total                        200
 
 
 
@@ -72,8 +70,4 @@ Items · 3 items
 
 
 
-
-
-
-
-Lovingly created with Human Essentials                                                                           Page 1 of 1
+Lovingly created with Human Essentials                                                                 Page 1 of 1

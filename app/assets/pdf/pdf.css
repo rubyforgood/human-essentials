@@ -5,9 +5,13 @@
  * not Tailwind and is not compiled. It is the design system's tokens written out by hand, because
  * the engine supports a deliberate subset of CSS:
  *
- *   - no `var()` dependence, no gradients, no `!important`, no `font` shorthand, no percentage
- *     radius, and `gap` on flex containers only;
+ *   - no gradients, no `!important`, no `font` shorthand, no percentage radius, and `gap` on flex
+ *     containers only;
  *   - weights collapse to two states, so 600 and 700 both print bold;
+ *   - `box-shadow` prints as a solid dark block, so nothing here has one;
+ *   - `font-variant-numeric: tabular-nums` is ignored;
+ *   - a box's border is not redrawn on the next page, which is why sections are bands and not
+ *     cards (design.md, Print);
  *   - fonts must be TrueType -- the woff2 files in public/vendor/figtree are invisible to it, which
  *     is why app/assets/fonts/figtree carries the same face as static TTFs.
  *
@@ -17,18 +21,17 @@
  * "../fonts/..." is left alone by Propshaft, resolves to nothing under public/assets, and every
  * production PDF silently fell back to a system font -- caught in a precompiled copy of the app.
  *
- * Token values are the ones in app/assets/tailwind/application.css and design.md, Colour. If a
- * token changes there, change it here.
+ * Sizes are px at the engine's 96dpi, so they are the app's own: text-sm is 14px, text-xs 12px.
+ * Token values are the ones in app/assets/tailwind/application.css. If a token changes there,
+ * change it here.
  *
- *   slate-900 #0f172a   headings, emphasised values
+ *   slate-900 #0f172a   headings, values, item names
  *   slate-700 #334155   body text
- *   slate-500 #64748b   meta, column headings, labels
- *   slate-400 #94a3b8   checkbox edge
- *   slate-300 #cbd5e1   heading rule
- *   slate-200 #e2e8f0   hairline borders
- *   slate-100 #f1f5f9   row dividers
- *   slate-50  #f8fafc   tinted surfaces
- *   brand-700 #4338ca   the eyebrow above the title
+ *   slate-600 #475569   subtitles, secondary lines
+ *   slate-500 #64748b   labels, column headings, meta
+ *   slate-400 #94a3b8   tick box and signature rule
+ *   slate-200 #e2e8f0   hairlines
+ *   slate-50  #f8fafc   section bands
  */
 
 @font-face {
@@ -56,27 +59,27 @@
 }
 
 /*
- * US Letter: the banks are American and every printer they own is loaded with it. Prawn defaulted
- * to Letter too -- prawn-rails' A4 setting only ever reached `.prawn` templates, and there were none.
+ * US Letter: the banks are American and every printer they own is loaded with it. Prawn printed on
+ * Letter too -- prawn-rails' A4 setting only ever reached `.prawn` templates, and there were none.
  *
  * The footer lives in the page margin so it repeats on every page and never collides with a long
- * table. Margin boxes take text, not markup, which is why the credit is words and not the logo.
+ * table. Margin boxes take text, not markup.
  */
 @page {
   size: Letter;
-  margin: 14mm 15mm 18mm 15mm;
+  margin: 14mm 14mm 16mm 14mm;
 
   @bottom-left {
     content: "Lovingly created with Human Essentials";
     font-family: "Figtree";
-    font-size: 7.5pt;
+    font-size: 8pt;
     color: #64748b;
   }
 
   @bottom-right {
     content: "Page " counter(page) " of " counter(pages);
     font-family: "Figtree";
-    font-size: 7.5pt;
+    font-size: 8pt;
     color: #64748b;
   }
 }
@@ -89,15 +92,14 @@ body {
 
 body {
   font-family: "Figtree", sans-serif;
-  font-size: 9.5pt;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 20px;
   color: #334155;
 }
 
 p,
 h1,
 h2,
-h3,
 dl,
 dd {
   margin: 0;
@@ -110,269 +112,234 @@ dd {
 
 /* --- Letterhead ----------------------------------------------------------------------------- */
 
+/*
+ * The bank on the left -- its logo, or its name set the way the sidebar sets it -- and how to
+ * reach it on the right, in meta text.
+ */
 .letterhead {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding-bottom: 14px;
+  padding-bottom: 16px;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .letterhead-logo {
-  max-height: 52px;
+  max-height: 48px;
   max-width: 200px;
 }
 
-/* Sized to its content, so a bank's name and email never wrap beside a wide logo. */
+.wordmark {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.wordmark-sub {
+  font-size: 12px;
+  line-height: 16px;
+  color: #64748b;
+}
+
+/* Sized to its content, so an address or email never wraps beside a wide logo. */
 .letterhead-org {
   flex-shrink: 0;
   margin-left: 24px;
   white-space: nowrap;
   text-align: right;
-  font-size: 8.5pt;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 18px;
   color: #64748b;
 }
 
 .letterhead-org-name {
-  font-size: 10pt;
   font-weight: 600;
   color: #0f172a;
 }
 
-/* --- Title ---------------------------------------------------------------------------------- */
+/* --- Page header ---------------------------------------------------------------------------- */
 
-.doc-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 20px;
+/* The page header partial: h1 text-2xl bold tracking-tight slate-900, subtitle text-sm slate-600. */
+.page-header {
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
-.eyebrow {
-  font-size: 8.5pt;
+.page-header h1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: #0f172a;
+}
+
+.page-subtitle {
+  margin-top: 4px;
+  color: #475569;
+}
+
+/* --- Sections ------------------------------------------------------------------------------- */
+
+/*
+ * A section is a band and what follows it -- design.md's banded details, "border-y slate-200,
+ * bg slate-50" on the heading. Not a card: a card's border would end at the foot of the page and
+ * not resume on the next, and boxes cost ink for nothing on paper.
+ */
+.section {
+  margin-bottom: 24px;
+}
+
+.section-band {
+  padding: 8px 12px;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  break-after: avoid;
+}
+
+.section-band h2 {
+  font-size: 14px;
+  line-height: 20px;
   font-weight: 600;
-  color: #4338ca;
-}
-
-.doc-title h1 {
-  margin-top: 2px;
-  font-size: 19pt;
-  font-weight: 700;
-  line-height: 1.2;
   color: #0f172a;
 }
 
-.doc-subtitle {
-  margin-top: 3px;
-  font-size: 9pt;
-  color: #64748b;
-}
+/* --- Details -------------------------------------------------------------------------------- */
 
 /*
- * The one number the reader looks for first, set apart on the right of the title: total units on a
- * picklist, the in-kind value on a receipt.
+ * essentials_detail on paper: a two-column grid of label over value, an em dash when a value is
+ * blank, and a wide field across both columns for free text. Flex rather than grid because the
+ * engine's grid splits leftover space evenly among auto tracks.
  */
-.headline-figure {
-  flex-shrink: 0;
-  margin-left: 24px;
-  white-space: nowrap;
-  text-align: right;
-}
-
-.headline-figure-value {
-  font-size: 19pt;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #0f172a;
-}
-
-.headline-figure-label {
-  font-size: 8.5pt;
-  color: #64748b;
-}
-
-/* --- Facts ---------------------------------------------------------------------------------- */
-
-/*
- * The definition list of who, when and how much, as a row of tiles. Flex rather than grid because
- * the engine honours `gap` on flex containers only.
- */
-.facts {
+.details {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-/*
- * Sized to content, then stretched to fill the row: a tile holding an email address is as wide as
- * the address, and when the row runs out the next tile wraps to a second row rather than squeezing
- * the address onto two lines.
- */
-.fact {
-  flex: 1 1 auto;
-  min-width: 120px;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background-color: #f8fafc;
+  padding: 14px 12px 0 12px;
   break-inside: avoid;
 }
 
-.fact dt {
-  font-size: 7.5pt;
-  font-weight: 600;
+.detail {
+  width: 50%;
+  padding-right: 24px;
+  padding-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.detail.wide {
+  width: 100%;
+}
+
+.detail dt {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
   color: #64748b;
 }
 
-.fact-primary {
+.detail dd {
   margin-top: 2px;
-  font-size: 10pt;
-  font-weight: 600;
   color: #0f172a;
 }
 
-.fact-secondary {
-  font-size: 8.5pt;
-  color: #64748b;
-}
-
-/* Kept on one line; only a value wider than the whole page may break. */
-.fact-primary,
-.fact-secondary {
-  white-space: nowrap;
-}
-
-/* --- Comments ------------------------------------------------------------------------------- */
-
-.note {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  break-inside: avoid;
-}
-
-.note-label {
-  font-size: 7.5pt;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.note-body {
-  margin-top: 2px;
-  color: #334155;
+/* An email address is one long word; let it break rather than run past the column. */
+.detail-secondary {
+  color: #475569;
+  overflow-wrap: anywhere;
 }
 
 /* --- Line item table ------------------------------------------------------------------------ */
 
 /*
- * `.data-table` on paper. Same column headings -- sentence case, slate-500, no uppercase -- and the
- * same hairline rows; no zebra striping, because a grey band is what a pen has to write over.
+ * `.data-table` on paper: sentence-case slate-500 headings, hairline rows, no zebra striping -- a
+ * grey band is what a pen has to write over -- and a totals row. The heading row repeats on every
+ * page the table runs onto.
  */
-.section-heading {
-  margin-top: 22px;
-  margin-bottom: 6px;
-  font-size: 10.5pt;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.section-heading-meta {
-  font-weight: 400;
-  color: #64748b;
-}
-
-.line-items {
+.data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.line-items th {
-  padding: 7px 10px;
-  border-bottom: 1px solid #cbd5e1;
-  font-size: 7.5pt;
+.data-table th {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 12px;
+  line-height: 16px;
   font-weight: 600;
   color: #64748b;
   text-align: left;
+  white-space: nowrap;
 }
 
-.line-items td {
-  padding: 7px 10px;
+.data-table td {
+  padding: 10px 12px;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: top;
 }
 
-.line-items tr {
+.data-table tr {
   break-inside: avoid;
 }
 
-.line-items .numeric {
+.data-table td.item {
+  color: #0f172a;
+}
+
+.data-table th.numeric,
+.data-table td.numeric {
   text-align: right;
 }
 
-.line-items .item-name {
-  color: #0f172a;
-}
-
-.line-items .quantity {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.line-items .muted {
-  color: #94a3b8;
-}
-
-.line-items tfoot td {
-  padding-top: 9px;
-  border-top: 1px solid #cbd5e1;
+.data-table tfoot td {
   border-bottom: 0;
   font-weight: 600;
   color: #0f172a;
 }
 
 /* A box to tick when the line is on the pallet. Drawn, not typed, so it prints as a box. */
-.line-items .check-column {
-  width: 34px;
+.data-table th.check-column,
+.data-table td.check-column {
+  width: 56px;
   text-align: center;
 }
 
 .checkbox {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 1px solid #94a3b8;
-  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  margin-top: 3px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 3px;
 }
 
 /* Left blank and wide for handwriting: the row's bottom rule is the line to write on. */
-.write-in {
-  width: 34%;
+.data-table .write-in {
+  width: 32%;
 }
 
 /* --- Sign-off ------------------------------------------------------------------------------- */
 
 .signatures {
-  margin-top: 30px;
   break-inside: avoid;
 }
 
-.signature-group + .signature-group {
-  margin-top: 26px;
+.signature-body {
+  padding: 0 12px;
+}
+
+.signature-group {
+  margin-top: 16px;
+}
+
+.signature-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
 }
 
 .signature-row {
   display: flex;
   gap: 24px;
-  margin-top: 6px;
-}
-
-.signature-label {
-  font-size: 8.5pt;
-  font-weight: 600;
-  color: #0f172a;
 }
 
 .signature-field {
@@ -380,12 +347,12 @@ dd {
 }
 
 .signature-line {
-  height: 26px;
+  height: 32px;
   border-bottom: 1px solid #94a3b8;
 }
 
 .signature-caption {
-  margin-top: 3px;
-  font-size: 7.5pt;
+  margin-top: 4px;
+  font-size: 12px;
   color: #64748b;
 }

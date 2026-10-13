@@ -1,0 +1,21 @@
+<%# A banded section of label-over-value fields, two to a row. `fields` is a list of
+    [label, lines] or [label, lines, :wide]: the first line is the value, the rest print beneath
+    it in a lighter tone, blank lines are dropped, and an empty field is the em dash, as
+    essentials_detail does. %>
+<section class="section">
+  <div class="section-band"><h2><%= title %></h2></div>
+  <dl class="details">
+    <% fields.each do |label, lines, wide| %>
+      <% lines = Array(lines).map(&:to_s).compact_blank %>
+      <div class="detail<%= " wide" if wide == :wide %>">
+        <dt><%= label %></dt>
+        <dd>
+          <p><%= lines.first.presence || "—" %></p>
+          <% lines.drop(1).each do |line| %>
+            <p class="detail-secondary"><%= line %></p>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+</section>

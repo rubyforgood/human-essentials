@@ -1,58 +1,57 @@
-                                                                                                       Essentials Bank 1
+                                                                                                Essentials Bank 1
+                                                                                             1500 Remount Road
 
-                                                                                                       1500 Remount Road
-                                                                                                     Front Royal, VA 22630
-
-                                                                                                      email1@example.com
-
-
-
-Distribution receipt
-
-Leslie Sue
-                                                                                                                 150
-Distribution 123                                                                                            items received
+                                                                                           Front Royal, VA 22630
+                                                                                            email1@example.com
 
 
 
-  Primary contact                    Delivery address                                             Issued on
-  Jaqueline Kihn DDS                 Example Program Address 1                                    July 4 2024
 
-  van@durgan.example                 Example Program City, Example Program State 54321
+Distribution to Leslie Sue
+
+Distribution 123 · Issued on July 4 2024
+
+
+
+  Details
+
+
+  Primary contact                                      Delivery address
+  Jaqueline Kihn DDS                                   Example Program Address 1
+
+  van@durgan.example                                   Example Program City, Example Program State
+                                                       54321
 
 
   Items received year-to-date
-
   150
 
 
-
-Items · 4 items
-
-
-  Items received                     Requested      Received       Value per item       In-kind value received Packages
-
-  Item 1                                                 50              $1.00                    $50.00              1
-
-
-  Item 2                                   30          100               $2.00                  $200.00
-
-  Item 3                                   50                            $3.00
-
-
-  Item 4                            120 packs                           $4.00
-
-
-  Total items received                   200            150                                     $250.00
+  Comments
+  —
 
 
 
 
+  Items distributed
 
 
+  Item                        Requested     Received      Value per item    In-kind value received  Packages
 
 
+  Item 1                                          50             $1.00                  $50.00             1
 
+
+  Item 2                             30          100            $2.00                 $200.00
+
+
+  Item 3                             50                         $3.00
+
+
+  Item 4                      120 packs                         $4.00
+
+
+  Total items received             200           150                                  $250.00
 
 
 
@@ -70,10 +69,4 @@ Items · 4 items
 
 
 
-
-
-
-
-
-
-Lovingly created with Human Essentials                                                                          Page 1 of 1
+Lovingly created with Human Essentials                                                                Page 1 of 1

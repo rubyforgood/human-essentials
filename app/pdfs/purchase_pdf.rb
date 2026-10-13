@@ -27,7 +27,7 @@ class PurchasePdf < ApplicationPdf
   end
 
   def purchase_data
-    data = [["Items purchased", "Value per item", "In-kind value", "Quantity"]]
+    data = [["Item", "Value per item", "In-kind value", "Quantity"]]
     data += purchase.line_items.sorted.map do |c|
       [c.item.name,
         dollar_value(c.item.value_in_cents),

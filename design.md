@@ -4779,33 +4779,38 @@ records**. They are PDFs, made from HTML by sghtmltopdf (ADR 0013). No browser r
 | --- | --- |
 | A document's data and choices | `app/pdfs/<name>_pdf.rb`, a subclass of `ApplicationPdf` |
 | Its layout | `app/views/pdfs/<name>.html.erb`, inside `layouts/pdf.html.erb` |
-| Shared parts | `pdfs/_letterhead`, `_title`, `_fact`, `_note`, `_line_items`, `_signatures` |
+| Shared parts | `pdfs/_letterhead`, `_header`, `_details`, `_line_items`, `_signatures` |
 | Styles | `app/assets/pdf/pdf.css` |
 
-**Every document has the same anatomy, top to bottom.**
+**Every document has the same anatomy, top to bottom.** It is the app's record page, printed:
+the page header, a details section, a line item section.
 
-1. **Letterhead.** The bank's logo on the left, and its name, address and email on the right, over
-   a `slate-200` hairline.
-2. **Title.** A `brand-700` eyebrow says what the document is ("Picklist", "Donation receipt"). The
-   title says who it is for: the partner, the donor or the vendor. A meta line gives the record's
-   number. On the right sits the one figure the reader looks for first: items to pick, items
-   received, or the amount spent.
-3. **Facts.** A row of `slate-50` tiles, each a label and a value, holding who, when and how much.
-   A tile is as wide as its content, so an email address never wraps. When the row is full, the
-   next tile starts a second row.
-4. **Comments**, in a bordered box, printed only when there are some.
-5. **Line items.** `.data-table` on paper: sentence-case `slate-500` headings, hairline rows, no
-   zebra striping, and figures right-aligned with thousands separators. A grey band is something
-   a pen has to write over.
-6. **Footer**, in the page margin, so it repeats on every page: "Lovingly created with Human
-   Essentials" on the left, "Page 1 of 2" on the right.
+| Piece | What it is |
+| --- | --- |
+| Letterhead | The bank's logo on the left, or its name set as the sidebar sets it, with "Human Essentials" beneath. Its address and email on the right in `slate-500` meta text. A `slate-200` hairline under both. |
+| Page header | The `h1`: *Picklist for …*, *Distribution to …*, *Donation from …*, *Purchase from …*. The subtitle: the record's number and its date. |
+| Details | A band headed *Request details* or *Details*, then `essentials_detail` fields two to a row: a `text-xs` `slate-500` label over a `slate-900` value. A blank value is the em dash. Comments span both columns. |
+| Line items | A band headed *Items requested*, *Items distributed*, *Items received* or *Items purchased*, then `.data-table`: an *Item* column, figures right-aligned with thousands separators, hairline rows, no zebra striping, and a totals row. |
+| Sign-off | On a distribution receipt, when the bank asks for it: a *Sign-off* band and two rules per party. |
+| Footer | In the page margin, so it repeats: "Lovingly created with Human Essentials" on the left, "Page 1 of 2" on the right. |
+
+**Sections are bands, not cards.** A band is the heading strip from
+[A record's details](#a-records-details-are-a-dl-and-long-ones-are-banded): `border-y slate-200`,
+`bg-slate-50`. On screen a card is the right container. On paper it is the wrong one, for two
+reasons. The engine does not redraw a box's border on the next page, so a card holding a long table
+loses its bottom edge on page one and its top on page two. And a box around every section costs ink
+and photocopies badly. The band keeps the screen's structure without a box to break.
 
 **A picklist is for writing on.** Its *Picked* column draws an empty box, not the characters
 `[  ]`. Its *Differences / comments* column is a third of the width and blank, and the row's bottom
-rule is the line to write on.
+rule is the line to write on. Its table ends with a *Total* row, as the request page's does.
 
-**Do not repeat the title in a tile.** The title already names the partner, donor or vendor, and
-the headline figure already gives the amount. A tile saying either again wastes the row.
+**Do not repeat the header in the body.** The `h1` already names the partner, donor or vendor, and
+the band already names the items. A field or a column heading that says either again is noise: the
+first column is *Item*, not *Items received* under a band saying *Items received*.
+
+**No shadows and no eyebrows.** The engine prints `box-shadow` as a solid dark block. A coloured
+label above the title is not a pattern the app has.
 
 **`pdf.css` is not Tailwind.** The engine supports a subset of CSS and does not compile utility
 classes, so the tokens are written out as values with a comment naming each one. If a token changes

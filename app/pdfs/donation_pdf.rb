@@ -62,7 +62,7 @@ class DonationPdf < ApplicationPdf
   end
 
   def donation_data
-    data = [["Items received",
+    data = [["Item",
       "Value per item",
       "In-kind value",
       "Quantity"]]

@@ -1,29 +1,24 @@
 <% distribution = @pdf.distribution %>
 <% profile = @pdf.profile %>
-<% table = @pdf.line_item_table %>
 <article class="sheet">
   <%= render "pdfs/letterhead", pdf: @pdf %>
-  <%= render "pdfs/title", pdf: @pdf,
-        title: distribution.partner.name,
-        subtitle: "Distribution #{distribution.id}",
-        figure: number_with_delimiter(distribution.line_items.total),
-        figure_label: "items received" %>
+  <%= render "pdfs/header", title: "Distribution to #{distribution.partner.name}",
+        subtitle: "Distribution #{distribution.id} · Issued on #{distribution.distributed_at}" %>
 
-  <dl class="facts">
-    <%= render "pdfs/fact", label: "Primary contact",
-          lines: [profile.primary_contact_name, profile.primary_contact_email, profile.primary_contact_phone] %>
-    <% if (address = @pdf.delivery_address_lines) %>
-      <%= render "pdfs/fact", label: "Delivery address", lines: address %>
-    <% end %>
-    <%= render "pdfs/fact", label: "Issued on", lines: [distribution.distributed_at] %>
-    <% if @pdf.organization.ytd_on_distribution_printout %>
-      <%= render "pdfs/fact", label: "Items received year-to-date",
-            lines: [number_with_delimiter(distribution.partner.quantity_year_to_date)] %>
-    <% end %>
-  </dl>
+  <%# No "Delivery method" field: the receipt never printed one, and whether a delivery address
+      appears already says it. spec/pdfs/distribution_pdf_spec.rb shares one snapshot across
+      methods for exactly that reason. %>
+  <% fields = [["Primary contact", [profile.primary_contact_name, profile.primary_contact_email, profile.primary_contact_phone]]] %>
+  <% if (address = @pdf.delivery_address_lines) %>
+    <% fields << ["Delivery address", address] %>
+  <% end %>
+  <% if @pdf.organization.ytd_on_distribution_printout %>
+    <% fields << ["Items received year-to-date", [number_with_delimiter(distribution.partner.quantity_year_to_date)]] %>
+  <% end %>
+  <% fields << ["Comments", [distribution.comment], :wide] %>
+  <%= render "pdfs/details", title: "Details", fields: fields %>
 
-  <%= render "pdfs/note", body: distribution.comment %>
-  <%= render "pdfs/line_items", table: table, heading: "Items" %>
+  <%= render "pdfs/line_items", title: "Items distributed", table: @pdf.line_item_table %>
 
   <% if @pdf.organization.signature_for_distribution_pdf %>
     <%= render "pdfs/signatures" %>

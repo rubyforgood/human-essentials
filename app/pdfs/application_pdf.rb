@@ -52,23 +52,18 @@ class ApplicationPdf
     raise NotImplementedError
   end
 
-  # The text above the title, and the PDF's <title>.
+  # What the document is, for the PDF's <title>.
   def document_name
     raise NotImplementedError
   end
 
-  # The bank's logo, or Human Essentials' when it has not uploaded one, as a `data:` URI.
+  # The bank's uploaded logo, as a `data:` URI. Only called when there is one: without a logo the
+  # letterhead sets the bank's name instead, the way the app's sidebar does.
   #
-  # Embedded rather than referenced because an uploaded logo lives in Active Storage -- S3 in
-  # production -- and the engine does not fetch remote resources. Embedding the default too keeps
-  # one code path, and means a document renders the same under the engine's server mode, which
-  # shares no filesystem with the app.
+  # Embedded rather than referenced because the logo lives in Active Storage -- S3 in production --
+  # and the engine does not fetch remote resources.
   def logo_data_uri
-    if organization.logo.attached?
-      data_uri(organization.logo.download, organization.logo.content_type)
-    else
-      data_uri(File.binread(Organization::DIAPER_APP_LOGO), "image/png")
-    end
+    data_uri(organization.logo.download, organization.logo.content_type)
   end
 
   private

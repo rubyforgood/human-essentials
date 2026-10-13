@@ -41,7 +41,7 @@ class DistributionPdf < ApplicationPdf
   end
 
   def request_data
-    data = [["Items received",
+    data = [["Item",
       "Requested",
       "Received",
       "Value per item",
@@ -82,7 +82,7 @@ class DistributionPdf < ApplicationPdf
   end
 
   def non_request_data
-    data = [["Items received",
+    data = [["Item",
       "Value per item",
       "In-kind value",
       "Quantity",

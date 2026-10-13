@@ -24,7 +24,7 @@ describe DistributionPdf do
     specify "#request_data" do
       results = described_class.new(organization, distribution).request_data
       expect(results).to eq([
-        ["Items received", "Requested", "Received", "Value per item", "In-kind value received", "Packages"],
+        ["Item", "Requested", "Received", "Value per item", "In-kind value received", "Packages"],
         ["Item 1", "", 50, "$1.00", "$50.00", "1"],
         ["Item 2", "30", 100, "$2.00", "$200.00", nil],
         ["Item 3", "50", "", "$3.00", nil, nil],
@@ -36,7 +36,7 @@ describe DistributionPdf do
     specify "#non_request_data" do
       results = described_class.new(organization, distribution).non_request_data
       expect(results).to eq([
-        ["Items received", "Value per item", "In-kind value", "Quantity", "Packages"],
+        ["Item", "Value per item", "In-kind value", "Quantity", "Packages"],
         ["Item 1", "$1.00", "$50.00", 50, "1"],
         ["Item 2", "$2.00", "$200.00", 100, nil],
         ["Total items received", "", "$250.00", 150, ""]
@@ -50,7 +50,7 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items received", "Requested", "Received"],
+            ["Item", "Requested", "Received"],
             ["Item 1", "", 50],
             ["Item 2", "30", 100],
             ["Item 3", "50", ""],
@@ -64,7 +64,7 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items received", "Requested", "Received", "Packages"],
+            ["Item", "Requested", "Received", "Packages"],
             ["Item 1", "", 50, "1"],
             ["Item 2", "30", 100, nil],
             ["Item 3", "50", "", nil],
@@ -81,7 +81,7 @@ describe DistributionPdf do
         data = pdf.request_data
         pdf.hide_columns(data)
         expect(data).to eq([
-          ["Items received", "Requested", "Received"],
+          ["Item", "Requested", "Received"],
           ["Item 1", "", 50],
           ["Item 2", "30", 100],
           ["Item 3", "50", ""],
@@ -95,7 +95,7 @@ describe DistributionPdf do
         data = pdf.request_data
         pdf.hide_columns(data)
         expect(data).to eq([
-          ["Items received", "Requested", "Received", "Packages"],
+          ["Item", "Requested", "Received", "Packages"],
           ["Item 1", "", 50, "1"],
           ["Item 2", "30", 100, nil],
           ["Item 3", "50", "", nil],
@@ -112,7 +112,7 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items received", "Requested", "Received", "Value per item", "In-kind value received"],
+            ["Item", "Requested", "Received", "Value per item", "In-kind value received"],
             ["Item 1", "", 50, "$1.00", "$50.00"],
             ["Item 2", "30", 100, "$2.00", "$200.00"],
             ["Item 3", "50", "", "$3.00", nil],

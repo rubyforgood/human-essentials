@@ -10033,6 +10033,9 @@ one document is how the four Prawn classes came to differ.
 
 ### One anatomy for all four
 
+> Superseded the same day by the entry below, "The printed documents became the app's record page".
+> The tiles, the eyebrow and the headline figure described here are gone.
+
 Letterhead, title, facts, comments, line items, footer, in that order, on every document. A
 receipt and a picklist have different jobs, but a bank prints both every day, and a reader who has
 learned one should be able to find things on the other. The anatomy is in
@@ -10104,3 +10107,53 @@ all four faces with no warnings.
 - **`bin/design/dead-code.rb` resolves templates by literal path.** `ApplicationPdf` first derived
   each template name from the class name, and the audit reported all four views as rendered by
   nothing. Each subclass now names its template in full, which a search also finds.
+
+## 2026-10-12 — The printed documents became the app's record page
+
+Asked whether the first version followed `design.md`, the answer was no, in four places. Each
+figure sat in its own grey tile, which [Stats](../design.md#stats) rules out: one card, hairline
+separators, no fill per figure. The picklist's fourth tile wrapped onto a full-width row of its own,
+which the same section calls out by name. Contacts and dates were tiles rather than the
+`essentials_detail` grid every record page uses. The table had no card, no title and no Total row,
+where the request page has all three. And a brand-coloured eyebrow and the bitmap
+humanessentials.app wordmark came from nowhere in the system.
+
+Three directions were rendered by the real engine from the development database and shown side by
+side: A, the screen's cards; B, A with a stats band of totals; C, the same parts as sections headed
+by bands, with no boxes. **C was chosen.**
+
+### Why bands rather than cards
+
+The engine does not redraw a box's border on the next page. A card holding a long table loses its
+bottom edge on page one and its top edge on page two. Options A and B worked around this by drawing
+the box from the table's cell borders, which leaves the bottom corners square. Bands have nothing
+to break, and they are a pattern `design.md` already has:
+[long details are banded](../design.md#a-records-details-are-a-dl-and-long-ones-are-banded). They
+also use less ink, and fit more rows on page one than A or B did.
+
+**Rejected: B's stats band.** It put the counts first, which a volunteer checking a pallet does
+want, but it made a 20-line distribution receipt run to three pages instead of two. The picklist's
+Total row carries the count instead.
+
+### What changed besides the layout
+
+- **The letterhead sets the bank's name when there is no logo**, the way the sidebar does, in place
+  of the Human Essentials logo bitmap. `ApplicationPdf#logo_data_uri` now only handles an uploaded
+  logo.
+- **The picklist table ends with a Total row**, the sum of the requested quantities.
+  `PicklistsPdf#line_item_table` adds it; `data_no_units` and `data_with_units` still return the
+  bare table their specs check.
+- **The receipts' first column is *Item*.** It was *Items received* or *Items purchased*, directly
+  under a band saying the same. The totals row keeps its words.
+- **An empty field prints the em dash**, as `essentials_detail` does. Comments always appear, as a
+  field across both columns, rather than appearing only when present.
+
+**Rejected: a "Delivery method" field on the distribution receipt.** The preview had one. It came
+out because `spec/pdfs/distribution_pdf_spec.rb` shares one text snapshot between pickup, delivery
+and shipped distributions to test that only the address changes, and the receipt never printed the
+method under Prawn either. Whether a delivery address appears already says it.
+
+### Two engine limits found while previewing
+
+`box-shadow` prints as a solid dark rectangle, and `font-variant-numeric: tabular-nums` is ignored.
+Neither is used. Both are recorded at the top of `app/assets/pdf/pdf.css`.

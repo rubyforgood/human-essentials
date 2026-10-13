@@ -1,12 +1,22 @@
-<%# The bank's logo on the left, who it is and how to reach it on the right. Printed at the top of
-    every document, including each picklist in a batch. %>
+<%# The bank on the left -- its logo, or its name set the way the app's sidebar sets it -- and
+    how to reach it on the right. Printed at the top of every document, including each picklist
+    in a batch. %>
+<% org = pdf.organization %>
 <header class="letterhead">
-  <img class="letterhead-logo" src="<%= pdf.logo_data_uri %>" alt="<%= pdf.organization.name %>">
+  <div>
+    <% if org.logo.attached? %>
+      <img class="letterhead-logo" src="<%= pdf.logo_data_uri %>" alt="<%= org.name %>">
+    <% else %>
+      <p class="wordmark"><%= org.name %></p>
+      <p class="wordmark-sub">Human Essentials</p>
+    <% end %>
+  </div>
   <div class="letterhead-org">
-    <p class="letterhead-org-name"><%= pdf.organization.name %></p>
-    <% if pdf.organization.street.present? %><p><%= pdf.organization.street %></p><% end %>
-    <% locality = [pdf.organization.city, [pdf.organization.state, pdf.organization.zipcode].compact_blank.join(" ")].compact_blank.join(", ") %>
+    <%# Beside a logo the bank's name is not on the page yet; beside the wordmark it already is. %>
+    <% if org.logo.attached? %><p class="letterhead-org-name"><%= org.name %></p><% end %>
+    <% if org.street.present? %><p><%= org.street %></p><% end %>
+    <% locality = [org.city, [org.state, org.zipcode].compact_blank.join(" ")].compact_blank.join(", ") %>
     <% if locality.present? %><p><%= locality %></p><% end %>
-    <% if pdf.organization.email.present? %><p><%= pdf.organization.email %></p><% end %>
+    <% if org.email.present? %><p><%= org.email %></p><% end %>
   </div>
 </header>

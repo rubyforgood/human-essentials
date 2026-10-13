@@ -1543,16 +1543,19 @@ Everything you print has been redesigned to match the rest of the app: **picklis
 receipts, donation receipts and purchase records.** What they contain has not changed, and nor have
 the buttons that print them.
 
-- **Your logo and address sit at the top**, as before, with what the document is and who it is for
-  underneath in large type.
-- **The number you look for first is at the top right.** That is how many items to pick, how many
-  items were received, or how much a purchase cost.
-- **Contacts, dates and totals sit in a row of boxes** under the title, instead of in two columns
-  that could run into each other when a name was long.
+- **Your logo and address sit at the top**, as before. If you have not uploaded a logo, your
+  organization's name is printed there instead of the Human Essentials logo.
+- **The title says what the document is and who it is for**, such as *Picklist for Pawnee
+  Pregnancy Center*, with the request or distribution number and the date beneath it.
+- **Contacts, dates and comments are in a "Details" section**, two to a row, laid out like the
+  details on the matching page in the app. An empty field shows a dash.
+- **The items follow in their own section** and end with a total row. On a picklist that is the
+  total quantity to pick.
 - **A picklist has real tick boxes** in the *Picked* column, and a wide, empty *Differences /
   comments* column for writing down what was short or swapped.
 - **Big numbers have commas**, so 12051 now reads 12,051.
-- **Every page says "Page 1 of 2"** at the bottom, and the footer repeats on every page.
+- **Every page says "Page 1 of 2"** at the bottom, and when the items run onto a second page their
+  column headings are printed again at the top.
 
 The printout settings under your organization's settings behave exactly as they did:
 

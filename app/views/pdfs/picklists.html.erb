@@ -1,33 +1,24 @@
 <% @pdf.requests.each do |request| %>
   <% partner = request.partner %>
   <% profile = partner.profile %>
-  <% table = @pdf.line_item_table(request) %>
   <article class="sheet">
     <%= render "pdfs/letterhead", pdf: @pdf %>
-    <%= render "pdfs/title", pdf: @pdf,
-          title: partner.name,
-          subtitle: "Request #{request.id}",
-          figure: table.rows.size,
-          figure_label: (table.rows.size == 1) ? "item to pick" : "items to pick" %>
+    <%= render "pdfs/header", title: "Picklist for #{partner.name}",
+          subtitle: "Request #{request.id} · Requested on #{request.created_at.to_fs(:date_picker)}" %>
 
-    <dl class="facts">
-      <%= render "pdfs/fact", label: "Primary contact",
-            lines: [profile.primary_contact_name, profile.primary_contact_email, profile.primary_contact_phone] %>
-      <% if profile.pick_up_name.present? %>
-        <%= render "pdfs/fact", label: "Pickup person",
-              lines: [profile.pick_up_name, profile.pick_up_email, profile.pick_up_phone] %>
-      <% end %>
-      <%= render "pdfs/fact", label: "Requested on", lines: [request.created_at.to_fs(:date_picker)] %>
-      <% if @pdf.organization.ytd_on_distribution_printout %>
-        <%= render "pdfs/fact", label: "Items received year-to-date",
-              lines: [number_with_delimiter(partner.quantity_year_to_date)] %>
-      <% end %>
-      <% if (quota = @pdf.quota_for(request)) %>
-        <%= render "pdfs/fact", label: "Quota", lines: [number_with_delimiter(quota)] %>
-      <% end %>
-    </dl>
+    <% fields = [["Primary contact", [profile.primary_contact_name, profile.primary_contact_email, profile.primary_contact_phone]]] %>
+    <% if profile.pick_up_name.present? %>
+      <% fields << ["Pickup person", [profile.pick_up_name, profile.pick_up_email, profile.pick_up_phone]] %>
+    <% end %>
+    <% if @pdf.organization.ytd_on_distribution_printout %>
+      <% fields << ["Items received year-to-date", [number_with_delimiter(partner.quantity_year_to_date)]] %>
+    <% end %>
+    <% if (quota = @pdf.quota_for(request)) %>
+      <% fields << ["Quota", [number_with_delimiter(quota)]] %>
+    <% end %>
+    <% fields << ["Comments", [request.comments], :wide] %>
+    <%= render "pdfs/details", title: "Request details", fields: fields %>
 
-    <%= render "pdfs/note", body: request.comments %>
-    <%= render "pdfs/line_items", table: table, heading: "Items" %>
+    <%= render "pdfs/line_items", title: "Items requested", table: @pdf.line_item_table(request) %>
   </article>
 <% end %>

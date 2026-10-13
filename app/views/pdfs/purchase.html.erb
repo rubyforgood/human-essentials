@@ -1,19 +1,13 @@
 <% purchase = @pdf.purchase %>
 <article class="sheet">
   <%= render "pdfs/letterhead", pdf: @pdf %>
-  <%= render "pdfs/title", pdf: @pdf,
-        title: purchase.purchased_from_view.presence || "Purchase",
-        subtitle: "Purchase #{purchase.id}",
-        figure: dollar_presentation(purchase.amount_spent_in_cents),
-        figure_label: "amount spent" %>
+  <%= render "pdfs/header", title: "Purchase from #{purchase.purchased_from_view.presence || "an unnamed vendor"}",
+        subtitle: "Purchase #{purchase.id} · Issued on #{purchase.issued_at.to_fs(:date_picker)}" %>
 
-  <dl class="facts">
-    <%= render "pdfs/fact", label: "Issued on", lines: [purchase.issued_at.to_fs(:date_picker)] %>
-    <% if purchase.storage_location %>
-      <%= render "pdfs/fact", label: "Storage location", lines: [purchase.storage_location.name] %>
-    <% end %>
-  </dl>
+  <% fields = [["Amount spent", [dollar_presentation(purchase.amount_spent_in_cents)]],
+               ["Storage location", [purchase.storage_location&.name]],
+               ["Comments", [purchase.comment], :wide]] %>
+  <%= render "pdfs/details", title: "Details", fields: fields %>
 
-  <%= render "pdfs/note", body: purchase.comment %>
-  <%= render "pdfs/line_items", table: @pdf.line_item_table, heading: "Items" %>
+  <%= render "pdfs/line_items", title: "Items purchased", table: @pdf.line_item_table %>
 </article>

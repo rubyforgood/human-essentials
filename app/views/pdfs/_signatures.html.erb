@@ -1,19 +1,22 @@
-<%# Two lines per party, name and signature, kept together on one page. Printed when the bank
-    turns on "Signature for distribution PDF". %>
-<section class="signatures">
-  <% ["Received by", "Delivered by"].each do |label| %>
-    <div class="signature-group">
-      <p class="signature-label"><%= label %></p>
-      <div class="signature-row">
-        <div class="signature-field">
-          <div class="signature-line"></div>
-          <p class="signature-caption">Print name</p>
-        </div>
-        <div class="signature-field">
-          <div class="signature-line"></div>
-          <p class="signature-caption">Signature and date</p>
+<%# Two rules per party, name and signature, kept together on one page. Printed when the bank
+    answers yes to "Include signature lines on the distribution printout?". %>
+<section class="section signatures">
+  <div class="section-band"><h2>Sign-off</h2></div>
+  <div class="signature-body">
+    <% ["Received by", "Delivered by"].each do |label| %>
+      <div class="signature-group">
+        <p class="signature-label"><%= label %></p>
+        <div class="signature-row">
+          <div class="signature-field">
+            <div class="signature-line"></div>
+            <p class="signature-caption">Print name</p>
+          </div>
+          <div class="signature-field">
+            <div class="signature-line"></div>
+            <p class="signature-caption">Signature and date</p>
+          </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </section>

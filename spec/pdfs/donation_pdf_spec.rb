@@ -36,7 +36,7 @@ describe DonationPdf do
   specify "#donation_data" do
     results = described_class.new(organization, donation).donation_data
     expect(results).to eq([
-      ["Items received", "Value per item", "In-kind value", "Quantity"],
+      ["Item", "Value per item", "In-kind value", "Quantity"],
       ["Item 1", "$1.00", "$50.00", 50],
       ["Item 2", "$2.00", "$200.00", 100],
       ["Total items received", "", "$250.00", 150]
@@ -49,7 +49,7 @@ describe DonationPdf do
       data = pdf.donation_data
       pdf.hide_columns(data)
       expect(data).to eq([
-        ["Items received", "Quantity"],
+        ["Item", "Quantity"],
         ["Item 1", 50],
         ["Item 2", 100],
         ["Total items received", 150]
