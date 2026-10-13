@@ -141,6 +141,7 @@ they render as nothing at all.
 | A length only the server knows | `style="width: 37.2%"` and `style="min-height: 320px"` written straight into the markup -- `page-audit.rb` counted both as defects and had done since each was written | A CSS custom property: the row carries `style="--share-fill: 37.2%"`, the stylesheet carries `width: var(--share-fill, 0%)`. Declarations in CSS, values in the markup |
 | Asking for an address | Five shapes across seven screens: four models with one freeform `address` box, `state` a select on one form and a free text box on another, `zip_code` a string beside an integer `program_zip_code`, the same box labelled "Street", "Street address" and "Address (line 1)", and no `autocomplete` on any of the 17 inputs | Four fields everywhere, from `address_field(role)`, which owns the label, the state list, the ZIP pattern and the WCAG 1.3.5 token. `pw bin/design/address-audit.js` fails if a screen writes its own — or goes back to one box |
 | JS | jQuery + Bootstrap + AdminLTE widgets | Stimulus; jQuery only where a third-party widget needs it |
+| Printed documents | Prawn, prawn-rails and prawn-table: four Ruby classes placing text by cursor arithmetic in Open Sans, with grey zebra rows and `[  ]` typed as a checkbox | ERB views under `app/views/pdfs`, rendered by sghtmltopdf from `ApplicationPdf` and styled by `app/assets/pdf/pdf.css` in Figtree (ADR 0013). Same `#compute_and_render` interface, so no caller changed |
 
 ## What was migrated, by area
 

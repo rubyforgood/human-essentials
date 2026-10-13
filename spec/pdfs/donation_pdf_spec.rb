@@ -36,11 +36,10 @@ describe DonationPdf do
   specify "#donation_data" do
     results = described_class.new(organization, donation).donation_data
     expect(results).to eq([
-      ["Items Received", "Value/item", "In-Kind Value", "Quantity"],
+      ["Items received", "Value per item", "In-kind value", "Quantity"],
       ["Item 1", "$1.00", "$50.00", 50],
       ["Item 2", "$2.00", "$200.00", 100],
-      ["", "", "", ""],
-      ["Total Items Received", "", "$250.00", 150]
+      ["Total items received", "", "$250.00", 150]
     ])
   end
 
@@ -50,11 +49,10 @@ describe DonationPdf do
       data = pdf.donation_data
       pdf.hide_columns(data)
       expect(data).to eq([
-        ["Items Received", "Quantity"],
+        ["Items received", "Quantity"],
         ["Item 1", 50],
         ["Item 2", 100],
-        ["", ""],
-        ["Total Items Received", 150]
+        ["Total items received", 150]
       ])
     end
   end
@@ -69,11 +67,12 @@ describe DonationPdf do
       if donation.comment
         expect(pdf_test.page(1).text).to include(donation.comment)
       end
-      expect(pdf_test.page(1).text).to include("Money Raised In Dollars: $0.00")
-      expect(pdf_test.page(1).text).to include("Items Received")
+      # The label and its value sit on consecutive lines of the "Money raised" tile.
+      expect(pdf_test.page(1).text).to match(/Money raised.*\n\s*.*\$0\.00/)
+      expect(pdf_test.page(1).text).to include("Items received")
       expect(pdf_test.page(1).text).to match(/Item 1\s+\$1\.00\s+\$50\.00\s+50/)
       expect(pdf_test.page(1).text).to match(/Item 2\s+\$2\.00\s+\$200\.00\s+100/)
-      expect(pdf_test.page(1).text).to include("Total Items Received")
+      expect(pdf_test.page(1).text).to include("Total items received")
     end
   end
 

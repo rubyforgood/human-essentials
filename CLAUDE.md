@@ -86,6 +86,10 @@ in CSS. There is no precompile list — everything on the load path is served.
 
 The UI follows a documented design system. **`design.md` is normative** — read it before building or changing a screen. Components are partials in `app/views/shared/essentials/` and helpers in `EssentialsUiHelper`; build from those rather than from utility strings.
 
+The printed documents (picklists, distribution and donation receipts, purchase records) are ERB
+views in `app/views/pdfs`, rendered to PDF by sghtmltopdf from `ApplicationPdf` and styled by
+`app/assets/pdf/pdf.css` — plain CSS, not Tailwind (ADR 0013, `design.md` under Print).
+
 Bootstrap and AdminLTE were removed (ADR 0011). A class like `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is defined nowhere and renders as nothing — see `docs/migration-map.md` for what to write instead.
 
 ### Background Jobs

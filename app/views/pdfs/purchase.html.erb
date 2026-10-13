@@ -1,0 +1,19 @@
+<% purchase = @pdf.purchase %>
+<article class="sheet">
+  <%= render "pdfs/letterhead", pdf: @pdf %>
+  <%= render "pdfs/title", pdf: @pdf,
+        title: purchase.purchased_from_view.presence || "Purchase",
+        subtitle: "Purchase #{purchase.id}",
+        figure: dollar_presentation(purchase.amount_spent_in_cents),
+        figure_label: "amount spent" %>
+
+  <dl class="facts">
+    <%= render "pdfs/fact", label: "Issued on", lines: [purchase.issued_at.to_fs(:date_picker)] %>
+    <% if purchase.storage_location %>
+      <%= render "pdfs/fact", label: "Storage location", lines: [purchase.storage_location.name] %>
+    <% end %>
+  </dl>
+
+  <%= render "pdfs/note", body: purchase.comment %>
+  <%= render "pdfs/line_items", table: @pdf.line_item_table, heading: "Items" %>
+</article>

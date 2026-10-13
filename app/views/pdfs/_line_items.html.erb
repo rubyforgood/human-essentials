@@ -1,0 +1,43 @@
+<%# The line item table. `table` is an ApplicationPdf::Table: its columns say how each cell prints,
+    so a quantity is right-aligned, a pick column draws a box and a write-in column stays blank.
+
+    A whole number prints with thousands separators, whether it arrived as an Integer or as the
+    String a request stores; anything else -- "120 packs", a dollar value -- prints as given. %>
+<% format_cell = ->(value) { value.to_s.match?(/\A\d+\z/) ? number_with_delimiter(value.to_i) : value } %>
+<h2 class="section-heading">
+  <%= heading %>
+  <span class="section-heading-meta">· <%= pluralize(table.rows.size, "item") %></span>
+</h2>
+<table class="line-items">
+  <thead>
+    <tr>
+      <% table.columns.each do |column| %>
+        <th class="<%= column.css_class %>"><%= column.label %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% table.rows.each do |row| %>
+      <tr>
+        <% table.columns.zip(row).each_with_index do |(column, value), index| %>
+          <% if column.kind == :check %>
+            <td class="<%= column.css_class %>"><span class="checkbox"></span></td>
+          <% elsif column.kind == :write_in %>
+            <td class="<%= column.css_class %>"></td>
+          <% else %>
+            <td class="<%= [column.css_class, ("item-name" if index.zero?), ("quantity" if column.kind == :quantity)].compact.join(" ") %>"><%= format_cell.(value) %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+  <% if table.totals %>
+    <tfoot>
+      <tr>
+        <% table.columns.zip(table.totals).each do |column, value| %>
+          <td class="<%= column.css_class %>"><%= format_cell.(value) %></td>
+        <% end %>
+      </tr>
+    </tfoot>
+  <% end %>
+</table>

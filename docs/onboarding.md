@@ -251,6 +251,21 @@ stale, that file is usually why.
 enhances the task. Follow it with `bin/rails tailwindcss:build` or every page will 500 on a
 missing `tailwind.css`.
 
+**The printed documents are views, and their specs compare text.** Picklists and the three
+receipts are ERB under `app/views/pdfs`, turned into PDFs by sghtmltopdf. `spec/pdfs` compares the
+text of each rendered PDF with a snapshot in `spec/fixtures/files/pdf_text/`. A PDF is never
+byte-identical twice, because the engine stamps it with the time. If you change a document on
+purpose, regenerate the snapshots from a sandbox console:
+
+```ruby
+load "lib/test_helpers/pdf_comparison_test_factory.rb"
+PDFComparisonTestFactory.create_comparison_pdfs
+```
+
+Read the diff of the `.txt` files before you commit them. To look at a document, write
+`PicklistsPdf.new(organization, [request]).compute_and_render` to a file and open it. `design.md`,
+under Print, has the anatomy every document follows.
+
 **Development shows the same page size as production.** Kaminari used to default to 5 rows in
 development and staging and 50 everywhere else, so a page under review never looked like the
 page a bank sees — you got a pager under a five-row table and never saw the long one. It is 25
@@ -1149,7 +1164,8 @@ the list.
 
 *Print* gives you a PDF of the purchase, laid out like the donation receipt: your logo and address,
 who you bought from, the amount spent, the storage location, your comments and the items. If your
-organization has *Hide value columns on receipts* switched on, the values are left out here too.
+organization answers yes to *Hide value columns on the distribution and donation printouts?*, the
+values are left out here too.
 
 ### You can scan a barcode when adding one
 
@@ -1520,6 +1536,30 @@ tab. A partner's **Help** page was titled after the diaper bank rather than the 
 family showed "Families", the same as the list; and several admin forms showed their index's title,
 so *New broadcast announcement* and the list of them were indistinguishable in a row of tabs. All
 named now.
+
+### Picklists and receipts have a new look
+
+Everything you print has been redesigned to match the rest of the app: **picklists, distribution
+receipts, donation receipts and purchase records.** What they contain has not changed, and nor have
+the buttons that print them.
+
+- **Your logo and address sit at the top**, as before, with what the document is and who it is for
+  underneath in large type.
+- **The number you look for first is at the top right.** That is how many items to pick, how many
+  items were received, or how much a purchase cost.
+- **Contacts, dates and totals sit in a row of boxes** under the title, instead of in two columns
+  that could run into each other when a name was long.
+- **A picklist has real tick boxes** in the *Picked* column, and a wide, empty *Differences /
+  comments* column for writing down what was short or swapped.
+- **Big numbers have commas**, so 12051 now reads 12,051.
+- **Every page says "Page 1 of 2"** at the bottom, and the footer repeats on every page.
+
+The printout settings under your organization's settings behave exactly as they did:
+
+- *Show year-to-date values on the distribution printout?*
+- *Include signature lines on the distribution printout?*
+- *Hide value columns on the distribution and donation printouts?*, which covers purchases too
+- *Hide the package column on the distribution printout?*
 
 ### Brought over from the main branch
 

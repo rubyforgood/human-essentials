@@ -1,0 +1,22 @@
+<% donation = @pdf.donation %>
+<% donor = @pdf.donor %>
+<article class="sheet">
+  <%= render "pdfs/letterhead", pdf: @pdf %>
+  <%= render "pdfs/title", pdf: @pdf,
+        title: donor.name.presence || "Donation",
+        subtitle: "Donation #{donation.id} · #{donation.source}",
+        figure: number_with_delimiter(donation.line_items.total),
+        figure_label: "items received" %>
+
+  <dl class="facts">
+    <%# The donor's name is the title; the tile carries how to reach them, when the source has it. %>
+    <% if donor.address.present? || donor.email.present? %>
+      <%= render "pdfs/fact", label: "Donor contact", lines: [donor.address, donor.email] %>
+    <% end %>
+    <%= render "pdfs/fact", label: "Issued on", lines: [donation.issued_at.to_fs(:date_picker)] %>
+    <%= render "pdfs/fact", label: "Money raised", lines: [@pdf.money_raised] %>
+  </dl>
+
+  <%= render "pdfs/note", body: donation.comment %>
+  <%= render "pdfs/line_items", table: @pdf.line_item_table, heading: "Items" %>
+</article>

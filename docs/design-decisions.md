@@ -10010,3 +10010,97 @@ helper without an argument. Now the bar does too, and a request spec checks the 
   `body`, which is the local every empty state actually passes. *"Please try the button below"*
   planted in this page's body gave **0 findings**. With `body` added it gives 2, and the app as a
   whole still gives 0, so no existing body was failing.
+
+## 2026-10-12 — The printed documents became views, rendered by sghtmltopdf
+
+The picklist was the prompt: Open Sans, grey zebra rows, Title Case headings under a heavy black
+rule, and `[  ]` typed where a tick box belonged. Nothing in the design system had reached the four
+PDFs, because they were not built from anything the design system owns. ADR 0013 records the
+engine choice. These are the calls inside it.
+
+### The Prawn classes kept their interface
+
+`PicklistsPdf.new(organization, requests).compute_and_render` still returns the bytes. It now
+renders a view and hands it to the engine. Five controllers and `DistributionMailer` call that
+interface, and request specs stub it, so keeping it meant none of them changed. The row-building
+methods the specs exercise also stayed: `request_data`, `donation_data`, `hide_columns` and the
+rest. Their labels are sentence case now, and they no longer carry the empty spacer row Prawn used
+to draw a gap above the total.
+
+**Rejected: `render pdf:` in the controllers.** The gem registers a wicked_pdf-style renderer, and
+it would have been fewer lines. But the mailer renders outside a request, and two code paths for
+one document is how the four Prawn classes came to differ.
+
+### One anatomy for all four
+
+Letterhead, title, facts, comments, line items, footer, in that order, on every document. A
+receipt and a picklist have different jobs, but a bank prints both every day, and a reader who has
+learned one should be able to find things on the other. The anatomy is in
+[Print](../design.md#print).
+
+**The headline figure is the number the reader looks for first.** That is items to pick on a
+picklist, items received on a receipt, and the amount spent on a purchase. Prawn printed none of
+these at the top. A volunteer checking a pallet wants the count before the list.
+
+**A tile never repeats the title.** The first draft of the donation receipt had a *Donation from*
+tile saying exactly what the title said, and the purchase record had *Purchased from* and *Amount
+spent* tiles duplicating the title and the headline. All three went.
+
+### The picklist is a form you fill in with a pen
+
+*Picked* draws a 10px box with a `slate-400` edge. *Differences / comments* is a third of the
+table, blank, and its row's hairline is the line to write on. There is no zebra striping, because
+a grey band is something a pen has to write over. This follows `.data-table`, which does not stripe
+either.
+
+**Rejected: a "Picked by / checked by" sign-off block.** It is useful and it was not asked for.
+The distribution receipt keeps its optional signature lines, redrawn as two labelled rules per
+party.
+
+### Tiles sized to content, not split evenly
+
+Equal-width tiles squeezed a 43-character email address onto two lines, broken mid-word. That
+looked wrong, and it also broke the specs, which look for the address in the extracted text. Tiles
+are now `flex: 1 1 auto` with `white-space: nowrap`: each is as wide as its content, and a tile that
+does not fit starts a second row.
+
+### Letter, not A4
+
+`config/initializers/prawn.rb` said A4. The old golden PDFs measure 612 × 792 points, which is US
+Letter. The A4 setting only applied to `.prawn` templates, and there were none. The documents stay
+on Letter, which is what the banks' printers hold.
+
+### Text snapshots instead of byte-identical PDFs
+
+sghtmltopdf writes the current time into `/CreationDate` and a fresh `/ID` on every render. Two
+renders a second apart differed in exactly those two places, measured with compression off. It
+ignores `SOURCE_DATE_EPOCH`. The six golden comparisons now check the text `PDF::Reader` extracts,
+in the position it falls on the page, against files in `spec/fixtures/files/pdf_text/`. That still
+catches a missing field, a moved column, or a label that changed. It does not catch a colour, a
+font, or a rule that disappeared. Those were checked by eye, from rendered pages, for all four
+documents, with and without an uploaded logo.
+
+The picklist's comparison request is created with a fixed ID, because the picklist prints the
+request number and a sequence-assigned one would drift between runs.
+
+### A production-only font failure, caught before commit
+
+The first `pdf.css` pointed `@font-face` at `../fonts/figtree/…`, relative to the stylesheet.
+Development served the stylesheet from its source directory, so the path resolved. A precompiled
+copy of the app printed four `failed to load @font-face "Figtree"` warnings, and the PDF was set in
+a system font. Propshaft leaves a relative `url()` untouched, so nothing pointed into
+`public/assets`. Logical paths (`url("figtree/Figtree-Regular.ttf")`) are digested by Propshaft and
+mapped back to files by the gem's stylesheet helper. The same production-mode render then embedded
+all four faces with no warnings.
+
+### Named, not done
+
+- **The package column setting still applies to distributions only.** Its label says so: *Hide the
+  package column on the distribution printout?* The donation receipt and purchase record have no
+  package column to hide, as under Prawn.
+- **The old golden PDFs `distribution_program_address.pdf` and `distribution_same_address.pdf`
+  stay.** The partner document upload specs attach them as ordinary files. The other four golden
+  PDFs were deleted.
+- **`bin/design/dead-code.rb` resolves templates by literal path.** `ApplicationPdf` first derived
+  each template name from the class name, and the audit reported all four views as rendered by
+  nothing. Each subclass now names its template in full, which a search also finds.

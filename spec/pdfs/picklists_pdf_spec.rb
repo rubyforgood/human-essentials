@@ -18,21 +18,21 @@ describe PicklistsPdf do
       expect(pdf_test.page(1).text).to include(request1.partner.name)
       expect(pdf_test.page(1).text).to include(request1.partner.profile.primary_contact_name)
       expect(pdf_test.page(1).text).to include(request1.partner.profile.primary_contact_email)
-      expect(pdf_test.page(1).text).to include("Requested on:")
-      expect(pdf_test.page(1).text).to include("Items Received Year-to-Date:")
+      expect(pdf_test.page(1).text).to include("Requested on")
+      expect(pdf_test.page(1).text).to include("Items received year-to-date")
       expect(pdf_test.page(1).text).to include("Comments")
       expect(pdf_test.page(1).text).to include(request1.comments)
-      expect(pdf_test.page(1).text).to include("Items Requested")
+      expect(pdf_test.page(1).text).to include("Items")
       expect(pdf_test.page(1).text).to include("Item 1")
 
       expect(pdf_test.page(2).text).to include(request2.partner.name)
       expect(pdf_test.page(2).text).to include(request2.partner.profile.primary_contact_name)
       expect(pdf_test.page(2).text).to include(request2.partner.profile.primary_contact_email)
-      expect(pdf_test.page(2).text).to include("Requested on:")
-      expect(pdf_test.page(2).text).to include("Items Received Year-to-Date:")
+      expect(pdf_test.page(2).text).to include("Requested on")
+      expect(pdf_test.page(2).text).to include("Items received year-to-date")
       expect(pdf_test.page(2).text).to include("Comments")
       expect(pdf_test.page(2).text).to include(request2.comments)
-      expect(pdf_test.page(2).text).to include("Items Requested")
+      expect(pdf_test.page(2).text).to include("Items")
       expect(pdf_test.page(2).text).to include("Item 2")
     end
 
@@ -49,8 +49,8 @@ describe PicklistsPdf do
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
 
-        expect(pdf_test.page(1).text).to include("Items Received Year-to-Date:")
-        expect(pdf_test.page(1).text).to include("17827")
+        expect(pdf_test.page(1).text).to include("Items received year-to-date")
+        expect(pdf_test.page(1).text).to include("17,827")
       end
     end
 
@@ -80,7 +80,7 @@ describe PicklistsPdf do
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
 
-        expect(pdf_test.page(1).text).to include("Quota:")
+        expect(pdf_test.page(1).text).to include("Quota")
         expect(pdf_test.page(1).text).to include("100")
       end
 
@@ -92,7 +92,7 @@ describe PicklistsPdf do
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
 
-        expect(pdf_test.page(1).text).not_to include("Quota:")
+        expect(pdf_test.page(1).text).not_to include("Quota")
       end
 
       it "does not render quota information when quota is zero" do
@@ -103,7 +103,7 @@ describe PicklistsPdf do
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
 
-        expect(pdf_test.page(1).text).not_to include("Quota:")
+        expect(pdf_test.page(1).text).not_to include("Quota")
       end
     end
   end
@@ -113,13 +113,15 @@ describe PicklistsPdf do
     create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5)
     create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
     pdf = described_class.new(organization, [request])
-    data = pdf.data_no_units(request.item_requests)
+    table = pdf.data_no_units(request.item_requests)
 
-    expect(data).to eq([
-      ["Items Requested", "Quantity", "[X]", "Differences / Comments"],
-      ["Item 1", "5", "[  ]", ""],
-      ["Item 2", "10", "[  ]", ""]
+    expect(table.columns.map(&:label)).to eq(["Item", "Quantity", "Picked", "Differences / comments"])
+    expect(table.columns.map(&:kind)).to eq([:text, :quantity, :check, :write_in])
+    expect(table.rows).to eq([
+      ["Item 1", "5", nil, nil],
+      ["Item 2", "10", nil, nil]
     ])
+    expect(table.totals).to be_nil
   end
 
   specify "#data_with_units" do
@@ -129,12 +131,12 @@ describe PicklistsPdf do
     create(:item_request, request: request, item: item_with_units, name: "Item with units", request_unit: "Pack", quantity: 5)
     create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
     pdf = described_class.new(organization, [request])
-    data = pdf.data_with_units(request.item_requests)
+    table = pdf.data_with_units(request.item_requests)
 
-    expect(data).to eq([
-      ["Items Requested", "Quantity", "Unit (if applicable)", "[X]", "Differences / Comments"],
-      ["Item with units", "5", "Packs", "[  ]", ""],
-      ["Item 2", "10", nil, "[  ]", ""]
+    expect(table.columns.map(&:label)).to eq(["Item", "Quantity", "Unit", "Picked", "Differences / comments"])
+    expect(table.rows).to eq([
+      ["Item with units", "5", "Packs", nil, nil],
+      ["Item 2", "10", nil, nil, nil]
     ])
   end
 
@@ -142,13 +144,13 @@ describe PicklistsPdf do
     def compare_picklist_pdf(requests, expected_file_path)
       pdf_file = PDFComparisonTestFactory.render_picklist_pdf(organization, requests)
       begin
-        # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
+        # Run the following from Rails sandbox console (bin/rails console --sandbox) to regenerate these text snapshots:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
         # => PDFComparisonTestFactory.create_comparison_pdfs
-        expect(pdf_file).to eq(IO.binread(expected_file_path))
+        expect(PDFComparisonTestFactory.pdf_text(pdf_file)).to eq(File.read(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
-        Rails.root.join("tmp", "failed_match_picklist_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
-        raise e.class, "PDF does not match, written to tmp/", cause: nil
+        Rails.root.join("tmp", "failed_match_picklist_" + expected_file_path.basename(".txt").to_s + ".pdf").binwrite(pdf_file)
+        raise e.class, "PDF text does not match, written to tmp/\n#{e.message}", cause: nil
       end
     end
 
@@ -164,7 +166,8 @@ describe PicklistsPdf do
       end
 
       it "compares against expected PDF file" do
-        request = PDFComparisonTestFactory.create_line_items_request(partner: partner, storage_creation: storage_creation)
+        request = PDFComparisonTestFactory.create_line_items_request(partner: partner, storage_creation: storage_creation,
+          id: PDFComparisonTestFactory::PICKLIST_REQUEST_ID)
         compare_picklist_pdf([request], expected_picklist_file_path)
       end
     end

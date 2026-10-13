@@ -1,0 +1,31 @@
+<% distribution = @pdf.distribution %>
+<% profile = @pdf.profile %>
+<% table = @pdf.line_item_table %>
+<article class="sheet">
+  <%= render "pdfs/letterhead", pdf: @pdf %>
+  <%= render "pdfs/title", pdf: @pdf,
+        title: distribution.partner.name,
+        subtitle: "Distribution #{distribution.id}",
+        figure: number_with_delimiter(distribution.line_items.total),
+        figure_label: "items received" %>
+
+  <dl class="facts">
+    <%= render "pdfs/fact", label: "Primary contact",
+          lines: [profile.primary_contact_name, profile.primary_contact_email, profile.primary_contact_phone] %>
+    <% if (address = @pdf.delivery_address_lines) %>
+      <%= render "pdfs/fact", label: "Delivery address", lines: address %>
+    <% end %>
+    <%= render "pdfs/fact", label: "Issued on", lines: [distribution.distributed_at] %>
+    <% if @pdf.organization.ytd_on_distribution_printout %>
+      <%= render "pdfs/fact", label: "Items received year-to-date",
+            lines: [number_with_delimiter(distribution.partner.quantity_year_to_date)] %>
+    <% end %>
+  </dl>
+
+  <%= render "pdfs/note", body: distribution.comment %>
+  <%= render "pdfs/line_items", table: table, heading: "Items" %>
+
+  <% if @pdf.organization.signature_for_distribution_pdf %>
+    <%= render "pdfs/signatures" %>
+  <% end %>
+</article>

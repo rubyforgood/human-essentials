@@ -74,8 +74,9 @@ gem "omniauth"
 gem "omniauth-rails_csrf_protection"
 # Allow login via Google.
 gem "omniauth-google-oauth2"
-# Generate PDFs as views.
-gem "prawn-rails"
+# Turns the printed documents (picklists, receipts) from HTML into PDF, in-process and with no
+# browser. See ADR 0013 and app/pdfs/application_pdf.rb.
+gem "sghtmltopdf", "~> 0.5.1"
 # Reduces boilerplate HTML code when writing forms.
 gem "simple_form"
 
@@ -115,9 +116,6 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "prawn", "~> 2.4.0"
-gem "matrix" # Used by prawn
-gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access

@@ -26,7 +26,11 @@ VIEWS = File.join(ROOT, "app/views")
 # `static/` is the legal pages, which `StaticController` renders with `layout false`: complete
 # HTML documents carrying their own `<style>`. They are not built from this design system and
 # were never meant to be.
-SKIP = %r{/(\w+_mailer|users/mailer|kaminari|static)/|/layouts/mailer\.}
+#
+# `pdfs/` and `layouts/pdf.html.erb` are the printed documents: HTML that sghtmltopdf turns into a
+# PDF and no browser ever renders. They are styled by app/assets/pdf/pdf.css, not Tailwind,
+# so `.data-table` and the rest of the shell's classes do not exist there (ADR 0013).
+SKIP = %r{/(\w+_mailer|users/mailer|kaminari|static|pdfs)/|/layouts/(mailer|pdf)\.}
 
 # ERB comments are prose about the markup, and prose talks about the very patterns being looked
 # for -- these files are full of sentences like "was `float-right`". Both comment forms have to

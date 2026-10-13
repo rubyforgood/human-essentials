@@ -1,187 +1,54 @@
-require "prawn/table"
-
-# Configures a Prawn PDF template for generating Distribution manifests
-class DistributionPdf
-  include Prawn::View
-  include ItemsHelper
+# The distribution receipt: what a partner was given, and what it was worth. Printed from the
+# distribution page, from the partner portal, and attached to the email DistributionMailer sends.
+class DistributionPdf < ApplicationPdf
+  attr_reader :distribution
 
   def initialize(organization, distribution)
+    super(organization)
     @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
-    @organization = organization
   end
 
-  def compute_and_render
-    font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
-    font "OpenSans"
-    font_size 10
+  def template
+    "pdfs/distribution"
+  end
 
-    logo_image = if @organization.logo.attached?
-                   StringIO.open(@organization.logo.download)
-                 else
-                   Organization::DIAPER_APP_LOGO
-                 end
+  def document_name
+    "Distribution receipt"
+  end
 
-    footer_height = 35
+  def profile
+    distribution.partner.profile
+  end
 
-    # Bounding box containing non-footer elements
-    bounding_box [bounds.left, bounds.top], width: bounds.width, height: bounds.height - footer_height do
-      image logo_image, fit: [250, 85]
+  def line_item_table
+    data = distribution.request ? request_data : non_request_data
+    hide_columns(data)
+    table_from(data, quantities: ["Received", "Quantity"])
+  end
 
-      bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
-        text @organization.name, align: :right
-        text @organization.address, align: :right
-        text @organization.email, align: :right
-      end
+  # The address the goods went to, or nil when they were picked up or the partner has none.
+  # A program address, when there is one, is where deliveries go.
+  def delivery_address_lines
+    return unless distribution.delivery? || distribution.shipped?
+    return unless profile.address1.present? || profile.program_address1.present?
 
-      profile = @distribution.partner.profile
-
-      font_size 12
-      text "Partner Primary Contact:", style: :bold, align: :right
-      text (profile.primary_contact_name.presence || " "), align: :right
-      font_size 10
-      text (profile.primary_contact_email.presence || " "), align: :right
-      text (profile.primary_contact_phone.presence || " "), align: :right
-      move_up 40
-
-      text "Issued to:", style: :bold
-      font_size 12
-      text @distribution.partner.name
-      font_size 10
-      move_down 10
-
-      if (profile.address1.present? || profile.program_address1.present?) &&
-          (@distribution.delivery? || @distribution.shipped?)
-        if profile.program_address1.blank?
-          address1 = profile.address1
-          address2 = profile.address2
-          city = profile.city
-          state = profile.state
-          zip_code = profile.zip_code
-        else
-          address1 = profile.program_address1
-          address2 = profile.program_address2
-          city = profile.program_city
-          state = profile.program_state
-          zip_code = profile.program_zip_code.to_s
-        end
-
-        text "Delivery address:", style: :bold
-        font_size 10
-        text address1
-        text address2
-        text city
-        text state
-        text zip_code
-      end
-
-      move_down 10
-      text "Issued on:", style: :bold
-      font_size 12
-      text @distribution.distributed_at
-      font_size 10
-
-      if @organization.ytd_on_distribution_printout
-        move_up 22
-        text "Items Received Year-to-Date:", style: :bold, align: :right
-        font_size 12
-        text @distribution.partner.quantity_year_to_date.to_s, align: :right
-        font_size 10
-      end
-
-      move_down 10
-      text "Distribution ID:", style: :bold
-      font_size 12
-      text @distribution.id.to_s
-
-      move_down 10
-      text "Comments:", style: :bold
-      font_size 12
-      text @distribution.comment
-
-      move_down 20
-
-      data = @distribution.request ? request_data : non_request_data
-      has_request = @distribution.request.present?
-
-      hide_columns(data)
-      hidden_columns_length = column_names_to_hide.length
-
-      font_size 11
-
-      # Line item table
-      table(data) do
-        self.header = true
-        self.cell_style = {
-          padding: has_request ? [5, 10, 5, 10] : [5, 20, 5, 20]
-        }
-        self.row_colors = %w(dddddd ffffff)
-
-        cells.borders = []
-
-        # Header row
-        row(0).borders = [:bottom]
-        row(0).border_width = 2
-        row(0).font_style = :bold
-        row(0).size = has_request ? 8 : 9
-        row(0).column(1..-1).borders = %i(bottom left)
-
-        # Total Items footer row
-        row(-1).borders = [:top]
-        row(-1).font_style = :bold
-        row(-1).column(1..-1).borders = %i(top left)
-        row(-1).column(1..-1).border_left_color = "aaaaaa"
-
-        # Footer spacing row
-        row(-2).borders = [:top]
-        row(-2).padding = [2, 0, 2, 0]
-
-        column(0).width = 190 + (hidden_columns_length * 60)
-
-        # Quantity column
-        column(1..-1).row(1..-3).borders = [:left]
-        column(1..-1).row(1..-3).border_left_color = "aaaaaa"
-        column(-1).row(-1).borders = [:left, :bottom]
-      end
-
-      if @organization.signature_for_distribution_pdf
-        insert_signature_fields
-      end
+    if profile.program_address1.blank?
+      address_lines(profile.address1, profile.address2, profile.city, profile.state, profile.zip_code)
+    else
+      address_lines(profile.program_address1, profile.program_address2, profile.program_city,
+        profile.program_state, profile.program_zip_code)
     end
-
-    number_pages "Page <page> of <total>",
-                 start_count_at: 1,
-                 at: [bounds.right - 130, 22],
-                 align: :right
-
-    repeat :all do
-      # Page footer
-      bounding_box [bounds.left, bounds.bottom + footer_height], width: bounds.width do
-        stroke_bounds
-        font "OpenSans"
-        font_size 9
-        stroke_horizontal_rule
-        move_down(5)
-
-        logo_offset = (bounds.width - 190) / 2
-        bounding_box([logo_offset, 0], width: 190, height: 33) do
-          text "Lovingly created with", valign: :center
-          image Organization::DIAPER_APP_LOGO, width: 75, vposition: :center, position: :right
-        end
-      end
-    end
-
-    render
   end
 
   def request_data
-    data = [["Items Received",
+    data = [["Items received",
       "Requested",
       "Received",
-      "Value/item",
-      "In-Kind Value Received",
+      "Value per item",
+      "In-kind value received",
       "Packages"]]
-    item_requests = @distribution.request.item_requests.includes(:item)
-    line_items = @distribution.line_items.sorted
+    item_requests = distribution.request.item_requests.includes(:item)
+    line_items = distribution.line_items.sorted
 
     requested_not_received = item_requests.select do |item_request|
       line_items.none? { |i| i.item_id == item_request.item_id }
@@ -206,34 +73,32 @@ class DistributionPdf
         nil]
     end
 
-    data + [["", "", "", "", ""],
-      ["Total Items Received",
-        item_requests.sum { |ir| ir.quantity.to_i },
-        @distribution.line_items.total,
-        "",
-        dollar_value(@distribution.value_per_itemizable),
-        ""]]
+    data + [["Total items received",
+      item_requests.sum { |ir| ir.quantity.to_i },
+      distribution.line_items.total,
+      "",
+      dollar_value(distribution.value_per_itemizable),
+      ""]]
   end
 
   def non_request_data
-    data = [["Items Received",
-      "Value/item",
-      "In-Kind Value",
+    data = [["Items received",
+      "Value per item",
+      "In-kind value",
       "Quantity",
       "Packages"]]
-    data += @distribution.line_items.sorted.map do |c|
+    data += distribution.line_items.sorted.map do |c|
       [c.item.name,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
         c.quantity,
         c.package_count]
     end
-    data + [["", "", "", "", ""],
-      ["Total Items Received",
-        "",
-        dollar_value(@distribution.value_per_itemizable),
-        @distribution.line_items.total,
-        ""]]
+    data + [["Total items received",
+      "",
+      dollar_value(distribution.value_per_itemizable),
+      distribution.line_items.total,
+      ""]]
   end
 
   def hide_columns(data)
@@ -246,45 +111,18 @@ class DistributionPdf
   private
 
   def column_names_to_hide
-    in_kind_column_name = @distribution.request.present? ? "In-Kind Value Received" : "In-Kind Value"
+    in_kind_column_name = distribution.request.present? ? "In-kind value received" : "In-kind value"
     columns_to_hide = []
-    columns_to_hide.push("Value/item", in_kind_column_name) if @organization.hide_value_columns_on_receipt
-    columns_to_hide.push("Packages") if @organization.hide_package_column_on_receipt
+    columns_to_hide.push("Value per item", in_kind_column_name) if organization.hide_value_columns_on_receipt
+    columns_to_hide.push("Packages") if organization.hide_package_column_on_receipt
     columns_to_hide
   end
 
-  def insert_signature_fields
-    minimum_space_required = 165
-    # Signatures lines shouldn't be separated by a page break, so if we can't fit both lines together we make a new page
-    if cursor < minimum_space_required
-      start_new_page
-    else
-      move_down 20
-    end
-
-    signature_lines_for "Received By:"
-
-    move_down 20
-    signature_lines_for "Delivered By:"
-  end
-
-  def signature_lines_for(label)
-    # Calculate half the screen width and the gap between the two signature lines
-    half_width = bounds.width / 2
-    gap = 20
-    left_end = half_width - (gap / 2)
-    right_start = half_width + (gap / 2)
-
-    text label, style: :bold
-    move_down 30
-    stroke do
-      horizontal_line 0, left_end
-      horizontal_line right_start, bounds.width
-    end
-
-    move_down 10
-    draw_text "(Print Name)", at: [0, cursor]
-    draw_text "(Signature and Date)", at: [right_start, cursor]
+  # Street lines, then "City, State Zip" on one line -- the way an address is written on an envelope.
+  # Blank parts drop out, so an incomplete address prints what it has and no stray commas.
+  def address_lines(line1, line2, city, state, zip)
+    state_and_zip = [state, zip.to_s].compact_blank.join(" ")
+    [line1, line2, [city, state_and_zip].compact_blank.join(", ")].compact_blank
   end
 
   def request_display_qty(item_request)

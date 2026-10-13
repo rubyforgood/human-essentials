@@ -3,6 +3,8 @@ require "active_support/testing/time_helpers"
 module PDFComparisonTestFactory
   extend ActiveSupport::Testing::TimeHelpers
 
+  PICKLIST_REQUEST_ID = 456
+
   StorageCreation = Data.define(:organization, :storage_location, :items)
   FilePaths = Data.define(:expected_pickup_file_path, :expected_same_address_file_path, :expected_different_address_file_path, :expected_incomplete_address_file_path, :expected_no_contact_file_path, :expected_picklist_file_path)
 
@@ -46,12 +48,16 @@ module PDFComparisonTestFactory
   end
 
   def self.get_file_paths
-    expected_pickup_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf")
-    expected_same_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf")
-    expected_different_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf")
-    expected_incomplete_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_incomplete_address.pdf")
-    expected_no_contact_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_no_contact.pdf")
-    expected_picklist_file_path = Rails.root.join("spec", "fixtures", "files", "picklist.pdf")
+    # Text snapshots, not PDFs. sghtmltopdf stamps every PDF with its creation time and a fresh
+    # document ID, so two renders of the same document are never byte-identical; the text a reader
+    # would see, laid out where it falls on the page, is what these compare. See ADR 0013.
+    dir = Rails.root.join("spec", "fixtures", "files", "pdf_text")
+    expected_pickup_file_path = dir.join("distribution_pickup.txt")
+    expected_same_address_file_path = dir.join("distribution_same_address.txt")
+    expected_different_address_file_path = dir.join("distribution_program_address.txt")
+    expected_incomplete_address_file_path = dir.join("distribution_incomplete_address.txt")
+    expected_no_contact_file_path = dir.join("distribution_no_contact.txt")
+    expected_picklist_file_path = dir.join("picklist.txt")
 
     FilePaths.new(
       expected_pickup_file_path,
@@ -125,13 +131,16 @@ module PDFComparisonTestFactory
     LineItem.create!(itemizable: distribution, item: storage_creation.items[1], quantity: 100)
   end
 
-  def self.create_line_items_request(partner:, storage_creation:, distribution: nil)
+  # `id` fixes the request's number, which a picklist prints; left to the sequence it would differ
+  # from one run to the next and the text snapshot with it.
+  def self.create_line_items_request(partner:, storage_creation:, distribution: nil, id: nil)
     storage_creation.organization.request_units.find_or_create_by!(name: "pack")
     ItemUnit.find_or_create_by!(item: storage_creation.items[3], name: "pack")
     req1 = Partners::ItemRequest.new(item: storage_creation.items[1], quantity: 30, name: storage_creation.items[1].name, partner_key: storage_creation.items[1].partner_key)
     req2 = Partners::ItemRequest.new(item: storage_creation.items[2], quantity: 50, name: storage_creation.items[2].name, partner_key: storage_creation.items[2].partner_key)
     req3 = Partners::ItemRequest.new(item: storage_creation.items[3], quantity: 120, name: storage_creation.items[3].name, partner_key: storage_creation.items[3].partner_key, request_unit: "pack")
     Request.create!(
+      id: id,
       organization: storage_creation.organization,
       partner: partner,
       distribution: distribution,
@@ -153,6 +162,11 @@ module PDFComparisonTestFactory
     dist
   end
 
+  # Every page's text, as PDF::Reader lays it out, pages separated by a form feed.
+  def self.pdf_text(pdf)
+    PDF::Reader.new(StringIO.new(pdf)).pages.map(&:text).join("\n\f\n") + "\n"
+  end
+
   def self.render_distribution_pdf_at_year_end(organization, distribution)
     travel_to(Time.zone.local(2024, 12, 30, 0, 0, 0)) do
       return DistributionPdf.new(organization, distribution).compute_and_render
@@ -170,7 +184,7 @@ module PDFComparisonTestFactory
       PDFComparisonTestFactory.public_send(profile_create_method, partner)
       dist = create_dist(partner, storage_creation, delivery_method)
       pdf_file = render_distribution_pdf_at_year_end(storage_creation.organization, dist)
-      File.binwrite(expected_file_path, pdf_file)
+      File.write(expected_file_path, pdf_text(pdf_file))
       raise ActiveRecord::Rollback
     end
   end
@@ -180,16 +194,17 @@ module PDFComparisonTestFactory
     ActiveRecord::Base.transaction(requires_new: true) do
       partner = PDFComparisonTestFactory.public_send(partner_create_method, storage_creation.organization)
       PDFComparisonTestFactory.public_send(profile_create_method, partner)
-      request = create_line_items_request(partner: partner, storage_creation: storage_creation)
+      request = create_line_items_request(partner: partner, storage_creation: storage_creation, id: PICKLIST_REQUEST_ID)
       pdf_file = render_picklist_pdf(storage_creation.organization, [request])
-      File.binwrite(expected_file_path, pdf_file)
+      File.write(expected_file_path, pdf_text(pdf_file))
       raise ActiveRecord::Rollback
     end
   end
 
-  # helper function that can be called from Rails console to generate comparison PDFs
+  # helper function that can be called from Rails console to generate the comparison text snapshots
   def self.create_comparison_pdfs
     file_paths = get_file_paths
+    FileUtils.mkdir_p(file_paths.expected_picklist_file_path.dirname)
 
     # ActiveStorage throws FileNotFoundError in a transaction
     # unless logo is uploaded before transaction

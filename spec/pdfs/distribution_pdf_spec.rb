@@ -24,24 +24,22 @@ describe DistributionPdf do
     specify "#request_data" do
       results = described_class.new(organization, distribution).request_data
       expect(results).to eq([
-        ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
+        ["Items received", "Requested", "Received", "Value per item", "In-kind value received", "Packages"],
         ["Item 1", "", 50, "$1.00", "$50.00", "1"],
         ["Item 2", "30", 100, "$2.00", "$200.00", nil],
         ["Item 3", "50", "", "$3.00", nil, nil],
         ["Item 4", "120 packs", "", "$4.00", nil, nil],
-        ["", "", "", "", ""],
-        ["Total Items Received", 200, 150, "", "$250.00", ""]
+        ["Total items received", 200, 150, "", "$250.00", ""]
       ])
     end
 
     specify "#non_request_data" do
       results = described_class.new(organization, distribution).non_request_data
       expect(results).to eq([
-        ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
+        ["Items received", "Value per item", "In-kind value", "Quantity", "Packages"],
         ["Item 1", "$1.00", "$50.00", 50, "1"],
         ["Item 2", "$2.00", "$200.00", 100, nil],
-        ["", "", "", "", ""],
-        ["Total Items Received", "", "$250.00", 150, ""]
+        ["Total items received", "", "$250.00", 150, ""]
       ])
     end
 
@@ -52,13 +50,12 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items Received", "Requested", "Received"],
+            ["Items received", "Requested", "Received"],
             ["Item 1", "", 50],
             ["Item 2", "30", 100],
             ["Item 3", "50", ""],
             ["Item 4", "120 packs", ""],
-            ["", "", ""],
-            ["Total Items Received", 200, 150]
+            ["Total items received", 200, 150]
           ])
         end
 
@@ -67,13 +64,12 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items Received", "Requested", "Received", "Packages"],
+            ["Items received", "Requested", "Received", "Packages"],
             ["Item 1", "", 50, "1"],
             ["Item 2", "30", 100, nil],
             ["Item 3", "50", "", nil],
             ["Item 4", "120 packs", "", nil],
-            ["", "", ""],
-            ["Total Items Received", 200, 150, ""]
+            ["Total items received", 200, 150, ""]
           ])
         end
       end
@@ -85,13 +81,12 @@ describe DistributionPdf do
         data = pdf.request_data
         pdf.hide_columns(data)
         expect(data).to eq([
-          ["Items Received", "Requested", "Received"],
+          ["Items received", "Requested", "Received"],
           ["Item 1", "", 50],
           ["Item 2", "30", 100],
           ["Item 3", "50", ""],
           ["Item 4", "120 packs", ""],
-          ["", "", ""],
-          ["Total Items Received", 200, 150]
+          ["Total items received", 200, 150]
         ])
       end
 
@@ -100,13 +95,12 @@ describe DistributionPdf do
         data = pdf.request_data
         pdf.hide_columns(data)
         expect(data).to eq([
-          ["Items Received", "Requested", "Received", "Packages"],
+          ["Items received", "Requested", "Received", "Packages"],
           ["Item 1", "", 50, "1"],
           ["Item 2", "30", 100, nil],
           ["Item 3", "50", "", nil],
           ["Item 4", "120 packs", "", nil],
-          ["", "", ""],
-          ["Total Items Received", 200, 150, ""]
+          ["Total items received", 200, 150, ""]
         ])
       end
     end
@@ -118,13 +112,12 @@ describe DistributionPdf do
           data = pdf.request_data
           pdf.hide_columns(data)
           expect(data).to eq([
-            ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
+            ["Items received", "Requested", "Received", "Value per item", "In-kind value received"],
             ["Item 1", "", 50, "$1.00", "$50.00"],
             ["Item 2", "30", 100, "$2.00", "$200.00"],
             ["Item 3", "50", "", "$3.00", nil],
             ["Item 4", "120 packs", "", "$4.00", nil],
-            ["", "", "", "", ""],
-            ["Total Items Received", 200, 150, "", "$250.00"]
+            ["Total items received", 200, 150, "", "$250.00"]
           ])
         end
       end
@@ -135,13 +128,13 @@ describe DistributionPdf do
     def compare_pdf(distribution, expected_file_path)
       pdf_file = PDFComparisonTestFactory.render_distribution_pdf_at_year_end(organization, distribution)
       begin
-        # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
+        # Run the following from Rails sandbox console (bin/rails console --sandbox) to regenerate these text snapshots:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
         # => PDFComparisonTestFactory.create_comparison_pdfs
-        expect(pdf_file).to eq(IO.binread(expected_file_path))
+        expect(PDFComparisonTestFactory.pdf_text(pdf_file)).to eq(File.read(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
-        Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
-        raise e.class, "PDF does not match, written to tmp/", cause: nil
+        Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.basename(".txt").to_s + ".pdf").binwrite(pdf_file)
+        raise e.class, "PDF text does not match, written to tmp/\n#{e.message}", cause: nil
       end
     end
 

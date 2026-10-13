@@ -1,0 +1,12 @@
+<%# The bank's logo on the left, who it is and how to reach it on the right. Printed at the top of
+    every document, including each picklist in a batch. %>
+<header class="letterhead">
+  <img class="letterhead-logo" src="<%= pdf.logo_data_uri %>" alt="<%= pdf.organization.name %>">
+  <div class="letterhead-org">
+    <p class="letterhead-org-name"><%= pdf.organization.name %></p>
+    <% if pdf.organization.street.present? %><p><%= pdf.organization.street %></p><% end %>
+    <% locality = [pdf.organization.city, [pdf.organization.state, pdf.organization.zipcode].compact_blank.join(" ")].compact_blank.join(", ") %>
+    <% if locality.present? %><p><%= locality %></p><% end %>
+    <% if pdf.organization.email.present? %><p><%= pdf.organization.email %></p><% end %>
+  </div>
+</header>

@@ -1,0 +1,14 @@
+<%# The page every printed document is rendered into before sghtmltopdf turns it into a PDF.
+    Not a screen: there is no app shell, no JavaScript and no Tailwind, and the stylesheet is
+    inlined because the engine never makes an HTTP request. See app/pdfs/application_pdf.rb. %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @pdf.document_name %> · <%= @pdf.organization.name %></title>
+    <%= sghtmltopdf_stylesheet_link_tag "pdf" %>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

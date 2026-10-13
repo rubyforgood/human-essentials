@@ -4772,8 +4772,58 @@ no tenant on it is a screen you can act on by mistake.
 
 ### Print
 
-`distributions/print` and the picklists are print targets. They render on the app shell and
-rely on the browser's print stylesheet; there is no separate print layout.
+The app prints four documents: **picklists, distribution receipts, donation receipts and purchase
+records**. They are PDFs, made from HTML by sghtmltopdf (ADR 0013). No browser renders them.
+
+| Piece | Where |
+| --- | --- |
+| A document's data and choices | `app/pdfs/<name>_pdf.rb`, a subclass of `ApplicationPdf` |
+| Its layout | `app/views/pdfs/<name>.html.erb`, inside `layouts/pdf.html.erb` |
+| Shared parts | `pdfs/_letterhead`, `_title`, `_fact`, `_note`, `_line_items`, `_signatures` |
+| Styles | `app/assets/pdf/pdf.css` |
+
+**Every document has the same anatomy, top to bottom.**
+
+1. **Letterhead.** The bank's logo on the left, and its name, address and email on the right, over
+   a `slate-200` hairline.
+2. **Title.** A `brand-700` eyebrow says what the document is ("Picklist", "Donation receipt"). The
+   title says who it is for: the partner, the donor or the vendor. A meta line gives the record's
+   number. On the right sits the one figure the reader looks for first: items to pick, items
+   received, or the amount spent.
+3. **Facts.** A row of `slate-50` tiles, each a label and a value, holding who, when and how much.
+   A tile is as wide as its content, so an email address never wraps. When the row is full, the
+   next tile starts a second row.
+4. **Comments**, in a bordered box, printed only when there are some.
+5. **Line items.** `.data-table` on paper: sentence-case `slate-500` headings, hairline rows, no
+   zebra striping, and figures right-aligned with thousands separators. A grey band is something
+   a pen has to write over.
+6. **Footer**, in the page margin, so it repeats on every page: "Lovingly created with Human
+   Essentials" on the left, "Page 1 of 2" on the right.
+
+**A picklist is for writing on.** Its *Picked* column draws an empty box, not the characters
+`[  ]`. Its *Differences / comments* column is a third of the width and blank, and the row's bottom
+rule is the line to write on.
+
+**Do not repeat the title in a tile.** The title already names the partner, donor or vendor, and
+the headline figure already gives the amount. A tile saying either again wastes the row.
+
+**`pdf.css` is not Tailwind.** The engine supports a subset of CSS and does not compile utility
+classes, so the tokens are written out as values with a comment naming each one. If a token changes
+in `application.css`, change it in `pdf.css` too. The engine's limits are listed at the top of that
+file. The ones that bite are `gap` working only on flex containers, fonts having to be TrueType,
+and 600 printing exactly like 700.
+
+**Font URLs are Propshaft logical paths**, such as `url("figtree/Figtree-Regular.ttf")`. A path
+relative to the stylesheet works in development and silently falls back to a system font in
+production.
+
+To see a layout, render the HTML and open it, or render the PDF and look at it:
+
+```ruby
+pdf = PicklistsPdf.new(organization, [request])
+File.write("tmp/picklist.html", pdf.to_html)
+File.binwrite("tmp/picklist.pdf", pdf.compute_and_render)
+```
 
 ## Build
 
