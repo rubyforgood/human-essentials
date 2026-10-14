@@ -51,7 +51,7 @@ export default class extends Controller {
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         bymonthday: parseInt(this.dayOfMonthTarget.value),
-        byhour: 11, // Force RRule to calculate an occurrance after today
+        byhour: 11, // Force RRule to calculate an occurrence after today
         until: untilDate
       })
       reminder_date = this.getFirstOccurrenceAfterToday( rule.all(), today )
@@ -62,7 +62,7 @@ export default class extends Controller {
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),
-        byhour: 11, // Force RRule to calculate an occurrance after today
+        byhour: 11, // Force RRule to calculate an occurrence after today
         wkst: RRule.SU,
         until: untilDate
       })

@@ -24,7 +24,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
         refute page.has_content? '# of Individuals'
       end
 
-      it "Double clicking submit for approval button does not result in the partner attemping to be approved twice" do
+      it "Double clicking submit for approval button does not result in the partner attempting to be approved twice" do
         click_on 'My Profile'
         assert page.has_content? 'Uninvited'
         all('a', text: 'Update Information').last.click

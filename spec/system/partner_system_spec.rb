@@ -31,7 +31,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(partner_awaiting_approval.reload.approved?).to eq(true)
         end
 
-        it 'Double clicking approval button does not result in the partner attemping to be approved twice' do
+        it 'Double clicking approval button does not result in the partner attempting to be approved twice' do
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name

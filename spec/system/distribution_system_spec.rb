@@ -935,7 +935,7 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_content("This distribution has been marked as being completed!")
   end
 
-  it "Double clicking distribution complete does not result in the distribution attemping to be completed twice" do
+  it "Double clicking distribution complete does not result in the distribution attempting to be completed twice" do
     visit new_distribution_path
     item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
     TestInventory.create_inventory(organization,
