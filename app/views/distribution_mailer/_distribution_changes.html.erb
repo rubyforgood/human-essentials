@@ -1,5 +1,16 @@
 <p>We've had to change some items on your distribution</p>
 <ul style="list-style-type:none">
+<% if @distribution_changes[:added].present? %>
+    <li>Items Added</li>
+    <ol style="list-style-type:none">
+        <% @distribution_changes[:added].each do |item| %>
+        <li>
+            <p><%= "#{item[:name]}: #{item[:quantity]}" %></p>
+        </li>
+        <% end %>
+    </ol>
+    </li>
+<% end %>
 <% if @distribution_changes[:updates].any? %>
     <li>Items Updated</li>
     <ol style="list-style-type:none">

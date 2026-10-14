@@ -81,7 +81,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       expect(page).not_to have_content("barcode_to_delete")
     end
 
-    it "Double clicking the delete button does not result in the barcode attemping to be deleted twice" do
+    it "Double clicking the delete button does not result in the barcode attempting to be deleted twice" do
       item = create(:item, name: "Red 1T Diapers", base_item: base_item)
       b_item = create(:barcode_item, organization: organization, barcodeable: item, value: "barcode_to_delete")
 

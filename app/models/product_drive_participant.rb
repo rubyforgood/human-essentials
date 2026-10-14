@@ -30,7 +30,22 @@ class ProductDriveParticipant < ApplicationRecord
   validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |pdp| pdp.contact_name.blank? }
   validates :comment, length: { maximum: 500 }
 
-  scope :alphabetized, -> { order(:contact_name) }
+  # Orders on the name the drop-downs actually show - `display_name`, which is
+  # `business_name` falling back to `contact_name` - rather than on the database
+  # collation, which is not the same everywhere: a `C.UTF-8` cluster puts every
+  # capitalised name before every lowercase one and the `en_US.utf8` image CI
+  # runs does not.
+  #
+  # `leading_digit_sort_key` (db/functions/leading_digit_sort_key_v01.sql, added
+  # via the `fx` gem) zero-pads a leading run of digits so "2" sorts before
+  # "10" - it does not natural-sort a digit run in the middle of the name. That
+  # scope was the deliberate tradeoff, over a fuller tokenizing version, agreed
+  # on in https://github.com/rubyforgood/human-essentials/pull/5656.
+  DISPLAY_NAME_ORDER = Arel.sql(
+    "leading_digit_sort_key(coalesce(NULLIF(business_name, ''), contact_name, ''))"
+  )
+
+  scope :alphabetized, -> { order(DISPLAY_NAME_ORDER) }
   scope :by_business_name, ->(business_name) { where("business_name ILIKE ?", "%#{business_name}%") }
   scope :by_contact_name, ->(contact_name) { where("contact_name ILIKE ?", "%#{contact_name}%") }
   scope :with_volumes, -> {
