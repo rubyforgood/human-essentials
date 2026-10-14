@@ -32,7 +32,8 @@
           <%=
               download_button_to(
                 range_reports_annual_reports_path(year_start: @years.first, year_end: @years.last, format: :csv),
-                text: "Export Yearly Reports"
+                text: "Export Yearly Reports",
+                remote: true
               )
           %>
           This will recalculate all the reports, and may take some time.

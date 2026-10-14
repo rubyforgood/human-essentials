@@ -88,11 +88,13 @@ module UiHelper
     cancel_button_to request.path, { size: "md", text: "Clear Filters" }.merge(options)
   end
 
+  # Pass remote: true to fetch the file in the background with the download controller. rails-ujs
+  # only re-enables a disabled link on the next page load, which a file download never triggers, so
+  # without it the button stays on "Please wait..." (#5691). The controller re-enables it once the
+  # file arrives.
   def download_button_to(link, options = {})
-    # A download link serves a file instead of a new page, so rails-ujs never re-enables the
-    # button on its own (#5691). The download controller fetches the file and re-enables the
-    # button once it arrives, which keeps the double-click protection without leaving it stuck.
-    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options), { data: { controller: "download", action: "download#download" } }
+    properties = options[:remote] ? { data: { controller: "download", action: "download#download" } } : {}
+    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options.except(:remote)), properties
   end
 
   def edit_button_to(link, options = {}, properties = {})
