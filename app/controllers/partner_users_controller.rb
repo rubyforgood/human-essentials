@@ -2,11 +2,16 @@
 
 class PartnerUsersController < ApplicationController
   before_action :authorize_admin
-  before_action :set_partner, only: %i[index create destroy resend_invitation]
+  before_action :set_partner, only: %i[index lookup create destroy resend_invitation]
 
   def index
     @users = @partner.users
     @user = User.new(name: "")
+  end
+
+  def lookup
+    user = User.find_by("LOWER(email) = ?", params[:email].to_s.downcase)
+    render json: {exists: user.present?, has_name: user&.name.present?}
   end
 
   def create
@@ -64,7 +69,7 @@ class PartnerUsersController < ApplicationController
   private
 
   def set_partner
-    @partner = Partner.find(params[:partner_id])
+    @partner = current_organization.partners.find(params[:partner_id])
   end
 
   def user_params
