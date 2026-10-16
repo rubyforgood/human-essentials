@@ -20,7 +20,6 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  item_category_id             :integer
-#  kit_id                       :integer
 #  organization_id              :integer
 #
 
