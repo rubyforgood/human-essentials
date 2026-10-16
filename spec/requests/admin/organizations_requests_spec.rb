@@ -59,7 +59,7 @@ RSpec.describe "Admin::Organizations", type: :request do
     end
 
     describe "POST #create" do
-      let(:valid_organization_params) { attributes_for(:organization, user: { name: 'admin', email: 'admin@example.com'}).except(:logo) }
+      let(:valid_organization_params) { attributes_for(:organization, user: { name: 'admin', email: 'admin@example.com', phone_number: '555-123-4567' }).except(:logo) }
 
       context "with valid params" do
         it "creates an organization and redirects to #index" do
@@ -68,6 +68,7 @@ RSpec.describe "Admin::Organizations", type: :request do
           }.to change(Organization, :count).by(1)
             .and change(SnapshotEvent, :count).by(1)
           expect(response).to redirect_to(admin_organizations_path)
+          expect(User.find_by(email: 'admin@example.com').phone_number).to eq('555-123-4567')
         end
       end
 
