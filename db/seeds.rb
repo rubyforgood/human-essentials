@@ -303,7 +303,7 @@ note = [
 
   # Base profile information all partners should have
   # Includes fields in the agency_information, contacts, and pick_up_person partial
-  # The counties and areas served by the partner are handled elsewere
+  # The counties and areas served by the partner are handled elsewhere
   profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
     partner_id: p.id,

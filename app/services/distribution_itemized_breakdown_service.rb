@@ -1,6 +1,6 @@
 class DistributionItemizedBreakdownService
   #
-  # Initializes the DistributionItemizedBreakdownService whoms
+  # Initializes the DistributionItemizedBreakdownService whose
   # purpose to construct a itemized breakdown of items distributed
   # and what is left on-hand currently (at the time of running)
   #

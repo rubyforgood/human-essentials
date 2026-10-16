@@ -6,7 +6,7 @@
 
 2.  However,  if you're not ready to have your Partners make Requests yet, that's ok -- you can put them in the system without inviting them.   You'll still be able to record what you are distributing to them.
 
-3.  You can import all your Partners at once.  You can only import Partners once, though -- this is a precaution to make sure we don't accidently create duplicates.
+3.  You can import all your Partners at once.  You can only import Partners once, though -- this is a precaution to make sure we don't accidentally create duplicates.
 
 4.  The usual way to handle bringing on Partners to be able to make Requests is to invite them,  then have them fill in their profile before approving them, so that you get the information from them that your bank needs for grants, etc.   However, if that's not how you want to work,  it is also possible to invite and approve them in one step.
 

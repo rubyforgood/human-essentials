@@ -19,7 +19,7 @@ RSpec.describe Tag, type: :model do
     it { should validate_length_of(:name).is_at_most(256) }
   end
 
-  describe "assocations" do
+  describe "associations" do
     it { should have_many(:taggings) }
     it { should belong_to(:organization) }
   end
