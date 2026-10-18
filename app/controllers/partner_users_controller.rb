@@ -13,6 +13,7 @@ class PartnerUsersController < ApplicationController
     @user = UserInviteService.invite(
       email: user_params[:email],
       name: user_params[:name],
+      phone_number: user_params[:phone_number],
       roles: [Role::PARTNER],
       resource: @partner
     )
@@ -68,6 +69,6 @@ class PartnerUsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :name)
+    params.require(:user).permit(:email, :name, :phone_number)
   end
 end
