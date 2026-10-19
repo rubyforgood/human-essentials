@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account request designs &mdash; options</title>
+<link rel="stylesheet" href="/mockup.css">
+<style>
+  body { background: #f8fafc; }
+  .wrap { max-width: 78rem; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  .opt { margin-top: 3rem; }
+  .note { max-width: 50rem; }
+  .frames { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem; align-items: flex-start; }
+  /* The auth shell's form column: max-w-sm (384px) on white. */
+  .frame { width: 26rem; max-width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 2rem; }
+  .frame-label { font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+  .col { width: 100%; max-width: 24rem; }
+  .captcha { width: 304px; height: 78px; border: 1px solid #d3d3d3; border-radius: 3px; background: #f9f9f9; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 14px; color: #000; }
+  .captcha span.box { width: 26px; height: 26px; border: 2px solid #c1c1c1; border-radius: 2px; background: #fff; }
+  /* Option B's tile. Not in the app build yet, so written out here. */
+  .tile { display: flex; gap: 0.75rem; align-items: flex-start; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 0.875rem 1rem; cursor: pointer; }
+  .tile.on { border-color: var(--color-brand-600, #4f46e5); box-shadow: 0 0 0 1px var(--color-brand-600, #4f46e5); background: var(--color-brand-50, #eef2ff); }
+  .tile + .tile { margin-top: 0.5rem; }
+  .radio { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid #94a3b8; background: #fff; flex: none; margin-top: 2px; }
+  .radio.on { border: 5px solid var(--color-brand-600, #4f46e5); }
+  .defects li { margin-top: 0.375rem; }
+  .cost { margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 50rem; }
+  @media (max-width: 640px) { .cost { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="text-2xl font-semibold text-slate-900">Account request page &mdash; designs</h1>
+  <p class="mt-2 text-sm text-slate-600 note">
+    <code>/account_requests/new</code> sits on the auth shell beside <em>Log in</em> but was built before
+    most of the form rules in <code>design.md</code>. Three options below, all from the app&rsquo;s own
+    stylesheet. Each frame is the shell&rsquo;s form column (384px), the width <em>Log in</em> uses.
+    Measured on this branch at 1440&times;900, 19 October 2026.
+  </p>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">What is wrong today, whichever option is chosen</h2>
+    <ol class="defects mt-2 list-decimal pl-5 text-sm text-slate-700 note">
+      <li><strong>The question is not a question.</strong> Two loose radios with no <code>&lt;fieldset&gt;</code> or
+        <code>&lt;legend&gt;</code>, so a screen reader announces two long sentences and never says what they answer.
+        <code>design.md</code>, <em>Building a form page</em>: &ldquo;A radio or checkbox group is a fieldset with a legend.&rdquo;</li>
+      <li><strong>Choosing an answer moves the whole page.</strong> The shell centres its column vertically, so
+        revealing the form throws the heading from y=378 to y=76: 302px, at the moment of the click.</li>
+      <li><strong>Four links look like text.</strong> &ldquo;Sign in to Human Essentials&rdquo;, both directories and &ldquo;partner app&rdquo;
+        have no <code>.link-brand</code> and no underline, so nothing but the cursor says they are links.</li>
+      <li><strong>The callout repeats the radio you just chose against.</strong> &ldquo;Do you <em>partner</em> with banks? Sign in
+        instead&rdquo; appears only <em>after</em> you have said you are a bank.</li>
+      <li><strong>The submit row is a card footer with no card.</strong> <code>border-t px-5 py-3</code> puts a rule across the form
+        and indents <em>Submit</em> 20px off the fields&rsquo; edge. <em>Log in</em> uses a full-width primary button.</li>
+      <li><strong>The form breaks out of the column.</strong> 560px against 384px for every other auth screen, via a
+        <code>.account-request</code> rule that only kicks in at 1400px. Below that it is the column width anyway.</li>
+      <li><strong>A rule is in the label.</strong> &ldquo;Request details (min 50 characters)&rdquo; belongs in a hint, and a
+        2-row textarea for 50+ characters makes you scroll inside it.</li>
+      <li><strong>The heading says &ldquo;bank account&rdquo; above a choice that includes &ldquo;I am a partner&rdquo;.</strong>
+        Seven nested <code>.form-inputs</code> divs that style nothing, and an inline <code>&lt;style&gt;</code> doing the reveal.</li>
+    </ol>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">Today</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">For comparison</span>
+    </div>
+    <div class="frames">
+      <div>
+        <div class="frame-label">Bank chosen</div>
+        <div class="frame">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an essentials bank account</h1>
+          <div class="mt-10 mb-3 flex items-start gap-2"><span class="radio on"></span><span class="text-sm text-slate-700">I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.</span></div>
+          <div class="mb-3 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.</span></div>
+          <div class="mb-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+            <p>Request a free account to use Human Essentials for your organization's essentials bank.</p>
+            <p class="mt-2 font-semibold">Do you <em>partner</em> with diaper or period supply banks? Sign in to the partner app instead.</p>
+          </div>
+          <div class="mb-4"><label class="block text-sm font-medium text-slate-700">Name <abbr class="required-marker">*</abbr></label><input class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"></div>
+          <div class="mb-4 text-center text-xs text-slate-400">&hellip; four more fields &hellip;</div>
+          <div class="mb-4"><label class="block text-sm font-medium text-slate-700">Request details (min 50 characters) <abbr class="required-marker">*</abbr></label><textarea rows="2" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"></textarea></div>
+          <div class="my-2 captcha"><span class="box"></span>I'm not a robot</div>
+          <div class="border-t border-slate-200 px-5 py-3"><button class="inline-flex items-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Submit</button></div>
+        </div>
+      </div>
+      <div>
+        <div class="frame-label">Partner chosen</div>
+        <div class="frame">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an essentials bank account</h1>
+          <div class="mt-10 mb-3 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.</span></div>
+          <div class="mb-3 flex items-start gap-2"><span class="radio on"></span><span class="text-sm text-slate-700">I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.</span></div>
+          <div class="text-sm text-slate-700">
+            <p class="mt-2">Already a partner to a diaper or period supply bank? Sign in to Human Essentials.</p>
+            <p class="mt-2">To receive diapers or period supplies as a partner, contact your local bank directly. Only they can create your account.</p>
+            <p class="mt-2">To find an essentials bank that distributes diapers, use the NDBN member directory. For period supplies, use the Alliance for Period Supplies directory.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">A &mdash; A radio question, and the answer under it</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Recommended</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The question becomes a <code>&lt;fieldset&gt;</code> through the <code>:essentials_collection</code> wrapper,
+      with a short label per answer and the long definition as its hint. Choosing <em>partner</em> reveals a callout under
+      that answer through <code>conditional_reveal</code> (<code>marked: false</code>, because a callout carries its own box).
+      Choosing <em>bank</em> reveals the form after the question. Column top-aligned so nothing jumps.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">Bank chosen</div>
+        <div class="frame"><div class="col">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+          <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+          <fieldset class="mt-6 mb-4">
+            <legend class="block text-sm font-medium text-slate-700 mb-1.5">Which describes your organization? <abbr class="required-marker">*</abbr></legend>
+            <div class="flex items-start gap-2 mb-2"><span class="radio on"></span><span class="text-sm text-slate-700">An essentials bank<span class="block text-xs text-slate-500">We give diapers or period supplies to partner agencies, not to the public.</span></span></div>
+            <div class="flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">A partner agency<span class="block text-xs text-slate-500">We receive supplies from a bank and give them to the public.</span></span></div>
+          </fieldset>
+          <div class="mb-4"><label class="block text-sm font-medium text-slate-700">Name <abbr class="required-marker">*</abbr></label><input class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"></div>
+          <div class="mb-4 text-center text-xs text-slate-400">&hellip; four more fields &hellip;</div>
+          <div class="mb-4"><label class="block text-sm font-medium text-slate-700">Request details <abbr class="required-marker">*</abbr></label><textarea rows="4" placeholder="Tell us about your organization and how you would use Human Essentials" class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400"></textarea><p class="mt-1 block text-xs text-slate-500">At least 50 characters.</p></div>
+          <div class="mb-6 captcha"><span class="box"></span>I'm not a robot</div>
+          <button class="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Submit request</button>
+        </div></div>
+      </div>
+      <div>
+        <div class="frame-label">Partner chosen</div>
+        <div class="frame"><div class="col">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+          <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+          <fieldset class="mt-6 mb-4">
+            <legend class="block text-sm font-medium text-slate-700 mb-1.5">Which describes your organization? <abbr class="required-marker">*</abbr></legend>
+            <div class="flex items-start gap-2 mb-2"><span class="radio"></span><span class="text-sm text-slate-700">An essentials bank<span class="block text-xs text-slate-500">We give diapers or period supplies to partner agencies, not to the public.</span></span></div>
+            <div class="flex items-start gap-2"><span class="radio on"></span><span class="text-sm text-slate-700">A partner agency<span class="block text-xs text-slate-500">We receive supplies from a bank and give them to the public.</span></span></div>
+            <div class="my-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+              <p class="font-semibold">You don&rsquo;t need to request an account.</p>
+              <p class="mt-1">Your bank creates partner accounts. Contact them directly, or find one in the
+                <a href="#" class="link-brand font-medium underline">NDBN member directory</a> (diapers) or the
+                <a href="#" class="link-brand font-medium underline">Alliance for Period Supplies directory</a>.</p>
+              <p class="mt-2">Already a partner? <a href="#" class="link-brand font-medium underline">Log in</a>.</p>
+            </div>
+          </fieldset>
+        </div></div>
+      </div>
+    </div>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">Nothing new. Every part already exists: the collection wrapper, <code>conditional_reveal</code>, the callout, <code>.link-brand</code>, the primary button. A small Stimulus controller replaces the inline <code>&lt;style&gt;</code>, per &ldquo;Stimulus first&rdquo;. The system spec&rsquo;s <code>choose('account_bank')</code> keeps working if the ids stay.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1"><strong>GOV.UK</strong> &ldquo;Conditionally revealing a question&rdquo;, <strong>USWDS</strong> and <strong>NHS</strong> radios with hints, already cited in <code>design.md</code>. <strong>Carbon</strong> radio groups with helper text.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">B &mdash; Two selectable tiles</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">New component</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Same as A, but each answer is a bordered tile. The whole tile is the target, and the chosen one is tinted.
+      Still a <code>&lt;fieldset&gt;</code> of real radios underneath.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">Bank chosen</div>
+        <div class="frame"><div class="col">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+          <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+          <fieldset class="mt-6 mb-6">
+            <legend class="block text-sm font-medium text-slate-700 mb-1.5">Which describes your organization? <abbr class="required-marker">*</abbr></legend>
+            <label class="tile on"><span class="radio on"></span><span class="text-sm"><span class="block font-medium text-slate-900">An essentials bank</span><span class="mt-0.5 block text-slate-600">We give diapers or period supplies to partner agencies, not to the public.</span></span></label>
+            <label class="tile"><span class="radio"></span><span class="text-sm"><span class="block font-medium text-slate-900">A partner agency</span><span class="mt-0.5 block text-slate-600">We receive supplies from a bank and give them to the public.</span></span></label>
+          </fieldset>
+          <div class="mb-4"><label class="block text-sm font-medium text-slate-700">Name <abbr class="required-marker">*</abbr></label><input class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"></div>
+          <div class="mb-4 text-center text-xs text-slate-400">&hellip; the rest as in A &hellip;</div>
+          <button class="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Submit request</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">A component the app does not have, for one page. It needs a <code>design.md</code> entry, focus and checked states, a forced-colours check, and an audit, and every later two-way choice will be argued against it. The tile tint also makes this page the only auth screen with a coloured block before you have done anything.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1"><strong>Carbon</strong> <code>RadioTile</code>, <strong>Cloudscape</strong> <code>Tiles</code>, <strong>Salesforce</strong> Visual Picker. All for a choice that changes what follows, which this is.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">C &mdash; Ask first, on a page of its own</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Changes the flow</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The question is the whole first page, with <em>Continue</em>. Bank goes to the form, and partner goes to a short
+      &ldquo;you don&rsquo;t need an account&rdquo; page. Nothing is hidden, so nothing has to be revealed.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">Step 1</div>
+        <div class="frame"><div class="col">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+          <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+          <fieldset class="mt-6 mb-6">
+            <legend class="block text-sm font-medium text-slate-700 mb-1.5">Which describes your organization? <abbr class="required-marker">*</abbr></legend>
+            <div class="flex items-start gap-2 mb-2"><span class="radio"></span><span class="text-sm text-slate-700">An essentials bank<span class="block text-xs text-slate-500">We give diapers or period supplies to partner agencies, not to the public.</span></span></div>
+            <div class="flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">A partner agency<span class="block text-xs text-slate-500">We receive supplies from a bank and give them to the public.</span></span></div>
+          </fieldset>
+          <button class="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Continue</button>
+        </div></div>
+      </div>
+      <div>
+        <div class="frame-label">Step 2, bank</div>
+        <div class="frame"><div class="col">
+          <a href="#" class="link-brand text-sm font-medium">&larr; Back</a>
+          <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">Tell us about your bank</h1>
+          <div class="mt-6 mb-4"><label class="block text-sm font-medium text-slate-700">Name <abbr class="required-marker">*</abbr></label><input class="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"></div>
+          <div class="mb-4 text-center text-xs text-slate-400">&hellip; the rest as in A &hellip;</div>
+          <button class="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Submit request</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">An extra click and a round trip for every bank, plus a new action or a <code>?account=</code> step, two new screens for the route sweep, and a rewritten system spec. After a failed submit it must come back to step 2, not step 1. It changes upstream&rsquo;s flow, not just its look.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1"><strong>GOV.UK</strong> &ldquo;One thing per page&rdquo; and its &ldquo;question pages&rdquo; pattern, and <strong>USWDS</strong> step-by-step forms. GOV.UK&rsquo;s own advice is to move to a page of its own when a reveal is more than a field or two, and the bank reveal here is six.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt note text-sm text-slate-700">
+    <h2 class="text-lg font-semibold text-slate-900">Recommendation: A</h2>
+    <p class="mt-2">
+      It fixes all eight defects with parts the system already has, and keeps the flow upstream built. B solves a
+      problem the page does not have: two short answers with hints are already easy to tell apart, and a
+      one-page component is the kind of thing <code>design.md</code> tells you to avoid. C is the better design in theory, since
+      GOV.UK is right that six fields is past what a reveal should hold. But it costs every bank a click to filter out
+      partners, who are the minority here, and it is a product change rather than a design one.
+    </p>
+    <p class="mt-2">
+      The copy changes in A (a shorter heading and answers, the partner message) apply to B and C too.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
