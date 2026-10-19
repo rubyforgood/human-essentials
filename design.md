@@ -2129,6 +2129,11 @@ Locals: `id` and `shown` are required; `data`, `class` and `marked` are optional
   from.
 - **When the trigger is a `<select>`** there is no single option to hang the rule under, so the
   6px is simply an indent — carried over so the app has one number rather than two shapes.
+- **The rest of a form is not a field belonging to an answer.** When an answer decides whether the
+  whole form applies — *An essentials bank* on `/account_requests/new` — the form follows the
+  question's `<fieldset>`, flush (`marked: false`), rather than hanging six fields and a captcha
+  under a 16px radio. An answer's own message still goes inside the fieldset, under that answer.
+  A reveal that is not indented is not held to its option's label edge.
 
 `pw bin/design/disclosure-audit.js` checks every reveal on every form: below its trigger, after it
 in the DOM, marked, and hanging 6px off its left edge. It exits non-zero on a defect. **10 reveals,
@@ -4732,6 +4737,11 @@ their own organization's name in the top bar, never the bank's internal navigati
 
 Split: brand panel on the left at `lg`, form column on the right, single centred column below
 that. Used by every Devise view and the account request flow, wired in `config/application.rb`.
+
+The column is centred vertically, which suits a short fixed page like *Log in*. **A page that
+grows once it is answered sets `content_for :auth_align_top`**, and the column starts at the top
+instead: centred, `/account_requests/new` threw its heading 302px up the page at the moment a
+radio revealed the form.
 
 No skip link here, deliberately: there is no repeated navigation block ahead of the content to
 skip past, and a skip link that jumps two elements forward is noise in the tab order.

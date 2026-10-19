@@ -154,7 +154,9 @@ const COLLECT = () => {
           bad.push(`hangs ${r.offsetFromTrigger}px off its trigger, not 6px -- it is not under it`);
         }
         if (r.triggerOnColumn === false) bad.push(`trigger left edge ${r.triggerX} is on no grid column`);
-        if (r.labelBeside && r.labelX !== null && r.fieldX !== null && Math.abs(r.labelX - r.fieldX) > 1) {
+        // The indent is what puts a field on its option's label, so a reveal with no indent is
+        // not held to it: /account_requests/new reveals the whole form after its question, flush.
+        if (!exempt && r.labelBeside && r.labelX !== null && r.fieldX !== null && Math.abs(r.labelX - r.fieldX) > 1) {
           bad.push(`field at ${r.fieldX} does not line up with its option's label at ${r.labelX}`);
         }
         defects += bad.length ? 1 : 0;

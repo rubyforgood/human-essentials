@@ -1564,6 +1564,20 @@ The printout settings under your organization's settings behave exactly as they 
 - *Hide value columns on the distribution and donation printouts?*, which covers purchases too
 - *Hide the package column on the distribution printout?*
 
+### Requesting an account is clearer
+
+The *Request an account* page asks one question first, **Which describes your organization?**, with
+two short answers: *An essentials bank* or *A partner agency*, each with a line explaining it.
+
+- **Choose essentials bank** and the request form appears under the question. The page no longer
+  jumps when it does. The request details box is bigger, and the 50-character minimum is written
+  under it rather than in its name. The button says *Submit request*.
+- **Choose partner agency** and a note appears under that answer: you don't need to request an
+  account, because your bank creates it. It links to the NDBN and Alliance for Period Supplies
+  directories to find a bank, and to *Log in* if you already have an account.
+
+The form asks for the same things as before.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

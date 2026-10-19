@@ -1,102 +1,98 @@
 <% content_for :title, "Request an account - Human Essentials" %>
+<%# Top-aligned: answering the question reveals the form, and a centred column would throw the
+    heading 302px up the page at the moment of the click. %>
+<% content_for :auth_align_top, true %>
 <% unless Rails.env.staging? %>
-  <div class="account-request">
-    <div class="p-3">
-      <div class="mb-10">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an essentials bank account</h1>
+  <%
+    # Server-rendered, so the right panel is showing before Stimulus boots. `account` is the
+    # radio below; it is submitted with the form and ignored by the strong params, which is what
+    # brings a failed submit back with the bank answer still chosen.
+    chosen = params[:account].presence_in(%w[bank partner]) || ("bank" if @bank_selected)
+    radio_classes = "mt-1 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30"
+  %>
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+  <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+
+  <%= essentials_form_for(@account_request, html: {class: "mt-6", data: {controller: "radio-reveal"}}) do |f| %>
+    <%= essentials_error_summary(@account_request) %>
+
+    <%# A real question: the legend is what a screen reader announces before each answer. The
+        two answers used to be loose radios whose labels were the whole definition. %>
+    <fieldset class="mb-4">
+      <legend class="mb-1.5 block text-sm font-medium text-slate-700">Which describes your organization?</legend>
+
+      <div class="mb-2 flex items-start gap-2">
+        <%= radio_button_tag :account, :bank, chosen == "bank", class: radio_classes,
+              aria: {controls: "create_bank", describedby: "account_bank_hint"},
+              data: {action: "radio-reveal#toggle"} %>
+        <div>
+          <%= label_tag :account_bank, "An essentials bank", class: "py-0.5 text-sm text-slate-700" %>
+          <p id="account_bank_hint" class="text-xs text-slate-500">We give diapers or period supplies to partner agencies, not to the public.</p>
+        </div>
       </div>
 
-      <div class="account-type-choice mb-3 flex items-start gap-2">
-        <%= radio_button_tag(:account, :bank, @bank_selected, class: "mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account_bank, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: "text-sm text-slate-700") %>
-      </div>
-      <div class="account-type-choice mb-3 flex items-start gap-2">
-        <%= radio_button_tag(:account, :partner, false, class: "mt-0.5 h-4 w-4 border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30") %>
-        <%= label_tag(:account_partner, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: "text-sm text-slate-700") %>
-      </div>
-
-      <%# Hide #partner_info and #create_bank selections unless radio button selected %>
-      <style>
-        #partner_info, #create_bank {
-          display: none;
-        }
-        .account-type-choice:has(#account_partner:checked) ~ #partner_info,
-        .account-type-choice:has(#account_bank:checked) ~ #create_bank {
-          display: block;
-        }
-      </style>
-
-      <div class="text-sm text-slate-700" id='partner_info'>
-        <p class="mt-2">Already a partner to a diaper or period supply bank? <%= link_to 'Sign in to Human Essentials', new_user_session_path %>.</p>
-        <p class="mt-2">To receive diapers or period supplies as a partner, contact your local bank directly. Only they can create your account.</p>
-        <p class="mt-2">To find an essentials bank that distributes diapers, use the <a href='https://nationaldiaperbanknetwork.org/member-directory/'>NDBN member directory</a>. For period supplies, use the <a href='https://allianceforperiodsupplies.org/allied-programs/'>Alliance for Period Supplies directory</a>.</p>
+      <div class="flex items-start gap-2">
+        <%= radio_button_tag :account, :partner, chosen == "partner", class: radio_classes,
+              aria: {controls: "partner_info", describedby: "account_partner_hint"},
+              data: {action: "radio-reveal#toggle"} %>
+        <div>
+          <%= label_tag :account_partner, "A partner agency", class: "py-0.5 text-sm text-slate-700" %>
+          <p id="account_partner_hint" class="text-xs text-slate-500">We receive supplies from a bank and give them to the public.</p>
+        </div>
       </div>
 
-      <div class="text-sm text-slate-700" id='create_bank'>
-        <%# Was a `<p>` painted `bg-yellow-200` -- a raw palette colour no callout in the app uses --
-            with two `<br>` holding its two sentences apart. It is a callout: it belongs to the page
-            rather than to the request, and it says the same thing on every load. %>
-        <%= render "shared/essentials/callout", tone: :info, wrapper_class: "mb-6" do %>
-          <p>Request a free account to use Human Essentials for your organization's essentials bank.</p>
-          <p class="mt-2 font-semibold">Do you <em>partner</em> with diaper or period supply banks? Sign in to the <%= link_to "partner app", new_user_session_path %> instead.</p>
+      <%# Under the answer that needs it. `marked: false` because a callout carries its own box. %>
+      <%= render "shared/essentials/conditional_reveal", id: "partner_info", shown: chosen == "partner",
+            marked: false, data: {radio_reveal_target: "panel", radio_reveal_value: "partner"} do %>
+        <%= render "shared/essentials/callout", tone: :info, role: nil do %>
+          <p class="font-semibold">You don't need to request an account.</p>
+          <p class="mt-1">
+            Your bank creates partner accounts. Contact them directly, or find one in the
+            <%= link_to "NDBN member directory", "https://nationaldiaperbanknetwork.org/member-directory/",
+                  class: "link-brand font-medium underline" %> (diapers) or the
+            <%= link_to "Alliance for Period Supplies directory", "https://allianceforperiodsupplies.org/allied-programs/",
+                  class: "link-brand font-medium underline" %>.
+          </p>
+          <p class="mt-2">Already a partner? <%= link_to "Log in", new_user_session_path, class: "link-brand font-medium underline" %>.</p>
         <% end %>
+      <% end %>
+    </fieldset>
 
-        <%= essentials_form_for(@account_request) do |f| %>
-          <%= essentials_error_summary(@account_request) %>
+    <%# The rest of the form, not a field belonging to one answer, so it follows the whole
+        question unmarked rather than hanging under the bank radio. %>
+    <%= render "shared/essentials/conditional_reveal", id: "create_bank", shown: chosen == "bank",
+          marked: false, data: {radio_reveal_target: "panel", radio_reveal_value: "bank"} do %>
+      <%= f.input :name %>
+      <%= f.input :email, input_html: {autocomplete: "email"} %>
+      <%= f.input :organization_name %>
+      <%= f.input :organization_website, placeholder: "https://www.example.com" %>
+      <%# f.association renders its own label, so the `for` matches the id it generates.
+          The wrapping f.input produced for="account_request_ndbn_member" against a select
+          whose id is account_request_ndbn_member_id -- the same defect already fixed in
+          organizations/edit.html.erb, and the select was reported as unlabelled. %>
+      <%= f.association :ndbn_member, label: "NDBN membership",
+            label_method: :full_name, value_method: :id %>
+      <%= f.input :request_details, hint: "At least 50 characters.",
+            placeholder: "Tell us about your organization and how you would use Human Essentials",
+            input_html: {rows: 4} %>
 
-          <div class="form-inputs">
-            <div class="form-inputs">
-              <%= f.input :name, autofocus: true %>
-            </div>
-
-            <div class="form-inputs">
-              <%= f.input :email %>
-            </div>
-
-            <div class="form-inputs">
-              <%= f.input :organization_name %>
-            </div>
-
-            <div class="form-inputs">
-              <%= f.input :organization_website, placeholder: "https://www.example.com" %>
-            </div>
-
-            <div class="form-inputs">
-              <%# f.association renders its own label, so the `for` matches the id it generates.
-                  The wrapping f.input produced for="account_request_ndbn_member" against a select
-                  whose id is account_request_ndbn_member_id -- the same defect already fixed in
-                  organizations/edit.html.erb, and the select was reported as unlabelled. %>
-              <%= f.association :ndbn_member, label: "NDBN membership",
-                    label_method: :full_name, value_method: :id %>
-            </div>
-
-            <div class="form-inputs">
-              <%= f.input :request_details, placeholder: 'Tell us more about your organization and how you would use Human Essentials', label: "Request details (min 50 characters)" %>
-            </div>
-          </div>
-
-          <div class="my-2">
-            <%= recaptcha_tags %>
-          </div>
-
-          <div class="border-t border-slate-200 px-5 py-3">
-            <%= submit_button({text: "Submit"}) %>
-          </div>
-        <% end %>
+      <div class="mb-6">
+        <%= recaptcha_tags %>
       </div>
-    </div>
-  </div>
-<% else %>
-  <div class="w-[30rem]">
-    <%= render "shared/essentials/card", title: "Request an account" do %>
-      <div class="space-y-2 text-sm text-slate-700">
-        <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
-        <p>
-          To request an account, go to
-          <%= link_to "request an account on #{production_host}", production_url("/account_requests/new"),
-                class: "font-medium link-brand underline" %>.
-        </p>
-      </div>
+
+      <%= f.button :button, "Submit request", class: essentials_button_classes(variant: :primary, size: :md, extra: "w-full"),
+            data: {disable_with: "Submitting"} %>
     <% end %>
-  </div>
+  <% end %>
+<% else %>
+  <%= render "shared/essentials/card", title: "Request an account" do %>
+    <div class="space-y-2 text-sm text-slate-700">
+      <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
+      <p>
+        To request an account, go to
+        <%= link_to "request an account on #{production_host}", production_url("/account_requests/new"),
+              class: "font-medium link-brand underline" %>.
+      </p>
+    </div>
+  <% end %>
 <% end %>

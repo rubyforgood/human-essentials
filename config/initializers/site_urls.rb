@@ -7,5 +7,9 @@
 # *different* deployment than the one serving the page -- the staging banner
 # pointing people at the live site, and the account request email pointing at
 # the demo site. Override them per-deployment if the canonical domain changes.
-Rails.application.config.x.site_urls.production = ENV.fetch("PRODUCTION_URL", "https://humanessentials.app")
-Rails.application.config.x.site_urls.demo = ENV.fetch("DEMO_URL", "https://staging.humanessentials.app")
+#
+# `.presence`, not `ENV.fetch`: .env.example lists both with no value, and bin/setup copies it to
+# .env, so a fresh checkout sets them to "" -- which `fetch` takes as a value. URI.join("", path)
+# then raises, and the staging page and its spec failed on every machine set up that way.
+Rails.application.config.x.site_urls.production = ENV["PRODUCTION_URL"].presence || "https://humanessentials.app"
+Rails.application.config.x.site_urls.demo = ENV["DEMO_URL"].presence || "https://staging.humanessentials.app"

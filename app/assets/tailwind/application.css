@@ -1446,25 +1446,6 @@
     min-height: 36rem;
     background-color: var(--color-white);
   }
-
-  /*
-   * The account request form is wider than the auth column it sits in, so it breaks out of it.
-   *
-   * It may only do that when there is room. The auth shell is `lg:w-1/2` with `lg:px-16`, so the
-   * column's content box is `50vw - 128px`; the break-out needs 560px, which needs a viewport of
-   * at least 1376. At exactly 1024 the old rule put the form's right edge at 1036 -- 12px past
-   * the viewport -- and the page scrolled sideways. It stays inside the column below that.
-   */
-  .account-request {
-    width: 100%;
-  }
-
-  @media (min-width: 1400px) {
-    .account-request {
-      width: 35rem;
-      margin-left: calc((360px - 35rem) / 2);
-    }
-  }
 }
 
 /*

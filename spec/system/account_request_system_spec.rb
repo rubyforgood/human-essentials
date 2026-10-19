@@ -30,12 +30,12 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       fill_in 'Email', with: account_request_attrs[:email]
       fill_in 'Organization name', with: account_request_attrs[:organization_name]
       fill_in 'Organization website', with: account_request_attrs[:organization_website]
-      fill_in 'Request details (min 50 characters)', with: account_request_attrs[:request_details]
+      fill_in 'Request details', with: account_request_attrs[:request_details]
       select "#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}", from: 'account_request[ndbn_member_id]'
 
       expect(AccountRequest.count).to eq(0)
 
-      click_button 'Submit'
+      click_button 'Submit request'
 
       # Wait for the redirect before asserting on the count, otherwise the
       # async form submission may not have been processed yet. main's flake fix (4c3b72875);
@@ -78,12 +78,12 @@ RSpec.describe 'Account request flow', type: :system, js: true do
     end
 
     context 'with a partner agency' do
-      it 'reveals text that directs current partner to human essentials sign in page' do
+      it 'tells a partner agency it does not need an account, and links to log in' do
         visit('/account_requests/new')
 
         choose(option: 'partner')
 
-        expect(page).to have_link('Sign in to Human Essentials', href: new_user_session_path)
+        expect(page).to have_link('Log in', href: new_user_session_path)
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
         choose('account_bank')
 
         fill_in 'Name', with: "Barbara Smith"
-        click_button 'Submit'
+        click_button 'Submit request'
 
         expect(find_field('account_bank')).to be_checked
         expect(find_field('account_partner')).to_not be_checked

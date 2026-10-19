@@ -10157,3 +10157,47 @@ method under Prawn either. Whether a delivery address appears already says it.
 
 `box-shadow` prints as a solid dark rectangle, and `font-variant-numeric: tabular-nums` is ignored.
 Neither is used. Both are recorded at the top of `app/assets/pdf/pdf.css`.
+
+## 2026-10-19 — The account request page: a question, not a branch in the layout
+
+Reported as *"doesn't look like it is in line with the new design system"*. Measured against
+`design.md`, eight things were wrong: the two radios had no `<fieldset>`/`<legend>`; choosing one
+moved the heading from y=378 to y=76, because the auth shell centres its column; four links had no
+`.link-brand`; a callout after *bank* told the reader to sign in if they were a partner; the submit
+sat in a card footer with no card, 20px off the fields' edge; the form broke out to 560px at 1400px
+and wider where every other auth screen is 384px; "(min 50 characters)" was in a label; and the
+heading said *bank account* above a choice that includes partners.
+
+Three options were previewed (`docs/mockups/account-request-designs.html`). **A was chosen**: a
+radio question with a hint per answer, the partner message revealed under its answer, the bank
+form after the question.
+
+**The bank form is a reveal, but not one hung under the bank radio.** `design.md` says a field
+that belongs to one answer is revealed under it, indented and ruled. Six fields and a captcha are
+not a field belonging to an answer; they are the rest of the page, and indenting all of them under
+a 16px radio would make the form look subordinate to its own question. So the form follows the
+fieldset, flush (`marked: false`), and the partner callout sits inside the fieldset under its
+answer, flush too because a callout carries its own box. `disclosure-audit`'s check that a field
+lines up with its option's label is a consequence of the indent, so it now applies only to marked
+reveals.
+
+**Top-aligned, by a flag on the page rather than for the whole shell.** *Log in* and the password
+pages are short and fixed, and centring suits them. Only a page whose content grows after it is
+answered needs the top: `content_for :auth_align_top`.
+
+**Rejected: B, selectable tiles** (Carbon `RadioTile`, Cloudscape `Tiles`, Salesforce Visual
+Picker). A new component for one page, with focus, checked and forced-colours states to specify
+and audit, for two answers that a hint already tells apart.
+
+**Rejected: C, the question on a page of its own** (GOV.UK "one thing per page"). GOV.UK is right
+that six fields is more than a reveal should hold, and this is the better design in the abstract.
+But it costs every bank an extra page to filter out partners, needs a new step and a rewritten
+system spec, and changes upstream's flow rather than its look. Worth raising upstream; not a
+design-system fix.
+
+**Not changed, and why.** The answer radios are hand-written `radio_button_tag`s, not
+`f.input as: :radio_buttons`: `account` is not an attribute of `AccountRequest`, and the ids
+`account_bank`/`account_partner` are what the system spec and the controller's failed-submit path
+both rely on. They copy the `:essentials_collection` wrapper's legend and radio classes instead.
+reCAPTCHA stays 304px wide: it is an iframe Google sizes.
+
