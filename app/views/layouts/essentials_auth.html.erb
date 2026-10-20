@@ -35,9 +35,17 @@
 
     <%# Centred, except on a page whose content grows when it is answered -- `:auth_align_top` --
         where centring would move everything above the part that grew. %>
-    <main id="main-content" class="flex w-full flex-col <%= content_for?(:auth_align_top) ? "justify-start" : "justify-center" %> px-6 py-12 lg:w-1/2 lg:px-16">
-      <div class="mx-auto w-full max-w-sm">
+    <%#
+      The page is a card on slate-50, on every auth screen -- chosen from the bank finder preview
+      (docs/mockups/bank-finder-designs.html). The card is here, once, so no view draws its own:
+      a view that renders `shared/essentials/card` inside it is a card in a card. 26rem wide with
+      32px padding is the preview's frame, and leaves a 352px column; 24px padding below `sm`,
+      so a 320px phone still has 240px of it.
+    %>
+    <main id="main-content" class="flex w-full flex-col <%= content_for?(:auth_align_top) ? "justify-start" : "justify-center" %> bg-slate-50 px-4 py-12 sm:px-6 lg:w-1/2 lg:px-16">
+      <div class="mx-auto w-full max-w-104">
         <img src="/img/essentials.svg" alt="Human Essentials" class="mb-8 h-10 w-auto lg:hidden">
+        <div class="card-surface p-6 sm:p-8">
 
         <%#
           Staging warning. The AdminLTE version was a Bootstrap `.modal fade` that nothing ever
@@ -68,6 +76,7 @@
 
         <%= render "shared/essentials/flash" %>
         <%= yield %>
+        </div>
       </div>
     </main>
   </div>

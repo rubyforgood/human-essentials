@@ -2027,7 +2027,7 @@ sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be
 to the subtitle's baseline.
 
 <a id="radio-drawing"></a>
-**A radio or checkbox is drawn by the stylesheet, not the browser.** A 16px box with a slate-500
+**A radio or checkbox is drawn by the stylesheet, not the browser.** A 16px box with a slate-400
 edge; checked, it fills with `text-brand-600` and shows a white dot or tick. An indeterminate
 checkbox (a select-all with some rows chosen) gets a white dash. Focus is the brand ring every button
 uses. One base rule in `application.css` does this for every `input[type=radio]` and
@@ -2039,10 +2039,13 @@ native control those classes do nothing, so each browser drew its own: Chrome's 
 with a square focus box, where the design preview had a brand one. Reported as *"this doesn't
 look like the design mock"* on `/account_requests/new`.
 
-- **The edge is slate-500, not the slate-300 the classes say.** WCAG 1.4.11 wants 3:1 for the
-  boundary that shows a control is there. Slate-300 on white is 1.48:1, slate-400 2.56:1 and slate-500
-  4.76:1. The colour is set in an unlayered rule, so it wins over the utility without editing
-  24 class strings in two spellings.
+- **The edge is slate-400, and that is a known WCAG 1.4.11 shortfall.** 1.4.11 wants 3:1 for the
+  boundary that shows a control is there. Slate-300 (what the classes say) is 1.48:1 on white,
+  slate-400 is 2.56:1 and slate-500 is 4.76:1. The control shipped at slate-500 for one commit.
+  Shown the preview's slate-400 with the figures, the owner chose to match the preview. Do not
+  "fix" it back without asking, and do not report it as a new finding: it is recorded in the
+  decision log. The colour is set in an unlayered rule, so it wins over the utility without
+  editing 24 class strings in two spellings.
 - **Forced colours get the system's control back** (`appearance: auto`). Forced colours remove
   background images, and without that rule a checked box would look empty.
 - **Not `accent-color`.** It only tints the browser's own drawing, and leaves the shape and focus
@@ -4764,6 +4767,16 @@ their own organization's name in the top bar, never the bank's internal navigati
 
 Split: brand panel on the left at `lg`, form column on the right, single centred column below
 that. Used by every Devise view and the account request flow, wired in `config/application.rb`.
+
+**The page is a card on slate-50**, the frame of the bank finder preview. The layout draws it, once:
+`.card-surface`, `max-w-104` (416px) with 32px padding, and 24px below `sm`. A view on this shell
+**never renders `shared/essentials/card`**, because that would be a card inside a card. Four
+account request pages did, and their contents now sit directly in the shell's card. 416px leaves
+a 352px column, which is the width every auth form is built to, and 240px at 320px.
+
+A widget that will not shrink has to be made to fit the column: reCAPTCHA is a fixed 304px
+iframe, so `.recaptcha-fit` scales it to 0.79 below 360px. Without that it ran 25px off a 320px
+screen.
 
 **The brand panel is pinned to the viewport** (`lg:sticky lg:top-0 lg:h-screen`). As a plain flex
 item it grew with the form beside it, and `justify-between` moved its middle block down the page:

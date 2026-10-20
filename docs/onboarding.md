@@ -1603,6 +1603,12 @@ it. Add a place to the end to link to the results: `/find-a-bank?near=Dayton, OH
 
 The account form asks for the same things as before.
 
+### The sign-in pages are a card
+
+*Log in*, *Forgot your password?*, *Request an account*, the bank finder, and the pages you see
+after requesting an account all show their content in a white card on a light grey background.
+Nothing on them has moved or changed. Only the frame is new.
+
 ### Tick boxes and round choices look the same in every browser
 
 **Radio buttons and checkboxes across the app** use the app's purple when chosen, with a white dot

@@ -10278,3 +10278,36 @@ harmless mismatch: the stylesheet, not the string, decides the colour.
 **Found while checking: the brand panel moved.** The auth shell's `<header>` stretched with the
 page, so `justify-between` carried its middle block down as the form grew. Reported as the left
 side "moves down when the page expands". It is pinned to the viewport now.
+
+## 2026-10-19 — The auth pages become a card, and the radio edge goes back to the preview's
+
+Reported again: the account request page *"still doesn't look like the mock"*. Measured
+element by element against the preview at the same width, everything inside matched to the pixel:
+type, sizes, colours, spacing, the reveal and the button. Three things did not.
+
+1. **The preview framed the form in a card on a grey page.** The real auth shell is flat white.
+   The frame was meant as a frame for the preview, but it is what the eye compares.
+2. **The unchosen radio's edge.** The preview drew it in slate-400. The previous commit had
+   moved it to slate-500 for contrast.
+3. **The preview has no "Already a partner? Log in" line.**
+
+The owner was asked about each, with a recommendation:
+
+- **Card: chosen for every auth page, against the recommendation of no card.** A card on
+  `/account_requests/new` alone would have made it the only auth screen unlike the rest. So the
+  card is in `layouts/essentials_auth`, and the four account request pages that drew their own
+  card no longer do. *Log in*, password reset, invitations, the bank finder and the account
+  request flow are all the same card.
+- **Slate-400: chosen, with the WCAG shortfall stated** (2.56:1 against 1.4.11's 3:1). Recorded in
+  `design.md` as a known exception, so a later audit does not "fix" it or report it as new.
+- **The Log in line stays.** It was not chosen to be removed. It is the one route left for an
+  existing partner, now that the partner answer is gone.
+
+**Also asked: preselect *Diapers or period supplies*?** No, as recommended. GOV.UK and USWDS both
+advise against a preselected radio, because people skip a question that is already answered.
+A bank would also have to undo the choice before its form appeared.
+
+**Found while checking:** at 320px reCAPTCHA's fixed 304px widget overflowed the card's column
+by 25px. It already overflowed by 8px before the card was added. `.recaptcha-fit` scales it to the
+column below 360px.
+

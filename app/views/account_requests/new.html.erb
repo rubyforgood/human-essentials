@@ -83,7 +83,7 @@
               placeholder: "Tell us about your organization and how you would use Human Essentials",
               input_html: {rows: 4} %>
 
-        <div class="mb-6">
+        <div class="recaptcha-fit mb-6">
           <%= recaptcha_tags %>
         </div>
 
@@ -93,14 +93,14 @@
     <% end %>
   </div>
 <% else %>
-  <%= render "shared/essentials/card", title: "Request an account" do %>
-    <div class="space-y-2 text-sm text-slate-700">
-      <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
-      <p>
-        To request an account, go to
-        <%= link_to "request an account on #{production_host}", production_url("/account_requests/new"),
-              class: "font-medium link-brand underline" %>.
-      </p>
-    </div>
-  <% end %>
+  <%# The auth shell is the card, so this is its heading, not a card of its own. %>
+  <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+  <div class="mt-4 space-y-2 text-sm text-slate-700">
+    <p>It looks like you are trying to request an account, but this is not the live version of Human Essentials.</p>
+    <p>
+      To request an account, go to
+      <%= link_to "request an account on #{production_host}", production_url("/account_requests/new"),
+            class: "font-medium link-brand underline" %>.
+    </p>
+  </div>
 <% end %>

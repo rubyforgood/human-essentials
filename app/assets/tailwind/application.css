@@ -1532,6 +1532,23 @@
     }
   }
 
+  /*
+   * reCAPTCHA's widget is a 304x78 iframe Google sizes, and it does not shrink. On a 320px phone
+   * the auth card leaves a 240px column, so it ran 25px off the screen (and 8px before the card,
+   * measured 2026-10-19). Below 360px it is scaled to the column: 240/304 is 0.79. The wrapper's
+   * height is set to match, because a transform does not change the space an element takes.
+   */
+  @media (max-width: 359px) {
+    .recaptcha-fit {
+      height: calc(78px * 0.79);
+    }
+
+    .recaptcha-fit > div {
+      transform: scale(0.79);
+      transform-origin: 0 0;
+    }
+  }
+
   /* FullCalendar needs an explicit height to render into. */
   #calendar {
     width: 100%;
@@ -1543,18 +1560,23 @@
 /*
  * A radio's edge. Outside every layer, so it wins over the `border-slate-300` utility that
  * every radio and checkbox carries -- an unlayered rule beats a layered one, utilities included.
+ * Set here rather than by editing the class strings, because there are two spellings of them
+ * (`h-4 w-4` and `size-4`) in 24 places across 18 files (measured 2026-10-19), and a string fix
+ * is the kind that drifts back.
  *
- * slate-500 rather than the slate-300 the classes ask for, or the slate-400 the design preview
- * was drawn with. WCAG 1.4.11 wants 3:1 for the edge that says "there is a control here":
- * slate-300 on white is 1.48:1, slate-400 2.56:1, slate-500 4.76:1. Set here rather than by
- * editing the class strings, because there are two spellings of them (`h-4 w-4` and `size-4`) in
- * 24 places across 18 files (measured 2026-10-19), and a string fix is the kind that drifts back.
+ * **slate-400, which is below WCAG 1.4.11, chosen knowingly.** 1.4.11 asks 3:1 for the edge that
+ * shows a control is there. slate-400 on white is 2.56:1; slate-500 (4.76:1) would pass, and was
+ * what this shipped with for one commit. The design preview drew slate-400, and asked to match it
+ * with the shortfall stated, the owner chose the preview. Recorded in docs/design-decisions.md
+ * ("The auth pages become a card, and the radio edge goes back to the preview's") so it is a
+ * known exception, not an oversight. The label beside every control is what names it; the edge
+ * is what fails.
  *
  * Checked, the edge takes the fill colour, so the control is one solid shape.
  */
 input[type="radio"],
 input[type="checkbox"] {
-  border-color: var(--color-slate-500);
+  border-color: var(--color-slate-400);
 }
 
 input[type="radio"]:checked,
