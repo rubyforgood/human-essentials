@@ -121,6 +121,98 @@
     max-width: calc(100% - 2rem);
   }
 
+  /*
+   * Radios and checkboxes are drawn, not left to the browser.
+   *
+   * Every one in the app carries `border-slate-300 text-brand-600` (with `h-4 w-4` or `size-4`) -- the
+   * convention of @tailwindcss/forms, which this app does not load. Without it those classes do
+   * nothing to a native control: measured on /account_requests/new, `appearance: auto` and
+   * `accent-color: auto`, so Chrome drew a system-blue dot with a square focus box and Safari a
+   * grey ring, where the design preview had a brand one. Reported as *"this doesn't look like the
+   * design mock"*.
+   *
+   * So this does what the plugin would for these two controls, and no more: a 16px box with a
+   * slate-400 edge, filled with `currentColor` (the `text-brand-600` every call site already
+   * sets) when checked, with a white dot or tick. Not `accent-color`, which only tints the
+   * browser's own drawing and leaves the shape and focus ring to each engine.
+   *
+   * The edge colour is set below, outside the layers -- see "A radio's edge".
+   */
+  input[type="radio"],
+  input[type="checkbox"] {
+    appearance: none;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    width: 1rem;
+    height: 1rem;
+    border-width: 1px;
+    border-style: solid;
+    background-color: var(--color-white);
+    background-origin: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    color: var(--color-brand-600);
+    print-color-adjust: exact;
+    cursor: pointer;
+  }
+
+  input[type="radio"] {
+    border-radius: 9999px;
+  }
+
+  input[type="checkbox"] {
+    border-radius: 0.25rem;
+  }
+
+  input[type="radio"]:checked,
+  input[type="checkbox"]:checked,
+  input[type="checkbox"]:indeterminate {
+    background-color: currentColor;
+  }
+
+  /*
+   * Some but not all: a table's select-all box while only part of the page is selected
+   * (`table_selection_controller` sets `indeterminate`). With `appearance: none` it would be an
+   * empty box, saying "nothing selected" -- the opposite of the truth -- so it gets its dash back.
+   */
+  input[type="checkbox"]:indeterminate {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='white' stroke-linecap='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");
+  }
+
+  input[type="radio"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+  }
+
+  input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  }
+
+  /* Round, offset off the control, in the brand colour -- the same ring every button uses. */
+  input[type="radio"]:focus-visible,
+  input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  input[type="radio"]:disabled,
+  input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /*
+   * Windows High Contrast and forced colours discard background images, which would leave a
+   * checked control looking unchecked. Hand the drawing back to the system there.
+   */
+  @media (forced-colors: active) {
+    input[type="radio"],
+    input[type="checkbox"] {
+      appearance: auto;
+    }
+  }
+
   /* Bootstrap Icons are decorative by default; give them the same optical
      alignment everywhere rather than per-call-site margin fiddling. */
   [class^="bi-"]::before,
@@ -1445,6 +1537,36 @@
     width: 100%;
     min-height: 36rem;
     background-color: var(--color-white);
+  }
+}
+
+/*
+ * A radio's edge. Outside every layer, so it wins over the `border-slate-300` utility that
+ * every radio and checkbox carries -- an unlayered rule beats a layered one, utilities included.
+ *
+ * slate-500 rather than the slate-300 the classes ask for, or the slate-400 the design preview
+ * was drawn with. WCAG 1.4.11 wants 3:1 for the edge that says "there is a control here":
+ * slate-300 on white is 1.48:1, slate-400 2.56:1, slate-500 4.76:1. Set here rather than by
+ * editing the class strings, because there are two spellings of them (`h-4 w-4` and `size-4`) in
+ * 24 places across 18 files (measured 2026-10-19), and a string fix is the kind that drifts back.
+ *
+ * Checked, the edge takes the fill colour, so the control is one solid shape.
+ */
+input[type="radio"],
+input[type="checkbox"] {
+  border-color: var(--color-slate-500);
+}
+
+input[type="radio"]:checked,
+input[type="checkbox"]:checked,
+input[type="checkbox"]:indeterminate {
+  border-color: currentColor;
+}
+
+@media (forced-colors: active) {
+  input[type="radio"],
+  input[type="checkbox"] {
+    border-color: revert;
   }
 }
 

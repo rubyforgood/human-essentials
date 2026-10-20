@@ -2026,6 +2026,28 @@ and title are one block with an 8px gap; `items-end` when there is no subtitle s
 sits on the `h1` baseline; `items-start` when there is one, so the CTA cannot be dragged down
 to the subtitle's baseline.
 
+<a id="radio-drawing"></a>
+**A radio or checkbox is drawn by the stylesheet, not the browser.** A 16px box with a slate-500
+edge; checked, it fills with `text-brand-600` and shows a white dot or tick. An indeterminate
+checkbox (a select-all with some rows chosen) gets a white dash. Focus is the brand ring every button
+uses. One base rule in `application.css` does this for every `input[type=radio]` and
+`input[type=checkbox]` in the app, so the call site sets nothing but its size and colour.
+
+Until 2026-10-19 that rule did not exist. Every control carried `border-slate-300 text-brand-600
+focus:ring-2`, the convention of `@tailwindcss/forms`, and this app does not load that plugin. On a
+native control those classes do nothing, so each browser drew its own: Chrome's system-blue dot
+with a square focus box, where the design preview had a brand one. Reported as *"this doesn't
+look like the design mock"* on `/account_requests/new`.
+
+- **The edge is slate-500, not the slate-300 the classes say.** WCAG 1.4.11 wants 3:1 for the
+  boundary that shows a control is there. Slate-300 on white is 1.48:1, slate-400 2.56:1 and slate-500
+  4.76:1. The colour is set in an unlayered rule, so it wins over the utility without editing
+  24 class strings in two spellings.
+- **Forced colours get the system's control back** (`appearance: auto`). Forced colours remove
+  background images, and without that rule a checked box would look empty.
+- **Not `accent-color`.** It only tints the browser's own drawing, and leaves the shape and focus
+  ring to each engine. That difference between engines is what was reported.
+
 <a id="radio-spacing"></a>
 **Radio and checkbox options are 24px rows with 8px between them** — a 32px pitch, set once on
 `:essentials_collection`'s `item_wrapper_class`, so no page decides this for itself.
@@ -4742,6 +4764,11 @@ their own organization's name in the top bar, never the bank's internal navigati
 
 Split: brand panel on the left at `lg`, form column on the right, single centred column below
 that. Used by every Devise view and the account request flow, wired in `config/application.rb`.
+
+**The brand panel is pinned to the viewport** (`lg:sticky lg:top-0 lg:h-screen`). As a plain flex
+item it grew with the form beside it, and `justify-between` moved its middle block down the page:
+*Human Essentials* went from y=362 to y=497 when the account request form opened. It now stays at
+362 when the form opens and when the page scrolls.
 
 The column is centred vertically, which suits a short fixed page like *Log in*. **A page that
 grows once it is answered sets `content_for :auth_align_top`**, and the column starts at the top

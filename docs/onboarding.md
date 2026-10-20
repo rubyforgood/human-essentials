@@ -1603,6 +1603,13 @@ it. Add a place to the end to link to the results: `/find-a-bank?near=Dayton, OH
 
 The account form asks for the same things as before.
 
+### Tick boxes and round choices look the same in every browser
+
+**Radio buttons and checkboxes across the app** use the app's purple when chosen, with a white dot
+or tick, and the same focus ring as buttons when you tab to them. Before, each browser drew its
+own: blue in Chrome, grey in Safari. A select-all box with only some rows chosen shows a dash. If
+you use Windows high contrast mode, you get your system's own controls, as before.
+
 ### Brought over from the main branch
 
 **Exporting distributions no longer freezes the page.** Press *Export* and you get a message saying

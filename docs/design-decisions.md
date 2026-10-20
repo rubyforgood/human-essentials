@@ -10249,3 +10249,32 @@ the data decisions and the import's safeguards.
   a filter is easy to add once someone asks for it.
 - **The partner answer is gone, not reworded.** An existing partner was the one visitor who had
   somewhere to go already, so they get a *Log in* link under the supplies answer instead.
+
+## 2026-10-19 — Drawing radios and checkboxes, rather than adding @tailwindcss/forms
+
+Reported against the bank finder build: the account request radios "don't look like the design
+mock". The mock drew a brand-coloured dot. The page had Chrome's system-blue one, because
+`appearance: auto` and `accent-color: auto` left the drawing to the browser. That was true of
+every radio and checkbox in the app. They all carry `@tailwindcss/forms` class names, and the
+plugin was never loaded.
+
+**Chosen: one base rule** in `application.css` for `input[type=radio]` and `input[type=checkbox]`,
+drawing what the plugin would for those two controls: an edge, a `currentColor` fill, a white
+dot, tick or dash, and a focus ring.
+
+**Rejected: loading `@tailwindcss/forms`.** It restyles every text input, select and textarea as
+well, and those already have a hand-tuned look, specified in `design.md` and checked by the
+audits. It would also need the plugin vendored for the standalone CLI, since there is no Node.
+
+**Rejected: `accent-color`.** It tints the browser's own control, so the shape, size and focus
+ring still differ by engine, which is what was reported.
+
+**Rider: the edge moved from slate-300 to slate-500.** The classes ask for slate-300, which is
+1.48:1 on white, under WCAG 1.4.11's 3:1 for a control's boundary. The mock's slate-400 is
+2.56:1, also under. Slate-500 is 4.76:1. It is set in an unlayered rule so it outranks the
+utility. That means the 24 class strings still say `border-slate-300`, which is a known,
+harmless mismatch: the stylesheet, not the string, decides the colour.
+
+**Found while checking: the brand panel moved.** The auth shell's `<header>` stretched with the
+page, so `justify-between` carried its middle block down as the form grew. Reported as the left
+side "moves down when the page expands". It is pinned to the viewport now.

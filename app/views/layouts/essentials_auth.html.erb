@@ -17,7 +17,12 @@
       Hiding it from assistive technology instead would have been easier and worse: it is real
       content, and a sighted user on a wide screen gets it.
     %>
-    <header class="hidden w-1/2 flex-col justify-between bg-brand-700 p-12 text-white lg:flex">
+    <%#
+      Pinned to the viewport (`sticky top-0 h-screen`), not stretched to the page. As a stretched
+      flex item it grew with the form beside it, and `justify-between` slid its middle block down
+      the page: "Human Essentials" went from y=362 to y=497 when the account request form opened.
+    %>
+    <header class="hidden w-1/2 flex-col justify-between bg-brand-700 p-12 text-white lg:sticky lg:top-0 lg:flex lg:h-screen">
       <img src="/img/essentials.svg" alt="" aria-hidden="true" class="h-10 w-auto">
       <div>
         <p class="text-3xl font-bold tracking-tight">Human Essentials</p>
