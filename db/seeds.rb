@@ -1282,3 +1282,13 @@ sc_org.storage_locations.each do |location|
     AdjustmentCreateService.new(adjustment).call
   end
 end
+
+# ----------------------------------------------------------------------------
+# Bank finder (/find-a-bank)
+# ----------------------------------------------------------------------------
+# The Census locations come with the migration, but `db:reset` loads the schema without running
+# migrations, so they are loaded here too. The listings are a few invented banks in the
+# directories' own format: `bin/rails bank_listings:import` replaces them with the real ones.
+CensusLocation.load_from_file! if CensusLocation.none?
+BankListingImportService.call(fetch: BankListingImportService::SAMPLE_FETCH)
+

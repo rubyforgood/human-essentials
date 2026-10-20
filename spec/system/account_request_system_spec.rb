@@ -77,13 +77,30 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       expect(created_account_request.reload.processed?).to eq(true)
     end
 
-    context 'with a partner agency' do
-      it 'tells a partner agency it does not need an account, and links to log in' do
+    context 'when looking for diapers or period supplies' do
+      before do
+        create_census_locations
+        import_sample_bank_listings
+      end
+
+      it 'finds the nearest banks instead of requesting an account' do
         visit('/account_requests/new')
 
-        choose(option: 'partner')
-
+        expect(page).to have_css('#find_bank', visible: :hidden)
+        choose('Diapers or period supplies')
+        expect(page).to have_css('#create_bank', visible: :hidden)
         expect(page).to have_link('Log in', href: new_user_session_path)
+
+        fill_in 'City and state, or ZIP code', with: 'Dayton, OH'
+        click_button 'Find banks'
+
+        expect(page).to have_current_path(bank_finder_path(near: 'Dayton, OH'))
+        expect(page).to have_css('h1', text: 'Banks near Dayton, OH')
+        expect(page).to have_content('Pawnee Diaper Bank')
+
+        click_link 'Back'
+        expect(find_field('account_supplies')).to be_checked
+        expect(page).to have_css('#find_bank', visible: true)
       end
     end
 
@@ -96,9 +113,9 @@ RSpec.describe 'Account request flow', type: :system, js: true do
         click_button 'Submit request'
 
         expect(find_field('account_bank')).to be_checked
-        expect(find_field('account_partner')).to_not be_checked
+        expect(find_field('account_supplies')).to_not be_checked
         expect(page).to have_css('#create_bank', visible: true)
-        expect(page).to have_css('#partner_info', visible: :hidden)
+        expect(page).to have_css('#find_bank', visible: :hidden)
         expect(page).to have_css('[data-error-summary]', text: /prevented this from being saved/)
       end
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -121,6 +121,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.index ["family_id"], name: "index_authorized_family_members_on_family_id"
   end
 
+  create_table "bank_listings", force: :cascade do |t|
+    t.string "city", null: false
+    t.datetime "created_at", null: false
+    t.boolean "diapers", default: false, null: false
+    t.float "latitude"
+    t.float "longitude"
+    t.string "name", null: false
+    t.string "name_key", null: false
+    t.integer "ndbn_member_id"
+    t.boolean "period_supplies", default: false, null: false
+    t.string "state", null: false
+    t.datetime "updated_at", null: false
+    t.string "website"
+    t.index ["name_key"], name: "index_bank_listings_on_name_key", unique: true
+  end
+
   create_table "barcode_items", id: :serial, force: :cascade do |t|
     t.integer "barcodeable_id"
     t.string "barcodeable_type", default: "Item"
@@ -155,6 +171,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_01_200000) do
     t.bigint "user_id", null: false
     t.index ["organization_id"], name: "index_broadcast_announcements_on_organization_id"
     t.index ["user_id"], name: "index_broadcast_announcements_on_user_id"
+  end
+
+  create_table "census_locations", force: :cascade do |t|
+    t.string "kind", null: false
+    t.float "latitude", null: false
+    t.float "longitude", null: false
+    t.string "name", null: false
+    t.string "name_key", null: false
+    t.string "state"
+    t.index ["kind", "name_key"], name: "index_census_locations_on_kind_and_name_key"
+    t.index ["kind", "state", "name_key"], name: "index_census_locations_on_kind_and_state_and_name_key"
   end
 
   create_table "child_item_requests", force: :cascade do |t|

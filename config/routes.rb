@@ -290,6 +290,9 @@ Rails.application.routes.draw do
   get "help", to: "help#show"
   get "pages/:name", to: "static#page"
   get "/privacypolicy", to: "static#privacypolicy"
+  # Public: find a diaper or period supply bank near you. See ADR 0014.
+  get "find-a-bank", to: "bank_finder#show", as: :bank_finder
+
   resources :account_requests, only: [:new, :create] do
     collection do
       get 'confirmation'

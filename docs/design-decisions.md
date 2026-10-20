@@ -10201,3 +10201,51 @@ design-system fix.
 both rely on. They copy the `:essentials_collection` wrapper's legend and radio classes instead.
 reCAPTCHA stays 304px wide: it is an iframe Google sizes.
 
+
+## 2026-10-19 — Asking what people want, and finding them a bank
+
+Reported: *"A lot of places that want diapers register as a bank because they don't like that the
+partner doesn't give them any info."* The question it was answering, *Which describes your
+organization?*, offered two words for organizations already inside the system. Someone looking
+for diapers is neither yet, and the partner answer gave them a "contact your bank" with no bank.
+
+**The question is now about what the visitor wants**, not what they are: *Diapers or period
+supplies*, then *Software to run our bank*. The supplies answer comes first because it is the one
+the wrong-answerers needed, and its hint says "We'll help you find a bank near you", so the
+helpful answer is no longer the one that looks like a dead end. The bank answer's hint says plainly
+that the account is for organizations that give supplies *out*.
+
+**Three layouts were previewed** with real results (`docs/mockups/bank-finder-designs.html`).
+**A was chosen**: the search revealed under the answer, results on a public page of their own.
+
+- **Rejected: B, results inline on the account page.** It had no URL to share, and five results
+  push the second answer off a phone screen, under a reveal that `design.md` limits to a field or two.
+- **Rejected: C, a button to the finder.** It puts a step in front of exactly the visitors who
+  give up today.
+
+**Census data, not a geocoder**, as chosen in the same review. The banks are only known to the
+city, so street-level geocoding would be precision the data cannot use. And sending what visitors
+type to OpenStreetMap would make a public page depend on a rate-limited service. See ADR 0014 for
+the data decisions and the import's safeguards.
+
+**Riders worth recording:**
+
+- **The finder says when nothing is close.** From Missoula, MT the nearest bank is 96 miles away.
+  An unqualified "nearest banks" list there would read as broken, and an empty page would be
+  wrong, because regional banks do serve that far. So: a warning callout, then the closest eight.
+- **"Less than 5 miles", not "0 miles".** Both points are city centres, so a bank in your own city
+  measures 0, which is false precision about where either of you actually is.
+- **An imported website is treated like one a user typed.** It goes through `essentials_safe_href`.
+  The directories are trusted, but they are not ours, and a row can be edited by anyone with the
+  maps.
+- **The question moved out of the account form**, because forms cannot nest and one answer now
+  reveals a search form. `design.md` records the pattern under Conditional reveal.
+
+**Not done, and why.**
+
+- **No map.** A list answers "who do I call", and a map needs a tile provider, its terms and its
+  JavaScript, for no new information.
+- **No filter for diapers only or period supplies only.** Each result says which it gives out, and
+  a filter is easy to add once someone asks for it.
+- **The partner answer is gone, not reworded.** An existing partner was the one visitor who had
+  somewhere to go already, so they get a *Log in* link under the supplies answer instead.

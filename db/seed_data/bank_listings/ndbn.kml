@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The shape of the NDBN member directory's My Maps export, cut down to five invented banks.
+     Field names, "12001.0" member IDs and the bare-domain websites are as the real export has them. -->
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>National Diaper Bank Network</name>
+    <Folder>
+      <name>Member Directory</name>
+      <Placemark>
+        <name>Pawnee Diaper Bank</name>
+        <address>Dayton OH</address>
+        <ExtendedData>
+          <Data name="Member ID:"><value>90001.0</value></Data>
+          <Data name="City (Headquarters):"><value>Dayton</value></Data>
+          <Data name="State:"><value>OH</value></Data>
+          <Data name="Website:"><value>www.pawneediapers.example</value></Data>
+          <Data name="Link to Volunteer"><value>https://pawneediapers.example/volunteer</value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>Eagleton Baby Pantry</name>
+        <address>Cincinnati OH</address>
+        <ExtendedData>
+          <Data name="Member ID:"><value>90002.0</value></Data>
+          <Data name="City (Headquarters):"><value>Cincinnati</value></Data>
+          <Data name="State:"><value>OH</value></Data>
+          <Data name="Website:"><value>https://eagletonbaby.example/</value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>Central Worcester Diaper Bank</name>
+        <address>Worchester MA</address>
+        <ExtendedData>
+          <Data name="Member ID:"><value>90003.0</value></Data>
+          <Data name="City (Headquarters):"><value>Worchester</value></Data>
+          <Data name="State:"><value>MA</value></Data>
+          <Data name="Website:"><value></value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>Cape Cod Baby Center</name>
+        <address>Hyannis MA</address>
+        <ExtendedData>
+          <Data name="Member ID:"><value>90004.0</value></Data>
+          <Data name="City (Headquarters):"><value>Hyannis</value></Data>
+          <Data name="State:"><value>MA</value></Data>
+          <Data name="Website:"><value>capecodbaby.example</value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>Big Sky Diaper Bank</name>
+        <address>Helena MT</address>
+        <ExtendedData>
+          <Data name="Member ID:"><value>90005.0</value></Data>
+          <Data name="City (Headquarters):"><value>Helena</value></Data>
+          <Data name="State:"><value>MT</value></Data>
+          <Data name="Website:"><value>bigskydiapers.example</value></Data>
+        </ExtendedData>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

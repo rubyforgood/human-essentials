@@ -36,4 +36,9 @@ module Clockwork
   every(1.day, "Send reminder emails", at: "12:00", if: lambda { |_| Rails.env.production? }) do
     ReminderDeadlineJob.perform_later
   end
+
+  # The bank finder's directory listings. See ADR 0014.
+  every(1.week, "Refresh the bank finder's listings", at: "Sunday 03:00", if: lambda { |_| Rails.env.production? }) do
+    BankListingImportJob.perform_later
+  end
 end

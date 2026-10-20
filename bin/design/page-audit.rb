@@ -17,7 +17,7 @@
 # Usage: ruby bin/design/page-audit.rb [show|index|form|partial|action]
 #        Exits non-zero if any DEFECT is found. DEBT is reported, not enforced.
 AUTH = %w[users/sessions users/passwords users/confirmations users/unlocks
-  users/invitations users/registrations account_requests].freeze
+  users/invitations users/registrations account_requests bank_finder].freeze
 
 # Classes nothing defines. `text-bold` is the one that bites: the author meant `font-bold`.
 # Capitalised runs that are names rather than Title Case. The audit cannot infer these, and a

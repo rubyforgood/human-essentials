@@ -185,6 +185,21 @@ The seeds create three organizations, seven partners and a few hundred records, 
 partners in the awkward states (invited but not accepted, awaiting approval, recertification
 required) that are worth testing against.
 
+### The bank finder's data
+
+`/find-a-bank` needs two kinds of data, and setup provides both without a download:
+
+- **Census locations**, the 93,094 cities, towns and ZIPs a search can start from. They load
+  with `db:migrate` and with the seeds, from `lib/assets/census_locations.csv.gz`.
+- **Bank listings.** The seeds load seven invented banks, so the finder works offline. Run
+  `bin/rails bank_listings:import` to replace them with the 347 real ones from the NDBN and
+  Alliance for Period Supplies directories. In production a weekly job does this, and it emails
+  super admins if it ever keeps last week's list instead.
+
+Specs use `create_census_locations` and `import_sample_bank_listings` from
+`spec/support/census_locations.rb` rather than the whole file, which takes about four seconds to
+load.
+
 ### Behind a proxy or tunnel
 
 If you reach the app through a port forward or a TLS-terminating tunnel, Rails cannot always
@@ -1564,19 +1579,29 @@ The printout settings under your organization's settings behave exactly as they 
 - *Hide value columns on the distribution and donation printouts?*, which covers purchases too
 - *Hide the package column on the distribution printout?*
 
-### Requesting an account is clearer
+### Requesting an account is clearer, and helps people looking for diapers
 
-The *Request an account* page asks one question first, **Which describes your organization?**, with
-two short answers: *An essentials bank* or *A partner agency*, each with a line explaining it.
+The *Request an account* page asks one question first: **What are you looking for?**
 
-- **Choose essentials bank** and the request form appears under the question. The page no longer
-  jumps when it does. The request details box is bigger, and the 50-character minimum is written
-  under it rather than in its name. The button says *Submit request*.
-- **Choose partner agency** and a note appears under that answer: you don't need to request an
-  account, because your bank creates it. It links to the NDBN and Alliance for Period Supplies
-  directories to find a bank, and to *Log in* if you already have an account.
+- **Diapers or period supplies.** For anyone who wants supplies, for the people they serve or
+  for their family. A box appears under the answer: type a city and state, or a ZIP code, and
+  press *Find banks*. You get the closest diaper and period supply banks, with what each one
+  gives out, roughly how far away it is, and a link to its website.
+- **Software to run our bank.** For organizations that collect diapers or period supplies and
+  give them out to others. The request form appears under the question, as before. The page no
+  longer jumps when it does. The request details box is bigger, the 50-character minimum is
+  written under it rather than in its name, and the button says *Submit request*.
 
-The form asks for the same things as before.
+The list of banks comes from the National Diaper Bank Network's member directory and the Alliance
+for Period Supplies' list of allied programs, and is updated every week. Banks usually supply
+local organizations like pantries, shelters and clinics rather than individuals, so the page
+suggests contacting a bank to ask about becoming a partner, or where families nearby can pick
+supplies up. If nothing is within 50 miles, it says so and still shows the closest.
+
+**The bank finder has its own address**, `/find-a-bank`, so you can send someone straight to
+it. Add a place to the end to link to the results: `/find-a-bank?near=Dayton, OH`.
+
+The account form asks for the same things as before.
 
 ### Brought over from the main branch
 

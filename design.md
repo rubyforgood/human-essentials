@@ -2130,10 +2130,15 @@ Locals: `id` and `shown` are required; `data`, `class` and `marked` are optional
 - **When the trigger is a `<select>`** there is no single option to hang the rule under, so the
   6px is simply an indent — carried over so the app has one number rather than two shapes.
 - **The rest of a form is not a field belonging to an answer.** When an answer decides whether the
-  whole form applies — *An essentials bank* on `/account_requests/new` — the form follows the
-  question's `<fieldset>`, flush (`marked: false`), rather than hanging six fields and a captcha
-  under a 16px radio. An answer's own message still goes inside the fieldset, under that answer.
-  A reveal that is not indented is not held to its option's label edge.
+  whole form applies — *Software to run our bank* on `/account_requests/new` — the form follows
+  the question's `<fieldset>`, flush (`marked: false`), rather than hanging six fields and a
+  captcha under a 16px radio. A field belonging to one answer still goes inside the fieldset,
+  marked, under that answer: the same page's city search, under *Diapers or period supplies*. A
+  reveal that is not indented is not held to its option's label edge.
+- **A reveal can hold a form of its own, if the question is outside every form.** Forms do not
+  nest, so on `/account_requests/new` the question sits in a plain wrapper carrying the
+  `radio-reveal` controller, one answer reveals a GET search form, and the other reveals the
+  account form.
 
 `pw bin/design/disclosure-audit.js` checks every reveal on every form: below its trigger, after it
 in the DOM, marked, and hanging 6px off its left edge. It exits non-zero on a defect. **10 reveals,
@@ -4745,6 +4750,22 @@ radio revealed the form.
 
 No skip link here, deliberately: there is no repeated navigation block ahead of the content to
 skip past, and a skip link that jumps two elements forward is noise in the tab order.
+
+**The bank finder is on this shell too** (`/find-a-bank`, ADR 0014): public, and the place
+`/account_requests/new` sends someone who wants supplies. Its pattern is the one a *find a…*
+service has everywhere — Feeding America's food bank finder, 211, GOV.UK's *Find a…* services:
+
+- **One location field, and the search is a GET.** A result has a URL that can be bookmarked
+  or sent, and the page works without JavaScript. The field and its button share a row; the
+  button is primary until there are results, then secondary, so the primary weight goes to
+  whatever the page is asking you to do next.
+- **A result is a line in a hairline list, not a card**: the name, then *what · where · how far*
+  on one muted line, then the website. Eight at most, closest first.
+- **Every answer is stated, including the unhelpful ones.** Nothing within 50 miles is a warning
+  callout above the closest banks, not an empty page, because many banks serve a region. A city
+  in several states asks *Which Springfield?* and links each state, up to twelve. A place it
+  does not know says what it does accept.
+- **Distances say *about*,** because both ends are a city's centre, not an address.
 
 ## Key patterns
 

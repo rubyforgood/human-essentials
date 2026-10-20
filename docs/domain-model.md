@@ -239,6 +239,21 @@ so nothing was invalidated. The render sites are guarded separately by `essentia
 see design.md, [a URL a user typed](../design.md#user-supplied-links) — because a validation guards
 one write path and a row can arrive by import, by console, or from an old backup.
 
+## Reference data shared by every tenant
+
+Three tables belong to no organization, because they describe the world rather than a bank:
+`base_items` (above), and the two behind the public bank finder at `/find-a-bank` (ADR 0014).
+
+| Model | Holds | Written by |
+| --- | --- | --- |
+| `BankListing` | A diaper or period supply bank from the NDBN member directory or the Alliance for Period Supplies' allied programs: name, headquarters city and state, website, `diapers` / `period_supplies`, and the city's latitude and longitude. A bank in both directories is one row with both flags. `ndbn_member_id` is the directory's number, and is **not** a foreign key to `ndbn_members`. | `BankListingImportService`, weekly, replacing every row |
+| `CensusLocation` | A Census place, county subdivision or ZIP Code Tabulation Area, and its point. `kind`, `state` (nil for a ZIP), `name`, `name_key`. | The migration that creates it and the seeds, from `lib/assets/census_locations.csv.gz` |
+
+Neither has an association. A `BankListing` is not an `Organization`, even when the same bank
+also uses Human Essentials: the directories are their record, not ours. Measured on 2026-10-19
+after a real import: **347** listings, all placed, and **93,094** Census locations (32,107
+places, 27,196 county subdivisions, 33,791 ZIPs).
+
 ## Where the code for each of these lives
 
 | Concern | Where |
@@ -246,7 +261,7 @@ one write path and a row can arrive by import, by console, or from an old backup
 | Domain and associations | `app/models` (67) |
 | Business logic | `app/services` (67), `{Model}{Action}Service` |
 | The inventory ledger | `app/events` (17 + 7 value types) |
-| Complex reads | `app/queries` (7) |
+| Complex reads | `app/queries` (8) |
 | Request handling | `app/controllers` (72), thin |
 | UI | `app/views` (421); design system in `shared/essentials` |
 | Behaviour | `app/javascript/controllers` (28), Stimulus |

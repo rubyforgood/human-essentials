@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The shape of the Alliance for Period Supplies allied programs My Maps export, cut down to
+     invented programs. It has two folders with two sets of field names, as the real export does,
+     and the NDBN folder writes cities in capitals. -->
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Alliance for Period Supplies</name>
+    <Folder>
+      <name>NDBN members w period supply programs</name>
+      <Placemark>
+        <name>Pawnee Diaper Bank</name>
+        <address>DAYTON OH 45402</address>
+        <ExtendedData>
+          <Data name="CITY"><value>DAYTON</value></Data>
+          <Data name="ST"><value>OH</value></Data>
+          <Data name="ZIPCODE"><value>45402</value></Data>
+          <Data name="WEBSITE"><value>www.pawneediapers.example</value></Data>
+        </ExtendedData>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Allied Programs</name>
+      <Placemark>
+        <name>Sweetums Period Project</name>
+        <address>Xenia OH</address>
+        <ExtendedData>
+          <Data name="Organization:"><value>Sweetums Period Project</value></Data>
+          <Data name="Headquarter City:"><value>Xenia</value></Data>
+          <Data name="State:"><value>OHIO</value></Data>
+          <Data name="Website:"><value>sweetumsperiod.example</value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>Winston-Salem Period Pantry</name>
+        <address>Winsten-Salem NC</address>
+        <ExtendedData>
+          <Data name="Organization:"><value>Winston-Salem Period Pantry</value></Data>
+          <Data name="Headquarter City:"><value>Winsten-Salem</value></Data>
+          <Data name="State:"><value>NC</value></Data>
+          <Data name="Website:"><value>wsperiod.example</value></Data>
+        </ExtendedData>
+      </Placemark>
+      <Placemark>
+        <name>No City Given</name>
+        <ExtendedData>
+          <Data name="Organization:"><value>No City Given</value></Data>
+          <Data name="State:"><value>OH</value></Data>
+        </ExtendedData>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

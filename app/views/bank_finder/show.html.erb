@@ -1,0 +1,95 @@
+<%
+  title = @location.is_a?(CensusLocation::Point) ? "Banks near #{@location.label}" : "Find a bank near you"
+  content_for :title, "#{title} - Human Essentials"
+  # The field shares a row with its button, so the stacked form spacing (`mt-1.5`) is dropped.
+  input_classes = EssentialsUiHelper::FILTER_CONTROL_CLASSES.sub("mt-1.5 ", "")
+%>
+<% content_for :auth_align_top, true %>
+
+<%= link_to "← Back", new_account_request_path(account: "supplies"), class: "link-brand text-sm font-medium" %>
+<h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900"><%= title %></h1>
+<p class="mt-1 text-sm text-slate-600">
+  Banks give diapers and period supplies to local organizations, like pantries, shelters and
+  clinics, rather than to individuals. Contact one to ask about becoming a partner, or where
+  families near you can pick supplies up.
+</p>
+
+<%# A GET form, so a search has a URL that can be bookmarked or sent, and works without JavaScript. %>
+<%= form_with url: bank_finder_path, method: :get, local: true, class: "mt-4", role: "search" do %>
+  <%= label_tag :near, "City and state, or ZIP code", class: "block text-sm font-medium text-slate-700" %>
+  <div class="mt-1.5 flex gap-2">
+    <%= text_field_tag :near, @near, class: input_classes, autocomplete: "address-level2",
+          placeholder: "Dayton, OH", required: true %>
+    <%= button_tag "Search", type: "submit", name: nil,
+          class: essentials_button_classes(variant: @results ? :secondary : :primary, size: :md, extra: "shrink-0") %>
+  </div>
+<% end %>
+
+<% if @near.present? %>
+  <div class="mt-6" id="bank-finder-results">
+    <% case @location %>
+    <% when CensusLocation::Ambiguous %>
+      <%= render "shared/essentials/callout", tone: :info, role: "status" do %>
+        <p class="font-semibold">Which <%= @location.city %>?</p>
+        <p class="mt-1">
+          There is a <%= @location.city %> in <%= @location.states.size %> states.
+          <%# Linked, so the state is one tap rather than retyping. Shown for up to 12; past that
+              the list is longer than typing the state. %>
+          <% if @location.states.size <= 12 %>
+            Choose one:
+            <%= safe_join(@location.states.map { |st| link_to(st, bank_finder_path(near: "#{@location.city}, #{st}"), class: "link-brand font-medium underline") }, ", ") %>.
+          <% else %>
+            Add the state, like <em><%= @location.city %>, <%= @location.states.first %></em>.
+          <% end %>
+        </p>
+      <% end %>
+    <% when nil %>
+      <%= render "shared/essentials/callout", tone: :warning, role: "status" do %>
+        <p class="font-semibold">We couldn't find &ldquo;<%= @near %>&rdquo;.</p>
+        <p class="mt-1">Try a US city and state, like <em>Dayton, OH</em>, or a five-digit ZIP code.</p>
+      <% end %>
+    <% else %>
+      <% if @results.empty? %>
+        <%= render "shared/essentials/empty_state", kind: :no_results, title: "No banks are listed yet",
+              body: "The bank directories have not been loaded. Try again later." %>
+      <% else %>
+        <% unless @results.first.miles <= NearbyBanksQuery::NEAR_MILES %>
+          <%= render "shared/essentials/callout", tone: :warning, role: "status", wrapper_class: "mb-4" do %>
+            <p class="font-semibold">There is no bank within <%= NearbyBanksQuery::NEAR_MILES %> miles.</p>
+            <p class="mt-1">These are the closest. Many serve a whole region, so it is still worth contacting them.</p>
+          <% end %>
+        <% end %>
+        <h2 class="sr-only">Closest banks</h2>
+        <ol class="divide-y divide-slate-200 border-y border-slate-200">
+          <% @results.each do |result| %>
+            <% listing = result.listing %>
+            <li class="py-3">
+              <p class="text-sm font-medium text-slate-900"><%= listing.name %></p>
+              <p class="mt-0.5 text-xs text-slate-600">
+                <%= listing.supplies %> &middot; <%= listing.city %>, <%= listing.state %> &middot;
+                <%= result.miles < 5 ? "Less than 5 miles" : "About #{pluralize(result.miles.round, "mile")}" %>
+              </p>
+              <%# Imported, so it goes through the same guard as a URL a user typed (design.md,
+                  "A URL a user typed"). Shown as text if it is not http(s). %>
+              <% if (href = essentials_safe_href(listing.website_url)) %>
+                <%= link_to listing.website_host, href, class: "link-brand mt-1 inline-block text-xs font-medium underline",
+                      rel: "noopener nofollow", target: "_blank",
+                      aria: {label: "#{listing.website_host}, website of #{listing.name} (opens in a new tab)"} %>
+              <% elsif listing.website.present? %>
+                <p class="mt-1 text-xs text-slate-600"><%= listing.website %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<p class="mt-6 text-xs text-slate-500">
+  From the
+  <%= link_to "NDBN member directory", "https://nationaldiaperbanknetwork.org/member-directory/", class: "link-brand underline" %>
+  and the
+  <%= link_to "Alliance for Period Supplies", "https://allianceforperiodsupplies.org/allied-programs/", class: "link-brand underline" %>
+  list of allied programs, updated weekly. Distances are to each bank's headquarters city.
+</p>
