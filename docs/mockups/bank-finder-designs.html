@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bank finder designs &mdash; options</title>
+<link rel="stylesheet" href="/mockup.css">
+<style>
+  body { background: #f8fafc; }
+  .wrap { max-width: 78rem; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  .opt { margin-top: 3rem; }
+  .note { max-width: 50rem; }
+  .frames { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem; align-items: flex-start; }
+  .frame { width: 26rem; max-width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 2rem; }
+  .frame-label { font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+  .radio { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid #94a3b8; background: #fff; flex: none; margin-top: 4px; }
+  .radio.on { border: 5px solid var(--color-brand-600, #4f46e5); }
+  .cost { margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 50rem; }
+  @media (max-width: 640px) { .cost { grid-template-columns: 1fr; } }
+  table.m { font-size: 0.875rem; border-collapse: collapse; margin-top: 0.75rem; }
+  table.m th, table.m td { text-align: left; padding: 0.375rem 1rem 0.375rem 0; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  table.m th { font-weight: 600; color: #0f172a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="text-2xl font-semibold text-slate-900">Finding a bank &mdash; designs</h1>
+  <p class="mt-2 text-sm text-slate-600 note">
+    Organizations that want diapers keep requesting a <em>bank</em> account, because the partner answer leaves them with
+    nothing but two links. Two things change: the question says plainly that the account is for organizations
+    <em>giving out</em> supplies, and the other answer helps them find a bank near them. Every result below is real,
+    taken from the two directories on 19 October 2026.
+  </p>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">The data, measured</h2>
+    <table class="m">
+      <tr><th>Source</th><th>Records</th><th>What each record has</th></tr>
+      <tr><td>NDBN member directory</td><td>244</td><td>Name, headquarters city and state, website, NDBN member ID</td></tr>
+      <tr><td>Alliance for Period Supplies</td><td>194</td><td>The same, and a ZIP for the 50 that are NDBN members</td></tr>
+      <tr><td>Merged by name</td><td>347</td><td>72 offer both diapers and period supplies</td></tr>
+    </table>
+    <ul class="mt-3 list-disc pl-5 text-sm text-slate-700 note space-y-1">
+      <li><strong>Both pages are Google My Maps</strong>, and each map exports as KML. The import reads those
+        exports, so nothing is scraped from HTML.</li>
+      <li><strong>Neither gives an address or coordinates</strong>, only a city and state, so a distance is to the
+        bank's headquarters city. Results say <em>about</em> N miles, and are labelled with the city.</li>
+      <li><strong>266 of 298 city/state pairs (89%) match the Census places list as they are.</strong> Most of the
+        other 32 are New England and New Jersey towns, which are in Census's county-subdivision file. The rest are
+        NYC boroughs, consolidated cities (Nashville, Lexington) and five typos in the source, such as
+        &ldquo;Worchester&rdquo;. A small alias list covers those.</li>
+      <li><strong>Rural searches are far from everything.</strong> From Missoula, MT, the nearest bank is 95 miles
+        away. The design has to say so rather than present 95 miles as near.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <h2 class="text-lg font-semibold text-slate-900">The question, rewritten (all options)</h2>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Today's answers are about <em>what you are</em>: an essentials bank or a partner agency. People who want diapers
+      don't think of themselves as either. The new answers are about <em>what you want</em>, and the bank answer says in
+      so many words that the account is for giving supplies out.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">Today</div>
+        <div class="frame">
+          <p class="text-sm font-medium text-slate-700">Which describes your organization?</p>
+          <div class="mt-1.5 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">An essentials bank<span class="block text-xs text-slate-500">We give diapers or period supplies to partner agencies, not to the public.</span></span></div>
+          <div class="mt-2 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">A partner agency<span class="block text-xs text-slate-500">We receive supplies from a bank and give them to the public.</span></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="frame-label">Proposed</div>
+        <div class="frame">
+          <p class="text-sm font-medium text-slate-700">What are you looking for?</p>
+          <div class="mt-1.5 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">Diapers or period supplies<span class="block text-xs text-slate-500">For the people we serve, or for my family. We'll help you find a bank near you.</span></span></div>
+          <div class="mt-2 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">Software to run our bank<span class="block text-xs text-slate-500">We collect diapers or period supplies and give them out to other organizations.</span></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-slate-700 note">
+      <strong>The finder answer comes first</strong>, because most people who pick the wrong answer today are looking
+      for supplies. The page heading stays <em>Request an account</em>, since that is what the sign-in link says.
+    </p>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">A &mdash; Search on the account page, results on a page of their own</h2>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">Recommended</span>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      Choosing <em>Diapers or period supplies</em> reveals a search box under the answer. It submits to
+      <code>/find-a-bank?near=Dayton%2C+OH</code>, a public page on the same auth shell that shows results and
+      searches again.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">/account_requests/new, answer chosen</div>
+        <div class="frame">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Request an account</h1>
+          <p class="mt-1 text-sm text-slate-600">Human Essentials is free for diaper banks and essentials banks.</p>
+          <p class="mt-6 text-sm font-medium text-slate-700">What are you looking for?</p>
+          <div class="mt-1.5 flex items-start gap-2"><span class="radio on"></span><span class="text-sm text-slate-700">Diapers or period supplies<span class="block text-xs text-slate-500">For the people we serve, or for my family. We'll help you find a bank near you.</span></span></div>
+          <div class="my-3 ml-1.5 border-l-4 border-slate-300 pl-3.5">
+            <label class="block text-sm font-medium text-slate-700">City and state, or ZIP code</label>
+            <div class="mt-1.5 flex gap-2">
+              <input value="Dayton, OH" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
+              <button class="inline-flex shrink-0 items-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Find banks</button>
+            </div>
+          </div>
+          <div class="mt-2 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">Software to run our bank<span class="block text-xs text-slate-500">We collect diapers or period supplies and give them out to other organizations.</span></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="frame-label">/find-a-bank?near=Dayton, OH</div>
+        <div class="frame">
+          <a href="#" class="link-brand text-sm font-medium">&larr; Back</a>
+          <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">Banks near Dayton, OH</h1>
+          <p class="mt-1 text-sm text-slate-600">
+            Banks give supplies to local organizations, like pantries, shelters and clinics, rather than to
+            individuals. Contact one to ask about becoming a partner, or where families near you can pick supplies up.
+          </p>
+          <div class="mt-4 flex gap-2">
+            <input value="Dayton, OH" aria-label="City and state, or ZIP code" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
+            <button class="inline-flex shrink-0 items-center rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700">Search</button>
+          </div>
+          <ul class="mt-4 divide-y divide-slate-200 border-y border-slate-200"><li class="py-3"><p class="text-sm font-medium text-slate-900">Gem City Diaper Bank</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Dayton, OH &middot; In town</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">gemcitydiaperbank.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">HTC</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Centerville, OH &middot; About 11 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">htcdayton.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Period Kits Ohio</p><p class="mt-0.5 text-xs text-slate-600">Period supplies &middot; New Carlisle, OH &middot; About 14 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">periodkitsohio.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Providing for Women</p><p class="mt-0.5 text-xs text-slate-600">Period supplies &middot; Xenia, OH &middot; About 15 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">providingforwomen.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Sweet Cheeks Diaper Bank</p><p class="mt-0.5 text-xs text-slate-600">Diapers and period supplies &middot; Cincinnati, OH &middot; About 47 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">sweetcheeksdiaperbanks.org</a></li></ul>
+          <p class="mt-4 text-xs text-slate-500">
+            From the <a href="#" class="link-brand underline">NDBN member directory</a> and the
+            <a href="#" class="link-brand underline">Alliance for Period Supplies</a> list of allied programs, updated
+            weekly. Distances are to each bank's headquarters city.
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="frame-label">/find-a-bank?near=59801 (nothing close)</div>
+        <div class="frame">
+          <a href="#" class="link-brand text-sm font-medium">&larr; Back</a>
+          <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">Banks near Missoula, MT</h1>
+          <div class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p class="font-semibold">There is no bank within 50 miles.</p>
+            <p class="mt-1">These are the closest. Many serve a whole region, so it is still worth contacting them.</p>
+          </div>
+          <ul class="mt-4 divide-y divide-slate-200 border-y border-slate-200"><li class="py-3"><p class="text-sm font-medium text-slate-900">Catholic Social Services of Montana</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Helena, MT &middot; About 96 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">cssmt.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Inland NW Diaper Bank a program of Spokane Valley Partners</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Spokane Valley, WA &middot; About 161 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">svpart.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Idaho Period Project</p><p class="mt-0.5 text-xs text-slate-600">Period supplies &middot; Rigby, ID &middot; About 242 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">idahoperiodproject.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Idaho Diaper Bank, Inc.</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Meridian, ID &middot; About 252 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">idahodiaperbank.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Tri-Cities Diaper Bank</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Richland, WA &middot; About 254 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">tricitiesdiaperbank.org</a></li></ul>
+        </div>
+      </div>
+    </div>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">The question moves outside the account form, because a search form cannot sit inside it. One new public page, a model for the listings, a weekly import job and a Census lookup table. The results page has a URL that banks and the sign-in page can link to, and it works without JavaScript.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1"><strong>Feeding America</strong>'s &ldquo;Find your local food bank&rdquo;: a ZIP box, then a results page. <strong>211.org</strong> and <strong>NDBN's own map</strong> work the same way, as does every store locator. GOV.UK's &ldquo;Find a&hellip;&rdquo; services put a single location field first, then a results page.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">B &mdash; Results right on the account page</h2>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The same search box, but the results load under it in a Turbo frame. There is no second page.
+    </p>
+    <div class="frames">
+      <div>
+        <div class="frame-label">/account_requests/new, after searching</div>
+        <div class="frame">
+          <p class="text-sm font-medium text-slate-700">What are you looking for?</p>
+          <div class="mt-1.5 flex items-start gap-2"><span class="radio on"></span><span class="text-sm text-slate-700">Diapers or period supplies<span class="block text-xs text-slate-500">For the people we serve, or for my family.</span></span></div>
+          <div class="my-3 ml-1.5 border-l-4 border-slate-300 pl-3.5">
+            <div class="flex gap-2">
+              <input value="Fresno, CA" class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
+              <button class="inline-flex shrink-0 items-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-medium text-white">Find</button>
+            </div>
+            <ul class="mt-3 divide-y divide-slate-200 border-y border-slate-200"><li class="py-3"><p class="text-sm font-medium text-slate-900">Central California Food Bank</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Fresno, CA &middot; In town</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">ccfoodbank.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Food Bank of Monterey County</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Salinas, CA &middot; About 102 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">foodbankformontereycounty.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Rotary Club of Concord</p><p class="mt-0.5 text-xs text-slate-600">Period supplies &middot; Lafayette, CA &middot; About 149 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">ladybugprogram.com/wordpress_c</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">SupplyBank.Org</p><p class="mt-0.5 text-xs text-slate-600">Diapers and period supplies &middot; Oakland, CA &middot; About 150 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">supplybank.org</a></li><li class="py-3"><p class="text-sm font-medium text-slate-900">Sweet Beginnings Diaper Bank</p><p class="mt-0.5 text-xs text-slate-600">Diapers &middot; Martinez, CA &middot; About 153 miles</p><a href="#" class="link-brand mt-1 inline-block text-xs font-medium underline">sbfrc.org</a></li></ul>
+          </div>
+          <div class="mt-2 flex items-start gap-2"><span class="radio"></span><span class="text-sm text-slate-700">Software to run our bank</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">Everything A costs, plus five results pushing the second answer off the screen on a phone. The results have no URL of their own, so nobody can share them, and the reveal is no longer a field or two, which is the limit <code>design.md</code> sets for one.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1">Inline results are common in checkout flows, like a pickup-store picker. Those pick one store and carry on, which is not the case here: finding a bank is the end of this visitor's task.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt">
+    <div class="flex flex-wrap items-baseline gap-3">
+      <h2 class="text-lg font-semibold text-slate-900">C &mdash; A button to the finder page</h2>
+    </div>
+    <p class="mt-2 text-sm text-slate-600 note">
+      The answer reveals one sentence and a <em>Find a bank near you</em> button that goes to
+      <code>/find-a-bank</code>, which asks for the location itself.
+    </p>
+    <div class="cost text-sm text-slate-700">
+      <div><p class="font-semibold text-slate-900">What it costs</p><p class="mt-1">The least to build, since the question can stay inside the account form. But it adds a step before anyone gets an answer, for the visitors the change is meant to help.</p></div>
+      <div><p class="font-semibold text-slate-900">Who does this</p><p class="mt-1">Most sign-up pages that route people elsewhere, like Stripe's &ldquo;Not a business? &rarr;&rdquo;. It works when the other page is the real destination, and here it is.</p></div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="opt note text-sm text-slate-700">
+    <h2 class="text-lg font-semibold text-slate-900">Recommendation: A</h2>
+    <p class="mt-2">
+      The visitor types where they are on the page they are already on, and gets a page of results they can
+      bookmark or be sent. The account form stays exactly as it is for banks. B crowds the question it is answering,
+      and C adds a step for exactly the people who give up today.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

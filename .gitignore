@@ -158,3 +158,4 @@ out/
 # Playwright MCP plugin scratch space (screenshot specs, console logs)
 .playwright-mcp/
 /public/account-request-designs.html
+/public/bank-finder-designs.html
