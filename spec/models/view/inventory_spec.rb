@@ -132,6 +132,22 @@ RSpec.describe View::Inventory do
     end
   end
 
+  describe "reserved quantities" do
+    before do
+      Flipper.enable(:reserved_inventory)
+      distribution = create(:distribution, organization: organization, storage_location: storage_location1)
+      distribution.line_items << build(:line_item, quantity: 30, item: item1, itemizable: distribution)
+      DistributionEvent.publish(distribution)
+    end
+
+    it "survives the view layer rebuilding each item" do
+      entry = described_class.new(organization.id).storage_locations[storage_location1.id].items[item1.id]
+      expect(entry.quantity).to eq(70)
+      expect(entry.reserved_quantity).to eq(30)
+      expect(entry.physical_quantity).to eq(100)
+    end
+  end
+
   describe "#all_items" do
     it "should return all items across storage locations" do
       results = subject.all_items
