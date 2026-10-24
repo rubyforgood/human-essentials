@@ -104,6 +104,16 @@ RSpec.describe DistributionMailer, type: :mailer do
       end
     end
 
+    context "with an added item" do
+      let(:distribution_changes) do
+        {added: [{name: "Wipes (Adult)", quantity: 88}], updates: [], removed: []}
+      end
+
+      it "shows the added item and its quantity" do
+        expect(html_body(mail)).to include("Items Added", "Wipes (Adult): 88")
+      end
+    end
+
     context "when organization does not have custom default_email_text" do
       before do
         # When default_email_text is cleared through UI, it still contains whitespace/empty divs/HTML comments

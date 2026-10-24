@@ -1,7 +1,7 @@
 # Provides full CRUD+ for Distributions, which are the primary way for inventory to leave a Diaperbank. Most
 # Distributions are given out through community partners (either via Partnerbase, or to Partners-on-record). It's
 # technically possible to also do Direct Services by having a Partner called "Direct Services" and then issuing
-# Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
+# Distributions to them, though it would lack some of the additional features and failsafes that a Diaperbank
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
   include DateRangeHelper

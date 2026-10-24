@@ -123,7 +123,7 @@ For the second item, after the `BaseItem` is retrieved, it consults back to the 
 
 ## Definitions & Terms
 
-(Note - in the following sections, the term "diaper bank" and "organization" are used interchangably.
+(Note - in the following sections, the term "diaper bank" and "organization" are used interchangeably.
 
 **Adjustment** - When a diaper bank has to make a change to its on-hand inventory totals, it creates an adjustment. A single adjustment can record the change of quantities for multiple different kinds of items. These adjustments create a record internally for transaction and are the only interface for an organization to make direct changes to their inventories. They are internally modeled as `Adjustment`.
 
