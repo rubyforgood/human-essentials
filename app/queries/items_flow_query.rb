@@ -129,7 +129,7 @@ class ItemsFlowQuery
         next
       end
 
-      key = event.versioned? ? [event.eventable_type, event.eventable_id] : [:event, event.id]
+      key = event.is_edit? ? [event.eventable_type, event.eventable_id] : [:event, event.id]
       record = records[key] ||= RecordChanges.new(time: event.event_time, adjustment: ADJUSTMENT_TYPES.include?(event.type))
       record.touch(item_ids_here(event)).each do |item_id|
         quantity = items[item_id]&.quantity.to_i

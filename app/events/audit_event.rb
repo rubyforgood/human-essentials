@@ -15,8 +15,8 @@ class AuditEvent < Event
     )
   end
 
-  # Sets quantities outright rather than diffing against an earlier version.
-  def versioned?
+  # Sets quantities outright rather than editing an earlier version.
+  def is_edit?
     false
   end
 end

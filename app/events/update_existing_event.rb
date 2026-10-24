@@ -61,8 +61,9 @@ class UpdateExistingEvent < Event
     end
   end
 
-  # Carries the difference from the previous version rather than a full version.
-  def versioned?
+  # Carries the difference from the previous version rather than a full
+  # version, so it is applied on its own instead of replacing an earlier event.
+  def is_edit?
     false
   end
 end
