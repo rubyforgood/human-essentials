@@ -19,13 +19,13 @@ migration](#verifying-a-migration):
 
 | | |
 | --- | --- |
-| Controllers on a design system layout | 63 of 65 |
-| **Views still using Bootstrap or AdminLTE** | **0 of 350** |
-| Views carrying a design system marker | 345 of 350 — an indicator, not a verdict |
+| Controllers on a design system layout | 64 of 66 |
+| **Views still using Bootstrap or AdminLTE** | **0 of 351** |
+| Views carrying a design system marker | 346 of 351 — an indicator, not a verdict |
 | Undefined Bootstrap/AdminLTE/Font Awesome classes in `app/views` and `app/helpers` | 0 |
-| Stimulus controllers | 47 |
+| Stimulus controllers | 48 |
 
-Measured 2026-09-09. This table is hand-maintained and the change log's is generated, which is why
+Measured 2026-10-24. This table is hand-maintained and the change log's is generated, which is why
 they had drifted apart before — it once read 299 of 392 and 30 controllers. Both are dated now.
 
 **The headline row is inverted, and that is the point.** It used to count views carrying design
