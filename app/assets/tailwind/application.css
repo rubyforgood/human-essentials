@@ -1050,7 +1050,7 @@
      * `var(--radius-full)`: that token does not exist. Tailwind v4's radius scale stops at
      * `--radius-2xl` and `rounded-full` is a literal, not a variable -- so the declaration this
      * replaces was invalid, the browser dropped it, and both the track and the thumb had been
-     * rendering as sharp rectangles since 015da3b36 first built the rail. Measured 0px on each.
+     * rendering as sharp rectangles since 7e7e571e2 first built the rail. Measured 0px on each.
      */
     border-radius: calc(infinity * 1px);
     background-color: var(--color-slate-100);

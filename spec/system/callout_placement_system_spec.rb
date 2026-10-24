@@ -4,7 +4,7 @@
 # This exists because the rule has now been broken, fixed, and broken again. The new-kit warning --
 # *the items in a kit are fixed once you save* -- sat below both cards at y=922 on a 720px viewport,
 # 765px under the h1: you had to scroll past the thing you were composing to be told composing it
-# was final. It was moved in e3e12881d, nothing pinned it, and when the working tree was rolled back
+# was final. It was moved in 830a24006, nothing pinned it, and when the working tree was rolled back
 # the old placement came straight back and was reported a second time.
 #
 # Measured in a browser rather than asserted against markup order, because the question is where the

@@ -234,7 +234,7 @@ a guard; it is simply no longer load-bearing on any screen we have.
 
 **`responsive-audit.js` was never blind to it.** The entry said it "compares `scrollWidth` with
 `clientWidth` … reads a proxy and reports clean while the page pans", and asked for a check that
-swipes and watches the `h1`. That check was already in the audit — added in `cfeee9130` on
+swipes and watches the `h1`. That check was already in the audit — added in `8e0f6192c` on
 **2026-08-21**, three days *before* this entry was written on 2026-08-24. It uses a real
 `page.mouse.wheel` gesture, and `bodyOverflow` is only its `else` branch. Proven with a positive
 control: a 2000px element with the clip rule removed pans the page 900px, and the audit reports

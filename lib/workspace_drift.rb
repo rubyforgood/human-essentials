@@ -101,7 +101,7 @@ module WorkspaceDrift
   end
 
   # `--full-history` again, because the default simplification reported *no history at all* for
-  # `public/product_drive_participants.csv`, whose blob is plainly there at 548db78f6. `--raw` hands
+  # `public/product_drive_participants.csv`, whose blob is plainly there at f4774563e. `--raw` hands
   # back the blob hashes directly, so this is one process per path and no walk in Ruby.
   def held_at?(path, sha)
     git("log", "--full-history", "--max-count=40", "--format=", "--raw", "--abbrev=40", "--", path)

@@ -2565,10 +2565,10 @@ skipped it. There is one `audited?` predicate now and both go through it. The co
 ### The dialog count that was already wrong
 
 `overlay-audit.js` reports 4 dialogs where the change log had recorded 6. Before writing the
-smaller number down it was measured at `c0de28eb1`, the branch tip before any of this work: 4
+smaller number down it was measured at `4ccc92083`, the branch tip before any of this work: 4
 there too. The audit's nine pages include nothing these commits touched, and the likeliest
 explanation is the manufacturers CSV import, whose modal was deleted along with its route in
-`f644de0ef` — recorded in the change log, not carried into the verification line beneath it.
+`f383cf12e` — recorded in the change log, not carried into the verification line beneath it.
 
 ## 2026-08-22 · The storage location date band, and the filter nobody could see
 
@@ -3005,7 +3005,7 @@ Evidence that the browser default had been met before and only patched locally:
 `requests/_request_row.html.erb` puts `class="no-underline"` on an unrelated `<abbr>`. Somebody
 hit it, fixed the one they could see, and moved on.
 
-### The legend is removed, and that reverses `fc4e62d32`
+### The legend is removed, and that reverses `33e98c602`
 
 `essentials_form_for` rendered "Fields marked * are required." above every form, CSS-hidden
 unless the form actually had a required field. It was added deliberately, for WCAG 3.3.2, with
@@ -3397,7 +3397,7 @@ back, which was verified rather than assumed.
 
 **What was found on the way.** `account_requests/new` was still rendering simple_form's
 `f.error_notification` rather than the app's `essentials_error_summary` — the single-convention
-sweep in `6d2cdb6e2` looked for a *flash* beside a summary and so never saw it. It surfaced here
+sweep in `fb226951f` looked for a *flash* beside a summary and so never saw it. It surfaced here
 only because the notification's default message, "Please review the problems below:", is copy
 with both a "please" and a position in it.
 
@@ -5169,7 +5169,7 @@ they were not four independent problems.
 
 **Two of the four were mine from the night before; two had been there since the rail was built.** I
 first wrote that three came from the previous change and had to correct it — `--radius-full` dates to
-`015da3b36`, and the gap above the pagination was zero then too, at a 25px strip holding a 25px rail.
+`7e7e571e2`, and the gap above the pagination was zero then too, at a 25px strip holding a 25px rail.
 What the previous change did was *unmask* them. A square slate-400 thumb under a 92%-white backdrop
 is a much quieter object than a square slate-500 thumb with nothing behind it, so removing the chrome
 is what made two old defects visible at the same moment it introduced two new ones. Worth recording
@@ -7533,9 +7533,9 @@ is in `stash@{0}`, the snapshot of the fifth workspace reset, which reverted 316
 has the callout after both cards with exactly those two sentences.
 
 So the report was accurate about what was on screen and the screen was showing a rolled-back tree.
-The live page measures **y=205, 48px under the `h1`**, which is where `e3e12881d` put it.
+The live page measures **y=205, 48px under the `h1`**, which is where `830a24006` put it.
 
-**The lesson is not "the reset did it".** It is that the fix had no test. `e3e12881d` moved a
+**The lesson is not "the reset did it".** It is that the fix had no test. `830a24006` moved a
 callout in one template and wrote the rule into design.md, and neither of those things can fail. A
 grep for `callout` across the system specs returned four comments and no assertion. Any rollback,
 any refactor that moves a wrapper, any future edit that appends rather than prepends puts it back
@@ -7577,7 +7577,7 @@ does not exist until a control is clicked, and clicking a *destructive* control 
 is least likely to do. The specs are better — thirteen files drive the dialog through
 `accept_confirm_dialog`, which looks for `dialog[open]` and fails if the native box appeared — but
 only at the call sites they happen to exercise, and **Delete on `/product_drives/:id` had no spec**:
-it moved into the header overflow the day before, in `a596d0c0f`, and I did not pin its confirm.
+it moved into the header overflow the day before, in `bc5d58ee9`, and I did not pin its confirm.
 **A mechanism that only some call sites' specs would notice is a mechanism nobody is watching.**
 
 So `bin/design/confirm-audit.js`: every page as three roles, every `data-confirm`, the menu it hides
@@ -7610,13 +7610,13 @@ and they can be made to announce themselves, which is where the cost actually is
 
 **What it does, measured.** Both snapshots of a reset are the same tree:
 `git diff --name-only stash@{n} <commit>` across the branch history puts both within **6 and 4 files
-of `548db78f6`** and hundreds of files from everything else. `548db78f6` is the commit that was
+of `f4774563e`** and hundreds of files from everything else. `f4774563e` is the commit that was
 `HEAD` when the session started. The reflog shows **`HEAD` never moved** — no `reset`, no branch
 checkout, only my own recovery. `/tmp` files from previous days survive and `.git` is untouched, so
 it is not a container or filesystem snapshot being restored. What is left is an external process
 running the equivalent of
 
-    git checkout 548db78f6 -- .
+    git checkout f4774563e -- .
 
 which restores every tracked file as of that commit, brings back files later commits deleted, and
 leaves `HEAD` and the index alone. That is exactly the damage observed, including the resurrected
@@ -9316,7 +9316,7 @@ most likely from the `.notes` column cap. The clip rule stays, but it currently 
 
 **The audit already had the honest check.** The entry said it "compares `scrollWidth` with
 `clientWidth`" and asked for a check that swipes and watches the heading move. That check was
-already there — `page.mouse.wheel(900, 0)`, then read the `h1`'s `left` — added in `cfeee9130` on
+already there — `page.mouse.wheel(900, 0)`, then read the `h1`'s `left` — added in `8e0f6192c` on
 **2026-08-21**, three days before the entry claiming its absence was written on 2026-08-24.
 `bodyOverflow` is its `else` branch, not its method. design.md has had a table since then spelling
 out why a gesture and `scrollTo` answer different questions.
@@ -9520,7 +9520,7 @@ Not done: `/broadcast_announcements/1/edit` and `/partners/children/new` still 4
 skipped by every audit. They are in `docs/todo.md`, because after today the reasonable prior is that
 a skipped route is hiding something.
 
-> **Superseded the next day, by `3403c72b7`.** Both were fixed and the paragraph above is no longer
+> **Superseded the next day, by `33c83b669`.** Both were fixed and the paragraph above is no longer
 > true of the code — left as written because this is a dated record, not a status page. The first
 > 404'd because `IDS` used `BroadcastAnnouncement.first`, a *global* announcement with a nil
 > `organization_id`, where the controller scopes to the org; the second is scoped by a **query
@@ -9584,7 +9584,7 @@ button on a live page for three weeks.
 ### What this did not fix
 
 The `responsive-audit` flicker, which is what led here, is still open. It is at
-`46352abf8` in the change log with six eliminated hypotheses, and the button on `/organization`
+`80a8ed03b` in the change log with six eliminated hypotheses, and the button on `/organization`
 was not its cause — the flicker is bimodal across all fifty spacing-exception targets, and this
 was one control.
 
@@ -9871,7 +9871,7 @@ check. `docs/onboarding.md`'s post-merge routine has a step 9 now, naming both.
 
 ## 2026-09-09 — The recovery tool could not see the file that broke a spec
 
-Rollback #9 landed mid-session: `HEAD` at `814c03f77` and pushed, the disk exactly `548db78f6` —
+Rollback #9 landed mid-session: `HEAD` at `d39e6524e` and pushed, the disk exactly `f4774563e` —
 the same target as the eight before it, 551 commits back, **0 differing paths**, so nothing on disk
 was unique to it and the restore was lossless. Recovery took a minute. What was worth the rest of
 the hour was that **thirteen files came back and `bin/workspace-restore` could only see eleven**.
@@ -9880,7 +9880,7 @@ the hour was that **thirteen files came back and `bin/workspace-restore` could o
 
 `public/product_drive_participants.csv` and `public/vendors.csv`. Both were on disk. Both were
 absent from `HEAD`. Neither appeared in `git status`, because `.gitignore` gained `/public/*.csv` at
-`db64bbec9` — and **a rollback restores an old tree without consulting the ignore rules of the tree
+`54ee68612` — and **a rollback restores an old tree without consulting the ignore rules of the tree
 it overwrites**. `WorkspaceDrift#untracked` read `git status --porcelain -uall`, which never lists
 an ignored path, so the files were invisible to the tool whose entire job is to find them.
 
@@ -9899,7 +9899,7 @@ visible it would have been filed as somebody's work in progress and spared.
 Two independent failures, both measured:
 
 **History simplification.** `git log -- <path>` prunes, and reported no history at all for a file
-whose blob is plainly in `548db78f6`. `--full-history` finds two commits. Nothing about the
+whose blob is plainly in `f4774563e`. `--full-history` finds two commits. Nothing about the
 prose form of the query suggests it can answer "never existed" about a file you are looking at.
 
 **Merges.** The obvious sharpening is `--diff-filter=D` — literally "paths some commit deleted",

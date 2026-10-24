@@ -1600,7 +1600,7 @@ utility beats a rule in `@layer components` whatever its specificity.
 **The track and the thumb are pills, written as `calc(infinity * 1px)`.** Not `var(--radius-full)`:
 **that token does not exist**. Tailwind v4's radius scale stops at `--radius-2xl` and `rounded-full`
 compiles to the literal, not to a variable — so the declaration was invalid, the browser dropped it,
-and both parts rendered as sharp rectangles from `015da3b36` until it was written out. Measured 0px
+and both parts rendered as sharp rectangles from `7e7e571e2` until it was written out. Measured 0px
 on each. Resolving every custom property `application.css` references against the running app,
 **30 referenced, 28 resolve**, and the other unresolved one is `--pin-width`, which the controller
 sets per element at runtime and is correct. One bad token, not a pattern — but a `var()` naming a
@@ -4127,7 +4127,7 @@ section-scoped. Position alone does not decide it.
 
 `spec/system/callout_placement_system_spec.rb` pins both halves of the rule — the kit warning above
 its cards and above the fold, and the partner group's reminder note staying with the fields it
-describes. It exists because the kit callout was reported **twice**: fixed in `e3e12881d`, unpinned,
+describes. It exists because the kit callout was reported **twice**: fixed in `830a24006`, unpinned,
 and back at y=922 the moment the working tree was rolled back. **A placement fixed by editing one
 template survives exactly as long as the template does.**
 
