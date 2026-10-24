@@ -113,6 +113,39 @@ RSpec.describe ItemsFlowQuery do
     end
   end
 
+  context "when successive edits each replace the donated item" do
+    let(:items) { create_list(:item, 3, organization: organization) }
+
+    before do
+      donation = donate(items[0], 5)
+      items.drop(1).each do |item|
+        donation.line_items.first.update!(item_id: item.id)
+        DonationEvent.publish(donation.reload)
+      end
+    end
+
+    it "only counts the item from the latest edit" do
+      expect(result.rows).to contain_exactly(have_attributes(item_id: items[2].id, quantity_in: 5, quantity_end: 5))
+    end
+  end
+
+  context "when an edit moves a donation to another storage location" do
+    let(:item) { create(:item, organization: organization) }
+    let(:other_location) { create(:storage_location, organization: organization) }
+
+    before do
+      donation = donate(item, 5)
+      donation.update!(storage_location: other_location)
+      DonationEvent.publish(donation.reload)
+    end
+
+    it "counts it only at the new location" do
+      expect(result.rows).to be_empty
+      other_result = described_class.new(organization: organization, storage_location: other_location).call
+      expect(other_result.rows).to contain_exactly(have_attributes(item_id: item.id, quantity_in: 5, quantity_end: 5))
+    end
+  end
+
   context "when a donation is destroyed" do
     let(:item) { create(:item, organization: organization) }
     let(:date_range) { month(2026, 1) }

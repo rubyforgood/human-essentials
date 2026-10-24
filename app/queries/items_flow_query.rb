@@ -83,16 +83,19 @@ class ItemsFlowQuery
     def initialize(time:, adjustment:)
       @time = time
       @adjustment = adjustment
-      @item_ids = Set.new
+      @previous_item_ids = []
       @quantities = Hash.new(0)
     end
 
-    # Adds the items a new version of the record touches. An edit can remove
-    # an item, so this keeps the items earlier versions touched as well.
+    # Records the items a new version of the record touches. An edit can
+    # remove an item, so the items the previous version touched may have
+    # changed too.
     # @param item_ids [Array<Integer>]
-    # @return [Set<Integer>] every item any version of the record has touched
+    # @return [Array<Integer>] the items this version or the previous one touched
     def touch(item_ids)
-      @item_ids.merge(item_ids)
+      touched = @previous_item_ids | item_ids
+      @previous_item_ids = item_ids
+      touched
     end
 
     # @param item_id [Integer]
