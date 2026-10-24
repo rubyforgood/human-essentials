@@ -159,12 +159,12 @@
                   <tfoot>
                   <tr>
                     <td>Total</td>
-                    <td><%= @flow.totals[:quantity_start] %></td>
-                    <td><%= @flow.totals[:quantity_in] %></td>
-                    <td><%= @flow.totals[:quantity_out] %></td>
-                    <td><%= @flow.totals[:quantity_adjustment] %></td>
-                    <td class="<%= 'modal-body-warning-text' if @flow.totals[:change].negative? %>"><%= @flow.totals[:change] %></td>
-                    <td><%= @flow.totals[:quantity_end] %></td>
+                    <td><%= @flow.totals.quantity_start %></td>
+                    <td><%= @flow.totals.quantity_in %></td>
+                    <td><%= @flow.totals.quantity_out %></td>
+                    <td><%= @flow.totals.quantity_adjustment %></td>
+                    <td class="<%= 'modal-body-warning-text' if @flow.totals.change.negative? %>"><%= @flow.totals.change %></td>
+                    <td><%= @flow.totals.quantity_end %></td>
                   </tr>
                   </tfoot>
                 </table>

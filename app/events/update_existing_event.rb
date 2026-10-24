@@ -60,4 +60,9 @@ class UpdateExistingEvent < Event
       )
     end
   end
+
+  # Carries the difference from the previous version rather than a full version.
+  def versioned?
+    false
+  end
 end

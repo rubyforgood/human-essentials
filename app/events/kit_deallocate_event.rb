@@ -30,4 +30,9 @@ class KitDeallocateEvent < Event
       )
     )
   end
+
+  # Each deallocation is its own change rather than a version of the kit.
+  def versioned?
+    false
+  end
 end

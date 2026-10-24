@@ -54,6 +54,14 @@ class Event < ApplicationRecord
     end
   end
 
+  # Whether this event is a full version of its eventable that replaces the
+  # previous event for the same record (e.g. an edited donation), rather than a
+  # standalone change.
+  # @return [Boolean]
+  def versioned?
+    true
+  end
+
   # @return [Array<Option>]
   def self.types_for_select
     descendants.map do |klass|

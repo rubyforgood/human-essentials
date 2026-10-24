@@ -102,4 +102,16 @@ RSpec.describe Event, type: :model do
       }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution created before #{1.day.ago.to_date}/)
     end
   end
+
+  describe "#versioned?" do
+    it "is true for events that are a version of their record" do
+      expect([DonationEvent, DistributionEvent, AdjustmentEvent, TransferEvent, DonationDestroyEvent].map { |klass| klass.new.versioned? })
+        .to all(be(true))
+    end
+
+    it "is false for standalone events" do
+      expect([KitAllocateEvent, KitDeallocateEvent, AuditEvent, UpdateExistingEvent].map { |klass| klass.new.versioned? })
+        .to all(be(false))
+    end
+  end
 end

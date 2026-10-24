@@ -8,7 +8,7 @@ RSpec.describe ItemsFlowQuery do
   subject(:result) { described_class.new(organization: organization, storage_location: storage_location, date_range: date_range).call }
 
   def rows_by_item
-    result.rows.index_by { |row| row[:item_id] }
+    result.rows.index_by(&:item_id)
   end
 
   def donate(item, quantity)
@@ -39,12 +39,12 @@ RSpec.describe ItemsFlowQuery do
 
     it "sorts each item's changes into in, out and adjustment columns" do
       expect(result.rows).to contain_exactly(
-        {item_id: items[0].id, item_name: items[0].name, quantity_start: 0, quantity_in: 10, quantity_out: 5,
-         quantity_adjustment: 0, change: 5, quantity_end: 5},
-        {item_id: items[1].id, item_name: items[1].name, quantity_start: 0, quantity_in: 3, quantity_out: 2,
-         quantity_adjustment: 2, change: 3, quantity_end: 3}
+        have_attributes(item_id: items[0].id, item_name: items[0].name, quantity_start: 0, quantity_in: 10, quantity_out: 5,
+          quantity_adjustment: 0, change: 5, quantity_end: 5),
+        have_attributes(item_id: items[1].id, item_name: items[1].name, quantity_start: 0, quantity_in: 3, quantity_out: 2,
+          quantity_adjustment: 2, change: 3, quantity_end: 3)
       )
-      expect(result.totals).to eq(quantity_start: 0, quantity_in: 13, quantity_out: 7, quantity_adjustment: 2,
+      expect(result.totals).to have_attributes(quantity_start: 0, quantity_in: 13, quantity_out: 7, quantity_adjustment: 2,
         change: 8, quantity_end: 8)
     end
   end
@@ -64,8 +64,8 @@ RSpec.describe ItemsFlowQuery do
     end
 
     it "counts flows inside the range and quantities at its start and end" do
-      expect(rows_by_item[items[0].id]).to include(quantity_start: 0, quantity_in: 10, quantity_out: 0, quantity_end: 10)
-      expect(rows_by_item[items[1].id]).to include(quantity_start: 8, quantity_in: 0, quantity_out: 5, quantity_end: 3)
+      expect(rows_by_item[items[0].id]).to have_attributes(quantity_start: 0, quantity_in: 10, quantity_out: 0, quantity_end: 10)
+      expect(rows_by_item[items[1].id]).to have_attributes(quantity_start: 8, quantity_in: 0, quantity_out: 5, quantity_end: 3)
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe ItemsFlowQuery do
       let(:date_range) { month(2026, 1) }
 
       it "counts the edited quantity on the original date" do
-        expect(rows_by_item[item.id]).to include(quantity_start: 0, quantity_in: 150, change: 150, quantity_end: 150)
+        expect(rows_by_item[item.id]).to have_attributes(quantity_start: 0, quantity_in: 150, change: 150, quantity_end: 150)
       end
     end
 
@@ -92,7 +92,7 @@ RSpec.describe ItemsFlowQuery do
       let(:date_range) { month(2026, 3) }
 
       it "shows no flow for the edit" do
-        expect(rows_by_item[item.id]).to include(quantity_start: 150, quantity_in: 0, quantity_out: 0, quantity_end: 150)
+        expect(rows_by_item[item.id]).to have_attributes(quantity_start: 150, quantity_in: 0, quantity_out: 0, quantity_end: 150)
       end
     end
   end
@@ -142,8 +142,8 @@ RSpec.describe ItemsFlowQuery do
       donate(content_item, 10)
       KitAllocateEvent.publish(kit, storage_location.id, 3)
 
-      expect(rows_by_item[kit.id]).to include(quantity_in: 3, quantity_end: 3)
-      expect(rows_by_item[content_item.id]).to include(quantity_in: 10, quantity_out: 6, quantity_end: 4)
+      expect(rows_by_item[kit.id]).to have_attributes(quantity_in: 3, quantity_end: 3)
+      expect(rows_by_item[content_item.id]).to have_attributes(quantity_in: 10, quantity_out: 6, quantity_end: 4)
     end
   end
 end

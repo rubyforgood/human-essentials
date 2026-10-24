@@ -9,17 +9,43 @@
 #
 # To do this we replay the inventory once (the same replay used everywhere
 # else, so audits, kits and edits are handled exactly as InventoryAggregate
-# handles them), record the change each event made at this location, and
-# attribute that change to the time its record was first created. Start and
-# end quantities are then the current quantity minus the changes attributed
-# after those times, so start + change always equals end.
+# handles them) and total up the net change each record made to each item at
+# this location, dated to when the record was first created. Records from
+# before the range make up the start quantity and records within it make up
+# the in, out and adjustment columns, so start + change always equals end.
 class ItemsFlowQuery
-  Result = Struct.new(:rows, :totals)
+  Result = Data.define(:rows, :totals)
+
+  # How one item's quantity moved over the date range. The totals row has no
+  # item.
+  Row = Data.define(:item_id, :item_name, :quantity_start, :quantity_in, :quantity_out, :quantity_adjustment) do
+    # @param rows [Array<Row>]
+    # @return [Row]
+    def self.total(rows)
+      new(
+        item_id: nil,
+        item_name: nil,
+        quantity_start: rows.sum(&:quantity_start),
+        quantity_in: rows.sum(&:quantity_in),
+        quantity_out: rows.sum(&:quantity_out),
+        quantity_adjustment: rows.sum(&:quantity_adjustment)
+      )
+    end
+
+    def change
+      quantity_in - quantity_out + quantity_adjustment
+    end
+
+    def quantity_end
+      quantity_start + change
+    end
+
+    def empty?
+      [quantity_start, quantity_in, quantity_out, quantity_adjustment].all?(&:zero?)
+    end
+  end
 
   ADJUSTMENT_TYPES = %w[AdjustmentEvent AuditEvent].freeze
-  # These events stand alone rather than being a version of their record, so
-  # their changes stay at their own event time.
-  STANDALONE_TYPES = %w[KitAllocateEvent KitDeallocateEvent AuditEvent UpdateExistingEvent].freeze
 
   # @param organization [Organization]
   # @param storage_location [StorageLocation]
@@ -32,106 +58,119 @@ class ItemsFlowQuery
 
   # @return [Result]
   def call
-    current, changes = replay
-    flows = window_flows(changes)
-    start_quantities = quantities_without(current, changes) { |time| @date_range.nil? || time >= @date_range.begin }
-    end_quantities = quantities_without(current, changes) { |time| @date_range && time > @date_range.end }
+    snapshot_quantities, records = replay
+    changes_by_item = records.flat_map(&:item_changes).group_by(&:item_id)
 
-    item_ids = (flows.keys + start_quantities.keys + end_quantities.keys).uniq
+    item_ids = (snapshot_quantities.keys + changes_by_item.keys).uniq
     names = Item.where(id: item_ids).pluck(:id, :name).to_h
 
     rows = item_ids.filter_map do |item_id|
-      flow = flows[item_id]
-      start_qty = start_quantities[item_id]
-      end_qty = end_quantities[item_id]
-      next if flow.values.all?(&:zero?) && start_qty.zero? && end_qty.zero?
+      row = build_row(item_id, names[item_id], snapshot_quantities.fetch(item_id, 0), changes_by_item.fetch(item_id, []))
+      row unless row.empty?
+    end.sort_by { |row| row.item_name.to_s }
 
-      {
-        item_id: item_id,
-        item_name: names[item_id],
-        quantity_start: start_qty,
-        quantity_in: flow[:in],
-        quantity_out: flow[:out],
-        quantity_adjustment: flow[:adjustment],
-        change: end_qty - start_qty,
-        quantity_end: end_qty
-      }
-    end.sort_by { |row| row[:item_name].to_s }
-
-    totals = %i[quantity_start quantity_in quantity_out quantity_adjustment change quantity_end]
-      .index_with { |column| rows.sum { |row| row[column] } }
-
-    Result.new(rows: rows, totals: totals)
+    Result.new(rows: rows, totals: Row.total(rows))
   end
 
   private
 
-  Change = Struct.new(:key, :time, :adjustment, :item_id, :quantity)
+  # The net change a record made to one item at this location.
+  ItemChange = Data.define(:item_id, :time, :adjustment, :quantity)
 
-  # Replays the inventory, recording the change each event made to each item
-  # at this location.
-  # @return [Array(Hash<Integer, Integer>, Array<Change>)] current quantities and changes
+  # Everything one record (e.g. a donation and all of its edits) changed at
+  # this location, dated to when the record was first created.
+  class RecordChanges
+    def initialize(time:, adjustment:)
+      @time = time
+      @adjustment = adjustment
+      @item_ids = Set.new
+      @quantities = Hash.new(0)
+    end
+
+    # Adds the items a new version of the record touches. An edit can remove
+    # an item, so this keeps the items earlier versions touched as well.
+    # @param item_ids [Array<Integer>]
+    # @return [Set<Integer>] every item any version of the record has touched
+    def touch(item_ids)
+      @item_ids.merge(item_ids)
+    end
+
+    # @param item_id [Integer]
+    # @param quantity [Integer]
+    def add(item_id, quantity)
+      @quantities[item_id] += quantity
+    end
+
+    # @return [Array<ItemChange>]
+    def item_changes
+      @quantities.filter_map do |item_id, quantity|
+        next if quantity.zero?
+
+        ItemChange.new(item_id: item_id, time: @time, adjustment: @adjustment, quantity: quantity)
+      end
+    end
+  end
+  private_constant :ItemChange, :RecordChanges
+
+  # Replays the inventory, totalling up the change each record made to each
+  # item at this location.
+  # @return [Array(Hash<Integer, Integer>, Array<RecordChanges>)] quantities at
+  #   the snapshot the replay started from, and each record's changes since
   def replay
-    running = Hash.new(0)
-    changes = []
-    first_seen = {} # record key => time its first event happened
-    touched_by = {} # record key => item ids its latest version touched here
+    snapshot_quantities = {}
+    quantities = Hash.new(0) # item_id => quantity after the last event
+    records = {}
 
     InventoryAggregate.inventory_for(@organization.id) do |event, inventory|
       items = inventory.storage_locations[@storage_location.id]&.items || {}
       if event.is_a?(SnapshotEvent)
-        running = Hash.new(0).merge(items.transform_values(&:quantity))
+        snapshot_quantities = items.transform_values(&:quantity)
+        quantities = Hash.new(0).merge(snapshot_quantities)
         next
       end
 
-      key = STANDALONE_TYPES.include?(event.type) ? [:event, event.id] : [event.eventable_type, event.eventable_id]
-      first_seen[key] ||= event.event_time
-      # an edit can remove an item, so also check what the previous version touched
-      touched = event.data.items.filter_map do |line_item|
-        line_item.item_id if [line_item.to_storage_location, line_item.from_storage_location].include?(@storage_location.id)
-      end
-      touched |= touched_by.fetch(key, [])
-      touched_by[key] = touched
-
-      touched.each do |item_id|
+      key = event.versioned? ? [event.eventable_type, event.eventable_id] : [:event, event.id]
+      record = records[key] ||= RecordChanges.new(time: event.event_time, adjustment: ADJUSTMENT_TYPES.include?(event.type))
+      record.touch(item_ids_here(event)).each do |item_id|
         quantity = items[item_id]&.quantity.to_i
-        next if quantity == running[item_id]
-
-        changes << Change.new(key: key, time: first_seen[key], adjustment: ADJUSTMENT_TYPES.include?(event.type),
-          item_id: item_id, quantity: quantity - running[item_id])
-        running[item_id] = quantity
+        record.add(item_id, quantity - quantities[item_id])
+        quantities[item_id] = quantity
       end
     end
 
-    [running, changes]
+    [snapshot_quantities, records.values]
   end
 
-  # Nets each record's changes (so an edited donation counts once, at its
-  # latest quantity) and sorts them into in, out and adjustment.
-  # @return [Hash<Integer, Hash>] item_id => {in:, out:, adjustment:}
-  def window_flows(changes)
-    flows = Hash.new { |hash, item_id| hash[item_id] = {in: 0, out: 0, adjustment: 0} }
-    in_window = changes.select { |change| @date_range.nil? || @date_range.cover?(change.time) }
-    in_window.group_by { |change| [change.key, change.item_id] }.each do |(_, item_id), record_changes|
-      net = record_changes.sum(&:quantity)
-      flow = flows[item_id]
-      if record_changes.first.adjustment
-        flow[:adjustment] += net
-      elsif net.positive?
-        flow[:in] += net
-      else
-        flow[:out] -= net
-      end
+  # @return [Array<Integer>] the items the event moves into or out of this location
+  def item_ids_here(event)
+    event.data.items.filter_map do |line_item|
+      line_item.item_id if [line_item.to_storage_location, line_item.from_storage_location].include?(@storage_location.id)
     end
-    flows
   end
 
-  # Current quantities with the changes attributed to the selected times undone.
-  # @yieldparam time [Time] when a change is attributed to
-  # @return [Hash<Integer, Integer>] item_id => quantity
-  def quantities_without(current, changes)
-    quantities = Hash.new(0).merge(current)
-    changes.each { |change| quantities[change.item_id] -= change.quantity if yield(change.time) }
-    quantities
+  # @param snapshot_quantity [Integer]
+  # @param changes [Array<ItemChange>] the item's changes since the snapshot
+  # @return [Row]
+  def build_row(item_id, item_name, snapshot_quantity, changes)
+    before = changes.select { |change| before_range?(change.time) }
+    adjustments, moves = changes.select { |change| in_range?(change.time) }.partition(&:adjustment)
+    ins, outs = moves.partition { |change| change.quantity.positive? }
+
+    Row.new(
+      item_id: item_id,
+      item_name: item_name,
+      quantity_start: snapshot_quantity + before.sum(&:quantity),
+      quantity_in: ins.sum(&:quantity),
+      quantity_out: -outs.sum(&:quantity),
+      quantity_adjustment: adjustments.sum(&:quantity)
+    )
+  end
+
+  def before_range?(time)
+    !@date_range.nil? && time < @date_range.begin
+  end
+
+  def in_range?(time)
+    @date_range.nil? || @date_range.cover?(time)
   end
 end
