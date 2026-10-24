@@ -335,6 +335,19 @@ RSpec.describe "StorageLocations", type: :request do
       context "html" do
         let(:response_format) { 'html' }
 
+        it "selects the Inventory tab, or the Inventory Flow tab when filtering by date range" do
+          get storage_location_path(storage_location, format: response_format)
+          tabs = Nokogiri::HTML(response.body)
+          expect(tabs.at_css("#custom-tabs-inventory-tab")["aria-selected"]).to eq("true")
+          expect(tabs.at_css("#custom-tabs-inventory-flow-tab")["aria-selected"]).to eq("false")
+
+          get storage_location_path(storage_location, format: response_format,
+            filters: {date_range: "January 1, 2026 - January 31, 2026"})
+          tabs = Nokogiri::HTML(response.body)
+          expect(tabs.at_css("#custom-tabs-inventory-tab")["aria-selected"]).to eq("false")
+          expect(tabs.at_css("#custom-tabs-inventory-flow-tab")["aria-selected"]).to eq("true")
+        end
+
         it "should return a correct response" do
           get storage_location_path(storage_location, format: response_format)
           expect(response).to be_successful

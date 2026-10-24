@@ -34,14 +34,13 @@ module InventoryAggregate
       event_hash = {}
       events.group_by(&:group_id).each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
-        # don't do grouping for UpdateExistingEvents
-        if event_batch.any? { |e| e.is_a?(UpdateExistingEvent) }
-          handle(last_grouped_event, inventory, validate: validate)
-          yield last_grouped_event, inventory if block_given?
-          next
+        previous_event = nil
+        # only edits are diffed against the previous version of their record
+        if last_grouped_event.is_edit?
+          key = [last_grouped_event.eventable_type, last_grouped_event.eventable_id]
+          previous_event = event_hash[key]
+          event_hash[key] = last_grouped_event
         end
-        previous_event = event_hash[[last_grouped_event.eventable_type, last_grouped_event.eventable_id]]
-        event_hash[[last_grouped_event.eventable_type, last_grouped_event.eventable_id]] = last_grouped_event
         handle(last_grouped_event, inventory, validate: validate, previous_event: previous_event)
         yield last_grouped_event, inventory if block_given?
       end

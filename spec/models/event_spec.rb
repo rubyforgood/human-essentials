@@ -102,4 +102,16 @@ RSpec.describe Event, type: :model do
       }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution created before #{1.day.ago.to_date}/)
     end
   end
+
+  describe "#is_edit?" do
+    it "is true for events that edit their record" do
+      expect([DonationEvent, DistributionEvent, AdjustmentEvent, TransferEvent, DonationDestroyEvent].map { |klass| klass.new.is_edit? })
+        .to all(be(true))
+    end
+
+    it "is false for standalone events" do
+      expect([KitAllocateEvent, KitDeallocateEvent, AuditEvent, UpdateExistingEvent].map { |klass| klass.new.is_edit? })
+        .to all(be(false))
+    end
+  end
 end
