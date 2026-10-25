@@ -48,6 +48,10 @@
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                   <%= f.input_field :email, class: "form-control" %>
                 <% end %>
+                <%= f.input :phone_number, label: "Phone Number:", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                  <%= f.input_field :phone_number, class: "form-control" %>
+                <% end %>
                 <%= f.input :current_password, label: "Current Password:", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
                   <%= f.input_field :current_password, class: "form-control" %>
