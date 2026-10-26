@@ -84,6 +84,8 @@ gem "bugsnag"
 gem 'delayed_job_active_record'
 # UI for showing job status.
 gem 'delayed_job_web'
+# Used by delayed_job; no longer a default gem as of Ruby 3.5.
+gem "benchmark"
 # Sends invitations via e-mail for new users.
 gem "devise_invitable"
 # Environment variable and configuration management.
