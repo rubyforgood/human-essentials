@@ -1,0 +1,47 @@
+.distribution-line-items {
+  .distribution-line-item-row {
+    margin-top: .5rem;
+  }
+
+  .distribution-line-item-inputs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 11rem;
+    gap: 1rem;
+
+    &.with-request {
+      grid-template-columns: minmax(0, 1fr) 11rem 7rem;
+    }
+  }
+
+  .li-name,
+  .li-quantity,
+  .li-requested {
+    min-width: 0;
+  }
+
+  .distribution-line-item-inputs label,
+  .form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: .5rem;
+    white-space: nowrap;
+  }
+
+  .distribution-requested-value {
+    display: flex;
+    align-items: center;
+    min-height: calc(1.5em + .75rem + 2px);
+  }
+
+  @media (max-width: 575.98px) {
+    .distribution-line-item-inputs,
+    .distribution-line-item-inputs.with-request {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .li-requested {
+      margin-bottom: 1rem;
+    }
+  }
+}
