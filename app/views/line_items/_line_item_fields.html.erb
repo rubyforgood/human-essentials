@@ -1,11 +1,12 @@
 <% if local_assigns[:changes_disallowed] %>
   <div class="alert alert-warning">This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.</div>
 <% end %>
+<% distribution = local_assigns[:distribution] %>
 <%= form.simple_fields_for :line_items, defined?(object) ? object : nil  do |field| %>
   <% requested = field.object.requested_item %>
   <section class="nested-fields line_item_section">
-    <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
-      <div class='d-flex flex-column justify-content-center'>
+    <div class="<%= distribution ? 'distribution-line-item-row' : 'row mt-2 d-flex flex-row align-items-center justify-content-between' %>">
+      <div class="<%= distribution ? 'distribution-line-item-details' : 'd-flex flex-column justify-content-center' %>">
         <% if requested.blank? %>
           <% unless local_assigns[:changes_disallowed] %>
           <div class='d-flex flex-row align-items-center'>
@@ -16,35 +17,40 @@
           <label class='my-1 mx-auto font-weight-normal'>OR</label>
           <% end %>
         <% end %>
-        <div class='d-flex flex-row'>
+        <div class="<%= distribution ? class_names('distribution-line-item-inputs', 'with-request': form.object.request) : 'd-flex flex-row' %>">
           <span class="li-name w-100">
             <%= field.input :item_id,
                             disabled: requested.present? || local_assigns[:changes_disallowed],
                             collection: @item_labels_with_quantities || @items, prompt: "Choose an item",
                             include_blank: "",
-                            label: false,
+                            label: distribution ? "Item" : false,
                             input_html: { class: "my-0 line_item_name", "data-controller": "select2", "data-select2-config-value": '{"width": "100%"}' } %>
             <% if requested.present? %>
               <%= field.input :item_id, as: :hidden %>
             <% end %>
           </span>
-          <div class="li-quantity mx-2">
+          <div class="<%= class_names('li-quantity', 'mx-2': !distribution) %>">
             <%= field.input :quantity,
                             as: :string,
                             disabled: local_assigns[:changes_disallowed],
                             placeholder: "Quantity",
-                            label: false,
+                            label: distribution ? "Quantity - Total Units" : false,
                             input_html: { class: "quantity my-0", data: { quantity: "" } } %>
           </div>
           <% if form.object.respond_to?(:request) && form.object.request %>
-            <div class="li-requested mx-2">
-              <% if requested&.request_unit.present? %>
-                <%= pluralize(requested.quantity, requested.request_unit) %>
-              <% elsif requested %>
-                <%= requested.quantity %>
-              <% else %>
-                N/A
+            <div class="<%= class_names('li-requested', 'mx-2': !distribution) %>">
+              <% if distribution %>
+                <div class="form-label">Requested</div>
               <% end %>
+              <div class="<%= 'distribution-requested-value' if distribution %>">
+                <% if requested&.request_unit.present? %>
+                  <%= pluralize(requested.quantity, requested.request_unit) %>
+                <% elsif requested %>
+                  <%= requested.quantity %>
+                <% else %>
+                  N/A
+                <% end %>
+              </div>
             </div>
           <% end %>
         </div>
