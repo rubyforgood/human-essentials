@@ -173,7 +173,7 @@ GEM
     crack (1.0.1)
       bigdecimal
       rexml
-    crass (1.0.7)
+    crass (1.0.8)
     csv (3.3.5)
     cuprite (0.18)
       capybara (~> 3.0)
@@ -355,18 +355,18 @@ GEM
     json (3.1.0)
     jwt (3.3.0)
       base64
-    kaminari (1.2.2)
+    kaminari (1.3.1)
       activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.2.2)
-      kaminari-activerecord (= 1.2.2)
-      kaminari-core (= 1.2.2)
-    kaminari-actionview (1.2.2)
+      kaminari-actionview (= 1.3.1)
+      kaminari-activerecord (= 1.3.1)
+      kaminari-core (= 1.3.1)
+    kaminari-actionview (1.3.1)
       actionview
-      kaminari-core (= 1.2.2)
-    kaminari-activerecord (1.2.2)
+      kaminari-core (= 1.3.1)
+    kaminari-activerecord (1.3.1)
       activerecord
-      kaminari-core (= 1.2.2)
-    kaminari-core (1.2.2)
+      kaminari-core (= 1.3.1)
+    kaminari-core (1.3.1)
     knapsack_pro (11.0.0)
       rake
       thor (~> 1.4)
@@ -745,7 +745,7 @@ GEM
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
     uniform_notifier (1.18.0)
-    uri (1.1.1)
+    uri (1.1.2)
     useragent (0.16.11)
     version_gem (1.1.15)
     warden (1.2.9)
