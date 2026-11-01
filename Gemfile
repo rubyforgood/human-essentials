@@ -162,7 +162,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 8.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.56"
+  gem "standard", "~> 1.57"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
