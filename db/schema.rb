@@ -776,6 +776,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_234706) do
     t.boolean "organization_admin"
     t.integer "organization_id"
     t.bigint "partner_id"
+    t.string "phone_number"
     t.string "provider"
     t.datetime "remember_created_at", precision: nil
     t.datetime "reset_password_sent_at", precision: nil

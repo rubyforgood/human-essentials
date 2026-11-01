@@ -40,9 +40,10 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "PATCH #update" do
       context 'with no errors' do
         it "renders index template with a successful update flash message" do
-          patch admin_user_path(user), params: { user: { name: 'New User 123', email: 'random@gmail.com' } }
+          patch admin_user_path(user), params: { user: { name: 'New User 123', email: 'random@gmail.com', phone_number: '555-123-4567' } }
           expect(response).to redirect_to admin_users_path
           expect(flash[:notice]).to eq("New User 123 updated!")
+          expect(user.reload.phone_number).to eq('555-123-4567')
         end
       end
 
@@ -144,13 +145,14 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "POST #create" do
       it "creates an org user" do
         post admin_users_path, params: {
-          user: { name: "New Org User", email: organization.email },
+          user: { name: "New Org User", email: organization.email, phone_number: "555-123-4567" },
           resource_type: Role::ORG_USER,
           resource_id: organization.id
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Org User")
         expect(new_user).not_to eq(nil)
+        expect(new_user.phone_number).to eq("555-123-4567")
         expect(new_user.has_role?(Role::ORG_USER, organization)).to be_truthy
         expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       end

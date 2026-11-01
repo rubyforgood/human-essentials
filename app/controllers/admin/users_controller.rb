@@ -45,6 +45,7 @@ class Admin::UsersController < AdminController
     UserInviteService.invite(
       name: user_params[:name],
       email: user_params[:email],
+      phone_number: user_params[:phone_number],
       roles: [params[:resource_type].to_sym],
       resource: resource
     )
@@ -103,7 +104,7 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email)
+    params.require(:user).permit(:name, :email, :phone_number)
   end
 
   def validate_role_resource_params

@@ -6,3 +6,7 @@
   <span class="input-group-text"><%= fa_icon "envelope" %></span>
   <%= f.input_field :email, class: "form-control" %>
 <% end %>
+<%= f.input :phone_number, label: "Phone Number", wrapper: :input_group do %>
+  <span class="input-group-text"><%= fa_icon "phone" %></span>
+  <%= f.input_field :phone_number, class: "form-control" %>
+<% end %>
