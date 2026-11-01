@@ -59,6 +59,17 @@ RSpec.describe "Dashboard", type: :request do
     end
   end
 
+  context "While signed in as a partner user" do
+    before do
+      sign_in(create(:partner_user, partner: create(:partner, organization: organization)))
+    end
+
+    it "does not allow choosing an organization via organization_id" do
+      get dashboard_path(organization_id: create(:organization).id)
+      expect(response).to redirect_to(partners_dashboard_path)
+    end
+  end
+
   context "While not signed in" do
     it "redirects for authentication" do
       get dashboard_path
