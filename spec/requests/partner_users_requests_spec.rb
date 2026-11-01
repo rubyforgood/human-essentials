@@ -1,8 +1,8 @@
 # spec/requests/partner_users_controller_spec.rb
 
 RSpec.describe PartnerUsersController, type: :request do
-  let!(:partner) { create(:partner) } # Assuming you have a factory for creating partners
   let(:organization) { create(:organization) }
+  let!(:partner) { create(:partner, organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:org_admin) { create(:organization_admin, organization: organization) }
   let(:default_params) do
@@ -234,6 +234,44 @@ RSpec.describe PartnerUsersController, type: :request do
         expect(response).to redirect_to(dashboard_path)
         expect(flash[:error]).to match(/access denied/i)
       end
+    end
+  end
+
+  context "with a partner from another organization" do
+    let(:other_partner) { create(:partner, organization: create(:organization)) }
+    let!(:other_partner_user) { create(:partner_user, partner: other_partner) }
+
+    before do
+      sign_in(org_admin)
+    end
+
+    it "does not list its users" do
+      get partner_users_path(partner_id: other_partner)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "does not invite users to it" do
+      post partner_users_path(partner_id: other_partner), params: {user: {email: org_admin.email, name: "Admin"}}
+      expect(response).to have_http_status(:not_found)
+      expect(org_admin.reload.has_role?(Role::PARTNER, other_partner)).to be(false)
+    end
+
+    it "does not remove its users" do
+      delete partner_user_path(partner_id: other_partner, id: other_partner_user)
+      expect(response).to have_http_status(:not_found)
+      expect(other_partner_user.reload.has_role?(Role::PARTNER, other_partner)).to be(true)
+    end
+
+    it "does not resend invitations to its users" do
+      post resend_invitation_partner_user_path(partner_id: other_partner, id: other_partner_user)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "does not reset its users' passwords via one of your own partners" do
+      expect {
+        post reset_password_partner_user_path(partner_id: partner, id: other_partner_user)
+      }.not_to change { ActionMailer::Base.deliveries.count }
+      expect(response).to have_http_status(:not_found)
     end
   end
 end
