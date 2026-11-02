@@ -10,8 +10,9 @@ Human Essentials is a Ruby on Rails inventory management system for diaper banks
 
 ### Development
 ```bash
+bin/db             # Starts Postgres in Docker (user/password: postgres/postgres; also stop|status|logs|psql)
 bin/setup          # First-time setup (installs gems, creates DB, seeds)
-bin/start          # Starts Rails server (port 3000) + Delayed Job worker
+bin/start          # Starts Rails server (port 3000, or $PORT) + Delayed Job worker
 ```
 
 ### Testing

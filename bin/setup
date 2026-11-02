@@ -49,20 +49,27 @@ FileUtils.chdir APP_ROOT do
 
   log "== Installing dependencies =="
   system! "gem install foreman"
-  system! "gem install bundler --conservative"
-  system!("bundle update --bundler --verbose")
-  system!("bundle check") || system!("bundle install")
+  # Install the bundler version the lockfile was built with, rather than the
+  # newest release (which may be a prerelease).
+  bundler_version = File.read("Gemfile.lock")[/^BUNDLED WITH\n\s+(\S+)/, 1]
+  system! "gem install bundler -v #{bundler_version} --conservative"
+  system("bundle check") || system!("bundle install")
 
   unless File.exist?('.env')
     log "== Setting up .env file from .env.example =="
     system!('cp .env.example .env')
-    log  "Check .env to see if your database credentials are correct.\nPress Enter to continue...", color: :red
-    gets
+    log "Created .env - edit it if your database credentials differ from the defaults (see .env.example)."
   end
 
   log "== Preparing database =="
-  log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
-  system! 'bin/rails db:reset'
+  log "⚠️  If you use docker to run postgres (bin/db), make sure your database is running ⚠️"
+  system('bin/rails db:reset') || abort(<<~MSG)
+
+    == Could not set up the database ==
+    Check that Postgres is running and that the credentials in .env are correct.
+    To run Postgres in Docker instead, run bin/db and set PG_USERNAME=postgres
+    and PG_PASSWORD=postgres in .env, then re-run bin/setup.
+  MSG
   system! 'bin/rails db:test:prepare'
 
   log "== Removing old logs, tempfiles, and jobs =="

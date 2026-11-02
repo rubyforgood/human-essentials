@@ -1,3 +1,9 @@
 #!/bin/bash
 
-bundle exec foreman start -f Procfile.dev
+# Set PORT to run the web server somewhere other than 3000, e.g. PORT=3001 bin/start
+port="${PORT:-3000}"
+# Foreman gives each process its own PORT, so pass the web server's port along
+# separately for links built outside a request (e.g. emails sent by jobs).
+export WEB_PORT="$port"
+
+bundle exec foreman start -f Procfile.dev -p "$port"

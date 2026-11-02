@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Runs the development Postgres database in Docker, using the postgres service
+# from the dev container's compose file. It listens on localhost:5432 with
+# username "postgres" and password "postgres" - set PG_USERNAME and PG_PASSWORD
+# in .env to match.
+#
+# Usage: bin/db [up|stop|status|logs|psql]   (default: up)
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+compose() {
+  docker compose -f .devcontainer/docker-compose.yml "$@"
+}
+
+case "${1:-up}" in
+  up)
+    compose up -d postgres
+    echo "Waiting for Postgres to accept connections..."
+    for _ in $(seq 1 30); do
+      if compose exec -T postgres pg_isready -U postgres > /dev/null 2>&1; then
+        echo "Postgres is ready on localhost:5432 (username: postgres, password: postgres)"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Postgres did not become ready after 30 seconds - check bin/db logs" >&2
+    exit 1
+    ;;
+  stop)
+    compose stop postgres
+    ;;
+  status)
+    compose ps postgres
+    ;;
+  logs)
+    compose logs -f postgres
+    ;;
+  psql)
+    shift
+    compose exec postgres psql -U postgres "$@"
+    ;;
+  *)
+    echo "Usage: bin/db [up|stop|status|logs|psql]" >&2
+    exit 1
+    ;;
+esac
