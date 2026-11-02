@@ -30,4 +30,9 @@ class KitDeallocateEvent < Event
       )
     )
   end
+
+  # Each deallocation is its own change rather than an edit of the kit.
+  def is_edit?
+    false
+  end
 end
