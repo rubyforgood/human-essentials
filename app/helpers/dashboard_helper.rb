@@ -19,7 +19,7 @@ module DashboardHelper
   private
 
   def total_distributed_unformatted(range = selected_range)
-    LineItem.active.where(itemizable: current_organization.distributions.during(range)).sum(:quantity)
+    LineItem.where(itemizable: current_organization.distributions.during(range)).sum(:quantity)
   end
 
   def future_distributed_unformatted
