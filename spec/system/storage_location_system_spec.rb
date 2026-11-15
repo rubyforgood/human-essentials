@@ -236,9 +236,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       it "shows the inventory flow for the storage location" do
         within("#custom-tabs-inventory-flow table tbody") do
           result.each do |item|
-            row = find(:css, "tr[id='#{item[:item_id]}']")
+            row = find(:css, "tr[data-item-id='#{item[:item_id]}']")
             change_column_css = item[:change].negative? ? "td.modal-body-warning-text" : "td"
-            expect(row).to have_link(item[:name], href: item_path(item[:item_id]))
+            expect(row).to have_link(item[:item_name], href: item_path(item[:item_id]))
             expect(row).to have_css("td", text: item[:quantity_in])
             expect(row).to have_css("td", text: item[:quantity_out])
             expect(row).to have_css(change_column_css, text: item[:change])
@@ -281,8 +281,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
         it "filters the inventory flow by date range" do
           within("#custom-tabs-inventory-flow table tbody") do
             expect(page).to have_css("tr", count: 1)
-            row = find(:css, "tr[id='#{result.first[:item_id]}']")
-            expect(row).to have_link(result.first[:name], href: item_path(result.first[:item_id]))
+            row = find(:css, "tr[data-item-id='#{result.first[:item_id]}']")
+            expect(row).to have_link(result.first[:item_name], href: item_path(result.first[:item_id]))
             expect(row).to have_css("td", text: result.first[:quantity_in])
             expect(row).to have_css("td", text: result.first[:quantity_out])
             expect(row).to have_css("td", text: result.first[:change])

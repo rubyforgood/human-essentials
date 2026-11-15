@@ -32,7 +32,7 @@ class KitAllocateEvent < Event
   end
 
   # Each allocation is its own change rather than an edit of the kit.
-  def is_edit?
+  def editable?
     false
   end
 end

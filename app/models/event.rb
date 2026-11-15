@@ -54,11 +54,12 @@ class Event < ApplicationRecord
     end
   end
 
-  # Whether events of this type edit their record: each one is a full version
-  # of the eventable (e.g. a donation, then each later edit of it) that replaces
-  # the previous event for that record, rather than a standalone change.
+  # Whether events of this type are versions of an editable record: each one,
+  # the first included, is a full version of the eventable (e.g. a donation,
+  # then each later edit of it), and replaces the previous event for that
+  # record. Events that are standalone changes return false.
   # @return [Boolean]
-  def is_edit?
+  def editable?
     true
   end
 

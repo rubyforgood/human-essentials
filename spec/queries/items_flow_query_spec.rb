@@ -69,6 +69,60 @@ RSpec.describe ItemsFlowQuery do
     end
   end
 
+  context "when the date range starts before the inventory snapshot" do
+    let(:item) { create(:item, organization: organization) }
+
+    before do
+      travel_to(Time.zone.local(2026, 1, 10)) { donate(item, 8) }
+      travel_to(Time.zone.local(2026, 1, 31, 12)) { SnapshotEvent.publish(organization) }
+      travel_to(Time.zone.local(2026, 2, 10)) { donate(item, 5) }
+    end
+
+    context "and ends after it" do
+      let(:date_range) { Time.zone.local(2026, 1, 15)..Time.zone.local(2026, 2, 28).end_of_day }
+
+      it "leaves the start quantity and change blank and counts flows from the snapshot on" do
+        expect(result.rows).to contain_exactly(
+          have_attributes(item_id: item.id, quantity_start: nil, quantity_in: 5, quantity_out: 0, change: nil, quantity_end: 13)
+        )
+        expect(result.totals).to have_attributes(quantity_start: nil, quantity_in: 5, change: nil, quantity_end: 13)
+        expect(result.history_start).to eq(Time.zone.local(2026, 1, 31, 12))
+      end
+    end
+
+    context "and ends before it" do
+      let(:date_range) { Time.zone.local(2026, 1, 1)..Time.zone.local(2026, 1, 20).end_of_day }
+
+      it "has no rows and no known totals" do
+        expect(result.rows).to be_empty
+        expect(result.totals).to have_attributes(quantity_start: nil, quantity_in: nil, quantity_out: nil,
+          quantity_adjustment: nil, change: nil, quantity_end: nil)
+        expect(result.history_start).to eq(Time.zone.local(2026, 1, 31, 12))
+      end
+    end
+
+    context "when the date range starts after the snapshot" do
+      let(:date_range) { month(2026, 2) }
+
+      it "starts from the snapshot quantity" do
+        expect(result.rows).to contain_exactly(
+          have_attributes(item_id: item.id, quantity_start: 8, quantity_in: 5, change: 5, quantity_end: 13)
+        )
+        expect(result.history_start).to be_nil
+      end
+    end
+  end
+
+  context "with item names in mixed case" do
+    let!(:items) { %w[banana Cherry apple].map { |name| create(:item, name: name, organization: organization) } }
+
+    before { items.each { |item| donate(item, 1) } }
+
+    it "sorts rows by name, ignoring case" do
+      expect(result.rows.map(&:item_name)).to eq(%w[apple banana Cherry])
+    end
+  end
+
   context "when a donation is edited after it was made" do
     let(:item) { create(:item, organization: organization) }
 

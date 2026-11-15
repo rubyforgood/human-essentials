@@ -335,17 +335,30 @@ RSpec.describe "StorageLocations", type: :request do
       context "html" do
         let(:response_format) { 'html' }
 
-        it "selects the Inventory tab, or the Inventory Flow tab when filtering by date range" do
+        it "selects the Inventory tab, or the Inventory Flow tab when asked for" do
           get storage_location_path(storage_location, format: response_format)
           tabs = Nokogiri::HTML(response.body)
           expect(tabs.at_css("#custom-tabs-inventory-tab")["aria-selected"]).to eq("true")
           expect(tabs.at_css("#custom-tabs-inventory-flow-tab")["aria-selected"]).to eq("false")
 
-          get storage_location_path(storage_location, format: response_format,
-            filters: {date_range: "January 1, 2026 - January 31, 2026"})
+          get storage_location_path(storage_location, format: response_format, tab: "flow")
           tabs = Nokogiri::HTML(response.body)
           expect(tabs.at_css("#custom-tabs-inventory-tab")["aria-selected"]).to eq("false")
           expect(tabs.at_css("#custom-tabs-inventory-flow-tab")["aria-selected"]).to eq("true")
+        end
+
+        it "loads the Inventory Flow table lazily, keeping each tab's filter when the other is submitted" do
+          date_range = "January 1, 2026 - January 31, 2026"
+          get storage_location_path(storage_location, format: response_format, tab: "flow", version_date: "2026-01-15",
+            filters: {date_range: date_range})
+          page = Nokogiri::HTML(response.body)
+
+          frame = page.at_css("turbo-frame#inventory_flow")
+          expect(frame["loading"]).to eq("lazy")
+          expect(Rack::Utils.parse_nested_query(URI(frame["src"]).query)).to eq("filters" => {"date_range" => date_range})
+          expect(page.at_css("#custom-tabs-inventory form input[name='filters[date_range]']")["value"]).to eq(date_range)
+          expect(page.at_css("#custom-tabs-inventory-flow form input[name='version_date']")["value"]).to eq("2026-01-15")
+          expect(page.at_css("#custom-tabs-inventory-flow form input[name='tab']")["value"]).to eq("flow")
         end
 
         it "should return a correct response" do
@@ -444,6 +457,43 @@ RSpec.describe "StorageLocations", type: :request do
           get storage_location_path(storage_location, format: response_format)
           expect(response).to be_successful
         end
+      end
+    end
+
+    describe "GET #inventory_flow" do
+      let(:item) { create(:item, name: "Flow Item", organization: organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+
+      before do
+        create(:donation, :with_items, item: item, item_quantity: 7, storage_location: storage_location, organization: organization)
+      end
+
+      it "renders the flow table in its turbo frame" do
+        get inventory_flow_storage_location_path(storage_location)
+
+        expect(response).to be_successful
+        frame = Nokogiri::HTML(response.body).at_css("turbo-frame#inventory_flow")
+        row = frame.at_css("tbody tr[data-item-id='#{item.id}']")
+        expect(row.css("td").map { |td| td.text.strip }).to eq(["Flow Item", "0", "7", "0", "0", "7", "7"])
+        expect(frame.at_css("#inventory-flow-history-start")).to be_nil
+      end
+
+      it "notes when the date range starts before the inventory history" do
+        travel_to(1.day.from_now) { SnapshotEvent.publish(organization) }
+
+        get inventory_flow_storage_location_path(storage_location, filters: {date_range: "January 1, 2020 - January 31, 2020"})
+
+        frame = Nokogiri::HTML(response.body).at_css("turbo-frame#inventory_flow")
+        expect(frame.css("tbody tr")).to be_empty
+        expect(frame.at_css("#inventory-flow-history-start").text).to include("Inventory history begins on")
+      end
+
+      it "does not show another organization's storage location" do
+        other_location = create(:storage_location, organization: create(:organization))
+
+        get inventory_flow_storage_location_path(other_location)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
 

@@ -103,14 +103,14 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "#is_edit?" do
-    it "is true for events that edit their record" do
-      expect([DonationEvent, DistributionEvent, AdjustmentEvent, TransferEvent, DonationDestroyEvent].map { |klass| klass.new.is_edit? })
+  describe "#editable?" do
+    it "is true for events that are versions of an editable record" do
+      expect([DonationEvent, DistributionEvent, AdjustmentEvent, TransferEvent, DonationDestroyEvent].map { |klass| klass.new.editable? })
         .to all(be(true))
     end
 
     it "is false for standalone events" do
-      expect([KitAllocateEvent, KitDeallocateEvent, AuditEvent, UpdateExistingEvent].map { |klass| klass.new.is_edit? })
+      expect([KitAllocateEvent, KitDeallocateEvent, AuditEvent, UpdateExistingEvent].map { |klass| klass.new.editable? })
         .to all(be(false))
     end
   end

@@ -58,8 +58,6 @@ class StorageLocationsController < ApplicationController
     setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
-    @flow = ItemsFlowQuery.new(organization: current_organization, storage_location: @storage_location,
-      date_range: helpers.selected_range).call
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
@@ -130,6 +128,14 @@ class StorageLocationsController < ApplicationController
       flash[:error] = @storage_location.errors.full_messages.join(', ')
       redirect_to storage_locations_path
     end
+  end
+
+  # The Inventory Flow tab's table, loaded into a lazy turbo frame on the show
+  # page so the inventory replay only runs when someone opens that tab.
+  def inventory_flow
+    @storage_location = current_organization.storage_locations.find(params[:id])
+    @flow = ItemsFlowQuery.new(organization: current_organization, storage_location: @storage_location,
+      date_range: helpers.selected_range).call
   end
 
   def inventory

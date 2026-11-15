@@ -63,7 +63,7 @@ class UpdateExistingEvent < Event
 
   # Carries the difference from the previous version rather than a full
   # version, so it is applied on its own instead of replacing an earlier event.
-  def is_edit?
+  def editable?
     false
   end
 end

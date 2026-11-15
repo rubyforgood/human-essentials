@@ -16,7 +16,7 @@ class AuditEvent < Event
   end
 
   # Sets quantities outright rather than editing an earlier version.
-  def is_edit?
+  def editable?
     false
   end
 end

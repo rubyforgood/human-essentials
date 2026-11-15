@@ -35,8 +35,8 @@ module InventoryAggregate
       events.group_by(&:group_id).each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
         previous_event = nil
-        # only edits are diffed against the previous version of their record
-        if last_grouped_event.is_edit?
+        # only versions of an editable record are diffed against its previous version
+        if last_grouped_event.editable?
           key = [last_grouped_event.eventable_type, last_grouped_event.eventable_id]
           previous_event = event_hash[key]
           event_hash[key] = last_grouped_event
