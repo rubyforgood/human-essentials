@@ -32,7 +32,10 @@ That shows the inventory at the beginning of the day.
 ![Storage Location - Inventory tab](images/inventory/inventory_storage_location_view_inventory.png)
 
 ### Inventory Flow
-This shows how the quantity of each item at the Storage Location changed over a date range.  Choose the range in "Date Range" and click "Filter".  For each item you see:
+This shows how the quantity of each item at the Storage Location changed over a date range.  Click the "Inventory Flow" tab (1), choose the range in "Date Range" (2), and click "Filter" (3).
+![Storage Location - Inventory Flow tab](images/inventory/inventory_storage_location_view_inventory_flow.png)
+
+For each item you see:
 - Quantity at Start: how much was there at the start of the range
 - Quantity In: what came in during the range ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Transfers](inventory_transfers.md) from other Storage Locations, and [Kit](inventory_kits.md) allocations and de-allocations that add inventory)
 - Quantity Out: what went out during the range ([Distributions](essentials_distributions.md), [Transfers](inventory_transfers.md) to other Storage Locations, and [Kit](inventory_kits.md) allocations and de-allocations that remove inventory)
