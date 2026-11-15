@@ -582,6 +582,16 @@ RSpec.describe "StorageLocations", type: :request do
         end
       end
 
+      it "formats quantities with thousands separators" do
+        create(:donation, :with_items, item: item, item_quantity: 1500, storage_location: storage_location, organization: organization)
+
+        get inventory_flow_storage_location_path(storage_location)
+
+        rows, totals = flow_cells(response.body)
+        expect(rows[item.id]).to eq(["Flow Item", "0", "1,507", "0", "0", "1,507", "1,507"])
+        expect(totals).to eq(["Total", "0", "1,507", "0", "0", "1,507", "1,507"])
+      end
+
       it "ignores a malformed filters param" do
         get inventory_flow_storage_location_path(storage_location, filters: "x")
 
