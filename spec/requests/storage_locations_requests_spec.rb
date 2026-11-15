@@ -361,6 +361,23 @@ RSpec.describe "StorageLocations", type: :request do
           expect(page.at_css("#custom-tabs-inventory-flow form input[name='tab']")["value"]).to eq("flow")
         end
 
+        it "does not build the Inventory Flow table until the tab loads it" do
+          expect(ItemsFlowQuery).not_to receive(:new)
+
+          get storage_location_path(storage_location, format: response_format, tab: "flow")
+
+          expect(response).to be_successful
+          expect(Nokogiri::HTML(response.body).at_css("turbo-frame#inventory_flow tbody")).to be_nil
+        end
+
+        it "clears the Inventory Flow date range without leaving the tab or losing the inventory date" do
+          get storage_location_path(storage_location, format: response_format, tab: "flow", version_date: "2026-01-15",
+            filters: {date_range: "January 1, 2026 - January 31, 2026"})
+
+          clear_link = Nokogiri::HTML(response.body).css("#custom-tabs-inventory-flow a").find { |a| a.text.include?("Clear Filters") }
+          expect(clear_link["href"]).to eq(storage_location_path(storage_location, tab: "flow", version_date: "2026-01-15"))
+        end
+
         it "should return a correct response" do
           get storage_location_path(storage_location, format: response_format)
           expect(response).to be_successful
@@ -495,6 +512,73 @@ RSpec.describe "StorageLocations", type: :request do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      def flow_cells(body)
+        frame = Nokogiri::HTML(body).at_css("turbo-frame#inventory_flow")
+        rows = frame.css("tbody tr").to_h do |tr|
+          [tr["data-item-id"].to_i, tr.css("td").map { |td| td.text.strip }]
+        end
+        [rows, frame.css("tfoot td").map { |td| td.text.strip }]
+      end
+
+      context "with a date range" do
+        let(:other_item) { create(:item, name: "Other Item", organization: organization) }
+
+        before do
+          travel_to(Time.zone.local(2026, 1, 15)) do
+            create(:donation, :with_items, item: other_item, item_quantity: 20, storage_location: storage_location, organization: organization)
+          end
+          travel_to(Time.zone.local(2026, 2, 10)) do
+            distribution = create(:distribution, :with_items, item: other_item, item_quantity: 12, storage_location: storage_location, organization: organization)
+            DistributionEvent.publish(distribution)
+          end
+          travel_to(Time.zone.local(2026, 3, 5)) do
+            create(:donation, :with_items, item: other_item, item_quantity: 100, storage_location: storage_location, organization: organization)
+          end
+        end
+
+        it "counts records before the range in the start, records in it as flows, and leaves later records out" do
+          get inventory_flow_storage_location_path(storage_location, filters: {date_range: "February 1, 2026 - February 28, 2026"})
+
+          rows, totals = flow_cells(response.body)
+          # The "Flow Item" donation from the outer before block is made today, after the range.
+          expect(rows.keys).to eq([other_item.id])
+          expect(rows[other_item.id]).to eq(["Other Item", "20", "0", "12", "0", "-12", "8"])
+          expect(totals).to eq(["Total", "20", "0", "12", "0", "-12", "8"])
+          change_cell = Nokogiri::HTML(response.body).css("tr[data-item-id='#{other_item.id}'] td")[5]
+          expect(change_cell["class"]).to include("modal-body-warning-text")
+        end
+      end
+
+      context "when the date range starts before the inventory snapshot and ends after it" do
+        let(:snapshot_time) { 1.day.from_now.change(usec: 0) }
+
+        before do
+          travel_to(snapshot_time) { SnapshotEvent.publish(organization) }
+          travel_to(snapshot_time + 1.day) do
+            create(:donation, :with_items, item: item, item_quantity: 3, storage_location: storage_location, organization: organization)
+          end
+        end
+
+        it "leaves the start quantity and change blank and counts flows from the snapshot" do
+          date_range = "#{(snapshot_time - 1.year).to_date.to_fs(:long)} - #{(snapshot_time + 1.week).to_date.to_fs(:long)}"
+          get inventory_flow_storage_location_path(storage_location, filters: {date_range: date_range})
+
+          rows, totals = flow_cells(response.body)
+          expect(rows[item.id]).to eq(["Flow Item", "", "3", "0", "0", "", "10"])
+          expect(totals).to eq(["Total", "", "3", "0", "0", "", "10"])
+          expect(Nokogiri::HTML(response.body).at_css("#inventory-flow-history-start").text)
+            .to include("Inventory history begins on #{snapshot_time.to_date.to_fs(:long)}")
+        end
+      end
+
+      it "falls back to the default date range when the range is invalid" do
+        get inventory_flow_storage_location_path(storage_location, filters: {date_range: "not a date range"})
+
+        expect(response).to be_successful
+        rows, _totals = flow_cells(response.body)
+        expect(rows[item.id]).to eq(["Flow Item", "0", "7", "0", "0", "7", "7"])
+      end
     end
 
     describe "GET #destroy" do
@@ -622,6 +706,16 @@ RSpec.describe "StorageLocations", type: :request do
         patch storage_location_path(storage_location), params: params
         expect(response.body).to include("Square footage must be greater than or equal to 0")
       end
+    end
+  end
+
+  context "While not signed in" do
+    it "redirects GET #inventory_flow to sign in" do
+      storage_location = create(:storage_location, organization: organization)
+
+      get inventory_flow_storage_location_path(storage_location)
+
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 end
