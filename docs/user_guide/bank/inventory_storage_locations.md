@@ -23,7 +23,7 @@ This brings up the New Storage Location page
 
 ## Storage location view
 To view a Storage Location, click the "View" button beside it in the Storage Location summary page.
-The view has three tabs:  Inventory, Inventory Coming In, and Inventory Going Out
+The view has two tabs:  Inventory and Inventory Flow
 
 ### Inventory 
 
@@ -31,16 +31,18 @@ Here you see the current levels of inventory for the chosen Storage Location.   
 That shows the inventory at the beginning of the day.
 ![Storage Location - Inventory tab](images/inventory/inventory_storage_location_view_inventory.png)
 
-### Inventory Coming In
-This shows the sum of all the inventory coming in ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and [Kit](inventory_kits.md) allocations and de-allocations that add inventory) for the given Storage Location for all time
+### Inventory Flow
+This shows how the quantity of each item at the Storage Location changed over a date range.  Choose the range in "Date Range" and click "Filter".  For each item you see:
+- Quantity at Start: how much was there at the start of the range
+- Quantity In: what came in during the range ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Transfers](inventory_transfers.md) from other Storage Locations, and [Kit](inventory_kits.md) allocations and de-allocations that add inventory)
+- Quantity Out: what went out during the range ([Distributions](essentials_distributions.md), [Transfers](inventory_transfers.md) to other Storage Locations, and [Kit](inventory_kits.md) allocations and de-allocations that remove inventory)
+- Quantity Adjustment/Audit: the net change from [Adjustments](inventory_adjustments.md) and [Audits](inventory_audits.md) during the range
+- Quantity Change: In, minus Out, plus Adjustment/Audit
+- Quantity at End: how much was there at the end of the range
 
-![Inventory coming in](images/inventory/inventory_storage_locations_coming_in.png)
+Each record is counted on the date it was entered into Human Essentials, not the date on the record itself (for example, a donation's issued date).  If a record is changed or deleted later, the change is counted on the date the record was first entered, so the numbers always reflect your records as they are now.  This means the Quantity at End for a past date can differ from what the Inventory tab shows for that date.
 
-
-### Inventory Going Out
-This shows the sum of all the inventory going out ([Distributions](essentials_distributions.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and [Kit](inventory_kits.md) allocations and de-allocations that remove inventory) for the given Storage Location for all time
-
-![Inventory going out](images/inventory/inventory_storage_locations_going_out.png)
+Human Essentials only keeps inventory history from a certain date (shown under the table).  If your range starts before then, Quantity at Start and Quantity Change are left blank, and In, Out and Adjustment/Audit only count from that date.
 
 ## Editing a Storage Location
 You can edit your Storage Location (though it seems a very rare event), by clicking "Edit" beside the Storage Location in the Storage Location Summary Page.

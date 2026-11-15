@@ -7,7 +7,9 @@
 # the record was first created, so a donation of 100 that was later edited to
 # 150 shows 150 on its original date, and a deleted donation shows nothing.
 # The exception is records from before event tracking began, whose edits are
-# stored as UpdateExistingEvents; those edits are dated when they were made.
+# stored as UpdateExistingEvents; those edits are dated when they were made,
+# and count as in or out by the sign of the change (so reducing such a
+# distribution shows as in).
 #
 # To do this we replay the inventory once (the same replay used everywhere
 # else, so audits, kits and edits are handled exactly as InventoryAggregate
@@ -61,7 +63,7 @@ class ItemsFlowQuery
     end
   end
 
-  ADJUSTMENT_TYPES = %w[AdjustmentEvent AuditEvent].freeze
+  ADJUSTMENT_TYPES = [AdjustmentEvent, AuditEvent].freeze
 
   # @param organization [Organization]
   # @param storage_location [StorageLocation]
@@ -83,7 +85,7 @@ class ItemsFlowQuery
     changes_by_item = records.flat_map(&:item_changes).group_by(&:item_id)
 
     item_ids = (snapshot_quantities.keys + changes_by_item.keys).uniq
-    names = Item.where(id: item_ids).pluck(:id, :name).to_h
+    names = @organization.items.where(id: item_ids).pluck(:id, :name).to_h
 
     rows = item_ids.filter_map do |item_id|
       row = build_row(item_id, names[item_id], snapshot_quantities.fetch(item_id, 0), changes_by_item.fetch(item_id, []),
@@ -159,7 +161,7 @@ class ItemsFlowQuery
       end
 
       key = event.editable? ? [event.eventable_type, event.eventable_id] : [:event, event.id]
-      record = records[key] ||= RecordChanges.new(time: event.event_time, adjustment: ADJUSTMENT_TYPES.include?(event.type))
+      record = records[key] ||= RecordChanges.new(time: event.event_time, adjustment: ADJUSTMENT_TYPES.any? { |type| event.is_a?(type) })
       record.touch(item_ids_here(event)).each do |item_id|
         quantity = items[item_id]&.quantity.to_i
         record.add(item_id, quantity - quantities[item_id])

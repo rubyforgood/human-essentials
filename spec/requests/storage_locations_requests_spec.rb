@@ -355,6 +355,8 @@ RSpec.describe "StorageLocations", type: :request do
 
           frame = page.at_css("turbo-frame#inventory_flow")
           expect(frame["loading"]).to eq("lazy")
+          # links in the table (to items) navigate the whole page, not the frame
+          expect(frame["target"]).to eq("_top")
           expect(Rack::Utils.parse_nested_query(URI(frame["src"]).query)).to eq("filters" => {"date_range" => date_range})
           expect(page.at_css("#custom-tabs-inventory form input[name='filters[date_range]']")["value"]).to eq(date_range)
           expect(page.at_css("#custom-tabs-inventory-flow form input[name='version_date']")["value"]).to eq("2026-01-15")
@@ -368,6 +370,14 @@ RSpec.describe "StorageLocations", type: :request do
 
           expect(response).to be_successful
           expect(Nokogiri::HTML(response.body).at_css("turbo-frame#inventory_flow tbody")).to be_nil
+        end
+
+        it "ignores a malformed filters param" do
+          get storage_location_path(storage_location, format: response_format, filters: "x")
+
+          expect(response).to be_successful
+          expect(Nokogiri::HTML(response.body).at_css("turbo-frame#inventory_flow")["src"])
+            .to eq(inventory_flow_storage_location_path(storage_location))
         end
 
         it "clears the Inventory Flow date range without leaving the tab or losing the inventory date" do
@@ -570,6 +580,14 @@ RSpec.describe "StorageLocations", type: :request do
           expect(Nokogiri::HTML(response.body).at_css("#inventory-flow-history-start").text)
             .to include("Inventory history begins on #{snapshot_time.to_date.to_fs(:long)}")
         end
+      end
+
+      it "ignores a malformed filters param" do
+        get inventory_flow_storage_location_path(storage_location, filters: "x")
+
+        expect(response).to be_successful
+        rows, _totals = flow_cells(response.body)
+        expect(rows[item.id]).to eq(["Flow Item", "0", "7", "0", "0", "7", "7"])
       end
 
       it "falls back to the default date range when the range is invalid" do

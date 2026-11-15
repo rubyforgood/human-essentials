@@ -58,6 +58,8 @@ class StorageLocationsController < ApplicationController
     setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
+    @show_flow_tab = params[:tab] == "flow"
+    @date_range_filters = date_range_filters
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
@@ -156,6 +158,14 @@ class StorageLocationsController < ApplicationController
     current_organization.items.where.not(id: existing_item_ids).collect do |item|
       Struct::OmittedInventoryItem.new(item)
     end
+  end
+
+  # @return [Hash] the Inventory Flow tab's date range filters, if any
+  def date_range_filters
+    filters = params[:filters]
+    return {} unless filters.is_a?(ActionController::Parameters)
+
+    filters.permit(:date_range, :date_range_label).to_h.compact_blank
   end
 
   helper_method \

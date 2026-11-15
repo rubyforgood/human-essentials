@@ -186,38 +186,16 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   context "when viewing an existing storage location" do
     let(:items) { create_list(:item, 2) }
     let!(:storage_location) { create(:storage_location, name: "here") }
-    let(:result) do
-      [
-        {
-          item_id: items[0].id,
-          item_name: items[0].name,
-          quantity_start: 0,
-          quantity_in: 10,
-          quantity_out: 5,
-          quantity_adjustment: 0,
-          change: 5,
-          quantity_end: 5,
-          total_quantity_in: 13,
-          total_quantity_out: 7,
-          total_change: 9
-        },
-        {
-          # The adjustment (+3) shows in the adjustment column, not as in.
-          item_id: items[1].id,
-          item_name: items[1].name,
-          quantity_start: 0,
-          quantity_in: 3,
-          quantity_out: 2,
-          quantity_adjustment: 3,
-          change: 4,
-          quantity_end: 4,
-          total_quantity_in: 13,
-          total_quantity_out: 7,
-          total_change: 9
-        }
-      ].map(&:with_indifferent_access)
-    end
     subject { storage_location_path(storage_location.id) }
+
+    # @return [Array<Array<String>>] the text of each cell in each body row
+    def flow_rows
+      all("#custom-tabs-inventory-flow tbody tr").map { |tr| tr.all("td").map(&:text) }
+    end
+
+    def flow_totals
+      all("#custom-tabs-inventory-flow tfoot td").map(&:text)
+    end
 
     context "Inventory Flow Tab" do
       before do
@@ -234,59 +212,41 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       end
 
       it "shows the inventory flow for the storage location" do
-        within("#custom-tabs-inventory-flow table tbody") do
-          result.each do |item|
-            row = find(:css, "tr[data-item-id='#{item[:item_id]}']")
-            change_column_css = item[:change].negative? ? "td.modal-body-warning-text" : "td"
-            expect(row).to have_link(item[:item_name], href: item_path(item[:item_id]))
-            expect(row).to have_css("td", text: item[:quantity_in])
-            expect(row).to have_css("td", text: item[:quantity_out])
-            expect(row).to have_css(change_column_css, text: item[:change])
-          end
-        end
-        within("#custom-tabs-inventory-flow table tfoot") do
-          expect(page).to have_css("td", text: "Total")
-          expect(page).to have_css("td", text: result.first[:total_quantity_in])
-          expect(page).to have_css("td", text: result.first[:total_quantity_out])
-          expect(page).to have_css("td", text: result.first[:total_change])
-        end
+        expect(page).to have_css("#custom-tabs-inventory-flow tbody tr", count: 2)
+        # Columns: item, start, in, out, adjustment/audit, change, end.
+        # The adjustment (+3) shows in the adjustment column, not as in.
+        expect(flow_rows).to contain_exactly(
+          [items[0].name, "0", "10", "5", "0", "5", "5"],
+          [items[1].name, "0", "3", "2", "3", "4", "4"]
+        )
+        expect(flow_totals).to eq(["Total", "0", "13", "7", "3", "9", "9"])
+      end
+
+      it "opens an item's page from its link" do
+        within("#custom-tabs-inventory-flow tbody") { click_link items[0].name }
+
+        expect(page).to have_current_path(item_path(items[0]))
+        expect(page).to have_content(items[0].name)
       end
 
       context "date range filter" do
         let!(:start_date) { 2.days.ago }
         let!(:end_date) { 1.day.ago }
         let!(:item) { create(:item, name: "Filtered Item") }
-        let(:result) do
-          [
-            {
-              item_id: item.id,
-              item_name: item.name,
-              quantity_in: 10,
-              quantity_out: 0,
-              change: 10,
-              total_quantity_in: 10,
-              total_quantity_out: 0,
-              total_change: 10
-            }
-          ].map(&:with_indifferent_access)
-        end
+
         before do
           create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
           Event.last.update(event_time: start_date)
           fill_in "filters[date_range]", with: "#{start_date.strftime("%B %d, %Y")} - #{end_date.strftime("%B %d, %Y")}"
           click_button "Filter"
-          find("#custom-tabs-inventory-flow-tab").click
         end
 
-        it "filters the inventory flow by date range" do
-          within("#custom-tabs-inventory-flow table tbody") do
-            expect(page).to have_css("tr", count: 1)
-            row = find(:css, "tr[data-item-id='#{result.first[:item_id]}']")
-            expect(row).to have_link(result.first[:item_name], href: item_path(result.first[:item_id]))
-            expect(row).to have_css("td", text: result.first[:quantity_in])
-            expect(row).to have_css("td", text: result.first[:quantity_out])
-            expect(row).to have_css("td", text: result.first[:change])
-          end
+        it "stays on the Inventory Flow tab and filters the flow by date range" do
+          expect(page).to have_css("#custom-tabs-inventory-flow-tab.active")
+          expect(page).to have_css("#custom-tabs-inventory-flow tbody tr", count: 1)
+          # Everything else was recorded today, after the range.
+          expect(flow_rows).to eq([["Filtered Item", "0", "10", "0", "0", "10", "10"]])
+          expect(flow_totals).to eq(["Total", "0", "10", "0", "0", "10", "10"])
         end
       end
     end

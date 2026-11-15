@@ -214,6 +214,130 @@ RSpec.describe ItemsFlowQuery do
     end
   end
 
+  context "with a transfer into this location" do
+    let(:item) { create(:item, organization: organization) }
+    let(:source) { create(:storage_location, organization: organization) }
+
+    before do
+      create(:donation, :with_items, item: item, item_quantity: 10, storage_location: source, organization: organization)
+      transfer = create(:transfer, :with_items, item: item, item_quantity: 4, from: source, to: storage_location, organization: organization)
+      TransferEvent.publish(transfer)
+    end
+
+    it "counts it as in at the receiving location and out at the source" do
+      expect(result.rows).to contain_exactly(have_attributes(item_id: item.id, quantity_in: 4, quantity_out: 0, quantity_end: 4))
+      source_result = described_class.new(organization: organization, storage_location: source).call
+      expect(source_result.rows).to contain_exactly(have_attributes(item_id: item.id, quantity_in: 10, quantity_out: 4, quantity_end: 6))
+    end
+  end
+
+  context "when records made in the range are destroyed later" do
+    let(:item) { create(:item, organization: organization) }
+    let(:other_location) { create(:storage_location, organization: organization) }
+    let(:date_range) { month(2026, 1) }
+
+    before do
+      travel_to(Time.zone.local(2026, 1, 10)) { donate(item, 10) }
+      travel_to(Time.zone.local(2026, 1, 15)) do
+        @distribution = create(:distribution, :with_items, item: item, item_quantity: 4, storage_location: storage_location, organization: organization)
+        DistributionEvent.publish(@distribution)
+        @transfer = create(:transfer, :with_items, item: item, item_quantity: 3, from: storage_location, to: other_location, organization: organization)
+        TransferEvent.publish(@transfer)
+        @purchase = create(:purchase, :with_items, item: item, item_quantity: 6, storage_location: storage_location, organization: organization)
+      end
+      travel_to(Time.zone.local(2026, 3, 1)) do
+        DistributionDestroyEvent.publish(@distribution)
+        TransferDestroyEvent.publish(@transfer)
+        PurchaseDestroyEvent.publish(@purchase)
+      end
+    end
+
+    it "does not count them, even in the range they were made" do
+      expect(result.rows).to contain_exactly(have_attributes(item_id: item.id, quantity_start: 0, quantity_in: 10, quantity_out: 0, quantity_end: 10))
+      other_result = described_class.new(organization: organization, storage_location: other_location, date_range: date_range).call
+      expect(other_result.rows).to be_empty
+    end
+  end
+
+  context "when a record from before event tracking is edited" do
+    let(:item) { create(:item, organization: organization) }
+
+    before do
+      travel_to(Time.zone.local(2026, 1, 10)) do
+        @donation = donate(item, 10)
+        Event.where(eventable: @donation).delete_all
+      end
+      travel_to(Time.zone.local(2026, 3, 10)) do
+        previous = @donation.line_items.map(&:dup)
+        @donation.line_items.first.update!(quantity: 15)
+        UpdateExistingEvent.publish(@donation.reload, previous, storage_location)
+      end
+    end
+
+    context "in the range when the record was made" do
+      let(:date_range) { month(2026, 1) }
+
+      it "does not backdate the edit" do
+        expect(result.rows).to be_empty
+      end
+    end
+
+    context "in the range when it was edited" do
+      let(:date_range) { month(2026, 3) }
+
+      it "counts the edit when it was made" do
+        expect(result.rows).to contain_exactly(have_attributes(item_id: item.id, quantity_start: 0, quantity_in: 5, quantity_end: 5))
+      end
+    end
+  end
+
+  context "with a mixed history over several months" do
+    let(:items) { create_list(:item, 2, organization: organization) }
+    let(:other_location) { create(:storage_location, organization: organization) }
+    let(:months) { (1..4).map { |m| month(2026, m) } }
+
+    before do
+      travel_to(Time.zone.local(2026, 1, 5)) do
+        @donation = donate(items[0], 50)
+        donate(items[1], 30)
+      end
+      travel_to(Time.zone.local(2026, 2, 5)) do
+        distribution = create(:distribution, :with_items, item: items[0], item_quantity: 12, storage_location: storage_location, organization: organization)
+        DistributionEvent.publish(distribution)
+        transfer = create(:transfer, :with_items, item: items[1], item_quantity: 5, from: storage_location, to: other_location, organization: organization)
+        TransferEvent.publish(transfer)
+      end
+      travel_to(Time.zone.local(2026, 3, 5)) do
+        @donation.line_items.first.update!(quantity: 60)
+        DonationEvent.publish(@donation.reload)
+        adjustment = create(:adjustment, :with_items, item: items[1], item_quantity: -4, storage_location: storage_location, organization: organization)
+        AdjustmentEvent.publish(adjustment)
+      end
+      travel_to(Time.zone.local(2026, 4, 5)) do
+        audit = create(:audit, :with_items, item: items[0], item_quantity: 40, storage_location: storage_location, organization: organization)
+        AuditEvent.publish(audit)
+      end
+    end
+
+    it "adds up within each row, chains from one month to the next, and ends at the current inventory" do
+      results = months.map { |range| described_class.new(organization: organization, storage_location: storage_location, date_range: range).call }
+      ends = ->(r) { r.rows.to_h { |row| [row.item_id, row.quantity_end] }.reject { |_, quantity| quantity.zero? } }
+      starts = ->(r) { r.rows.to_h { |row| [row.item_id, row.quantity_start] }.reject { |_, quantity| quantity.zero? } }
+
+      results.each do |r|
+        r.rows.each { |row| expect(row.quantity_start + row.change).to eq(row.quantity_end) }
+      end
+      results.each_cons(2) do |earlier, later|
+        expect(starts.call(later)).to eq(ends.call(earlier))
+      end
+      current = InventoryAggregate.inventory_for(organization.id).storage_locations[storage_location.id].items
+        .transform_values(&:quantity).reject { |_, quantity| quantity.zero? }
+      expect(ends.call(results.last)).to eq(current)
+      # The March edit (50 -> 60) is backdated to the January donation.
+      expect(results.first.rows.find { |row| row.item_id == items[0].id }.quantity_in).to eq(60)
+    end
+  end
+
   context "with kit allocations" do
     let(:content_item) { create(:item, organization: organization) }
     let(:kit) do
@@ -231,6 +355,15 @@ RSpec.describe ItemsFlowQuery do
 
       expect(rows_by_item[kit.id]).to have_attributes(quantity_in: 3, quantity_end: 3)
       expect(rows_by_item[content_item.id]).to have_attributes(quantity_in: 10, quantity_out: 6, quantity_end: 4)
+    end
+
+    it "counts deallocated kits flowing out and their contents flowing back in" do
+      donate(content_item, 10)
+      KitAllocateEvent.publish(kit, storage_location.id, 3)
+      KitDeallocateEvent.publish(kit, storage_location.id, 1)
+
+      expect(rows_by_item[kit.id]).to have_attributes(quantity_in: 3, quantity_out: 1, quantity_end: 2)
+      expect(rows_by_item[content_item.id]).to have_attributes(quantity_in: 12, quantity_out: 6, quantity_end: 6)
     end
   end
 end
