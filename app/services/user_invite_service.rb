@@ -20,7 +20,7 @@ module UserInviteService
       roles.append(Role::ORG_USER)
     end
 
-    user = User.find_by(email: email)
+    user = User.find_by("LOWER(email) = ?", email.to_s.downcase)
 
     # return if user already has all the roles we're trying to add
     if !force && user && roles.all? { |role| user.has_role?(role, resource) }
@@ -28,6 +28,7 @@ module UserInviteService
     end
 
     if user
+      user.update!(name: name) if user.name.blank? && name.present?
       add_roles(user, resource: resource, roles: roles)
       if force
         user.invite!
