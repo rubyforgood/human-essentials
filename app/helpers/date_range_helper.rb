@@ -1,11 +1,11 @@
 # Encapsulates methods used on the Dashboard that need some business logic
 module DateRangeHelper
   def date_range_params
-    params.dig(:filters, :date_range).presence || default_date
+    date_range_filter(:date_range).presence || default_date
   end
 
   def date_range_label
-    case (params.dig(:filters, :date_range_label).presence || "this year").downcase
+    case (date_range_filter(:date_range_label).presence || "this year").downcase
     when "today"
       "today"
     when "yesterday"
@@ -44,6 +44,13 @@ module DateRangeHelper
   def selected_range
     start_date, end_date = selected_interval
     (start_date.beginning_of_day)..(end_date.end_of_day)
+  end
+
+  # @param key [Symbol]
+  # @return [String, nil] the filter's value, or nil if params[:filters] isn't a hash
+  def date_range_filter(key)
+    filters = params[:filters]
+    filters[key] if filters.respond_to?(:key?)
   end
 
   def selected_range_described

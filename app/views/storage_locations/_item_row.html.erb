@@ -1,0 +1,9 @@
+<tr data-item-id="<%= item_row.item_id %>">
+  <td><%= item_row.item_name ? link_to(item_row.item_name, item_path(item_row.item_id)) : "Unknown item ##{item_row.item_id}" %></td>
+  <td><%= number_with_delimiter(item_row.quantity_start) %></td>
+  <td><%= number_with_delimiter(item_row.quantity_in) %></td>
+  <td><%= number_with_delimiter(item_row.quantity_out) %></td>
+  <td><%= number_with_delimiter(item_row.quantity_adjustment) %></td>
+  <td class="<%= 'modal-body-warning-text' if item_row.change&.negative? %>"><%= number_with_delimiter(item_row.change) %></td>
+  <td><%= number_with_delimiter(item_row.quantity_end) %></td>
+</tr>

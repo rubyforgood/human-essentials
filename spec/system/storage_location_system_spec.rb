@@ -99,13 +99,6 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       click_on "View", match: :first
 
-      find("#custom-tabs-inventory-in-tab").click
-
-      within "#custom-tabs-inventory-in" do
-        expect(page).to have_content("Needle")
-        expect(page).to have_content(100)
-      end
-
       find("#custom-tabs-inventory-tab").click
 
       within "#custom-tabs-inventory" do
@@ -191,24 +184,71 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   end
 
   context "when viewing an existing storage location" do
-    let(:item) { create(:item, name: "AAA Diapers") }
-    let!(:storage_location) { create(:storage_location, :with_items, item: item, name: "here") }
-    let!(:adjustment) { create(:adjustment, :with_items, storage_location: storage_location) }
+    let(:items) { create_list(:item, 2) }
+    let!(:storage_location) { create(:storage_location, name: "here") }
     subject { storage_location_path(storage_location.id) }
 
-    it "Items in (adjustments)" do
-      visit subject
-      find("#custom-tabs-inventory-in-tab").click
-
-      expect(page.find("#custom-tabs-inventory-in", visible: true)).to have_content "100"
+    # @return [Array<Array<String>>] the text of each cell in each body row
+    def flow_rows
+      all("#custom-tabs-inventory-flow tbody tr").map { |tr| tr.all("td").map(&:text) }
     end
 
-    it "Items out (distributions)" do
-      create(:distribution, :with_items, storage_location: storage_location)
-      visit subject
-      find("#custom-tabs-inventory-out-tab").click
+    def flow_totals
+      all("#custom-tabs-inventory-flow tfoot td").map(&:text)
+    end
 
-      expect(page.find("#custom-tabs-inventory-out", visible: true)).to have_content "100"
+    context "Inventory Flow Tab" do
+      before do
+        create(:donation, :with_items, item: items[0], item_quantity: 10, storage_location: storage_location)
+        distribution = create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+        DistributionEvent.publish(distribution)
+        create(:donation, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+        adjustment = create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+        AdjustmentEvent.publish(adjustment)
+        transfer = create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
+        TransferEvent.publish(transfer)
+        visit subject
+        find("#custom-tabs-inventory-flow-tab").click
+      end
+
+      it "shows the inventory flow for the storage location" do
+        expect(page).to have_css("#custom-tabs-inventory-flow tbody tr", count: 2)
+        # Columns: item, start, in, out, adjustment/audit, change, end.
+        # The adjustment (+3) shows in the adjustment column, not as in.
+        expect(flow_rows).to contain_exactly(
+          [items[0].name, "0", "10", "5", "0", "5", "5"],
+          [items[1].name, "0", "3", "2", "3", "4", "4"]
+        )
+        expect(flow_totals).to eq(["Total", "0", "13", "7", "3", "9", "9"])
+      end
+
+      it "opens an item's page from its link" do
+        within("#custom-tabs-inventory-flow tbody") { click_link items[0].name }
+
+        expect(page).to have_current_path(item_path(items[0]))
+        expect(page).to have_content(items[0].name)
+      end
+
+      context "date range filter" do
+        let!(:start_date) { 2.days.ago }
+        let!(:end_date) { 1.day.ago }
+        let!(:item) { create(:item, name: "Filtered Item") }
+
+        before do
+          create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
+          Event.last.update(event_time: start_date)
+          fill_in "filters[date_range]", with: "#{start_date.strftime("%B %d, %Y")} - #{end_date.strftime("%B %d, %Y")}"
+          click_button "Filter"
+        end
+
+        it "stays on the Inventory Flow tab and filters the flow by date range" do
+          expect(page).to have_css("#custom-tabs-inventory-flow-tab.active")
+          expect(page).to have_css("#custom-tabs-inventory-flow tbody tr", count: 1)
+          # Everything else was recorded today, after the range.
+          expect(flow_rows).to eq([["Filtered Item", "0", "10", "0", "0", "10", "10"]])
+          expect(flow_totals).to eq(["Total", "0", "10", "0", "0", "10", "10"])
+        end
+      end
     end
   end
 end

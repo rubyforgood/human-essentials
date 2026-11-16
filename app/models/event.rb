@@ -54,6 +54,15 @@ class Event < ApplicationRecord
     end
   end
 
+  # Whether events of this type are versions of an editable record: each one,
+  # the first included, is a full version of the eventable (e.g. a donation,
+  # then each later edit of it), and replaces the previous event for that
+  # record. Events that are standalone changes return false.
+  # @return [Boolean]
+  def editable?
+    true
+  end
+
   # @return [Array<Option>]
   def self.types_for_select
     descendants.map do |klass|

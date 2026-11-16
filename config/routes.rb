@@ -139,6 +139,7 @@ Rails.application.routes.draw do
     end
     member do
       get :inventory
+      get :inventory_flow
     end
   end
 

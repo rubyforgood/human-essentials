@@ -102,4 +102,17 @@ RSpec.describe Event, type: :model do
       }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution created before #{1.day.ago.to_date}/)
     end
   end
+
+  describe "#editable?" do
+    it "is true for events that are versions of an editable record" do
+      expect([DonationEvent, DistributionEvent, PurchaseEvent, AdjustmentEvent, TransferEvent,
+        DonationDestroyEvent, DistributionDestroyEvent, PurchaseDestroyEvent, TransferDestroyEvent].map { |klass| klass.new.editable? })
+        .to all(be(true))
+    end
+
+    it "is false for standalone events" do
+      expect([KitAllocateEvent, KitDeallocateEvent, AuditEvent, UpdateExistingEvent, SnapshotEvent].map { |klass| klass.new.editable? })
+        .to all(be(false))
+    end
+  end
 end

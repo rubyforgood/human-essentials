@@ -54,15 +54,12 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
-  # TODO: Move these queries to Query Object
   def show
+    setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
-    # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
-    @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @show_flow_tab = params[:tab] == "flow"
+    @date_range_filters = date_range_filters
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
@@ -135,6 +132,14 @@ class StorageLocationsController < ApplicationController
     end
   end
 
+  # The Inventory Flow tab's table, loaded into a lazy turbo frame on the show
+  # page so the inventory replay only runs when someone opens that tab.
+  def inventory_flow
+    @storage_location = current_organization.storage_locations.find(params[:id])
+    @flow = ItemsFlowQuery.new(organization: current_organization, storage_location: @storage_location,
+      date_range: helpers.selected_range).call
+  end
+
   def inventory
     @items = View::Inventory.items_for_location(StorageLocation.find(params[:id]),
       include_omitted: params[:include_omitted_items] == "true")
@@ -153,6 +158,14 @@ class StorageLocationsController < ApplicationController
     current_organization.items.where.not(id: existing_item_ids).collect do |item|
       Struct::OmittedInventoryItem.new(item)
     end
+  end
+
+  # @return [Hash] the Inventory Flow tab's date range filters, if any
+  def date_range_filters
+    filters = params[:filters]
+    return {} unless filters.is_a?(ActionController::Parameters)
+
+    filters.permit(:date_range, :date_range_label).to_h.compact_blank
   end
 
   helper_method \
