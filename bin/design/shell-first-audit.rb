@@ -23,9 +23,10 @@ VIEWS = File.join(ROOT, "app/views")
 # that survives Outlook. Devise puts its own under `users/mailer/`, and `layouts/mailer.html.erb`
 # is the mailer layout -- neither of which a `*_mailer/` directory pattern catches.
 #
-# `static/` is the legal pages, which `StaticController` renders with `layout false`: complete
-# HTML documents carrying their own `<style>`. They are not built from this design system and
-# were never meant to be.
+# `static/` is the public site -- the landing page and the privacy policy -- which
+# `StaticController` renders on `layouts/landing` with a stylesheet of its own, `landing.css`.
+# They are not built from this design system's components and are not meant to be; see
+# design.md, "The public site".
 #
 # `pdfs/` and `layouts/pdf.html.erb` are the printed documents: HTML that sghtmltopdf turns into a
 # PDF and no browser ever renders. They are styled by app/assets/pdf/pdf.css, not Tailwind,

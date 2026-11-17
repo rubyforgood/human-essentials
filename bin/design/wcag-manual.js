@@ -263,7 +263,8 @@ async function skipLink(page, label) {
      *
      * A threshold rather than a list of excused pages: an exclusion list is how an audit quietly
      * stops covering things. The app shell puts thirteen controls ahead of `main` and is well over
-     * the line; `/privacypolicy` puts three and is under it.
+     * the line; a standalone page with three links ahead of it is under it. (`/privacypolicy` was
+     * the example until it gained a skip link of its own with the public site's layout.)
      */
     const ahead = await page.evaluate(() => {
       const main = document.querySelector("main, #main-content");

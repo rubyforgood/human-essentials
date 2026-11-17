@@ -200,6 +200,33 @@ Specs use `create_census_locations` and `import_sample_bank_listings` from
 `spec/support/census_locations.rb` rather than the whole file, which takes about four seconds to
 load.
 
+### The landing page
+
+`/`, signed out, and the privacy policy are the **public site**. They are on their own layout
+(`layouts/landing`) and their own plain stylesheet (`app/assets/stylesheets/landing.css`), not
+Tailwind, and load no JavaScript. `design.md` says why under "The public site". Three things
+about it are easy to trip over:
+
+- **The map is drawn from `bank_listings`.** With the seven seeded banks it shows seven lights;
+  run `bin/rails bank_listings:import` to see the real 347. With no listings it draws the
+  outline and no caption. `BankMapQuery` places the lights, and its spec pins four cities to the
+  positions the outline was drawn for.
+- **Two pictures are files, not rendered.** The share picture (`og:image`) and the product
+  screen under *How it works* are in `app/assets/images/landing/`. Retake them from a running,
+  seeded dev server when the headline or the request page changes:
+
+  ```bash
+  BASE_URL=http://127.0.0.1:3000 pw bin/design/landing-images.js
+  ```
+
+  The product screen needs `cwebp` (`brew install webp`). Look at both before committing.
+- **The figures are typed in.** "200+", "3M+" and "400K+" come from `README.md`, not from the
+  database. Change them in `static/index.html.erb` when the README's change.
+
+A new directory under `app/assets/` is not on Propshaft's load path until the server restarts.
+`app/assets/stylesheets/` was new with this page, so a server that was already running serves a
+500 for `landing.css` until it is restarted.
+
 ### Behind a proxy or tunnel
 
 If you reach the app through a port forward or a TLS-terminating tunnel, Rails cannot always
@@ -1756,6 +1783,32 @@ address. Bookmark the view you check every morning, send someone a link to it, a
 button to get out of it. The button at the top right follows the tab you are on: it says *New
 item* on the item list and *New item category* on the categories tab, so the thing you came to
 create is always in the same corner of the screen.
+
+### The front page is new
+
+**humanessentials.app has a new front page.** What you do there has not changed: *Log in* is at
+the top right, as before, and takes you to the same place.
+
+- **The button to ask for an account is called *Request an account*,** at the top right and
+  under the headline. It used to say *Register* in one place and *Request An Account* in
+  another. It opens the same form.
+- **A map of the United States** sits beside the headline, with a point of light for each diaper
+  bank and period supply bank in the National Diaper Bank Network and Alliance for Period
+  Supplies directories: amber for diapers, pink for period supplies, white for both. It is those
+  two directories, not a list of the banks that use Human Essentials, so your bank may use the
+  app and not be on it, or be on it and not use the app. It updates every week with the
+  directories.
+- **A search box under the map finds a bank near you.** It is for people who came looking for
+  diapers or period supplies rather than software. Type a city and state, or a ZIP code, and
+  press *Find a bank*. If someone asks your bank where else they can go, you can send them to
+  the front page as well as to `/find-a-bank`.
+- **Further down:** how the app works in five steps, a picture of a real request, two things
+  banks have said about it, and answers to the questions banks ask first. The questions open
+  when you press them.
+- **The privacy policy looks like the front page now.** Its words have not changed.
+
+Nothing on the page moves except the map's lights, which come on once when the page opens. If
+your computer is set to reduce motion, they are simply on.
 
 ## If you are a partner agency
 

@@ -71,10 +71,11 @@ DESIGN_SYSTEM = Regexp.union(
 )
 
 # Mailers are HTML email -- table layouts and inline styles, deliberately not the design system.
-# static/ renders with `layout false` and its own stylesheet (see docs/migration-map.md).
+# static/ is the public site: it renders on layouts/landing with landing.css, its own
+# stylesheet (see design.md, "The public site").
 # pdfs/ and layouts/pdf are the printed documents: HTML that sghtmltopdf turns into a PDF, styled by
 # app/assets/pdf/pdf.css rather than Tailwind (ADR 0013). No browser ever renders them.
-EXEMPT = %r{app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/users/mailer/|app/views/static/|app/views/pdfs/|app/views/layouts/pdf\.}
+EXEMPT = %r{app/views/\w*mailer\w*/|app/views/layouts/mailer|app/views/users/mailer/|app/views/static/|app/views/layouts/landing\.|app/views/pdfs/|app/views/layouts/pdf\.}
 
 # Gem and framework partials, and the components themselves, which cannot carry a marker for the
 # system they *are*. Named rather than silently dropped: an unexplained exclusion reads the same as

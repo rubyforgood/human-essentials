@@ -54,7 +54,7 @@ framework partials, and the components themselves, which cannot carry a marker f
 | Not migrated | Why |
 | --- | --- |
 | `HistoricalTrends::BaseController` | Abstract; it has no views. Its three subclasses are migrated. |
-| `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
+| `StaticController` | `layouts/landing`, with `landing.css`. The landing page and the privacy policy are the public site: read signed out, mostly once, and built as documents rather than app screens. See [The public site](../design.md#the-public-site--layoutslandinghtmlerb). |
 | `donations#add_item`, `donations#remove_item` | Removed in 2026, not migrated: routes with no actions whose only templates were 2018 scaffold stubs. |
 | `@selected_date_range_label` | Set in `ApplicationController#setup_date_range_picker` and read by no view. `#date_range_label` itself is now used — by the stats caption and the empty states — but through the helper, not this ivar. |
 | ~~`toastr`~~ | **Gone.** Removed from `config/importmap.rb` and `application.js` after its last caller was migrated — see the defects table. |

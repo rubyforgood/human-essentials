@@ -499,7 +499,7 @@ Three things it had to learn, each of which produced a wrong answer first:
 - **Page tabs count.** They are lateral rather than up, but a tab strip linking a sibling section is
   still a way out -- `/item_categories` and `/partner_groups` are reached and left that way.
 - **Signed-out and standalone screens are excluded**, listed with reasons at the top of the file:
-  the landing page, the legal documents (`layout false`), the account-request flow and Devise's
+  the landing page, the privacy policy (both on `layouts/landing`), the account-request flow and Devise's
   invitation acceptance have no app chrome for a breadcrumb to sit in.
 
 `shell-first-audit.rb` asks the question none of the others do. Every audit above answers *is
@@ -518,7 +518,7 @@ Font Awesome icon. Exits non-zero on any finding.
 
 **Read the narrowings before adding a check**, because four of these eight started as false-positive
 factories and the reasons are the useful part. Mailers and `static/` are skipped — HTML email needs
-tables, and the legal pages are standalone documents with their own `<style>`. A `<br>` inside an
+tables, and the public site has its own stylesheet, `landing.css`. A `<br>` inside an
 `<address>` is correct HTML, so only a doubled one or one right after a block closes counts;
 unnarrowed it reported 31 and 29 were fine. A detail pair must carry `font-medium` and there must be
 four, or a stat card's caption matches. And a hand-written card header only counts when the file

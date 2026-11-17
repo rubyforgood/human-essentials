@@ -1,0 +1,28 @@
+<%#
+  The public site's header. It has no background of its own: it lies over the top of the page's
+  first block, which is `.night.top` and leaves room for it. That keeps the night sky one
+  surface while the page's <h1> stays inside <main>, where the skip link lands.
+
+    sections   in-page links, as { "Label" => "#id" }. The landing page has them; the privacy
+               policy does not.
+
+  The two actions are named the same everywhere on these pages and on the pages they lead to:
+  "Log in" and "Request an account".
+%>
+<% sections = local_assigns.fetch(:sections, {}) %>
+<header class="site-header">
+  <div class="wrap nav-in">
+    <%= link_to "Human Essentials", root_path, class: "wordmark" %>
+    <% if sections.any? %>
+      <nav class="nav-links" aria-label="On this page">
+        <% sections.each do |label, target| %>
+          <a href="<%= target %>"><%= label %></a>
+        <% end %>
+      </nav>
+    <% end %>
+    <div class="nav-actions">
+      <%= link_to "Log in", new_user_session_path, class: "btn btn-ghost btn-sm" %>
+      <%= link_to "Request an account", new_account_request_path, class: "btn btn-light btn-sm" %>
+    </div>
+  </div>
+</header>

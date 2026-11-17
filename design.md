@@ -49,7 +49,7 @@ system layout:
 | Controller | Why it is not on a design system layout |
 | --- | --- |
 | `HistoricalTrends::BaseController` | Abstract. It has no views of its own; its three subclasses are migrated. |
-| `StaticController` | `layout false`. The marketing home page and privacy policy are standalone public documents with their own stylesheet, not app screens. |
+| `StaticController` | `layouts/landing`, with `landing.css`. The landing page and the privacy policy are the public site: read signed out, mostly once, and built as documents rather than app screens. See [The public site](#the-public-site--layoutslandinghtmlerb). |
 
 Anything else rendering `btn`, `card-body`, `form-group`, `col-md-*` or `fa-*` is a defect, not
 a page waiting its turn: none of those classes are defined anywhere any more, so they draw
@@ -4041,9 +4041,9 @@ instead of `essentials_button_classes`, and a Font Awesome icon.
 **Four of its checks were narrowed after they produced false positives**, which is worth knowing
 before adding a fifth:
 
-- **Mailers and `static/` are skipped.** HTML email is laid out in tables by necessity, and the legal
-  pages are complete documents `StaticController` renders with `layout false` and their own
-  `<style>`. Neither is built from this design system.
+- **Mailers and `static/` are skipped.** HTML email is laid out in tables by necessity, and the
+  public site (`static/`, on `layouts/landing`) has a stylesheet of its own, `landing.css`.
+  Neither is built from this design system's components.
 - **A `<br>` between two lines of text is correct HTML.** An address, a second line in a cell. Only
   a doubled `<br>` or one straight after a block closes is a margin in disguise — unnarrowed the
   check reported 31 and **29 of them were right**.
@@ -4807,6 +4807,56 @@ service has everywhere — Feeding America's food bank finder, 211, GOV.UK's *Fi
   does not know says what it does accept.
 - **Distances say *about*,** because both ends are a city's centre, not an address.
 
+### The public site — `layouts/landing.html.erb`
+
+The landing page at `/` and the privacy policy. Signed out, no account, and for most readers
+the only page of Human Essentials they will ever see. `StaticController` renders both.
+
+**It is the one part of the app that is not built from this system's components, and that is
+deliberate.** It loads `app/assets/stylesheets/landing.css` (plain CSS, 19 KB) instead of
+`tailwind.css` (186 KB), and no JavaScript at all. A first-time visitor on a phone should not
+download the app to read about it. What keeps it the same product is what it shares:
+
+- **The typeface is the app's Figtree**, from the same files in `public/vendor/figtree`. The
+  headlines use weight 900, which nothing in the app does; the two 900 files are there for this
+  page only.
+- **The colours are this system's brand and slate tokens**, copied by value into `:root` at the
+  top of `landing.css`. Three are the page's own: `--night` (`#1e1b4b`, brand indigo taken down
+  to a night sky), and the lights `--amber` (`#fbbf24`) and `--rose` (`#fda4af`).
+- **The actions have the names the app gives them.** *Log in* and *Request an account*,
+  everywhere, in that capitalisation. The page it replaced called one action *Register*,
+  *Request An Account* and *Request an account*.
+
+What the page is made of, in order:
+
+| Part | Rule |
+| --- | --- |
+| Header | No background of its own. It lies over the top of the first `.night.top` block, so the night sky is one surface and the `<h1>` is still inside `<main>`, where the skip link lands. On a phone it keeps *Log in* only; the hero's button asks for the account. |
+| Hero | One sentence, one primary action, and the map. |
+| The map | `static/_bank_map`. A fixed outline, and one light for each `BankListing` with a location, placed by `BankMapQuery` on every request because the listings are replaced weekly. **The lights are the two public directories, not the banks that use Human Essentials**, and the caption under the map says so; copy near it must not imply otherwise. Amber is diapers, rose is period supplies, white is both. |
+| The finder | A plain `GET` form to `/find-a-bank`, directly under the hero, for the visitor who wants supplies and not software (ADR 0014). |
+| How it works | Five steps. They are numbered because they are a sequence; nothing else on the page is. |
+| The product | One real screen in a browser frame. Never a drawing of the app. |
+| Three doors | *I run an essentials bank*, *I work at a partner agency*, *I need diapers or period supplies*. Each is one link. |
+| Questions | `<details>`, so they open without JavaScript. |
+
+**Motion: one moment, once.** The map's lights come on from east to west over 2.4 seconds when
+the page loads, and stay on. That is the only animation, it does not loop, and under
+`prefers-reduced-motion: reduce` the lights are simply lit. Do not add a second one: no
+entrance animations on sections, no hover movement on cards.
+
+**Contrast on the night background** is measured against the lightest point of its gradient
+(`#2a2670`), since that is the worst case for light text: white 13.05:1, `brand-200` 8.75:1,
+`brand-300` 6.54:1, and the finder's placeholder 5.22:1. axe cannot compute contrast over a
+gradient and reports these as "incomplete", so they were worked out by hand on 2026-11-16.
+
+**Two pictures are not drawn at request time**, and go stale quietly: the share picture
+(`og:image`) and the product screen. `bin/design/landing-images.js` retakes both from the
+running app.
+
+**The privacy policy** is the same header and footer around a 44rem column. Its words are a
+legal text and are not edited for voice (see Copy).
+
 ## Key patterns
 
 ### Turbo is opt-in per action
@@ -5148,9 +5198,16 @@ Known gaps, in rough priority order:
   landing page with one rail entry, which is what most applications of this size do; see the
   note under "App shell" before changing it.
 
-- **`app/views/static/`** (marketing home page, privacy policy) is still on its own
-  stylesheet. It is public-facing and standalone, so it was excluded from the migration
-  deliberately, but it is now the only part of the app that does not look like the app.
+- **The landing page's figures are typed, not counted.** "200+", "3M+" and "400K+" under
+  *A lot of families are counting on these banks* are the project's published numbers
+  (`README.md`). Nothing checks them against production, and they will be out of date before
+  anyone notices. Either compute them or put a date beside them.
+- **The landing page shows one product screen.** The preview's option A had a tabbed tour of
+  five (requests, inventory, distributions, partners, reports); the owner chose option C, which
+  has one. The other four screenshots are in `docs/mockups/landing-designs-assets/`.
+- **The public site's tokens are copied, not shared.** `landing.css` repeats twelve of the
+  brand and slate values by hand, so a token changed in `application.css` has to be changed
+  there too. Nothing checks that they agree.
 - **Charts are not accessible.** Highcharts output has no text alternative beyond the table
   beside it. A summary sentence per chart would be cheap.
 - **No dark mode.** The tokens would support it; nothing has been built.

@@ -1,0 +1,67 @@
+<%#
+  The public site: the landing page at / and the privacy policy. Signed out, no account needed.
+
+  Not one of the design system's layouts, and it loads landing.css rather than tailwind.css: see
+  the comment at the top of that file, and design.md under "The public site". No JavaScript is
+  loaded. Everything on these pages works without it -- the in-page links, the questions
+  (<details>) and the bank finder's form (a plain GET).
+
+  A page sets:
+    :title        the <title>, and the title a shared link shows
+    :description  the search result and shared-link description
+    :credits      optional, a line of sources under the footer
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= yield :title %></title>
+  <meta name="description" content="<%= yield :description %>">
+  <link rel="canonical" href="<%= url_for(only_path: false, params: {}) %>">
+  <meta property="og:site_name" content="Human Essentials">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= yield :title %>">
+  <meta property="og:description" content="<%= yield :description %>">
+  <meta property="og:url" content="<%= url_for(only_path: false, params: {}) %>">
+  <meta property="og:image" content="<%= image_url("landing/share.png") %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A map of the United States at night, with a point of light for each diaper bank and period supply bank.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#1e1b4b">
+
+  <%# The headline is the first thing painted, and it is set in a weight nothing else asks for. %>
+  <link rel="preload" href="/vendor/figtree/figtree-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <%= stylesheet_link_tag "landing", media: "all" %>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#4f46e5">
+</head>
+<body>
+<a class="skip" href="#main-content">Skip to main content</a>
+
+<%= yield %>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-in">
+      <p><b>Human Essentials</b><br>Built by <a href="https://rubyforgood.org">Ruby for Good</a>. Open source under the MIT license.</p>
+      <ul>
+        <li><%= link_to "Log in", new_user_session_path %></li>
+        <li><%= link_to "Request an account", new_account_request_path %></li>
+        <li><%= link_to "Find a bank", bank_finder_path %></li>
+        <li><%= link_to "Privacy policy", privacypolicy_path %></li>
+        <li><a href="https://github.com/rubyforgood/human-essentials">Source code</a></li>
+      </ul>
+    </div>
+    <% if content_for?(:credits) %>
+      <p class="credits"><%= yield :credits %></p>
+    <% end %>
+  </div>
+</footer>
+</body>
+</html>

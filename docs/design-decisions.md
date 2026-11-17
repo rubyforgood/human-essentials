@@ -10361,3 +10361,90 @@ supply recipients) against production. They are on all three previews and need c
 **Not done:** the privacy policy, which shares the old stylesheet; the wordmark, because
 `/img/essentials.svg` is 247 KB of traced outline; self-hosting the fonts, which the previews
 load from Google Fonts.
+
+## 2026-11-16 — The landing page is built: option C, on a stylesheet of its own
+
+The owner chose option C from the three previews ("implement design C with the map"), without
+option A's tabbed tour that the preview had recommended adding. `/` is now that page. Five
+choices made while building it are not in the preview.
+
+**The map is computed on every request; it is not the preview's drawing.** The preview had 347
+`<circle>`s typed into the page, made once with d3. `BankListingImportService` replaces the
+listings every Sunday, so a drawn map would say "347 banks" under 347 dots until someone
+remembered to redraw it. `BankMapQuery` reads the located listings and projects each one in
+Ruby. The outline stays a drawing, because coastlines do not change weekly.
+
+That meant writing the projection twice, once in d3 for the outline and once in Ruby for the
+lights, and the two have to agree or the lights drift off their cities. They were checked
+against each other on all 347 listings: 346 points, largest difference 0.0 units at one decimal
+place, and the same single listing off the map (Puerto Rico) in both. The spec pins four
+cities to d3's answers so the Ruby cannot drift later.
+
+*Rejected:* a rake task that redraws a static partial after each import. It is one more thing
+for the import to do and to fail at, for the sake of saving a few hundred trigonometric calls
+on a page that is not hot. *Rejected:* caching the result. Production has a cache store, but
+the work is two queries and well under a millisecond of arithmetic, and a cache adds a way to
+be stale. *Rejected:* drawing the map in the browser with d3. The page loads no JavaScript,
+and the map would be blank without it.
+
+**Puerto Rico's lights sit in a labelled spot, not at their coordinates.** Albers USA has no
+place for Puerto Rico. Its banks are placed side by side south-east of Florida under the words
+"Puerto Rico". One listing is there today. Guam and anywhere else off the map is left out, and
+the caption counts only the lights drawn.
+
+**Plain CSS, not Tailwind.** The app's bundle is 186 KB and this page would use a few percent
+of it. `landing.css` is 19 KB, and 4.9 KB compressed. The cost is that twelve colour tokens are
+copied by value and nothing checks they still match `application.css`; that is in `design.md`'s
+backlog. *Rejected:* a second Tailwind entry point, which would share the tokens but adds a
+second build, and the page's layout (a night gradient, an SVG map, a numbered rail) is mostly
+bespoke rules either way.
+
+**The headline is inside `<main>`, which the preview's was not.** The preview wrapped the
+header and the hero in one night-coloured `<div>` and started `<main>` after it, so its skip
+link jumped past the headline and the bank finder. The header now has no background and lies
+over the top of the first night block, which keeps the sky one surface and lets `<main>` start
+at the hero. `wcag-manual.js` found the other half of this: the skip link's target has to take
+focus, so `<main>` has `tabindex="-1"` as the app's own layout does.
+
+**Figtree 900 was added, for this page only.** The preview used it from Google Fonts. The app
+self-hosts Figtree at 400 to 800, so the two 900 files (latin and latin-ext, 17 KB together)
+came from the same Fontsource package, 5.3.0, as the others; the 800 file from that source is
+byte-identical to the vendored one, which is how the source was confirmed.
+
+**What the page weighs.** 174,638 bytes in 8 requests, uncompressed, measured in Chrome on
+2026-11-16: the document 49 KB (13.9 KB gzipped; half of it is the map), the stylesheet 19 KB,
+five font files 57 KB, and the product screenshot 50 KB. The page it replaced was 23,568 bytes
+in one request, with a system font and no images. This is heavier and that is the trade: the
+old page showed nothing.
+
+**Checked.** axe (WCAG 2.0, 2.1 and 2.2 A and AA, and best practice) at 1440px and 390px on
+`/` and `/privacypolicy`: no violations in the page. Its only finding is rack-mini-profiler's
+badge, which is not in production. Contrast over the gradient, which axe cannot compute, by
+hand: the lowest is the finder's placeholder at 5.22:1. No horizontal scroll at 390px. No
+looping animation. The skip link lands on `<main>` and the next Tab is the hero's button.
+The repo's own audits, against a dev server: `wcag-manual.js` 8 pages on the expensive checks
+and 99 on the cheap ones, no failures (after one: see the skip link above);
+`responsive-audit.js` 1,617 page and width combinations, no findings; `route-sweep.js` 146
+screens, no findings. Two results are **not** evidence and are not counted: `wcag-audit.js`
+printed "no violations" but had skipped pages because it could not find axe at
+`/tmp/axe/node_modules`, and `wcag22-audit.js` exits 1 on this database because no multi-step
+process is reachable for 3.3.7, as it did before this change. `layout-shift-audit.js` and
+`wayfinding-audit.js` skip `/` and `/privacypolicy` by design.
+
+**Not done.**
+
+- **The figures are still the README's.** "200+ banks", "3M+ children" and "400K+ people" are
+  typed into the view. Nobody has confirmed them against production.
+- **No tour of the product.** One screenshot. Option A's five are in
+  `docs/mockups/landing-designs-assets/` if the owner wants them.
+- **The screenshot is of the seeded demo bank**, with the request's lorem ipsum comment
+  replaced by a written one. `bin/design/landing-images.js` says so and does it again on a
+  retake.
+- **Not looked at in Safari or Firefox.** The lights' animation changes the SVG `r` property
+  from CSS; a browser that does not support that still fades each light in at its drawn size.
+  Believed, not seen.
+- **The privacy policy's words are untouched**, including "http://humanessentials.app", the
+  2022 date and its Title Case headings. Its "Contact Us" was an `<h3>` directly under the
+  `<h1>` and is now an `<h2>`; that is the only change inside the policy.
+- **No link from the landing page to a terms of service.** `wayfinding-audit.js` names
+  `/termsofservice`; the route does not exist and the old page did not link one either.

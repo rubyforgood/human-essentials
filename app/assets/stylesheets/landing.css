@@ -1,0 +1,246 @@
+/*
+ * The public site: the landing page at / and the privacy policy. Loaded by layouts/landing.
+ *
+ * Plain CSS, not Tailwind, and deliberately so. These two pages are read by people who have no
+ * account, most of them once, so they get a stylesheet of their own that is a twentieth the size
+ * of the app's bundle. They are still the same product: the typeface is the app's Figtree, from
+ * the same files in public/vendor/figtree, and the colours below are the design system's brand
+ * and slate tokens copied by value. If a token changes in app/assets/tailwind/application.css,
+ * change it here too. See design.md, "The public site".
+ *
+ * The page has one piece of motion, the map's lights coming on, and it is off under
+ * prefers-reduced-motion. Nothing loops.
+ */
+
+/* Figtree, the weights these pages use. 900 is only used here, for the headlines. */
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 400; font-display: swap; src: url("/vendor/figtree/figtree-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 400; font-display: swap; src: url("/vendor/figtree/figtree-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 500; font-display: swap; src: url("/vendor/figtree/figtree-latin-ext-500-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 500; font-display: swap; src: url("/vendor/figtree/figtree-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 700; font-display: swap; src: url("/vendor/figtree/figtree-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 700; font-display: swap; src: url("/vendor/figtree/figtree-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 800; font-display: swap; src: url("/vendor/figtree/figtree-latin-ext-800-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 800; font-display: swap; src: url("/vendor/figtree/figtree-latin-800-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 900; font-display: swap; src: url("/vendor/figtree/figtree-latin-ext-900-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 900; font-display: swap; src: url("/vendor/figtree/figtree-latin-900-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  /* The design system's tokens, by value. */
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-300: #a5b4fc;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --slate-50: #f8fafc;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-900: #0f172a;
+
+  /* This page's own: brand indigo taken down to night, and the three colours of light. */
+  --night: #1e1b4b;
+  --night-deep: #14112f;
+  --amber: #fbbf24;
+  --rose: #fda4af;
+  --both: #ffffff;
+
+  --gutter: clamp(1rem, 4vw, 2rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--slate-700); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img, svg { max-width: 100%; display: block; }
+img { height: auto; }
+h1, h2, h3, p, ul, ol, figure, blockquote, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: var(--brand-700); }
+:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px; border-radius: 4px; }
+.night :focus-visible, .site-header :focus-visible { outline-color: #fff; }
+/* An in-page link lands its target clear of the top edge. */
+[id] { scroll-margin-top: 1.5rem; }
+
+.wrap { max-width: 76rem; margin: 0 auto; padding-inline: var(--gutter); }
+.skip { position: absolute; left: 1rem; top: -4rem; background: #fff; padding: .5rem .75rem; border-radius: .5rem; z-index: 50; }
+.skip:focus { top: .75rem; }
+/* The skip link's target takes focus so the next Tab starts there. It is the whole page, so it draws no ring. */
+main:focus { outline: none; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 2.875rem; padding: .625rem 1.25rem; border-radius: .625rem; font: inherit; font-weight: 700; font-size: 1rem; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color .15s; }
+.btn-sm { min-height: 2.5rem; padding: .5rem .875rem; font-size: .9375rem; }
+.btn-light { background: #fff; color: var(--night); }
+.btn-light:hover { background: var(--brand-100); }
+.btn-ghost { color: #fff; border-color: rgba(255, 255, 255, .4); }
+.btn-ghost:hover { background: rgba(255, 255, 255, .1); }
+
+/* Night: the hero, the finder and the closing call to action. */
+.night { background: radial-gradient(120% 90% at 70% 35%, #2a2670 0%, var(--night) 45%, var(--night-deep) 100%); color: var(--brand-100); }
+/*
+ * The header has no background. It lies over the top of the first night block, which leaves
+ * 4.5rem for it, so the sky is one surface and the <h1> can still be inside <main>.
+ */
+.site-header { position: absolute; inset: 0 0 auto; z-index: 10; }
+.night.top { padding-top: 4.5rem; }
+.nav-in { display: flex; align-items: center; gap: 1.5rem; height: 4.5rem; }
+.wordmark { font-weight: 800; font-size: 1.125rem; letter-spacing: -.01em; color: #fff; text-decoration: none; margin-right: auto; }
+.nav-links { display: none; gap: 1.75rem; }
+.nav-links a { color: var(--brand-200); text-decoration: none; font-weight: 500; font-size: .9375rem; }
+.nav-links a:hover { color: #fff; }
+.nav-actions { display: flex; gap: .5rem; }
+/* On a phone the header keeps Log in, and the hero's own button asks for the account. */
+.nav-actions .btn-light { display: none; }
+@media (min-width: 30rem) { .nav-actions .btn-light { display: inline-flex; } }
+@media (min-width: 58rem) { .nav-links { display: flex; } }
+
+.hero-in { display: grid; gap: 2rem; padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem); }
+.hero h1 { font-size: clamp(2.5rem, 5.4vw, 4.25rem); line-height: 1; letter-spacing: -.035em; font-weight: 900; color: #fff; max-width: 13ch; }
+.lede { margin-top: 1.375rem; font-size: clamp(1.0625rem, 1.5vw, 1.25rem); max-width: 31rem; color: var(--brand-200); }
+.hero-cta { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+.assoc { margin-top: 1.5rem; font-size: .9375rem; color: var(--brand-300); max-width: 30rem; }
+
+/* The map. Its markup, and where the lights come from, is static/_bank_map. */
+.map-fig { position: relative; }
+.map { width: 100%; height: auto; overflow: visible; }
+.map .land { fill: rgba(255, 255, 255, .045); stroke: rgba(165, 180, 252, .5); stroke-width: 1; stroke-linejoin: round; }
+.map .lines { fill: none; stroke: rgba(165, 180, 252, .2); stroke-width: .75; }
+.map .d { fill: var(--amber); }
+.map .p { fill: var(--rose); }
+.map .b { fill: var(--both); }
+.map text { fill: var(--brand-300); font-size: 13px; font-family: inherit; }
+/*
+ * The one moment of motion: the lights come on from the east, the way a morning does, over 2.4
+ * seconds however many there are. Each runs once and stays lit. Without the media query -- and
+ * so for anyone who has asked for less motion -- every light is simply on.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .map .dots circle { opacity: 0; animation: light-on .6s ease-out forwards; animation-delay: calc(.35s + var(--i) / var(--n) * 2.4s); }
+}
+@keyframes light-on {
+  0% { opacity: 0; r: 0; }
+  60% { opacity: 1; r: 5.5px; }
+  100% { opacity: 1; }
+}
+.legend { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .375rem 1.5rem; font-size: .875rem; }
+.legend li { display: flex; align-items: center; gap: .5rem; }
+.legend i { width: .625rem; height: .625rem; border-radius: 50%; box-shadow: 0 0 8px currentColor; background: currentColor; }
+.legend .d { color: var(--amber); }
+.legend .p { color: var(--rose); }
+.legend .b { color: var(--both); }
+.legend span { color: var(--brand-200); }
+.map-note { margin-top: .5rem; font-size: .875rem; color: var(--brand-300); max-width: 40rem; }
+@media (min-width: 64rem) {
+  .hero-in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 2.5rem; }
+  .map-fig { margin-right: -3rem; }
+}
+
+/* The finder: the other reason someone lands here. It posts to /find-a-bank. */
+.finder { border-top: 1px solid rgba(165, 180, 252, .25); }
+.finder-in { display: grid; gap: 1rem; padding-block: 1.75rem; align-items: center; }
+.finder label { font-weight: 700; color: #fff; font-size: 1.0625rem; }
+.finder small { display: block; font-weight: 400; font-size: .9375rem; color: var(--brand-200); }
+.finder form { display: flex; gap: .5rem; }
+.finder input { flex: 1; min-width: 0; min-height: 2.875rem; padding: .5rem .875rem; border-radius: .625rem; border: 1px solid rgba(165, 180, 252, .6); background: rgba(255, 255, 255, .08); color: #fff; font: inherit; }
+.finder input::placeholder { color: var(--brand-300); opacity: 1; }
+@media (min-width: 52rem) { .finder-in { grid-template-columns: 1fr minmax(0, 26rem); gap: 3rem; } }
+
+/* Day: everything between the hero and the closing call to action. */
+.section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+.section.tint { background: var(--slate-50); border-block: 1px solid var(--slate-200); }
+.section h2 { font-size: clamp(1.875rem, 3.8vw, 3rem); line-height: 1.06; letter-spacing: -.03em; font-weight: 900; color: var(--slate-900); max-width: 20ch; }
+.section .intro { margin-top: 1rem; font-size: 1.125rem; color: var(--slate-600); max-width: 38rem; }
+
+/* The five steps are a real sequence, so they are numbered: down the page on a phone, across it on a desk. */
+.steps { margin-top: 3rem; display: grid; gap: 0; counter-reset: step; }
+.steps li { counter-increment: step; position: relative; padding: 0 0 2rem 3.25rem; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--night); color: #fff; font-weight: 800; font-size: .9375rem; display: grid; place-items: center; z-index: 1; }
+.steps li::after { content: ""; position: absolute; left: calc(1rem - 1px); top: 2rem; bottom: 0; width: 2px; background: var(--brand-200); }
+.steps li:last-child { padding-bottom: 0; }
+.steps li:last-child::after { display: none; }
+.steps h3 { font-size: 1.1875rem; font-weight: 800; letter-spacing: -.015em; color: var(--slate-900); line-height: 2rem; }
+.steps p { margin-top: .25rem; font-size: .9375rem; color: var(--slate-600); max-width: 26rem; }
+@media (min-width: 62rem) {
+  .steps { grid-template-columns: repeat(5, 1fr); gap: 2rem; }
+  .steps li { padding: 3rem 0 0; }
+  .steps li::after { left: 2rem; right: -2rem; top: calc(1rem - 1px); bottom: auto; width: auto; height: 2px; }
+}
+
+/* The product, shown: one real screen in a browser frame, beside what else it does. */
+.show { margin-top: clamp(3rem, 6vw, 5rem); display: grid; gap: 2.5rem; }
+.frame { border: 1px solid var(--slate-300); border-radius: .875rem; background: #fff; box-shadow: 0 30px 60px -28px rgba(30, 27, 75, .4); overflow: hidden; }
+.frame-bar { display: flex; align-items: center; gap: .375rem; padding: .625rem .875rem; background: var(--slate-50); border-bottom: 1px solid var(--slate-200); }
+.frame-bar i { width: .625rem; height: .625rem; border-radius: 50%; background: var(--slate-300); }
+.feats { display: grid; gap: 0; border-top: 1px solid var(--slate-200); align-content: start; }
+.feats div { padding: 1rem 0; border-bottom: 1px solid var(--slate-200); }
+.feats dt { font-weight: 700; color: var(--slate-900); }
+.feats dd { font-size: .9375rem; color: var(--slate-600); }
+@media (min-width: 62rem) { .show { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 3.5rem; align-items: start; } }
+
+/* The numbers. A <dl> lists the term first; column-reverse puts the figure on top. */
+.stats { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
+.stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; padding-top: 1.25rem; border-top: 3px solid var(--night); }
+.stats dd { font-size: clamp(2.25rem, 5vw, 3.75rem); font-weight: 900; letter-spacing: -.04em; line-height: 1; color: var(--night); font-variant-numeric: tabular-nums; }
+.stats dt { margin-top: .5rem; font-size: .9375rem; color: var(--slate-600); max-width: 13rem; }
+@media (min-width: 52rem) { .stats { grid-template-columns: repeat(4, 1fr); } }
+
+.quotes { margin-top: clamp(3rem, 6vw, 4.5rem); display: grid; gap: 2.5rem; }
+.quotes figure { padding-left: 1.25rem; border-left: 3px solid var(--amber); }
+.quotes blockquote { font-size: clamp(1.125rem, 1.8vw, 1.375rem); line-height: 1.5; color: var(--slate-900); font-weight: 500; }
+.quotes figcaption { margin-top: 1rem; font-size: .9375rem; color: var(--slate-600); }
+.quotes figcaption b { color: var(--slate-900); }
+@media (min-width: 58rem) { .quotes { grid-template-columns: 5fr 3fr; gap: 4rem; } }
+
+.open { display: grid; gap: 2.5rem; }
+.open dl { display: grid; gap: 1.25rem; }
+.open dt { font-weight: 700; color: var(--slate-900); }
+.open dd { margin-top: .125rem; color: var(--slate-600); font-size: .9375rem; }
+@media (min-width: 58rem) { .open { grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; } }
+
+/* Three doors, one for each kind of visitor. The whole card is the link. */
+.router ul { margin-top: 2rem; display: grid; gap: 1rem; }
+.router a { display: block; height: 100%; padding: 1.375rem; border-radius: 1rem; text-decoration: none; background: #fff; border: 1px solid var(--slate-200); transition: border-color .15s; }
+.router a:hover { border-color: var(--night); }
+.router b { display: block; color: var(--slate-900); font-weight: 800; font-size: 1.125rem; letter-spacing: -.01em; }
+.router span { display: block; margin-top: .25rem; color: var(--slate-600); font-size: .9375rem; }
+.router em { display: block; margin-top: .875rem; font-style: normal; font-weight: 700; color: var(--brand-700); }
+@media (min-width: 48rem) { .router ul { grid-template-columns: repeat(3, 1fr); } }
+
+/* Questions are <details>, so they open without JavaScript. */
+.faq { margin-top: 2rem; max-width: 46rem; border-top: 1px solid var(--slate-200); }
+.faq details { border-bottom: 1px solid var(--slate-200); }
+.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.125rem 0; font-weight: 700; font-size: 1.0625rem; color: var(--slate-900); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; flex: none; width: .625rem; height: .625rem; border-right: 2px solid var(--slate-500); border-bottom: 2px solid var(--slate-500); transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+.faq details[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+.faq p { padding: 0 2rem 1.25rem 0; max-width: 40rem; }
+
+.cta-in { padding-block: clamp(4rem, 9vw, 6.5rem); display: grid; gap: 2rem; }
+.cta h2 { font-size: clamp(2rem, 4.4vw, 3.5rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 900; color: #fff; max-width: 16ch; }
+.cta p { margin-top: 1rem; font-size: 1.125rem; color: var(--brand-200); max-width: 32rem; }
+.cta a:not(.btn) { color: #fff; }
+@media (min-width: 52rem) { .cta-in { grid-template-columns: 1fr auto; align-items: end; } }
+
+.footer { padding-block: 2.5rem; font-size: .9375rem; color: var(--slate-600); }
+.footer-in { display: grid; gap: 1.5rem; }
+.footer b { color: var(--slate-900); }
+.footer ul { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+.footer a { color: var(--slate-700); }
+.credits { margin-top: 1.5rem; font-size: .8125rem; color: var(--slate-500); }
+@media (min-width: 52rem) { .footer-in { grid-template-columns: 1fr auto; } }
+
+/* The privacy policy: the same header and footer around a column of plain reading text. */
+.policy-head { padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4rem); }
+.policy-head h1 { font-size: clamp(2.25rem, 5vw, 3.5rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 900; color: #fff; }
+.policy-head p { margin-top: .875rem; color: var(--brand-200); }
+.policy { padding-block: clamp(2.5rem, 6vw, 4.5rem); font-size: 1.0625rem; }
+.policy > * { max-width: 44rem; }
+.policy h2 { margin-top: 2.5rem; font-size: 1.375rem; font-weight: 800; letter-spacing: -.015em; line-height: 1.25; color: var(--slate-900); }
+.policy p { margin-top: .875rem; }
+.policy .intro-text { font-size: 1.1875rem; color: var(--slate-900); }
+.policy .highlight-box { margin-top: .875rem; padding-left: 1.25rem; border-left: 3px solid var(--brand-200); }
+.policy .highlight-box p:first-child { margin-top: 0; }
+.policy .contact-info { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200); }
+.policy .contact-info h2 { margin-top: 0; }
+.policy .contact-info a { display: inline-block; margin-top: .5rem; font-weight: 700; }

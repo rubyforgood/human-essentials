@@ -32,7 +32,7 @@ const LEGACY = ["card-body", "card-header", "card-footer", "btn-primary", "btn-s
   "panel-body", "well", "callout", "info-box", "small-box", "box-title", "pull-right",
   "img-circle", "custom-select", "form-check-input", "custom-control-input", "label-default"];
 
-// static/ renders with layout false and its own stylesheet; see docs/migration-map.md.
+// static/ is the public site, on layouts/landing with landing.css; see design.md, "The public site".
 const EXEMPT = /^\/(privacypolicy|)$/;
 
 

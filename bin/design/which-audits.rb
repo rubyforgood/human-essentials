@@ -62,7 +62,8 @@ NOT_AN_AUDIT = {
   "status.rb" => "a report, not a check: which controllers render on a design system layout",
   "audit.js" => "a one-off page inspector for a human, documented as an exception in README.md",
   "which-audits.rb" => "this script",
-  "build-stage.rb" => "assembles a review-plan stage as a branch; it reports nothing about the app"
+  "build-stage.rb" => "assembles a review-plan stage as a branch; it reports nothing about the app",
+  "landing-images.js" => "retakes the landing page's share picture and product screenshot; it checks nothing"
 }.freeze
 
 def matches?(patterns, path)

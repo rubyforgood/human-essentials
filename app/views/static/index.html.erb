@@ -1,687 +1,172 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HumanEssentials.app - Modern Inventory Management</title>
-    <style>
-        /*
-         * The app's focus ring, on the two pages that are `layout false` -- self-contained
-         * documents on their own stylesheet, which none of the design system reaches.
-         *
-         * **Not a WCAG fix, and it was added believing it was one.** `wcag-manual.js --all`
-         * reported 2.4.7 failing here, and that was the audit reading `getComputedStyle` in the
-         * same tick as `focus()`; with no author rule at all Chromium still paints its own ring,
-         * measured as `auto 1px`. The criterion was always satisfied. What this buys is
-         * consistency: the same 2px indigo indicator as the other 139 screens, instead of the
-         * browser default on two pages and the app's ring everywhere else.
-         */
-        a:focus-visible,
-        button:focus-visible {
-            outline: 2px solid #4F46E5;
-            outline-offset: 2px;
-            border-radius: 2px;
-        }
+<%#
+  The landing page. Three kinds of people arrive here and each has a door: someone who runs a
+  bank (Request an account), someone at a partner agency (Log in), and someone who needs
+  diapers or period supplies and has mistaken the software for the service (the bank finder,
+  which is in the hero for exactly that reason -- see ADR 0014).
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  The map's lights are the two public directories the bank finder searches, not the banks that
+  use Human Essentials, and the caption under it says so. Do not let the copy drift into
+  implying otherwise.
 
-        body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            overflow-x: hidden;
-        }
+  The figures under "A lot of families" are the project's published ones (README.md). They are
+  not computed from this database, so they change when the README does.
+%>
+<% content_for :title, "Human Essentials: the free system behind more than 200 essentials banks" %>
+<% content_for :description, "Human Essentials is free inventory software for diaper banks and period supply banks across the United States. Built by volunteers at Ruby for Good." %>
+<% map = bank_map %>
+<% if map.any? %>
+  <% content_for :credits do %>
+    Map outline from U.S. Census Bureau cartographic boundary files. Bank locations from the
+    National Diaper Bank Network and Alliance for Period Supplies directories, as imported on
+    <%= l(map.as_of.to_date, format: :long) %>.
+  <% end %>
+<% end %>
 
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+<%= render "static/header", sections: {
+      "How it works" => "#how", "Who uses it" => "#banks", "Who builds it" => "#open", "Questions" => "#questions"
+    } %>
 
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #4a5568;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .login-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 8rem 0 6rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" /></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/><circle cx="800" cy="300" r="150" fill="url(%23grad1)"/><circle cx="400" cy="700" r="120" fill="url(%23grad1)"/></svg>') no-repeat center center;
-            background-size: cover;
-            opacity: 0.3;
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-text h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-
-        .hero-text p {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 2rem;
-        }
-
-        .hero-cta {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .primary-btn {
-            background: rgba(255, 255, 255, 0.95);
-            color: #667eea;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: inline-block;
-            text-align: center;
-        }
-
-        .primary-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            background: white;
-        }
-
-        .member-note {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-            font-style: italic;
-            text-align: center;
-        }
-
-        .hero-visual {
-            position: relative;
-            perspective: 1000px;
-        }
-
-        .hero-visual::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
-        }
-
-        .floating-cards {
-            position: relative;
-            width: 100%;
-            height: 400px;
-        }
-
-        .card {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .card:nth-child(1) {
-            top: 50px;
-            left: 50px;
-            animation-delay: 0s;
-        }
-
-        .card:nth-child(2) {
-            top: 150px;
-            right: 30px;
-            animation-delay: 2s;
-        }
-
-        .card:nth-child(3) {
-            bottom: 250px;
-            left: 270px;
-            animation-delay: 4s;
-        }
-
-        .card:nth-child(4) {
-            bottom: 140px;
-            left: 10px;
-            animation-delay: 5s;
-        }
-
-        .card:nth-child(5) {
-            bottom: 50px;
-            left: 200px;
-            animation-delay: 8s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 6rem 0;
-            background: #f8fafc;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            font-size: 1.2rem;
-            color: #718096;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            margin-bottom: 6rem;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        /* Testimonials */
-        .testimonials {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            padding: 6rem 0;
-            color: white;
-        }
-
-        .testimonial-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 3rem;
-            margin: 2rem 0;
-        }
-
-        .testimonial-text {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            font-style: italic;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: #f8fafc;
-            padding: 6rem 0;
-            text-align: center;
-        }
-
-        .cta-section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 3rem;
-        }
-
-        /* Footer */
-        .footer {
-            background: #1a202c;
-            color: white;
-            padding: 4rem 0 2rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-        }
-
-        .footer-section h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #667eea;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: #a0aec0;
-            text-decoration: none;
-            line-height: 1.6;
-        }
-
-        .footer-section a:hover {
-            color: #667eea;
-        }
-
-        .privacy-link {
-            color: #667eea !important;
-            text-decoration: underline;
-            transition: all 0.3s ease;
-        }
-
-        .privacy-link:hover {
-            color: #764ba2 !important;
-            text-decoration: none;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid #2d3748;
-            /* #718096 on #1a202c is 4.06:1 -- just under the 4.5 AA needs. #a0aec0 is 7.23:1. */
-            color: #a0aec0;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 0 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hero-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 2rem;
-            }
-
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .feature-card {
-                padding: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">HumanEssentials.app</div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="#contact">Contact</a></li>
+<main id="main-content" tabindex="-1">
+<div class="night top">
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap hero-in">
+      <div>
+        <h1 id="hero-h">The free system behind more than 200 essentials banks.</h1>
+        <p class="lede">Human Essentials keeps count of every donation, shelf and distribution for diaper banks and period supply banks across the United States. Volunteers build it. Banks never pay for it.</p>
+        <div class="hero-cta">
+          <%= link_to "Request an account", new_account_request_path, class: "btn btn-light" %>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <p class="assoc">Provided in association with the National Diaper Bank Network and the Alliance for Period Supplies.</p>
+      </div>
+      <figure class="map-fig">
+        <%= render "static/bank_map", map: map %>
+        <% if map.any? %>
+          <figcaption>
+            <ul class="legend">
+              <li class="d"><i></i><span>Diapers</span></li>
+              <li class="p"><i></i><span>Period supplies</span></li>
+              <li class="b"><i></i><span>Both</span></li>
             </ul>
-            <a href="<%= new_user_session_path %>" class="login-btn">Login</a>
-        </nav>
-    </header>
+            <p class="map-note">Each light is one of the <%= number_with_delimiter(map.count) %> banks in the National Diaper Bank Network and Alliance for Period Supplies directories, placed at its home city.</p>
+          </figcaption>
+        <% end %>
+      </figure>
+    </div>
+  </section>
 
-    <section class="hero" id="about">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1>The easiest and most love-filled way to manage your Human Essentials bank</h1>
-                <p>Ready to make yourself more efficient? Transform your inventory management with our intuitive, powerful platform designed specifically for community organizations.</p>
-                <div class="hero-cta">
-                    <a href="<%= new_account_request_path %>" class="primary-btn">Register</a>
-                    <p class="member-note">Provided free for all in association with the National Diaper Bank Network and Alliance for Period Supplies</p>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="floating-cards">
-                    <div class="card">
-                        <h4>📊 Analytics</h4>
-                        <p>Real-time insights</p>
-                    </div>
-                      <div class="card">
-                        <h4>📱 Reminders</h4>
-                        <p>Automatically notify users</p>
-                    </div>
-                    <div class="card">
-                        <h4>🔒 Secure</h4>
-                        <p>Anywhere access</p>
-                    </div>
-                    <div class="card">
-                        <h4>🤝 Partner Management</h4>
-                        <p>Manage and track partners</p>
-                    </div>
-                    <div class="card">
-                        <h4>📔 Reports</h4>
-                        <p>Generate Reports</p>
-                    </div>
-                </div>
-            </div>
+  <section class="finder" aria-labelledby="finder-l">
+    <div class="wrap finder-in">
+      <label for="near" id="finder-l">Looking for diapers or period supplies?
+        <small>We make the software banks use. A bank near you gives out the supplies.</small>
+      </label>
+      <%# A plain GET to the bank finder, so it works without JavaScript. Left empty, it opens the finder. %>
+      <%= form_with url: bank_finder_path, method: :get, local: true, role: "search" do %>
+        <%= text_field_tag :near, nil, autocomplete: "address-level2", placeholder: "City and state, or ZIP code" %>
+        <%= button_tag "Find a bank", type: "submit", name: nil, class: "btn btn-light" %>
+      <% end %>
+    </div>
+  </section>
+</div>
+
+  <section class="section" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h">One count, from the loading dock to the family.</h2>
+      <p class="intro">Every bank does the same five things. Human Essentials records each one, so the number on the screen is the number on the shelf.</p>
+      <ol class="steps">
+        <li><h3>Receive</h3><p>Record donations, purchases and product drives. Scan the barcode on the box.</p></li>
+        <li><h3>Store</h3><p>Stock is counted for each storage location, with transfers, adjustments and audits.</p></li>
+        <li><h3>Hear from partners</h3><p>Agencies ask for what their families need through their own portal.</p></li>
+        <li><h3>Distribute</h3><p>Fulfill a request, schedule the pick up or delivery, and print the picklist.</p></li>
+        <li><h3>Report</h3><p>Eleven reports, most with a CSV export, and the annual survey on one page.</p></li>
+      </ol>
+
+      <div class="show">
+        <div class="frame">
+          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+          <%# A real screen from the seeded demo bank. Retake it when the request page changes: docs/onboarding.md, "The landing page". %>
+          <%= image_tag "landing/app-request.webp", width: 1600, height: 1000, loading: "lazy",
+                alt: "A partner request in Human Essentials. Each requested item is listed beside the bank's total inventory, with a Fulfill request button." %>
         </div>
-    </section>
+        <dl class="feats">
+          <div><dt>Partner agencies</dt><dd>Invite, approve and recertify them. Groups and quotas set what each can request.</dd></div>
+          <div><dt>Kits</dt><dd>Bundle items into a kit and stock it like any other item.</dd></div>
+          <div><dt>Pick ups and deliveries</dt><dd>A calendar of what is leaving, and when.</dd></div>
+          <div><dt>Reminders</dt><dd>Email partners before their request deadline.</dd></div>
+          <div><dt>Spreadsheet import</dt><dd>Bring in partners, storage locations, vendors and donation sites.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
 
-    <!-- Main Content -->
-    <main class="main-content" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>The Human Essentials app removes the complexity from your day</h2>
-                <p>Streamline your operations with powerful tools designed for efficiency and ease of use</p>
-            </div>
+  <section class="section tint" id="banks" aria-labelledby="banks-h">
+    <div class="wrap">
+      <h2 id="banks-h">A lot of families are counting on these banks.</h2>
+      <dl class="stats">
+        <div><dt>banks registered on Human Essentials</dt><dd>200+</dd></div>
+        <div><dt>children receiving diapers</dt><dd>3M+</dd></div>
+        <div><dt>people receiving period supplies</dt><dd>400K+</dd></div>
+        <div><dt>cost to a bank</dt><dd>$0</dd></div>
+      </dl>
+      <div class="quotes">
+        <figure>
+          <blockquote>&ldquo;Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.&rdquo;</blockquote>
+          <figcaption><b>Megan</b>, Sweet Cheeks Diaper Bank</figcaption>
+        </figure>
+        <figure>
+          <blockquote>&ldquo;Finally, an inventory management system designed specifically for the unique needs of diaper banks!&rdquo;</blockquote>
+          <figcaption><b>Rachel Alston</b>, PDX Diaper Bank</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Partner Management</h3>
-                    <p>Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders.</p>
-                </div>
+  <section class="section" id="open" aria-labelledby="open-h">
+    <div class="wrap open">
+      <div>
+        <h2 id="open-h">Built in the open, by volunteers.</h2>
+        <p class="intro">Human Essentials is made by <a href="https://rubyforgood.org">Ruby for Good</a>, a non-profit whose volunteers write software for organizations doing good. It was first built alongside PDX Diaper Bank.</p>
+      </div>
+      <dl>
+        <div><dt>Free, and hosted for you</dt><dd>No license fee, no per-user price and nothing to install.</dd></div>
+        <div><dt>Open source</dt><dd>Every line is public under the MIT license. <a href="https://github.com/rubyforgood/human-essentials">Read the code on GitHub.</a></dd></div>
+        <div><dt>A digital public good</dt><dd>Recognized by the Digital Public Goods Alliance.</dd></div>
+      </dl>
+    </div>
+  </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3>Forecasting</h3>
-                    <p>View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
-                </div>
+  <section class="section tint router" aria-labelledby="router-h">
+    <div class="wrap">
+      <h2 id="router-h">What brings you here?</h2>
+      <ul>
+        <li><%= link_to new_account_request_path do %><b>I run an essentials bank</b><span>You collect diapers, period supplies or other essentials and give them out through partner agencies.</span><em>Request an account</em><% end %></li>
+        <li><%= link_to new_user_session_path do %><b>I work at a partner agency</b><span>Your bank invites you. Use the email address the invitation was sent to.</span><em>Log in</em><% end %></li>
+        <li><%= link_to bank_finder_path do %><b>I need diapers or period supplies</b><span>We make the software banks use; we do not hand out supplies. A bank near you does.</span><em>Find a bank near you</em><% end %></li>
+      </ul>
+    </div>
+  </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon">📋</div>
-                    <h3>Report Generation</h3>
-                    <p>Generate PDFs of partner distribution reports for easy printing and sharing with stakeholders and funding sources.</p>
-                </div>
+  <section class="section" id="questions" aria-labelledby="q-h">
+    <div class="wrap">
+      <h2 id="q-h">Questions banks ask first.</h2>
+      <div class="faq">
+        <details><summary>Is it really free?</summary><p>Yes. There is no charge to any bank. Volunteers build it and Ruby for Good hosts it.</p></details>
+        <details><summary>Who is it for?</summary><p>Diaper banks, period supply banks and other essentials banks that give out supplies through partner agencies. You request an account, and we set your bank up.</p></details>
+        <details><summary>I need diapers or period supplies. Can I get them here?</summary><p>Not from us. We make the software that banks use. <%= link_to "Find a bank near you", bank_finder_path %>, and it can tell you which local agencies give out supplies.</p></details>
+        <details><summary>I work at a partner agency. How do I get in?</summary><p>Your bank invites you. Once you accept the invitation, <%= link_to "log in", new_user_session_path %> with that email address.</p></details>
+        <details><summary>Can we bring the records we already have?</summary><p>Yes. Partners, storage locations with their starting inventory, vendors and donation sites can each be imported from a spreadsheet.</p></details>
+        <details><summary>Who can see our data?</summary><p>Your bank's records belong to your bank, and other banks cannot see them. The <%= link_to "privacy policy", privacypolicy_path %> says what we keep and why.</p></details>
+      </div>
+    </div>
+  </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Barcode Scanning</h3>
-                    <p>Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">📦</div>
-                    <h3>Inventory Management</h3>
-                    <p>Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Dashboard Visualization</h3>
-                    <p>Quickly view your inventory, donations, purchases, and distributions on a single page with intuitive charts and metrics.</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-header">
-                <h2 style="color: white;">What our users say</h2>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-text">
-                    "Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it."
-                </div>
-                <div class="testimonial-author">— Megan, Sweet Cheeks Diaper Bank</div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-text">
-                    "Finally, an inventory management system designed specifically for the unique needs of diaper banks!"
-                </div>
-                <div class="testimonial-author">— Rachel Alston, PDX Diaper Bank</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section" id="contact">
-        <div class="container">
-            <h2>Want to use the Human Essentials App?</h2>
-            <a href="<%= new_account_request_path %>" class="primary-btn" style="color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Request An Account</a>
-            <p style="margin-top: 1rem; color: #718096;">Have questions? Email us at <a href="mailto:info@humanessentials.app" style="color: #667eea;">info@humanessentials.app</a></p>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>HumanEssentials.app</h3>
-                <p>The Human Essentials App was lovingly built by:</p>
-                <p>Ruby for Good | PDX Diaper Bank</p>
-                <p>Powered by Love and Community</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>Email: info@humanessentials.app</p>
-                <p>For technical support and inquiries</p>
-                <p><a href="<%= privacypolicy_path %>" class="privacy-link">Privacy Policy</a></p>
-            </div>
-            <div class="footer-section">
-                <h3>About</h3>
-                <p>Built with love for community organizations to streamline their essential goods distribution and inventory management.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <%= Date.current.year %> HumanEssentials.app. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Add scroll effect to header
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(255, 255, 255, 0.98)';
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = 'none';
-            }
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all feature cards
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'all 0.6s ease';
-            observer.observe(card);
-        });
-    </script>
-</body>
-</html>
+  <section class="night cta" aria-labelledby="cta-h">
+    <div class="wrap cta-in">
+      <div>
+        <h2 id="cta-h">Run your bank on Human Essentials.</h2>
+        <p>Tell us about your bank and we will set up your account. Questions first? Write to <a href="mailto:info@humanessentials.app">info@humanessentials.app</a>.</p>
+      </div>
+      <%= link_to "Request an account", new_account_request_path, class: "btn btn-light" %>
+    </div>
+  </section>
+</main>

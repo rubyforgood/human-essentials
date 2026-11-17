@@ -15,7 +15,7 @@ const PASSWORD = process.env.SEED_PASSWORD || "password!";
 // the app to go back to. All of them are signed-out or standalone flows.
 //
 //   /                          the marketing landing page
-//   /privacypolicy, /termsofservice   standalone legal documents, rendered with `layout false`
+//   /privacypolicy, /termsofservice   standalone legal documents, on the public site's layout
 //   /account_requests/*        the request-an-account flow, before an account exists
 //   /users/invitation/*        Devise's invitation acceptance, likewise
 //   /admin                     a redirect, not a page
