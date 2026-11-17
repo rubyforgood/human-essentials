@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human Essentials: the love-filled way to run an essentials bank</title>
+<meta name="description" content="Free inventory software for diaper banks and essentials banks, built by volunteers. Record what comes in, fill partner requests and report on every item.">
+<meta property="og:title" content="Human Essentials: the love-filled way to run an essentials bank">
+<meta property="og:description" content="Free inventory software for diaper banks and essentials banks, built by volunteers at Ruby for Good.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&display=swap" rel="stylesheet">
+<style>
+  /* Option B. Photographs and a soft serif. The app's indigo is the ink; apricot is its companion. */
+  :root {
+    --ink: #1e1b4b; --indigo: #4338ca; --indigo-600: #4f46e5; --indigo-100: #e0e7ff; --indigo-200: #c7d2fe;
+    --apricot: #ffd3b5; --apricot-soft: #fff4ec; --apricot-line: #f3c9aa;
+    --body: #3f3d56; --muted: #5b5873; --line: #e7e5f0;
+    --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--body); background: #fff; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; height: auto; display: block; }
+  h1, h2, h3, p, ul, ol, figure, blockquote, dl, dd { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  a { color: var(--indigo); }
+  :focus-visible { outline: 2px solid var(--indigo-600); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 74rem; margin: 0 auto; padding-inline: var(--gutter); }
+  .skip { position: absolute; left: 1rem; top: -4rem; background: #fff; padding: .5rem .75rem; border-radius: .5rem; z-index: 50; }
+  .skip:focus { top: .75rem; }
+  .display { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; letter-spacing: -.02em; color: var(--ink); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: .75rem 1.375rem; border-radius: 999px; font-weight: 600; font-size: 1rem; text-decoration: none; border: 1.5px solid transparent; transition: background-color .15s, color .15s; }
+  .btn-sm { min-height: 2.5rem; padding: .5rem 1rem; font-size: .9375rem; }
+  .btn-ink { background: var(--ink); color: #fff; }
+  .btn-ink:hover { background: var(--indigo); }
+  .btn-apricot { background: var(--apricot); color: var(--ink); }
+  .btn-apricot:hover { background: #ffc49d; }
+  .btn-line { border-color: currentColor; color: var(--ink); background: transparent; }
+  .btn-line:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .on-ink .btn-line { color: #fff; }
+  .on-ink .btn-line:hover { background: #fff; color: var(--ink); border-color: #fff; }
+
+  /* Nav */
+  .nav-in { display: flex; align-items: center; gap: 1.5rem; height: 4.5rem; }
+  .wordmark { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 600; font-size: 1.375rem; letter-spacing: -.02em; color: var(--ink); text-decoration: none; margin-right: auto; }
+  .nav-links { display: none; gap: 1.75rem; }
+  .nav-links a { color: var(--body); text-decoration: none; font-weight: 500; font-size: .9375rem; }
+  .nav-links a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+  .nav-actions { display: flex; gap: .5rem; }
+  .nav-actions .btn-ink { display: none; }
+  @media (min-width: 30rem) { .nav-actions .btn-ink { display: inline-flex; } }
+  @media (min-width: 58rem) { .nav-links { display: flex; } }
+
+  /* Hero: ink on the left, the photograph on the right, edge to edge. */
+  .hero { display: grid; background: var(--ink); }
+  .hero-copy { padding: clamp(3rem, 8vw, 6rem) var(--gutter); color: var(--indigo-100); }
+  .hero-copy > div { max-width: 36rem; margin-left: auto; }
+  .hero h1 { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(2.5rem, 5.6vw, 4.5rem); line-height: 1.02; letter-spacing: -.03em; color: #fff; }
+  .lede { margin-top: 1.5rem; font-size: clamp(1.0625rem, 1.5vw, 1.25rem); max-width: 31rem; }
+  .hero-cta { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+  .assoc { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.18); font-size: .9375rem; max-width: 31rem; color: var(--indigo-200); }
+  .hero-photo { position: relative; min-height: 18rem; }
+  .hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 55%; }
+  @media (min-width: 60rem) {
+    .hero { grid-template-columns: minmax(0, 11fr) minmax(0, 9fr); min-height: min(46rem, calc(100vh - 4.5rem)); }
+    .hero-copy { display: flex; align-items: center; padding-right: clamp(2rem, 5vw, 5rem); }
+    .hero-copy > div { margin-right: 0; }
+  }
+
+  /* Numbers */
+  .numbers { background: var(--apricot-soft); border-bottom: 1px solid var(--apricot-line); }
+  .numbers dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; padding-block: 2.5rem; }
+  .numbers dd { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(2rem, 4.4vw, 3.25rem); line-height: 1; letter-spacing: -.03em; color: var(--ink); }
+  .numbers dt { margin-top: .5rem; font-size: .9375rem; color: var(--body); max-width: 14rem; }
+  .numbers div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+  @media (min-width: 52rem) { .numbers dl { grid-template-columns: repeat(4, 1fr); } }
+
+  /* Sections */
+  .section { padding-block: clamp(4rem, 9vw, 7rem); }
+  .section h2 { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(2rem, 4.2vw, 3.25rem); line-height: 1.06; letter-spacing: -.025em; color: var(--ink); max-width: 20ch; }
+  .section .intro { margin-top: 1.125rem; font-size: 1.125rem; max-width: 36rem; }
+
+  /* Chapters: photograph, with the screen that does the job laid over its corner. */
+  .chapters { margin-top: clamp(3rem, 6vw, 5rem); display: grid; gap: clamp(4rem, 8vw, 7rem); counter-reset: ch; }
+  .chapter { display: grid; gap: 2rem; }
+  .chapter-art { position: relative; padding-bottom: 3.5rem; }
+  .chapter-art .photo { border-radius: 1.5rem; aspect-ratio: 4 / 3; object-fit: cover; width: 88%; }
+  .chapter-art .screen { position: absolute; right: 0; bottom: 0; width: 62%; border-radius: .75rem; border: 1px solid var(--line); box-shadow: 0 22px 44px -18px rgba(30,27,75,.45); background: #fff; }
+  .chapter-text { counter-increment: ch; }
+  .chapter-text::before { content: counter(ch); display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--apricot); color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 1.25rem; margin-bottom: 1.25rem; }
+  .chapter h3 { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(1.625rem, 3vw, 2.25rem); line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
+  .chapter p { margin-top: .875rem; font-size: 1.0625rem; max-width: 30rem; }
+  .chapter ul { margin-top: 1.25rem; display: grid; gap: .5rem; max-width: 30rem; }
+  .chapter li { padding-left: 1.25rem; position: relative; }
+  .chapter li::before { content: ""; position: absolute; left: 0; top: .7em; width: .5rem; height: .5rem; border-radius: 50%; background: var(--apricot); border: 1px solid var(--apricot-line); }
+  @media (min-width: 58rem) {
+    .chapter { grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 6rem); align-items: center; }
+    .chapter:nth-child(even) .chapter-art { order: 2; }
+    .chapter:nth-child(even) .chapter-art .photo { margin-left: auto; }
+    .chapter:nth-child(even) .chapter-art .screen { right: auto; left: 0; }
+  }
+
+  /* The long quotation */
+  .voice { background: var(--ink); color: #fff; }
+  .voice-in { display: grid; gap: 2.5rem; padding-block: clamp(4rem, 9vw, 7rem); }
+  .voice img { border-radius: 1.5rem; aspect-ratio: 4 / 5; object-fit: cover; object-position: 55% 50%; width: 100%; max-width: 24rem; }
+  .voice blockquote { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 400; font-size: clamp(1.375rem, 2.5vw, 2rem); line-height: 1.32; letter-spacing: -.01em; }
+  .voice figcaption { margin-top: 1.5rem; color: var(--indigo-200); }
+  .voice figcaption b { color: var(--apricot); font-weight: 600; }
+  .voice .second { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,.18); }
+  .voice .second blockquote { font-size: 1.25rem; }
+  @media (min-width: 58rem) { .voice-in { grid-template-columns: 24rem 1fr; gap: clamp(3rem, 6vw, 6rem); align-items: center; } }
+
+  /* Volunteers */
+  .made { display: grid; gap: 2.5rem; }
+  .made figure img { border-radius: 1.5rem; aspect-ratio: 5 / 4; object-fit: cover; width: 100%; }
+  .made figcaption { margin-top: .75rem; font-size: .875rem; color: var(--muted); }
+  .made dl { margin-top: 2rem; display: grid; gap: 1.25rem; }
+  .made dt { font-weight: 600; color: var(--ink); }
+  .made dd { margin-top: .125rem; }
+  @media (min-width: 58rem) { .made { grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 6rem); align-items: center; } }
+
+  /* Who are you */
+  .router { background: var(--apricot-soft); border-block: 1px solid var(--apricot-line); }
+  .router ul { margin-top: 2rem; border-top: 1px solid var(--apricot-line); }
+  .router li { border-bottom: 1px solid var(--apricot-line); }
+  .router a { display: grid; gap: .25rem 2rem; padding: 1.5rem 0; text-decoration: none; color: var(--body); }
+  .router b { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(1.375rem, 2.4vw, 1.75rem); letter-spacing: -.02em; color: var(--ink); line-height: 1.2; }
+  .router em { font-style: normal; font-weight: 600; color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; }
+  .router a:hover b { color: var(--indigo); }
+  @media (min-width: 58rem) { .router a { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 12rem; align-items: baseline; } .router em { justify-self: end; } }
+
+  /* FAQ */
+  .faq { margin-top: 2rem; max-width: 46rem; border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.25rem 0; font-weight: 600; font-size: 1.125rem; color: var(--ink); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; flex: none; font-family: var(--display); font-size: 1.75rem; line-height: 1; font-weight: 400; color: var(--indigo); transition: transform .15s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq p { padding: 0 2.5rem 1.5rem 0; max-width: 40rem; }
+
+  /* Closing */
+  .cta { background: var(--apricot); }
+  .cta-in { padding-block: clamp(4rem, 9vw, 6.5rem); text-align: center; }
+  .cta h2 { font-family: var(--display); font-variation-settings: "SOFT" 100; font-weight: 500; font-size: clamp(2.25rem, 5vw, 4rem); line-height: 1.04; letter-spacing: -.03em; color: var(--ink); max-width: 16ch; margin-inline: auto; }
+  .cta p { margin: 1.25rem auto 0; font-size: 1.125rem; color: var(--ink); max-width: 32rem; }
+  .cta a:not(.btn) { color: var(--ink); font-weight: 600; }
+  .cta .btn { margin-top: 2rem; }
+
+  .footer { padding-block: 3rem; font-size: .9375rem; color: var(--muted); }
+  .footer-in { display: grid; gap: 2rem; }
+  .footer ul.links { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+  .footer a { color: var(--body); }
+  .credits { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: .8125rem; max-width: 60rem; }
+  @media (min-width: 52rem) { .footer-in { grid-template-columns: 1fr auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#top">Human Essentials</a>
+    <nav class="nav-links" aria-label="Page">
+      <a href="#day">How it helps</a>
+      <a href="#voices">What banks say</a>
+      <a href="#made">Who makes it</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-line btn-sm" href="/users/sign_in">Log in</a>
+      <a class="btn btn-ink btn-sm" href="/account_requests/new">Request an account</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero on-ink" id="top">
+    <div class="hero-copy">
+      <div>
+        <h1>The easiest, most love-filled way to run your essentials bank.</h1>
+        <p class="lede">Free inventory software for the people who get diapers and period supplies to families who need them. Less time counting boxes. More time for everything else.</p>
+        <div class="hero-cta">
+          <a class="btn btn-apricot" href="/account_requests/new">Request an account</a>
+          <a class="btn btn-line" href="#day">See how it helps</a>
+        </div>
+        <p class="assoc">Free for every bank, in association with the National Diaper Bank Network and the Alliance for Period Supplies.</p>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="landing-designs-assets/photo-feet-in-hands.webp" width="1600" height="1067" fetchpriority="high" alt="A newborn's feet cupped in an adult's hands.">
+    </div>
+  </section>
+
+  <section class="numbers" aria-label="Human Essentials in numbers">
+    <div class="wrap">
+      <dl>
+        <div><dt>banks across the United States</dt><dd>200+</dd></div>
+        <div><dt>children receiving diapers</dt><dd>3 million+</dd></div>
+        <div><dt>people receiving period supplies</dt><dd>400,000+</dd></div>
+        <div><dt>cost to a bank, ever</dt><dd>$0</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" id="day" aria-labelledby="day-h">
+    <div class="wrap">
+      <h2 id="day-h">From the back of a truck to a baby's first week.</h2>
+      <p class="intro">A box of diapers passes through a lot of hands. Human Essentials keeps count at each one, so nobody has to.</p>
+
+      <ol class="chapters">
+        <li class="chapter">
+          <div class="chapter-art">
+            <img class="photo" loading="lazy" src="landing-designs-assets/photo-loading-truck.webp" width="1600" height="1066" alt="Two volunteers pass a carton of training pants from a car into a moving truck during a diaper drive.">
+            <img class="screen" loading="lazy" src="landing-designs-assets/app-donation-card.webp" width="1100" height="749" alt="A donation in Human Essentials, listing each item donated with its quantity and in-kind value.">
+          </div>
+          <div class="chapter-text">
+            <h3>It comes in.</h3>
+            <p>A donor's car, a product drive, a pallet you paid for. Record it once and it is on the shelf, with who gave it and what it is worth.</p>
+            <ul>
+              <li>Donations, purchases and product drives</li>
+              <li>Scan the barcode on the box, or create your own</li>
+              <li>In-kind value added up for you</li>
+            </ul>
+          </div>
+        </li>
+        <li class="chapter">
+          <div class="chapter-art">
+            <img class="photo" loading="lazy" src="landing-designs-assets/photo-pallet.webp" width="1600" height="900" alt="A pallet stacked with cartons on the floor of a community distribution center.">
+            <img class="screen" loading="lazy" src="landing-designs-assets/app-inventory-card.webp" width="1100" height="749" alt="The inventory of one storage location in Human Essentials, with the quantity of each item.">
+          </div>
+          <div class="chapter-text">
+            <h3>It waits where you can find it.</h3>
+            <p>Every storage location has its own count. Move stock between them, correct a miscount, and run an audit when you want to be sure.</p>
+            <ul>
+              <li>Transfers, adjustments and audits</li>
+              <li>Kits built from the items you stock</li>
+              <li>What was on the shelf on any past date</li>
+            </ul>
+          </div>
+        </li>
+        <li class="chapter">
+          <div class="chapter-art">
+            <img class="photo" loading="lazy" src="landing-designs-assets/photo-finger-grip.webp" width="1600" height="1065" alt="A sleeping newborn's hand wrapped around an adult's finger.">
+            <img class="screen" loading="lazy" src="landing-designs-assets/app-request-card.webp" width="1100" height="749" alt="A partner agency's request in Human Essentials, with a Fulfill request button.">
+          </div>
+          <div class="chapter-text">
+            <h3>It goes to a family.</h3>
+            <p>Partner agencies ask for what their families need through their own portal. You see each request beside your stock, send it out, and print the picklist.</p>
+            <ul>
+              <li>Invite, approve and recertify partners</li>
+              <li>A calendar of pick ups and deliveries</li>
+              <li>Eleven reports for your board and your funders</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="voice" id="voices" aria-label="What banks say">
+    <div class="wrap voice-in">
+      <img loading="lazy" src="landing-designs-assets/photo-hand-on-shirt.webp" width="1600" height="1069" alt="A baby's hand holding on to a parent's shirt.">
+      <div>
+        <figure>
+          <blockquote>&ldquo;Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.&rdquo;</blockquote>
+          <figcaption><b>Megan</b>, Sweet Cheeks Diaper Bank</figcaption>
+        </figure>
+        <figure class="second">
+          <blockquote>&ldquo;Finally, an inventory management system designed specifically for the unique needs of diaper banks!&rdquo;</blockquote>
+          <figcaption><b>Rachel Alston</b>, PDX Diaper Bank</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="made" aria-labelledby="made-h">
+    <div class="wrap made">
+      <figure>
+        <img loading="lazy" src="landing-designs-assets/photo-drive-poster.webp" width="1600" height="1280" alt="A hand-made poster reading Diaper Drive, decorated with paper cut-outs of diapers, wipes and lotion.">
+        <figcaption>A poster children made for a diaper drive. Most of this work runs on volunteers; so does the software.</figcaption>
+      </figure>
+      <div>
+        <h2 id="made-h">Made by volunteers, the way your bank is.</h2>
+        <p class="intro">Human Essentials is built by <a href="https://rubyforgood.org">Ruby for Good</a>, a non-profit whose volunteers write software for organizations doing good. It was first built alongside PDX Diaper Bank.</p>
+        <dl>
+          <div><dt>Free, and hosted for you</dt><dd>No license fee, no per-user price and nothing to install.</dd></div>
+          <div><dt>Open source</dt><dd>Every line is public under the MIT license. <a href="https://github.com/rubyforgood/human-essentials">Read the code on GitHub.</a></dd></div>
+          <div><dt>A digital public good</dt><dd>Recognized by the Digital Public Goods Alliance.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section router" aria-labelledby="router-h">
+    <div class="wrap">
+      <h2 id="router-h">What brings you here?</h2>
+      <ul>
+        <li><a href="/account_requests/new"><b>I run an essentials bank</b><span>You collect diapers, period supplies or other essentials and give them out through partner agencies.</span><em>Request an account</em></a></li>
+        <li><a href="/users/sign_in"><b>I work at a partner agency</b><span>Your bank invites you. Use the email address the invitation was sent to.</span><em>Log in</em></a></li>
+        <li><a href="/find-a-bank"><b>I need diapers or period supplies</b><span>We make the software banks use; we do not hand out supplies. A bank near you does.</span><em>Find a bank near you</em></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="questions" aria-labelledby="q-h">
+    <div class="wrap">
+      <h2 id="q-h">Questions banks ask first.</h2>
+      <div class="faq">
+        <details><summary>Is it really free?</summary><p>Yes. There is no charge to any bank. Volunteers build it and Ruby for Good hosts it.</p></details>
+        <details><summary>Who is it for?</summary><p>Diaper banks, period supply banks and other essentials banks that give out supplies through partner agencies. You request an account, and we set your bank up.</p></details>
+        <details><summary>I need diapers or period supplies. Can I get them here?</summary><p>Not from us. We make the software that banks use. <a href="/find-a-bank">Find a bank near you</a>, and it can tell you which local agencies give out supplies.</p></details>
+        <details><summary>I work at a partner agency. How do I get in?</summary><p>Your bank invites you. Once you accept the invitation, <a href="/users/sign_in">log in</a> with that email address.</p></details>
+        <details><summary>Can we bring the records we already have?</summary><p>Yes. Partners, storage locations with their starting inventory, vendors and donation sites can each be imported from a spreadsheet.</p></details>
+        <details><summary>Who can see our data?</summary><p>Your bank's records belong to your bank, and other banks cannot see them. The <a href="/privacypolicy">privacy policy</a> says what we keep and why.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="cta-h">
+    <div class="wrap cta-in">
+      <h2 id="cta-h">Spend the afternoon on families, not spreadsheets.</h2>
+      <p>Tell us about your bank and we will set up your account. Questions first? Write to <a href="mailto:info@humanessentials.app">info@humanessentials.app</a>.</p>
+      <a class="btn btn-ink" href="/account_requests/new">Request an account</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-in">
+      <p><span class="wordmark" style="font-size:1.125rem">Human Essentials</span><br>Built by <a href="https://rubyforgood.org">Ruby for Good</a>. Open source under the MIT license.</p>
+      <ul class="links">
+        <li><a href="/users/sign_in">Log in</a></li>
+        <li><a href="/account_requests/new">Request an account</a></li>
+        <li><a href="/find-a-bank">Find a bank</a></li>
+        <li><a href="/privacypolicy">Privacy policy</a></li>
+        <li><a href="https://github.com/rubyforgood/human-essentials">Source code</a></li>
+      </ul>
+    </div>
+    <p class="credits">Photographs are in the public domain. Newborn's feet: Rene Asmussen (CC0). Diaper drive truck: U.S. Space Force, Senior Airman Danielle McBride. Pallet: U.S. Department of Agriculture. Hand on finger: Wayne Evans (CC0). Hand on shirt: Jordan Whitt (CC0). Poster: U.S. Air Force, Gina Randall. The appearance of U.S. Department of Defense visual information does not imply or constitute DoD endorsement.</p>
+  </div>
+</footer>
+</body>
+</html>

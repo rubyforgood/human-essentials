@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing page: review and three replacements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: #f8fafc; color: #334155; font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: .9375rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, p, ul, figure { margin: 0; }
+  a { color: #4338ca; }
+  :focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; border-radius: 4px; }
+  .wrap { max-width: 78rem; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; letter-spacing: -.02em; }
+  h2 { font-size: 1.25rem; font-weight: 700; color: #0f172a; letter-spacing: -.015em; }
+  h3 { font-size: 1rem; font-weight: 600; color: #0f172a; }
+  .note { max-width: 50rem; margin-top: .5rem; }
+  .block { margin-top: 3.5rem; }
+  .card { margin-top: 1rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; overflow: hidden; }
+  .pad { padding: 1.5rem; }
+  ul.plain { padding-left: 1.25rem; display: grid; gap: .375rem; margin-top: .75rem; max-width: 50rem; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  th, td { text-align: left; vertical-align: top; padding: .625rem 1rem; border-bottom: 1px solid #e2e8f0; }
+  thead th, thead td { background: #f8fafc; }
+  thead th { font-weight: 600; color: #475569; font-size: .8125rem; background: #f8fafc; white-space: nowrap; }
+  tbody th { font-weight: 600; color: #0f172a; min-width: 12rem; }
+  tr:last-child > * { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .two { display: grid; gap: 1.5rem; }
+  @media (min-width: 60rem) { .two { grid-template-columns: 5fr 4fr; align-items: start; } }
+
+  .opt { margin-top: 2.5rem; }
+  .opt-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
+  .opt-head a { font-weight: 600; }
+  .pill { display: inline-block; font-size: .75rem; font-weight: 600; padding: .125rem .625rem; border-radius: 999px; background: #eef2ff; color: #4338ca; }
+  .opt-grid { display: grid; gap: 0; }
+  @media (min-width: 64rem) { .opt-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } .opt-grid .pad { border-left: 1px solid #e2e8f0; } }
+  /* A live, scaled view of the page itself, so the preview cannot drift from the file it previews. */
+  .live { position: relative; aspect-ratio: 1440 / 900; overflow: hidden; background: #e2e8f0; display: block; }
+  .live iframe { position: absolute; top: 0; left: 0; width: 1440px; height: 900px; border: 0; transform-origin: 0 0; transform: scale(var(--s, .5)); pointer-events: none; }
+  .live a { position: absolute; inset: 0; z-index: 1; }
+  .live a span { position: absolute; left: -999rem; }
+  dl.facts { margin: 0; display: grid; gap: .875rem; }
+  dl.facts dt { font-weight: 600; color: #0f172a; }
+  dl.facts dd { margin: 0; }
+  .shotfig img { display: block; width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: .75rem; }
+  .shotfig figcaption { margin-top: .5rem; font-size: .8125rem; color: #64748b; }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <h1>Landing page: a review, and three replacements</h1>
+  <p class="note">
+    The page at <code>/</code> is the first thing a bank director, a partner agency or a parent looking for diapers
+    sees. This is what it does today, measured on 16 November 2026, and three complete pages that could replace it.
+    Each one is a real page: open it, resize it, tab through it.
+  </p>
+  <p class="note"><strong>Recommendation: C, with A's product tour in place of C's single screenshot.</strong>
+    C is the only one whose first screen is something no other product could show, it uses the app's own typeface and
+    colour, it is the lightest of the three, and it gives the visitor who needs diapers a search box before they can
+    reach the account request form.</p>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>The page today</h2>
+    <div class="two" style="margin-top:1rem">
+      <figure class="shotfig">
+        <img src="landing-designs-assets/current-page.webp" width="1200" height="750" alt="The current landing page: a purple gradient hero with a five-line headline, a wide Register button and five small translucent cards that overlap each other.">
+        <figcaption>The current page at 1440 &times; 900. The five cards drift up and down continuously.</figcaption>
+      </figure>
+      <div>
+        <h3>What works, and stays in all three</h3>
+        <ul class="plain">
+          <li><strong>It is fast.</strong> One request, 23,568 bytes, no images.</li>
+          <li><strong>The two quotations are real,</strong> from named people at named banks. They are kept word for word.</li>
+          <li><strong>&ldquo;Free for all&rdquo; with NDBN and the Alliance</strong> is the strongest thing on the page, and it is in small italics.</li>
+          <li><strong>&ldquo;Love-filled&rdquo;</strong> is a voice nobody else in inventory software has. Option B keeps the line.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card scroll" style="margin-top:1.5rem" tabindex="0" role="region" aria-label="Findings">
+      <table>
+        <thead><tr><th>Finding</th><th>Measured</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><th>It does not look like the app</th><td>A <code>#667eea</code> to <code>#764ba2</code> gradient and the system font. The app is Figtree and brand indigo.</td><td>Clicking Login moves the visitor to what looks like a different product. <code>design.md</code> already lists this page as the only part of the app that does not look like it.</td></tr>
+          <tr><th>The product is never shown</th><td>0 screenshots, 0 photographs. The hero's picture is five emoji cards. Two pairs of them overlap at 1440px, and four pairs at 390px, one by 92px.</td><td>A director deciding whether to move a bank's records wants to see the screens.</td></tr>
+          <tr><th>Seven text styles fail contrast</th><td>Hero paragraph 3.28:1, association note 2.92:1, Register label 3.66:1, email link 3.50:1, section subheading 3.84:1, feature text 4.02:1, quotation author about 2.7:1. AA needs 4.5:1.</td><td>WCAG 1.4.3. The hero headline passes only because it is large.</td></tr>
+          <tr><th>Motion that cannot be stopped</th><td>6 animations that repeat forever, no <code>prefers-reduced-motion</code> rule and no pause control.</td><td>WCAG 2.2.2, a Level A criterion.</td></tr>
+          <tr><th>One action, three names</th><td>&ldquo;Register&rdquo; in the hero, &ldquo;Request An Account&rdquo; at the foot, and the page both lead to is headed &ldquo;Request an account&rdquo;. &ldquo;Login&rdquo; here is &ldquo;Log in&rdquo; in the app.</td><td>&ldquo;Register&rdquo; promises an account now. What follows is a request that someone reviews.</td></tr>
+          <tr><th>Nowhere to go if you need diapers</th><td>9 links: four in-page, log in, the account request twice, an email address and the privacy policy. None to <code>/find-a-bank</code>.</td><td>ADR 0014 records organizations that want diapers requesting bank accounts. This page is where they start, and Register is the only door.</td></tr>
+          <tr><th>The numbers are missing</th><td>The README says over 200 banks, over 3 million children and over 400,000 period supply recipients. The page says none of it.</td><td>The page's best evidence is in a file visitors never read.</td></tr>
+          <tr><th>Search and sharing</th><td>No meta description and no Open Graph tags. The title is &ldquo;HumanEssentials.app - Modern Inventory Management&rdquo;.</td><td>A link pasted into an email or Slack shows a bare URL.</td></tr>
+          <tr><th>Structure</th><td>Headings run h1 then h4. The hero is outside <code>&lt;main&gt;</code>. Below 768px the four nav links are hidden and nothing replaces them.</td><td>Screen reader users navigate by headings and landmarks.</td></tr>
+          <tr><th>Small things</th><td>Emoji as icons, which each platform draws differently. &ldquo;All rights reserved&rdquo; on MIT-licensed software.</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>What all three share</h2>
+    <ul class="plain">
+      <li><strong>One name for the action:</strong> &ldquo;Request an account&rdquo; everywhere, and &ldquo;Log in&rdquo; as the app spells it.</li>
+      <li><strong>A door for each visitor:</strong> a bank, a partner agency, and someone who needs supplies, who is sent to <code>/find-a-bank</code>.</li>
+      <li><strong>Real product screens</strong> from the seeded demonstration bank, the README's numbers, both quotations verbatim, and six questions with answers checked against the app.</li>
+      <li><strong>The basics:</strong> a description and Open Graph tags, one h1, landmarks, a skip link, a visible focus ring, text at 4.5:1 or better, no motion under <code>prefers-reduced-motion</code>, and every image with dimensions and alt text. axe reports no WCAG A or AA violations on any of the three.</li>
+      <li><strong>Nothing depends on JavaScript.</strong> A's tabs fall back to a stack; C's lights are CSS.</li>
+    </ul>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>The three</h2>
+
+    <div class="opt">
+      <div class="opt-head"><h3>A. The app, shown</h3><span class="pill">Closest to the design system</span><a href="landing-designs-a.html">Open the full page</a></div>
+      <div class="card opt-grid">
+        <div class="live"><iframe src="landing-designs-a.html" title="Option A, scaled down" loading="lazy" tabindex="-1"></iframe><a href="landing-designs-a.html"><span>Open option A</span></a></div>
+        <div class="pad">
+          <dl class="facts">
+            <div><dt>The idea</dt><dd>The first screen is the product: a real request, beside the bank's stock, with the Fulfill button. Below it, five tabs walk through requests, inventory, distributions, partners and reports on real screens.</dd></div>
+            <div><dt>What it bets on</dt><dd>That the visitor is a bank director comparing this with a spreadsheet, and that seeing the screens settles it.</dd></div>
+            <div><dt>What it costs</dt><dd>It is the least surprising of the three. Screenshots go stale when a screen changes, so they need retaking; the script that took them is short.</dd></div>
+            <div><dt>Looks like</dt><dd>Figtree, brand indigo, slate, hairline cards. Entirely inside <code>design.md</code>.</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><h3>B. The people it is for</h3><span class="pill">Warmest</span><a href="landing-designs-b.html">Open the full page</a></div>
+      <div class="card opt-grid">
+        <div class="live"><iframe src="landing-designs-b.html" title="Option B, scaled down" loading="lazy" tabindex="-1"></iframe><a href="landing-designs-b.html"><span>Open option B</span></a></div>
+        <div class="pad">
+          <dl class="facts">
+            <div><dt>The idea</dt><dd>A photograph and the &ldquo;love-filled&rdquo; line. Then a box of diapers followed through three chapters, each a photograph with the screen that does that job laid over its corner.</dd></div>
+            <div><dt>What it bets on</dt><dd>That people who run diaper banks choose with the heart first, and that the page should feel like the cause and not like software.</dd></div>
+            <div><dt>What it costs</dt><dd>A second typeface, Fraunces, which <code>design.md</code> rules out for the app and which would be self-hosted. The heaviest page. Stock photographs are never as good as a member bank's own; see the note on photographs below.</dd></div>
+            <div><dt>Looks like</dt><dd>Deep indigo ink, apricot, a soft serif for headings, Figtree for everything else.</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><h3>C. The network</h3><span class="pill">Recommended</span><a href="landing-designs-c.html">Open the full page</a></div>
+      <div class="card opt-grid">
+        <div class="live"><iframe src="landing-designs-c.html" title="Option C, scaled down" loading="lazy" tabindex="-1"></iframe><a href="landing-designs-c.html"><span>Open option C</span></a></div>
+        <div class="pad">
+          <dl class="facts">
+            <div><dt>The idea</dt><dd>A night map of the United States with a light for each of the 347 banks in the NDBN and Alliance directories, coloured by what they give out. The lights come on from the east when the page loads. Under the map, a search box sends anyone who needs supplies to the bank finder.</dd></div>
+            <div><dt>What it bets on</dt><dd>That the strongest argument is that this is already how the sector works, and that a director wants to be on that map.</dd></div>
+            <div><dt>What it costs</dt><dd>The map shows the directories, not Human Essentials' own banks, and the caption has to keep saying so. It should be regenerated when the weekly import changes the list. A dark first screen is a departure from the app's white one.</dd></div>
+            <div><dt>Looks like</dt><dd>Figtree and the brand indigo taken to night, then daylight for the detail. No photographs, one screenshot.</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>Side by side</h2>
+    <div class="card scroll" tabindex="0" role="region" aria-label="Comparison">
+      <table>
+        <thead><tr><td></td><th>Today</th><th>A. The app</th><th>B. The people</th><th>C. The network</th></tr></thead>
+        <tbody>
+          <tr><th>First screen shows</th><td>Emoji cards</td><td>A real request screen</td><td>A photograph</td><td>347 banks on a map</td></tr>
+          <tr><th>Typeface</th><td>System font</td><td>Figtree</td><td>Fraunces and Figtree</td><td>Figtree</td></tr>
+          <tr><th>Page weight, without fonts</th><td class="num">23 KB</td><td class="num">302 KB</td><td class="num">652 KB</td><td class="num">113 KB</td></tr>
+          <tr><th>Images</th><td class="num">0</td><td class="num">6 screenshots</td><td class="num">6 photographs, 3 screenshots</td><td class="num">1 screenshot, 1 inline map</td></tr>
+          <tr><th>Path for someone needing supplies</th><td>None</td><td>A card below the hero</td><td>A row near the foot</td><td>A search box in the first screen</td></tr>
+          <tr><th>Inside <code>design.md</code></th><td>No</td><td>Yes</td><td>No: second typeface, apricot</td><td>Mostly: night background, two light colours</td></tr>
+          <tr><th>Upkeep</th><td>None</td><td>Retake screenshots when screens change</td><td>The same, and better photographs over time</td><td>Regenerate the map when the directory changes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The sections are interchangeable. A's tabbed tour, B's chapters and C's map and finder can be combined, which is what the recommendation does.</p>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>Photographs and other sources</h2>
+    <p class="note">Every photograph is public domain or CC0, taken from Wikimedia Commons, where each file page records its origin. Free of copyright is not the same as free of every concern, and two of these carry one.</p>
+    <div class="card scroll" tabindex="0" role="region" aria-label="Sources">
+      <table>
+        <thead><tr><th>Image</th><th>Source</th><th>Status</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><th>Newborn's feet in hands</th><td><a href="https://commons.wikimedia.org/wiki/File:Baby-baby-feet-bed-325690.jpg">Rene Asmussen, via Pexels</a></td><td>CC0</td><td>Nobody identifiable.</td></tr>
+          <tr><th>Hand around a finger</th><td><a href="https://commons.wikimedia.org/wiki/File:Adult-baby-bed-225744.jpg">Wayne Evans, via Pexels</a></td><td>CC0</td><td>Part of a sleeping newborn's face is in frame.</td></tr>
+          <tr><th>Hand on a shirt</th><td><a href="https://commons.wikimedia.org/wiki/File:New_baby_(Unsplash).jpg">Jordan Whitt, via Unsplash</a></td><td>CC0</td><td>Nobody identifiable.</td></tr>
+          <tr><th>Loading the truck</th><td><a href="https://commons.wikimedia.org/wiki/File:Fill_the_Mayflower_(6943517).jpg">U.S. Space Force, Senior Airman Danielle McBride</a></td><td>Public domain</td><td><strong>Two identifiable people, and a branded carton.</strong> A real diaper drive in Aurora, Colorado, 2021. Fine as a federal work; I would still swap it for a member bank's photograph.</td></tr>
+          <tr><th>Pallet of cartons</th><td><a href="https://commons.wikimedia.org/wiki/File:Genesee_County_Community_Action_Resource_Department_(GCCARD)_partners_with_USDA_to_help_Flint,_MI_-_TEFAP_and_CSFP_(20161005-FNS-LSC-0834).jpg">U.S. Department of Agriculture</a></td><td>Public domain</td><td><strong>It is a food pantry,</strong> in Flint, Michigan. It reads as a warehouse; it is not a diaper bank.</td></tr>
+          <tr><th>Diaper drive poster</th><td><a href="https://commons.wikimedia.org/wiki/File:RAF_Mildenhall_Youth_Center_holds_diaper_drive_140314-F-FE537-0027.jpg">U.S. Air Force, Gina Randall</a></td><td>Public domain</td><td>Made by children at RAF Mildenhall, 2014. A brand name is drawn on it.</td></tr>
+          <tr><th>Map outline</th><td>U.S. Census Bureau boundaries, through the <code>us-atlas</code> package</td><td>Public domain data</td><td>Simplified to 17 KB of path.</td></tr>
+          <tr><th>Bank locations</th><td><code>bank_listings</code>, 347 rows, last imported 19 October 2026</td><td>The app's own data</td><td>171 diapers only, 104 period supplies only, 72 both.</td></tr>
+          <tr><th>Product screens</th><td>The running app, signed in to the seeded Pawnee Diaper Bank</td><td>The app's own</td><td>Two filler strings were replaced before the shot: a lorem ipsum comment, and a partner group named &ldquo;Dont test this 1&rdquo;.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><strong>The best photographs for this page do not exist yet.</strong> They are a member bank's own warehouse and volunteers, used with their permission. B is built so that each one is a single file to replace.</p>
+  </div>
+
+  <!-- ================================================================= -->
+  <div class="block">
+    <h2>Not done, and not checked</h2>
+    <ul class="plain">
+      <li><strong>Nothing is built.</strong> <code>app/views/static/index.html.erb</code> is unchanged. These are previews.</li>
+      <li><strong>The three numbers come from the README</strong> and I could not check them against production. They need confirming before they go on a public page.</li>
+      <li><strong>The fonts load from Google Fonts here.</strong> The app makes no CDN request, so the built page would use the self-hosted Figtree, and B would add a self-hosted Fraunces.</li>
+      <li><strong>The wordmark is set in type.</strong> <code>/img/essentials.svg</code> is 247 KB of traced outline, more than the whole of option C, so none of the three uses it.</li>
+      <li><strong>&ldquo;First built alongside PDX Diaper Bank&rdquo;</strong> rests on the current footer and the README's thanks. Worth a second pair of eyes.</li>
+      <li><strong>The privacy policy</strong> is the other page on its own stylesheet. It is not redesigned here and should follow whichever of these is chosen.</li>
+    </ul>
+  </div>
+
+</main>
+<script>
+  // Scale each 1440px-wide iframe to the width of its frame.
+  function fit() {
+    document.querySelectorAll(".live").forEach(function (el) { el.style.setProperty("--s", el.clientWidth / 1440); });
+  }
+  fit(); window.addEventListener("resize", fit);
+</script>
+</body>
+</html>

@@ -535,7 +535,7 @@ string is two characters, so the card-header probe failed before the audit could
 ```bash
 bin/design/serve-mockup request-units
 # => http://localhost:3000/request-units.html
-bin/design/serve-mockup                  # lists all 44
+bin/design/serve-mockup                  # lists all 73
 ```
 
 Mockups are written self-contained so they open by double-clicking, and **that is not enough**:
@@ -544,6 +544,9 @@ and nothing else, so a `file:///` path shows them nothing. Three previews have b
 this reason. The script copies the mockup into `public/`, where Rails serves it ahead of the router,
 refreshes `mockup.css` for the older ones that link it, warns if the served copy is not gitignored,
 and prints the URL to send.
+
+A mockup that is several pages, or has images of its own, keeps them beside it as `<name>-*.html`
+and `<name>-assets/`. Both are copied with it. `landing-designs` is the first of these.
 
 **`sweep.js` is gone.** It was the older 56-path version, kept because it was quicker to run
 against a subset — but `route-sweep.js` performs every one of its checks, including the console-error

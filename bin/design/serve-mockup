@@ -42,6 +42,21 @@ end
 
 FileUtils.cp(src, File.join(DEST, "#{name}.html"))
 
+# A mockup that is several pages, or that has images of its own, keeps them beside it:
+# `<name>-*.html` and a `<name>-assets/` directory. They are copied with it, because a full-page
+# design links its siblings and its photographs by relative path. `landing-designs` is the first.
+served = ["/public/#{name}.html"]
+Dir.glob(File.join(SRC, "#{name}-*.html")).each do |page|
+  FileUtils.cp(page, DEST)
+  served << "/public/#{File.basename(page)}"
+end
+assets = File.join(SRC, "#{name}-assets")
+if Dir.exist?(assets)
+  FileUtils.rm_rf(File.join(DEST, "#{name}-assets"))
+  FileUtils.cp_r(assets, DEST)
+  served << "/public/#{name}-assets"
+end
+
 # The older mockups link /mockup.css, a snapshot of the app's stylesheet. It is a snapshot rather
 # than a link because Propshaft only serves the digested path, and the digest changes on rebuild --
 # so it has to be re-copied or the mockup renders with the classes the app had at copy time.
@@ -57,8 +72,9 @@ if File.read(src).include?("/mockup.css")
 end
 
 ignore = File.join(ROOT, ".gitignore")
-entry = "/public/#{name}.html"
-unless File.read(ignore).include?(entry)
+ignored = File.read(ignore)
+served.each do |entry|
+  next if ignored.include?(entry)
   warn "Note: #{entry} is not in .gitignore, so `git add -A` will track the served copy."
 end
 

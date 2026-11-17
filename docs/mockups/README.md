@@ -27,6 +27,13 @@ a design preview nobody can look at has failed at the only thing it exists to do
 `mockup.css` if the mockup needs it, warns if the served copy is not gitignored, and prints the URL.
 The tracked copy stays here; the copy in `public/` is ignored.
 
+### A mockup with pages and images of its own
+
+A full-page design cannot be one file: it has photographs, and an index that links the options.
+`landing-designs` is the first. Its pages are `landing-designs-a.html`, `-b` and `-c`, and its
+images are in `landing-designs-assets/`. `serve-mockup landing-designs` copies all of them, and
+each page links the others and the images by relative path, so they also open from disk.
+
 ## Still write every new mockup self-contained
 
 Its CSS inline, its fonts from Google Fonts or falling back gracefully, no `/mockup.css`. That way
@@ -76,6 +83,7 @@ Chromium's default 300px that way.
 
 | Mockup | Question it was made to answer | Outcome |
 | --- | --- | --- |
+| `landing-designs.html` | Review the landing page and offer three replacements. | **Awaiting a decision.** Three complete pages: A, the app shown; B, photographs and a serif; C, a night map of the 347 directory banks with the bank finder in the first screen. Recommends C with A's tabbed tour. The current page fails contrast in seven text styles, runs six animations that cannot be stopped, and has no link to `/find-a-bank`. |
 | `barcode-scan-field.html` | The scan button added to the barcode form spills out of the field, and does not match the scan bar on the inventory audit. What should it be? | **Joined chosen and applied in all three.** Extracted to `shared/essentials/_barcode_scan_field`, so the three copies are one partial. Measured identical to the audit bar afterwards: input 1px on four sides, button 1px with `border-left: 0`, 0px seam, both 38px. The overlay it replaced was 38px against 36px, 4px low. |
 | `row-menu-followups.html` | The row menu's items are misaligned, disabled actions may be the wrong pattern, and the confirm dialog is the browser's. | **All three done. Alignment** was a plain bug (an enabled action rendered through the *button* helper, so an `inline-block` form inherited the cell's `text-right` and floated). **Option B chosen**: an action that will fail is offered, and the server answers with the reason *and* the next step. **The confirm is the app's dialog now** — all 44 call sites, plus the one raw `confirm()` in `utils/donations.js`. |
 | `actions-header-and-disabled.html` | Should the actions column header be visible? And why does a disabled *Deactivate* give the user no reason? | **Both chosen and applied.** Visible `Actions` header on all 43 tables, costing 15px. The reason for an unavailable action is visible help text under the label — and the dimming moved onto the label alone, because `opacity-60` on the item painted the reason at 2.32:1 and the point of showing it is that it gets read. |

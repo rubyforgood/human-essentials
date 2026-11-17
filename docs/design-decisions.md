@@ -10311,3 +10311,53 @@ A bank would also have to undo the choice before its form appeared.
 by 25px. It already overflowed by 8px before the card was added. `.recaptcha-fit` scales it to the
 column below 360px.
 
+## 2026-11-16 — The landing page: reviewed, and three replacements previewed
+
+Asked for a review of the landing page and three replacements, "industry best practice" and "a
+design that delights", using public domain images. **Nothing is built.** A design decision is
+the owner's, so this is a preview: `docs/mockups/landing-designs.html`.
+
+**What was measured on the page at `/`**, in a browser at 1440px and 390px:
+
+- Seven text styles are under 4.5:1. The worst is the association note at 2.92:1. axe confirms
+  the four it can compute, at 3.49 and 3.83; the rest sit on a gradient, which axe does not judge.
+- Six animations repeat forever, with no `prefers-reduced-motion` rule and no pause (WCAG 2.2.2).
+- The hero's five cards overlap: two pairs at 1440px, four at 390px, one by 92px.
+- Nine links, none to `/find-a-bank`. ADR 0014 exists because organizations that want diapers
+  request bank accounts, and this page is where they begin.
+- One action has three names: "Register", "Request An Account", and "Request an account" on the
+  page both lead to.
+- No meta description or Open Graph tags; headings run h1 then h4; the hero is outside `<main>`.
+- It is 23,568 bytes in one request. That is the thing to protect.
+
+**Three pages, each differing in what the first screen shows**, because that is the decision:
+
+- **A, the product.** A real request screen, then five tabs of real screens. Figtree and the
+  app's tokens, so it is inside `design.md`. 302 KB.
+- **B, the people.** A photograph and the existing "love-filled" line, set in Fraunces. 652 KB.
+  It adds a second typeface, which `design.md` rules out for the app.
+- **C, the network.** A night map with a light for each of the 347 rows in `bank_listings`,
+  and the bank finder's search box under it. Figtree. 113 KB.
+
+**Recommended: C, with A's tabbed tour.** C's first screen is the only one another product could
+not show, it is the lightest, and it puts the finder in front of a visitor who needs supplies
+before the account request form. Its cost is honesty: the map is the two directories, not Human
+Essentials' own banks, and the caption has to say so. A first draft of C closed with "Add your
+bank's light to the map", which is false, since joining adds no light. It now says "Run your
+bank on Human Essentials".
+
+**Images are files, not data URIs.** The earlier screenshot mockup, `content-width-in-app.html`,
+inlined its images and is 799 KB of one file that cannot be edited by hand. Sixteen images would
+have been worse. So `serve-mockup` copies `<name>-*.html` and `<name>-assets/` with the mockup.
+
+**Photographs: free of copyright is not free of every concern.** All six are public domain or
+CC0, from Wikimedia Commons. Two were still flagged in the mockup: the diaper drive photograph
+shows two identifiable people and a branded carton, and the pallet is in a food pantry. Photographs
+of identifiable children were found and not used. The right pictures are a member bank's own.
+
+**Not checked:** the README's three numbers (over 200 banks, 3 million children, 400,000 period
+supply recipients) against production. They are on all three previews and need confirming.
+
+**Not done:** the privacy policy, which shares the old stylesheet; the wordmark, because
+`/img/essentials.svg` is 247 KB of traced outline; self-hosting the fonts, which the previews
+load from Google Fonts.

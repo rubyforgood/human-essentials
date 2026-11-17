@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human Essentials: the free system behind more than 200 essentials banks</title>
+<meta name="description" content="Human Essentials is free inventory software for diaper banks and period supply banks across the United States. Built by volunteers at Ruby for Good.">
+<meta property="og:title" content="Human Essentials: the free system behind more than 200 essentials banks">
+<meta property="og:description" content="Free inventory software for diaper banks and period supply banks across the United States.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Option C. The network: a night map with a light for every bank, then daylight for the detail. */
+  :root {
+    --night: #1e1b4b; --night-deep: #14112f; --brand-600: #4f46e5; --brand-700: #4338ca; --brand-50: #eef2ff; --brand-100: #e0e7ff; --brand-200: #c7d2fe; --brand-300: #a5b4fc;
+    --amber: #fbbf24; --rose: #fda4af; --both: #ffffff;
+    --slate-50: #f8fafc; --slate-200: #e2e8f0; --slate-300: #cbd5e1; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; --slate-900: #0f172a;
+    --gutter: clamp(1rem, 4vw, 2rem);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--slate-700); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  img, svg { max-width: 100%; display: block; }
+  img { height: auto; }
+  h1, h2, h3, p, ul, ol, figure, blockquote, dl, dd { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  a { color: var(--brand-700); }
+  :focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px; border-radius: 4px; }
+  .night :focus-visible { outline-color: #fff; }
+  .wrap { max-width: 76rem; margin: 0 auto; padding-inline: var(--gutter); }
+  .skip { position: absolute; left: 1rem; top: -4rem; background: #fff; padding: .5rem .75rem; border-radius: .5rem; z-index: 50; }
+  .skip:focus { top: .75rem; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 2.875rem; padding: .625rem 1.25rem; border-radius: .625rem; font: inherit; font-weight: 700; font-size: 1rem; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color .15s; }
+  .btn-sm { min-height: 2.5rem; padding: .5rem .875rem; font-size: .9375rem; }
+  .btn-light { background: #fff; color: var(--night); }
+  .btn-light:hover { background: var(--brand-100); }
+  .btn-ghost { color: #fff; border-color: rgba(255,255,255,.4); }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); }
+  .btn-brand { background: var(--brand-600); color: #fff; }
+  .btn-brand:hover { background: var(--brand-700); }
+
+  /* Night */
+  .night { background: radial-gradient(120% 90% at 70% 35%, #2a2670 0%, var(--night) 45%, var(--night-deep) 100%); color: var(--brand-100); }
+  .nav-in { display: flex; align-items: center; gap: 1.5rem; height: 4.5rem; }
+  .wordmark { font-weight: 800; font-size: 1.125rem; letter-spacing: -.01em; color: #fff; text-decoration: none; margin-right: auto; }
+  .nav-links { display: none; gap: 1.75rem; }
+  .nav-links a { color: var(--brand-200); text-decoration: none; font-weight: 500; font-size: .9375rem; }
+  .nav-links a:hover { color: #fff; }
+  .nav-actions { display: flex; gap: .5rem; }
+  .nav-actions .btn-light { display: none; }
+  @media (min-width: 30rem) { .nav-actions .btn-light { display: inline-flex; } }
+  @media (min-width: 58rem) { .nav-links { display: flex; } }
+
+  .hero-in { display: grid; gap: 2rem; padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem); }
+  .hero h1 { font-size: clamp(2.5rem, 5.4vw, 4.25rem); line-height: 1; letter-spacing: -.035em; font-weight: 900; color: #fff; max-width: 13ch; }
+  .lede { margin-top: 1.375rem; font-size: clamp(1.0625rem, 1.5vw, 1.25rem); max-width: 31rem; color: var(--brand-200); }
+  .hero-cta { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+  .assoc { margin-top: 1.5rem; font-size: .9375rem; color: var(--brand-300); max-width: 30rem; }
+
+  .map-fig { position: relative; }
+  .map { width: 100%; height: auto; overflow: visible; }
+  .map .land { fill: rgba(255,255,255,.045); stroke: rgba(165,180,252,.5); stroke-width: 1; stroke-linejoin: round; }
+  .map .lines { fill: none; stroke: rgba(165,180,252,.2); stroke-width: .75; }
+  .map .d { fill: var(--amber); }
+  .map .p { fill: var(--rose); }
+  .map .b { fill: var(--both); }
+  .map text { fill: var(--brand-300); font-size: 13px; font-family: inherit; }
+  /* One moment: the lights come on from the east, the way a morning does. */
+  @media (prefers-reduced-motion: no-preference) {
+    .map .dots circle { opacity: 0; animation: light-on .6s ease-out forwards; animation-delay: calc(.35s + var(--i) * 7ms); }
+  }
+  @keyframes light-on { 0% { opacity: 0; r: 0; } 60% { opacity: 1; r: 5.5px; } 100% { opacity: 1; } }
+  .legend { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .375rem 1.5rem; font-size: .875rem; color: var(--brand-200); }
+  .legend li { display: flex; align-items: center; gap: .5rem; }
+  .legend i { width: .625rem; height: .625rem; border-radius: 50%; box-shadow: 0 0 8px currentColor; background: currentColor; }
+  .legend span { color: var(--brand-200); }
+  .map-note { margin-top: .5rem; font-size: .875rem; color: var(--brand-300); max-width: 40rem; }
+  @media (min-width: 64rem) {
+    .hero-in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 2.5rem; }
+    .map-fig { margin-right: -3rem; }
+  }
+
+  /* Finder: the other reason someone lands here */
+  .finder { border-top: 1px solid rgba(165,180,252,.25); }
+  .finder-in { display: grid; gap: 1rem; padding-block: 1.75rem; align-items: center; }
+  .finder label { font-weight: 700; color: #fff; font-size: 1.0625rem; }
+  .finder small { display: block; font-weight: 400; font-size: .9375rem; color: var(--brand-200); }
+  .finder form { display: flex; gap: .5rem; }
+  .finder input { flex: 1; min-width: 0; min-height: 2.875rem; padding: .5rem .875rem; border-radius: .625rem; border: 1px solid rgba(165,180,252,.6); background: rgba(255,255,255,.08); color: #fff; font: inherit; }
+  .finder input::placeholder { color: var(--brand-300); }
+  @media (min-width: 52rem) { .finder-in { grid-template-columns: 1fr minmax(0, 26rem); gap: 3rem; } }
+
+  /* Day */
+  .section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+  .section.tint { background: var(--slate-50); border-block: 1px solid var(--slate-200); }
+  .section h2 { font-size: clamp(1.875rem, 3.8vw, 3rem); line-height: 1.06; letter-spacing: -.03em; font-weight: 900; color: var(--slate-900); max-width: 20ch; }
+  .section .intro { margin-top: 1rem; font-size: 1.125rem; color: var(--slate-600); max-width: 38rem; }
+
+  /* A real sequence, so it is numbered. */
+  .steps { margin-top: 3rem; display: grid; gap: 0; counter-reset: step; }
+  .steps li { counter-increment: step; position: relative; padding: 0 0 2rem 3.25rem; }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--night); color: #fff; font-weight: 800; font-size: .9375rem; display: grid; place-items: center; z-index: 1; }
+  .steps li::after { content: ""; position: absolute; left: calc(1rem - 1px); top: 2rem; bottom: 0; width: 2px; background: var(--brand-200); }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li:last-child::after { display: none; }
+  .steps h3 { font-size: 1.1875rem; font-weight: 800; letter-spacing: -.015em; color: var(--slate-900); line-height: 2rem; }
+  .steps p { margin-top: .25rem; font-size: .9375rem; color: var(--slate-600); max-width: 26rem; }
+  @media (min-width: 62rem) {
+    .steps { grid-template-columns: repeat(5, 1fr); gap: 2rem; }
+    .steps li { padding: 3rem 0 0; }
+    .steps li::after { left: 2rem; right: -2rem; top: calc(1rem - 1px); bottom: auto; width: auto; height: 2px; }
+  }
+
+  .show { margin-top: clamp(3rem, 6vw, 5rem); display: grid; gap: 2.5rem; }
+  .frame { border: 1px solid var(--slate-300); border-radius: .875rem; background: #fff; box-shadow: 0 30px 60px -28px rgba(30,27,75,.4); overflow: hidden; }
+  .frame-bar { display: flex; align-items: center; gap: .375rem; padding: .625rem .875rem; background: var(--slate-50); border-bottom: 1px solid var(--slate-200); }
+  .frame-bar i { width: .625rem; height: .625rem; border-radius: 50%; background: var(--slate-300); }
+  .feats { display: grid; gap: 0; border-top: 1px solid var(--slate-200); align-content: start; }
+  .feats div { padding: 1rem 0; border-bottom: 1px solid var(--slate-200); }
+  .feats dt { font-weight: 700; color: var(--slate-900); }
+  .feats dd { font-size: .9375rem; color: var(--slate-600); }
+  @media (min-width: 62rem) { .show { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 3.5rem; align-items: start; } }
+
+  /* Numbers */
+  .stats { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
+  .stats dd { font-size: clamp(2.25rem, 5vw, 3.75rem); font-weight: 900; letter-spacing: -.04em; line-height: 1; color: var(--night); font-variant-numeric: tabular-nums; }
+  .stats dt { margin-top: .5rem; font-size: .9375rem; color: var(--slate-600); max-width: 13rem; }
+  .stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; padding-top: 1.25rem; border-top: 3px solid var(--night); }
+  @media (min-width: 52rem) { .stats { grid-template-columns: repeat(4, 1fr); } }
+
+  .quotes { margin-top: clamp(3rem, 6vw, 4.5rem); display: grid; gap: 2.5rem; }
+  .quotes blockquote { font-size: clamp(1.125rem, 1.8vw, 1.375rem); line-height: 1.5; color: var(--slate-900); font-weight: 500; }
+  .quotes figcaption { margin-top: 1rem; font-size: .9375rem; color: var(--slate-600); }
+  .quotes figcaption b { color: var(--slate-900); }
+  .quotes figure { padding-left: 1.25rem; border-left: 3px solid var(--amber); }
+  @media (min-width: 58rem) { .quotes { grid-template-columns: 5fr 3fr; gap: 4rem; } }
+
+  .open { display: grid; gap: 2.5rem; }
+  .open dl { display: grid; gap: 1.25rem; }
+  .open dt { font-weight: 700; color: var(--slate-900); }
+  .open dd { margin-top: .125rem; color: var(--slate-600); font-size: .9375rem; }
+  @media (min-width: 58rem) { .open { grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; } }
+
+  .router ul { margin-top: 2rem; display: grid; gap: 1rem; }
+  .router a { display: block; height: 100%; padding: 1.375rem; border-radius: 1rem; text-decoration: none; background: #fff; border: 1px solid var(--slate-200); transition: border-color .15s; }
+  .router a:hover { border-color: var(--night); }
+  .router b { display: block; color: var(--slate-900); font-weight: 800; font-size: 1.125rem; letter-spacing: -.01em; }
+  .router span { display: block; margin-top: .25rem; color: var(--slate-600); font-size: .9375rem; }
+  .router em { display: block; margin-top: .875rem; font-style: normal; font-weight: 700; color: var(--brand-700); }
+  @media (min-width: 48rem) { .router ul { grid-template-columns: repeat(3, 1fr); } }
+
+  .faq { margin-top: 2rem; max-width: 46rem; border-top: 1px solid var(--slate-200); }
+  .faq details { border-bottom: 1px solid var(--slate-200); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.125rem 0; font-weight: 700; font-size: 1.0625rem; color: var(--slate-900); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: ""; flex: none; width: .625rem; height: .625rem; border-right: 2px solid var(--slate-500); border-bottom: 2px solid var(--slate-500); transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+  .faq details[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+  .faq p { padding: 0 2rem 1.25rem 0; max-width: 40rem; }
+
+  .cta-in { padding-block: clamp(4rem, 9vw, 6.5rem); display: grid; gap: 2rem; }
+  .cta h2 { font-size: clamp(2rem, 4.4vw, 3.5rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 900; color: #fff; max-width: 16ch; }
+  .cta p { margin-top: 1rem; font-size: 1.125rem; color: var(--brand-200); max-width: 32rem; }
+  .cta a:not(.btn) { color: #fff; }
+  @media (min-width: 52rem) { .cta-in { grid-template-columns: 1fr auto; align-items: end; } }
+
+  .footer { padding-block: 2.5rem; font-size: .9375rem; color: var(--slate-600); }
+  .footer-in { display: grid; gap: 1.5rem; }
+  .footer ul { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+  .footer a { color: var(--slate-700); }
+  .credits { margin-top: 1.5rem; font-size: .8125rem; color: var(--slate-500); }
+  @media (min-width: 52rem) { .footer-in { grid-template-columns: 1fr auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="night">
+  <header>
+    <div class="wrap nav-in">
+      <a class="wordmark" href="#top">Human Essentials</a>
+      <nav class="nav-links" aria-label="Page">
+        <a href="#how">How it works</a>
+        <a href="#banks">Who uses it</a>
+        <a href="#open">Who builds it</a>
+        <a href="#questions">Questions</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn btn-ghost btn-sm" href="/users/sign_in">Log in</a>
+        <a class="btn btn-light btn-sm" href="/account_requests/new">Request an account</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top" aria-labelledby="hero-h">
+    <div class="wrap hero-in">
+      <div>
+        <h1 id="hero-h">The free system behind more than 200 essentials banks.</h1>
+        <p class="lede">Human Essentials keeps count of every donation, shelf and distribution for diaper banks and period supply banks across the United States. Volunteers build it. Banks never pay for it.</p>
+        <div class="hero-cta">
+          <a class="btn btn-light" href="/account_requests/new">Request an account</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <p class="assoc">Provided in association with the National Diaper Bank Network and the Alliance for Period Supplies.</p>
+      </div>
+      <figure class="map-fig">
+        <!-- map:start -->
+        <svg class="map" viewBox="0 0 960 600" role="img" aria-label="A map of the United States at night with 347 points of light, one for each diaper bank and period supply bank in the two directories. They are densest in the Northeast, the Midwest and along the West Coast.">
+        <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <path class="land" d="M637,484L637,484L637,484ZM768,458L774,477L783,492L792,502L794,513L807,535L810,544L811,564L809,564L807,576L794,580L788,568L779,566L774,555L765,547L754,533L759,524L752,521L755,525L750,525L748,517L751,512L750,501L747,496L743,496L734,490L728,482L720,478L716,479L715,484L711,484L702,492L696,491L695,486L684,480L670,478L653,482L648,483L643,474L641,482L636,481L626,481L615,487L609,490L613,494L616,489L618,493L617,499L613,499L616,505L622,505L624,513L610,507L603,512L598,507L591,514L581,509L575,499L569,497L561,504L545,500L532,502L526,503L514,509L515,501L509,503L511,511L515,510L502,521L486,529L470,542L472,538L481,532L474,531L474,535L466,538L470,539L466,544L461,542L465,546L462,555L460,566L461,573L467,585L462,588L453,583L445,583L440,579L427,574L424,564L421,560L421,550L413,543L412,539L405,532L399,513L384,497L373,496L368,494L361,497L356,508L351,513L331,502L325,496L322,489L322,482L318,472L310,467L301,455L297,452L291,444L260,441L258,451L243,448L204,443L140,405L142,400L97,395L96,391L97,381L95,376L85,363L80,363L80,356L75,355L68,350L64,343L48,338L45,334L49,323L41,308L34,287L39,281L30,269L32,256L37,265L35,252L32,255L25,249L28,244L19,225L23,205L18,193L18,189L25,182L30,169L32,157L30,154L33,144L32,137L43,121L56,90L60,79L61,73L63,69L69,68L62,66L68,57L64,56L65,49L66,31L64,23L67,18L75,26L88,32L93,32L93,37L86,43L95,38L94,41L89,52L94,50L96,40L100,36L97,30L99,30L100,20L97,18L98,13L180,35L195,38L371,64L472,69L502,69L502,60L507,62L510,74L522,77L523,79L529,77L535,77L542,80L544,85L546,82L554,85L557,89L561,87L567,84L569,87L578,86L582,88L587,88L581,92L573,95L564,102L559,109L550,117L551,118L559,117L567,112L570,113L568,120L571,118L576,120L585,114L590,113L609,98L616,99L608,104L605,109L606,114L609,110L617,111L622,118L635,118L641,113L651,111L659,108L659,115L666,116L671,112L674,122L678,124L682,121L683,125L674,124L670,126L666,124L663,128L660,125L652,124L650,128L642,128L640,133L635,136L637,131L630,132L622,150L617,159L617,163L622,156L625,154L630,145L631,149L625,162L625,170L622,177L623,182L621,192L624,208L624,213L630,225L635,227L641,223L644,220L649,207L648,194L642,180L643,177L641,172L645,165L644,157L646,152L650,150L653,145L654,154L657,150L657,142L663,139L660,135L664,130L674,132L676,135L686,137L690,144L688,146L691,151L691,159L688,166L684,168L683,174L688,177L693,167L698,164L704,169L707,182L710,187L709,196L704,196L701,204L700,211L697,217L706,221L707,219L714,223L721,219L726,219L736,209L744,205L755,196L764,188L768,182L762,172L771,168L784,167L787,168L796,166L803,159L806,158L806,149L802,147L802,143L807,138L814,126L821,120L844,115L872,108L873,103L877,100L881,101L881,94L886,84L884,74L885,66L891,46L894,46L898,51L907,44L915,48L924,78L930,78L931,85L937,86L942,93L938,96L935,103L932,102L929,108L922,111L922,117L917,112L916,108L914,122L903,128L898,135L896,147L895,152L900,155L895,162L902,168L906,173L911,174L914,171L916,173L905,180L905,176L898,183L895,184L896,179L895,179L892,178L893,187L887,190L871,196L860,204L863,204L877,200L880,196L885,198L869,210L858,215L855,212L855,213L853,217L858,219L859,233L857,241L849,254L849,249L837,245L836,242L836,241L836,240L836,245L841,253L847,258L850,265L849,275L845,283L843,296L839,295L839,287L842,279L838,280L838,274L832,274L828,269L833,266L826,261L827,250L823,254L825,269L828,277L821,276L817,273L814,275L814,269L813,276L817,274L819,277L825,278L832,282L832,293L836,300L833,305L841,303L845,310L842,312L846,317L834,327L849,323L851,331L846,338L830,337L841,341L837,350L842,345L845,347L842,356L839,354L833,356L825,363L821,370L820,377L810,379L807,381L801,389L798,401L788,412L779,416L780,419L773,427L770,435L769,447L767,449ZM109,536L109,536L109,536ZM107,550L107,550L107,550ZM105,552L105,552L105,552ZM104,552L104,552L104,552ZM103,552L103,552L103,552ZM103,559L103,559L103,559ZM102,553L102,553L102,553ZM102,542L102,542L102,542ZM101,554L101,554L101,554ZM100,544L100,544L100,544ZM97,560L98,560L99,558L99,559L100,556L101,556L101,557L103,558L103,560L100,559L99,561ZM96,550L96,550L96,550ZM94,571L94,571L94,571ZM93,572L94,572L95,573ZM91,566L94,563L95,564L96,562L97,562L97,561L101,561L101,564L102,564L102,565L100,565L100,566L99,566L95,571L96,567L93,570L92,569L92,567ZM91,573L91,573L91,573ZM87,578L87,578L87,578ZM83,576L83,576L83,576ZM83,575L83,575L83,575ZM80,572L80,572L80,572ZM78,573L78,573L78,573ZM73,577L73,577L73,577ZM72,577L72,577L72,577ZM71,584L71,584L71,584ZM71,577L71,577L71,577ZM70,584L70,584L70,584ZM69,585L69,585L69,585ZM69,582L69,582L69,582ZM68,585L68,585L68,585ZM69,583L69,583L69,583ZM68,580L68,580L68,580ZM67,584L68,582L68,582ZM69,554L69,554L69,554ZM67,580L67,580L67,580ZM69,554L69,554L69,554ZM64,580L66,580L66,582L64,581ZM66,555L66,554L68,553L67,555ZM62,581L62,581L62,581ZM60,581L60,581L60,581ZM59,581L59,581L59,581ZM57,582L57,582L57,582ZM65,515L65,515L65,515ZM55,586L55,586L55,586ZM54,578L54,578L54,578ZM45,586L45,586L45,586ZM43,587L43,587L43,587ZM42,587L42,587L42,587ZM42,587L42,587L42,587ZM42,585L42,585L42,585ZM40,586L40,585L41,587L40,587ZM39,587L39,587L39,587ZM43,538L45,539L46,538L48,537L48,538L50,539L50,542L48,542L47,543L43,539ZM30,591L33,590L35,589L34,587L35,587L37,587L37,588L39,588L37,589L39,588L36,591L34,591L31,591ZM49,496L55,493L60,492L62,491L64,492L63,494L64,495L67,496L70,496L71,495L73,495L71,494L70,494L70,493L68,490L69,489L70,491L70,492L71,493L72,493L70,491L71,489L71,489L69,489L65,487L65,484L61,480L60,479L59,477L58,476L60,475L60,473L63,473L66,473L68,472L69,471L70,467L72,464L74,463L75,464L76,463L78,462L80,460L81,460L82,461L84,460L86,460L87,457L88,457L91,458L91,459L90,460L90,461L92,458L93,459L93,461L94,461L95,460L97,460L99,461L99,462L101,463L100,464L102,464L104,463L104,464L107,463L110,464L110,464L112,465L117,464L119,466L123,464L124,464L129,466L130,466L145,538L146,538L147,537L149,538L149,537L152,536L152,538L154,539L155,540L159,543L161,545L163,543L163,543L163,539L166,537L169,538L169,540L170,540L173,542L175,543L177,545L179,546L185,552L185,553L186,553L186,554L187,555L188,556L189,556L192,556L196,557L197,558L197,560L199,563L199,566L198,568L196,568L195,565L195,564L195,562L195,565L193,566L191,565L191,561L190,564L189,563L189,561L188,562L187,561L186,561L186,559L187,559L185,556L182,554L180,554L180,553L178,550L175,547L173,547L170,543L168,540L167,541L168,542L170,545L171,548L170,547L168,548L167,546L166,545L166,545L163,544L166,546L167,548L165,550L160,548L159,546L157,545L150,543L151,542L150,540L148,542L146,542L143,541L139,541L138,541L133,542L132,541L130,541L130,539L128,540L126,539L125,540L125,540L123,541L124,540L126,539L123,538L122,536L121,536L121,535L120,537L119,536L118,538L117,538L118,535L117,536L117,536L116,538L117,538L116,540L117,539L118,541L117,542L119,544L117,545L117,543L116,545L113,545L112,544L112,547L111,545L111,547L111,547L109,549L109,548L108,549L107,551L105,551L104,552L103,551L103,550L105,548L107,547L105,548L103,547L104,545L105,543L105,541L105,539L106,539L108,537L110,538L111,537L109,536L110,535L107,535L105,537L104,537L103,539L101,541L101,542L100,543L100,545L98,548L97,548L96,549L94,550L94,552L97,553L97,555L95,556L94,560L91,561L90,562L88,562L87,564L86,564L84,566L85,567L84,569L82,569L81,570L80,569L78,571L78,572L76,572L75,573L77,574L75,576L71,577L69,577L67,578L66,579L64,579L63,580L61,580L62,578L61,578L59,581L54,582L51,584L48,584L48,585L46,585L45,583L46,583L48,581L52,581L53,582L53,580L55,580L58,577L61,575L65,575L65,576L67,577L66,575L67,573L70,571L74,569L75,570L75,568L76,566L79,564L81,556L82,555L82,554L78,555L76,554L77,552L75,555L76,556L74,557L73,554L72,553L71,554L69,552L69,551L65,553L63,555L63,554L63,551L63,549L64,547L62,542L62,543L59,544L57,544L55,543L55,542L54,539L52,538L53,538L51,537L53,536L53,534L54,534L52,532L51,533L51,531L50,529L50,528L51,528L50,527L52,527L52,525L56,521L57,518L60,517L62,519L63,519L66,516L68,517L70,516L71,514L71,511L70,508L71,509L72,507L71,505L70,506L69,506L66,508L65,509L65,508L63,507L60,507L58,507L54,505L53,504L54,503L53,501L53,501L55,500L54,500L51,498L49,497ZM24,593L26,591L28,590L28,589L30,589L30,590L28,591L27,592ZM23,593L23,593L23,593ZM21,591L21,591L21,591ZM28,564L28,564L28,564ZM21,591L21,591L21,591ZM20,592L20,592L20,592ZM19,591L19,591L19,591ZM19,593L19,593L19,593ZM26,559L26,559L26,559ZM15,593L15,593L15,593ZM14,593L14,593L14,593ZM13,593L13,593L13,593ZM33,509L34,507L34,508L37,510L38,509L39,510L39,511L41,512L44,514L43,515L41,514L40,516L38,512L36,511L34,511L33,510ZM6,593L6,593L6,593ZM23,531L23,531L25,533L24,532ZM23,529L23,529L23,529ZM-0,592L2,593L4,594L2,594ZM-6,591L-0,591L0,590L0,591L-3,592ZM-7,591L-7,591L-7,591ZM-6,590L-6,590L-6,590ZM-8,591L-8,591L-8,591ZM-9,590L-9,590L-9,590ZM-10,589L-10,589L-10,589ZM-10,591L-10,591L-10,591ZM-14,591L-12,589L-12,590L-10,591L-13,592ZM-16,589L-16,589L-16,589ZM-17,590L-14,589L-15,591ZM-19,587L-18,588L-18,589ZM-22,589L-22,589L-22,589ZM-23,589L-23,589L-23,589ZM-22,587L-22,587L-22,587ZM-24,590L-24,590L-24,590ZM-25,590L-25,590L-25,590ZM-29,583L-29,583L-29,583ZM-34,583L-34,583L-34,583ZM-34,581L-34,581L-34,581ZM-35,581L-35,581L-35,581ZM-35,580L-35,580L-35,580ZM-40,579L-40,579L-40,579ZM-44,573L-44,573L-44,573ZM-50,566L-50,566L-50,566ZM-51,566L-51,566L-51,566ZM-51,566L-51,566L-51,566ZM-54,567L-53,567L-53,568ZM-56,561L-53,562L-53,564L-55,563ZM195,566L195,566L195,566ZM194,568L194,568L194,568ZM193,568L193,568L193,568ZM193,567L193,565L194,567ZM191,565L192,565L192,567ZM186,558L186,558L186,558ZM186,559L186,559L186,559ZM185,558L185,558L185,558ZM188,570L188,570L188,570ZM184,560L184,560L184,560ZM184,560L184,559L185,559L185,560ZM185,567L185,567L185,567ZM185,571L185,571L185,571ZM183,566L183,566L183,566ZM183,565L183,565L183,565ZM183,567L184,566L185,567L184,568ZM182,563L182,562L182,560L183,560L185,562L187,562L188,564L190,565L188,565L191,567L192,570L190,570L190,570L188,569L186,568L188,570L189,570L189,572L189,572L187,570L186,568L185,569L186,567L182,565ZM178,554L178,554L178,554ZM181,564L181,564L181,564ZM179,565L179,565L179,565ZM177,558L177,557L179,557L178,556L179,555L182,555L185,557L184,558L183,558L181,560L181,559L181,563L179,563ZM171,547L173,548L175,547L177,551L175,550L178,552L178,554L176,556L175,555L176,554L174,551L174,551ZM171,546L171,546L171,546ZM168,542L168,542L168,542ZM171,555L171,553L174,554L176,559L178,563L174,559L173,559L172,556ZM168,548L168,548L168,548ZM170,556L172,556L172,558L171,558ZM166,546L166,546L166,546ZM167,549L167,549L167,549ZM166,552L166,551L168,548L170,549L172,549L172,551L174,553L173,554L171,553L171,555L168,554ZM127,540L127,540L127,540ZM125,540L125,540L125,540ZM120,537L120,537L120,537ZM119,539L119,539L119,539ZM120,542L120,542L120,542ZM118,546L120,543L121,541L122,542L120,544ZM118,542L119,539L119,543ZM117,538L117,538L117,538ZM802,584L802,584L802,584ZM800,586L800,586L800,586ZM795,589L795,589L795,589ZM781,594L788,588L792,590ZM777,595L777,595L777,595ZM774,595L774,595L774,595ZM765,549L765,549L765,549ZM758,596L758,596L758,596ZM709,487L709,487L709,487ZM925,112L925,112L925,112ZM923,114L923,114L923,114ZM921,110L921,110L921,110ZM917,113L917,113L917,113ZM919,122L919,122L919,122ZM917,117L917,117L917,117ZM915,114L915,114L915,114ZM913,183L913,183L913,183ZM904,185L907,181L910,183ZM850,323L850,323L850,323ZM850,343L850,343L850,343ZM76,368L76,368L76,368ZM73,377L73,377L73,377ZM67,365L67,365L67,365ZM64,352L64,352L64,352ZM57,368L57,368L57,368ZM55,349L55,349L55,349ZM49,349L49,349L49,349ZM46,347L46,347L46,347ZM300,575L305,568L304,563L317,568L321,575L327,580L323,583L312,588L308,593L304,590L304,583ZM287,549L295,548L301,551L300,554L292,556L292,552ZM287,557L287,557L287,557ZM279,549L279,549L279,549ZM274,545L275,542L286,543L283,546ZM254,534L260,531L267,540L257,540ZM222,524L226,519L232,522L231,526L226,527ZM212,528L212,528L212,528ZM835,280L836,280L835,280ZM834,276L834,276L834,276ZM826,263L826,263L826,263ZM666,128L666,128L666,128ZM655,131L655,131L655,131ZM653,130L653,130L653,130ZM652,136L652,136L652,136ZM650,133L650,133L650,133ZM648,140L648,140L648,140ZM646,147L646,147L646,147ZM645,150L645,150L645,150ZM635,137L635,137L635,137ZM592,90L600,84L600,87L594,91ZM634,485L634,485L634,485ZM629,484L629,484L629,484ZM625,485L625,485L625,485ZM622,485L622,485L622,485ZM885,192L885,192L885,192ZM884,196L884,196L884,196ZM882,194L882,194L882,194ZM802,151L802,151L802,151ZM801,151L801,151L801,151ZM709,219L709,219L709,219ZM707,218L707,218L707,218ZM837,282L837,282L837,282ZM91,49L91,49L91,49ZM97,23L97,23L97,23ZM97,19L97,19L97,19ZM96,22L96,22L96,22ZM93,30L98,35L96,38ZM94,17L94,17L94,17ZM92,18L92,18L92,18ZM93,12L93,12L93,12ZM89,20L96,21L94,25ZM89,18L89,18L89,18ZM632,143L632,143L632,143ZM625,147L625,147L625,147ZM575,111L575,111L575,111ZM574,114L574,114L574,114ZM572,113L572,113L572,113ZM570,115L570,115L570,115ZM570,112L570,112L570,112ZM570,110L570,110L570,110ZM570,116L570,116L570,116ZM567,112L567,112L567,112ZM627,489L627,489L627,489ZM618,489L618,489L618,489ZM614,502L614,502L614,502ZM600,512L600,512L600,512ZM596,512L596,512L596,512ZM592,514L592,514L592,514ZM567,503L567,503L567,503ZM893,180L893,180L893,180ZM894,185L894,185L894,185ZM892,192L892,192L892,192Z"/>
+        <path class="lines" d="M636,481L632,447L633,379L631,377L678,373L691,419L698,432L695,436L695,442L697,449L697,457L699,461L650,466L650,469L654,473L656,478L653,482M142,400L146,400L147,394L144,392L145,385L151,379L153,371L160,368L157,363L154,350L157,325L164,326L167,329L169,326L173,308L260,322L243,448M699,461L703,467L754,463L757,467L758,457L768,458M678,373L701,370L723,367L720,375L729,378L736,389L750,399L754,405L759,407L762,416L764,417L769,426L773,427M641,223L675,220L675,221L681,279L682,286L672,289L673,293L666,300L665,305L659,305L655,309L650,308L645,313L636,309L629,314L628,312L636,292L633,283L635,278L630,225M387,267L502,270L509,274L505,281L510,288L514,290L514,338L416,336L383,335M896,147L889,141L888,137L877,100M895,179L891,172L884,174L857,180L857,164L870,162L889,157L895,152M898,183L896,179M551,118L547,120L547,133L541,137L539,144L542,147L541,150L540,162L545,167L555,171L556,174L563,178L566,182L567,190L483,191L483,151L476,144L481,137L481,128L478,121L477,100L473,88L474,76L472,69M836,240L837,237L847,227L840,222L836,217L836,210L841,200L856,205L855,212M855,213L853,217M836,242L836,241M701,370L701,365L706,363L709,356L715,355L723,350L728,342L729,344L735,339L739,339L743,328L768,325L845,310M810,379L785,362L765,365L760,358L737,361L723,367M481,137L365,131L371,64M514,338L514,349L518,374L518,413L511,411L504,406L493,409L487,409L484,412L473,407L468,411L468,407L463,409L459,406L454,405L447,401L444,403L431,397L422,395L417,391L419,348L365,345L366,333M755,196L756,202L827,188L832,191L834,196L841,200M837,237L831,240L770,252L752,255L749,235L744,205M483,191L480,209L483,214L479,210L469,206L460,205L457,208L449,202L359,197L363,153L365,131M518,413L526,415L526,415L526,427L527,450L531,459L537,468L537,476L533,487L534,493L530,499L532,502M291,444L290,439L357,445L360,402L365,345L365,345M359,197L355,242M272,233L355,242L389,244L387,267L383,335L366,333L298,327L260,322L272,233L239,228L243,206L252,151L253,139L363,153M884,174L887,190M860,204L860,197L857,180M502,270L496,263L494,257L514,257L562,255L567,260L566,268L569,274L580,285L582,292L591,293L588,305L588,308L603,318L605,325L604,328L608,334L611,334L611,341L607,345L606,345L605,345L605,350L602,357L591,358L595,351L594,346L514,349M770,252L772,264L782,252L787,254L792,249L797,251L801,256L800,260L790,254L790,261L784,272L781,270L778,281L771,278L771,281L764,300L764,304L749,312L746,310L741,314L736,312L735,308L729,305L722,296L721,289L726,288L727,280L729,274L732,278L733,270L737,265L742,264L747,256L749,242L747,237L749,235M567,260L568,255L572,253L574,243L571,240L572,236L584,232L586,227L586,220L582,218L577,211L624,208M629,314L629,321L622,324L623,331L615,328L611,334M602,357L604,359L598,363L600,365L595,370L597,377L593,380L590,385L589,393L586,395L584,401L580,404L582,408L578,413L580,415L580,426L526,427M32,157L48,161L98,176L98,176L82,241L110,284L131,316L154,350M850,265L839,268L831,240M567,190L570,195L568,198L570,206L576,208L577,211M494,257L491,237L488,236L489,230L485,224L483,214M681,279L688,278L693,285L702,287L709,287L715,283L721,289M735,308L729,315L723,319L717,328L708,333L676,336L657,337L634,340L630,339L631,343L607,345M606,345L605,345M836,280L835,280M849,275L842,279M814,269L815,265M813,262L815,265L813,262L805,259L801,256M697,217L675,221M622,150L618,145L618,145L618,137L612,134L613,132L602,131L597,129L581,125L577,121L577,121L576,120M593,380L631,377M615,487L608,477L609,469L573,471L575,459L585,440L581,437L582,428L580,426M252,151L247,144L245,148L233,145L231,148L221,146L220,139L215,136L216,131L213,125L213,118L211,116L204,120L201,117L202,112L209,95L201,87L197,78L192,73L193,67L190,60L195,38M870,162L867,143L869,130L868,125L874,119L872,114L872,108M844,115L845,124L848,127L847,137L853,147L857,164M69,68L75,72L78,78L77,85L84,89L96,88L101,92L111,92L116,94L120,93L134,93L136,93L167,100L172,110L164,121L161,126L155,132L154,136L159,140L155,147L146,187L98,176M708,333L743,328M173,308L194,197L243,206M180,35L168,91L167,100M194,197L146,187"/>
+        <g class="dots" filter="url(#glow)">
+        <circle class="b" cx="910" cy="176.3" r="2.6" style="--i:0"/>
+        <circle class="b" cx="900.8" cy="132.9" r="2.6" style="--i:1"/>
+        <circle class="p" cx="898.1" cy="166.2" r="2.6" style="--i:2"/>
+        <circle class="p" cx="896.1" cy="166.1" r="2.6" style="--i:3"/>
+        <circle class="d" cx="895.5" cy="164.5" r="2.6" style="--i:4"/>
+        <circle class="p" cx="893.7" cy="164.1" r="2.6" style="--i:5"/>
+        <circle class="p" cx="892.8" cy="180" r="2.6" style="--i:6"/>
+        <circle class="d" cx="892.5" cy="165.4" r="2.6" style="--i:7"/>
+        <circle class="p" cx="892.2" cy="166.7" r="2.6" style="--i:8"/>
+        <circle class="d" cx="891.5" cy="163.1" r="2.6" style="--i:9"/>
+        <circle class="b" cx="891.3" cy="178.8" r="2.6" style="--i:10"/>
+        <circle class="p" cx="891.2" cy="176.7" r="2.6" style="--i:11"/>
+        <circle class="d" cx="891.1" cy="157.3" r="2.6" style="--i:12"/>
+        <circle class="p" cx="890.5" cy="143.5" r="2.6" style="--i:13"/>
+        <circle class="p" cx="888.9" cy="159.3" r="2.6" style="--i:14"/>
+        <circle class="b" cx="883.7" cy="177.4" r="2.6" style="--i:15"/>
+        <circle class="d" cx="883.3" cy="169.3" r="2.6" style="--i:16"/>
+        <circle class="b" cx="881.8" cy="147.4" r="2.6" style="--i:17"/>
+        <circle class="d" cx="877.3" cy="193.9" r="2.6" style="--i:18"/>
+        <circle class="b" cx="871.5" cy="193" r="2.6" style="--i:19"/>
+        <circle class="p" cx="870.7" cy="194.8" r="2.6" style="--i:20"/>
+        <circle class="d" cx="868.9" cy="165" r="2.6" style="--i:21"/>
+        <circle class="d" cx="868.1" cy="195.1" r="2.6" style="--i:22"/>
+        <circle class="d" cx="866.2" cy="174.3" r="2.6" style="--i:23"/>
+        <circle class="b" cx="865.7" cy="208.3" r="2.6" style="--i:24"/>
+        <circle class="p" cx="862.2" cy="152.4" r="2.6" style="--i:25"/>
+        <circle class="d" cx="860.3" cy="204.4" r="2.6" style="--i:26"/>
+        <circle class="b" cx="858.9" cy="204.3" r="2.6" style="--i:27"/>
+        <circle class="p" cx="858.2" cy="219.8" r="2.6" style="--i:28"/>
+        <circle class="d" cx="857.9" cy="174.7" r="2.6" style="--i:29"/>
+        <circle class="d" cx="857.7" cy="212.9" r="2.6" style="--i:30"/>
+        <circle class="b" cx="857.7" cy="212.9" r="2.6" style="--i:31"/>
+        <circle class="d" cx="857.7" cy="212.9" r="2.6" style="--i:32"/>
+        <circle class="b" cx="857.7" cy="212.9" r="2.6" style="--i:33"/>
+        <circle class="d" cx="857.7" cy="212.9" r="2.6" style="--i:34"/>
+        <circle class="b" cx="857.7" cy="212.9" r="2.6" style="--i:35"/>
+        <circle class="d" cx="857.7" cy="212.9" r="2.6" style="--i:36"/>
+        <circle class="p" cx="857.7" cy="212.9" r="2.6" style="--i:37"/>
+        <circle class="p" cx="857.7" cy="212.9" r="2.6" style="--i:38"/>
+        <circle class="p" cx="857.7" cy="212.9" r="2.6" style="--i:39"/>
+        <circle class="p" cx="857.7" cy="212.9" r="2.6" style="--i:40"/>
+        <circle class="p" cx="857.5" cy="144.8" r="2.6" style="--i:41"/>
+        <circle class="d" cx="856" cy="153.4" r="2.6" style="--i:42"/>
+        <circle class="d" cx="854.1" cy="207.2" r="2.6" style="--i:43"/>
+        <circle class="b" cx="852.8" cy="213.3" r="2.6" style="--i:44"/>
+        <circle class="b" cx="852.4" cy="210.4" r="2.6" style="--i:45"/>
+        <circle class="d" cx="852" cy="194.8" r="2.6" style="--i:46"/>
+        <circle class="d" cx="852" cy="191.3" r="2.6" style="--i:47"/>
+        <circle class="d" cx="850.3" cy="218.7" r="2.6" style="--i:48"/>
+        <circle class="b" cx="849.7" cy="215.8" r="2.6" style="--i:49"/>
+        <circle class="d" cx="849.6" cy="168.5" r="2.6" style="--i:50"/>
+        <circle class="d" cx="846.4" cy="225.7" r="2.6" style="--i:51"/>
+        <circle class="d" cx="843.8" cy="246.9" r="2.6" style="--i:52"/>
+        <circle class="b" cx="842.6" cy="226.6" r="2.6" style="--i:53"/>
+        <circle class="d" cx="841.4" cy="231.8" r="2.6" style="--i:54"/>
+        <circle class="b" cx="841.4" cy="231.8" r="2.6" style="--i:55"/>
+        <circle class="p" cx="841.4" cy="231.8" r="2.6" style="--i:56"/>
+        <circle class="d" cx="837.4" cy="309.5" r="2.6" style="--i:57"/>
+        <circle class="d" cx="836.1" cy="239.3" r="2.6" style="--i:58"/>
+        <circle class="p" cx="836" cy="353.7" r="2.6" style="--i:59"/>
+        <circle class="b" cx="835.8" cy="226.8" r="2.6" style="--i:60"/>
+        <circle class="d" cx="832.8" cy="220.2" r="2.6" style="--i:61"/>
+        <circle class="d" cx="832.6" cy="241.4" r="2.6" style="--i:62"/>
+        <circle class="d" cx="831.4" cy="172" r="2.6" style="--i:63"/>
+        <circle class="p" cx="831.4" cy="172" r="2.6" style="--i:64"/>
+        <circle class="d" cx="825.9" cy="203.1" r="2.6" style="--i:65"/>
+        <circle class="d" cx="821.8" cy="257.3" r="2.6" style="--i:66"/>
+        <circle class="b" cx="820.1" cy="252.7" r="2.6" style="--i:67"/>
+        <circle class="p" cx="820.1" cy="252.7" r="2.6" style="--i:68"/>
+        <circle class="b" cx="818" cy="269.1" r="2.6" style="--i:69"/>
+        <circle class="b" cx="815" cy="262.9" r="2.6" style="--i:70"/>
+        <circle class="p" cx="814.8" cy="298.7" r="2.6" style="--i:71"/>
+        <circle class="p" cx="813.9" cy="344.2" r="2.6" style="--i:72"/>
+        <circle class="d" cx="813.3" cy="294.8" r="2.6" style="--i:73"/>
+        <circle class="p" cx="813.3" cy="294.8" r="2.6" style="--i:74"/>
+        <circle class="d" cx="812.8" cy="168.4" r="2.6" style="--i:75"/>
+        <circle class="b" cx="811.1" cy="232.1" r="2.6" style="--i:76"/>
+        <circle class="d" cx="811" cy="263.8" r="2.6" style="--i:77"/>
+        <circle class="p" cx="811" cy="258.1" r="2.6" style="--i:78"/>
+        <circle class="d" cx="809.7" cy="563.2" r="2.6" style="--i:79"/>
+        <circle class="d" cx="809.6" cy="549.8" r="2.6" style="--i:80"/>
+        <circle class="p" cx="808.4" cy="554.6" r="2.6" style="--i:81"/>
+        <circle class="d" cx="808" cy="544.3" r="2.6" style="--i:82"/>
+        <circle class="p" cx="807.8" cy="541.7" r="2.6" style="--i:83"/>
+        <circle class="d" cx="807.2" cy="557.5" r="2.6" style="--i:84"/>
+        <circle class="p" cx="807.2" cy="557.5" r="2.6" style="--i:85"/>
+        <circle class="d" cx="803.8" cy="532.3" r="2.6" style="--i:86"/>
+        <circle class="b" cx="801" cy="527.5" r="2.6" style="--i:87"/>
+        <circle class="d" cx="799.3" cy="191.1" r="2.6" style="--i:88"/>
+        <circle class="p" cx="797.5" cy="251.2" r="2.6" style="--i:89"/>
+        <circle class="b" cx="795.1" cy="333.9" r="2.6" style="--i:90"/>
+        <circle class="p" cx="795.1" cy="333.9" r="2.6" style="--i:91"/>
+        <circle class="p" cx="791.5" cy="340.3" r="2.6" style="--i:92"/>
+        <circle class="d" cx="790.1" cy="407.3" r="2.6" style="--i:93"/>
+        <circle class="d" cx="788" cy="407.2" r="2.6" style="--i:94"/>
+        <circle class="d" cx="786.5" cy="170.6" r="2.6" style="--i:95"/>
+        <circle class="d" cx="785.6" cy="279.3" r="2.6" style="--i:96"/>
+        <circle class="d" cx="785.6" cy="279.3" r="2.6" style="--i:97"/>
+        <circle class="d" cx="778.3" cy="334.2" r="2.6" style="--i:98"/>
+        <circle class="d" cx="777.2" cy="237.5" r="2.6" style="--i:99"/>
+        <circle class="p" cx="776.9" cy="511.6" r="2.6" style="--i:100"/>
+        <circle class="d" cx="776.6" cy="560" r="2.6" style="--i:101"/>
+        <circle class="p" cx="775.6" cy="554" r="2.6" style="--i:102"/>
+        <circle class="d" cx="774.3" cy="549.9" r="2.6" style="--i:103"/>
+        <circle class="p" cx="773.6" cy="515.3" r="2.6" style="--i:104"/>
+        <circle class="b" cx="772.6" cy="506.9" r="2.6" style="--i:105"/>
+        <circle class="p" cx="772.6" cy="506.9" r="2.6" style="--i:106"/>
+        <circle class="d" cx="771.4" cy="308.3" r="2.6" style="--i:107"/>
+        <circle class="p" cx="770.5" cy="335.4" r="2.6" style="--i:108"/>
+        <circle class="p" cx="769.3" cy="173.9" r="2.6" style="--i:109"/>
+        <circle class="d" cx="768.3" cy="428.9" r="2.6" style="--i:110"/>
+        <circle class="p" cx="768.3" cy="428.9" r="2.6" style="--i:111"/>
+        <circle class="b" cx="767.8" cy="180.5" r="2.6" style="--i:112"/>
+        <circle class="d" cx="767.6" cy="368.7" r="2.6" style="--i:113"/>
+        <circle class="b" cx="766.5" cy="383.1" r="2.6" style="--i:114"/>
+        <circle class="d" cx="765.3" cy="467.5" r="2.6" style="--i:115"/>
+        <circle class="p" cx="762.4" cy="348.6" r="2.6" style="--i:116"/>
+        <circle class="b" cx="759.2" cy="238.1" r="2.6" style="--i:117"/>
+        <circle class="d" cx="757.2" cy="522.1" r="2.6" style="--i:118"/>
+        <circle class="p" cx="757.2" cy="522.1" r="2.6" style="--i:119"/>
+        <circle class="b" cx="754.6" cy="527.1" r="2.6" style="--i:120"/>
+        <circle class="d" cx="751.2" cy="201.1" r="2.6" style="--i:121"/>
+        <circle class="b" cx="745.6" cy="225.3" r="2.6" style="--i:122"/>
+        <circle class="d" cx="742.5" cy="309.6" r="2.6" style="--i:123"/>
+        <circle class="p" cx="737.5" cy="369.4" r="2.6" style="--i:124"/>
+        <circle class="d" cx="735.8" cy="278.8" r="2.6" style="--i:125"/>
+        <circle class="d" cx="734.7" cy="233.7" r="2.6" style="--i:126"/>
+        <circle class="p" cx="734.2" cy="358.8" r="2.6" style="--i:127"/>
+        <circle class="d" cx="731.7" cy="353.5" r="2.6" style="--i:128"/>
+        <circle class="b" cx="727.3" cy="219.5" r="2.6" style="--i:129"/>
+        <circle class="d" cx="721.6" cy="393.8" r="2.6" style="--i:130"/>
+        <circle class="p" cx="720.6" cy="222.9" r="2.6" style="--i:131"/>
+        <circle class="d" cx="717.6" cy="260.9" r="2.6" style="--i:132"/>
+        <circle class="d" cx="712.6" cy="385.2" r="2.6" style="--i:133"/>
+        <circle class="b" cx="710.6" cy="395.2" r="2.6" style="--i:134"/>
+        <circle class="d" cx="710.4" cy="256" r="2.6" style="--i:135"/>
+        <circle class="p" cx="710.4" cy="256" r="2.6" style="--i:136"/>
+        <circle class="b" cx="705.7" cy="347.9" r="2.6" style="--i:137"/>
+        <circle class="b" cx="701.2" cy="202.7" r="2.6" style="--i:138"/>
+        <circle class="p" cx="700.6" cy="394.3" r="2.6" style="--i:139"/>
+        <circle class="d" cx="698.3" cy="427.3" r="2.6" style="--i:140"/>
+        <circle class="d" cx="695.5" cy="219.8" r="2.6" style="--i:141"/>
+        <circle class="p" cx="695.2" cy="264.8" r="2.6" style="--i:142"/>
+        <circle class="p" cx="693" cy="259.2" r="2.6" style="--i:143"/>
+        <circle class="d" cx="691.9" cy="266.4" r="2.6" style="--i:144"/>
+        <circle class="p" cx="691" cy="302.7" r="2.6" style="--i:145"/>
+        <circle class="d" cx="690.6" cy="263.1" r="2.6" style="--i:146"/>
+        <circle class="d" cx="689.2" cy="481.2" r="2.6" style="--i:147"/>
+        <circle class="b" cx="687.1" cy="278.2" r="2.6" style="--i:148"/>
+        <circle class="b" cx="684.9" cy="371" r="2.6" style="--i:149"/>
+        <circle class="b" cx="679.3" cy="177.4" r="2.6" style="--i:150"/>
+        <circle class="p" cx="677.7" cy="197.5" r="2.6" style="--i:151"/>
+        <circle class="d" cx="671.3" cy="235.9" r="2.6" style="--i:152"/>
+        <circle class="b" cx="671.3" cy="235.9" r="2.6" style="--i:153"/>
+        <circle class="d" cx="670.1" cy="302.3" r="2.6" style="--i:154"/>
+        <circle class="p" cx="670.1" cy="302.3" r="2.6" style="--i:155"/>
+        <circle class="d" cx="669.3" cy="256.2" r="2.6" style="--i:156"/>
+        <circle class="p" cx="669.3" cy="256.2" r="2.6" style="--i:157"/>
+        <circle class="p" cx="669" cy="296.4" r="2.6" style="--i:158"/>
+        <circle class="d" cx="666.8" cy="208.9" r="2.6" style="--i:159"/>
+        <circle class="p" cx="666.8" cy="208.9" r="2.6" style="--i:160"/>
+        <circle class="d" cx="664" cy="285.2" r="2.6" style="--i:161"/>
+        <circle class="d" cx="661" cy="210.1" r="2.6" style="--i:162"/>
+        <circle class="b" cx="661" cy="210.1" r="2.6" style="--i:163"/>
+        <circle class="b" cx="660.3" cy="408.4" r="2.6" style="--i:164"/>
+        <circle class="p" cx="660.3" cy="262.6" r="2.6" style="--i:165"/>
+        <circle class="d" cx="659.9" cy="382" r="2.6" style="--i:166"/>
+        <circle class="d" cx="659.4" cy="478.1" r="2.6" style="--i:167"/>
+        <circle class="d" cx="659" cy="271.8" r="2.6" style="--i:168"/>
+        <circle class="d" cx="657.7" cy="267.1" r="2.6" style="--i:169"/>
+        <circle class="p" cx="657.7" cy="267.1" r="2.6" style="--i:170"/>
+        <circle class="d" cx="654.7" cy="349.1" r="2.6" style="--i:171"/>
+        <circle class="p" cx="654.7" cy="349.1" r="2.6" style="--i:172"/>
+        <circle class="p" cx="654.7" cy="349.1" r="2.6" style="--i:173"/>
+        <circle class="d" cx="652.7" cy="281.5" r="2.6" style="--i:174"/>
+        <circle class="p" cx="652.7" cy="281.5" r="2.6" style="--i:175"/>
+        <circle class="d" cx="651.5" cy="200" r="2.6" style="--i:176"/>
+        <circle class="d" cx="641.5" cy="474.5" r="2.6" style="--i:177"/>
+        <circle class="p" cx="638.6" cy="471.9" r="2.6" style="--i:178"/>
+        <circle class="d" cx="637.5" cy="276.1" r="2.6" style="--i:179"/>
+        <circle class="d" cx="634.4" cy="230.9" r="2.6" style="--i:180"/>
+        <circle class="d" cx="631.1" cy="227.9" r="2.6" style="--i:181"/>
+        <circle class="d" cx="627.6" cy="223.3" r="2.6" style="--i:182"/>
+        <circle class="d" cx="627.6" cy="223.3" r="2.6" style="--i:183"/>
+        <circle class="b" cx="627.4" cy="363.5" r="2.6" style="--i:184"/>
+        <circle class="p" cx="627.4" cy="363.5" r="2.6" style="--i:185"/>
+        <circle class="d" cx="627" cy="218.7" r="2.6" style="--i:186"/>
+        <circle class="p" cx="624.6" cy="219.6" r="2.6" style="--i:187"/>
+        <circle class="d" cx="623.5" cy="211.7" r="2.6" style="--i:188"/>
+        <circle class="b" cx="623.5" cy="211.7" r="2.6" style="--i:189"/>
+        <circle class="d" cx="623.1" cy="180.8" r="2.6" style="--i:190"/>
+        <circle class="d" cx="622.1" cy="223" r="2.6" style="--i:191"/>
+        <circle class="d" cx="621.5" cy="264" r="2.6" style="--i:192"/>
+        <circle class="b" cx="620.6" cy="196.3" r="2.6" style="--i:193"/>
+        <circle class="d" cx="620.6" cy="196.3" r="2.6" style="--i:194"/>
+        <circle class="p" cx="616.7" cy="213" r="2.6" style="--i:195"/>
+        <circle class="p" cx="613.6" cy="169.5" r="2.6" style="--i:196"/>
+        <circle class="b" cx="612.1" cy="205.8" r="2.6" style="--i:197"/>
+        <circle class="d" cx="611.1" cy="171.2" r="2.6" style="--i:198"/>
+        <circle class="p" cx="611.1" cy="171.2" r="2.6" style="--i:199"/>
+        <circle class="p" cx="611.1" cy="171.2" r="2.6" style="--i:200"/>
+        <circle class="b" cx="607.4" cy="490.9" r="2.6" style="--i:201"/>
+        <circle class="d" cx="604.9" cy="343.8" r="2.6" style="--i:202"/>
+        <circle class="p" cx="604.9" cy="343.8" r="2.6" style="--i:203"/>
+        <circle class="p" cx="603.4" cy="481.5" r="2.6" style="--i:204"/>
+        <circle class="p" cx="599.8" cy="195.2" r="2.6" style="--i:205"/>
+        <circle class="b" cx="599.6" cy="377.6" r="2.6" style="--i:206"/>
+        <circle class="d" cx="599" cy="440.6" r="2.6" style="--i:207"/>
+        <circle class="p" cx="599" cy="440.6" r="2.6" style="--i:208"/>
+        <circle class="d" cx="596.9" cy="197.5" r="2.6" style="--i:209"/>
+        <circle class="d" cx="596.9" cy="197.5" r="2.6" style="--i:210"/>
+        <circle class="p" cx="596.9" cy="197.5" r="2.6" style="--i:211"/>
+        <circle class="d" cx="590.6" cy="155.8" r="2.6" style="--i:212"/>
+        <circle class="b" cx="589.9" cy="398.8" r="2.6" style="--i:213"/>
+        <circle class="p" cx="589.9" cy="398.8" r="2.6" style="--i:214"/>
+        <circle class="b" cx="589.8" cy="298.5" r="2.6" style="--i:215"/>
+        <circle class="p" cx="586.4" cy="441.1" r="2.6" style="--i:216"/>
+        <circle class="p" cx="586.3" cy="301.1" r="2.6" style="--i:217"/>
+        <circle class="b" cx="584.4" cy="246.5" r="2.6" style="--i:218"/>
+        <circle class="d" cx="583.9" cy="483.5" r="2.6" style="--i:219"/>
+        <circle class="d" cx="581.9" cy="232.7" r="2.6" style="--i:220"/>
+        <circle class="d" cx="580.3" cy="235.1" r="2.6" style="--i:221"/>
+        <circle class="p" cx="577.8" cy="459.1" r="2.6" style="--i:222"/>
+        <circle class="d" cx="572.3" cy="236.6" r="2.6" style="--i:223"/>
+        <circle class="d" cx="568.8" cy="270.3" r="2.6" style="--i:224"/>
+        <circle class="b" cx="566.9" cy="489.6" r="2.6" style="--i:225"/>
+        <circle class="d" cx="561.6" cy="224.9" r="2.6" style="--i:226"/>
+        <circle class="d" cx="561.6" cy="160.7" r="2.6" style="--i:227"/>
+        <circle class="d" cx="553.6" cy="293.2" r="2.6" style="--i:228"/>
+        <circle class="d" cx="550.1" cy="246.6" r="2.6" style="--i:229"/>
+        <circle class="b" cx="548.7" cy="311.7" r="2.6" style="--i:230"/>
+        <circle class="d" cx="542.2" cy="150.3" r="2.6" style="--i:231"/>
+        <circle class="b" cx="538.1" cy="333.3" r="2.6" style="--i:232"/>
+        <circle class="d" cx="536.1" cy="158.8" r="2.6" style="--i:233"/>
+        <circle class="d" cx="535.4" cy="169.8" r="2.6" style="--i:234"/>
+        <circle class="p" cx="534.6" cy="178" r="2.6" style="--i:235"/>
+        <circle class="b" cx="532.7" cy="167.4" r="2.6" style="--i:236"/>
+        <circle class="p" cx="532.2" cy="152.1" r="2.6" style="--i:237"/>
+        <circle class="b" cx="531.7" cy="440" r="2.6" style="--i:238"/>
+        <circle class="d" cx="530.8" cy="239.5" r="2.6" style="--i:239"/>
+        <circle class="d" cx="530" cy="234.8" r="2.6" style="--i:240"/>
+        <circle class="p" cx="528" cy="232.1" r="2.6" style="--i:241"/>
+        <circle class="d" cx="523.3" cy="356.3" r="2.6" style="--i:242"/>
+        <circle class="p" cx="523.3" cy="356.3" r="2.6" style="--i:243"/>
+        <circle class="d" cx="515.2" cy="290.3" r="2.6" style="--i:244"/>
+        <circle class="p" cx="514" cy="295.2" r="2.6" style="--i:245"/>
+        <circle class="p" cx="512" cy="290.3" r="2.6" style="--i:246"/>
+        <circle class="d" cx="510.5" cy="513.9" r="2.6" style="--i:247"/>
+        <circle class="p" cx="504.6" cy="496" r="2.6" style="--i:248"/>
+        <circle class="d" cx="503" cy="294.1" r="2.6" style="--i:249"/>
+        <circle class="p" cx="503" cy="294.1" r="2.6" style="--i:250"/>
+        <circle class="d" cx="502.8" cy="507.2" r="2.6" style="--i:251"/>
+        <circle class="d" cx="495.6" cy="292.5" r="2.6" style="--i:252"/>
+        <circle class="p" cx="495" cy="505.1" r="2.6" style="--i:253"/>
+        <circle class="b" cx="492.1" cy="358" r="2.6" style="--i:254"/>
+        <circle class="p" cx="492.1" cy="358" r="2.6" style="--i:255"/>
+        <circle class="d" cx="489.5" cy="242.3" r="2.6" style="--i:256"/>
+        <circle class="p" cx="489.5" cy="242.3" r="2.6" style="--i:257"/>
+        <circle class="p" cx="480" cy="289" r="2.6" style="--i:258"/>
+        <circle class="p" cx="479.8" cy="256.6" r="2.6" style="--i:259"/>
+        <circle class="b" cx="478" cy="423.9" r="2.6" style="--i:260"/>
+        <circle class="p" cx="477.8" cy="173.9" r="2.6" style="--i:261"/>
+        <circle class="d" cx="477.6" cy="116.7" r="2.6" style="--i:262"/>
+        <circle class="b" cx="476" cy="433.1" r="2.6" style="--i:263"/>
+        <circle class="d" cx="473.1" cy="375.1" r="2.6" style="--i:264"/>
+        <circle class="p" cx="469.6" cy="427.5" r="2.6" style="--i:265"/>
+        <circle class="d" cx="467.8" cy="460.7" r="2.6" style="--i:266"/>
+        <circle class="b" cx="467.2" cy="320" r="2.6" style="--i:267"/>
+        <circle class="d" cx="465.2" cy="433.2" r="2.6" style="--i:268"/>
+        <circle class="b" cx="463.1" cy="372.7" r="2.6" style="--i:269"/>
+        <circle class="p" cx="463.1" cy="372.7" r="2.6" style="--i:270"/>
+        <circle class="p" cx="463.1" cy="372.7" r="2.6" style="--i:271"/>
+        <circle class="d" cx="462.5" cy="297.2" r="2.6" style="--i:272"/>
+        <circle class="p" cx="462.5" cy="297.2" r="2.6" style="--i:273"/>
+        <circle class="b" cx="456.6" cy="488.8" r="2.6" style="--i:274"/>
+        <circle class="b" cx="441.2" cy="507.1" r="2.6" style="--i:275"/>
+        <circle class="d" cx="342.7" cy="254.5" r="2.6" style="--i:276"/>
+        <circle class="d" cx="342.1" cy="270.4" r="2.6" style="--i:277"/>
+        <circle class="d" cx="339.5" cy="269" r="2.6" style="--i:278"/>
+        <circle class="p" cx="339.5" cy="269" r="2.6" style="--i:279"/>
+        <circle class="d" cx="337.8" cy="254" r="2.6" style="--i:280"/>
+        <circle class="b" cx="337" cy="264.4" r="2.6" style="--i:281"/>
+        <circle class="d" cx="330.7" cy="233.2" r="2.6" style="--i:282"/>
+        <circle class="b" cx="317.2" cy="152.9" r="2.6" style="--i:283"/>
+        <circle class="b" cx="311.1" cy="359.1" r="2.6" style="--i:284"/>
+        <circle class="p" cx="311.1" cy="359.1" r="2.6" style="--i:285"/>
+        <circle class="d" cx="309.8" cy="569.2" r="2.6" style="--i:286"/>
+        <circle class="d" cx="297.8" cy="370.3" r="2.6" style="--i:287"/>
+        <circle class="d" cx="295.2" cy="127.8" r="2.6" style="--i:288"/>
+        <circle class="b" cx="293.7" cy="443.6" r="2.6" style="--i:289"/>
+        <circle class="d" cx="275.2" cy="277" r="2.6" style="--i:290"/>
+        <circle class="d" cx="271.9" cy="219.6" r="2.6" style="--i:291"/>
+        <circle class="d" cx="263.1" cy="540.1" r="2.6" style="--i:292"/>
+        <circle class="p" cx="258.5" cy="539.7" r="2.6" style="--i:293"/>
+        <circle class="d" cx="244.8" cy="101.9" r="2.6" style="--i:294"/>
+        <circle class="p" cx="235.5" cy="166.7" r="2.6" style="--i:295"/>
+        <circle class="b" cx="229.5" cy="209.7" r="2.6" style="--i:296"/>
+        <circle class="d" cx="224.4" cy="230.9" r="2.6" style="--i:297"/>
+        <circle class="b" cx="194.4" cy="390.5" r="2.6" style="--i:298"/>
+        <circle class="p" cx="194.4" cy="390.5" r="2.6" style="--i:299"/>
+        <circle class="d" cx="171.3" cy="63.2" r="2.6" style="--i:300"/>
+        <circle class="d" cx="164.3" cy="154.3" r="2.6" style="--i:301"/>
+        <circle class="d" cx="148.8" cy="320.9" r="2.6" style="--i:302"/>
+        <circle class="d" cx="148.8" cy="320.9" r="2.6" style="--i:303"/>
+        <circle class="p" cx="148.8" cy="320.9" r="2.6" style="--i:304"/>
+        <circle class="d" cx="133.5" cy="85.7" r="2.6" style="--i:305"/>
+        <circle class="d" cx="118.7" cy="65.5" r="2.6" style="--i:306"/>
+        <circle class="d" cx="112.9" cy="535.8" r="2.6" style="--i:307"/>
+        <circle class="d" cx="112.9" cy="535.8" r="2.6" style="--i:308"/>
+        <circle class="p" cx="106.4" cy="541.6" r="2.6" style="--i:309"/>
+        <circle class="b" cx="101.7" cy="391.5" r="2.6" style="--i:310"/>
+        <circle class="b" cx="101.1" cy="20.3" r="2.6" style="--i:311"/>
+        <circle class="d" cx="100.1" cy="363.3" r="2.6" style="--i:312"/>
+        <circle class="b" cx="99.9" cy="47.8" r="2.6" style="--i:313"/>
+        <circle class="d" cx="98.6" cy="27.9" r="2.6" style="--i:314"/>
+        <circle class="d" cx="98.6" cy="46.2" r="2.6" style="--i:315"/>
+        <circle class="b" cx="95.9" cy="44.9" r="2.6" style="--i:316"/>
+        <circle class="d" cx="93.4" cy="122" r="2.6" style="--i:317"/>
+        <circle class="d" cx="92.1" cy="52.3" r="2.6" style="--i:318"/>
+        <circle class="p" cx="92.1" cy="52.3" r="2.6" style="--i:319"/>
+        <circle class="d" cx="89.1" cy="364.4" r="2.6" style="--i:320"/>
+        <circle class="d" cx="87.6" cy="230.1" r="2.6" style="--i:321"/>
+        <circle class="d" cx="87.6" cy="230.1" r="2.6" style="--i:322"/>
+        <circle class="p" cx="87.6" cy="230.1" r="2.6" style="--i:323"/>
+        <circle class="d" cx="84.4" cy="55" r="2.6" style="--i:324"/>
+        <circle class="d" cx="83.1" cy="29.7" r="2.6" style="--i:325"/>
+        <circle class="b" cx="82.3" cy="357.2" r="2.6" style="--i:326"/>
+        <circle class="d" cx="82.3" cy="357.2" r="2.6" style="--i:327"/>
+        <circle class="d" cx="82.3" cy="357.2" r="2.6" style="--i:328"/>
+        <circle class="p" cx="82.3" cy="357.2" r="2.6" style="--i:329"/>
+        <circle class="d" cx="80.2" cy="86.3" r="2.6" style="--i:330"/>
+        <circle class="d" cx="78.7" cy="88.2" r="2.6" style="--i:331"/>
+        <circle class="d" cx="73.1" cy="290.8" r="2.6" style="--i:332"/>
+        <circle class="d" cx="69.1" cy="349.8" r="2.6" style="--i:333"/>
+        <circle class="p" cx="68.6" cy="108.7" r="2.6" style="--i:334"/>
+        <circle class="d" cx="64.5" cy="118.7" r="2.6" style="--i:335"/>
+        <circle class="d" cx="59.8" cy="238.5" r="2.6" style="--i:336"/>
+        <circle class="d" cx="58.8" cy="341.8" r="2.6" style="--i:337"/>
+        <circle class="d" cx="55.1" cy="244.3" r="2.6" style="--i:338"/>
+        <circle class="d" cx="41" cy="284.4" r="2.6" style="--i:339"/>
+        <circle class="d" cx="40.8" cy="253.7" r="2.6" style="--i:340"/>
+        <circle class="p" cx="40.1" cy="256" r="2.6" style="--i:341"/>
+        <circle class="b" cx="37.5" cy="258.1" r="2.6" style="--i:342"/>
+        <circle class="d" cx="33.7" cy="241.2" r="2.6" style="--i:343"/>
+        <circle class="p" cx="25.1" cy="183.3" r="2.6" style="--i:344"/>
+        <circle class="d" cx="23.7" cy="255.2" r="2.6" style="--i:345"/>
+        <circle class="d" cx="905" cy="548" r="2.6" style="--i:0"/>
+        </g>
+        <text x="916" y="552">Puerto Rico</text>
+        </svg>
+        <!-- map:end -->
+        <figcaption>
+          <ul class="legend">
+            <li style="color:var(--amber)"><i></i><span>Diapers</span></li>
+            <li style="color:var(--rose)"><i></i><span>Period supplies</span></li>
+            <li style="color:var(--both)"><i></i><span>Both</span></li>
+          </ul>
+          <p class="map-note">Each light is one of the <!-- map:count -->347<!-- /map:count --> banks in the National Diaper Bank Network and Alliance for Period Supplies directories, placed at its home city.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="finder" aria-labelledby="finder-l">
+    <div class="wrap finder-in">
+      <label for="near" id="finder-l">Looking for diapers or period supplies?
+        <small>We make the software banks use. A bank near you gives out the supplies.</small>
+      </label>
+      <form action="/find-a-bank" method="get">
+        <input id="near" name="near" type="text" autocomplete="postal-code" placeholder="City and state, or ZIP">
+        <button class="btn btn-light" type="submit">Find a bank</button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<main id="main">
+  <section class="section" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 id="how-h">One count, from the loading dock to the family.</h2>
+      <p class="intro">Every bank does the same five things. Human Essentials records each one, so the number on the screen is the number on the shelf.</p>
+      <ol class="steps">
+        <li><h3>Receive</h3><p>Record donations, purchases and product drives. Scan the barcode on the box.</p></li>
+        <li><h3>Store</h3><p>Stock is counted for each storage location, with transfers, adjustments and audits.</p></li>
+        <li><h3>Hear from partners</h3><p>Agencies ask for what their families need through their own portal.</p></li>
+        <li><h3>Distribute</h3><p>Fulfill a request, schedule the pick up or delivery, and print the picklist.</p></li>
+        <li><h3>Report</h3><p>Eleven reports, most with a CSV export, and the annual survey on one page.</p></li>
+      </ol>
+
+      <div class="show">
+        <div class="frame">
+          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+          <img loading="lazy" src="landing-designs-assets/app-request.webp" width="1600" height="1000" alt="A partner request in Human Essentials. Each requested item is listed beside the bank's total inventory, with a Fulfill request button.">
+        </div>
+        <dl class="feats">
+          <div><dt>Partner agencies</dt><dd>Invite, approve and recertify them. Groups and quotas set what each can request.</dd></div>
+          <div><dt>Kits</dt><dd>Bundle items into a kit and stock it like any other item.</dd></div>
+          <div><dt>Pick ups and deliveries</dt><dd>A calendar of what is leaving, and when.</dd></div>
+          <div><dt>Reminders</dt><dd>Email partners before their request deadline.</dd></div>
+          <div><dt>Spreadsheet import</dt><dd>Bring in partners, storage locations, vendors and donation sites.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tint" id="banks" aria-labelledby="banks-h">
+    <div class="wrap">
+      <h2 id="banks-h">A lot of families are counting on these banks.</h2>
+      <dl class="stats">
+        <div><dt>banks registered on Human Essentials</dt><dd>200+</dd></div>
+        <div><dt>children receiving diapers</dt><dd>3M+</dd></div>
+        <div><dt>people receiving period supplies</dt><dd>400K+</dd></div>
+        <div><dt>cost to a bank</dt><dd>$0</dd></div>
+      </dl>
+      <div class="quotes">
+        <figure>
+          <blockquote>&ldquo;Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.&rdquo;</blockquote>
+          <figcaption><b>Megan</b>, Sweet Cheeks Diaper Bank</figcaption>
+        </figure>
+        <figure>
+          <blockquote>&ldquo;Finally, an inventory management system designed specifically for the unique needs of diaper banks!&rdquo;</blockquote>
+          <figcaption><b>Rachel Alston</b>, PDX Diaper Bank</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="open" aria-labelledby="open-h">
+    <div class="wrap open">
+      <div>
+        <h2 id="open-h">Built in the open, by volunteers.</h2>
+        <p class="intro">Human Essentials is made by <a href="https://rubyforgood.org">Ruby for Good</a>, a non-profit whose volunteers write software for organizations doing good. It was first built alongside PDX Diaper Bank.</p>
+      </div>
+      <dl>
+        <div><dt>Free, and hosted for you</dt><dd>No license fee, no per-user price and nothing to install.</dd></div>
+        <div><dt>Open source</dt><dd>Every line is public under the MIT license. <a href="https://github.com/rubyforgood/human-essentials">Read the code on GitHub.</a></dd></div>
+        <div><dt>A digital public good</dt><dd>Recognized by the Digital Public Goods Alliance.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section tint router" aria-labelledby="router-h">
+    <div class="wrap">
+      <h2 id="router-h">What brings you here?</h2>
+      <ul>
+        <li><a href="/account_requests/new"><b>I run an essentials bank</b><span>You collect diapers, period supplies or other essentials and give them out through partner agencies.</span><em>Request an account</em></a></li>
+        <li><a href="/users/sign_in"><b>I work at a partner agency</b><span>Your bank invites you. Use the email address the invitation was sent to.</span><em>Log in</em></a></li>
+        <li><a href="/find-a-bank"><b>I need diapers or period supplies</b><span>We make the software banks use; we do not hand out supplies. A bank near you does.</span><em>Find a bank near you</em></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="questions" aria-labelledby="q-h">
+    <div class="wrap">
+      <h2 id="q-h">Questions banks ask first.</h2>
+      <div class="faq">
+        <details><summary>Is it really free?</summary><p>Yes. There is no charge to any bank. Volunteers build it and Ruby for Good hosts it.</p></details>
+        <details><summary>Who is it for?</summary><p>Diaper banks, period supply banks and other essentials banks that give out supplies through partner agencies. You request an account, and we set your bank up.</p></details>
+        <details><summary>I need diapers or period supplies. Can I get them here?</summary><p>Not from us. We make the software that banks use. <a href="/find-a-bank">Find a bank near you</a>, and it can tell you which local agencies give out supplies.</p></details>
+        <details><summary>I work at a partner agency. How do I get in?</summary><p>Your bank invites you. Once you accept the invitation, <a href="/users/sign_in">log in</a> with that email address.</p></details>
+        <details><summary>Can we bring the records we already have?</summary><p>Yes. Partners, storage locations with their starting inventory, vendors and donation sites can each be imported from a spreadsheet.</p></details>
+        <details><summary>Who can see our data?</summary><p>Your bank's records belong to your bank, and other banks cannot see them. The <a href="/privacypolicy">privacy policy</a> says what we keep and why.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="night cta" aria-labelledby="cta-h">
+    <div class="wrap cta-in">
+      <div>
+        <h2 id="cta-h">Run your bank on Human Essentials.</h2>
+        <p>Tell us about your bank and we will set up your account. Questions first? Write to <a href="mailto:info@humanessentials.app">info@humanessentials.app</a>.</p>
+      </div>
+      <a class="btn btn-light" href="/account_requests/new">Request an account</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-in">
+      <p><b style="color:var(--slate-900)">Human Essentials</b><br>Built by <a href="https://rubyforgood.org">Ruby for Good</a>. Open source under the MIT license.</p>
+      <ul>
+        <li><a href="/users/sign_in">Log in</a></li>
+        <li><a href="/account_requests/new">Request an account</a></li>
+        <li><a href="/find-a-bank">Find a bank</a></li>
+        <li><a href="/privacypolicy">Privacy policy</a></li>
+        <li><a href="https://github.com/rubyforgood/human-essentials">Source code</a></li>
+      </ul>
+    </div>
+    <p class="credits">Map outline from U.S. Census Bureau cartographic boundary files. Bank locations from the NDBN and Alliance for Period Supplies directories, as imported on 19 October 2026.</p>
+  </div>
+</footer>
+</body>
+</html>
