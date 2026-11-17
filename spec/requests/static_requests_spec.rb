@@ -54,6 +54,24 @@ RSpec.describe "Static", type: :request do
         expect(levels.each_cons(2).all? { |a, b| b <= a + 1 }).to be(true)
       end
 
+      it "has a tour of five steps that needs no JavaScript: a radio, its label and its screen, in that order" do
+        get root_path
+        tour = Nokogiri::HTML(response.body).at_css(".tour")
+        parts = tour.element_children.map { |el| (el.name == "div") ? el["class"] : el.name }
+
+        # The stylesheet shows a panel with `input:checked + label + .panel`, so the order is the mechanism.
+        expect(parts).to eq(%w[input label panel] * 5)
+        expect(tour.css("input[type=radio]").map { |i| i["name"] }.uniq).to eq(["step"])
+        expect(tour.css("input[checked]").map { |i| i["id"] }).to eq(["step-1"])
+        expect(tour.css("label b").map(&:text)).to eq(["Receive", "Store", "Hear from partners", "Distribute", "Report"])
+        tour.css("label").each { |label| expect(tour.at_css("input##{label["for"]}")).to be_present }
+
+        images = tour.css(".panel img")
+        expect(images.map { |img| img["src"][%r{landing/app-(\w+)-}, 1] }).to eq(%w[donation inventory request distribution reports])
+        expect(images.map { |img| img["loading"] }.uniq).to eq(["lazy"])
+        expect(images.map { |img| img["alt"].to_s.length }).to all(be > 40)
+      end
+
       context "the map" do
         it "draws one light for each located bank, and says how many" do
           create(:bank_listing, diapers: true, period_supplies: false)

@@ -1,22 +1,34 @@
-// Retakes the two pictures the landing page uses, from the running app.
+// Retakes the pictures the landing page uses, from the running app.
 //
-//   app/assets/images/landing/share.png          the picture a shared link shows (og:image), 1200x630
-//   app/assets/images/landing/app-request.webp   the product screen under "How it works", 1600x1000
+//   app/assets/images/landing/share.png             the picture a shared link shows (og:image), 1200x630
+//   app/assets/images/landing/app-donation.webp     the five screens of the tour under "How it works",
+//                           app-inventory.webp      1600x1000 each, one for each step
+//                           app-request.webp
+//                           app-distribution.webp
+//                           app-reports.webp
 //
-// Neither is drawn at request time, so both go stale quietly: the share picture when the headline
-// or the directories change, the product screen when the request page does. Run this then, look
-// at both files, and commit them.
+// None is drawn at request time, so each goes stale quietly: the share picture when the headline
+// or the directories change, a screen when its page does. Run this then, look at the files, and
+// commit them.
 //
-// Usage: pw bin/design/landing-images.js                         both
-//        pw bin/design/landing-images.js share                   one of them
+// Usage: pw bin/design/landing-images.js                         all six
+//        pw bin/design/landing-images.js share                   one of them, by name
 //        REQUEST_PATH=/requests/269 pw bin/design/landing-images.js request
 //
-// The product screen is a real page of the seeded demo bank, signed in as its admin, with one
-// change: the seeds fill a request's comment with lorem ipsum, and COMMENT replaces it. Nothing
-// else is touched, so what the picture shows is what the app does. Without REQUEST_PATH it takes
-// the first request in the list; pick one with several items so the table is worth showing.
+// Each screen is a real page of the seeded demo bank, signed in as its admin. Two things on them
+// are changed before the picture is taken, and nothing else, so what a picture shows is what the
+// app does:
 //
-// Needs `cwebp` on the path for the product screen (brew install webp).
+//   request     the seeds fill a request's comment with lorem ipsum; COMMENT replaces it
+//   inventory   the seeds leave a storage location's address as the word "Unknown"; it is blanked
+//
+// Without its *_PATH variable a screen takes the first record in its list, and the seeds are
+// random, so pick records worth showing -- a request and a donation with several items. The
+// committed pictures were taken with DONATION_PATH=/donations/13, INVENTORY_PATH=/storage_locations/2,
+// REQUEST_PATH=/requests/269 and DISTRIBUTION_PATH=/distributions/1 on the author's database;
+// those numbers mean nothing on another one.
+//
+// Needs `cwebp` on the path for the screens (brew install webp).
 const { chromium } = require("playwright");
 const { execFileSync } = require("child_process");
 const fs = require("fs");
@@ -51,21 +63,16 @@ async function share(browser) {
   console.log("wrote share.png");
 }
 
-async function request(browser) {
-  const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
-  const page = await context.newPage();
-  await signIn(page, BANK_ADMIN);
-  let target = process.env.REQUEST_PATH;
-  if (!target) {
-    await page.goto(BASE + "/requests", { waitUntil: "networkidle" });
-    target = await page.evaluate(() => {
-      const link = [...document.querySelectorAll("a[href]")].find((a) => /^\/requests\/\d+$/.test(new URL(a.href).pathname));
-      return link && new URL(link.href).pathname;
-    });
-    if (!target) throw new Error("No request found in /requests. Seed the database, or pass REQUEST_PATH.");
-  }
-  await page.goto(BASE + target, { waitUntil: "networkidle" });
-  await page.addStyleTag({ content: HIDE_DEV_BADGES });
+// name, the list a record is chosen from, what a record's path looks like, and what to tidy.
+const SCREENS = [
+  { name: "donation", list: "/donations", record: /^\/donations\/\d+$/ },
+  { name: "inventory", list: "/storage_locations", record: /^\/storage_locations\/\d+$/, tidy: blankUnknownAddress },
+  { name: "request", list: "/requests", record: /^\/requests\/\d+$/, tidy: replaceComment },
+  { name: "distribution", list: "/distributions", record: /^\/distributions\/\d+$/ },
+  { name: "reports", path: "/reports" }
+];
+
+async function replaceComment(page, target) {
   const swapped = await page.evaluate((comment) => {
     const term = [...document.querySelectorAll("dt")].find((dt) => dt.textContent.trim() === "Comments");
     const value = term && term.nextElementSibling;
@@ -74,20 +81,58 @@ async function request(browser) {
     return true;
   }, COMMENT);
   if (!swapped) throw new Error(`${target} has no Comments field. The request page changed: update this script.`);
-  await page.evaluate(() => document.fonts.ready);
+}
 
-  const png = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "landing-")), "request.png");
+// No error when there is nothing to blank: a location with a real address is the better picture.
+async function blankUnknownAddress(page) {
+  await page.evaluate(() => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.filter((node) => node.nodeValue.trim() === "Unknown").forEach((node) => { node.nodeValue = ""; });
+  });
+}
+
+async function screen(page, { name, list, record, path: fixed, tidy }) {
+  let target = fixed || process.env[`${name.toUpperCase()}_PATH`];
+  if (!target) {
+    await page.goto(BASE + list, { waitUntil: "networkidle" });
+    target = await page.evaluate((source) => {
+      const pattern = new RegExp(source);
+      const link = [...document.querySelectorAll("a[href]")].find((a) => pattern.test(new URL(a.href).pathname));
+      return link && new URL(link.href).pathname;
+    }, record.source);
+    if (!target) throw new Error(`Nothing found in ${list}. Seed the database, or pass ${name.toUpperCase()}_PATH.`);
+  }
+  await page.goto(BASE + target, { waitUntil: "networkidle" });
+  await page.addStyleTag({ content: HIDE_DEV_BADGES });
+  if (tidy) await tidy(page, target);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(500);
+
+  const png = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "landing-")), `${name}.png`);
   await page.screenshot({ path: png });
-  execFileSync("cwebp", ["-quiet", "-q", "82", "-resize", "1600", "1000", png, "-o", path.join(OUT, "app-request.webp")]);
+  execFileSync("cwebp", ["-quiet", "-q", "82", "-resize", "1600", "1000", png, "-o", path.join(OUT, `app-${name}.webp`)]);
+  console.log(`wrote app-${name}.webp from ${target}`);
+}
+
+async function screens(browser, wanted) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
+  const page = await context.newPage();
+  await signIn(page, BANK_ADMIN);
+  for (const each of wanted) await screen(page, each);
   await context.close();
-  console.log(`wrote app-request.webp from ${target}`);
 }
 
 (async () => {
   const browser = await chromium.launch();
   try {
+    const wanted = SCREENS.filter((each) => !only || only === each.name);
+    if (only && only !== "share" && !wanted.length) {
+      throw new Error(`No picture called "${only}". Choose from: share, ${SCREENS.map((each) => each.name).join(", ")}.`);
+    }
     if (!only || only === "share") await share(browser);
-    if (!only || only === "request") await request(browser);
+    if (wanted.length) await screens(browser, wanted);
   } finally {
     await browser.close();
   }

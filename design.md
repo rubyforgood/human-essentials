@@ -4835,8 +4835,7 @@ What the page is made of, in order:
 | Hero | One sentence, one primary action, and the map. |
 | The map | `static/_bank_map`. A fixed outline, and one light for each `BankListing` with a location, placed by `BankMapQuery` on every request because the listings are replaced weekly. **The lights are the two public directories, not the banks that use Human Essentials**, and the caption under the map says so; copy near it must not imply otherwise. Amber is diapers, rose is period supplies, white is both. |
 | The finder | A plain `GET` form to `/find-a-bank`, directly under the hero, for the visitor who wants supplies and not software (ADR 0014). |
-| How it works | Five steps. They are numbered because they are a sequence; nothing else on the page is. |
-| The product | One real screen in a browser frame. Never a drawing of the app. |
+| How it works | `static/_tour`. Five steps, numbered because they are a sequence; nothing else on the page is. Each step has the real screen that records it, in a browser frame. Never a drawing of the app. On a desk one step is chosen and its screen shows beneath the row; below 62rem nothing is chosen and each step is followed by its screen. |
 | Three doors | *I run an essentials bank*, *I work at a partner agency*, *I need diapers or period supplies*. Each is one link. |
 | Questions | `<details>`, so they open without JavaScript. |
 
@@ -4850,9 +4849,19 @@ entrance animations on sections, no hover movement on cards.
 `brand-300` 6.54:1, and the finder's placeholder 5.22:1. axe cannot compute contrast over a
 gradient and reports these as "incomplete", so they were worked out by hand on 2026-11-16.
 
-**Two pictures are not drawn at request time**, and go stale quietly: the share picture
-(`og:image`) and the product screen. `bin/design/landing-images.js` retakes both from the
-running app.
+**The tour's steps are radio buttons, not tabs with a script.** Each step is an `<input
+type="radio">` and its `<label>`; the stylesheet draws the label as the step and shows the
+panel after the checked one (`input:checked + label + .panel`). The page loads no JavaScript and
+this is not the place to start: the arrow keys already move through a radio group, a screen
+reader already announces one, and with no stylesheet every step and screen is on the page. If
+a control on this page seems to need a script, look for the native element first.
+
+**Six pictures are not drawn at request time**, and go stale quietly: the share picture
+(`og:image`) and the tour's five screens. `bin/design/landing-images.js` retakes them from the
+running app. A screen that is not showing is not fetched until its step is chosen.
+
+**No sideways scroll at any width** is checked by the system spec from 320px to 1920px. The
+map leans 3rem into the page's margin, and only from 80rem, where there is room.
 
 **The privacy policy** is the same header and footer around a 44rem column. Its words are a
 legal text and are not edited for voice (see Copy).
@@ -5202,9 +5211,12 @@ Known gaps, in rough priority order:
   *A lot of families are counting on these banks* are the project's published numbers
   (`README.md`). Nothing checks them against production, and they will be out of date before
   anyone notices. Either compute them or put a date beside them.
-- **The landing page shows one product screen.** The preview's option A had a tabbed tour of
-  five (requests, inventory, distributions, partners, reports); the owner chose option C, which
-  has one. The other four screenshots are in `docs/mockups/landing-designs-assets/`.
+- **The landing page's screens are hard to read on a phone.** The tour's five pictures are
+  1600 by 1000 shots of a desktop screen, shown about 360px wide. A phone-sized crop of each,
+  served with `<picture>`, would read better; none has been made.
+- **The landing page's tour has no screen for partner agencies.** No step is about managing
+  them, so it is one line under *Hear from partners*. The screenshot exists, in
+  `docs/mockups/landing-designs-assets/app-partners.webp`.
 - **The public site's tokens are copied, not shared.** `landing.css` repeats twelve of the
   brand and slate values by hand, so a token changed in `application.css` has to be changed
   there too. Nothing checks that they agree.

@@ -1,0 +1,90 @@
+<%#
+  The landing page's tour: the five things every bank does, each with the screen that records it.
+
+  **It works without JavaScript, like the rest of the page.** Each step is a radio button and its
+  label; `landing.css` draws the label as the step and shows the panel that follows the checked
+  one. So the arrow keys move between steps, as in any radio group, and with no stylesheet at
+  all every step and every screen is simply on the page.
+
+  **On a phone there is nothing to choose.** Five steps do not fit in a row, and a control at the
+  top of a list that changes a picture further down is worse than no control. Below 62rem the
+  radios are removed (`display: none`) and each step is followed by its own screen. That is why
+  the group's label does not say "choose".
+
+  The order is fixed by the stylesheet's sibling selectors: input, then label, then panel.
+
+  The screens are pictures of the seeded demo bank, retaken by `bin/design/landing-images.js`.
+  When one of those five pages changes, retake it. All are lazy: a panel that is not showing
+  does not fetch its picture until it is chosen.
+%>
+<%
+  steps = [
+    {
+      name: "Receive",
+      line: "Record donations, purchases and product drives. Scan the barcode on the box.",
+      image: "app-donation.webp",
+      alt: "A donation from a manufacturer: five items with the quantity of each, 1,996 in total, received into the bulk storage location.",
+      title: "What came in, and what it is worth.",
+      text: "Record a donation, a purchase or a product drive, with who it came from and which shelf it went to.",
+      points: ["Scan the barcode on the box, or create your own", "Track each product drive and who took part in it", "In-kind value totalled for every donation"]
+    },
+    {
+      name: "Store",
+      line: "Stock is counted for each storage location, with transfers, adjustments and audits.",
+      image: "app-inventory.webp",
+      alt: "The inventory of one storage location: adult briefs in four sizes with the quantity of each, and a field to show inventory at a past date.",
+      title: "Every storage location, counted.",
+      text: "Stock is tracked for each place you keep it. Move it with a transfer, correct it with an adjustment, and check it with an audit.",
+      points: ["Pick a past date to see what was on the shelf that day", "Bundle items into a kit and stock it like any other item", "Import locations with their starting inventory"]
+    },
+    {
+      name: "Hear from partners",
+      line: "Agencies ask for what their families need through their own portal.",
+      image: "app-request.webp",
+      alt: "A request from Second Street Community Outreach, listing pads, briefs and liners with the quantity asked for and the bank's total inventory of each.",
+      title: "Partners ask. You see it against your shelves.",
+      text: "Partner agencies request what their families need through their own portal. Each request opens beside your current stock, so you know what you can fill before you say yes.",
+      points: ["Partners ask by quantity, by number of people or by family", "Groups and quotas set what each agency can ask for", "Email partners before their request deadline"]
+    },
+    {
+      name: "Distribute",
+      line: "Fulfill a request, schedule the pick up or delivery, and print the picklist.",
+      image: "app-distribution.webp",
+      alt: "A distribution from the main bank to a homeless shelter, with Print, Edit and Distribution complete buttons and the items distributed.",
+      title: "From request to pick up.",
+      text: "A distribution records essentials leaving your bank for a partner. Schedule the pick up or delivery, print the picklist, and mark it complete when it is gone.",
+      points: ["Fulfill a request and it becomes a distribution", "A calendar of pick ups and deliveries", "Printed picklists and receipts"]
+    },
+    {
+      name: "Report",
+      line: "Eleven reports, most with a CSV export, and the annual survey on one page.",
+      image: "app-reports.webp",
+      alt: "The reports page, grouped into distributions, donations, purchases, requests, compliance and activity.",
+      title: "The numbers your funders ask for.",
+      text: "Eleven reports cover distributions, donations, purchases and requests, by item, by partner or by county. Most take a date range and export to CSV.",
+      points: ["Twelve-month trends for what came in and went out", "The annual survey figures, one page per year"]
+    }
+  ]
+%>
+<div class="tour" role="group" aria-label="How it works, in five steps">
+  <% steps.each.with_index(1) do |step, number| %>
+    <input type="radio" name="step" id="step-<%= number %>" <%= "checked" if number == 1 %>>
+    <label for="step-<%= number %>"><b><%= step[:name] %></b><span><%= step[:line] %></span></label>
+    <div class="panel">
+      <div class="frame">
+        <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <%= image_tag "landing/#{step[:image]}", width: 1600, height: 1000, loading: "lazy", alt: step[:alt] %>
+      </div>
+      <div class="about">
+        <h3><%= step[:title] %></h3>
+        <p><%= step[:text] %></p>
+        <ul>
+          <% step[:points].each do |point| %>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4.5" /></svg><%= point %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+</div>
+<p class="tour-note">Real screens, from the demonstration bank's data.</p>

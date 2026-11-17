@@ -47,6 +47,62 @@ RSpec.describe "Landing page", type: :system, js: true do
     expect(page).to have_css(".map-note", text: "Each light is one of the #{BankListing.located.count} banks")
   end
 
+  context "the tour of five steps" do
+    let(:shown) { -> { page.all(".tour .panel img", visible: true).map { |img| img[:src][%r{app-(\w+)-}, 1] } } }
+
+    it "shows the first step's screen, and another's when that step is chosen" do
+      visit root_path
+
+      expect(page).to have_css(".tour .panel", count: 1)
+      expect(shown.call).to eq(["donation"])
+      expect(page).to have_css(".tour .about h3", text: "What came in, and what it is worth.")
+
+      find(".tour label", text: "Distribute").click
+
+      expect(page).to have_css(".tour .about h3", text: "From request to pick up.")
+      expect(shown.call).to eq(["distribution"])
+      expect(page).to have_no_text("What came in, and what it is worth.")
+    end
+
+    it "loads a screen's picture only when its step is chosen" do
+      visit root_path
+      loaded = -> { page.evaluate_script("[...document.querySelectorAll('.tour img')].filter(i => i.complete && i.naturalWidth > 0).length") }
+      find(".tour").scroll_to(:center)
+
+      expect(page).to have_css(".tour .panel", count: 1)
+      page.document.synchronize { raise Capybara::ExpectationNotMet, "#{loaded.call} loaded" unless loaded.call == 1 }
+
+      find(".tour label", text: "Report").click
+      page.document.synchronize { raise Capybara::ExpectationNotMet, "#{loaded.call} loaded" unless loaded.call == 2 }
+    end
+
+    it "moves between steps with the arrow keys, as a radio group does" do
+      visit root_path
+      page.execute_script("document.getElementById('step-1').focus()")
+
+      page.driver.browser.keyboard.type(:Right)
+      expect(page).to have_css(".tour .about h3", text: "Every storage location, counted.")
+      expect(page.evaluate_script("document.activeElement.id")).to eq("step-2")
+
+      page.driver.browser.keyboard.type(:Left)
+      expect(page).to have_css(".tour .about h3", text: "What came in, and what it is worth.")
+    end
+
+    it "has nothing to choose on a phone: every step is followed by its screen" do
+      page.driver.resize(390, 844)
+      visit root_path
+
+      expect(page).to have_css(".tour .panel", count: 5)
+      expect(shown.call).to eq(%w[donation inventory request distribution reports])
+      # The radios are gone, not just hidden, so the keyboard does not stop on them.
+      expect(page).to have_no_css(".tour input", visible: true)
+      expect(page.evaluate_script("getComputedStyle(document.getElementById('step-1')).display")).to eq("none")
+      expect(page.evaluate_script("document.documentElement.scrollWidth")).to eq(390)
+    ensure
+      page.driver.resize(1200, 800)
+    end
+  end
+
   it "answers a question when it is opened" do
     visit root_path
     answer = "There is no charge to any bank."
@@ -74,6 +130,18 @@ RSpec.describe "Landing page", type: :system, js: true do
 
     expect(page.evaluate_script("document.documentElement.scrollWidth")).to eq(390)
     expect(page).to have_css("header a", text: "Log in")
+  ensure
+    page.driver.resize(1200, 800)
+  end
+
+  # The map leans into the page's margin, and at these widths the margin was narrower than the lean.
+  it "does not scroll sideways at any width between a small phone and a wide desk" do
+    [320, 768, 991, 992, 1024, 1100, 1247, 1248, 1279, 1280, 1440, 1920].each do |width|
+      page.driver.resize(width, 800)
+      visit root_path
+      overflow = page.evaluate_script("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+      expect(overflow).to eq(0), "#{overflow}px of sideways scroll at #{width}px wide"
+    end
   ensure
     page.driver.resize(1200, 800)
   end

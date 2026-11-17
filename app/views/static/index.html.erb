@@ -73,29 +73,7 @@
     <div class="wrap">
       <h2 id="how-h">One count, from the loading dock to the family.</h2>
       <p class="intro">Every bank does the same five things. Human Essentials records each one, so the number on the screen is the number on the shelf.</p>
-      <ol class="steps">
-        <li><h3>Receive</h3><p>Record donations, purchases and product drives. Scan the barcode on the box.</p></li>
-        <li><h3>Store</h3><p>Stock is counted for each storage location, with transfers, adjustments and audits.</p></li>
-        <li><h3>Hear from partners</h3><p>Agencies ask for what their families need through their own portal.</p></li>
-        <li><h3>Distribute</h3><p>Fulfill a request, schedule the pick up or delivery, and print the picklist.</p></li>
-        <li><h3>Report</h3><p>Eleven reports, most with a CSV export, and the annual survey on one page.</p></li>
-      </ol>
-
-      <div class="show">
-        <div class="frame">
-          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i></div>
-          <%# A real screen from the seeded demo bank. Retake it when the request page changes: docs/onboarding.md, "The landing page". %>
-          <%= image_tag "landing/app-request.webp", width: 1600, height: 1000, loading: "lazy",
-                alt: "A partner request in Human Essentials. Each requested item is listed beside the bank's total inventory, with a Fulfill request button." %>
-        </div>
-        <dl class="feats">
-          <div><dt>Partner agencies</dt><dd>Invite, approve and recertify them. Groups and quotas set what each can request.</dd></div>
-          <div><dt>Kits</dt><dd>Bundle items into a kit and stock it like any other item.</dd></div>
-          <div><dt>Pick ups and deliveries</dt><dd>A calendar of what is leaving, and when.</dd></div>
-          <div><dt>Reminders</dt><dd>Email partners before their request deadline.</dd></div>
-          <div><dt>Spreadsheet import</dt><dd>Bring in partners, storage locations, vendors and donation sites.</dd></div>
-        </dl>
-      </div>
+      <%= render "static/tour" %>
     </div>
   </section>
 

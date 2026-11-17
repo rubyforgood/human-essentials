@@ -211,15 +211,21 @@ about it are easy to trip over:
   run `bin/rails bank_listings:import` to see the real 347. With no listings it draws the
   outline and no caption. `BankMapQuery` places the lights, and its spec pins four cities to the
   positions the outline was drawn for.
-- **Two pictures are files, not rendered.** The share picture (`og:image`) and the product
-  screen under *How it works* are in `app/assets/images/landing/`. Retake them from a running,
-  seeded dev server when the headline or the request page changes:
+- **Six pictures are files, not rendered.** The share picture (`og:image`) and the five
+  screens of the tour under *How it works* are in `app/assets/images/landing/`. Retake them
+  from a running, seeded dev server when the headline changes, or the donation, storage
+  location, request, distribution or reports page does:
 
   ```bash
-  BASE_URL=http://127.0.0.1:3000 pw bin/design/landing-images.js
+  BASE_URL=http://127.0.0.1:3000 pw bin/design/landing-images.js            # all six
+  REQUEST_PATH=/requests/269 pw bin/design/landing-images.js request        # one, of a record you chose
   ```
 
-  The product screen needs `cwebp` (`brew install webp`). Look at both before committing.
+  The screens need `cwebp` (`brew install webp`). The seeds are random, so choose records worth
+  showing; the script's header says how. Look at every picture before committing.
+- **The tour has no JavaScript.** The five steps are radio buttons; `static/_tour` and
+  `design.md` say why. On a window narrower than 992px there is nothing to click, by design:
+  every step is followed by its screen.
 - **The figures are typed in.** "200+", "3M+" and "400K+" come from `README.md`, not from the
   database. Change them in `static/index.html.erb` when the README's change.
 
@@ -1802,9 +1808,12 @@ the top right, as before, and takes you to the same place.
   diapers or period supplies rather than software. Type a city and state, or a ZIP code, and
   press *Find a bank*. If someone asks your bank where else they can go, you can send them to
   the front page as well as to `/find-a-bank`.
-- **Further down:** how the app works in five steps, a picture of a real request, two things
-  banks have said about it, and answers to the questions banks ask first. The questions open
-  when you press them.
+- **Further down, a tour in five steps:** receive, store, hear from partners, distribute and
+  report. On a computer, press a step to see the screen that does it; the arrow keys work too.
+  On a phone each step simply has its screen under it. The screens are real ones, from a
+  demonstration bank.
+- **Below that:** two things banks have said about the app, and answers to the questions banks
+  ask first. The questions open when you press them.
 - **The privacy policy looks like the front page now.** Its words have not changed.
 
 Nothing on the page moves except the map's lights, which come on once when the page opens. If

@@ -10492,3 +10492,46 @@ when it is chosen. axe finds nothing in either mock's page content at 1440px or 
 small on a phone in both versions, as the built page's one already is; a phone-sized crop of
 each would read better and has not been made. Not checked with a screen reader, only with the
 keyboard.
+
+## 2026-11-17 — The tour is built, and a sideways scroll from the day before is fixed
+
+The owner chose version 1 of the two tour previews: the five steps are the tour. It is built as
+previewed, in `static/_tour`. The reasons for radios rather than scripted tabs, and for offering
+no choice on a phone, are in the entry above and are now also in `design.md`, since they are
+rules for the page and not only for the mock.
+
+**Two things differ from the mock.** The group is `role="group"` labelled "How it works, in
+five steps", where the mock had `role="radiogroup"` and "Choose one to see its screen": on a
+phone the radios are removed, and a radio group with no radios that tells the reader to choose
+is wrong there. And every screen is `loading="lazy"`, the first included, because the tour is
+below the first screenful.
+
+**What it costs.** On a desk, nothing until a step is chosen: 169,935 bytes in 8 requests at
+1440px, a little under the 174,638 before, because the first screen is now the donation (36 KB)
+and not the request (50 KB). Each other screen is fetched when its step is chosen, 213 KB for
+all five. On a phone all five are fetched as the reader scrolls: 346,496 bytes in 12 requests
+at 390px, twice what it was, and the page is 7,994px tall against 6,712px. That is the price of
+showing every screen on the device where there is no choosing. It was stated when the preview
+was offered and the owner chose it.
+
+**The image script reproduces the committed pictures.** `bin/design/landing-images.js` was
+extended from one screen to five. Run against the same records, all five came out byte for byte
+the same as the ones in the preview, which is the check that the script documents how they
+were really made. Two edits are made to the page before a picture is taken, and both are in the
+script's header: a request's lorem ipsum comment is replaced, and a storage location's address
+of "Unknown" is blanked.
+
+**A defect in the build of 2026-11-16, found while measuring this.** From 1024px to 1247px wide
+the landing page scrolled 16px sideways. The map has a 3rem negative right margin from 64rem,
+and at those widths the page's own margin is 2rem. The original check was at 1440px and 390px
+only, and `responsive-audit.js` does not visit `/`. The margin now applies from 80rem, and a
+system spec loads the page at twelve widths from 320px to 1920px; it fails on the old
+stylesheet with "16px of sideways scroll at 1024px wide". The lesson is the usual one: two
+widths are not a sweep, and the breakpoints themselves are where a layout breaks.
+
+**Checked.** 44 examples in the landing, static, map and account request specs pass. axe at
+1440px and 390px: nothing in the page. `wcag-manual.js`: no failures. Keyboard: the arrow keys
+move between steps and the focus ring is drawn around the step.
+
+**Not done.** No phone-sized crops of the screens. No screen for partner agencies. Not tried
+with a screen reader. Not looked at in Safari or Firefox.

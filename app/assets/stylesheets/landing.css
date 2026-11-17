@@ -133,8 +133,12 @@ main:focus { outline: none; }
 .map-note { margin-top: .5rem; font-size: .875rem; color: var(--brand-300); max-width: 40rem; }
 @media (min-width: 64rem) {
   .hero-in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 2.5rem; }
-  .map-fig { margin-right: -3rem; }
 }
+/*
+ * The map leans 3rem past the column, into the page's margin. Only from 80rem, where that margin
+ * is at least 4rem: between 64rem and 78rem it is 2rem, and the map pushed the page 16px sideways.
+ */
+@media (min-width: 80rem) { .map-fig { margin-right: -3rem; } }
 
 /* The finder: the other reason someone lands here. It posts to /find-a-bank. */
 .finder { border-top: 1px solid rgba(165, 180, 252, .25); }
@@ -152,31 +156,63 @@ main:focus { outline: none; }
 .section h2 { font-size: clamp(1.875rem, 3.8vw, 3rem); line-height: 1.06; letter-spacing: -.03em; font-weight: 900; color: var(--slate-900); max-width: 20ch; }
 .section .intro { margin-top: 1rem; font-size: 1.125rem; color: var(--slate-600); max-width: 38rem; }
 
-/* The five steps are a real sequence, so they are numbered: down the page on a phone, across it on a desk. */
-.steps { margin-top: 3rem; display: grid; gap: 0; counter-reset: step; }
-.steps li { counter-increment: step; position: relative; padding: 0 0 2rem 3.25rem; }
-.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--night); color: #fff; font-weight: 800; font-size: .9375rem; display: grid; place-items: center; z-index: 1; }
-.steps li::after { content: ""; position: absolute; left: calc(1rem - 1px); top: 2rem; bottom: 0; width: 2px; background: var(--brand-200); }
-.steps li:last-child { padding-bottom: 0; }
-.steps li:last-child::after { display: none; }
-.steps h3 { font-size: 1.1875rem; font-weight: 800; letter-spacing: -.015em; color: var(--slate-900); line-height: 2rem; }
-.steps p { margin-top: .25rem; font-size: .9375rem; color: var(--slate-600); max-width: 26rem; }
-@media (min-width: 62rem) {
-  .steps { grid-template-columns: repeat(5, 1fr); gap: 2rem; }
-  .steps li { padding: 3rem 0 0; }
-  .steps li::after { left: 2rem; right: -2rem; top: calc(1rem - 1px); bottom: auto; width: auto; height: 2px; }
-}
-
-/* The product, shown: one real screen in a browser frame, beside what else it does. */
-.show { margin-top: clamp(3rem, 6vw, 5rem); display: grid; gap: 2.5rem; }
+/*
+ * The tour: the five steps, each with the screen that records it. Markup and reasons are in
+ * static/_tour. The steps are a real sequence, so they are numbered.
+ *
+ * Each step is a radio button and its label. The radio is what the keyboard and a screen reader
+ * use, so it stays in the page, 1px and transparent; the label is what is seen.
+ */
+.tour { margin-top: 3rem; counter-reset: step; position: relative; }
+.tour input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.tour label { counter-increment: step; position: relative; display: block; padding: 0 0 1rem 3.25rem; }
+.tour label::before { content: counter(step); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--night); color: #fff; font-weight: 800; font-size: .9375rem; display: grid; place-items: center; z-index: 1; }
+.tour label b { display: block; font-size: 1.1875rem; font-weight: 800; letter-spacing: -.015em; color: var(--slate-900); line-height: 2rem; }
+.tour label span { display: block; margin-top: .25rem; font-size: .9375rem; color: var(--slate-600); max-width: 26rem; }
+.tour .panel { display: grid; gap: 1.5rem; margin-bottom: 3rem; }
+.tour .panel:last-of-type { margin-bottom: 0; }
 .frame { border: 1px solid var(--slate-300); border-radius: .875rem; background: #fff; box-shadow: 0 30px 60px -28px rgba(30, 27, 75, .4); overflow: hidden; }
 .frame-bar { display: flex; align-items: center; gap: .375rem; padding: .625rem .875rem; background: var(--slate-50); border-bottom: 1px solid var(--slate-200); }
 .frame-bar i { width: .625rem; height: .625rem; border-radius: 50%; background: var(--slate-300); }
-.feats { display: grid; gap: 0; border-top: 1px solid var(--slate-200); align-content: start; }
-.feats div { padding: 1rem 0; border-bottom: 1px solid var(--slate-200); }
-.feats dt { font-weight: 700; color: var(--slate-900); }
-.feats dd { font-size: .9375rem; color: var(--slate-600); }
-@media (min-width: 62rem) { .show { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 3.5rem; align-items: start; } }
+.about h3 { font-size: 1.375rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; color: var(--slate-900); }
+.about p { margin-top: .625rem; color: var(--slate-600); }
+.about ul { margin-top: 1rem; display: grid; gap: .5rem; font-size: .9375rem; color: var(--slate-700); }
+.about li { display: flex; gap: .625rem; align-items: flex-start; }
+.about svg { flex: none; margin-top: .3rem; color: var(--brand-600); }
+.tour-note { margin-top: 1.25rem; font-size: .875rem; color: var(--slate-500); }
+/*
+ * On a phone there is nothing to choose: every step is followed by its screen, and the radios
+ * are taken out altogether so the keyboard does not stop on controls that do nothing. The
+ * panel's heading and paragraph repeat the step above them at this width, so only the points stay.
+ */
+@media (max-width: 61.99rem) {
+  .tour input { display: none; }
+  .tour .about h3, .tour .about p { display: none; }
+  .tour .about ul { margin-top: 0; }
+}
+/* On a desk the steps run across, one is chosen, and its panel fills the row beneath. */
+@media (min-width: 62rem) {
+  .tour { display: grid; grid-template-columns: repeat(5, 1fr); column-gap: 2rem; }
+  .tour label { grid-row: 1; padding: 3rem 0 1.25rem; cursor: pointer; border-bottom: 3px solid var(--slate-200); }
+  .tour label:nth-of-type(1) { grid-column: 1; }
+  .tour label:nth-of-type(2) { grid-column: 2; }
+  .tour label:nth-of-type(3) { grid-column: 3; }
+  .tour label:nth-of-type(4) { grid-column: 4; }
+  .tour label:nth-of-type(5) { grid-column: 5; }
+  /* The line under the steps runs unbroken, so each label bridges the gap to the next. */
+  .tour label::after { content: ""; position: absolute; left: 100%; bottom: -3px; width: 2rem; height: 3px; background: var(--slate-200); }
+  .tour label:nth-of-type(5)::after { display: none; }
+  /* A step that is not showing is an outlined number; the one that is, is filled and underlined. */
+  .tour label::before { background: #fff; color: var(--night); box-shadow: inset 0 0 0 2px var(--brand-300); }
+  .tour label:hover::before { box-shadow: inset 0 0 0 2px var(--night); }
+  .tour label:hover b { color: var(--brand-700); }
+  .tour input:checked + label { border-bottom-color: var(--night); }
+  .tour input:checked + label::before { background: var(--night); color: #fff; box-shadow: none; }
+  .tour input:checked + label:hover b { color: var(--slate-900); }
+  .tour input:focus-visible + label { outline: 2px solid var(--brand-600); outline-offset: 6px; border-radius: 6px; }
+  .tour .panel { grid-row: 2; grid-column: 1 / -1; display: none; margin: 2.5rem 0 0; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 3.5rem; align-items: center; }
+  .tour input:checked + label + .panel { display: grid; }
+}
 
 /* The numbers. A <dl> lists the term first; column-reverse puts the figure on top. */
 .stats { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
