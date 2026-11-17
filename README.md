@@ -63,12 +63,12 @@ Thanks for checking us out! Here is a quick-start, and also check out our [Contr
    - Install the version specified in [`.ruby-version`](.ruby-version).
    - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOS setup. Follow only the Installing Ruby step, as our project setup differs. It is highly recommended you use a Ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
    - Verify that your Ruby installation works by running `ruby -v`.
-2. Install Postgres
-   - Follow one of these guides: [macOS](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
-   - Create a `database.yml` file in the `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
+2. Set up Postgres
+   - **With Docker:** after cloning the project (step 3), run `bin/db` to start Postgres in a container (`bin/db stop` stops it), then copy [`.env.example`](.env.example) to `.env` and set `PG_USERNAME=postgres` and `PG_PASSWORD=postgres`.
+   - **Or install it locally:** follow one of these guides: [macOS](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04). If your database credentials differ from the defaults, copy [`.env.example`](.env.example) to `.env` and set `PG_USERNAME` and `PG_PASSWORD`.
 3. Clone the project and switch to its directory
 4. Run `bin/setup`
-5. Run `bin/start` and visit http://localhost:3000/ to see the Human Essentials page.
+5. Run `bin/start` and visit http://localhost:3000/ to see the Human Essentials page. To use a different port, run `PORT=3001 bin/start`.
 6. Log in as a sample user with the default [credentials](#credentials-for-development-and-staging).
 
 ### Cloud Development
