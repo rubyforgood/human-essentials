@@ -10448,3 +10448,47 @@ process is reachable for 3.3.7, as it did before this change. `layout-shift-audi
   `<h1>` and is now an `<h2>`; that is the only change inside the policy.
 - **No link from the landing page to a terms of service.** `wayfinding-audit.js` names
   `/termsofservice`; the route does not exist and the old page did not link one either.
+
+## 2026-11-17 — A tour for the landing page, previewed two ways
+
+The owner chose option C without option A's tour, then asked to see what the tour would look
+like. Two mocks, both the built page with *How it works* changed. Nothing is built.
+
+**Version 1, recommended: the five steps are the tour**
+(`docs/mockups/landing-designs-tour.html`). Receive, Store, Hear from partners, Distribute and
+Report are already on the page as a numbered row. Each becomes a choice, and choosing one shows
+its screen beside a short description. The single screenshot and the list of five features
+beside it go; what they said is now under the step it belongs to.
+
+**Version 2: option A's tabs, under the steps** (`landing-designs-tour-tabs.html`). This is
+what "C with A's tour" literally meant when it was recommended. Seen on the page it has a
+problem the recommendation missed: a row of five steps sits directly above a row of five tabs
+whose labels nearly match (Store and Inventory, Distribute and Distributions, Report and
+Reports). A reader has to work out whether they are the same five things. It is in the mock so
+the owner can see that rather than take it on trust.
+
+Version 1 has no screen for partner agencies, since no step is about managing them; its
+substance is a line under *Hear from partners*. Version 2 keeps that screen and has none for
+donations.
+
+**No JavaScript in either.** The built page loads none, and `design.md` says so. The choice is
+a group of radio buttons with their labels drawn as the steps or tabs, and the panel after the
+checked one is shown with CSS. Arrow keys move between them, as they do in any radio group. A
+screen reader announces a radio group, not a tab list; that is accurate, since they are radios.
+*Rejected:* ARIA tabs with a script, as option A's own mock used. It would be the page's only
+script.
+
+**On a phone, version 1 offers no choice.** A row of five does not fit, and a control at the
+top of a list that changes a picture further down the screen is worse than no control. Each
+step is followed by its screen. That makes the section 3,015px tall at 390px, against 1,732px
+now, and loads all five screenshots (213 KB) as the reader scrolls. Version 2 keeps its tabs on
+a phone, wrapped onto two lines, and stays 1,726px.
+
+**Measured 2026-11-17, in Chrome.** At 1440px the section is 1,184px (steps) or 1,286px (tabs),
+against 1,159px as built. One screenshot loads with the page, 36 KB or 50 KB, and each other
+when it is chosen. axe finds nothing in either mock's page content at 1440px or 390px.
+
+**Not done.** Not built. The screenshots are 1600 by 1000 pictures of a desktop screen and are
+small on a phone in both versions, as the built page's one already is; a phone-sized crop of
+each would read better and has not been made. Not checked with a screen reader, only with the
+keyboard.
