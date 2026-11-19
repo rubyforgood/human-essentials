@@ -5,9 +5,10 @@
  * slice replaces a legacy component with the design system's own (buttons, pagination, cards,
  * the sidebar...), it deletes that component's section here. The file goes with Bootstrap.
  *
- * The rule for everything in this file: swap values, keep shapes. Only colours change. No size,
- * spacing, radius, border width, typeface, layout or markup changes, so nothing moves and no
- * behaviour changes.
+ * The rule for everything in this file: swap values, keep shapes. Only colours and the typeface
+ * change. No size, spacing, radius, border width, layout or markup changes, and no behaviour
+ * changes. (The typeface is the one value that moves things: Figtree is wider than Source Sans
+ * Pro, so text reflows.)
  *
  * It is unlayered on purpose, so it competes with Bootstrap and AdminLTE on equal terms (they are
  * unlayered too). Each selector is copied from the legacy rule it overrides. Equal specificity
@@ -21,6 +22,23 @@
  *   #80bdff #86b7fe               focus    → brand-300
  *   rgba(0,123,255,a)             rings    → brand-600 at the same alpha
  */
+
+/* ---------------------------------------------------------------- Typography */
+
+:root {
+  --bs-font-sans-serif: var(--font-sans);
+  --bs-body-font-family: var(--font-sans);
+}
+
+body,
+.tooltip,
+.popover,
+.mapael .mapTooltip,
+.modal-dialog h4.modal-title,
+.modal-dialog .modal-title.h4,
+.modal-dialog.onboarding_steps .modal-body {
+  font-family: var(--font-sans);
+}
 
 /* ---------------------------------------------------------------- Neutrals */
 
