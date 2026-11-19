@@ -25,6 +25,10 @@
 /* Self-hosted typeface, no CDN. Binaries (and the OFL licence) live in public/vendor/figtree. */
 @import "./vendor/figtree.css";
 
+/* The tokens above, painted onto the existing Bootstrap/AdminLTE screens. Unlayered, and
+   temporary: see the file's header. */
+@import "./legacy/bootstrap_bridge.css";
+
 /*
  * Design tokens. These are shared with the other Ruby for Good applications; change
  * them there, not here.

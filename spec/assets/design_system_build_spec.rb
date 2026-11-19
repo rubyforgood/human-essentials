@@ -35,9 +35,12 @@ RSpec.describe "Design system build", type: :request do
   # named like a Bootstrap class would silently restyle legacy markup: `mb-3` is 0.75rem in
   # Tailwind and 1rem in Bootstrap, and Tailwind's `collapse` (visibility: collapse) would hide
   # every open Bootstrap collapsible. Scanning today's views as-is would emit ~90 of these.
-  it "defines no class that the legacy Bootstrap/AdminLTE stylesheet also defines" do
+  #
+  # The one deliberate exception is the bridge, which exists to restyle legacy classes.
+  it "defines no class that the legacy Bootstrap/AdminLTE stylesheet also defines, outside the bridge" do
     legacy = css_class_names(assets["application.css"].to_s)
-    ours = css_class_names(build.read)
+    bridge = css_class_names(Rails.root.join("app/assets/tailwind/legacy/bootstrap_bridge.css").read)
+    ours = css_class_names(build.read) - bridge
 
     expect(ours & legacy).to be_empty,
       "the design system build defines classes Bootstrap/AdminLTE already use: #{(ours & legacy).sort.inspect}"
