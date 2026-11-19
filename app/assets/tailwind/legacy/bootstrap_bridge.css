@@ -1,0 +1,198 @@
+/*
+ * Bootstrap/AdminLTE bridge — the design system's tokens painted onto the legacy UI.
+ *
+ * TEMPORARY. This file exists only while Bootstrap and AdminLTE are on the page. When a later
+ * slice replaces a legacy component with the design system's own (buttons, pagination, cards,
+ * the sidebar...), it deletes that component's section here. The file goes with Bootstrap.
+ *
+ * The rule for everything in this file: swap values, keep shapes. Only colours change. No size,
+ * spacing, radius, border width, typeface, layout or markup changes, so nothing moves and no
+ * behaviour changes.
+ *
+ * It is unlayered on purpose, so it competes with Bootstrap and AdminLTE on equal terms (they are
+ * unlayered too). Each selector is copied from the legacy rule it overrides. Equal specificity
+ * plus a later stylesheet means this wins. `!important` appears only where the legacy rule
+ * already has it.
+ *
+ * Legacy blue → design system brand (indigo):
+ *   #007bff #0d6efd               base     → brand-600
+ *   #0069d9 #0056b3 #0b5ed7       hover    → brand-700
+ *   #0062cc #005cbf #0a58ca       pressed  → brand-800
+ *   #80bdff #86b7fe               focus    → brand-300
+ *   rgba(0,123,255,a)             rings    → brand-600 at the same alpha
+ */
+
+/* ---------------------------------------------------------------- Neutrals */
+
+body {
+  color: var(--color-slate-900);
+}
+
+.content-wrapper {
+  background-color: var(--color-slate-50);
+}
+
+/* ---------------------------------------------------------------- Links */
+
+:root {
+  --bs-link-color: var(--color-brand-600);
+  --bs-link-color-rgb: 79, 70, 229;
+  --bs-link-hover-color: var(--color-brand-700);
+  --bs-link-hover-color-rgb: 67, 56, 202;
+  --bs-primary: var(--color-brand-600);
+  --bs-primary-rgb: 79, 70, 229;
+  --blue: var(--color-brand-600);
+  --primary: var(--color-brand-600);
+}
+
+a,
+body a, /* application.scss repeats AdminLTE's link colour, one notch more specific */
+.btn-link,
+.page-link {
+  color: var(--color-brand-600);
+}
+
+a:hover,
+.btn-link:hover,
+.page-link:hover {
+  color: var(--color-brand-700);
+}
+
+/* ---------------------------------------------------------------- Primary buttons */
+
+.btn-primary {
+  --bs-btn-bg: var(--color-brand-600);
+  --bs-btn-border-color: var(--color-brand-600);
+  --bs-btn-hover-bg: var(--color-brand-700);
+  --bs-btn-hover-border-color: var(--color-brand-700);
+  --bs-btn-active-bg: var(--color-brand-800);
+  --bs-btn-active-border-color: var(--color-brand-800);
+  --bs-btn-disabled-bg: var(--color-brand-600);
+  --bs-btn-disabled-border-color: var(--color-brand-600);
+  --bs-btn-focus-shadow-rgb: 79, 70, 229;
+  background-color: var(--color-brand-600);
+  border-color: var(--color-brand-600);
+}
+
+.btn-primary:hover,
+.btn-primary.focus,
+.btn-primary:focus {
+  background-color: var(--color-brand-700);
+  border-color: var(--color-brand-700);
+}
+
+.btn-primary.disabled,
+.btn-primary:disabled {
+  background-color: var(--color-brand-600);
+  border-color: var(--color-brand-600);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: var(--color-brand-800);
+  border-color: var(--color-brand-800);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--color-brand-600);
+  --bs-btn-border-color: var(--color-brand-600);
+  --bs-btn-hover-bg: var(--color-brand-600);
+  --bs-btn-hover-border-color: var(--color-brand-600);
+  --bs-btn-active-bg: var(--color-brand-600);
+  --bs-btn-active-border-color: var(--color-brand-600);
+  color: var(--color-brand-600);
+  border-color: var(--color-brand-600);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.show > .btn-outline-primary.dropdown-toggle {
+  background-color: var(--color-brand-600);
+  border-color: var(--color-brand-600);
+}
+
+.btn-outline-primary.disabled,
+.btn-outline-primary:disabled {
+  color: var(--color-brand-600);
+}
+
+/* ---------------------------------------------------------------- Selected / current state */
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active,
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link,
+.dropdown-item.active,
+.dropdown-item:active,
+.list-group-item.active,
+.select2-container--default .select2-results__option--highlighted,
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background-color: var(--color-brand-600);
+}
+
+.nav-pills .nav-link:not(.active):hover {
+  color: var(--color-brand-600);
+}
+
+.page-item.active .page-link,
+.list-group-item.active {
+  background-color: var(--color-brand-600);
+  border-color: var(--color-brand-600);
+}
+
+.card-primary.card-outline-tabs > .card-header a.active,
+.card-primary.card-outline-tabs > .card-header a.active:hover {
+  border-top-color: var(--color-brand-600);
+}
+
+/* ---------------------------------------------------------------- Focus */
+
+.form-control:focus,
+.custom-select:focus,
+.custom-file-input:focus ~ .custom-file-label,
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before,
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default .select2-selection--multiple:focus {
+  border-color: var(--color-brand-300);
+}
+
+.page-link:focus {
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-brand-600) 25%, transparent);
+}
+
+/* ---------------------------------------------------------------- Brand surfaces */
+
+.card-primary:not(.card-outline) > .card-header,
+.progress-bar,
+.badge-primary,
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: var(--color-brand-600);
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  border-color: var(--color-brand-600);
+}
+
+.card-primary.card-outline {
+  border-top-color: var(--color-brand-600);
+}
+
+.bg-primary {
+  background-color: var(--color-brand-600) !important;
+}
+
+.bg-gradient-primary {
+  background: var(--color-brand-600) linear-gradient(180deg, var(--color-brand-500), var(--color-brand-600)) repeat-x !important;
+}
+
+.text-primary {
+  color: var(--color-brand-600) !important;
+}
+
+.border-primary {
+  border-color: var(--color-brand-600) !important;
+}
