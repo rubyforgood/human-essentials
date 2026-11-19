@@ -35,5 +35,12 @@ module Diaper
     config.action_mailer.deliver_later_queue_name = 'default'
 
     config.active_support.to_time_preserves_timezone = :zone # New default starting in Rails 8.1
+
+    # Keep minifying the Bootstrap stylesheets with Sass outside development, as sassc-rails
+    # did implicitly, but never feed it the Tailwind build, which libsass cannot parse.
+    unless Rails.env.development?
+      require_relative "../lib/tailwind_safe_css_compressor"
+      config.assets.css_compressor = TailwindSafeCssCompressor
+    end
   end
 end

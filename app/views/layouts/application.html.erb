@@ -46,6 +46,8 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <%# Ruby for Good design system, after every other stylesheet. See app/assets/tailwind/application.css. %>
+  <%= stylesheet_link_tag 'tailwind', media: 'all' %>
   <%= render 'magic_test/support' if Rails.env.test? %>
   <% unless @turbo %>
     <meta name="turbo-visit-control" content="reload">
