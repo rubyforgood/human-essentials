@@ -93,3 +93,8 @@ out/
 
 # Playwright MCP plugin scratch space (screenshot specs, console logs)
 .playwright-mcp/
+
+# Tailwind build output. Compiled from app/assets/tailwind/application.css by the
+# tailwindcss-rails gem, which hooks assets:precompile, so it is built on deploy.
+/app/assets/builds/*
+!/app/assets/builds/.keep

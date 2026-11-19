@@ -46,6 +46,9 @@ gem "solid_cache", "~> 1.0"
 gem 'bootstrap', '~> 5.2'
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
+# The Ruby for Good design system is built with Tailwind v4. This gem ships the standalone
+# Tailwind CLI, so no Node is needed at build or deploy time, and it hooks assets:precompile.
+gem "tailwindcss-rails", "~> 4.6"
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS

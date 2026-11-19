@@ -1,0 +1,47 @@
+/*
+ * Human Essentials — Ruby for Good design system entry point (Tailwind v4).
+ *
+ * Compiled by the tailwindcss-rails gem to app/assets/builds/tailwind.css
+ * (`bin/rails tailwindcss:build`, or the `css` process in Procfile.dev).
+ *
+ * The design system arrives in slices alongside the existing Bootstrap/AdminLTE UI
+ * rather than replacing it page by page. That shapes this file in two ways:
+ *
+ *   - Tailwind's Preflight (its CSS reset) is deliberately NOT imported. Bootstrap's
+ *     Reboot already owns element defaults on every page, and two resets in one
+ *     document would restyle every legacy screen at once. Only the theme (design
+ *     tokens) and utilities layers are pulled in.
+ *
+ *   - Class scanning is off (`source(none)`). Sources are added explicitly, and only
+ *     once a slice actually renders design system markup, so the build cannot emit a
+ *     utility whose name collides with a Bootstrap class already in the views.
+ */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
+/* Self-hosted typeface, no CDN. Binaries (and the OFL licence) live in public/vendor/figtree. */
+@import "./vendor/figtree.css";
+
+/*
+ * Design tokens. These are shared with the other Ruby for Good applications; change
+ * them there, not here.
+ */
+@theme {
+  /* Typeface: Figtree, a warm humanist sans — friendly but credible. */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Brand = indigo. Neutrals = slate (Tailwind's default palette, not redeclared). */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+}
