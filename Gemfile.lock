@@ -729,6 +729,13 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (2.8.0)
       activerecord (>= 7.2)
+    tailwindcss-rails (4.7.0)
+      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.3.4)
+    tailwindcss-ruby (4.3.4-arm64-darwin)
+    tailwindcss-ruby (4.3.4-x86_64-darwin)
+    tailwindcss-ruby (4.3.4-x86_64-linux-gnu)
     terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
@@ -863,6 +870,7 @@ DEPENDENCIES
   standard-rails
   stimulus-rails
   strong_migrations
+  tailwindcss-rails (~> 4.6)
   terser
   ttfunk (~> 1.7.0)
   turbo-rails
