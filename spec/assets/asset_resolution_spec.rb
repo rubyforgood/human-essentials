@@ -11,7 +11,16 @@ RSpec.describe "Asset resolution", type: :request do
 
   it "serves no Bootstrap or AdminLTE stylesheet" do
     expect(load_path.find("application.css")).to be_nil
-    expect(Rails.root.join("app/assets/stylesheets")).not_to exist
+
+    # ADR 0011 removed this directory entirely, then the landing page gave it one new, narrow,
+    # already-documented use: landing.css, plain CSS for the public site (see that file's own
+    # header comment and design.md's "The public site"), never resolved through Propshaft's
+    # load path into application.css. Anything else showing up here would be exactly the silent
+    # reintroduction this test exists to catch.
+    stylesheets_dir = Rails.root.join("app/assets/stylesheets")
+    if stylesheets_dir.exist?
+      expect(Dir.children(stylesheets_dir)).to contain_exactly("landing.css")
+    end
   end
 
   # tailwindcss-rails compiles app/assets/tailwind/application.css, whose first line is

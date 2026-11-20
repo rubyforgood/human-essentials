@@ -10667,3 +10667,24 @@ label]`/link-in-text-block issues on pages this change never touches).
 - *Teach `<rfg-button>` what `data-confirm`/`data-disable-with` mean, instead of a dumb proxy.*
   Rejected — see above.
 
+## 2026-11-20 · Narrowing `asset_resolution_spec.rb`'s stale "no Bootstrap stylesheet" check
+
+**Decision.** `"serves no Bootstrap or AdminLTE stylesheet"` asserted
+`Rails.root.join("app/assets/stylesheets")).not_to exist` — true when ADR 0011 removed the
+directory, false since the landing-page work gave it one new file, `landing.css` (plain CSS for
+the public site, see that file's own header comment and design.md's "The public site"). Narrowed
+to: if the directory exists, it contains nothing but `landing.css`.
+
+**Rationale.** The blanket check and the actual risk it guards against came apart. The real risk —
+named in the test's own file-level comment — is Propshaft resolving an aggregated Bootstrap-era
+`application.css` back into existence, which the adjacent `load_path.find("application.css")).to
+be_nil` assertion already catches directly. "This directory has zero files, ever" was a stronger,
+coincidentally-true statement that stopped being true for an unrelated, legitimate reason, and nothing
+caught the gap until CI's Ruby-version fix (above) let `rspec` actually finish and report it.
+
+**Alternatives rejected.**
+- *Delete the directory-existence assertion entirely.* Rejected: it would stop catching a genuine
+  Bootstrap-era file reappearing there, which is the scenario this test is named for.
+- *Lower the bar further (e.g., skip the check, or assert nothing about the directory at all).*
+  Rejected for the same reason — the point is to keep this checkable, not to make the failure stop.
+
