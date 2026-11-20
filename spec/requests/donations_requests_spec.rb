@@ -245,14 +245,18 @@ RSpec.describe "Donations", type: :request do
       it "shows a print button" do
         get donation_path(id: donation.id)
         page = Nokogiri::HTML(response.body)
-        pdf = page.at_css("a[href*='#{print_donation_path(id: donation.id)}']")
+        # essentials_link_button now renders through <rfg-button> (vendor/javascript/rfg-button.js,
+        # Ruby for Good's design system -- see ADR 14 there), which carries its href as a real
+        # attribute on the host; a request spec parses the raw server response and never runs the
+        # JS that would turn it into an <a>, so that's what's actually checkable here.
+        pdf = page.at_css("a[href*='#{print_donation_path(id: donation.id)}'], rfg-button[href*='#{print_donation_path(id: donation.id)}']")
         expect(pdf.text).to include("Print")
       end
 
       it "shows an edit action" do
         get donation_path(id: donation.id)
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
+        edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}'], rfg-button[href='#{edit_donation_path(id: donation.id)}']")
         expect(edit).to be_present
         expect(response.body).not_to match(/reactivate these items:/)
       end

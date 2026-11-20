@@ -53,6 +53,12 @@ async function auditPage(page, path) {
         if (c.includes("border-slate-300")) return "secondary";
         if (c.includes("hover:bg-rose-50")) return "ghost-danger";
         if (c.includes("hover:bg-slate-100")) return "ghost";
+        // essentials_link_button now renders through <rfg-button> (vendor/javascript/rfg-button.js,
+        // Ruby for Good's design system -- see ADR 14 there), which carries variant as a real
+        // attribute on the host rather than a Tailwind utility class on the rendered control --
+        // nothing to read back from className for these. Read the attribute instead.
+        const host = el.closest("rfg-button");
+        if (host) return host.getAttribute("variant") || "primary";
         return "unknown";
       };
 

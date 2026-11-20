@@ -36,3 +36,7 @@ pin "tslib", to: "https://ga.jspm.io/npm:tslib@2.8.1/tslib.es6.mjs" # @2.8.1
 # Rails.env.test?. Preloading is on by default in importmap-rails 2.x, which pulled it into
 # every page in every environment.
 pin "sinon", preload: false # @21.0.0
+# Not on the npm registry yet — vendored from rubyforgood/designsystem's standalone build
+# (Lit bundled in), the same way filterrific/rrule/tslib are. See the header comment in
+# vendor/javascript/rfg-button.js for provenance and how to update it.
+pin "rfg-button", to: "rfg-button.js", preload: true

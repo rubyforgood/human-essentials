@@ -17,6 +17,10 @@ import "@rails/actiontext"
 
 import 'controllers'
 
+// Registers <rfg-button> as a custom element; see essentials_ui_helper.rb's
+// essentials_link_button for where it's rendered from.
+import "rfg-button"
+
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/distributions_and_transfers'

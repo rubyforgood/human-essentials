@@ -36,7 +36,21 @@ RSpec.describe "Partner groups page", type: :system, js: true do
     actions = find('[data-page-header="actions"]')
     buttons = actions.all("a,button")
     expect(buttons.size).to be <= 3
-    expect(buttons.count { |b| b[:class].to_s.include?("bg-brand-600") }).to eq(1)
+
+    # The variant survives either in the class the old helper emitted directly, or -- for
+    # essentials_link_button, which now renders through <rfg-button> (vendor/javascript/rfg-button.js,
+    # see designsystem's ADR 14) -- as a real attribute on the host, since the rendered control no
+    # longer carries a Tailwind utility class at all. Same fix as bin/design/button-audit.js's
+    # own variantOf, for the same reason.
+    primaries = page.evaluate_script(<<~JS)
+      [...document.querySelectorAll('[data-page-header="actions"] a, [data-page-header="actions"] button')]
+        .filter((el) => {
+          if (el.className.includes("bg-brand-600")) return true;
+          const host = el.closest("rfg-button");
+          return host ? (host.getAttribute("variant") || "primary") === "primary" : false;
+        }).length
+    JS
+    expect(primaries).to eq(1)
   end
 
   it "does not announce the links as a tablist" do

@@ -10535,3 +10535,60 @@ move between steps and the focus ring is drawn around the step.
 
 **Not done.** No phone-sized crops of the screens. No screen for partner agencies. Not tried
 with a screen reader. Not looked at in Safari or Firefox.
+---
+
+## 2026-11-20 · essentials_link_button renders through `<rfg-button>`, a client-JS requirement for every navigation link
+
+**Decision.** `essentials_link_button` (the `GET`/navigation half of the button helper — 158 call
+sites, 108 view files) now renders `<rfg-button>` internally, a Web Component vendored from Ruby
+for Good's design system (`vendor/javascript/rfg-button.js`). The Ruby call site API is unchanged;
+every one of those 108 files was untouched. `essentials_action_button` (the `button_to`/mutating
+half) is deliberately **not** migrated in this pass — see below.
+
+**Rationale.** ADR 14 in the design system repo names this migration as the real "any app"
+portability proof for its component layer, the same role `examples/reference-app` plays for its
+audit suite. Before touching any real call site, three concrete blockers were measured, not
+assumed: a shadow-rendered submit button doesn't participate in an ancestor `<form>`'s submission;
+rails-ujs's `data-confirm`/`data-disable-with` guards are wired by tag/attribute CSS selectors
+that never match a custom element tag; and this app's own pinned `capybara`/`cuprite` versions
+cannot see into a shadow root at all via `click_link`/`have_link`. All three are resolved by
+converting `<rfg-button>` to light DOM (done in the design system repo, not here).
+
+**The accepted cost, stated plainly:** a `<rfg-button href="...">Label</rfg-button>` has no real
+`<a>` tag at all until client-side JS runs — confirmed directly: this app's own request specs,
+which parse raw server HTML with Nokogiri and never execute JS, found no anchor where one used to
+be, which is exactly correct — there genuinely isn't one yet. A plain `<a href>` works regardless
+of whether CSS or JS ever loads; this does not. If `vendor/javascript/rfg-button.js` fails to load
+for any reason (a flaky network, an ad blocker, a CSP misconfiguration), every migrated navigation
+link in the app becomes inert, unstyled text with no `href` — worse than a visual regression, a
+functional dead end. This is weighed against this app's own "no build step, works everywhere"
+posture (ADR 0012) and is a real tension with it, not a free upgrade.
+
+**Why accepted anyway:** this is how Web Components work industry-wide — Carbon's and Shoelace's
+own web-components flavors carry the identical property — and it's the only way to get an
+installable, tokens-driven component instead of hand-built markup audited after the fact. The
+request specs that asserted on the raw `<a>` tag were updated to check for either shape
+(`a[href=...], rfg-button[href=...]`), matching what the server actually, honestly guarantees
+without JS — the href is present and correct in the server response; activating it is not,
+until JS runs. Two genuine, previously-unknown component bugs surfaced by running this app's full
+system-spec suite (not a sample) — a crash under in-place AJAX/Turbo content replacement, and a
+~20px-per-button width regression from an un-hidden insertion marker — are fixed in the design
+system repo itself (ADR 14), not worked around here.
+
+**Alternatives rejected.**
+- *Keep `essentials_link_button` as hand-built Tailwind markup, forever.* Rejected: it's the
+  helper design.md and ADR 14 both name as the natural first migration target, and the component
+  already correctly implements its exact `available: false`/"inert on arrival" fallback — this
+  helper hand-rolled, by hand, the same rule the component now owns once, more thoroughly tested.
+- *Also migrate `essentials_action_button` in this pass.* Rejected for now: it needs
+  `<rfg-button>` to forward `data-confirm`/`data-disable-with`/`data-tooltip`/`data-turbo` onto its
+  internal control (today only `aria-label` is proxied), and re-verification against rails-ujs's
+  confirm/disable-with wiring and the `turbo: false` Turbo-frame bug this helper's own comments
+  already document in detail. Real, separate work — not bundled in to avoid under-testing either
+  half.
+- *Server-side fallback markup for the no-JS case (e.g., a `<noscript>` plain link).* Not pursued:
+  it would need maintaining two renderings of every link in step, which is exactly the
+  "two mechanisms for one job" pattern this app's own design.md already argues against elsewhere.
+  Named here as a real option if the JS-dependency cost turns out to matter in practice, not
+  dismissed outright.
+

@@ -677,6 +677,13 @@ One treatment per role. The **variant** carries the meaning, the **size** carrie
 `button_to`, so the verb, the CSRF token and `disable_with` are handled for you. A thing that
 changes state is never a link.
 
+**`essentials_link_button` renders through `<rfg-button>`** (Ruby for Good's design system —
+`vendor/javascript/rfg-button.js`, see `docs/architecture/decisions/0014-*.md` there), a Web
+Component, not hand-built Tailwind markup. The Ruby call site is unchanged; what changed is that
+the actual `<a>` tag only exists once client JS runs. This is an accepted, named cost, not an
+oversight — see `docs/design-decisions.md`'s entry on it — and `essentials_action_button` (the
+`button_to`/mutating half) is deliberately **not** migrated yet, for a separate reason given there.
+
 **`UiHelper` is the older API and it still works.** `new_button_to`, `edit_button_to`,
 `delete_button_to`, `submit_button` and the rest have ~100 call sites; they now emit design
 system classes and Bootstrap Icons, and their `type:`/`size:` options map onto the variants

@@ -27,7 +27,13 @@ RSpec.describe "Button icons", type: :system, js: true do
   def controls_on_page
     page.evaluate_script(<<~JS)
       [...document.querySelectorAll("a, button, input[type=submit]")]
-        .filter((el) => el.classList.contains("inline-flex") && el.classList.contains("rounded-lg"))
+        .filter((el) =>
+          // Either the old helper's own Tailwind utility classes, directly on the control, or --
+          // for essentials_link_button, which now renders through <rfg-button>
+          // (vendor/javascript/rfg-button.js, see designsystem's ADR 14) -- a real .control
+          // element inside one, since the rendered control no longer carries those classes itself.
+          (el.classList.contains("inline-flex") && el.classList.contains("rounded-lg")) ||
+          el.closest("rfg-button"))
         .map((el) => {
           const clone = el.cloneNode(true);
           clone.querySelectorAll(".sr-only").forEach((n) => n.remove());

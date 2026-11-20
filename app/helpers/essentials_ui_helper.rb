@@ -232,25 +232,26 @@ module EssentialsUiHelper
 
   # A link styled as a button. Use for navigation (GET).
   #
-  # `available: false` renders a non-interactive `<span>` rather than an `<a>`, because **a link
-  # cannot be disabled** -- it stays focusable and clickable by keyboard and announces nothing.
-  # This is the treatment pagination's ends already get, and the styling hangs off the attribute so
-  # markup and appearance cannot disagree. `reason:` is sr-only text saying why, which design.md
-  # asks of every unavailable action -- "greyed out" on its own leaves the reader guessing.
+  # Renders through `<rfg-button>` (vendor/javascript/rfg-button.js — Ruby for Good's design
+  # system, see designsystem's ADR 14) rather than hand-built Tailwind markup. The component
+  # already implements this helper's own `available: false` fallback: `disabled`/`reason` become
+  # a non-interactive `<span role="link" aria-disabled="true">` rather than an `<a>`, because **a
+  # link cannot be disabled** -- it stays focusable and announces why via `reason`, sr-only text
+  # design.md asks of every unavailable action -- "greyed out" on its own leaves the reader
+  # guessing. `href` is always passed, available or not: that's what selects the component's
+  # link-shaped render path at all, rather than its plain-button one.
   def essentials_link_button(label, path, variant: :primary, size: :md, icon: nil,
     available: true, reason: nil, **html_attrs)
-    classes = essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
-    body = safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
+    icon_el = icon ? tag.i(nil, class: icon, slot: "icon", aria: {hidden: true}) : nil
+    content = safe_join([icon_el, label].compact, " ")
 
+    attrs = html_attrs.merge(href: path, variant: variant, size: size)
     unless available
-      content = safe_join([body, (tag.span(reason, class: "sr-only") if reason)].compact)
-      return tag.span(content, class: "#{classes} cursor-not-allowed opacity-60",
-        aria: {disabled: true}, **html_attrs)
+      attrs[:disabled] = true
+      attrs[:reason] = reason if reason
     end
 
-    link_to path, class: classes, **html_attrs do
-      body
-    end
+    content_tag("rfg-button", content, **attrs)
   end
 
   # A real button that submits or mutates. `method:` routes it through button_to so the

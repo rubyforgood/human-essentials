@@ -404,7 +404,11 @@ RSpec.describe "Purchases", type: :request do
         get purchase_path(id: purchase.id)
         expect(response).to be_successful
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
+        # essentials_link_button now renders through <rfg-button> (vendor/javascript/rfg-button.js,
+        # Ruby for Good's design system -- see ADR 14 there), which carries its href as a real
+        # attribute on the host; a request spec parses the raw server response and never runs the
+        # JS that would turn it into an <a>, so that's what's actually checkable here.
+        edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}'], rfg-button[href='#{edit_purchase_path(id: purchase.id)}']")
         expect(edit).to be_present
         expect(response.body).not_to match(/reactivate these items:/)
       end
@@ -522,7 +526,8 @@ RSpec.describe "Purchases", type: :request do
         get purchase_path(id: purchase.id)
         page = Nokogiri::HTML(response.body)
 
-        print_link = page.at_css("a[href*='#{print_purchase_path(id: purchase.id)}']")
+        # See the comment on the "shows an edit action" example above re: <rfg-button>.
+        print_link = page.at_css("a[href*='#{print_purchase_path(id: purchase.id)}'], rfg-button[href*='#{print_purchase_path(id: purchase.id)}']")
         expect(print_link).to be_present
         # A *page header* button, not a row action -- it keeps its visible label. Icon-only applies
         # to the actions column in a table, where a frozen column has to pay for its width.
@@ -530,7 +535,8 @@ RSpec.describe "Purchases", type: :request do
 
         # `purchase_id`, which distributions#new now understands -- the button could not exist
         # before, because copy_line_items hardcoded a donation.
-        distribute = page.at_css("a[href*='purchase_id=#{purchase.id}']")
+        # See the comment on the "shows an edit action" example above re: <rfg-button>.
+        distribute = page.at_css("a[href*='purchase_id=#{purchase.id}'], rfg-button[href*='purchase_id=#{purchase.id}']")
         expect(distribute).to be_present
         expect(distribute.text).to include("Start a distribution")
       end

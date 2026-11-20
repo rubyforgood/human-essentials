@@ -208,7 +208,11 @@ RSpec.describe 'Requests', type: :request do
           expect(cancel_button).to be_nil
           expect(fulfill_button).to be_nil
 
-          print_link = page.at_css("a[href='/requests/#{cancelled_request.id}/print_picklist']")
+          # essentials_link_button now renders through <rfg-button> (vendor/javascript/rfg-button.js,
+          # Ruby for Good's design system -- see ADR 14 there), which carries its href as a real
+          # attribute on the host; a request spec parses the raw server response and never runs the
+          # JS that would turn it into an <a>, so that's what's actually checkable here.
+          print_link = page.at_css("a[href='/requests/#{cancelled_request.id}/print_picklist'], rfg-button[href='/requests/#{cancelled_request.id}/print_picklist']")
           expect(print_link).to be_present
         end
       end
