@@ -10592,3 +10592,78 @@ system repo itself (ADR 14), not worked around here.
   Named here as a real option if the JS-dependency cost turns out to matter in practice, not
   dismissed outright.
 
+## 2026-11-20 · essentials_action_button renders through `<rfg-button>`, built on `form_with` instead of `button_to`
+
+**Decision.** `essentials_action_button`'s `icon_only: false` (default) path — reached directly
+and via `essentials_record_actions`'s single-item branch — now renders through `<rfg-button
+type="submit">`, the same component `essentials_link_button` migrated onto above. The `icon_only:
+true` path (`essentials_row_icon_action`, 12 call sites, and `reinvite_user_link`, 1 call site)
+is **not** migrated — see "Alternatives rejected" below. The Ruby call site API is unchanged.
+
+**Why this needed more than extending a JS proxy, found before writing any Ruby.** The obvious
+plan — forward `data-confirm`/`data-disable-with`/`data-tooltip` onto `<rfg-button>`'s internal
+control the same way `aria-label` already was, then swap the helper's `button_to` call to render
+`<rfg-button>` instead of a plain `<button>` — turned out to rest on a false premise. Read directly
+from the installed Rails 8.1.4 gem source (`actionview-8.1.4/lib/action_view/helpers/url_helper.rb`),
+`button_to` given a block always does `content_tag("button", html_options, &block)`: the block
+supplies the button's *inner content*, never the tag itself. There is no way to make `<rfg-button>`
+*be* `button_to`'s submit control — at best it could nest *inside* the `<button>` `button_to`
+insists on generating, which solves nothing. The helper had to stop calling `button_to` and build
+the `<form>` directly with `form_with` (already used 9 other places in this codebase for the same
+CSRF-token/method-override job) — a bigger, different-shaped change than "extend a proxy," found
+by reading the actual dependency's source before writing a line of the new helper, not assumed
+from its documented API.
+
+**The generic-vs-Rails-specific judgement call.** `<rfg-button>` could have grown first-class
+support for confirm dialogs, disable-with guards, and loading states — making it more "complete,"
+at the cost of baking Rails/rails-ujs's specific attribute vocabulary into a component this design
+system's own README pitches as useful to any app. Instead, `<rfg-button>`'s proxy stays a plain,
+generic `data-*`/`aria-*`/`role` pass-through (designsystem ADR 14's second "Update") — it has no
+idea `data-confirm` triggers a dialog, the same way it has no idea what `href` or `variant` "mean"
+beyond its own documented vocabulary. rails-ujs and this app's own `confirm_dialog_controller.js`/
+`tooltip_controller.js` keep doing the actual work, unchanged, exactly as they do for a plain
+`<button>` today. The alternative (teach the component what Rails attributes mean) was rejected
+because it would make a genuinely portable piece of UI quietly Rails-shaped, for no gain a dumb
+proxy doesn't already give.
+
+**A real bug, found by reproducing the actual mechanism before touching this app at all.** The
+first version of the proxy *copied* each attribute onto the control and left the original on the
+host. Reproducing `confirm_dialog_controller.js` verbatim (in the designsystem repo, against a
+bare `<rfg-button type="submit" data-confirm="...">`) found that its replay step
+(`trigger.click()`, after stripping `data-confirm` and before restoring it) silently failed to
+submit: the controller's `closest("[data-confirm]")` matches the real control on the first click
+(the actual click target), strips its copy, replays — and the replayed click bubbles past the
+host, which still carries its own un-stripped copy, so `closest()` matches *that* instead and the
+controller intercepts its own replay a second time. Fixed in the component (move the attribute
+instead of mirroring it, so there's only ever one copy — see designsystem ADR 14) before this app
+was ever involved, then re-confirmed here against the real `confirm_dialog_controller.js`: signed
+in as `org_admin1@example.com`, opened a real audit, clicked Delete, confirmed the dialog actually
+appeared with the right message, accepted it, and confirmed the record actually changed state
+(status: `finalized`) — not just that the page navigated somewhere.
+
+**Verification.** Full `rspec` run (not a sample): 3523 examples, 3 failures — the same two
+pre-existing flakes Phase 7 already confirmed via `git stash` (`barcode_item_system_spec.rb:201`,
+`partners/children_system_spec.rb:32`), plus one newly-surfaced-but-pre-existing failure
+(`spec/assets/asset_resolution_spec.rb:12`, expecting `app/assets/stylesheets` not to exist —
+`app/assets/stylesheets/landing.css` was added by the unrelated landing-page work that merged in
+during Phase 7's rebase; confirmed via the same `git stash` discipline to fail identically without
+this change). `confirm-audit.js`: 49 confirmations across 23 pages, all the app's own styled
+dialog, none falling through to a native `window.confirm`. `button-audit.js`, `wcag-audit.js`,
+`keyboard-audit.js`: no new findings (the two pre-existing WCAG violations found were confirmed,
+via the same `git stash` check, to be identical with and without this change — unrelated `a[aria-
+label]`/link-in-text-block issues on pages this change never touches).
+
+**Alternatives rejected.**
+- *Also migrate `icon_only: true`.* Rejected: it's a distinct 28px circular treatment
+  (`essentials_row_icon_classes`), not `<rfg-button>`'s primary/secondary/danger/ghost × sm/md
+  vocabulary — the same reason `essentials_row_icon_link` was already excluded when
+  `essentials_link_button` migrated. Unifying it would mean teaching `<rfg-button>` a new visual
+  shape, a separate, larger decision, not a natural extension of this pass.
+- *Also migrate `_menu_items.html.erb`'s raw `button_to` calls (row-level Delete/Deactivate/etc. in
+  every table).* Rejected: that file already documents, in its own comment, why it doesn't use
+  `essentials_action_button` — the helper's `inline-flex`/`inline-block` wrapper breaks a
+  full-width menu-item row (measured on `/vendors`). `<rfg-button>`'s host is itself `display:
+  inline-flex`, so the identical conflict would recur. Left unchanged.
+- *Teach `<rfg-button>` what `data-confirm`/`data-disable-with` mean, instead of a dumb proxy.*
+  Rejected — see above.
+

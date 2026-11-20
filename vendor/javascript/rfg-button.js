@@ -1,4 +1,4 @@
-// Vendored from rubyforgood/designsystem, commit fdb70a0e67c3e1a9897fb1392e1e0545dcabfeae
+// Vendored from rubyforgood/designsystem, commit 8b0d935f1cb49e474be14ce1d092168fc639159a
 // (2026-11-20): dist/standalone/button.mjs — <rfg-button>, with Lit bundled in (the "standalone"
 // build target; see that repo's components/README.md). Not on the npm registry yet, and this
 // app has no Node build step (ADR 0012), so this is vendored the same way filterrific.js,
@@ -1260,6 +1260,10 @@ o4 == null ? void 0 : o4({ LitElement: i3 });
 // components/button.js
 var VARIANTS = /* @__PURE__ */ new Set(["primary", "secondary", "danger", "ghost"]);
 var SIZES = /* @__PURE__ */ new Set(["sm", "md"]);
+var OWN_ATTRS = /* @__PURE__ */ new Set(["variant", "size", "href", "disabled", "reason", "type"]);
+function isProxiedAttr(name) {
+  return !OWN_ATTRS.has(name) && (name === "role" || name.startsWith("aria-") || name.startsWith("data-"));
+}
 var STYLE_ID = "rfg-button-styles";
 var STYLES = i`
   rfg-button {
@@ -1404,11 +1408,17 @@ var RfgButton = class extends i3 {
     return this;
   }
   static properties = {
+    /** What the action means — not decided per-button. See design.md's Buttons table. */
     variant: { type: String, reflect: true },
+    /** What context the button appears in: `sm` inside a table row or dense toolbar, `md` for page/section actions. */
     size: { type: String, reflect: true },
+    /** Switches the component to link mode: a real `<a>`, for navigation (a GET), never a state-changing action. */
     href: { type: String },
+    /** Native `disabled` in button mode. In link mode, renders "inert on arrival" instead — a focusable `aria-disabled` control. */
     disabled: { type: Boolean, reflect: true },
+    /** Visually-hidden text explaining why a disabled link is unavailable — only meaningful alongside `href` and `disabled`. */
     reason: { type: String },
+    /** The native `type` attribute in button mode (`button`/`submit`/`reset`). Ignored in link mode. */
     type: { type: String }
   };
   constructor() {
@@ -1425,8 +1435,14 @@ var RfgButton = class extends i3 {
     super.connectedCallback();
     ensureStylesInjected();
     this._syncContent();
-    this._observer = new MutationObserver(() => this._syncContent());
-    this._observer.observe(this, { childList: true });
+    this._observer = new MutationObserver((mutations) => {
+      if (mutations.some((m3) => m3.type === "childList")) {
+        this._syncContent();
+      } else {
+        this.requestUpdate();
+      }
+    });
+    this._observer.observe(this, { childList: true, attributes: true });
   }
   disconnectedCallback() {
     var _a4;
@@ -1447,8 +1463,10 @@ var RfgButton = class extends i3 {
       console.warn(`<rfg-button> received unknown size "${this.size}"; expected one of ${[...SIZES].join(", ")}.`);
     }
   }
-  // Proxy `aria-label` from the host onto the internal control, since the host itself has no
-  // accessible-name-bearing role — the rendered <a>/<button> is what assistive tech sees. Also
+  // Proxies `data-*`/`aria-*`/`role` from the host onto the internal control (see
+  // `isProxiedAttr`) — the host itself has no accessible-name-bearing role, and a progressive-
+  // enhancement library (rails-ujs) or a delegated-listener controller (a confirm dialog, a
+  // tooltip) matches against a real element's own attributes, not a custom element's tag. Also
   // re-parents the captured original content into the freshly rendered control — a light-DOM
   // render doesn't move pre-existing children into place the way a shadow <slot> would.
   updated() {
@@ -1459,11 +1477,10 @@ var RfgButton = class extends i3 {
     const labelMarker = control.querySelector(".rfg-button-label-position");
     if (iconMarker) placeInOrder(this._iconNodes, iconMarker);
     if (labelMarker) placeInOrder(this._labelNodes, labelMarker);
-    const hostLabel = this.getAttribute("aria-label");
-    if (hostLabel) {
-      control.setAttribute("aria-label", hostLabel);
-    } else {
-      control.removeAttribute("aria-label");
+    for (const attr of [...this.attributes]) {
+      if (!isProxiedAttr(attr.name)) continue;
+      control.setAttribute(attr.name, attr.value);
+      this.removeAttribute(attr.name);
     }
     this._warnIfNoAccessibleName(control);
   }
@@ -1544,3 +1561,4 @@ lit-html/node/is-server.js:
    * SPDX-License-Identifier: BSD-3-Clause
    *)
 */
+//# sourceMappingURL=button.mjs.map

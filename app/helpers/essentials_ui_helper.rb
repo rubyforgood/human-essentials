@@ -254,32 +254,39 @@ module EssentialsUiHelper
     content_tag("rfg-button", content, **attrs)
   end
 
-  # A real button that submits or mutates. `method:` routes it through button_to so the
-  # verb, CSRF token and disable_with guard are all handled.
-  # `icon_only: true` renders the same control as `essentials_row_icon_link` -- 28px, the label as
-  # `aria-label` and `data-tooltip` rather than as text. It is an option here rather than a second
-  # helper because everything below this line (the `turbo: false`, the confirm wiring, the derived
-  # confirm label and tone) was hard enough to get right once.
+  # A real button that submits or mutates.
+  #
+  # `icon_only: true` (reached via `essentials_row_icon_action`) stays hand-built, unmigrated --
+  # it's a distinct 28px circular treatment (`essentials_row_icon_classes`), not `<rfg-button>`'s
+  # primary/secondary/danger/ghost x sm/md vocabulary, the same reason `essentials_row_icon_link`
+  # was already excluded when `essentials_link_button` migrated. See docs/design-decisions.md.
+  #
+  # The `icon_only: false` (default) path renders through `<rfg-button>`
+  # (vendor/javascript/rfg-button.js -- designsystem's ADR 14), the same component
+  # `essentials_link_button` uses -- but as a real `type="submit"` control inside a hand-built
+  # `form_with`, not `button_to`: `button_to` can only ever wrap its block in a `<button>` tag of
+  # its own (confirmed from the actual Rails source, `action_view/helpers/url_helper.rb`), never
+  # swap that tag for a custom element, so the form has to be built directly. `form_with` already
+  # gives the CSRF token and the method-override hidden field for free, the same way `button_to`
+  # does internally -- this isn't new form-building machinery, just the same two ingredients
+  # assembled by hand instead of by `button_to`.
+  #
+  # `data-confirm`/`data-disable-with`/`data-confirm-label`/`data-confirm-tone`/`data-turbo` all go
+  # on the `<rfg-button>` host, exactly where `button_to` used to put them on its own generated
+  # `<button>` (confirmed from the same source: its `data:` option becomes an attribute on the
+  # button it builds, not the form). `<rfg-button>`'s generalized attribute proxy (designsystem
+  # ADR 14's second "Update") moves them onto the real control, which is what rails-ujs's
+  # tag-selector matching and `confirm_dialog_controller.js`'s `closest()`-based interception both
+  # need -- the same structural reason `essentials_link_button`'s migration needed light DOM.
+  #
+  # `data-turbo: false` is the fix for a real, measured bug (storage_location_system_spec:167,
+  # failing 4 runs in 8 before, 0 in 20 after): these buttons sit in table rows inside a results
+  # turbo-frame, and Turbo's `elementIsNavigatable` returns true for anything inside a frame *even
+  # when Drive is off*, so without it Turbo intercepts the submission and sometimes fails to
+  # promote the resulting redirect to a top-level visit correctly. A row action is a whole-page
+  # navigation ending in a redirect and a flash, not a frame update, so opting out is correct here.
   def essentials_action_button(label, path, method:, variant: :primary, size: :md, icon: nil,
     confirm: nil, icon_only: false, **html_attrs)
-    classes = if icon_only
-      essentials_row_icon_classes(tone: (%i[danger ghost_danger].include?(variant.to_sym) ? :danger : :ghost))
-    else
-      essentials_button_classes(variant: variant, size: size, extra: html_attrs.delete(:class))
-    end
-    # `turbo: false`, so the browser submits the form itself.
-    #
-    # These buttons sit in table rows, and the tables sit inside a results turbo-frame. Turbo's
-    # `elementIsNavigatable` returns true for anything inside a frame *even when Drive is off*,
-    # so Turbo intercepted the submission, fetched the redirect, and then had to promote it to a
-    # top-level visit because the frame carries `target="_top"`. That last step is where it came
-    # apart: the confirm was accepted, the submit event fired, the server handled the PUT -- and
-    # about half the time the page never changed. Reactivate stayed on screen with the previous
-    # flash still above it.
-    #
-    # A row action is a whole-page navigation that ends in a redirect and a flash, not a frame
-    # update, so opting out is what it wanted all along. Measured on
-    # storage_location_system_spec:167, which had been failing 4 runs in 8: 0 in 20 after.
     data = {disable_with: "Please wait...", turbo: false}.merge(html_attrs.delete(:data) || {})
     # data-confirm, not data-turbo-confirm: rails-ujs is what this app loads, and Turbo would
     # only act on its own attribute where Turbo Drive is enabled -- which is per-action here.
@@ -293,17 +300,27 @@ module EssentialsUiHelper
     end
 
     if icon_only
+      classes = essentials_row_icon_classes(tone: (%i[danger ghost_danger].include?(variant.to_sym) ? :danger : :ghost))
       html_attrs["aria-label"] ||= label
       data[:tooltip] ||= label
+
+      return button_to path, method: method, class: classes, form_class: "inline-block",
+        data: data, **html_attrs do
+          tag.i(nil, class: icon, aria: {hidden: true})
+        end
     end
 
-    button_to path, method: method, class: classes, form_class: "inline-block",
-      data: data, **html_attrs do
-      if icon_only
-        tag.i(nil, class: icon, aria: {hidden: true})
-      else
-        safe_join([(tag.i(nil, class: icon, aria: {hidden: true}) if icon), label].compact, " ")
-      end
+    icon_el = icon ? tag.i(nil, class: icon, slot: "icon", aria: {hidden: true}) : nil
+    content = safe_join([icon_el, label].compact, " ")
+    params = html_attrs.delete(:params)
+
+    form_with(url: path, method: method, class: "inline-block") do
+      safe_join([
+        # `button_to`'s own `params:` behavior, rebuilt directly with the same `to_form_params`
+        # it calls internally -- one nested hidden `<input>` per leaf value.
+        (params ? safe_join(to_form_params(params).map { |p| tag.input(type: "hidden", name: p[:name], value: p[:value], autocomplete: "off") }) : nil),
+        content_tag("rfg-button", content, type: "submit", variant: variant, size: size, data: data, **html_attrs)
+      ].compact)
     end
   end
 

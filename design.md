@@ -673,16 +673,25 @@ One treatment per role. The **variant** carries the meaning, the **size** carrie
 <button class="<%= essentials_button_classes(variant: :secondary, size: :sm) %>">Filter</button>
 ```
 
-`essentials_link_button` is a `GET` — it navigates. `essentials_action_button` goes through
-`button_to`, so the verb, the CSRF token and `disable_with` are handled for you. A thing that
-changes state is never a link.
+`essentials_link_button` is a `GET` — it navigates. `essentials_action_button` builds its own
+`form_with` (not `button_to` — see below), so the verb, the CSRF token and `disable_with` are
+handled for you either way. A thing that changes state is never a link.
 
-**`essentials_link_button` renders through `<rfg-button>`** (Ruby for Good's design system —
+**Both render through `<rfg-button>`** (Ruby for Good's design system —
 `vendor/javascript/rfg-button.js`, see `docs/architecture/decisions/0014-*.md` there), a Web
-Component, not hand-built Tailwind markup. The Ruby call site is unchanged; what changed is that
-the actual `<a>` tag only exists once client JS runs. This is an accepted, named cost, not an
-oversight — see `docs/design-decisions.md`'s entry on it — and `essentials_action_button` (the
-`button_to`/mutating half) is deliberately **not** migrated yet, for a separate reason given there.
+Component, not hand-built Tailwind markup. Both Ruby call sites are unchanged; what changed is that
+the actual `<a>`/`<button>` tag only exists once client JS runs. This is an accepted, named cost,
+not an oversight — see `docs/design-decisions.md`'s entries on it.
+
+**`essentials_action_button` doesn't call `button_to` at all.** `button_to` can only ever wrap its
+block in a `<button>` tag it generates itself, never swap that tag for a custom element — so the
+non-`icon_only` path builds a `form_with` directly and renders `<rfg-button type="submit">` as its
+visible content, with `data-confirm`/`data-disable-with`/`data-turbo` set on the component the same
+way `button_to` used to set them on its own `<button>`. `<rfg-button>`'s attribute proxy (a plain,
+generic `data-*`/`aria-*`/`role` pass-through — it has no idea what `data-confirm` means) carries
+them onto the real control, where rails-ujs and `confirm_dialog_controller.js` both need them.
+`icon_only: true` (reached via `essentials_row_icon_action`) is **not** migrated — see
+`docs/design-decisions.md`.
 
 **`UiHelper` is the older API and it still works.** `new_button_to`, `edit_button_to`,
 `delete_button_to`, `submit_button` and the rest have ~100 call sites; they now emit design
