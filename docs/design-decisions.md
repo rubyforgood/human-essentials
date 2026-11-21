@@ -10787,3 +10787,45 @@ record.
   that number is Local, not portable; hardcoding it would bake one app's layout constant into a
   component meant for any app.
 
+## 2026-11-21 · `/distributions/schedule`'s calendar range/layout switches render through `<rfg-segmented-control>`
+
+This pattern — two `role="group"` rows of `aria-pressed` buttons, `essentials_view_toggle_classes`
+for the styling — was the real evidence the designsystem repo's own ADR 14 built
+`<rfg-segmented-control>` from in the first place: a Material/Carbon/Primer comparison sweep found
+the component worth having, then a targeted evidence pass over this app found the one real instance
+to build it against, rather than inventing one. Migrating this call site onto the ported component
+is that evidence loop closing: the component's own `role="group"`/`aria-pressed`/no-radios reasoning
+and its `value`/`rfg-change` event contract were both written down *from* this view's existing
+comments, unchanged, so there was no new design decision to make here — only wiring.
+
+**What changed.** `vendor/javascript/rfg-segmented-control.js` vendored the same way
+`rfg-button.js` already is (`dist/standalone/segmented-control.mjs`, Lit bundled in, no Node build
+step per ADR 0012), pinned in `config/importmap.rb`, registered in `application.js`. The two button
+groups in `schedule.html.erb` now render `<rfg-segmented-control>` wrapping plain
+`button_tag label, type: "button", value: "..."` children, instead of a hand-built `role="group"`
+`<div>` with `essentials_view_toggle_classes`-styled buttons. `essentials_view_toggle_classes`
+itself is deleted — it had exactly these two call sites and the component now owns that styling.
+
+**`calendar_controller.js`'s interface to the toolbar changed shape**, not its behavior:
+`switchRange`/`switchLayout` now read `event.detail.value` off the `rfg-change` CustomEvent instead
+of `event.currentTarget.dataset.calendarRange`/`calendarLayout` off a per-button `click`, since the
+component resolves which segment was pressed before it ever dispatches. `markPressed` (manually
+setting `aria-pressed` on every button) became `syncGroupValues`, which just assigns the component's
+`value` property — `<rfg-segmented-control>` owns `aria-pressed` on its own children once `value`
+matches one of them, the same division of labor `<rfg-button>` already has between Ruby call sites
+and the component's own rendering.
+
+**Verification.** `spec/system/distribution_system_spec.rb`'s full calendar describe block (82
+examples covering both axes, the URL round-trip, back/forward, narrow-window defaults, and the
+legacy `?view=` parameter) passes unchanged in substance — eight assertions updated from
+`[data-calendar-range][aria-pressed='true']` to `rfg-segmented-control[label='Calendar range']
+button[aria-pressed='true']`, since the per-button `data-calendar-range`/`data-calendar-layout`
+attributes this read no longer exist (the value the component needs is `value`, not a custom data
+attribute a Stimulus target used to read). `rubocop`/`erb_lint` clean on every touched file.
+
+**Alternatives rejected.**
+- *Keep `data-calendar-range`/`data-calendar-layout` on each button alongside `value`, so the old
+  spec selectors keep working untouched.* Rejected: carrying a second, now-redundant attribute
+  whose only purpose is not having to touch eight spec lines is exactly the kind of drift this
+  project's own discipline argues against — fix the real call site, update what asserts on it.
+

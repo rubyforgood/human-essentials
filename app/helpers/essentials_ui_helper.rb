@@ -141,18 +141,6 @@ module EssentialsUiHelper
     render("shared/essentials/row_actions", label: label, size: :md, items: items)
   end
 
-  # One segment of a segmented toggle -- the calendar's range and layout switchers. Its state is
-  # `aria-pressed`, and the styling hangs off the attribute so markup and appearance cannot
-  # disagree. `first:` drops the divider, which belongs between segments rather than before them.
-  def essentials_view_toggle_classes(first: false)
-    [
-      "px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors",
-      "hover:bg-slate-50 aria-pressed:bg-slate-100 aria-pressed:text-slate-900",
-      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
-      ("border-l border-slate-300" unless first)
-    ].compact.join(" ")
-  end
-
   # Two short fields side by side inside a form.
   #
   #   <%= essentials_field_row do %>

@@ -82,8 +82,8 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_button("Grid")
       expect(page).to have_button("List")
       expect(page).to have_no_button("Day")
-      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Month")
-      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar range'] button[aria-pressed='true']", text: "Month")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar layout'] button[aria-pressed='true']", text: "Grid")
     end
 
     # All four combinations, including a whole month as one list -- which the three-button switcher
@@ -125,8 +125,8 @@ RSpec.feature "Distributions", type: :system do
       # And a link straight to it opens there.
       visit "#{schedule_distributions_path}?range=week&layout=grid"
       expect(page).to have_css(".fc-dayGridWeek-view")
-      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Week")
-      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar range'] button[aria-pressed='true']", text: "Week")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar layout'] button[aria-pressed='true']", text: "Grid")
     end
 
     # `?view=` was the parameter before the switcher split in two. Links shared while it existed
@@ -157,7 +157,7 @@ RSpec.feature "Distributions", type: :system do
       # pushState rather than replaceState, or Back would leave the URL behind and the view alone.
       expect(page).to have_current_path(schedule_distributions_path, ignore_query: false)
       expect(page).to have_css(".fc-dayGridMonth-view")
-      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Month")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar range'] button[aria-pressed='true']", text: "Month")
     end
 
     # A month grid on a phone is unreadable, so a narrow window opens on the week, as a list --
@@ -167,8 +167,8 @@ RSpec.feature "Distributions", type: :system do
       visit schedule_distributions_path
 
       expect(page).to have_css(".fc-listWeek-view")
-      expect(page).to have_css("[data-calendar-range][aria-pressed='true']", text: "Week")
-      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "List")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar range'] button[aria-pressed='true']", text: "Week")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar layout'] button[aria-pressed='true']", text: "List")
     end
 
     # The bug the split was born from: "Week" once meant a grid above 992px and a list below it, and
@@ -182,7 +182,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Grid"
 
       expect(page).to have_css(".fc-dayGridWeek-view")
-      expect(page).to have_css("[data-calendar-layout][aria-pressed='true']", text: "Grid")
+      expect(page).to have_css("rfg-segmented-control[label='Calendar layout'] button[aria-pressed='true']", text: "Grid")
     end
 
     # `defaultView` and `eventLimit` are FullCalendar 4 spellings, and this app is on 6, so both

@@ -21,6 +21,10 @@ import 'controllers'
 // essentials_link_button for where it's rendered from.
 import "rfg-button"
 
+// Registers <rfg-segmented-control> as a custom element; see
+// app/views/distributions/schedule.html.erb for where it's rendered from.
+import "rfg-segmented-control"
+
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/distributions_and_transfers'

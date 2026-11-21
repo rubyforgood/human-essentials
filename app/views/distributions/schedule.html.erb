@@ -51,31 +51,27 @@
           Splitting them also reaches a whole month as one list, which three buttons could not
           express. FullCalendar has all four views already. See design.md.
 
-          `aria-pressed` rather than radios, because these toggle a state rather than submit a
-          value. The URL parameter is `layout` and not `format`: `format` is reserved by Rails
-          routing for the response MIME type, and `?format=grid` raised a 406 before rendering.
+          Renders through `<rfg-segmented-control>` (vendor/javascript/rfg-segmented-control.js --
+          designsystem's own ADR 14): this pattern was the real evidence behind that component, and
+          this is it migrated onto the ported version. `aria-pressed` rather than radios, because
+          these toggle a state rather than submit a value -- the component's own reasoning,
+          unchanged, since it was written down from here. The URL parameter is `layout` and not
+          `format`: `format` is reserved by Rails routing for the response MIME type, and
+          `?format=grid` raised a 406 before rendering.
         %>
-        <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
-             role="group" aria-label="Calendar range">
-          <% [["month", "Month"], ["week", "Week"]].each_with_index do |(value, label), index| %>
-            <%= button_tag label, type: "button",
-                  class: essentials_view_toggle_classes(first: index.zero?),
-                  "aria-pressed": "false",
-                  data: {calendar_range: value, action: "calendar#switchRange",
-                         calendar_target: "rangeButton"} %>
+        <%= content_tag("rfg-segmented-control", label: "Calendar range",
+              data: {calendar_target: "rangeGroup", action: "rfg-change->calendar#switchRange"}) do %>
+          <% [["month", "Month"], ["week", "Week"]].each do |(value, label)| %>
+            <%= button_tag label, type: "button", value: value %>
           <% end %>
-        </div>
+        <% end %>
 
-        <div class="inline-flex overflow-hidden rounded-lg border border-slate-300"
-             role="group" aria-label="Calendar layout">
-          <% [["grid", "Grid"], ["list", "List"]].each_with_index do |(value, label), index| %>
-            <%= button_tag label, type: "button",
-                  class: essentials_view_toggle_classes(first: index.zero?),
-                  "aria-pressed": "false",
-                  data: {calendar_layout: value, action: "calendar#switchLayout",
-                         calendar_target: "layoutButton"} %>
+        <%= content_tag("rfg-segmented-control", label: "Calendar layout",
+              data: {calendar_target: "layoutGroup", action: "rfg-change->calendar#switchLayout"}) do %>
+          <% [["grid", "Grid"], ["list", "List"]].each do |(value, label)| %>
+            <%= button_tag label, type: "button", value: value %>
           <% end %>
-        </div>
+        <% end %>
 
         <%#
           Jumping to a month in another year. Prev and Next move one step, so before this March next

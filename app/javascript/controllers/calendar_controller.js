@@ -67,7 +67,7 @@ const LEGACY_VIEWS = {
 };
 
 export default class extends Controller {
-  static targets = ["grid", "title", "caption", "rangeButton", "layoutButton",
+  static targets = ["grid", "title", "caption", "rangeGroup", "layoutGroup",
                     "monthSelect", "yearSelect", "stepButton"];
 
   connect() {
@@ -124,7 +124,7 @@ export default class extends Controller {
     });
 
     this.calendar.render();
-    this.markPressed(range, layout);
+    this.syncGroupValues(range, layout);
     this.labelStepButtons(range);
   }
 
@@ -268,12 +268,15 @@ export default class extends Controller {
     return `${withEvents} of ${total} days have distributions`;
   }
 
+  // `rfg-change`'s own detail carries the segment's value directly -- the component already
+  // resolved which button was pressed, so there's no dataset to read off `event.currentTarget`
+  // the way a plain `click` listener on each button needed.
   switchRange(event) {
-    this.switchTo("range", event.currentTarget.dataset.calendarRange);
+    this.switchTo("range", event.detail.value);
   }
 
   switchLayout(event) {
-    this.switchTo("layout", event.currentTarget.dataset.calendarLayout);
+    this.switchTo("layout", event.detail.value);
   }
 
   /*
@@ -316,18 +319,17 @@ export default class extends Controller {
 
     this.calendar.setOption("height", this.heightFor(layout));
     this.calendar.changeView(VIEWS[`${range}:${layout}`]);
-    this.markPressed(range, layout);
+    this.syncGroupValues(range, layout);
     this.labelStepButtons(range);
     this.renderCaption();
   }
 
-  markPressed(range, layout) {
-    this.rangeButtonTargets.forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.calendarRange === range));
-    });
-    this.layoutButtonTargets.forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.calendarLayout === layout));
-    });
+  // `<rfg-segmented-control>` owns `aria-pressed` on its own buttons once its `value` property
+  // matches one of them -- setting the property here (rather than an attribute on each button, as
+  // before the component existed) is the whole interface the component asks for.
+  syncGroupValues(range, layout) {
+    this.rangeGroupTarget.value = range;
+    this.layoutGroupTarget.value = layout;
   }
 
   // Prev and Next step whatever the *duration* is, so their names follow the range and not the

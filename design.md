@@ -705,6 +705,38 @@ system classes and Bootstrap Icons, and their `type:`/`size:` options map onto t
 above. Its own comment still holds: *anytime a button or pseudo-button is displayed, it
 should be through one of these methods.*
 
+### Segmented controls
+
+A connected row of buttons that switches between a few views without navigating — `role="group"`
+with independently-focusable `aria-pressed` buttons, never `role="radiogroup"`: these toggle a
+state, they don't submit a value. Only one real instance exists, `/distributions/schedule`'s
+calendar range (Month/Week) and layout (Grid/List) switches, and it's what the design system's own
+`<rfg-segmented-control>` was built from — see
+`docs/architecture/decisions/0014-add-an-installable-component-layer.md` in that repo for the
+evidence pass. There isn't a Ruby helper for this one; it's rendered directly:
+
+```erb
+<%= content_tag("rfg-segmented-control", label: "Calendar range",
+      data: {calendar_target: "rangeGroup", action: "rfg-change->calendar#switchRange"}) do %>
+  <%= button_tag "Month", type: "button", value: "month" %>
+  <%= button_tag "Week", type: "button", value: "week" %>
+<% end %>
+```
+
+Renders through `<rfg-button>`'s sibling component (`vendor/javascript/rfg-segmented-control.js`),
+not hand-built Tailwind markup — the same `essentials_view_toggle_classes` helper this replaced is
+gone; the component owns the connected-segments visual treatment (shared border, divider between
+segments, only the outer corners rounded) itself. The host dispatches a generic `rfg-change` event
+with `{ value }` in its detail; `calendar_controller.js`'s `switchRange`/`switchLayout` read
+`event.detail.value` directly rather than a per-button `data-*` attribute, and set the component's
+`value` property (not a per-button `aria-pressed` attribute) to move the pressed state
+programmatically — the component owns `aria-pressed` on its own children once `value` matches one
+of them.
+
+State lives in the URL (`?range=`/`?layout=`), not localStorage — design.md settled that for page
+tabs and the argument is unchanged here: it's how a view becomes linkable, bookmarkable, and
+answers "why does mine look different from yours."
+
 ### Row actions
 
 **Every action in a table row uses `:ghost`, whatever it does.** A table is read down a column,
