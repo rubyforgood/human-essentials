@@ -63,6 +63,33 @@
   --color-success: var(--color-emerald-600);
   --color-warning: var(--color-amber-600);
   --color-info: var(--color-sky-600);
+
+  /* `<rfg-segmented-control>`/`<rfg-popover>`/`<rfg-menu>` reference `--color-neutral-*`,
+     `--radius-control`, `--radius-surface` and `--shadow-overlay` — the same "semantic token the
+     design system expects a consuming app to define" contract as `--color-danger` above, not
+     something this app had ever actually set. The comment below this one says "Neutrals = slate
+     (Tailwind default, not redeclared)" and that was true for this app's own utility classes
+     (`text-slate-500`, etc.) — it was never true for the CSS custom property `--color-neutral-*`
+     itself, which Tailwind v4 generates on demand as its own separate, zero-chroma grey scale the
+     moment anything references it, regardless of what this app calls "neutral" in prose. Found by
+     checking computed styles on the real, already-migrated `<rfg-segmented-control>`, not assumed:
+     `border-radius` computed to `0px` (`--radius-control` had no value at all, so the declaration
+     was invalid and fell back to the initial value, not to the rounded corners the component
+     draws everywhere else it's used) and the border painted Tailwind's own neutral-200 rather
+     than this app's slate-200 — close enough to pass a glance, not close enough to be the same
+     colour. `--radius-pill` aliases to a literal rather than `var(--radius-full)`: confirmed nothing
+     in this app's scanned templates uses `rounded-full`, so Tailwind v4 never emits that variable
+     at all for this build to alias. */
+  --radius-control: var(--radius-lg);
+  --radius-surface: var(--radius-2xl);
+  --radius-pill: 9999px;
+  --shadow-overlay: var(--shadow-xl);
+  --color-neutral-50: var(--color-slate-50);
+  --color-neutral-100: var(--color-slate-100);
+  --color-neutral-200: var(--color-slate-200);
+  --color-neutral-500: var(--color-slate-500);
+  --color-neutral-700: var(--color-slate-700);
+  --color-neutral-900: var(--color-slate-900);
 }
 
 @theme {
