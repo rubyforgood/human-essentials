@@ -51,6 +51,18 @@
      `rose-600` is this app's own already-established destructive accent
      (`essentials_button_classes`'s own `bg-rose-600`/`hover:bg-rose-700`). */
   --color-danger: var(--color-rose-600);
+
+  /* `--color-success`/`--color-warning`/`--color-info`: the same semantic contract as
+     `--color-danger` above, for designsystem components that reference those tones
+     (callout.js, icon-tile.js, flash-message.js, status-pill.js) but aren't vendored into this
+     app yet (only rfg-button.js is, confirmed via config/importmap.rb) — defined now so the gap
+     doesn't repeat `--color-danger`'s silent-transparent-background history once one of them is.
+     Values match this app's own already-established tone accents
+     (`essentials_ui_helper.rb`'s badge/banner/flash helpers: `emerald`/`amber`/`sky`), not a new
+     choice. */
+  --color-success: var(--color-emerald-600);
+  --color-warning: var(--color-amber-600);
+  --color-info: var(--color-sky-600);
 }
 
 @theme {
