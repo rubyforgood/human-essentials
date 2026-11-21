@@ -93,24 +93,24 @@ RSpec.describe "Row actions in a wide table", type: :system, js: true do
       # below the scroll rail: measured, the rail spanned y=417-441 and the second menu item's
       # centre was y=423, so the click landed on `.table-rail-track` instead. The panel is moved
       # out while it is open -- the same move `table_scroll_controller` already makes for the rail.
-      trigger = find("tbody [data-popover-target=trigger]", match: :first)
+      trigger = find("tbody [slot=trigger]", match: :first)
       panel_id = trigger["aria-controls"]
       expect(panel_id).to be_present
 
       trigger.click
-      expect(page).to have_css("[data-popover-target=panel]", visible: true)
+      expect(page).to have_css(".rfg-popover-panel", visible: true)
       expect(page.evaluate_script(
         "document.getElementById(#{panel_id.to_json}).parentElement.tagName"
       )).to eq("BODY")
 
       page.send_keys(:escape)
-      expect(page).to have_no_css("[data-popover-target=panel]", visible: true)
+      expect(page).to have_no_css(".rfg-popover-panel", visible: true)
 
       # And nothing is left on the body afterwards -- the property that actually matters, since a
       # stranded panel would outlive the row it belongs to. Asserted this way rather than by
       # looking the panel up again: the table sits in a filter turbo-frame that can re-render in
       # between, and each render issues a fresh id.
-      expect(page).to have_no_css("body > [data-popover-target=panel]", visible: :all)
+      expect(page).to have_no_css("body > .rfg-popover-panel", visible: :all)
     end
 
     it "puts its items on top of the scroll rail rather than under it" do
@@ -126,27 +126,28 @@ RSpec.describe "Row actions in a wide table", type: :system, js: true do
     end
 
     it "carries a name and a tooltip, and no title" do
-      control = find("main .cell-actions a[data-tooltip]", match: :first)
+      tooltip = find("main .cell-actions rfg-tooltip", match: :first)
+      control = tooltip.find("a")
 
       expect(control["aria-label"]).to be_present
-      expect(control["data-tooltip"]).to eq(control["aria-label"])
+      expect(tooltip["text"]).to eq(control["aria-label"])
       # A `title` would draw the browser's own tooltip on top of ours a second later. Read with
       # `hasAttribute`, because Capybara reports a missing attribute as nil *or* "" by driver.
       expect(page.evaluate_script(
-        "document.querySelector('main .cell-actions a[data-tooltip]').hasAttribute('title')"
+        "document.querySelector('main .cell-actions rfg-tooltip a').hasAttribute('title')"
       )).to be(false)
     end
 
     it "names itself on keyboard focus, which a title cannot do at all" do
-      page.execute_script("document.querySelector('main .cell-actions [data-tooltip]').focus()")
+      page.execute_script("document.querySelector('main .cell-actions rfg-tooltip a').focus()")
 
-      expect(page).to have_css(".tip-bubble", text: "View")
+      expect(page).to have_css(".rfg-tooltip-bubble", text: "View")
       # aria-hidden: the button's aria-label already carries the name, so describing it with the
       # bubble as well would announce the action twice.
-      expect(find(".tip-bubble")["aria-hidden"]).to eq("true")
+      expect(find(".rfg-tooltip-bubble")["aria-hidden"]).to eq("true")
 
       page.send_keys(:escape)
-      expect(page).to have_no_css(".tip-bubble")
+      expect(page).to have_no_css(".rfg-tooltip-bubble")
     end
   end
 end

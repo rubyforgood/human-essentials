@@ -70,8 +70,9 @@ module EssentialsUiHelper
   # uniform **94px** -- narrower than three of the five kebab columns, and unlike collapsing into a
   # menu it costs no extra click.
   #
-  # **`data-tooltip`, never `title`.** A `title` is browser chrome: unstyleable, silent on keyboard
-  # focus, and failing WCAG 1.4.13 three ways. `tooltip_controller` shows the same string on hover
+  # **Renders through `<rfg-tooltip>`, never `title`.** A `title` is browser chrome: unstyleable,
+  # silent on keyboard focus, and failing WCAG 1.4.13 three ways. `<rfg-tooltip>`
+  # (vendor/javascript/rfg-tooltip.js -- designsystem's ADR 14) shows the same string on hover
   # *and* focus, dismissible with Escape and hoverable. `aria-label` remains the accessible name and
   # the bubble is `aria-hidden`, so the action is announced once rather than twice.
   ROW_ICON_CLASSES = "inline-flex size-7 items-center justify-center rounded-lg transition-colors " \
@@ -91,7 +92,6 @@ module EssentialsUiHelper
   # earlier button migrations, and why that turned out to be overstated.
   def essentials_row_icon_link(label, path, icon:, tone: :ghost, **html_attrs)
     icon_el = tag.i(nil, class: icon, slot: "icon", aria: {hidden: true})
-    data = {tooltip: label}.merge(html_attrs.delete(:data) || {})
     # `url_for`, not the raw `path` -- found live, not assumed: three call sites
     # (transfers/_transfer_row, manufacturers/_manufacturer_row,
     # product_drive_participants/_product_drive_participant_row) pass the record itself, not a
@@ -100,9 +100,9 @@ module EssentialsUiHelper
     # straight into `href`, producing `#<Transfer:0x...>` -- `link_to`'s own implementation
     # calls `url_for(options)` unconditionally for exactly this reason; this does the same.
     attrs = html_attrs.merge(href: url_for(path), variant: ((tone.to_sym == :danger) ? :ghost_danger : :ghost),
-      size: "xs", "aria-label": label, data: data)
+      size: "xs", "aria-label": label)
 
-    content_tag("rfg-button", icon_el, **attrs)
+    content_tag("rfg-tooltip", content_tag("rfg-button", icon_el, **attrs), text: label)
   end
 
   # The same control for an action that is not a GET.
@@ -303,13 +303,12 @@ module EssentialsUiHelper
     end
 
     if icon_only
-      # `data-tooltip`, never `title`: a `title` is unstyleable browser chrome, silent on
-      # keyboard focus, and fails WCAG 1.4.13 three ways. `tooltip_controller` shows the same
+      # Renders through `<rfg-tooltip>`, never `title`: a `title` is unstyleable browser chrome,
+      # silent on keyboard focus, and fails WCAG 1.4.13 three ways. `<rfg-tooltip>` shows the same
       # string on hover and focus; `aria-label` stays the accessible name, so the action is
       # announced once, not twice.
       content = tag.i(nil, class: icon, slot: "icon", aria: {hidden: true})
       html_attrs["aria-label"] ||= label
-      data[:tooltip] ||= label
       control_size = "xs"
     else
       icon_el = icon ? tag.i(nil, class: icon, slot: "icon", aria: {hidden: true}) : nil
@@ -320,11 +319,14 @@ module EssentialsUiHelper
     params = html_attrs.delete(:params)
 
     form_with(url: path, method: method, class: "inline-block") do
+      button = content_tag("rfg-button", content, type: "submit", variant: variant, size: control_size, data: data, **html_attrs)
+      button = content_tag("rfg-tooltip", button, text: label) if icon_only
+
       safe_join([
         # `button_to`'s own `params:` behavior, rebuilt directly with the same `to_form_params`
         # it calls internally -- one nested hidden `<input>` per leaf value.
         (params ? safe_join(to_form_params(params).map { |p| tag.input(type: "hidden", name: p[:name], value: p[:value], autocomplete: "off") }) : nil),
-        content_tag("rfg-button", content, type: "submit", variant: variant, size: control_size, data: data, **html_attrs)
+        button
       ].compact)
     end
   end

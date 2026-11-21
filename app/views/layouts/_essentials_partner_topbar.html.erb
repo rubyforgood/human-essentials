@@ -17,15 +17,11 @@
         <i class="bi-life-preserver mr-1" aria-hidden="true"></i>Help
       <% end %>
 
-      <%# See the note on the same trigger in `layouts/_essentials_topbar`: `aria-expanded` alone
-          says a region opened without saying which. %>
-      <% account_menu_id = "account-menu-#{SecureRandom.hex(4)}" %>
-      <div class="relative" data-controller="popover">
-        <button type="button"
+      <%# Renders through `<rfg-menu>` -- see the note on the same trigger in
+          `layouts/_essentials_topbar`. %>
+      <%= content_tag("rfg-menu", label: "Account menu for #{current_user.preferred_name}") do %>
+        <button type="button" slot="trigger"
                 class="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                aria-haspopup="menu"
-                aria-expanded="false"
-                aria-controls="<%= account_menu_id %>"
                 <%# `preferred_name`, not `display_name`: the latter returns the literal
                     "Name Not Provided" for anyone who has not filled in a name, so two different
                     users announce as the same control. The same fault was found and fixed in
@@ -33,43 +29,36 @@
                     Name Not Provided". `preferred_name` falls back to the email, which every user
                     has and no two share. %>
                 aria-label="Account menu for <%= current_user.preferred_name %>"
-                data-popover-target="trigger" data-account-menu
-                data-action="click->popover#toggle">
+                data-account-menu>
           <%= essentials_avatar_disc(current_user) %>
           <i class="bi-chevron-down text-xs text-slate-500" aria-hidden="true"></i>
         </button>
 
-        <div class="absolute right-0 z-30 w-64 py-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
-             hidden
-             id="<%= account_menu_id %>"
-             role="menu"
-             data-popover-target="panel">
-          <div class="border-b border-slate-100 px-4 pb-2">
-            <p class="truncate text-sm font-semibold text-slate-900"><%= current_user.display_name.presence || current_user.email %></p>
-            <p class="truncate text-xs text-slate-500"><%= current_user.email %></p>
-            <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">Partner</span>
-          </div>
-
-          <%= link_to "Co-workers", partners_users_path, role: "menuitem",
-                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
-          <%= link_to "Account", edit_partners_user_path(current_user), role: "menuitem",
-                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
-
-          <% current_user.switchable_roles.each do |role| %>
-            <% next if role == current_role %>
-            <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
-                  class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" do %>
-              Switch to <%= role.resource.name %>
-            <% end %>
-          <% end %>
-
-          <div class="my-1 border-t border-slate-100"></div>
-
-          <%= button_to "Log out", destroy_user_session_path, method: :delete, role: "menuitem",
-                form_class: "block", data: {disable_with: "Please wait..."},
-                class: "block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" %>
+        <div class="border-b border-slate-100 px-4 pb-2">
+          <p class="truncate text-sm font-semibold text-slate-900"><%= current_user.display_name.presence || current_user.email %></p>
+          <p class="truncate text-xs text-slate-500"><%= current_user.email %></p>
+          <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">Partner</span>
         </div>
-      </div>
+
+        <%= link_to "Co-workers", partners_users_path, role: "menuitem",
+              class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Account", edit_partners_user_path(current_user), role: "menuitem",
+              class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" %>
+
+        <% current_user.switchable_roles.each do |role| %>
+          <% next if role == current_role %>
+          <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
+                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" do %>
+            Switch to <%= role.resource.name %>
+          <% end %>
+        <% end %>
+
+        <div class="my-1 border-t border-slate-100"></div>
+
+        <%= button_to "Log out", destroy_user_session_path, method: :delete, role: "menuitem",
+              form_class: "block", data: {disable_with: "Please wait..."},
+              class: "block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" %>
+      <% end %>
     </div>
   </div>
 </header>

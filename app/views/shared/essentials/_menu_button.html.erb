@@ -50,21 +50,17 @@
           icon: icon || only[:icon], **(only[:link_options] || {}) %>
   <% end %>
 <% else %>
-<%# `popover-fixed-value`: the panel is placed against the viewport and clamped to it. At 320px the
-    header's actions wrap, which puts this trigger near the left edge -- and a panel right-aligned
-    to a trigger there starts at a negative x. The overlay audit caught it at 320x640. %>
-<%# `aria-controls` and an id, as `row_actions` has: the ARIA menu-button pattern recommends the
-    pairing, and it is what makes the panel findable once `popover_controller` moves it to `<body>`
-    while it is open. Random rather than derived, because a page may hold more than one of these. %>
-<% panel_id = "menu-#{SecureRandom.hex(4)}" %>
-<div class="relative" data-controller="popover" data-popover-fixed-value="true">
-  <button type="button"
-          class="<%= essentials_button_classes(variant: variant, size: size) %>"
-          aria-haspopup="true"
-          aria-expanded="false"
-          aria-controls="<%= panel_id %>"
-          data-popover-target="trigger"
-          data-action="click->popover#toggle">
+<%#
+  Renders through `<rfg-menu>` (vendor/javascript/rfg-menu.js -- designsystem's ADR 14), the same
+  component `row_actions` uses -- see that partial's own comment for why this replaced
+  `popover_controller`'s hand-built `role="menu"` markup. `align` maps onto the component's own
+  `placement` property (`@floating-ui/dom` under the hood) rather than a `left-0`/`right-0` class on
+  a hand-positioned panel -- it also now clamps to the viewport generically, which is what the old
+  comment about a negative x at 320px was working around by hand.
+%>
+<%= content_tag("rfg-menu", label: label, placement: (align == :start ? "bottom-start" : "bottom-end")) do %>
+  <button type="button" slot="trigger"
+          class="<%= essentials_button_classes(variant: variant, size: size) %>">
     <% if icon %><i class="<%= icon %>" aria-hidden="true"></i><% end %>
     <%= label %>
     <%# Decorative: the chevron says "this opens", which `aria-haspopup` already tells a screen
@@ -72,15 +68,6 @@
     <i class="bi-chevron-down text-xs" aria-hidden="true"></i>
   </button>
 
-  <%# `role="menu"` with `role="menuitem"` children, and `popover_controller` implements the
-      arrow-key movement that role promises. The overlay audit requires a panel to declare what it
-      is. %>
-  <div class="absolute <%= align == :start ? "left-0" : "right-0" %> z-30 mt-1 w-64 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
-       id="<%= panel_id %>"
-       hidden
-       role="menu"
-       data-popover-target="panel">
-    <%= render "shared/essentials/menu_items", items: items %>
-  </div>
-</div>
+  <%= render "shared/essentials/menu_items", items: items %>
+<% end %>
 <% end %>

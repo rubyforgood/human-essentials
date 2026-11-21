@@ -113,9 +113,9 @@ RSpec.describe "Row action menus", type: :system, js: true do
     end
 
     it "names the trigger after its row, so a screen reader does not hear 'button' once per row" do
-      trigger = find("tbody tr [data-popover-target=trigger]", match: :first)
+      trigger = find("tbody tr [slot=trigger]", match: :first)
       expect(trigger["aria-label"]).to include("Costco")
-      expect(trigger["aria-haspopup"]).to eq("true")
+      expect(trigger["aria-haspopup"]).to eq("menu")
       expect(trigger["aria-expanded"]).to eq("false")
     end
 
@@ -136,7 +136,7 @@ RSpec.describe "Row action menus", type: :system, js: true do
     # last row. The panel is placed against the viewport instead -- and, since the actions column
     # became a `position: sticky` cell, it is also moved to `<body>` while open: `fixed` escapes an
     # ancestor's overflow but not its stacking context, and trapped in that cell the open menu sat
-    # underneath the scroll rail. See popover_controller.
+    # underneath the scroll rail. See <rfg-menu>/<rfg-popover> (designsystem ADR 14).
     it "escapes the table's scroll region, and its stacking context" do
       # The id is read while the menu is open: moving the node makes Capybara's reference stale,
       # so the string has to be captured before the panel goes home.
@@ -151,7 +151,7 @@ RSpec.describe "Row action menus", type: :system, js: true do
 
       # And back where it belongs once it closes, so Turbo replacing the row does not strand it.
       page.send_keys(:escape)
-      expect(page).to have_no_css("[data-popover-target=panel]", visible: true)
+      expect(page).to have_no_css(".rfg-popover-panel", visible: true)
       # That it goes *home* again is asserted in row_actions_reach_system_spec, on a page with no
       # filter frame: this one is inside a turbo-frame that may replace the table underneath the
       # assertion, which is a race rather than a fact about the portal.

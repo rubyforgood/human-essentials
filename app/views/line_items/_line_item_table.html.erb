@@ -75,12 +75,16 @@
         <input type="text" id="line-item-scan" autocomplete="off"
                class="__barcode_item_lookup block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none"
                placeholder="Barcode entry">
-        <button type="button"
-                class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                aria-label="Scan a barcode with the camera"
-                data-tooltip="Scan a barcode with the camera" aria-expanded="false">
-          <i class="bi-upc-scan" aria-hidden="true"></i>
-        </button>
+        <%# Renders through `<rfg-tooltip>` -- see `shared/essentials/_barcode_scan_field`'s own
+            comment. %>
+        <%= content_tag("rfg-tooltip", text: "Scan a barcode with the camera") do %>
+          <button type="button"
+                  class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  aria-label="Scan a barcode with the camera"
+                  aria-expanded="false">
+            <i class="bi-upc-scan" aria-hidden="true"></i>
+          </button>
+        <% end %>
       </div>
       <p class="mt-1 text-xs text-slate-500">
         Each scan adds a row, or adds to the row that item is already on.

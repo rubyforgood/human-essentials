@@ -37,12 +37,17 @@
           class: "block w-full rounded-l-lg border border-slate-300 bg-white px-3 py-2 " \
                  "text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 " \
                  "focus:ring-brand-500/30 focus:outline-none" %>
-    <button type="button"
-            class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-            aria-label="Scan a barcode with the camera" data-tooltip="Scan a barcode with the camera"
-            aria-expanded="false">
-      <i class="bi-upc-scan" aria-hidden="true"></i>
-    </button>
+    <%# Renders through `<rfg-tooltip>` (vendor/javascript/rfg-tooltip.js -- designsystem's ADR 14)
+        rather than `data-tooltip` -- the scanner JS finds this button via `.closest`, which works
+        regardless of the extra wrapping element. %>
+    <%= content_tag("rfg-tooltip", text: "Scan a barcode with the camera") do %>
+      <button type="button"
+              class="barcode-scanner inline-flex size-[2.375rem] shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-slate-300 bg-white text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              aria-label="Scan a barcode with the camera"
+              aria-expanded="false">
+        <i class="bi-upc-scan" aria-hidden="true"></i>
+      </button>
+    <% end %>
   </div>
 
   <% if errors.any? %>

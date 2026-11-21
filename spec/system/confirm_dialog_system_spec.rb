@@ -82,6 +82,6 @@ RSpec.describe "Confirmations", type: :system, js: true do
   # The record's Edit and Delete live in the page header's overflow -- see
   # `essentials_record_actions` and "A record owns its actions" in design.md.
   def open_record_actions
-    find("[data-page-header='actions'] button[aria-haspopup='true']").click
+    find("[data-page-header='actions'] button[aria-haspopup='menu']").click
   end
 end

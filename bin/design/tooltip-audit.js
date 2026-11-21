@@ -9,7 +9,9 @@
 // Four assertions, per icon-only control **anywhere in the page's main region**:
 //
 //   1. NAMED      -- it has an accessible name, from `aria-label` or its text.
-//   2. TOOLTIP    -- it has `data-tooltip`, so a sighted user can find out what it does.
+//   2. TOOLTIP    -- it is wrapped in an `<rfg-tooltip>`, so a sighted user can find out what it
+//                    does (designsystem's ADR 14 -- this used to be a `data-tooltip` attribute
+//                    read by a page-wide `tooltip_controller.js`; that controller is gone).
 //   3. NO TITLE   -- and no `title`, which would draw a second tooltip on top of ours.
 //   4. AGREES     -- the tooltip and the accessible name say the same thing.
 //
@@ -53,6 +55,12 @@ const COLLECT = () => [...document.querySelectorAll("main a, main button")]
   .filter((el) => el.offsetParent !== null || el.getClientRects().length > 0)
   .map((el) => {
     const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+    // `<rfg-tooltip>` wraps the control as a real light-DOM ancestor (designsystem's ADR 14) --
+    // `closest` finds it regardless of how many light-DOM levels sit between (an `<rfg-button>`'s
+    // own control, say). Its `text` attribute is what the bubble shows, same job `dataset.tooltip`
+    // used to do directly on the control itself.
+    const tooltipEl = el.closest("rfg-tooltip");
+    const tooltip = tooltipEl ? tooltipEl.getAttribute("text") : null;
     return {
       what: el.getAttribute("aria-label") || text || "(unnamed)",
       iconOnly: text === "",
@@ -72,9 +80,9 @@ const COLLECT = () => [...document.querySelectorAll("main a, main button")]
       // exemption a component has to opt into cannot widen behind anyone's back.
       trigger: el.hasAttribute("aria-haspopup") || el.hasAttribute("data-chip-dismiss"),
       named: Boolean(el.getAttribute("aria-label") || text),
-      tooltip: el.dataset.tooltip || null,
+      tooltip,
       title: el.getAttribute("title"),
-      agrees: !el.dataset.tooltip || el.dataset.tooltip === (el.getAttribute("aria-label") || text)
+      agrees: !tooltip || tooltip === (el.getAttribute("aria-label") || text)
     };
   });
 
@@ -98,7 +106,7 @@ const COLLECT = () => [...document.querySelectorAll("main a, main button")]
         controls++;
         if (c.iconOnly && !c.trigger) iconOnly++;
         if (!c.named) bad.push(`unnamed control`);
-        if (c.iconOnly && !c.trigger && !c.tooltip) bad.push(`"${c.what}" is icon-only with no data-tooltip (${c.where})`);
+        if (c.iconOnly && !c.trigger && !c.tooltip) bad.push(`"${c.what}" is icon-only with no <rfg-tooltip> (${c.where})`);
         if (c.title) bad.push(`"${c.what}" still carries title="${c.title}" (${c.where})`);
         if (!c.agrees) bad.push(`"${c.what}" tooltip says "${c.tooltip}"`);
       }
@@ -120,16 +128,16 @@ const COLLECT = () => [...document.querySelectorAll("main a, main button")]
   const page = await ctx.newPage();
   await signIn(page, RUNS[0][0]);
   await page.goto(BASE + "/donations", { waitUntil: "networkidle" });
-  const sel = "main .cell-actions [data-tooltip]";
+  const sel = "main .cell-actions rfg-tooltip a, main .cell-actions rfg-tooltip button";
   await page.evaluate((s) => document.querySelector(s).focus(), sel);
   await page.waitForTimeout(150);
   const onFocus = await page.evaluate(() => {
-    const b = document.querySelector(".tip-bubble");
+    const b = document.querySelector(".rfg-tooltip-bubble");
     return b && { text: b.textContent, ariaHidden: b.getAttribute("aria-hidden") };
   });
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
-  const afterEscape = await page.evaluate(() => Boolean(document.querySelector(".tip-bubble")));
+  const afterEscape = await page.evaluate(() => Boolean(document.querySelector(".rfg-tooltip-bubble")));
   await ctx.close();
   await browser.close();
 

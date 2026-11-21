@@ -44,9 +44,10 @@ RSpec.describe "History", type: :system, js: true do
 
   describe "the funnel on a row" do
     it "says what it does, on hover and to a screen reader" do
-      # design.md: an icon-only control is named by `aria-label` AND `data-tooltip`, never `title`.
-      # This one had the label and no tooltip, so there was nothing to hover and nothing to read.
-      expect(funnel["data-tooltip"]).to eq(label)
+      # design.md: an icon-only control is named by `aria-label` AND an `<rfg-tooltip>`, never
+      # `title`. This one had the label and no tooltip, so there was nothing to hover and nothing
+      # to read.
+      expect(funnel.find(:xpath, "./ancestor::rfg-tooltip")["text"]).to eq(label)
       expect(funnel["aria-label"]).to eq(label)
       expect(funnel["title"]).to be_blank
     end

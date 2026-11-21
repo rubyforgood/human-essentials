@@ -33,51 +33,31 @@
   The items themselves are `shared/essentials/menu_items`, shared with `menu_button`, so what a
   menu item is has one definition rather than two that drift.
 
-  The disclosure pattern, not the ARIA menu pattern: a popover of links moved through with Tab.
-  `popover_controller` already gives Escape, focus back to the trigger, `aria-expanded` and
-  click-outside; it does not do arrow-key movement, and promising `role="menu"` without that is
-  worse than not promising it.
+  Renders through `<rfg-menu>` (vendor/javascript/rfg-menu.js -- designsystem's ADR 14): the real
+  WAI-ARIA menu-button pattern, not the disclosure pattern this used to fall back to.
+  `popover_controller` gave Escape, focus back to the trigger, `aria-expanded` and click-outside,
+  but promised `role="menu"` without arrow-key movement between items -- this component is what
+  closes that gap, not a markup change on top of the same controller.
 %>
 <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
   <%= primary if defined?(primary) && primary %>
 
-  <%# `popover-fixed-value`: this menu is inside `.table-scroll`, which clips on both axes, so the
-      panel is placed against the viewport instead. Without it the last row's menu is cut off by
-      the bottom of the table. %>
-  <%#
-    `aria-controls` on the trigger, and an id on the panel. The ARIA menu-button pattern recommends
-    it, and it is what makes the panel findable now that `popover_controller` moves it to `<body>`
-    while it is open -- the audits and the spec helper had been reaching it through the DOM, which
-    a portal breaks. Random rather than derived from the label, because two rows in one table can
-    share a name and two elements cannot share an id.
-  %>
-  <% panel_id = "row-actions-#{SecureRandom.hex(4)}" %>
-  <div class="relative" data-controller="popover" data-popover-fixed-value="true">
-    <button type="button"
-            <%# `size-7` in a row, not the 38px control height: a row action is `sm` sized everywhere
-        else in the app, and a 38px trigger made every distribution row 10px taller. 28px still
-        clears WCAG 2.5.8's 24x24 floor. In a page header it is 2.375rem -- 38px, the control
-        height design.md fixes -- so it stands level with the buttons beside it rather than 10px
-        short of them. Not `size-10`, which is 40 and was 2px proud of them. %>
+  <%= content_tag("rfg-menu", label: "More actions for #{label}") do %>
+    <%# `size-7` in a row, not the 38px control height: a row action is `sm` sized everywhere else
+        in the app, and a 38px trigger made every distribution row 10px taller. 28px still clears
+        WCAG 2.5.8's 24x24 floor. In a page header it is 2.375rem -- 38px, the control height
+        design.md fixes -- so it stands level with the buttons beside it rather than 10px short of
+        them. Not `size-10`, which is 40 and was 2px proud of them.
+
+        `aria-haspopup`/`aria-expanded`/`aria-controls` are no longer written here -- `<rfg-menu>`
+        sets all three on its own trigger once it finds it (`slot="trigger"`), the same division
+        of labor `<rfg-button>`'s own attribute proxy already established. %>
+    <button type="button" slot="trigger"
             class="inline-flex <%= (local_assigns[:size].to_s == "md") ? "size-[2.375rem] border border-slate-300 bg-white" : "size-7" %> items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-label="More actions for <%= label %>"
-            aria-controls="<%= panel_id %>"
-            data-popover-target="trigger"
-            data-action="click->popover#toggle">
+            aria-label="More actions for <%= label %>">
       <i class="bi-three-dots-vertical" aria-hidden="true"></i>
     </button>
 
-    <%# `role="menu"` with `role="menuitem"` children, and the popover controller now implements the
-        arrow-key movement that role promises -- see popover_controller. The overlay audit requires
-        a popover panel to declare what it is. %>
-    <div class="absolute right-0 z-30 w-56 py-1 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
-         id="<%= panel_id %>"
-         hidden
-         role="menu"
-         data-popover-target="panel">
-      <%= render "shared/essentials/menu_items", items: items %>
-    </div>
-  </div>
+    <%= render "shared/essentials/menu_items", items: items %>
+  <% end %>
 </div>

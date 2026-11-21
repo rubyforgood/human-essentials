@@ -48,10 +48,11 @@ Capybara.ignore_hidden_elements = true
 
 # Match a control by its **accessible name**, not only by visible text.
 #
-# Every visible action in a table row is a 28px icon now, named by `aria-label` and `data-tooltip`
-# rather than by a text node -- design.md, Row actions. Without this, `click_on "Delete"` stops
-# matching the Delete button, and seventeen specs did. They are not wrong: "Delete" *is* what that
-# control is called, and it is what a screen reader announces. This makes Capybara agree.
+# Every visible action in a table row is a 28px icon now, named by `aria-label` and an
+# `<rfg-tooltip>` rather than by a text node -- design.md, Row actions. Without this,
+# `click_on "Delete"` stops matching the Delete button, and seventeen specs did. They are not
+# wrong: "Delete" *is* what that control is called, and it is what a screen reader announces.
+# This makes Capybara agree.
 #
 # Three specs previously worked around the setting being off. Their comments are left in place and
 # corrected rather than deleted, so the reason they were written that way survives.

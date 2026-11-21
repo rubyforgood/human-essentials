@@ -18,23 +18,23 @@ module RowActions
   # Works whether or not the caller has already scoped to a row with `within`: several specs do,
   # and hunting for a `tbody tr` inside a `tr` finds nothing.
   #
-  # **The trigger is found in the row; the panel is found on the page.** `popover_controller` moves
-  # a `fixed` panel to `<body>` while it is open, because `position: fixed` escapes an ancestor's
-  # overflow but not its stacking context -- and the actions column is now a `position: sticky`
-  # cell, which trapped the open menu underneath the scroll rail. Only one panel is ever visible,
-  # so `visible: true` identifies it without ambiguity.
+  # **The trigger is found in the row; the panel is found on the page.** `<rfg-menu>` (designsystem
+  # ADR 14) moves its panel to `<body>` while it is open, because `position: fixed` escapes an
+  # ancestor's overflow but not its stacking context -- and the actions column is now a
+  # `position: sticky` cell, which trapped the open menu underneath the scroll rail. Only one panel
+  # is ever visible, so `visible: true` identifies it without ambiguity.
   def open_row_menu(row: nil)
     scope =
       if row
         find("tbody tr", text: row, match: :first)
-      elsif has_selector?("[data-popover-target=trigger]", count: 1, wait: 0)
+      elsif has_selector?("[slot=trigger]", count: 1, wait: 0)
         self
       else
         find("tbody tr", match: :first)
       end
 
-    scope.find("[data-popover-target=trigger]").click
-    page.document.find("[data-popover-target=panel]", visible: true)
+    scope.find("[slot=trigger]").click
+    page.document.find(".rfg-popover-panel", visible: true)
   end
 
   # A record page's own actions -- its Edit, its Delete -- live in the page header's overflow, for
@@ -50,14 +50,14 @@ module RowActions
   # Delete moved into a menu.
   def record_action_labels
     header = find("[data-page-header='actions']")
-    trigger = header.all("[data-popover-target=trigger]", wait: 0).first
+    trigger = header.all("[slot=trigger]", wait: 0).first
     return header.all("a, button", wait: 0).map { |b| b.text.strip }.reject(&:empty?) unless trigger
 
     trigger.click
-    labels = page.document.find("[data-popover-target=panel]", visible: true)
+    labels = page.document.find(".rfg-popover-panel", visible: true)
       .all("[role=menuitem]", wait: 0).map { |i| i.text.strip }
-    # Closed by toggling the trigger, not with Escape. `popover_controller` focuses the first item
-    # when it opens, and `page.send_keys(:escape)` goes to whatever has focus -- which navigated to
+    # Closed by toggling the trigger, not with Escape. `<rfg-menu>` focuses the first item when it
+    # opens, and `page.send_keys(:escape)` goes to whatever has focus -- which navigated to
     # /purchases/1/edit and made the next step fail on a page with no header actions. Traced, not
     # guessed: the URL changed on the send_keys line and nowhere else.
     trigger.click
@@ -66,11 +66,11 @@ module RowActions
 
   def click_record_action(action)
     header = find("[data-page-header='actions']")
-    trigger = header.all("[data-popover-target=trigger]", wait: 0).first
+    trigger = header.all("[slot=trigger]", wait: 0).first
 
     if trigger
       trigger.click
-      page.document.find("[data-popover-target=panel]", visible: true).click_on(action)
+      page.document.find(".rfg-popover-panel", visible: true).click_on(action)
     else
       header.click_on(action)
     end

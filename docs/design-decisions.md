@@ -10829,3 +10829,130 @@ attribute a Stimulus target used to read). `rubocop`/`erb_lint` clean on every t
   whose only purpose is not having to touch eight spec lines is exactly the kind of drift this
   project's own discipline argues against — fix the real call site, update what asserts on it.
 
+## 2026-11-21 · The kebab menu, the page-level menu and both account menus render through `<rfg-menu>`
+
+Four real `popover_controller`/`role="menu"` consumers in this app -- `shared/essentials/
+row_actions` (the table-row kebab, 16 real call sites), `shared/essentials/menu_button` (the
+page-level labelled menu, `/requests`), and both top bars' account menus -- all moved onto
+`<rfg-menu>` (designsystem ADR 14) in one pass, since all four are the same real pattern this
+component was built from in the first place (row_actions' own real markup was the ADR's evidence
+source). `popover_controller.js` itself stays: the date range filter, the compare picker and the
+month range picker are genuinely `role="dialog"` shaped (real date/form inputs, where an arrow key
+belongs to the focused control, not to moving between items) and were never in scope.
+
+**A real, longstanding documentation error found and corrected along the way, not introduced by
+this change.** design.md's Row actions section said `popover_controller` "does not do arrow-key
+movement, and promising `role="menu"` without that is worse than not promising it" -- true of the
+very first version of that controller, but it had since grown real arrow-key navigation (gated on
+`role="menu"`, confirmed reading the controller directly: `moveWithArrows` checked
+`this.panel.getAttribute("role") !== "menu"` and returned early otherwise), and the section was
+never corrected to say so. `<rfg-menu>` makes that real-but-undocumented behavior the component's
+own stated contract instead, annotated rather than silently edited (see design.md's own "Update,
+2026-11-21" note there).
+
+**A real gap found in `<rfg-menu>` itself, integrating it for the first time.** `<rfg-popover>`'s
+panel carries a uniform `0.75rem` padding, built for arbitrary dialog-shaped content -- applied to
+a menu, it insets every item from the panel edge, breaking the edge-to-edge hover/click target this
+app's own `py-1`-plus-full-width-items markup always had. `<rfg-combobox>` had already solved the
+identical problem for its own option rows with a scoped CSS override; `<rfg-menu>` didn't have one
+yet, so it was added upstream (designsystem commit `38829bd`, its own design.md annotation) rather
+than worked around here with app-level CSS -- the same "fix it in the component, not in the app
+that happened to find it" rule `<rfg-popover>`'s own light-DOM rewrite followed.
+
+**A second, unrelated real gap found in the same session, in this app's own token layer, not in
+any component.** `<rfg-segmented-control>` (migrated two commits before this one) referenced
+`--radius-control`/`--color-neutral-*`, tokens this app had never defined -- confirmed by checking
+its own computed styles rather than trusting a screenshot: `border-radius` computed to `0px`, and
+the border painted Tailwind's own zero-chroma neutral grey rather than this app's slate. Fixed
+first (`82c62e6bc`), since `<rfg-popover>`/`<rfg-menu>` reference the same tokens and would have
+carried the identical defect forward silently.
+
+**What changed, mechanically.** Every trigger's `aria-haspopup`/`aria-expanded`/`aria-controls` and
+every panel's `id`/`role`/`hidden` are now set by the component once it finds its `slot="trigger"`
+child, rather than hand-paired in ERB -- the same division of labor `<rfg-button>`'s attribute
+proxy already established for its own host. `menu_button`'s `align: :start`/`:end` option now maps
+onto the component's `placement` property (`@floating-ui/dom`), which also clamps to the viewport
+generically -- the hand-measured "negative x at 320px" workaround this partial's own comment used
+to name is no longer a thing to work around. The account menu's info block (name, email, role
+badge) is ordinary non-interactive content inside the panel, same as before; `<rfg-menu>` only ever
+makes `[role="menuitem"]` descendants keyboard-navigable, so it passes through unaffected.
+
+**Verification.** `spec/support/row_actions.rb` (the shared Capybara helper nearly every row/record-
+action spec uses) updated from `[data-popover-target=trigger/panel]` to `[slot=trigger]`/
+`.rfg-popover-panel`; four more specs with their own direct selectors or `aria-haspopup='true'`
+assertions updated the same way (`row_actions_reach_system_spec.rb`,
+`clipped_text_tooltip_system_spec.rb`, `confirm_dialog_system_spec.rb`, `request_system_spec.rb`).
+132 examples across those plus the four account-menu specs (`account_system_spec.rb`,
+`organization_system_spec.rb`, `coworker_invitations_system_spec.rb`, `admin/users_system_spec.rb`)
+green. `bin/design/overlay-audit.js` (0 findings, 40 popovers across 156 screens),
+`button-audit.js`, `wcag-audit.js` (same two pre-existing findings only) and `keyboard-audit.js`
+all clean, re-run against the real running app, not assumed from the designsystem repo's own
+Storybook audits alone. Confirmed live in a browser, not only via the specs: arrow-key navigation
+and wraparound on a real multi-item row menu (`/vendors`), Escape-with-refocus, and the account
+menu's visual surface (edge-to-edge items, the info block, correct rounded corners and border now
+that the token fix landed).
+
+**Alternatives rejected.**
+- *Leave `popover_controller.js`'s `role="menu"` arrow-key gate in place, unused, rather than
+  deleting it.* Rejected: with no consumer left that sets `role="menu"` through this controller,
+  the gate is dead code, not a real branch kept for a future case -- the project's own standing
+  rule is to delete confirmed-dead code rather than leave it as a trap for the next reader.
+
+## 2026-11-21 · Every icon-only control's tooltip renders through `<rfg-tooltip>`
+
+`<rfg-tooltip>` (designsystem ADR 14) was itself generalized from this app's own
+`tooltip_controller.js` -- 640 icon-only controls across 153 screens, 0 defects, the evidence that
+pattern was built from. Migrating onto it closes that loop the same way the segmented-control and
+menu migrations did: `essentials_row_icon_link` and `essentials_action_button`'s `icon_only` path
+(the two helpers every row-action icon-only control renders through -- zero Ruby call-site changes
+across every caller) now wrap the `<rfg-button>` they already render in `<rfg-tooltip text="...">`
+instead of setting a `data-tooltip` attribute for a page-wide delegated `tooltip_controller.js` to
+find on hover/focus. The two hand-built barcode-scan buttons
+(`shared/essentials/_barcode_scan_field`, `line_items/_line_item_table`) do the same, directly.
+
+**`tooltip_controller.js` is deleted, not left registered-but-idle.** Once every real
+`data-tooltip` call site moved onto the component, a grep across `app/views` found none left; the
+controller was removed from both shells' `data-controller` list and the file itself deleted. The
+clipped-cell bubble (`clipped_text_controller.js`, `.tip-bubble`) is a different, untouched
+implementation -- it was never this pattern's evidence, see design.md's own note on the two now
+measurably diverging slightly (`<rfg-tooltip>`'s bubble uses the generic
+`--radius-control`/`--shadow-overlay` tokens; the clipped-cell one its own one-off `--radius-md`/
+`--shadow-lg` choice -- 8px vs. 6px radius, `shadow-xl` vs. `shadow-lg`). Named rather than
+silently let drift, since the two were never actually sharing a class or a token to begin with,
+only a visually-matched pair of hand-picked values.
+
+**Two of this session's own audit scripts were checking the old mechanism literally and had to be
+updated, not just the app.** `bin/design/tooltip-audit.js` read `el.dataset.tooltip` directly off
+each icon-only control; with that attribute gone, every real icon-only control looked like a fresh
+defect (12 pages, dozens of false "no tooltip" findings) until it was changed to read an
+`el.closest("rfg-tooltip")` ancestor's `text` attribute instead -- confirmed clean afterward (595
+controls across 156 screens, 0 defects, plus the keyboard-focus/`aria-hidden`/Escape behavior
+re-verified live). `bin/design/confirm-audit.js` collected every row-menu trigger via
+`document.querySelectorAll('[data-popover-target="trigger"]')` to compute a stable index it could
+re-click after a reload; since `<rfg-menu>`'s own trigger carries `slot="trigger"` instead, every
+confirmation behind a menu reported "unreachable: no trigger for its menu" (ten false findings)
+until the selector was updated. Both are exactly the kind of tooling-trusts-a-specific-attribute
+trap `audit-suite`'s own discipline warns about: a clean report from an audit that is quietly
+checking the wrong thing is worse than no audit at all, because it is actively misleading rather
+than merely silent.
+
+**Verification.** `spec/system/row_actions_reach_system_spec.rb` and `spec/system/
+events_history_system_spec.rb`'s own direct `data-tooltip`/`.tip-bubble` assertions updated to the
+new shape (an `<rfg-tooltip>` ancestor's `text` attribute, `.rfg-tooltip-bubble`); `spec/
+rails_helper.rb`'s own comment corrected. `bin/design/tooltip-audit.js` (0 defects, 595 controls),
+`confirm-audit.js` (49 confirmations across 23 pages, all the app's own dialog, all reachable),
+`button-audit.js`, `wcag-audit.js` (same two pre-existing findings only), `keyboard-audit.js`,
+`overlay-audit.js`, `row-actions-audit.js`, `icon-audit.js`, `wcag22-audit.js`, `dead-code.rb`
+(nothing new), `undefined-classes.py` (0 undefined), `template-compile-audit.rb` (451 templates),
+and `audit-selftest.js` (the audits' own self-test) all re-run clean against the real running app.
+Full `rubocop` (737 files) and `erb_lint --lint-all` (450 files) clean. `spec/system/
+barcode_item_system_spec.rb:201`'s one failure confirmed pre-existing via `git stash` against the
+baseline -- fails identically with or without this change, a known camera-unavailable-in-CI flake,
+not a regression.
+
+**Alternatives rejected.**
+- *Leave `data-tooltip` on the control alongside the new `<rfg-tooltip>` wrapper, so the two audit
+  scripts above keep working unchanged.* Rejected: the same reasoning the segmented-control
+  migration already settled -- carrying a redundant, now-meaningless attribute to avoid updating
+  two audit scripts is exactly the drift this project argues against.
+

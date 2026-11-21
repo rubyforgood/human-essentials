@@ -25,6 +25,16 @@ import "rfg-button"
 // app/views/distributions/schedule.html.erb for where it's rendered from.
 import "rfg-segmented-control"
 
+// Registers <rfg-tooltip>; see essentials_ui_helper.rb's icon-only row-action helpers.
+import "rfg-tooltip"
+
+// Registers <rfg-menu> (which also defines <rfg-popover> internally); see
+// shared/essentials/_row_actions, _menu_button, and the two topbar account menus.
+import "rfg-menu"
+
+// Registers <rfg-combobox>; see the views listed in design.md's Comboboxes section.
+import "rfg-combobox"
+
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/distributions_and_transfers'

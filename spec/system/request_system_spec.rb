@@ -43,13 +43,13 @@ RSpec.describe "Requests", type: :system, js: true do
       visit subject
 
       expect(page.all("[data-page-header='actions'] > *").length).to eq(1)
-      expect(page).to have_css("[data-page-header='actions'] button[aria-haspopup='true']", text: "Export")
+      expect(page).to have_css("[data-page-header='actions'] button[aria-haspopup='menu']", text: "Export")
 
-      trigger = find("[data-page-header='actions'] button[aria-haspopup='true']")
+      trigger = find("[data-page-header='actions'] button[aria-haspopup='menu']")
       panel_id = trigger["aria-controls"]
       click_on "Export"
 
-      # The panel is asked for by id, not by its place in the header: `popover_controller` moves an
+      # The panel is asked for by id, not by its place in the header: `<rfg-menu>` moves an
       # open `fixed` panel to `<body>`, so it is no longer a descendant of the actions container.
       # See design.md -- `position: fixed` escapes an ancestor's overflow but not its stacking
       # context, and the row menus needed that escape once the actions column was frozen.
@@ -72,7 +72,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
         visit requests_path
 
-        expect(page).to have_no_css("[data-page-header='actions'] button[aria-haspopup='true']")
+        expect(page).to have_no_css("[data-page-header='actions'] button[aria-haspopup='menu']")
         expect(page).to have_link("Export")
       end
     end

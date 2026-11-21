@@ -21,17 +21,13 @@
         <i class="<%= help_link_icon %> mr-1" aria-hidden="true"></i><%= help_link_label %>
       <% end %>
 
-      <%# The trigger names the panel it opens. `aria-expanded` on its own says that a region
-          opened, not which one, and the panel is a sibling rather than a descendant -- so a DOM
-          relationship is not something a screen reader can infer either. Same pairing as
-          `shared/essentials/row_actions`, and what the ARIA menu-button pattern asks for. %>
-      <% account_menu_id = "account-menu-#{SecureRandom.hex(4)}" %>
-      <div class="relative" data-controller="popover">
-        <button type="button"
+      <%# Renders through `<rfg-menu>` (vendor/javascript/rfg-menu.js -- designsystem's ADR 14),
+          the same component `shared/essentials/row_actions` uses. The trigger's own `aria-label`
+          doubles as the panel's accessible name -- same pairing `row_actions` establishes, now
+          set via the component's `label` property instead of a hand-paired `aria-controls`/`id`. %>
+      <%= content_tag("rfg-menu", label: "Account menu for #{current_user.preferred_name}") do %>
+        <button type="button" slot="trigger"
                 class="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                aria-haspopup="menu"
-                aria-expanded="false"
-                aria-controls="<%= account_menu_id %>"
                 <%# `preferred_name`, not `display_name`: the latter returns the literal
                     "Name Not Provided" for anyone who has not filled in a name, so two different
                     users announce as the same control. The same fault was found and fixed in
@@ -39,66 +35,59 @@
                     Name Not Provided". `preferred_name` falls back to the email, which every user
                     has and no two share. %>
                 aria-label="Account menu for <%= current_user.preferred_name %>"
-                data-popover-target="trigger" data-account-menu
-                data-action="click->popover#toggle">
+                data-account-menu>
           <%= essentials_avatar_disc(current_user) %>
           <i class="bi-chevron-down text-xs text-slate-500" aria-hidden="true"></i>
         </button>
 
-        <div class="absolute right-0 z-30 w-64 py-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>"
-             hidden
-             id="<%= account_menu_id %>"
-             role="menu"
-             data-popover-target="panel">
-          <div class="border-b border-slate-100 px-4 pb-2">
-            <p class="truncate text-sm font-semibold text-slate-900"><%= current_user.display_name %></p>
-            <p class="truncate text-xs text-slate-500"><%= current_user.email %></p>
-            <% if current_role %>
-              <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-                <%= essentials_role_label(current_role) %>
-              </span>
-            <% end %>
-          </div>
-
-          <%= link_to "Account settings", edit_user_registration_path, role: "menuitem",
-                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
-
-          <%#
-            No "Organization" here. It was in this menu *and* pinned to the foot of the sidebar,
-            behind the identical `can_administrate?` gate -- the same link, for the same people, in
-            two places. This menu is about the *person*: their account, the roles they can switch
-            to, and signing out. Where an organization's settings live is a question about
-            navigation; putting them in both is not an answer to it.
-
-            The near-universal convention is that an avatar menu holds personal things. Slack,
-            GitHub, Linear, Notion, Stripe and Atlassian all keep workspace or organization
-            settings out of it, and the sidebar is where this app puts destinations. See design.md.
-
-            The "Co-workers" link that used to sit here is gone too, and it is worth saying why
-            rather than quietly dropping it: it was gated on `can_administrate?` *and*
-            `has_cached_role?(:partner)`, and a bank admin has no partner role -- so it rendered
-            for nobody in this shell. The page it pointed at, /users, lists name and email, which
-            the organization page's own users table already shows alongside role, last sign in,
-            status and the actions. See docs/design-decisions.md.
-          %>
-
-          <% current_user.switchable_roles.each do |role| %>
-            <% next if role == current_role %>
-            <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
-                  class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" do %>
-              Switch to: <%= role.resource&.name || "Super admin" %>
-            <% end %>
+        <div class="border-b border-slate-100 px-4 pb-2">
+          <p class="truncate text-sm font-semibold text-slate-900"><%= current_user.display_name %></p>
+          <p class="truncate text-xs text-slate-500"><%= current_user.email %></p>
+          <% if current_role %>
+            <span class="mt-1.5 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+              <%= essentials_role_label(current_role) %>
+            </span>
           <% end %>
-
-          <div class="my-1 border-t border-slate-100"></div>
-
-          <%= button_to "Log out", destroy_user_session_path, method: :delete,
-                role: "menuitem",
-                form_class: "block",
-                data: {disable_with: "Please wait..."},
-                class: "block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
         </div>
-      </div>
+
+        <%= link_to "Account settings", edit_user_registration_path, role: "menuitem",
+              class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
+
+        <%#
+          No "Organization" here. It was in this menu *and* pinned to the foot of the sidebar,
+          behind the identical `can_administrate?` gate -- the same link, for the same people, in
+          two places. This menu is about the *person*: their account, the roles they can switch
+          to, and signing out. Where an organization's settings live is a question about
+          navigation; putting them in both is not an answer to it.
+
+          The near-universal convention is that an avatar menu holds personal things. Slack,
+          GitHub, Linear, Notion, Stripe and Atlassian all keep workspace or organization
+          settings out of it, and the sidebar is where this app puts destinations. See design.md.
+
+          The "Co-workers" link that used to sit here is gone too, and it is worth saying why
+          rather than quietly dropping it: it was gated on `can_administrate?` *and*
+          `has_cached_role?(:partner)`, and a bank admin has no partner role -- so it rendered
+          for nobody in this shell. The page it pointed at, /users, lists name and email, which
+          the organization page's own users table already shows alongside role, last sign in,
+          status and the actions. See docs/design-decisions.md.
+        %>
+
+        <% current_user.switchable_roles.each do |role| %>
+          <% next if role == current_role %>
+          <%= link_to switch_to_role_users_path(role_id: role.id), role: "menuitem",
+                class: "block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" do %>
+            Switch to: <%= role.resource&.name || "Super admin" %>
+          <% end %>
+        <% end %>
+
+        <div class="my-1 border-t border-slate-100"></div>
+
+        <%= button_to "Log out", destroy_user_session_path, method: :delete,
+              role: "menuitem",
+              form_class: "block",
+              data: {disable_with: "Please wait..."},
+              class: "block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-600" %>
+      <% end %>
     </div>
   </div>
 </header>

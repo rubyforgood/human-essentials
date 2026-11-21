@@ -34,11 +34,11 @@ const ADMIN = (p) => p.startsWith("/admin");
 
 // What is on the page that will ask for a confirmation, and how to reach it again after a reload.
 //
-// A menu panel is `hidden` until its trigger is pressed, and `popover_controller` moves it to
-// <body> while it is open. The panel's **id is no handle at all**: `row_actions` builds it from
-// `SecureRandom.hex(4)`, so it is different on the next request -- which is what the first draft of
-// this audit recorded, and why it reported twenty controls as unreachable that were perfectly
-// reachable. The trigger's `aria-label` is stable, because it names the row.
+// A menu panel is `hidden` until its trigger is pressed, and `<rfg-menu>` (designsystem's ADR 14)
+// moves it to <body> while it is open. The panel's **id is no handle at all**: it's a random uid
+// regenerated on every render, so it is different on the next request -- which is what the first
+// draft of this audit recorded, and why it reported twenty controls as unreachable that were
+// perfectly reachable. The trigger's `aria-label` is stable, because it names the row.
 const INVENTORY = () => [...document.querySelectorAll("[data-confirm], [data-turbo-confirm]")]
   .filter((el) => !el.disabled)
   .map((el) => {
@@ -47,7 +47,13 @@ const INVENTORY = () => [...document.querySelectorAll("[data-confirm], [data-tur
     // The *index* of the trigger, not its name. Four rows on /organization were all called "More
     // actions for Name Not Provided" -- a real defect, since a screen reader user cannot tell them
     // apart, and one this audit had to stop tripping over to be able to report.
-    const triggers = [...document.querySelectorAll('[data-popover-target="trigger"]')];
+    //
+    // `[slot="trigger"]`, not `[data-popover-target="trigger"]`: every `role="menu"` trigger in
+    // this app is an `<rfg-menu>` trigger now (2026-11-21), marked that way instead -- the
+    // remaining `data-popover-target="trigger"` consumers (the date range/compare/month range
+    // pickers) are `role="dialog"`, never matched by `panel` above, so this selector only ever
+    // needs to find the kind this audit actually cares about.
+    const triggers = [...document.querySelectorAll('[slot="trigger"]')];
     return {
       triggerIndex: trigger ? triggers.indexOf(trigger) : null,
       // Icon-only row actions carry no text, so the aria-label is the label. Both are recorded,
@@ -103,7 +109,7 @@ const MARK = ({ text, aria, inPanel }) => {
     await page.waitForTimeout(120);
 
     if (item.triggerIndex !== null) {
-      const trigger = page.locator('[data-popover-target="trigger"]').nth(item.triggerIndex);
+      const trigger = page.locator('[slot="trigger"]').nth(item.triggerIndex);
       if (!(await trigger.count())) return { ...item, path, verdict: "unreachable: no trigger for its menu" };
       await trigger.click();
       await page.waitForTimeout(180);

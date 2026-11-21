@@ -1,7 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
 
-// An anchored floating panel: the account menu, the date range picker, anything that hangs off a
-// trigger rather than covering the page.
+// An anchored floating panel: the date range picker, the compare picker, the month range picker --
+// anything that hangs off a trigger rather than covering the page, and holds real form controls
+// rather than a `role="menu"` list.
+//
+// **The account menu and both row/page-level menus moved off this onto `<rfg-menu>`,
+// 2026-11-21** (designsystem's ADR 14) -- see `shared/essentials/row_actions`'s own comment for
+// why. What's left here is genuinely `role="dialog"` shaped: a date range panel holds date
+// inputs, and arrow keys inside it belong to those inputs, not to moving between menu items --
+// the reason `moveWithArrows` used to gate itself on `role="menu"` rather than just being here
+// unconditionally. With no more `role="menu"` consumer left, that gate was dead code rather than
+// a real branch, so it's gone rather than kept for a role nothing here sets anymore.
 //
 // A modal is a <dialog>; this is not, because a popover must not trap focus or block the page --
 // you are meant to be able to see what you are filtering while you filter it. What it does share
@@ -33,11 +42,8 @@ export default class extends Controller {
     this.onKeydown = this.closeOnEscape.bind(this)
     this.onReposition = () => { if (this.isOpen) this.position() }
 
-    this.onPanelKeydown = this.moveWithArrows.bind(this)
-
     document.addEventListener("click", this.onDocumentClick)
     document.addEventListener("keydown", this.onKeydown)
-    this.panelTarget.addEventListener("keydown", this.onPanelKeydown)
     window.addEventListener("resize", this.onReposition)
     window.addEventListener("scroll", this.onReposition, true)
   }
@@ -45,7 +51,6 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("click", this.onDocumentClick)
     document.removeEventListener("keydown", this.onKeydown)
-    this.panel.removeEventListener("keydown", this.onPanelKeydown)
     window.removeEventListener("resize", this.onReposition)
     window.removeEventListener("scroll", this.onReposition, true)
     // Turbo can replace the row while the menu is open; the panel would otherwise be left on the
@@ -53,38 +58,6 @@ export default class extends Controller {
     if (this.panelHome) this.portalled.remove()
     this.panelHome = null
     this.portalled = null
-  }
-
-  // Arrow keys, Home and End move between items -- but only in a panel that calls itself a
-  // `menu`. The ARIA menu pattern requires this, and the account menu had claimed `role="menu"`
-  // since it was built without ever implementing it: a promise in an attribute that nothing kept.
-  // The overlay audit found it the moment row action menus multiplied it by 62.
-  //
-  // Gated on the role, because the date range panel holds date inputs and an arrow key there
-  // belongs to the input -- hijacking it would break adjusting a date with the keyboard.
-  moveWithArrows(event) {
-    if (this.panel.getAttribute("role") !== "menu") return
-    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
-
-    const items = this.focusableItems()
-    if (items.length === 0) return
-    event.preventDefault()
-
-    const here = items.indexOf(document.activeElement)
-    const next = {
-      ArrowDown: here < 0 ? 0 : (here + 1) % items.length,
-      ArrowUp: here < 0 ? items.length - 1 : (here - 1 + items.length) % items.length,
-      Home: 0,
-      End: items.length - 1
-    }[event.key]
-
-    items[next].focus()
-  }
-
-  focusableItems() {
-    return [...this.panel.querySelectorAll(
-      "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])"
-    )].filter((el) => el.offsetParent !== null)
   }
 
   /*

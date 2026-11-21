@@ -42,3 +42,9 @@ pin "sinon", preload: false # @21.0.0
 pin "rfg-button", to: "rfg-button.js", preload: true
 # vendor/javascript/rfg-segmented-control.js for provenance and how to update it.
 pin "rfg-segmented-control", to: "rfg-segmented-control.js", preload: true
+# vendor/javascript/rfg-tooltip.js for provenance and how to update it.
+pin "rfg-tooltip", to: "rfg-tooltip.js", preload: true
+# vendor/javascript/rfg-menu.js for provenance and how to update it.
+pin "rfg-menu", to: "rfg-menu.js", preload: true
+# vendor/javascript/rfg-combobox.js for provenance and how to update it.
+pin "rfg-combobox", to: "rfg-combobox.js", preload: true

@@ -1225,6 +1225,22 @@ dismissible with Escape, hoverable, persistent. Three rules:
   makes routine. On scroll it is re-placed rather than dropped: moving focus to a control below the
   fold *scrolls*, and hiding then would starve the one case that most needs a name.
 
+**Update, 2026-11-21 — renders through `<rfg-tooltip>` now** (vendor/javascript/rfg-tooltip.js,
+designsystem's ADR 14), generalized from this exact `tooltip_controller`/`.tip-bubble`
+implementation (640 icon-only controls across 153 screens, 0 defects, per its own audit — the
+evidence that pattern was built from, not a fresh design). `essentials_row_icon_link` and
+`essentials_action_button`'s `icon_only` path now wrap the `<rfg-button>` they already render in
+`<rfg-tooltip text="...">`, rather than setting a `data-tooltip` attribute for a page-wide
+delegated Stimulus controller to find; the two hand-built barcode-scan buttons
+(`shared/essentials/_barcode_scan_field`, `line_items/_line_item_table`) do the same. All three
+rules above hold unchanged — the bubble (now `.rfg-tooltip-bubble`) is still `aria-hidden`, `title`
+is still removed rather than left alongside, it still opens below and flips left/up against the
+viewport. `tooltip_controller.js` itself is deleted: once every real `data-tooltip` call site moved
+onto the component, nothing read it anymore, and it is no longer registered on either shell's
+`data-controller` list. The clipped-cell bubble (`clipped_text_controller`, `.tip-bubble`,
+different CSS class, different job) is untouched — it was never this pattern's evidence to begin
+with, see [its own section](#clipped-cell-bubble).
+
 <a id="a-fixed-panel-is-portalled"></a>
 **An open `fixed` popover panel is moved to `<body>`, and put back when it closes.**
 `position: fixed` escapes an ancestor's *overflow* — which is what `popover-fixed-value` was added
@@ -1242,6 +1258,14 @@ Two consequences worth knowing. The trigger carries **`aria-controls`** and the 
 recommended by the ARIA menu-button pattern anyway, and now the only reliable way to pair them.
 And a spec finds the trigger in the row but **the panel on the page**: `open_row_menu` does this
 for you.
+
+**Update, 2026-11-21 — this exact portal rule is now built into `<rfg-popover>` itself, and the
+kebab/account menus render through `<rfg-menu>`, the portable component built on top of it**
+(designsystem's ADR 14). The `popover-fixed-value` opt-in named above is gone along with the
+hand-built markup it modified: every `<rfg-popover>`/`<rfg-menu>` panel is fixed-positioned and
+portalled while open, unconditionally, so there is no longer a non-portalled mode to opt out of.
+`popover_controller.js` stays for the date range, compare and month range pickers — genuinely
+`role="dialog"` shaped, never in scope here.
 
 **The kebab trigger gets no tooltip.** It is a menu opener rather than an action, `aria-haspopup`
 already identifies it, and "More actions for <this row>" repeated down every row is noise — the menu
@@ -1312,18 +1336,30 @@ Salesforce Lightning calls it *row-level actions*, Polaris renders them as an `A
   one destination, which is what the tab-actions pass removed.
 - **Always visible, never hover-revealed.** Several of the consumer apps reveal the kebab on hover.
   There is no hover on a phone, and a keyboard user cannot reach a control that does not exist yet.
-- **The disclosure pattern, not the ARIA menu pattern.** A popover of links moved through with Tab.
-  `popover_controller` gives Escape, focus back to the trigger, `aria-expanded` and click-outside;
-  it does not do arrow-key movement, and promising `role="menu"` without that is worse than not
-  promising it. The trigger takes `aria-haspopup` and a label naming the row — *"More actions for
-  distribution 24"* — or a screen reader hears "button" once per row.
-- **`data-popover-fixed-value="true"`.** The menu lives inside `.table-scroll`, whose
-  `overflow-x: auto` forces `overflow-y` to compute to `auto` as well, so an absolutely positioned
-  panel is clipped on **both** axes and the last row's menu was cut off by the bottom of the table.
-  Fixed positioning is opt-in, because the account menu and date picker have no clipping ancestor
-  and moving with the page is the better default.
+- **The real ARIA menu-button pattern, not the disclosure pattern this used to fall back to.** The
+  trigger takes `aria-haspopup="menu"` and a label naming the row — *"More actions for distribution
+  24"* — or a screen reader hears "button" once per row.
 - **`size-7`, not the 38px control height.** A row action is `sm` everywhere else; a 38px trigger
   made every distribution row 10px taller. 28px still clears WCAG 2.5.8's 24×24 floor.
+
+**Update, 2026-11-21 — renders through `<rfg-menu>` now** (vendor/javascript/rfg-menu.js,
+designsystem's ADR 14), replacing `popover_controller`'s hand-built `role="menu"` markup. This also
+corrects a claim this section had carried since it was first written: it used to say
+`popover_controller` "does not do arrow-key movement, and promising `role="menu"` without that is
+worse than not promising it" — true of the *very first* version, but `popover_controller` had
+since grown real arrow-key navigation (gated on `role="menu"`, so the date-range/compare pickers'
+own popovers were unaffected), and this section was never corrected to say so. `<rfg-menu>` makes
+that real-and-undocumented behavior the component's own documented contract instead: arrow-key
+navigation between items, ArrowDown/ArrowUp from the trigger opening straight to the first/last
+item, Escape-with-refocus, outside-click, and the same fixed-positioning/portal-to-`<body>` escape
+from `.table-scroll`'s clipping and the actions column's own `position: sticky` stacking context —
+all previously true of `popover_controller`'s own `fixed`-value opt-in, now unconditional (every
+`<rfg-menu>` panel is portalled while open; there is no longer a non-portalled mode to opt out of).
+`shared/essentials/menu_button` (the page-level, labelled counterpart — see
+[below](#menu-button)) and both top bars' account menus render through the same component. `popover_controller.js` itself stays, narrower: the date-range, compare and month-range
+pickers are genuinely `role="dialog"` shaped (real form controls, where an arrow key belongs to the
+focused input rather than to moving between items), and its own now-dead `role="menu"` arrow-key
+gate was removed rather than kept for a role nothing sets through it anymore.
 <a id="the-app-confirms-not-the-browser"></a>
 **The app confirms, not the browser.** `data-confirm` on any control opens the design system's
 `<dialog>` — `shared/essentials/confirm_dialog`, one per shell, filled in by
@@ -2597,6 +2633,10 @@ header has room, so it uses one.
     ] %>
 ```
 
+**Update, 2026-11-21 — renders through `<rfg-menu>` now**, same as `row_actions` above.
+`align: :start`/`:end` maps onto the component's own `placement` property (`@floating-ui/dom`),
+which also clamps to the viewport generically — the Ruby call site is unchanged either way.
+
 It **counts as one action** against the limit of three, which is the whole point of collapsing into
 it. Both menus render their items through `shared/essentials/menu_items`, so what a menu item is —
 its roles, its tones, and the difference between a disabled link and a disabled form control — has
@@ -3393,6 +3433,15 @@ dialog — `rounded-2xl border-slate-200 bg-white shadow-xl`. The scale has two 
 centring, viewport fit, accessible name, Escape, focus return and surface, and runs axe on the
 opened overlay. It exists because the dialog centring bug survived both other audits: one reads
 markup and the other scans the page as loaded, and **neither had ever opened anything**.
+
+**Update, 2026-11-21 — the account menu, and both row/page-level menus, moved off this onto
+`<rfg-menu>`** (vendor/javascript/rfg-menu.js, designsystem's ADR 14 — see the Row actions section
+above for the full account). `popover_controller.js` stays, narrower: the date range filter, the
+compare picker and the month range picker are the real remaining consumers here, each genuinely
+`role="dialog"` shaped rather than a `role="menu"` list, which is also why this file's own
+arrow-key-movement code was removed rather than kept — nothing sets `role="menu"` through it
+anymore. The markup/contract above (`data-controller="popover"`, `data-popover-target`) is accurate
+for these three; a new `role="menu"` consumer belongs on `<rfg-menu>` instead, not on this pattern.
 
 ### Flash messages
 
@@ -4546,9 +4595,15 @@ Three things about it:
 
   **Not a general tooltip component.** It reveals text that is present and clipped. A control that
   needs a *name* gets a visible label or an `aria-label`, and where it is icon-only it also gets
-  `data-tooltip` and [`tooltip_controller`](#tooltips) — a separate controller sharing this bubble,
-  because "show me the text I cannot fit" and "tell me what this button does" are different jobs
-  with the same appearance.
+  [`<rfg-tooltip>`](#tooltips) — a separate implementation, because "show me the text I cannot fit"
+  and "tell me what this button does" are different jobs. **Update, 2026-11-21:** before
+  `<rfg-tooltip>` existed, both were the same hand-rolled `.tip-bubble` CSS, so "the same
+  appearance" was literally true; `<rfg-tooltip>`'s own bubble uses the generic design-system
+  tokens (`--radius-control`/`--shadow-overlay`) rather than this one's own `--radius-md`/
+  `--shadow-lg`, so the two now measure **8px/shadow-xl vs. 6px/shadow-lg** — close, not identical.
+  Named rather than silently let drift: they were never sharing a class or a token, only a
+  visually-matched set of hand-picked values, so migrating one was always going to make that
+  explicit rather than keep it coincidental.
 - **Not where the row leads nowhere.** `partners/requests/_history` and the partner dashboard have
   no detail page, so a clipped comment would be unreadable rather than one click away. Those use a
   `<details>` disclosure — bounded when collapsed, full text in place, keyboard reachable. That is
