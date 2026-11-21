@@ -690,8 +690,14 @@ visible content, with `data-confirm`/`data-disable-with`/`data-turbo` set on the
 way `button_to` used to set them on its own `<button>`. `<rfg-button>`'s attribute proxy (a plain,
 generic `data-*`/`aria-*`/`role` pass-through — it has no idea what `data-confirm` means) carries
 them onto the real control, where rails-ujs and `confirm_dialog_controller.js` both need them.
-`icon_only: true` (reached via `essentials_row_icon_action`) is **not** migrated — see
-`docs/design-decisions.md`.
+**`icon_only: true` (`essentials_row_icon_action`) and `essentials_row_icon_link` now render
+through `<rfg-button>` too, at a new `size="xs"`** — a fixed-box, icon-only compact size, not a
+point on the labelled `sm`/`md` scale. The exact box dimension is a CSS custom property
+(`--rfg-button-xs-size`, set here to `1.75rem`/28px — see `app/assets/tailwind/application.css`),
+not hardcoded in the component: the designsystem repo's own portability audit had already
+concluded this app's specific 28px figure is Local, derived from the kebab-menu trigger's own
+height, not a portable fact — see `docs/design-decisions.md` for the full reasoning, including why
+the earlier "distinct visual vocabulary" exclusion turned out to be overstated.
 
 **`UiHelper` is the older API and it still works.** `new_button_to`, `edit_button_to`,
 `delete_button_to`, `submit_button` and the rest have ~100 call sites; they now emit design

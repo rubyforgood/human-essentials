@@ -393,6 +393,15 @@ the Bootstrap/Tailwind conversion this file otherwise tracks, found the same way
 its own `{label:, path:, method: :put, ...}` item hashes for `row_actions` instead. Named here
 rather than removed, since deleting dead code is a separate decision from migrating a live one.
 
+**`essentials_row_icon_classes` (and its `ROW_ICON_CLASSES`/`ROW_ICON_TONES` constants) still has
+one real caller after `essentials_row_icon_link`/`essentials_row_icon_action` moved onto
+`<rfg-button>`, found 2026-11-21**: `items/_item_row_inventory.html.erb`'s expand/collapse disclosure
+toggle (`aria-expanded`, `aria-controls`, `data-action="click->expandable#toggle"`) calls
+`essentials_row_icon_classes` directly for its own styling. It is not a link or a mutating action —
+a local, client-side-only expand toggle — so it was never in scope for either button migration and
+is not a leftover to clean up; it is a genuinely different kind of control that happens to want the
+same 28px treatment. The helper and its constants stay, for this one caller.
+
 **`data-stack` is gone.** A narrow table became a list of cards from an attribute
 `table_stack_controller` wrote after measuring the container; it is a media query now, at
 `max-width: 689px` and `max-width: 449px`, which are the old container thresholds translated by

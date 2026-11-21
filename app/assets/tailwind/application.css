@@ -36,6 +36,21 @@
  */
 :root {
   --chevron-down: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M1 1 5 5 9 1'/%3e%3c/svg%3e");
+
+  /* <rfg-button>'s size="xs" is a token, not a hardcoded number (designsystem ADR 14) — this is
+     this app's own answer: 28px, matching the kebab-menu trigger's own height
+     (shared/essentials/_row_actions.html.erb's `size-7`), so a column mixing icon-only row
+     actions with the kebab trigger doesn't step by a couple of pixels. */
+  --rfg-button-xs-size: 1.75rem;
+
+  /* <rfg-button>'s `danger`/`ghost_danger` variants reference `--color-danger`, a semantic token
+     the design system expects a consuming app to define (the same way `--color-brand-*` already
+     is, above) -- never defined here until this was actually checked in a real browser: every
+     filled `danger` button has rendered with no background at all (an invalid `var()` falls back
+     to transparent, not to Tailwind's own rose), since `<rfg-button>` was first vendored in.
+     `rose-600` is this app's own already-established destructive accent
+     (`essentials_button_classes`'s own `bg-rose-600`/`hover:bg-rose-700`). */
+  --color-danger: var(--color-rose-600);
 }
 
 @theme {

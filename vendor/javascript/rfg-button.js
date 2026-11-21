@@ -1,5 +1,5 @@
-// Vendored from rubyforgood/designsystem, commit 8b0d935f1cb49e474be14ce1d092168fc639159a
-// (2026-11-20): dist/standalone/button.mjs — <rfg-button>, with Lit bundled in (the "standalone"
+// Vendored from rubyforgood/designsystem, commit b0b5e4c5f006b97f72847e54a12378b43bf123e7 (plus uncommitted local fix, see below)
+// (2026-11-21): dist/standalone/button.mjs — <rfg-button>, with Lit bundled in (the "standalone"
 // build target; see that repo's components/README.md). Not on the npm registry yet, and this
 // app has no Node build step (ADR 0012), so this is vendored the same way filterrific.js,
 // rrule.js and tslib.js already are: copied in and pinned by config/importmap.rb, rather than
@@ -1258,8 +1258,8 @@ o4 == null ? void 0 : o4({ LitElement: i3 });
 (s3.litElementVersions ??= []).push("4.2.2");
 
 // components/button.js
-var VARIANTS = /* @__PURE__ */ new Set(["primary", "secondary", "danger", "ghost"]);
-var SIZES = /* @__PURE__ */ new Set(["sm", "md"]);
+var VARIANTS = /* @__PURE__ */ new Set(["primary", "secondary", "danger", "ghost", "ghost_danger"]);
+var SIZES = /* @__PURE__ */ new Set(["sm", "md", "xs"]);
 var OWN_ATTRS = /* @__PURE__ */ new Set(["variant", "size", "href", "disabled", "reason", "type"]);
 function isProxiedAttr(name) {
   return !OWN_ATTRS.has(name) && (name === "role" || name.startsWith("aria-") || name.startsWith("data-"));
@@ -1307,6 +1307,24 @@ var STYLES = i`
     font-size: 0.8125rem;
   }
 
+  /* A fixed, icon-only square — not a third point on the padding-based sm/md scale, which is
+     built for variable-width text+icon content and can't land on an exact box size. The box
+     dimension is a token, not a hardcoded number: what size an icon-only control "should" be is
+     app-specific (e.g. matched to a menu-trigger's own height elsewhere on the page), not a
+     portable design-system fact, so this stays a sensible default a consuming app can override,
+     the same way --radius-control etc. already are. No separate icon-size override needed: the
+     control's own font-size, not the box, drives the existing 1em icon-slot rule above.
+     See ADR 14. */
+  rfg-button[size="xs"] .control {
+    width: var(--rfg-button-xs-size, 1.75rem);
+    height: var(--rfg-button-xs-size, 1.75rem);
+    padding: 0;
+    /* ~4:7 of the box, same ratio as the 1.75rem default's 1rem icon — found by actually
+       overriding --rfg-button-xs-size and looking at the result, not assumed: a fixed font-size
+       here left the icon visibly stuck at its default size while the box grew around it. */
+    font-size: calc(var(--rfg-button-xs-size, 1.75rem) * 0.571);
+  }
+
   /* Variant axis — what the action means. */
   rfg-button[variant="primary"] .control,
   rfg-button:not([variant]) .control {
@@ -1341,6 +1359,31 @@ var STYLES = i`
   }
   rfg-button[variant="ghost"] .control:hover {
     background: var(--color-neutral-100);
+  }
+
+  /* A destructive row/toolbar action: ghost's own rest treatment (no fill, same text colour),
+     tinted on hover rather than filled — found missing entirely, not assumed present: the
+     component only ever recognized four variants, so every "ghost_danger" button rendered fully
+     unstyled (transparent, inherited text colour) while silently logging the unrecognized-
+     variant warning below on every page load — a real, console-warning-only (not "error") bug
+     missed for two prior migration passes by only filtering for errors. The 15%-tint technique
+     matches rfg-icon-tile's own danger tone, since tokens/ exposes one value per semantic
+     tone, not a tint scale. */
+  rfg-button[variant="ghost_danger"] .control {
+    background: transparent;
+    color: var(--color-neutral-700);
+  }
+  rfg-button[variant="ghost_danger"] .control:hover {
+    background: color-mix(in oklch, var(--color-danger) 15%, white);
+    color: var(--color-danger);
+  }
+
+  /* Destructive variants get their own focus-ring colour — found missing, not assumed present,
+     the same way the ghost_danger variant itself was: every variant shared one brand-coloured
+     ring, so a focused destructive control's ring never matched its own danger colour. */
+  rfg-button[variant="danger"] .control:focus-visible,
+  rfg-button[variant="ghost_danger"] .control:focus-visible {
+    outline-color: var(--color-danger);
   }
 
   /* Native "disabled" (button mode only — anchors don't support this attribute). */
@@ -1410,7 +1453,7 @@ var RfgButton = class extends i3 {
   static properties = {
     /** What the action means — not decided per-button. See design.md's Buttons table. */
     variant: { type: String, reflect: true },
-    /** What context the button appears in: `sm` inside a table row or dense toolbar, `md` for page/section actions. */
+    /** What context the button appears in: `sm` inside a table row or dense toolbar, `md` for page/section actions, `xs` for a fixed-size icon-only control (see `--rfg-button-xs-size`). */
     size: { type: String, reflect: true },
     /** Switches the component to link mode: a real `<a>`, for navigation (a GET), never a state-changing action. */
     href: { type: String },
@@ -1451,6 +1494,7 @@ var RfgButton = class extends i3 {
   }
   _syncContent() {
     const original = [...this.childNodes].filter((n4) => n4 !== this._controlEl);
+    if (original.length === 0 && (this._iconNodes.length > 0 || this._labelNodes.length > 0)) return;
     this._iconNodes = original.filter((n4) => n4.nodeType === 1 && n4.getAttribute("slot") === "icon");
     this._labelNodes = original.filter((n4) => !this._iconNodes.includes(n4));
     this.requestUpdate();
@@ -1487,7 +1531,7 @@ var RfgButton = class extends i3 {
   _warnIfNoAccessibleName(control) {
     if (this._warnedMissingName) return;
     const hasVisibleText = this.textContent.trim().length > 0;
-    const hasLabel = this.hasAttribute("aria-label") || this.hasAttribute("aria-labelledby");
+    const hasLabel = control.hasAttribute("aria-label") || control.hasAttribute("aria-labelledby");
     if (!hasVisibleText && !hasLabel) {
       console.warn(
         "<rfg-button> has no visible text and no aria-label/aria-labelledby \u2014 an icon-only button needs its own accessible name (design.md's Iconography rule)."

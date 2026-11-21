@@ -85,11 +85,24 @@ module EssentialsUiHelper
     "#{ROW_ICON_CLASSES} #{ROW_ICON_TONES.fetch(tone.to_sym)}"
   end
 
+  # Renders through `<rfg-button>` at `size: "xs"` -- a fixed, icon-only control, not a point on
+  # the labelled sm/md scale. See `essentials_action_button`'s doc comment and
+  # docs/design-decisions.md for why this and `essentials_row_icon_action` were excluded from the
+  # earlier button migrations, and why that turned out to be overstated.
   def essentials_row_icon_link(label, path, icon:, tone: :ghost, **html_attrs)
-    link_to path, "aria-label": label, data: {tooltip: label}.merge(html_attrs.delete(:data) || {}),
-      class: essentials_row_icon_classes(tone: tone), **html_attrs do
-      tag.i(nil, class: icon, aria: {hidden: true})
-    end
+    icon_el = tag.i(nil, class: icon, slot: "icon", aria: {hidden: true})
+    data = {tooltip: label}.merge(html_attrs.delete(:data) || {})
+    # `url_for`, not the raw `path` -- found live, not assumed: three call sites
+    # (transfers/_transfer_row, manufacturers/_manufacturer_row,
+    # product_drive_participants/_product_drive_participant_row) pass the record itself, not a
+    # path string, the same way `link_to` always accepted either and resolved a record
+    # polymorphically. `content_tag` has no such awareness and would stringify a bare record
+    # straight into `href`, producing `#<Transfer:0x...>` -- `link_to`'s own implementation
+    # calls `url_for(options)` unconditionally for exactly this reason; this does the same.
+    attrs = html_attrs.merge(href: url_for(path), variant: ((tone.to_sym == :danger) ? :ghost_danger : :ghost),
+      size: "xs", "aria-label": label, data: data)
+
+    content_tag("rfg-button", icon_el, **attrs)
   end
 
   # The same control for an action that is not a GET.
@@ -256,10 +269,12 @@ module EssentialsUiHelper
 
   # A real button that submits or mutates.
   #
-  # `icon_only: true` (reached via `essentials_row_icon_action`) stays hand-built, unmigrated --
-  # it's a distinct 28px circular treatment (`essentials_row_icon_classes`), not `<rfg-button>`'s
-  # primary/secondary/danger/ghost x sm/md vocabulary, the same reason `essentials_row_icon_link`
-  # was already excluded when `essentials_link_button` migrated. See docs/design-decisions.md.
+  # `icon_only: true` (reached via `essentials_row_icon_action`) also renders through
+  # `<rfg-button>` now, at `size: "xs"` -- a fixed, icon-only control, not a point on the
+  # primary/secondary/danger/ghost x sm/md vocabulary the labelled path uses. See
+  # docs/design-decisions.md for why the earlier "distinct visual vocabulary" exclusion turned
+  # out to be overstated, and designsystem's ADR 14 for the `size="xs"`/`--rfg-button-xs-size`
+  # token this app sets to 28px (app/assets/tailwind/application.css).
   #
   # The `icon_only: false` (default) path renders through `<rfg-button>`
   # (vendor/javascript/rfg-button.js -- designsystem's ADR 14), the same component
@@ -300,18 +315,20 @@ module EssentialsUiHelper
     end
 
     if icon_only
-      classes = essentials_row_icon_classes(tone: (%i[danger ghost_danger].include?(variant.to_sym) ? :danger : :ghost))
+      # `data-tooltip`, never `title`: a `title` is unstyleable browser chrome, silent on
+      # keyboard focus, and fails WCAG 1.4.13 three ways. `tooltip_controller` shows the same
+      # string on hover and focus; `aria-label` stays the accessible name, so the action is
+      # announced once, not twice.
+      content = tag.i(nil, class: icon, slot: "icon", aria: {hidden: true})
       html_attrs["aria-label"] ||= label
       data[:tooltip] ||= label
-
-      return button_to path, method: method, class: classes, form_class: "inline-block",
-        data: data, **html_attrs do
-          tag.i(nil, class: icon, aria: {hidden: true})
-        end
+      control_size = "xs"
+    else
+      icon_el = icon ? tag.i(nil, class: icon, slot: "icon", aria: {hidden: true}) : nil
+      content = safe_join([icon_el, label].compact, " ")
+      control_size = size
     end
 
-    icon_el = icon ? tag.i(nil, class: icon, slot: "icon", aria: {hidden: true}) : nil
-    content = safe_join([icon_el, label].compact, " ")
     params = html_attrs.delete(:params)
 
     form_with(url: path, method: method, class: "inline-block") do
@@ -319,7 +336,7 @@ module EssentialsUiHelper
         # `button_to`'s own `params:` behavior, rebuilt directly with the same `to_form_params`
         # it calls internally -- one nested hidden `<input>` per leaf value.
         (params ? safe_join(to_form_params(params).map { |p| tag.input(type: "hidden", name: p[:name], value: p[:value], autocomplete: "off") }) : nil),
-        content_tag("rfg-button", content, type: "submit", variant: variant, size: size, data: data, **html_attrs)
+        content_tag("rfg-button", content, type: "submit", variant: variant, size: control_size, data: data, **html_attrs)
       ].compact)
     end
   end

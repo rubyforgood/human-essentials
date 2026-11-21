@@ -32,7 +32,10 @@ RSpec.describe "Donations", type: :request do
         end
         it "shows a print button" do
           page = Nokogiri::HTML(subject.body)
-          pdf = page.at_css("a[href*='print.pdf']")
+          # essentials_row_icon_link now renders through <rfg-button> (designsystem ADR 14) --
+          # a request spec parses the raw server response and never runs the JS that would turn
+          # it into a real <a>, so the href lives on the custom element's own tag instead.
+          pdf = page.at_css("a[href*='print.pdf'], rfg-button[href*='print.pdf']")
           # A row action is a 28px icon now, so its name is the `aria-label` rather than a text
           # node -- design.md, Row actions. That *is* what the control is called; it is what a
           # screen reader announces and what the tooltip shows.

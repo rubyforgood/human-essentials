@@ -32,6 +32,7 @@ export default class extends Controller {
   connect() {
     this.bubble = null;
     this.anchor = null;
+    this._escapeDismissed = null;
 
     this.onOver = this.onOver.bind(this);
     this.onOut = this.onOut.bind(this);
@@ -66,13 +67,30 @@ export default class extends Controller {
 
   onOver(event) {
     const target = event.target.closest("[data-tooltip]");
-    if (target) this.show(target);
+    if (!target) return;
+    // A real browser can re-fire a trusted `mouseover` for an element the pointer never actually
+    // moved to or off of -- found live, not assumed: focusing/blurring a control can make Chrome
+    // recompute what is "under the pointer" and resend enter/leave for it, with no real pointer
+    // movement at all. Without this guard, a user whose mouse happens to already be resting on a
+    // control they also reach by Tab would press Escape, dismiss the bubble, and immediately get
+    // it back -- the exact thing WCAG 1.4.13 "dismissible" promises cannot happen. Ignored once,
+    // for this specific control, then cleared -- a real subsequent hover (a real mouseout then
+    // back in) still works normally.
+    if (target === this._escapeDismissed) {
+      this._escapeDismissed = null;
+      return;
+    }
+    this.show(target);
   }
 
   onOut(event) {
     if (!event.target.closest("[data-tooltip]")) return;
     // WCAG 1.4.13 "hoverable": moving the pointer onto the bubble must not dismiss it.
     if (event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest(".tip-bubble")) return;
+    // The Escape guard above only needs to survive until the *next* real pointer event for this
+    // control -- a genuine leave this soon after an Escape-dismiss, not a spurious re-fire, so a
+    // later real return should show the bubble again rather than silently eating it too.
+    this._escapeDismissed = null;
     this.hide();
   }
 
@@ -87,7 +105,10 @@ export default class extends Controller {
 
   // WCAG 1.4.13 "dismissible": without moving the pointer.
   onKey(event) {
-    if (event.key === "Escape" && this.bubble) this.hide();
+    if (event.key === "Escape" && this.bubble) {
+      this._escapeDismissed = this.anchor;
+      this.hide();
+    }
   }
 
   onScroll() {

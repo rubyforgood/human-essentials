@@ -10688,3 +10688,102 @@ caught the gap until CI's Ruby-version fix (above) let `rspec` actually finish a
 - *Lower the bar further (e.g., skip the check, or assert nothing about the directory at all).*
   Rejected for the same reason — the point is to keep this checkable, not to make the failure stop.
 
+## 2026-11-21 · `essentials_row_icon_link`/`essentials_row_icon_action` render through `<rfg-button>`, via a new token-based `size="xs"`
+
+**Decision.** Icon-only row actions — `essentials_row_icon_link` (46 call sites, 34 files),
+`essentials_row_icon_action` (12 call sites, 11 files), and `reinvite_user_link` (1 call site) —
+now render through `<rfg-button>`, at a new designsystem-repo size value, `size="xs"`: a fixed
+28×28px box, not a point on the labelled `sm`/`md` scale. Ruby call sites are unchanged.
+
+**The "distinct visual vocabulary" exclusion, re-examined, was overstated.** Both prior button
+migrations deferred this on the reasoning that row icons are "a distinct 28px circular treatment,
+not `<rfg-button>`'s vocabulary." Checked precisely before building anything: `ROW_ICON_TONES[
+:danger]` (`text-slate-600 hover:bg-rose-50 hover:text-rose-700`) is byte-for-byte identical to
+`BUTTON_VARIANTS[:ghost_danger]` at rest and on hover — only the fixed size and the focus-ring
+colour differed, and the focus-ring difference was itself a real, separate bug (below). The plain
+`:ghost` tone did genuinely differ (`slate-500` vs `slate-600`), with no documented rationale found
+anywhere near `ROW_ICON_CLASSES` — unlike nearly every other colour choice in this codebase, which
+is otherwise reliably commented; likely drift, not intent. design.md itself never calls this a
+protected second vocabulary the way it explicitly does for `<rfg-icon-tile>`/`<rfg-avatar>` — it
+frames 28px purely as a layout decision (matches the kebab-menu trigger's height, makes a frozen
+actions column's fixed width affordable). The real blocker was structural: `<rfg-button>`'s `sm`/
+`md` sizes are padding-based, built for variable-width text+icon content, and its icon was fixed at
+`1em` (tied to font-size) — neither produces a true, fixed, icon-only square.
+
+**The new size's exact dimension is a token, not a hardcoded number**, because the designsystem
+repo's own portability audit (`docs/portability/design-md-tagging.md` there) had already concluded
+this app's specific 28px figure is Local — derived from this app's own kebab-trigger height, not a
+portable design-system fact. `--rfg-button-xs-size` defaults to `1.75rem` in the component itself;
+this app sets it to exactly `1.75rem` too, in `app/assets/tailwind/application.css`, alongside a
+comment naming why (matches the kebab trigger). A different app adopting this component gets a
+sensible default rather than inheriting a number that means nothing to its own layout.
+
+**Three real bugs found by actually measuring and reproducing, not assumed fixed.** Each is detailed
+in designsystem's own ADR 14 and this app's own commit history; summarized here for where a reader
+of *this* app's decisions would look first:
+
+1. **`ghost_danger` was never a real `<rfg-button>` variant at all**, despite design.md naming it
+   explicitly and this app's own Ruby code (both the already-shipped `essentials_action_button` and
+   now this migration) passing `variant: :ghost_danger` directly into the component since the first
+   `essentials_action_button` migration. Every such button rendered fully unstyled — transparent,
+   inherited colour, no hover state, no correct focus ring — while silently logging an
+   unknown-variant warning on every page load, missed for two prior migration passes because every
+   verification pass filtered for `console.error` only, never `console.warn`. Fixed in the
+   designsystem repo: a real fifth variant, matching design.md's own description ("`slate-600` at
+   rest, rose on hover and focus only"), plus per-variant focus-ring colours for `danger`/
+   `ghost_danger` (also missing before — the component had exactly one, brand-coloured, focus ring
+   for every variant).
+2. **A self-triggering render loop in `<rfg-button>` itself**, found while chasing a flaky system
+   spec: the component's own content-sync `MutationObserver` watches the host's `childList`, but
+   its own `placeInOrder` re-parenting (moving slotted content into the rendered control) is itself
+   a childList mutation on the host, which the same observer re-observes, discarding and
+   re-deriving tracked content on every single render that has an icon — and once, on a real page,
+   enough of that churn made Lit's own render bookkeeping desync and recreate the control entirely,
+   silently orphaning the host's already-moved `data-*`/`aria-*` attributes on the disconnected
+   original. Fixed in the designsystem repo (`_syncContent`): skip the resync when nothing is left
+   as a direct child but something is already tracked — that's the element's own placement, not an
+   external change.
+3. **A real WCAG 1.4.13 "dismissible" gap in `tooltip_controller.js`**: a real, trusted `mouseover`
+   can re-fire for an element the pointer never actually moved to or off of — found live, not
+   assumed, chasing what first looked like test flakiness — because focusing/blurring a control can
+   make Chrome recompute what is "under the pointer" and resend enter/leave for it with no real
+   pointer movement at all. Without a guard, a user whose mouse happened to already be resting on a
+   control they also reached by Tab would press Escape, watch the tooltip close, and immediately
+   get it back — exactly what WCAG 1.4.13 promises cannot happen. Fixed with a one-shot guard:
+   ignore exactly one stray re-entry for the control just dismissed via Escape, cleared on the next
+   real pointer event (over or out) so a later genuine hover still works normally.
+
+**A fourth, unrelated, real bug found along the way, in this app's own view code**:
+`_transfer_row.html.erb`'s "View" link passed the raw `Transfer` record itself as `path`, relying
+on `link_to`'s own polymorphic `url_for` resolution (the same convenience `_manufacturer_row.html.erb`
+and `_product_drive_participant_row.html.erb` also lean on for their own "View" links) — `link_to`
+silently resolves a bare record to its show path; `content_tag`, which `essentials_row_icon_link`
+now uses, has no such awareness and stringified the record straight into `href`, producing
+`href="#<Transfer:0x...>"`. Found by chasing what looked like a React-style timing race in a system
+spec, which turned out to be the actual symptom of a genuinely broken link (focusing and escaping a
+link with a malformed `href` was confusing the browser's own navigation/hash handling in a way that
+masqueraded as a component bug for a long investigation before the real cause surfaced). Fixed in
+the helper itself — `href: url_for(path)`, matching `link_to`'s own exact mechanism — rather than
+in the three affected views, so any future call site relying on the same, pre-existing, legitimate
+Rails convention keeps working.
+
+**Verification.** Full `rspec` (not a sample), run to completion after every fix above: 3523
+examples, the same two pre-existing flakes already confirmed via `git stash` in earlier phases,
+zero new failures — including 11 consecutive clean runs of the specific system spec
+(`row_actions_reach_system_spec.rb`) this investigation started from, across different random
+seeds, where it had been failing roughly half the time before the `url_for` fix. `confirm-audit.js`:
+49 confirmations across 23 pages, all the app's own dialog. `button-audit.js`, `wcag-audit.js`,
+`keyboard-audit.js`: no new findings. Manually confirmed live on all three affected pages
+(`/transfers`, `/manufacturers`, `/product_drive_participants`) that "View" now links to the real
+record.
+
+**Alternatives rejected.**
+- *Resolve the `url_for` finding by editing the three affected views instead of the helper.* Could
+  have matched the adjacent "Undo"/"Edit" links' own explicit `transfer_path(...)`-style calls.
+  Rejected: the helper fix protects every current and future call site relying on the same,
+  already-established Rails convenience, not just the three found by this grep.
+- *Leave the `--rfg-button-xs-size` number hardcoded in the component, matching the exact 28px this
+  app already needs.* Rejected: the designsystem repo's own portability work had already concluded
+  that number is Local, not portable; hardcoding it would bake one app's layout constant into a
+  component meant for any app.
+
