@@ -386,12 +386,12 @@ findings that belong to this migration rather than to the app's own history:
   unused helper that renders design system output is inert, an unused helper that renders classes
   nothing defines is a trap, and the three deleted from `partners_helper.rb` were the second kind.
 
-**`KitsHelper#deactivate_kit_button` has no callers, found 2026-11-20** while surveying
-`essentials_action_button`'s call-site family for the button-helper migration above — unrelated to
-the Bootstrap/Tailwind conversion this file otherwise tracks, found the same way: `grep -rn
-"deactivate_kit_button" app/ spec/` returns only its own definition. `kits/_table.html.erb` builds
-its own `{label:, path:, method: :put, ...}` item hashes for `row_actions` instead. Named here
-rather than removed, since deleting dead code is a separate decision from migrating a live one.
+**`KitsHelper#deactivate_kit_button`, found dead 2026-11-20, removed 2026-11-21.** No callers:
+`kits/_table.html.erb` builds its own `{label:, path:, method: :put, ...}` item hashes for
+`row_actions` instead. Left named-not-removed for a day on the rule that deleting dead code is a
+separate decision from migrating a live one — asked, and the answer was to remove it.
+`app/helpers/kits_helper.rb` deleted outright (the method was its only content); no spec existed
+for it.
 
 **`essentials_row_icon_classes` (and its `ROW_ICON_CLASSES`/`ROW_ICON_TONES` constants) still has
 one real caller after `essentials_row_icon_link`/`essentials_row_icon_action` moved onto
