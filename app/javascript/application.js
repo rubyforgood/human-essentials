@@ -90,12 +90,16 @@ $(document).ready(function(){
   const today = DateTime.now();
   const startDate = new Date(rangeElement.dataset["initialStartDate"]);
   const endDate = new Date(rangeElement.dataset["initialEndDate"]);
+  const minDate = rangeElement.dataset["minDate"]
+    ? new Date(rangeElement.dataset["minDate"])
+    : null;
 
   const picker = new Litepicker({
     element: rangeElement,
     plugins: ["ranges"],
     startDate: startDate,
     endDate: endDate,
+    minDate: minDate,
     format: "MMMM D, YYYY",
     ranges: {
       customRanges: {

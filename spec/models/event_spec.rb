@@ -36,14 +36,14 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "#most_recent_snapshot" do
+  describe ".usable_snapshots" do
     let(:eventable) { FactoryBot.create(:distribution, organization_id: organization.id) }
     let(:data) { EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id) }
     let(:payload) { EventTypes::InventoryPayload.new(items: []) }
 
-    it "should include the last usable snapshot" do
+    it "should include every usable snapshot, oldest first" do
       freeze_time do
-        SnapshotEvent.create!(organization_id: organization.id, eventable: eventable,
+        snapshot1 = SnapshotEvent.create!(organization_id: organization.id, eventable: eventable,
           data: data,
           event_time: 1.week.ago, updated_at: 1.week.ago)
         DonationEvent.create!(organization_id: organization.id, eventable: eventable,
@@ -56,7 +56,7 @@ RSpec.describe Event, type: :model do
           data: payload,
           event_time: 1.minute.ago, updated_at: 1.minute.ago)
 
-        expect(described_class.most_recent_snapshot(organization.id)).to eq(snapshot2)
+        expect(described_class.usable_snapshots(organization.id)).to eq([snapshot1, snapshot2])
       end
     end
 
@@ -75,7 +75,25 @@ RSpec.describe Event, type: :model do
           data: payload,
           event_time: 1.minute.ago, updated_at: 1.minute.ago)
 
-        expect(described_class.most_recent_snapshot(organization.id)).to eq(snapshot1)
+        expect(described_class.usable_snapshots(organization.id)).to eq([snapshot1])
+        expect(described_class.usable_snapshots(create(:organization).id)).to be_empty
+        expect(described_class.history_start(organization.id)).to eq(snapshot1.event_time)
+      end
+    end
+  end
+
+  describe ".usable_snapshots across organizations" do
+    it "ignores another organization's edited events" do
+      other = create(:organization)
+      freeze_time do
+        snapshot = SnapshotEvent.create!(organization_id: organization.id, eventable: organization,
+          data: EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id),
+          event_time: 2.days.ago, updated_at: 2.days.ago)
+        DonationEvent.create!(organization_id: other.id, eventable: create(:donation, organization: other),
+          data: EventTypes::InventoryPayload.new(items: []),
+          event_time: 3.days.ago, updated_at: 1.hour.ago)
+
+        expect(described_class.usable_snapshots(organization.id)).to eq([snapshot])
       end
     end
   end

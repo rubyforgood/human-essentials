@@ -57,18 +57,11 @@ class StorageLocationsController < ApplicationController
   def show
     setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
-    version_date = params[:version_date].presence&.to_date
     @show_flow_tab = params[:tab] == "flow"
     @date_range_filters = date_range_filters
-    if View::Inventory.within_snapshot?(current_organization.id, version_date)
-      @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
-    else
-      @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
-        current_organization.id,
-        @storage_location.id,
-        version_date
-      )
-    end
+    history_start = Event.history_start(current_organization.id)
+    @history_start_date = history_start&.to_date
+    @inventory = View::Inventory.new(current_organization.id, event_time: inventory_time(history_start))
 
     respond_to do |format|
       format.html
@@ -158,6 +151,22 @@ class StorageLocationsController < ApplicationController
     current_organization.items.where.not(id: existing_item_ids).collect do |item|
       Struct::OmittedInventoryItem.new(item)
     end
+  end
+
+  # The time to show the Inventory tab's inventory at: the start of the requested
+  # version_date, but no earlier than when the inventory history begins.
+  # @param history_start [ActiveSupport::TimeWithZone, nil]
+  # @return [ActiveSupport::TimeWithZone, nil] nil for the current inventory
+  def inventory_time(history_start)
+    version_date = params[:version_date].presence&.to_date
+    return if version_date.nil?
+
+    if history_start && version_date < history_start.to_date
+      flash.now[:alert] = "Inventory history begins on #{history_start.to_date.to_fs(:long)}. Showing the current inventory."
+      return
+    end
+
+    [version_date.in_time_zone, history_start].compact.max
   end
 
   # @return [Hash] the Inventory Flow tab's date range filters, if any

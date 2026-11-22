@@ -75,7 +75,7 @@ Business logic lives in service classes (`app/services/`), not controllers. Patt
 - `/reports/*` - Reporting endpoints
 
 ### Query Objects
-Complex queries are extracted into `app/queries/` (e.g., `ItemsInQuery`, `LowInventoryQuery`).
+Complex queries are extracted into `app/queries/` (e.g., `ItemsFlowQuery`, `LowInventoryQuery`).
 
 ### Frontend
 Bootstrap 5.2, Turbo Rails, Stimulus.js, ImportMap (no Webpack/bundler). JavaScript controllers live in `app/javascript/`.

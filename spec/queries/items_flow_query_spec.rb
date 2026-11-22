@@ -81,11 +81,11 @@ RSpec.describe ItemsFlowQuery do
     context "and ends after it" do
       let(:date_range) { Time.zone.local(2026, 1, 15)..Time.zone.local(2026, 2, 28).end_of_day }
 
-      it "leaves the start quantity and change blank and counts flows from the snapshot on" do
+      it "starts at the snapshot" do
         expect(result.rows).to contain_exactly(
-          have_attributes(item_id: item.id, quantity_start: nil, quantity_in: 5, quantity_out: 0, change: nil, quantity_end: 13)
+          have_attributes(item_id: item.id, quantity_start: 8, quantity_in: 5, quantity_out: 0, change: 5, quantity_end: 13)
         )
-        expect(result.totals).to have_attributes(quantity_start: nil, quantity_in: 5, change: nil, quantity_end: 13)
+        expect(result.totals).to have_attributes(quantity_start: 8, quantity_in: 5, change: 5, quantity_end: 13)
         expect(result.history_start).to eq(Time.zone.local(2026, 1, 31, 12))
       end
     end
@@ -93,10 +93,10 @@ RSpec.describe ItemsFlowQuery do
     context "and ends before it" do
       let(:date_range) { Time.zone.local(2026, 1, 1)..Time.zone.local(2026, 1, 20).end_of_day }
 
-      it "has no rows and no known totals" do
+      it "has no rows" do
         expect(result.rows).to be_empty
-        expect(result.totals).to have_attributes(quantity_start: nil, quantity_in: nil, quantity_out: nil,
-          quantity_adjustment: nil, change: nil, quantity_end: nil)
+        expect(result.totals).to have_attributes(quantity_start: 0, quantity_in: 0, quantity_out: 0,
+          quantity_adjustment: 0, change: 0, quantity_end: 0)
         expect(result.history_start).to eq(Time.zone.local(2026, 1, 31, 12))
       end
     end
@@ -375,7 +375,9 @@ RSpec.describe ItemsFlowQuery do
       starts = ->(r) { r.rows.to_h { |row| [row.item_id, row.quantity_start] }.reject { |_, quantity| quantity.zero? } }
 
       results.each do |r|
-        r.rows.each { |row| expect(row.quantity_start + row.change).to eq(row.quantity_end) }
+        (r.rows + [r.totals]).each do |row|
+          expect(row.quantity_start + row.quantity_in - row.quantity_out + row.quantity_adjustment).to eq(row.quantity_end)
+        end
       end
       results.each_cons(2) do |earlier, later|
         expect(starts.call(later)).to eq(ends.call(earlier))

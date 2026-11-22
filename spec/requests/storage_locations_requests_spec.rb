@@ -410,12 +410,6 @@ RSpec.describe "StorageLocations", type: :request do
         end
 
         context "with version date set" do
-          let!(:inventory_item) {
-            InventoryItem.create!(storage_location_id: storage_location.id,
-              item_id: item.id,
-              quantity: 200)
-          }
-
           # @return [String] the item's quantity in the Inventory tab's table
           def inventory_tab_quantity(item)
             row = Nokogiri::HTML(response.body).css("#custom-tabs-inventory tbody tr")
@@ -423,18 +417,32 @@ RSpec.describe "StorageLocations", type: :request do
             row.css("td")[1].text.strip
           end
 
-          context "before active events", versioning: true do
-            it "should show the version specified" do
-              travel 1.day do
-                inventory_item.update!(quantity: 100)
+          def set_quantity(quantity)
+            TestInventory.create_inventory(organization, {storage_location.id => {item.id => quantity, item2.id => 0}})
+          end
+
+          context "before the first snapshot" do
+            it "shows the current inventory with a notice" do
+              travel(1.day) { set_quantity(100) }
+              snapshot_date = travel(8.days) { SnapshotEvent.publish(organization) }.event_time.to_date
+
+              travel 2.weeks do
+                get storage_location_path(storage_location, format: response_format,
+                  version_date: (snapshot_date - 1).to_fs(:db))
+                expect(response).to be_successful
+                expect(inventory_tab_quantity(item)).to eq("100")
+                expect(flash[:alert]).to include("Inventory history begins on #{snapshot_date.to_fs(:long)}")
+                expect(Nokogiri::HTML(response.body).at_css("input[name='version_date']")["min"]).to eq(snapshot_date.iso8601)
               end
-              travel 1.week do
-                inventory_item.update!(quantity: 300)
-              end
-              travel 8.days do
-                SnapshotEvent.delete_all
-                SnapshotEvent.publish(organization)
-              end
+            end
+          end
+
+          context "after the first snapshot" do
+            it "shows the inventory at that date" do
+              SnapshotEvent.publish(organization)
+              travel(1.day) { set_quantity(100) }
+              travel(1.week) { set_quantity(300) }
+
               travel 2.weeks do
                 get storage_location_path(storage_location, format: response_format,
                   version_date: 9.days.ago.to_date.to_fs(:db))
@@ -443,33 +451,16 @@ RSpec.describe "StorageLocations", type: :request do
                 expect(inventory_tab_quantity(item)).to eq("100")
               end
             end
-          end
 
-          context "with active events" do
-            it 'should show the right version' do
+            it "shows the inventory at that date when it is before a later snapshot" do
               SnapshotEvent.publish(organization)
-              travel 1.day do
-                TestInventory.create_inventory(organization, {
-                  storage_location.id => {
-                    item.id => 100,
-                    item2.id => 0
-                  }
-                })
-              end
-              travel 1.week do
-                TestInventory.create_inventory(organization, {
-                  storage_location.id => {
-                    item.id => 300,
-                    item2.id => 0
-                  }
-                })
-              end
+              travel(1.day) { set_quantity(100) }
+              travel(3.days) { SnapshotEvent.publish(organization) }
+              travel(1.week) { set_quantity(300) }
 
               travel 2.weeks do
                 get storage_location_path(storage_location, format: response_format,
-                  version_date: 9.days.ago.to_date.to_fs(:db))
-                expect(response).to be_successful
-                expect(response.body).to include("Test Storage Location")
+                  version_date: 12.days.ago.to_date.to_fs(:db))
                 expect(inventory_tab_quantity(item)).to eq("100")
               end
             end
@@ -576,13 +567,13 @@ RSpec.describe "StorageLocations", type: :request do
           end
         end
 
-        it "leaves the start quantity and change blank and counts flows from the snapshot" do
+        it "starts at the snapshot" do
           date_range = "#{(snapshot_time - 1.year).to_date.to_fs(:long)} - #{(snapshot_time + 1.week).to_date.to_fs(:long)}"
           get inventory_flow_storage_location_path(storage_location, filters: {date_range: date_range})
 
           rows, totals = flow_cells(response.body)
-          expect(rows[item.id]).to eq(["Flow Item", "", "3", "0", "0", "", "10"])
-          expect(totals).to eq(["Total", "", "3", "0", "0", "", "10"])
+          expect(rows[item.id]).to eq(["Flow Item", "7", "3", "0", "0", "3", "10"])
+          expect(totals).to eq(["Total", "7", "3", "0", "0", "3", "10"])
           expect(Nokogiri::HTML(response.body).at_css("#inventory-flow-history-start").text)
             .to include("Inventory history begins on #{snapshot_time.to_date.to_fs(:long)}")
         end

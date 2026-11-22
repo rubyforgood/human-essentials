@@ -84,9 +84,11 @@
                   <% @date_range_filters.each do |name, value| %>
                     <%= hidden_field_tag "filters[#{name}]", value, id: nil %>
                   <% end %>
-                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION, autocomplete: "on" %>
+                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: @history_start_date, autocomplete: "on" %>
                   <%= filter_button(text: 'View') %>
-                  <br><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
+                  <% if @history_start_date %>
+                    <br><small>(inventory history begins on <%= @history_start_date.strftime("%b %-d, %Y") %>)</small>
+                  <% end %>
                 <% end %>
                 <table class="table">
                   <thead>
@@ -96,35 +98,17 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <% if @inventory %>
-                    <% @inventory.items_for_location(@storage_location.id, include_omitted: true).each do |item| %>
-                      <tr>
-                        <td><%= link_to item.name, item_path(item.item_id) %></td>
-                        <td><%= number_with_delimiter(item.quantity) %></td>
-                      </tr>
-                    <% end %>
-                  <% elsif @legacy_inventory %>
-                    <% @legacy_inventory.each do |item| %>
-                      <tr>
-                        <td><%= link_to item.name, item_path(item.item_id) %></td>
-                        <td><%= number_with_delimiter(item.quantity) %></td>
-                      </tr>
-                    <% end %>
-                  <% else %>
+                  <% @inventory.items_for_location(@storage_location.id, include_omitted: true).each do |item| %>
+                    <tr>
+                      <td><%= link_to item.name, item_path(item.item_id) %></td>
+                      <td><%= number_with_delimiter(item.quantity) %></td>
+                    </tr>
                   <% end %>
                   </tbody>
                   <tfoot>
                   <tr>
                     <td>Total</td>
-                    <td>
-                      <% if @inventory %>
-                        <%= number_with_delimiter(@inventory.quantity_for(storage_location: @storage_location.id)) %>
-                      <% elsif @legacy_inventory %>
-                        <%= number_with_delimiter(@legacy_inventory.map(&:quantity).sum) %>
-                      <% else %>
-                        <%= number_with_delimiter(@storage_location.size) %>
-                      <% end %>
-                    </td>
+                    <td><%= number_with_delimiter(@inventory.quantity_for(storage_location: @storage_location.id)) %></td>
                   </tr>
                   </tfoot>
                 </table>
@@ -137,7 +121,7 @@
                   <%= label_tag "Date Range" %>
                   <div class="row mb-4">
                     <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                      <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                      <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control", min_date: @history_start_date} %>
                     </div>
                     <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                       <%= filter_button %>

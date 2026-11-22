@@ -1,4 +1,5 @@
 <% css_class ||= "" %>
+<% min_date ||= nil %>
 <%= text_field_tag "filters[date_range]",
 @selected_date_range_label,
 placeholder: "January 1, 2011 - December 31, 2011",
@@ -10,5 +11,6 @@ data: {
   action: "blur->date-range#validate",
   initial_start_date: @selected_date_interval.first.strftime("%B %d, %Y"),
   initial_end_date: @selected_date_interval.last.strftime("%B %d, %Y"),
+  min_date: min_date&.strftime("%B %d, %Y"),
 } %>
 <%= hidden_field_tag "filters[date_range_label]", @selected_date_range_label %>

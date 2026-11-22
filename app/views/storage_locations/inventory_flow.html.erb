@@ -21,16 +21,15 @@
       <td><%= number_with_delimiter(@flow.totals.quantity_in) %></td>
       <td><%= number_with_delimiter(@flow.totals.quantity_out) %></td>
       <td><%= number_with_delimiter(@flow.totals.quantity_adjustment) %></td>
-      <td class="<%= 'modal-body-warning-text' if @flow.totals.change&.negative? %>"><%= number_with_delimiter(@flow.totals.change) %></td>
+      <td class="<%= 'modal-body-warning-text' if @flow.totals.change.negative? %>"><%= number_with_delimiter(@flow.totals.change) %></td>
       <td><%= number_with_delimiter(@flow.totals.quantity_end) %></td>
     </tr>
     </tfoot>
   </table>
   <% if @flow.history_start %>
     <p class="text-muted small" id="inventory-flow-history-start">
-      Inventory history begins on <%= @flow.history_start.to_date.to_fs(:long) %>.
-      Quantities from before then are not available, so they are left blank,
-      and Quantity In, Out and Adjustment/Audit count from that date.
+      Inventory history begins on <%= @flow.history_start.to_date.to_fs(:long) %>,
+      so these quantities start from then.
     </p>
   <% end %>
   <p class="text-muted small">

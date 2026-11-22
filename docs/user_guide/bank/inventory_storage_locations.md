@@ -28,7 +28,7 @@ The view has two tabs:  Inventory and Inventory Flow
 ### Inventory 
 
 Here you see the current levels of inventory for the chosen Storage Location.   You can see the inventory levels for past dates by choosing the date in "Show Inventory at Date" and clicking "View"
-That shows the inventory at the beginning of the day.
+That shows the inventory at the beginning of the day.  The earliest date you can choose is when your inventory history begins in Human Essentials (shown under the date).
 ![Storage Location - Inventory tab](images/inventory/inventory_storage_location_view_inventory.png)
 
 ### Inventory Flow
@@ -45,7 +45,7 @@ For each item you see:
 
 Each record is counted on the date it was entered into Human Essentials, not the date on the record itself (for example, a donation's issued date).  If a record is changed or deleted later, the change is counted on the date the record was first entered, so the numbers always reflect your records as they are now.  This means the Quantity at End for a past date can differ from what the Inventory tab shows for that date.
 
-Human Essentials only keeps inventory history from a certain date (shown under the table).  If your range starts before then, Quantity at Start and Quantity Change are left blank, and In, Out and Adjustment/Audit only count from that date.
+Human Essentials only keeps inventory history from a certain date, so a range can't start before then.  If you choose one that does, it starts from that date instead (noted under the table).
 
 ## Editing a Storage Location
 You can edit your Storage Location (though it seems a very rare event), by clicking "Edit" beside the Storage Location in the Storage Location Summary Page.

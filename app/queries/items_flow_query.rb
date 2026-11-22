@@ -19,28 +19,25 @@
 # the in, out and adjustment columns, so start + change always equals end.
 #
 # The replay starts from the organization's first snapshot, so nothing is known
-# about quantities before it. If the range starts before the snapshot, the start
-# quantity and change are left blank (nil) and in, out and adjustment only count
-# from the snapshot on. If the whole range is before the snapshot, there are no
-# rows. Later snapshots don't hide the history before them: the replay passes
-# through them, and if one disagrees with the replayed quantities, the
-# difference counts as an adjustment.
+# about quantities before it. A range that starts before the snapshot starts at
+# the snapshot instead, and a range that ends before it has no rows. Later
+# snapshots don't hide the history before them: the replay passes through them,
+# and if one disagrees with the replayed quantities, the difference counts as an
+# adjustment.
 class ItemsFlowQuery
   # @!attribute history_start [Time, nil] when the inventory history begins, if
-  #   the range starts before then (so some quantities are unknown)
+  #   the range starts before then (so the results start from then)
   Result = Data.define(:rows, :totals, :history_start)
 
-  # How one item's quantity moved over the date range. The totals row has no
-  # item. Quantities that can't be known are nil.
+  # How one item's quantity moved over the date range. The totals row has no item.
   Row = Data.define(:item_id, :item_name, :quantity_start, :quantity_in, :quantity_out, :quantity_adjustment, :quantity_end) do
     # @param rows [Array<Row>]
-    # @param start_known [Boolean]
     # @return [Row]
-    def self.total(rows, start_known: true)
+    def self.total(rows)
       new(
         item_id: nil,
         item_name: nil,
-        quantity_start: (rows.sum(&:quantity_start) if start_known),
+        quantity_start: rows.sum(&:quantity_start),
         quantity_in: rows.sum(&:quantity_in),
         quantity_out: rows.sum(&:quantity_out),
         quantity_adjustment: rows.sum(&:quantity_adjustment),
@@ -48,20 +45,13 @@ class ItemsFlowQuery
       )
     end
 
-    # A totals row for a range with no known quantities.
-    # @return [Row]
-    def self.unknown
-      new(item_id: nil, item_name: nil, quantity_start: nil, quantity_in: nil, quantity_out: nil,
-        quantity_adjustment: nil, quantity_end: nil)
-    end
-
-    # @return [Integer, nil] nil when the start quantity isn't known
+    # @return [Integer]
     def change
-      quantity_end - quantity_start if quantity_start && quantity_end
+      quantity_end - quantity_start
     end
 
     def empty?
-      [quantity_start, quantity_in, quantity_out, quantity_adjustment, quantity_end].compact.all?(&:zero?)
+      [quantity_start, quantity_in, quantity_out, quantity_adjustment, quantity_end].all?(&:zero?)
     end
   end
 
@@ -80,23 +70,21 @@ class ItemsFlowQuery
   def call
     history_start, snapshot_quantities, records = replay
     if before?(@date_range&.end, history_start)
-      return Result.new(rows: [], totals: Row.unknown, history_start: history_start)
+      return Result.new(rows: [], totals: Row.total([]), history_start: history_start)
     end
 
-    start_known = !before?(@date_range&.begin, history_start)
     changes_by_item = records.flat_map(&:item_changes).group_by(&:item_id)
 
     item_ids = (snapshot_quantities.keys + changes_by_item.keys).uniq
     names = @organization.items.where(id: item_ids).pluck(:id, :name).to_h
 
     rows = item_ids.filter_map do |item_id|
-      row = build_row(item_id, names[item_id], snapshot_quantities.fetch(item_id, 0), changes_by_item.fetch(item_id, []),
-        start_known: start_known)
+      row = build_row(item_id, names[item_id], snapshot_quantities.fetch(item_id, 0), changes_by_item.fetch(item_id, []))
       row unless row.empty?
     end.sort_by { |row| row.item_name.to_s.downcase }
 
-    Result.new(rows: rows, totals: Row.total(rows, start_known: start_known),
-      history_start: (history_start unless start_known))
+    Result.new(rows: rows, totals: Row.total(rows),
+      history_start: (history_start if before?(@date_range&.begin, history_start)))
   end
 
   private
@@ -184,10 +172,11 @@ class ItemsFlowQuery
   end
 
   # @param snapshot_quantity [Integer]
+  # Every change is after the snapshot, so a range that starts before the
+  # snapshot starts at the snapshot quantity.
   # @param changes [Array<ItemChange>] the item's changes since the snapshot
-  # @param start_known [Boolean]
   # @return [Row]
-  def build_row(item_id, item_name, snapshot_quantity, changes, start_known:)
+  def build_row(item_id, item_name, snapshot_quantity, changes)
     quantity_start = snapshot_quantity + changes.select { |change| before?(change.time, @date_range&.begin) }.sum(&:quantity)
     during = changes.select { |change| in_range?(change.time) }
     adjustments, moves = during.partition(&:adjustment)
@@ -196,7 +185,7 @@ class ItemsFlowQuery
     Row.new(
       item_id: item_id,
       item_name: item_name,
-      quantity_start: (quantity_start if start_known),
+      quantity_start: quantity_start,
       quantity_in: ins.sum(&:quantity),
       quantity_out: -outs.sum(&:quantity),
       quantity_adjustment: adjustments.sum(&:quantity),

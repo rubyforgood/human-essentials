@@ -70,21 +70,14 @@ class Event < ApplicationRecord
     end.sort_by(&:name)
   end
 
-  # Returns the most recent "usable" snapshot. A snapshot is unusable if there is another event
-  # that was originally made before the snapshot, but was later updated/edited after the snapshot
-  # (i.e. there is a correction event whose event_time is before the snapshot, but whose
+  # The organization's "usable" snapshots, oldest first. A snapshot is unusable if there is another
+  # event that was originally made before the snapshot, but was later updated/edited after the
+  # snapshot (i.e. there is a correction event whose event_time is before the snapshot, but whose
   # updated_at time is after it).
   # In this case, the values in the snapshot can't be used to start the inventory because they
   # wouldn't reflect the updates.
   # There should always be at least one usable snapshot since the very first event we have in the
   # DB for any organization should be a SnapshotEvent.
-  # @param organization_id [Integer]
-  # @return [SnapshotEvent]
-  def self.most_recent_snapshot(organization_id)
-    usable_snapshots(organization_id).last
-  end
-
-  # All of the organization's usable snapshots (see most_recent_snapshot), oldest first.
   # @param organization_id [Integer]
   # @return [ActiveRecord::Relation<SnapshotEvent>]
   def self.usable_snapshots(organization_id)
@@ -92,10 +85,19 @@ class Event < ApplicationRecord
       NOT EXISTS (
         SELECT 1
         FROM events AS edited
-        WHERE edited.type != 'SnapshotEvent'
+        WHERE edited.organization_id = events.organization_id
+        AND edited.type != 'SnapshotEvent'
         AND edited.event_time < events.event_time AND edited.updated_at > events.event_time
       )
     SQL
+  end
+
+  # When the organization's inventory history begins: the time of its first usable snapshot.
+  # Inventory from before then can't be known.
+  # @param organization_id [Integer]
+  # @return [ActiveSupport::TimeWithZone, nil] nil if there is no snapshot
+  def self.history_start(organization_id)
+    usable_snapshots(organization_id).pick(:event_time)
   end
 
   def validate_inventory

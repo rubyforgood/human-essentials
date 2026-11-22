@@ -4,6 +4,6 @@
   <td><%= number_with_delimiter(item_row.quantity_in) %></td>
   <td><%= number_with_delimiter(item_row.quantity_out) %></td>
   <td><%= number_with_delimiter(item_row.quantity_adjustment) %></td>
-  <td class="<%= 'modal-body-warning-text' if item_row.change&.negative? %>"><%= number_with_delimiter(item_row.change) %></td>
+  <td class="<%= 'modal-body-warning-text' if item_row.change.negative? %>"><%= number_with_delimiter(item_row.change) %></td>
   <td><%= number_with_delimiter(item_row.quantity_end) %></td>
 </tr>
