@@ -27,6 +27,7 @@ module Partners
     def create
       user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],
+        phone_number: user_params[:phone_number],
         roles: [Role::PARTNER],
         resource: current_partner)
 
@@ -45,7 +46,7 @@ module Partners
     private
 
     def user_params
-      modified_params = params.require(:user).permit(:name, :email)
+      modified_params = params.require(:user).permit(:name, :email, :phone_number)
       modified_params[:name] = nil if modified_params[:name].blank?
       modified_params
     end
