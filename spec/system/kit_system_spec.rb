@@ -42,7 +42,7 @@ RSpec.describe "Kit management", type: :system do
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_line_items_attributes_0_item_id"
+    select item.name, from: "kit_line_items_attributes_0_item_id", visible: false
     find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
@@ -225,14 +225,14 @@ RSpec.describe "Kit management", type: :system do
 
       item = Item.last
       quantity_per_kit = 5
-      select item.name, from: "kit_line_items_attributes_0_item_id"
+      select item.name, from: "kit_line_items_attributes_0_item_id", visible: false
       find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
 
       click_button "Save"
 
       expect(page).to have_css("[role=alert]", text: "Name can't be blank")
       expect(page).to have_content(kit_traits[:quantity])
-      expect(page).to have_content(item.name)
+      expect(page).to have_css("option[selected]", text: item.name, visible: false)
     end
   end
 
@@ -247,7 +247,7 @@ RSpec.describe "Kit management", type: :system do
       item = Item.last
 
       # Add first entry for the item
-      select item.name, from: "kit_line_items_attributes_0_item_id"
+      select item.name, from: "kit_line_items_attributes_0_item_id", visible: false
       fill_in "kit_line_items_attributes_0_quantity", with: "10"
 
       # Add a new line item row
@@ -255,8 +255,8 @@ RSpec.describe "Kit management", type: :system do
 
       # Add second entry for the same item
       within all('.line_item_section').last do
-        item_select = find('select[name*="[item_id]"]')
-        select item.name, from: item_select[:id]
+        item_select = find('select[name*="[item_id]"]', visible: false)
+        select item.name, from: item_select[:id], visible: false
         quantity_input = find('input[name*="[quantity]"]')
         fill_in quantity_input[:id], with: "15"
       end
