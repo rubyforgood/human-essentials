@@ -416,7 +416,14 @@ RSpec.describe "StorageLocations", type: :request do
               quantity: 200)
           }
 
-          context "before active events" do
+          # @return [String] the item's quantity in the Inventory tab's table
+          def inventory_tab_quantity(item)
+            row = Nokogiri::HTML(response.body).css("#custom-tabs-inventory tbody tr")
+              .find { |tr| tr.at_css("td").text.strip == item.name }
+            row.css("td")[1].text.strip
+          end
+
+          context "before active events", versioning: true do
             it "should show the version specified" do
               travel 1.day do
                 inventory_item.update!(quantity: 100)
@@ -433,14 +440,14 @@ RSpec.describe "StorageLocations", type: :request do
                   version_date: 9.days.ago.to_date.to_fs(:db))
                 expect(response).to be_successful
                 expect(response.body).to include("Test Storage Location")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
+                expect(inventory_tab_quantity(item)).to eq("100")
               end
             end
           end
 
           context "with active events" do
             it 'should show the right version' do
+              SnapshotEvent.publish(organization)
               travel 1.day do
                 TestInventory.create_inventory(organization, {
                   storage_location.id => {
@@ -463,8 +470,7 @@ RSpec.describe "StorageLocations", type: :request do
                   version_date: 9.days.ago.to_date.to_fs(:db))
                 expect(response).to be_successful
                 expect(response.body).to include("Test Storage Location")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
+                expect(inventory_tab_quantity(item)).to eq("100")
               end
             end
           end
