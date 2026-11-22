@@ -17,12 +17,12 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
     end
 
     it "handles an invalid total client share properly" do
-      county_1_text = find_field("partner_profile_served_areas_attributes_0_county_id", visible: false).find("option[selected]", visible: false).text
+      county_1_text = find_field("partner_profile_served_areas_attributes_0_county_id", visible: false).find("option[selected]", visible: false).text(:all)
       select "26", from: "partner_profile_served_areas_attributes_0_client_share"
       expect(page).to have_content("101 %")
       expect(page).to have_content("The total client share must be either 0 or 100 %")
       click_on "Update information"
-      text_2 = find_field("partner_profile_served_areas_attributes_0_county_id", visible: false).find("option[selected]", visible: false).text # There is at least one county already
+      text_2 = find_field("partner_profile_served_areas_attributes_0_county_id", visible: false).find("option[selected]", visible: false).text(:all) # There is at least one county already
       expect(text_2).to eq(county_1_text)
       expect(page).to have_field("partner_profile_served_areas_attributes_0_client_share", with: "26")
       expect(page).to have_content("The total client share must be either 0 or 100 %")

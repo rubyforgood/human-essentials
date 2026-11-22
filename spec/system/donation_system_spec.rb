@@ -225,7 +225,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows donations to be created IN THE PAST", versioning: true do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
           fill_in "donation_issued_at", with: "2001-01-01"
 
@@ -240,7 +240,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "User can create a donation using dollars decimal amount for its money raised" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_money_raised_in_dollars", with: "1,234.56"
 
           expect do
@@ -254,11 +254,11 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Accepts and combines multiple line items for the same item type" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
           page.find(:css, "#__add_line_item").click
-          select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
-          select Item.alphabetized.first.name, from: select_id
+          select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select', visible: false)[:id]
+          select Item.alphabetized.first.name, from: select_id, visible: false
           text_id = page.find_all('.donation_line_items_quantity > input').last[:id]
           fill_in text_id, with: "10"
 
@@ -273,14 +273,14 @@ RSpec.describe "Donations", type: :system, js: true do
           item = Item.alphabetized.first
 
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          expect(page).to have_content(item.name)
-          select item.name, from: "donation_line_items_attributes_0_item_id"
+          expect(page).to have_css("option", text: item.name, visible: false)
+          select item.name, from: "donation_line_items_attributes_0_item_id", visible: false
 
           item.update(active: false)
 
           page.refresh
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          expect(page).to have_no_content(item.name)
+          expect(page).to have_no_css("option", text: item.name, visible: false)
         end
 
         it "Allows User to create a donation for a ProductDrive Participant source" do
@@ -291,7 +291,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select ProductDrive.first.name, from: "donation_product_drive_id"
           select ProductDriveParticipant.first.business_name, from: "donation_product_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
           expect do
@@ -361,7 +361,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
           select Manufacturer.first.name, from: "donation_manufacturer_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
           expect do
@@ -388,7 +388,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
           select DonationSite.first.name, from: "donation_donation_site_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
           expect do
@@ -415,7 +415,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
           expect do
@@ -434,7 +434,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select ProductDrive.first.name, from: "donation_product_drive_id"
           select ProductDriveParticipant.first.business_name, from: "donation_product_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
           click_button "Save"
@@ -450,11 +450,11 @@ RSpec.describe "Donations", type: :system, js: true do
         # dropdown is not populated on the return trip.
         it "Repopulates items dropdown even if initial submission doesn't validate" do
           item_count = organization.items.count + 1 # Adds 1 for the "choose an item" option
-          expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
+          expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1, visible: false)
           click_button "Save"
 
           expect(page).to have_content("error")
-          expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
+          expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1, visible: false)
         end
 
         # Bug fix -- Issue #526. That bug was duplicate ids across per-row barcode fields; there
@@ -471,7 +471,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Verifies unusually large donation quantities", js: true do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
 
           expect do
@@ -479,14 +479,14 @@ RSpec.describe "Donations", type: :system, js: true do
               click_button "Save"
             end
             # wait for the next page to load
-            expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
+            expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']", visible: false)
           end.to change { Donation.count }.by(1)
         end
 
         it "Remains on the page when the user cancels a large donation", js: true do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
 
           dismiss_confirm_dialog do
@@ -500,7 +500,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Requires quantity to be numeric" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
           click_button "Save"
           expect(page).to have_content("Quantity is not a number. Note: commas are not allowed")
@@ -509,14 +509,14 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Displays nested errors" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id", visible: false
           fill_in "donation_line_items_attributes_0_quantity", with: "10000000000000000000000"
 
           expect do
             accept_confirm_dialog do
               click_button "Save"
             end
-            expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
+            expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']", visible: false)
           end.not_to change { Donation.count }
           expect(page).to have_content("New donation")
           expect(page).to have_content("must be less than")
@@ -547,7 +547,7 @@ RSpec.describe "Donations", type: :system, js: true do
           Barcode.boop(@existing_barcode.value)
           # the form should update
           expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
-          expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @existing_barcode.item.name)).to eq(true)
+          expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @existing_barcode.item.name, visible: false)).to eq(true)
           qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
           expect(qty).to eq(@existing_barcode.quantity.to_s)
@@ -590,7 +590,7 @@ RSpec.describe "Donations", type: :system, js: true do
           within "#donation_line_items" do
             qty_field = page.find(:xpath, ".//input[@id='donation_line_items_attributes_0_quantity']").value
             expect(qty_field).to eq("10")
-            item_field = page.find(:xpath, ".//select[@id='donation_line_items_attributes_0_item_id']").value
+            item_field = page.find(:xpath, ".//select[@id='donation_line_items_attributes_0_item_id']", visible: false).value
             expect(item_field).to eq(Item.first.id.to_s)
           end
 
@@ -615,7 +615,7 @@ RSpec.describe "Donations", type: :system, js: true do
             expect(page).to have_field(Barcode::SCAN_FIELD)
             Barcode.boop(@global_barcode.value)
             expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
-            expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
+            expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name, visible: false)).to eq(true)
             qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
             expect(qty).to eq(@global_barcode.quantity.to_s)
@@ -705,7 +705,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_record_action "Edit"
 
         item_select = "#donation_line_items_attributes_0_item_id"
-        selected_option_text = find(item_select).find("option[selected]").text
+        selected_option_text = find(item_select, visible: false).find("option[selected]", visible: false).text(:all)
         expect(selected_option_text).to eq "Rare Candy"
 
         # move the item to another org
@@ -715,7 +715,7 @@ RSpec.describe "Donations", type: :system, js: true do
         page.refresh
 
         # ensure nothing is pre-selected
-        expect(find(item_select)).to have_no_css "option[selected]"
+        expect(find(item_select, visible: false)).to have_no_css "option[selected]", visible: false
         click_on "Save"
 
         # TODO: I'm not sure if this is the correct behavior, but

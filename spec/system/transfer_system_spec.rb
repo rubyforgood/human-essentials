@@ -15,7 +15,7 @@ RSpec.describe "Transfer management", type: :system do
       select from_name, from: "From storage location"
       select to_name, from: "To storage location"
       fill_in "Comment", with: "something"
-      select item.name, from: "transfer_line_items_attributes_0_item_id"
+      select item.name, from: "transfer_line_items_attributes_0_item_id", visible: false
       fill_in "transfer_line_items_attributes_0_quantity", with: amount
     end
     click_on "Save" if click_save
@@ -41,9 +41,10 @@ RSpec.describe "Transfer management", type: :system do
       create_transfer("10", from_storage_location.name, to_storage_location.name, click_save: false, click_confirm: false)
       # grabs the dynamically generated new item
       click_on "Add another item"
-      new_select = all("select[id$='_item_id']").last
+      expect(page).to have_css("select[id$='_item_id']", count: 2, visible: false)
+      new_select = all("select[id$='_item_id']", visible: false).last
       select_id = new_select[:id]
-      select item.name, from: select_id
+      select item.name, from: select_id, visible: false
       index = select_id[/attributes_(\d+)_item_id$/, 1]
       quantity_field_id = "transfer_line_items_attributes_#{index}_quantity"
       fill_in quantity_field_id, with: "30"
