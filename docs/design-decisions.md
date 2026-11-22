@@ -11075,3 +11075,88 @@ clean. Full `rubocop`/`erb_lint --lint-all` clean.
   simpler and more robust than reverse-engineering what select2's own generated DOM happened to
   expose a class-substring match against.
 
+## 2026-11-22 · The date range, month range and compare pickers render through `<rfg-popover>`; `popover_controller.js` is deleted
+
+**Decision.** The three remaining `popover_controller.js` consumers — `_date_range_picker`,
+`_month_range_picker`, `_compare_picker` — now render through `<rfg-popover>`
+(`vendor/javascript/rfg-popover.js`, designsystem's ADR 14), completing what the menu migration
+(2026-11-21, above) left narrower: `popover_controller.js` is deleted outright. Each sets
+`no-portal`, since none of the three sit under a `position: sticky`/`fixed` ancestor and
+portalling would break the `date-range`/`month-range`/`compare-picker` Stimulus controller's own
+target tracking on the same host element (see the earlier `<rfg-menu>` entry for the same
+discovery on the account menu's side).
+
+**Three real bugs in `<rfg-popover>` itself, found integrating, fixed upstream.** Each is the kind
+of thing that only shows up the first time a real app puts a real filter bar through the
+component — none of it was visible from Storybook alone.
+
+- **`no-portal="true"` did nothing.** `noPortal: { type: Boolean }` left Lit's default
+  attribute-name derivation in place, which lowercases a camelCase property
+  (`noPortal` → `noportal`) rather than inserting a hyphen; the HTML every consumer actually
+  writes never reached the property. Confirmed live: the attribute was present in the rendered
+  markup, the served JS had the `noPortal`-gated code, and the panel still portalled to `<body>`
+  anyway — until `customElements.get("rfg-popover")`'s own property definition was checked
+  directly rather than assumed correct from the attribute name alone. Fixed by declaring
+  `attribute: "no-portal"` explicitly.
+- **The control didn't fill its grid cell.** `<rfg-popover>`'s own default is
+  `display: inline-block` — right for `<rfg-menu>`'s kebab trigger or `<rfg-combobox>`'s barcode
+  field, both of which should size to content, not stretch. A filter's root used to be a plain
+  `<div>`, block by default, so it filled the filter bar's `min-w-0` grid cell for free; swapping
+  it for `<rfg-popover>` lost that silently. Measured on the month range/compare pickers:
+  `filter_control_width_system_spec.rb` caught a 142px box inside a 231px cell, a 12px intended
+  gap reading as 155. Fixed at the three Ruby call sites, not in the component — `w-full` on the
+  `<rfg-popover>` host — since the component's own default is correct for its other consumers.
+- **A filter's own `<label>` and hint landed inside the panel and sat hidden with it.** The
+  component recognized exactly two buckets for its light-DOM children: the one element marked
+  `slot="trigger"`, and everything else, which it treated as panel content. A plain, unslotted
+  `<label for="…">` sitting next to the trigger fell into the second bucket by elimination, and
+  with it a hint `<p>` on two of the three pickers — both sat hidden behind the (collapsed) panel
+  until it opened, which `trend_compare_picker_system_spec.rb`'s "the labels around it" examples
+  caught (`have_css("label[…]", text: …)` found the element but it was not visible). Fixed
+  upstream: any element carrying *any* `slot` attribute, not only `slot="trigger"`, now stays in
+  the trigger area, in the author's own order; `_wireTrigger` picks the one actually marked
+  `slot="trigger"` out of that group for the click/aria wiring, so a label or hint riding
+  alongside it is never mistaken for the control itself. The three partials mark their label
+  `slot="trigger-label"` and their hint (where one exists) `slot="trigger-hint"`.
+
+**What changed, mechanically.** `app/javascript/controllers/popover_controller.js` is deleted; its
+three Stimulus counterparts (`date_range_controller.js`, `month_range_controller.js`,
+`compare_picker_controller.js`) lost their `popover` getter/lookup and now call the host element's
+own public `#close()`/`#isOpen` directly, and `compare_picker_controller.js` listens for `rfg-close`
+(bubbling from the same host) in place of the old `popover:close` custom event.
+`EssentialsUiHelper::POPOVER_SURFACE_CLASSES` is removed — nothing references it once all three
+panels get their surface from the component instead of a hand-applied class string;
+`POPOVER_TRIGGER_CLASSES` stays (still used once, on the date range trigger). `config/importmap.rb`
+and `app/javascript/application.js` gained a `rfg-popover` pin/import;
+`vendor/javascript/rfg-popover.js` is new, and `rfg-menu.js`/`rfg-combobox.js` were re-vendored at
+the same designsystem commit (both subclass `RfgPopover` and share its `_syncContent`/`_portal`
+logic, so the three bugs above and their fixes apply to all three components, not only
+`<rfg-popover>` itself, even though only the filter pickers exercised them here).
+
+**Verification.** `rspec` across every spec touching the three pickers
+(`purchase_system_spec.rb`, `transfer_system_spec.rb`, `distribution_system_spec.rb`,
+`donation_system_spec.rb`, `request_system_spec.rb`, `adjustment_system_spec.rb` via the shared
+"Date Range Picker" example; `filter_control_width_system_spec.rb`,
+`trend_compare_picker_system_spec.rb`, `trend_month_range_system_spec.rb`,
+`trend_comparison_system_spec.rb`, `date_range_helper_spec.rb`) green — 300 examples, 0 failures,
+after the two layout/trapping bugs above were fixed (one pre-existing, unrelated flake reproduced
+clean on re-run). `button-audit.js`, `wcag-audit.js` (same two pre-existing findings only, neither
+on a page this touched), `keyboard-audit.js`, `overlay-audit.js`, `responsive-audit.js`,
+`dead-code.rb`, `undefined-classes.py`, `template-compile-audit.rb` all re-run clean against the
+real running app. `rubocop`/`erb_lint --lint-all` clean on the changed files. Verified live via
+Playwright beyond what the specs cover: the panel never portals to `<body>` for any of the three
+(confirmed `bodyHasPanel: false`/`panelParent: "RFG-POPOVER"` on each); a preset click updates the
+hidden fields and closes with focus returned to the trigger; the compare picker commits its
+selection only on close (`rfg-close`), not per-checkbox, matching its own documented contract.
+
+**Alternatives rejected.**
+- *Work around the three component bugs in the app instead of fixing them upstream* — e.g. an
+  app-side `MutationObserver` to rescue a mis-sorted label, or reverting to `popover_controller.js`
+  for just these three. Rejected on the same reasoning as every other fix this migration series has
+  made upstream: a bug in a shared component found by one consumer will be hit by the next one too,
+  and `<rfg-menu>`/`<rfg-combobox>` share the exact code paths that produced all three bugs here.
+- *Change `<rfg-popover>`'s default `display` to `block`* instead of adding `w-full` at the call
+  sites. Rejected: `<rfg-menu>`'s kebab trigger and `<rfg-combobox>`'s barcode field are real,
+  already-shipped consumers that want to size to content, not stretch full width; changing the
+  shared default would fix this integration by breaking those two.
+

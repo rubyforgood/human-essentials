@@ -14,18 +14,36 @@
 
   Capped at four, and the number is measured: four dash patterns stay distinct at 2px and a fourth
   direct label is the first to collide. See "The table plots what you tick" in design.md.
+
+  Renders through <rfg-popover> (vendor/javascript/rfg-popover.js -- designsystem's ADR 14)
+  instead of popover_controller.js -- see that controller's own header comment. compare-picker (a
+  Stimulus controller still, attached to the same <rfg-popover> element) listens for its own
+  rfg-close event (bubbles from the same host) rather than popover_controller's old popover:close,
+  and asks whether the panel is open via its public #isOpen accessor rather than reaching into the
+  panel's hidden attribute directly.
+
+  **no-portal.** See _date_range_picker's own comment on the same attribute -- this filter bar has
+  no position: sticky/fixed ancestor to escape, and portalling would break Stimulus's own target
+  tracking for compare-picker, attached to this same element.
+
+  **w-full.** See _date_range_picker's own comment on the same class.
+
+  **slot="trigger-label"/slot="trigger-hint".** See _date_range_picker's own comment on
+  slot="trigger-label" -- the hint needs it here too, for the same reason: it must stay visible
+  describing the trigger whether or not the panel is open.
 %>
 <%
   chosen = selected_comparisons
   cap_reached = compare_cap_reached?
-  panel_id = "compare-panel-#{SecureRandom.uuid}"
+  hint_id = "compare-hint-#{SecureRandom.hex(4)}"
   total = categories.size + items.size
 %>
-<div class="relative" data-controller="popover compare-picker"
-     data-compare-picker-cap-value="<%= MonthRangeHelper::COMPARE_CAP %>">
+<%= content_tag("rfg-popover", class: "w-full min-w-0", "no-portal": true, data: {controller: "compare-picker",
+      compare_picker_cap_value: MonthRangeHelper::COMPARE_CAP},
+      label: "Choose what to compare") do %>
   <%# The count is in the label, so the length of the list is known before it is opened. %>
   <%= label_tag "filters_compare_trigger", "Compare (#{total})",
-        class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        class: EssentialsUiHelper::FILTER_LABEL_CLASSES, slot: "trigger-label" %>
   <%#
     A plain control at the app's 38px, saying **how many** rather than which. Carbon's `MultiSelect`
     does the same -- a `selectionCount` badge in the field, not the chips -- and here it is also the
@@ -33,11 +51,9 @@
     wrapped to three rows and pushed the chart 120px down the page. *Which* ones they are is the row
     of chips under the bar, `shared/compare_chips`, where there is 1,120px and they sit on one line.
   %>
-  <button type="button" id="filters_compare_trigger"
+  <button type="button" id="filters_compare_trigger" slot="trigger"
           class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
-          aria-describedby="<%= panel_id %>-hint"
-          data-popover-target="trigger" data-action="click->popover#toggle">
+          aria-describedby="<%= hint_id %>">
     <span class="truncate <%= "text-slate-500" if chosen.empty? %>">
       <%= chosen.empty? ? "Everything" : "#{chosen.size} chosen" %>
     </span>
@@ -49,16 +65,13 @@
     </span>
   </button>
 
-  <p id="<%= panel_id %>-hint" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>">
+  <p id="<%= hint_id %>" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>" slot="trigger-hint">
     Up to <%= MonthRangeHelper::COMPARE_CAP %>. Leave empty for everything.
   </p>
 
-  <div id="<%= panel_id %>" hidden
-       role="dialog" aria-label="Choose what to compare"
-       data-popover-target="panel"
-       class="absolute left-0 z-30 w-80 max-w-[calc(100vw-2rem)] p-2 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
-    <label class="sr-only" for="<%= panel_id %>-q">Search categories and items</label>
-    <%= search_field_tag "#{panel_id}-q", nil, id: "#{panel_id}-q", name: nil, autocomplete: "off",
+  <div class="w-80 max-w-[calc(100vw-2rem)]">
+    <label class="sr-only" for="compare-query-<%= hint_id %>">Search categories and items</label>
+    <%= search_field_tag "compare-query-#{hint_id}", nil, id: "compare-query-#{hint_id}", name: nil, autocomplete: "off",
           placeholder: "Search categories and items",
           class: "#{EssentialsUiHelper::FILTER_CONTROL_CLASSES} mb-1.5",
           data: {compare_picker_target: "query", action: "input->compare-picker#filter"} %>
@@ -114,4 +127,4 @@
               data-action="click->compare-picker#clearAll">Clear comparison</button>
     </div>
   </div>
-</div>
+<% end %>

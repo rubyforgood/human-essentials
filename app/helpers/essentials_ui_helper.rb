@@ -857,14 +857,6 @@ module EssentialsUiHelper
 
   FILTER_LABEL_CLASSES = "block text-sm font-medium text-slate-700"
 
-  # A floating panel anchored to a trigger: the account menu, the date range picker.
-  #
-  # Same surface as a dialog, because it is the same idea -- something above the page rather than
-  # part of it. The elevation scale has two steps on purpose: `shadow-sm` for things in the page,
-  # `shadow-xl` for things over it. The account menus used `shadow-lg`, which was a third step
-  # nothing else shared.
-  POPOVER_SURFACE_CLASSES = "rounded-2xl border border-slate-200 bg-white shadow-xl"
-
   # The trigger reads as a control, not a button: it sits in a filter grid beside real selects and
   # has to line up with them.
   POPOVER_TRIGGER_CLASSES = "#{FILTER_CONTROL_BASE} flex items-center justify-between gap-2 px-3 text-left"

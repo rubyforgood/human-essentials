@@ -12,8 +12,9 @@ import { Controller } from "@hotwired/stimulus"
 // no date arithmetic. The ranges have to agree with the Time.zone the query is filtered in, and
 // the browser's midnight is not necessarily that.
 //
-// Opening and closing the panel belongs to the popover controller on the same element. This one
-// only asks it to close, after a choice has been made.
+// Opening and closing the panel belongs to <rfg-popover> itself (the same element this
+// controller is attached to, designsystem's ADR 14) -- this one only asks it to close, after a
+// choice has been made, via its own public #close() method.
 export default class extends Controller {
   static targets = ["summary", "start", "end", "presetField", "range"]
   static values = { presets: Object }
@@ -26,7 +27,7 @@ export default class extends Controller {
     this.startTarget.value = from
     this.endTarget.value = to
     this.commit(name, from, to)
-    this.popover?.close()
+    this.element.close()
   }
 
   // Custom dates apply themselves. There is no Apply button: it was a second click for something
@@ -81,10 +82,6 @@ export default class extends Controller {
       name === "Custom" ? `${this.short(from)} – ${this.short(to)}` : name
 
     this.dispatchChange()
-  }
-
-  get popover() {
-    return this.application.getControllerForElementAndIdentifier(this.element, "popover")
   }
 
   // On the hidden field, so the filter bar's auto-submit and summary controllers both see it.

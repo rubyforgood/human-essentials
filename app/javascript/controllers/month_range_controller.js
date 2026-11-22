@@ -9,7 +9,8 @@ import { Controller } from "@hotwired/stimulus"
 // have to agree with the Time.zone the query is filtered in, and the browser's midnight is not
 // necessarily that.
 //
-// Opening and closing the panel belongs to the popover controller on the same element.
+// Opening and closing the panel belongs to <rfg-popover> itself (the same element this
+// controller is attached to, designsystem's ADR 14).
 export default class extends Controller {
   static targets = ["summary", "start", "end", "range"]
   static values = { presets: Object }
@@ -22,7 +23,7 @@ export default class extends Controller {
     this.startTarget.value = from
     this.endTarget.value = to
     this.commit(name, from, to)
-    this.popover?.close()
+    this.element.close()
   }
 
   // Custom months apply themselves, on the same terms as the date filter: no Apply button, the
@@ -66,9 +67,5 @@ export default class extends Controller {
   label(iso) {
     const [year, month] = iso.split("-").map(Number)
     return new Date(year, month - 1, 1).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-  }
-
-  get popover() {
-    return this.application.getControllerForElementAndIdentifier(this.element, "popover")
   }
 }

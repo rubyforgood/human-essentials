@@ -48,3 +48,5 @@ pin "rfg-tooltip", to: "rfg-tooltip.js", preload: true
 pin "rfg-menu", to: "rfg-menu.js", preload: true
 # vendor/javascript/rfg-combobox.js for provenance and how to update it.
 pin "rfg-combobox", to: "rfg-combobox.js", preload: true
+# vendor/javascript/rfg-popover.js for provenance and how to update it.
+pin "rfg-popover", to: "rfg-popover.js", preload: true

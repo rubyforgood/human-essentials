@@ -2939,6 +2939,29 @@ native `<input type="date">` fields on the other. No calendar widget and no thir
 dependency: it is built from the same `FILTER_CONTROL_CLASSES` as every other filter, so it
 matches the rest of the bar by construction rather than by being re-themed.
 
+**Renders through `<rfg-popover>`** (`vendor/javascript/rfg-popover.js` — designsystem's ADR 14),
+same as the month range and compare pickers below, in place of the app's own `popover_controller.js`
+(retired). Each of the three sets `no-portal`: this filter bar has no `position: sticky`/`fixed`
+ancestor to escape, and portalling would break Stimulus's own target tracking for the
+`date-range`/`month-range`/`compare-picker` controller attached to the same host element — see
+designsystem's design.md, Popovers. Integrating all three surfaced three real bugs in
+`<rfg-popover>` itself, fixed upstream rather than worked around here:
+
+- **`no-portal="true"` silently did nothing at first.** Lit's default attribute-name conversion
+  for a camelCase property just lowercases it (`noPortal` → `noportal`); it does not insert a
+  hyphen. Fixed in designsystem by declaring `attribute: "no-portal"` explicitly.
+- **The filled-in control was narrower than its grid cell** — a 142px box inside a 231px filter
+  bar column, visually doubling the gap to the next filter. `<rfg-popover>`'s own default is
+  `display: inline-block` (right for a menu/combobox trigger, which should size to content); the
+  filter's old root was a plain `<div>`, block by default, and filled the column for free. Fixed
+  here, not in the component: `w-full` on the `<rfg-popover>` host in all three partials.
+- **A filter's own `<label>` and hint landed inside the (closed) panel and sat hidden with it.**
+  The component only recognized two buckets, "the one clickable trigger" and "the panel," so an
+  unslotted label fell into the second by elimination. Fixed in designsystem: any element carrying
+  *any* `slot` attribute — not only `slot="trigger"` — now stays in the trigger area, in author
+  order; the three partials mark their label `slot="trigger-label"` and their hint
+  `slot="trigger-hint"`.
+
 **No Apply button.** The dates apply themselves. An Apply is a second click for something the
 user has already said. Stripe, Shopify, Linear and Notion are observed committing on selection, and
 Google Analytics is the counter-example that proves it is a choice rather than a law — it keeps an
@@ -3396,19 +3419,23 @@ scrolls rather than the whole dialog, so the header and footer stay put, and it 
 
 ### Popovers
 
-An anchored floating panel — the account menu, the date range filter. `popover_controller.js`
-owns all of them.
+An anchored floating panel — the account menu, the date range filter — rendered through
+`<rfg-popover>` (`vendor/javascript/rfg-popover.js`, designsystem's ADR 14).
 
 ```erb
-<div class="relative" data-controller="popover">
-  <button type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel-id"
-          data-popover-target="trigger" data-action="click->popover#toggle">…</button>
-
-  <div id="panel-id" hidden role="dialog" aria-label="…"
-       data-popover-target="panel"
-       class="absolute left-0 z-30 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">…</div>
-</div>
+<%= content_tag("rfg-popover", class: "w-full min-w-0", label: "…", "no-portal": true,
+      data: {controller: "date-range", …}) do %>
+  <%= label_tag "trigger-id", "…", slot: "trigger-label" %>
+  <button type="button" id="trigger-id" slot="trigger" class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %>">…</button>
+  <p slot="trigger-hint">…</p>
+  … panel content …
+<% end %>
 ```
+
+A Stimulus controller (`date-range`/`month-range`/`compare-picker`) still sits on the same host
+element for the behavior specific to each picker — reading `.isOpen`, calling `.close()`,
+listening for `rfg-close` — but no longer owns open/close, focus, Escape or outside-click; the
+component does.
 
 **A popover is not a modal**, and the difference is deliberate: it must not trap focus or make the
 page inert, because you are meant to see what you are filtering while you filter it. What it does
@@ -3436,12 +3463,16 @@ markup and the other scans the page as loaded, and **neither had ever opened any
 
 **Update, 2026-11-21 — the account menu, and both row/page-level menus, moved off this onto
 `<rfg-menu>`** (vendor/javascript/rfg-menu.js, designsystem's ADR 14 — see the Row actions section
-above for the full account). `popover_controller.js` stays, narrower: the date range filter, the
-compare picker and the month range picker are the real remaining consumers here, each genuinely
-`role="dialog"` shaped rather than a `role="menu"` list, which is also why this file's own
-arrow-key-movement code was removed rather than kept — nothing sets `role="menu"` through it
-anymore. The markup/contract above (`data-controller="popover"`, `data-popover-target`) is accurate
-for these three; a new `role="menu"` consumer belongs on `<rfg-menu>` instead, not on this pattern.
+above for the full account). `popover_controller.js` stayed, narrower: the date range filter, the
+compare picker and the month range picker were the real remaining consumers.
+
+**Update, 2026-11-22 — those three moved too, onto `<rfg-popover>` directly, and
+`popover_controller.js` is deleted.** The markup sample above is current, not historical. Each of
+the three `role="dialog"`-shaped pickers sets `no-portal`, for the same reason named at the top of
+this section: no `position: sticky`/`fixed` ancestor to escape here, and portalling would have
+broken the Stimulus controller's own target tracking on the same host. See the Date range picker
+section above for the three real bugs this integration found and fixed in the component itself
+(the `no-portal` attribute name, the default width, and labels/hints landing inside the panel).
 
 ### Flash messages
 

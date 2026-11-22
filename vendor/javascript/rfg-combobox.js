@@ -1,9 +1,9 @@
-// Vendored from rubyforgood/designsystem, commit b576121298a7b44edeed0118e832def02b2a3d40
-// (2026-11-21): dist/standalone/combobox.mjs — <rfg-combobox>, with Lit bundled in (the
-// "standalone" build target; see that repo's components/README.md). Not on the npm registry
-// yet, and this app has no Node build step (ADR 0012), so this is vendored the same way
-// rfg-button.js, rfg-segmented-control.js, rfg-tooltip.js and rfg-menu.js already are: copied
-// in and pinned by config/importmap.rb, rather than resolved through a package manager.
+// Vendored from rubyforgood/designsystem, commit 07d2b2653f87e541413698827da86fe4ec6a1c59
+// (2026-11-22): dist/standalone/combobox.mjs — <rfg-combobox>, with Lit bundled in (the "standalone"
+// build target; see that repo's components/README.md). Not on the npm registry yet, and this
+// app has no Node build step (ADR 0012), so this is vendored the same way rfg-button.js,
+// rfg-segmented-control.js and rfg-tooltip.js already are: copied in and pinned by
+// config/importmap.rb, rather than resolved through a package manager.
 //
 // To update: build the standalone target in that repo (`npm run build`) and copy
 // dist/standalone/combobox.mjs over this file, updating the commit hash above.
@@ -2491,6 +2491,18 @@ var RfgPopover = class extends i3 {
     placement: { type: String },
     /** The panel's ARIA role, and what `aria-haspopup` on the trigger names — `dialog` (default), `menu`, or `listbox`. */
     role: { type: String },
+    /**
+     * Skips portalling the panel to `<body>` while open. Set this when nothing in the ancestor
+     * chain creates a stacking context the panel would otherwise need to escape (no
+     * `position: sticky`/`fixed` ancestor) — portalling has a real cost this element cannot see
+     * from inside itself: anything watching the panel's *own* subtree for changes (a framework's
+     * own behavior layer attached to this element, tracking its descendants) stops seeing it the
+     * moment it becomes a `<body>` child instead, since that is a different subtree entirely.
+     * Found integrating this into a real app: Stimulus controllers attached to this element, with
+     * `static targets` resolving inside the panel, silently lost every target the instant the
+     * panel portalled out from under them.
+     */
+    noPortal: { type: Boolean, attribute: "no-portal" },
     /** @ignore */
     _open: { state: true }
   };
@@ -2529,7 +2541,7 @@ var RfgPopover = class extends i3 {
       (n4) => n4 !== this._panelEl && n4 !== this._placeholder && !(n4.nodeType === 1 && n4.classList.contains("rfg-popover-trigger-position"))
     );
     if (original.length === 0 && (this._triggerNodes.length > 0 || this._contentNodes.length > 0)) return;
-    this._triggerNodes = original.filter((n4) => n4.nodeType === 1 && n4.getAttribute("slot") === "trigger");
+    this._triggerNodes = original.filter((n4) => n4.nodeType === 1 && n4.hasAttribute("slot"));
     this._contentNodes = original.filter((n4) => !this._triggerNodes.includes(n4));
     this.requestUpdate();
   }
@@ -2543,7 +2555,7 @@ var RfgPopover = class extends i3 {
     this._wireTrigger();
   }
   _wireTrigger() {
-    const trigger = this._triggerNodes[0];
+    const trigger = this._triggerNodes.find((n4) => n4.getAttribute("slot") === "trigger");
     if (!trigger || trigger === this._trigger) return;
     this._trigger = trigger;
     trigger.setAttribute("aria-haspopup", this.role);
@@ -2555,7 +2567,15 @@ var RfgPopover = class extends i3 {
     if (!this._uid) this._uid = Math.random().toString(36).slice(2, 8);
     return `rfg-popover-${this._uid}`;
   }
+  // Public, read-only — a consumer wiring its own behavior to this element (a Stimulus controller
+  // on the same host, say) needs to ask "is this open right now" without reaching into `_open`,
+  // which is a Lit-internal convention (the leading underscore), not a contract. Named `isOpen`,
+  // not `open`, so it can't collide with the method above.
+  get isOpen() {
+    return this._open;
+  }
   async open() {
+    var _a4;
     if (this._open || !this._trigger) return;
     this._open = true;
     this._trigger.setAttribute("aria-expanded", "true");
@@ -2563,6 +2583,10 @@ var RfgPopover = class extends i3 {
     this._portal();
     await this._reposition();
     this._addDocListeners();
+    const first = (_a4 = this._panelEl) == null ? void 0 : _a4.querySelector(
+      "input:not([type=hidden]), select, textarea, button, [href], [tabindex]:not([tabindex='-1'])"
+    );
+    first == null ? void 0 : first.focus();
     this.dispatchEvent(new CustomEvent("rfg-open", { bubbles: true, composed: true }));
   }
   close({ returnFocus = true } = {}) {
@@ -2580,7 +2604,7 @@ var RfgPopover = class extends i3 {
   // of DOM nesting, so moving the element changes nothing about the positioning math below —
   // only the ancestor chain stacking contexts resolve against, which is the entire point.
   _portal() {
-    if (!this._panelEl || this._placeholder) return;
+    if (!this._panelEl || this._placeholder || this.noPortal) return;
     this._placeholder = document.createComment("rfg-popover-panel");
     this._panelEl.before(this._placeholder);
     document.body.appendChild(this._panelEl);

@@ -19,12 +19,28 @@
   The maximum is the current month. The current month **is** offered -- "how are we doing this month" is
   the question people ask most of a trend -- and the chart marks that column as still running rather
   than letting it be compared with a whole one.
+
+  Renders through <rfg-popover> (vendor/javascript/rfg-popover.js -- designsystem's ADR 14)
+  instead of popover_controller.js -- see that controller's own header comment. month-range (a
+  Stimulus controller still, attached to the same <rfg-popover> element) asks it to close via its
+  own public #close() method rather than looking up a sibling Stimulus controller instance, since
+  there is no longer one to look up.
+
+  **no-portal.** See _date_range_picker's own comment on the same attribute -- this filter bar has
+  no position: sticky/fixed ancestor to escape, and portalling would break Stimulus's own target
+  tracking for month-range, attached to this same element.
+
+  **w-full.** See _date_range_picker's own comment on the same class.
+
+  **slot="trigger-label"/slot="trigger-hint".** See _date_range_picker's own comment on
+  slot="trigger-label" -- the hint needs it here too, for the same reason: it must stay visible
+  describing the trigger whether or not the panel is open.
 %>
 <%
   presets = month_range_presets
   from, to = selected_month_range
-  panel_id = "month-range-panel-#{SecureRandom.uuid}"
   this_month = Time.zone.today.strftime("%Y-%m")
+  hint_id = "month-range-hint-#{SecureRandom.hex(4)}"
 %>
 <%#
   **It brings no form of its own**, exactly like the date range picker. It goes *inside* the shared
@@ -34,72 +50,62 @@
   a labelled 256px control came out **142px wide, hard right**, against the 271px the same control
   gets on the six other report pages. A filter is not a page action.
 %>
-<div class="relative"
-     data-controller="popover month-range"
-     data-month-range-presets-value="<%= presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json %>">
-  <div>
-    <%# "Date range", not "Months": it is the same question the six other report pages ask under that
+<%= content_tag("rfg-popover", class: "w-full min-w-0", "no-portal": true, data: {controller: "month-range",
+      month_range_presets_value: presets.transform_values { |a, b| [a.strftime("%Y-%m"), b.strftime("%Y-%m")] }.to_json},
+      label: "Choose a range of months") do %>
+  <%# "Date range", not "Months": it is the same question the six other report pages ask under that
       name, and a reader should not have to learn a second word for it because this one happens to
       round to whole months. The granularity is a detail, and the hint says it. %>
-  <%= label_tag "filters_months_trigger", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-    <button type="button" id="filters_months_trigger"
-            class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left"
-            aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
-            aria-describedby="<%= panel_id %>-hint"
-            data-popover-target="trigger" data-month-range-target="summary"
-            data-action="click->popover#toggle">
-      <span class="truncate"><%= month_range_summary %></span>
-      <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
-    </button>
-    <p id="<%= panel_id %>-hint" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>">
-      Whole months. Ends with the current one.
-    </p>
+  <%= label_tag "filters_months_trigger", "Date range", class: EssentialsUiHelper::FILTER_LABEL_CLASSES,
+        slot: "trigger-label" %>
+  <button type="button" id="filters_months_trigger" slot="trigger"
+          class="<%= EssentialsUiHelper::FILTER_CONTROL_CLASSES %> flex w-full items-center justify-between gap-2 text-left"
+          aria-describedby="<%= hint_id %>"
+          data-month-range-target="summary">
+    <span class="truncate"><%= month_range_summary %></span>
+    <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
+  </button>
+  <p id="<%= hint_id %>" class="<%= EssentialsUiHelper::FILTER_HINT_CLASSES %>" slot="trigger-hint">
+    Whole months. Ends with the current one.
+  </p>
 
-    <%# Hidden with the attribute, not a class: Tailwind's preflight marks [hidden] !important, so
-        it cannot lose to a display utility. %>
-    <div id="<%= panel_id %>" hidden
-         role="dialog" aria-label="Choose a range of months"
-         data-popover-target="panel"
-         class="absolute left-0 z-30 w-[24rem] max-w-[calc(100vw-2rem)] p-3 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
-      <div class="grid gap-3 sm:grid-cols-2">
-        <ul class="space-y-0.5 sm:border-r sm:border-slate-100 sm:pr-3">
-          <% presets.each_key do |name| %>
-            <li>
-              <button type="button"
-                      class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_month_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
-                      <%= tag.attributes("aria-current": true) if name == selected_month_preset %>
-                      data-action="click->month-range#choosePreset"
-                      data-preset="<%= name %>"><%= name %></button>
-            </li>
-          <% end %>
-        </ul>
+  <div class="grid w-[24rem] max-w-[calc(100vw-2rem)] gap-3 sm:grid-cols-2">
+    <ul class="space-y-0.5 sm:border-r sm:border-slate-100 sm:pr-3">
+      <% presets.each_key do |name| %>
+        <li>
+          <button type="button"
+                  class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_month_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
+                  <%= tag.attributes("aria-current": true) if name == selected_month_preset %>
+                  data-action="click->month-range#choosePreset"
+                  data-preset="<%= name %>"><%= name %></button>
+        </li>
+      <% end %>
+    </ul>
 
-        <div class="space-y-3">
-          <div>
-            <%= label_tag "filters_months_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-            <%= month_field_tag "months_start", from.strftime("%Y-%m"), id: "filters_months_start", name: nil,
-                  max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                  data: {month_range_target: "start", action: "change->month-range#changeCustom"} %>
-          </div>
-          <div>
-            <%= label_tag "filters_months_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-            <%= month_field_tag "months_end", to.strftime("%Y-%m"), id: "filters_months_end", name: nil,
-                  max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                  data: {month_range_target: "end", action: "change->month-range#changeCustom"} %>
-          </div>
-          <p class="pt-1 text-xs text-slate-500">Whole months, applied as you choose them.</p>
-        </div>
+    <div class="space-y-3">
+      <div>
+        <%= label_tag "filters_months_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= month_field_tag "months_start", from.strftime("%Y-%m"), id: "filters_months_start", name: nil,
+              max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+              data: {month_range_target: "start", action: "change->month-range#changeCustom"} %>
       </div>
+      <div>
+        <%= label_tag "filters_months_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= month_field_tag "months_end", to.strftime("%Y-%m"), id: "filters_months_end", name: nil,
+              max: this_month, class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+              data: {month_range_target: "end", action: "change->month-range#changeCustom"} %>
+      </div>
+      <p class="pt-1 text-xs text-slate-500">Whole months, applied as you choose them.</p>
     </div>
-
-    <%#
-      data-filter-label names this for the filter bar's summary chips -- a hidden input has no
-      <label> for the controller to read. data-default-value is the window the page shows when
-      nobody has chosen one, so a chip appears only when the range is genuinely a filter.
-    %>
-    <%= hidden_field_tag "filters[months]", month_range_param(from, to),
-          id: nil, autocomplete: "off",
-          data: {month_range_target: "range", filter_label: "Months",
-                 default_value: month_range_param(*default_month_range)} %>
   </div>
-</div>
+
+  <%#
+    data-filter-label names this for the filter bar's summary chips -- a hidden input has no
+    <label> for the controller to read. data-default-value is the window the page shows when
+    nobody has chosen one, so a chip appears only when the range is genuinely a filter.
+  %>
+  <%= hidden_field_tag "filters[months]", month_range_param(from, to),
+        id: nil, autocomplete: "off",
+        data: {month_range_target: "range", filter_label: "Months",
+               default_value: month_range_param(*default_month_range)} %>
+<% end %>

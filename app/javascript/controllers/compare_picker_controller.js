@@ -16,15 +16,16 @@ export default class extends Controller {
 
   connect() {
     this.committed = this.selection()
-    // The popover dispatches this when it closes, however it closed -- button, Escape or a click
-    // outside. Submitting from here rather than from each of those is what makes all three behave
-    // the same.
+    // <rfg-popover> (designsystem's ADR 14, the same element this controller is attached to)
+    // dispatches this when it closes, however it closed -- button, Escape or a click outside.
+    // Submitting from here rather than from each of those is what makes all three behave the
+    // same.
     this.onClose = () => this.commit()
-    this.element.addEventListener("popover:close", this.onClose)
+    this.element.addEventListener("rfg-close", this.onClose)
   }
 
   disconnect() {
-    this.element.removeEventListener("popover:close", this.onClose)
+    this.element.removeEventListener("rfg-close", this.onClose)
   }
 
   filter() {
@@ -57,7 +58,7 @@ export default class extends Controller {
     // per choice, and its remove button unchecks the box directly. With the panel shut there is no
     // close event coming, so the commit has to happen here or the chip would tick the box off and
     // leave the page unchanged.
-    if (!this.panelOpen) {
+    if (!this.element.isOpen) {
       this.commit()
       return
     }
@@ -80,10 +81,6 @@ export default class extends Controller {
     }
     this.toggle()
     this.commit()
-  }
-
-  get panelOpen() {
-    return this.element.querySelector("[data-popover-target=panel]")?.hidden === false
   }
 
   commit() {

@@ -13,6 +13,35 @@
   rather than a select, because the visible control is a button.
 
   Locals: label (optional, defaults to "Date range").
+
+  Renders through <rfg-popover> (vendor/javascript/rfg-popover.js -- designsystem's ADR 14)
+  instead of popover_controller.js -- see that controller's own header comment. date_range
+  (a Stimulus controller still, attached to the same <rfg-popover> element) asks it to close via
+  its own public #close() method rather than looking up a sibling Stimulus controller instance,
+  since there is no longer one to look up.
+
+  **w-full.** <rfg-popover>'s own default is `display: inline-block` (designsystem's
+  components/popover.js -- shared with <rfg-menu>/<rfg-combobox>, which are usually inline
+  triggers and should shrink to content, not stretch). A filter's root used to be a plain `<div>`,
+  block by default, so it filled the filter bar's `min-w-0` grid cell for free; swapping it for
+  <rfg-popover> lost that silently -- no spec caught it here, but filter_control_width_system_spec
+  caught the same loss on the month range/compare pickers (a 142px box inside a 231px cell, where
+  12px of intended gap read as 155). `w-full` on the host is the fix, not a change to the shared
+  default: <rfg-menu>'s kebab trigger and <rfg-combobox>'s barcode field still want to size to
+  content.
+
+  **no-portal.** <rfg-popover> portals its panel to <body> by default, to escape a
+  position: sticky/fixed ancestor's stacking context -- the reason the kebab menu needs it. This
+  filter bar has no such ancestor, and portalling has a real cost here: Stimulus's own target
+  tracking for date_range (attached to this same element) is scoped to its host's subtree, and a
+  <body>-child panel is a different subtree entirely -- every target inside it silently stops
+  resolving the moment it portals. See design.md's Popovers section in the designsystem repo.
+
+  **slot="trigger-label".** The label has to stay visible beside the trigger whether or not the
+  panel is open -- without a slot attribute it is unslotted, and unslotted content is panel
+  content, so it sat hidden with the collapsed panel until opened. Any slot name keeps it out of
+  the panel; only the element actually marked slot="trigger" gets the click/aria wiring. See
+  design.md's Popovers section in the designsystem repo.
 %>
 <%
   label ||= "Date range"
@@ -22,64 +51,52 @@
   start_date, end_date = @selected_date_interval
   wire = "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}"
   summary = selected_preset || "#{start_date.to_fs(:date_picker_short)} – #{end_date.to_fs(:date_picker_short)}"
-  panel_id = "date-range-panel-#{SecureRandom.uuid}"
 %>
-<div class="relative min-w-0"
-     data-controller="popover date-range"
-     data-date-range-presets-value="<%= presets.transform_values { |from, to| [from.iso8601, to.iso8601] }.to_json %>">
-
-  <%= label_tag "filters_date_range_trigger", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-  <button type="button" id="filters_date_range_trigger"
+<%= content_tag("rfg-popover", class: "w-full min-w-0", label: "Choose a date range", "no-portal": true,
+      data: {controller: "date-range",
+             date_range_presets_value: presets.transform_values { |from, to| [from.iso8601, to.iso8601] }.to_json}) do %>
+  <%= label_tag "filters_date_range_trigger", label, class: EssentialsUiHelper::FILTER_LABEL_CLASSES,
+        slot: "trigger-label" %>
+  <button type="button" id="filters_date_range_trigger" slot="trigger"
           class="<%= EssentialsUiHelper::POPOVER_TRIGGER_CLASSES %>"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="<%= panel_id %>"
-          data-popover-target="trigger" data-date-range-target="summary"
-          data-action="click->popover#toggle">
+          data-date-range-target="summary">
     <span class="truncate"><%= summary %></span>
     <i class="bi-chevron-down shrink-0 text-slate-400" aria-hidden="true"></i>
   </button>
 
-  <%#
-    Hidden with the attribute, not a class: Tailwind's preflight marks [hidden] !important, so it
-    cannot lose to a display utility -- which is how the Filter button once stayed visible.
-  %>
-  <div id="<%= panel_id %>" hidden
-       role="dialog" aria-label="Choose a date range"
-       data-popover-target="panel"
-       class="absolute left-0 z-30 w-[26rem] max-w-[calc(100vw-2rem)] p-3 <%= EssentialsUiHelper::POPOVER_SURFACE_CLASSES %>">
-    <div class="grid gap-3 sm:grid-cols-2">
-      <ul class="max-h-64 space-y-0.5 overflow-y-auto sm:border-r sm:border-slate-100 sm:pr-3">
-        <% presets.each_key do |name| %>
-          <li>
-            <button type="button"
-                    class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
-                    <%= tag.attributes("aria-current": true) if name == selected_preset %>
-                    data-action="click->date-range#choosePreset"
-                    data-preset="<%= name %>"><%= name %></button>
-          </li>
-        <% end %>
-      </ul>
+  <div class="grid w-[26rem] max-w-[calc(100vw-2rem)] gap-3 sm:grid-cols-2">
+    <ul class="max-h-64 space-y-0.5 overflow-y-auto sm:border-r sm:border-slate-100 sm:pr-3">
+      <% presets.each_key do |name| %>
+        <li>
+          <button type="button"
+                  class="w-full rounded-lg px-3 py-1.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 <%= (name == selected_preset) ? "bg-brand-50 font-medium text-brand-800" : "text-slate-700 hover:bg-slate-100" %>"
+                  <%= tag.attributes("aria-current": true) if name == selected_preset %>
+                  data-action="click->date-range#choosePreset"
+                  data-preset="<%= name %>"><%= name %></button>
+        </li>
+      <% end %>
+    </ul>
 
-      <div class="space-y-3">
-        <div>
-          <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-          <%= date_field_tag "date_range_start", start_date, id: "filters_date_range_start", name: nil,
-                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                data: {date_range_target: "start", action: "change->date-range#changeCustom"} %>
-        </div>
-        <div>
-          <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
-          <%= date_field_tag "date_range_end", end_date, id: "filters_date_range_end", name: nil,
-                class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
-                data: {date_range_target: "end", action: "change->date-range#changeCustom"} %>
-        </div>
-        <%#
-          No Apply and no Cancel. The dates apply themselves, debounced so From-then-To is one
-          request, and the panel stays open so the range can be adjusted -- only a preset closes
-          it. An end before a start is reordered rather than refused, so there is no error state
-          left to display. See design.md.
-        %>
-        <p class="pt-1 text-xs text-slate-500">Applied as you choose them.</p>
+    <div class="space-y-3">
+      <div>
+        <%= label_tag "filters_date_range_start", "From", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= date_field_tag "date_range_start", start_date, id: "filters_date_range_start", name: nil,
+              class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+              data: {date_range_target: "start", action: "change->date-range#changeCustom"} %>
       </div>
+      <div>
+        <%= label_tag "filters_date_range_end", "To", class: EssentialsUiHelper::FILTER_LABEL_CLASSES %>
+        <%= date_field_tag "date_range_end", end_date, id: "filters_date_range_end", name: nil,
+              class: EssentialsUiHelper::FILTER_CONTROL_CLASSES, autocomplete: "off",
+              data: {date_range_target: "end", action: "change->date-range#changeCustom"} %>
+      </div>
+      <%#
+        No Apply and no Cancel. The dates apply themselves, debounced so From-then-To is one
+        request, and the panel stays open so the range can be adjusted -- only a preset closes
+        it. An end before a start is reordered rather than refused, so there is no error state
+        left to display. See design.md.
+      %>
+      <p class="pt-1 text-xs text-slate-500">Applied as you choose them.</p>
     </div>
   </div>
 
@@ -93,4 +110,4 @@
           filter_label: label, default_value: default_preset} %>
   <%= hidden_field_tag "filters[date_range]", wire,
         id: "filters_date_range", data: {date_range_target: "range"} %>
-</div>
+<% end %>

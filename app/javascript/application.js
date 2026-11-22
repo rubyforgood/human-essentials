@@ -35,6 +35,9 @@ import "rfg-menu"
 // Registers <rfg-combobox>; see the views listed in design.md's Comboboxes section.
 import "rfg-combobox"
 
+// Registers <rfg-popover>; see shared/_date_range_picker, _compare_picker and _month_range_picker.
+import "rfg-popover"
+
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/distributions_and_transfers'
