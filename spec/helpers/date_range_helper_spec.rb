@@ -61,4 +61,14 @@ RSpec.describe DateRangeHelper do
       end
     end
   end
+
+  describe "#date_range_label" do
+    it "uses the default range when the filters param isn't a hash" do
+      flash_double = double("flash", now: {})
+      helper = dummy_class.new({filters: "x"}, flash_double)
+
+      expect(helper.date_range_label).to eq(dummy_class.new({}, flash_double).date_range_label)
+      expect(helper.selected_interval).to eq(dummy_class.new({}, flash_double).selected_interval)
+    end
+  end
 end

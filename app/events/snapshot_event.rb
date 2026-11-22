@@ -19,4 +19,9 @@ class SnapshotEvent < Event
       data: inventory
     )
   end
+
+  # A snapshot replaces the whole inventory rather than versioning a record.
+  def editable?
+    false
+  end
 end

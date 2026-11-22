@@ -1,0 +1,39 @@
+<%= turbo_frame_tag "inventory_flow", target: "_top" do %>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity at Start</th>
+      <th>Quantity In</th>
+      <th>Quantity Out</th>
+      <th>Quantity Adjustment/Audit</th>
+      <th>Quantity Change</th>
+      <th>Quantity at End</th>
+    </tr>
+    </thead>
+    <tbody>
+    <%= render partial: "item_row", collection: @flow.rows %>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>Total</td>
+      <td><%= number_with_delimiter(@flow.totals.quantity_start) %></td>
+      <td><%= number_with_delimiter(@flow.totals.quantity_in) %></td>
+      <td><%= number_with_delimiter(@flow.totals.quantity_out) %></td>
+      <td><%= number_with_delimiter(@flow.totals.quantity_adjustment) %></td>
+      <td class="<%= 'modal-body-warning-text' if @flow.totals.change.negative? %>"><%= number_with_delimiter(@flow.totals.change) %></td>
+      <td><%= number_with_delimiter(@flow.totals.quantity_end) %></td>
+    </tr>
+    </tfoot>
+  </table>
+  <% if @flow.history_start %>
+    <p class="text-muted small" id="inventory-flow-history-start">
+      Inventory history begins on <%= @flow.history_start.to_date.to_fs(:long) %>,
+      so these quantities start from then.
+    </p>
+  <% end %>
+  <p class="text-muted small">
+    Edits and deletions are counted on the date the record was first entered, so a quantity here
+    can differ from the Inventory tab's quantity at the same past date.
+  </p>
+<% end %>

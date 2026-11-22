@@ -671,6 +671,39 @@ RSpec.describe InventoryAggregate do
     end
   end
 
+  describe "from_first_snapshot" do
+    it "replays from the first usable snapshot through the later ones" do
+      first = travel_to(3.days.ago) { SnapshotEvent.publish(organization) }
+      donation = travel_to(2.days.ago) do
+        create(:donation, :with_items, item: item1, item_quantity: 7, storage_location: storage_location1, organization: organization)
+      end
+      later = travel_to(1.day.ago) { SnapshotEvent.publish(organization) }
+
+      yielded = []
+      inventory = described_class.inventory_for(organization.id, from_first_snapshot: true) { |event, _| yielded << event }
+
+      expect(yielded).to eq([first, DonationEvent.find_by(eventable: donation), later])
+      expect(inventory).to eq(described_class.inventory_for(organization.id))
+      expect(inventory.storage_locations[storage_location1.id].items[item1.id].quantity).to eq(7)
+    end
+
+    it "matches the normal replay when a record gets a new version after a later snapshot" do
+      travel_to(4.days.ago) { SnapshotEvent.publish(organization) }
+      donation = travel_to(3.days.ago) do
+        create(:donation, :with_items, item: item1, item_quantity: 10, storage_location: storage_location1, organization: organization)
+      end
+      travel_to(2.days.ago) { SnapshotEvent.publish(organization) }
+      # normally prevented by Event#no_intervening_snapshot
+      donation.line_items.first.update!(quantity: 15)
+      DonationEvent.new(eventable: donation, organization_id: organization.id, event_time: Time.zone.now, group_id: "late-edit",
+        data: EventTypes::InventoryPayload.new(items: EventTypes::EventLineItem.from_line_items(donation.line_items, to: storage_location1.id)))
+        .save!(validate: false)
+
+      expect(described_class.inventory_for(organization.id, from_first_snapshot: true))
+        .to eq(described_class.inventory_for(organization.id))
+    end
+  end
+
   describe "validation" do
     let(:donation) { FactoryBot.create(:donation, organization: organization, storage_location: storage_location1) }
     let(:distribution) { FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1) }
