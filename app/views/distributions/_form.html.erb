@@ -43,21 +43,15 @@
 
     <%= f.input :comment, label: "Comment" %>
 
-    <fieldset style="margin-bottom: 2rem">
-      <div class="distribution-title">
-        <legend class="<%= 'with-request' if distribution.request %>">Items in this distribution</legend>
-        <% if distribution.request %>
-          <div class="distribution-request-unit">Quantity - Total Units</div>
-          <div class="distribution-request-unit">Requested</div>
-        <% end %>
-      </div>
+    <fieldset class="distribution-line-items" style="margin-bottom: 2rem">
+      <legend>Items in this distribution</legend>
       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-          <%= render 'line_items/line_item_fields', form: f, changes_disallowed: @changes_disallowed %>
+          <%= render 'line_items/line_item_fields', form: f, changes_disallowed: @changes_disallowed, distribution: true %>
       </div>
       <% unless @changes_disallowed %>
         <div class="row links justify-content-end">
           <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
-            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new, distribution: true %>
           <% end %>
         </div>
       <% end %>

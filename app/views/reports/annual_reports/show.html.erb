@@ -36,7 +36,8 @@
         <%=
             download_button_to(
               reports_annual_report_path(@year, format: :csv),
-              text: "Export Report"
+              text: "Export Report",
+              remote: true
             )
         %>
       </span>
