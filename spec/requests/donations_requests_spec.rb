@@ -35,6 +35,15 @@ RSpec.describe "Donations", type: :request do
           expect(pdf.text).to include("Print")
         end
 
+        it "fetches the export in the background so the button re-enables (#5744)" do
+          create(:donation, organization: organization)
+          page = Nokogiri::HTML(subject.body)
+          export = page.at_css("a[href*='donations.csv']")
+          expect(export.text).to include("Export Donations")
+          expect(export["data-controller"]).to eq("download")
+          expect(export["data-action"]).to eq("download#download")
+        end
+
         context "when given a product drive" do
           let(:product_drive) { create(:product_drive, name: "Drive Name") }
           let(:donation) { create(:donation, source: "Product Drive", product_drive: product_drive) }
