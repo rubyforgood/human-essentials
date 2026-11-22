@@ -18,11 +18,13 @@
 # before the range make up the start quantity and records within it make up
 # the in, out and adjustment columns, so start + change always equals end.
 #
-# The replay starts from the organization's most recent usable snapshot, so
-# nothing is known about quantities before it. If the range starts before the
-# snapshot, the start quantity and change are left blank (nil) and in, out and
-# adjustment only count from the snapshot on. If the whole range is before the
-# snapshot, there are no rows.
+# The replay starts from the organization's first snapshot, so nothing is known
+# about quantities before it. If the range starts before the snapshot, the start
+# quantity and change are left blank (nil) and in, out and adjustment only count
+# from the snapshot on. If the whole range is before the snapshot, there are no
+# rows. Later snapshots don't hide the history before them: the replay passes
+# through them, and if one disagrees with the replayed quantities, the
+# difference counts as an adjustment.
 class ItemsFlowQuery
   # @!attribute history_start [Time, nil] when the inventory history begins, if
   #   the range starts before then (so some quantities are unknown)
@@ -63,11 +65,11 @@ class ItemsFlowQuery
     end
   end
 
-  ADJUSTMENT_TYPES = [AdjustmentEvent, AuditEvent].freeze
+  ADJUSTMENT_TYPES = [AdjustmentEvent, AuditEvent, SnapshotEvent].freeze
 
   # @param organization [Organization]
   # @param storage_location [StorageLocation]
-  # @param date_range [Range<Time>, nil] nil means everything since the last snapshot
+  # @param date_range [Range<Time>, nil] nil means everything since the first snapshot
   def initialize(organization:, storage_location:, date_range: nil)
     @organization = organization
     @storage_location = storage_location
@@ -143,17 +145,17 @@ class ItemsFlowQuery
   # Replays the inventory, totalling up the change each record made to each
   # item at this location.
   # @return [Array(Time, Hash<Integer, Integer>, Array<RecordChanges>)] when the
-  #   snapshot the replay started from was taken (nil if there is none), the
-  #   quantities at that snapshot, and each record's changes since
+  #   first snapshot was taken (nil if there is none), the quantities at that
+  #   snapshot, and each record's changes since
   def replay
     history_start = nil
     snapshot_quantities = {}
     quantities = Hash.new(0) # item_id => quantity after the last event
     records = {}
 
-    InventoryAggregate.inventory_for(@organization.id) do |event, inventory|
+    InventoryAggregate.inventory_for(@organization.id, from_first_snapshot: true) do |event, inventory|
       items = inventory.storage_locations[@storage_location.id]&.items || {}
-      if event.is_a?(SnapshotEvent)
+      if event.is_a?(SnapshotEvent) && history_start.nil?
         history_start = event.event_time
         snapshot_quantities = items.transform_values(&:quantity)
         quantities = Hash.new(0).merge(snapshot_quantities)
@@ -162,7 +164,9 @@ class ItemsFlowQuery
 
       key = event.editable? ? [event.eventable_type, event.eventable_id] : [:event, event.id]
       record = records[key] ||= RecordChanges.new(time: event.event_time, adjustment: ADJUSTMENT_TYPES.any? { |type| event.is_a?(type) })
-      record.touch(item_ids_here(event)).each do |item_id|
+      # a later snapshot replaces every quantity here
+      item_ids = event.is_a?(SnapshotEvent) ? quantities.keys | items.keys : item_ids_here(event)
+      record.touch(item_ids).each do |item_id|
         quantity = items[item_id]&.quantity.to_i
         record.add(item_id, quantity - quantities[item_id])
         quantities[item_id] = quantity

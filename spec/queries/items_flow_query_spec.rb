@@ -113,6 +113,56 @@ RSpec.describe ItemsFlowQuery do
     end
   end
 
+  context "with a later snapshot" do
+    let(:item) { create(:item, organization: organization) }
+
+    before do
+      travel_to(Time.zone.local(2026, 1, 1)) { SnapshotEvent.publish(organization) }
+      travel_to(Time.zone.local(2026, 1, 10)) { donate(item, 8) }
+      travel_to(Time.zone.local(2026, 2, 1)) { SnapshotEvent.publish(organization) }
+      travel_to(Time.zone.local(2026, 2, 10)) { donate(item, 5) }
+    end
+
+    context "and a range before it" do
+      let(:date_range) { month(2026, 1) }
+
+      it "still sees the history since the first snapshot" do
+        expect(result.rows).to contain_exactly(
+          have_attributes(item_id: item.id, quantity_start: 0, quantity_in: 8, quantity_adjustment: 0, quantity_end: 8)
+        )
+        expect(result.history_start).to be_nil
+      end
+    end
+
+    context "and a range across it" do
+      let(:date_range) { Time.zone.local(2026, 1, 5)..Time.zone.local(2026, 2, 28).end_of_day }
+
+      it "passes through the snapshot without an adjustment" do
+        expect(result.rows).to contain_exactly(
+          have_attributes(item_id: item.id, quantity_start: 0, quantity_in: 13, quantity_adjustment: 0, quantity_end: 13)
+        )
+      end
+    end
+
+    context "that disagrees with the replayed quantities" do
+      let(:date_range) { month(2026, 3) }
+
+      before do
+        travel_to(Time.zone.local(2026, 3, 1)) do
+          inventory = InventoryAggregate.inventory_for(organization.id)
+          inventory.set_item_quantity(item_id: item.id, quantity: 10, location: storage_location.id)
+          SnapshotEvent.create!(eventable: organization, organization_id: organization.id, event_time: Time.zone.now, data: inventory)
+        end
+      end
+
+      it "counts the difference as an adjustment" do
+        expect(result.rows).to contain_exactly(
+          have_attributes(item_id: item.id, quantity_start: 13, quantity_in: 0, quantity_adjustment: -3, quantity_end: 10)
+        )
+      end
+    end
+  end
+
   context "with item names in mixed case" do
     let!(:items) { %w[banana Cherry apple].map { |name| create(:item, name: name, organization: organization) } }
 

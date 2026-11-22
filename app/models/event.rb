@@ -81,20 +81,21 @@ class Event < ApplicationRecord
   # @param organization_id [Integer]
   # @return [SnapshotEvent]
   def self.most_recent_snapshot(organization_id)
-    query = <<-SQL
-        select *
-        FROM events as snapshots
-        WHERE type='SnapshotEvent' AND organization_id=$1
-        AND NOT EXISTS (
-            SELECT id
-            FROM events
-            WHERE type != 'SnapshotEvent'
-            AND event_time < snapshots.event_time AND updated_at > snapshots.event_time
-        )
-        ORDER BY event_time DESC
-        LIMIT 1
+    usable_snapshots(organization_id).last
+  end
+
+  # All of the organization's usable snapshots (see most_recent_snapshot), oldest first.
+  # @param organization_id [Integer]
+  # @return [ActiveRecord::Relation<SnapshotEvent>]
+  def self.usable_snapshots(organization_id)
+    SnapshotEvent.where(organization_id: organization_id).where(<<~SQL).order(:event_time)
+      NOT EXISTS (
+        SELECT 1
+        FROM events AS edited
+        WHERE edited.type != 'SnapshotEvent'
+        AND edited.event_time < events.event_time AND edited.updated_at > events.event_time
+      )
     SQL
-    SnapshotEvent.find_by_sql(query, [organization_id]).first
   end
 
   def validate_inventory

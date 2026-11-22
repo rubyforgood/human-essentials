@@ -11,28 +11,38 @@ module InventoryAggregate
     # @param organization_id [Integer]
     # @param event_time [DateTime]
     # @param validate [Boolean]
+    # @param from_first_snapshot [Boolean] replay from the first usable snapshot, applying each
+    #   later usable snapshot along the way, instead of starting at the most recent one. Only
+    #   useful with a block, to see the whole history; the resulting inventory is the same.
     # @return [EventTypes::Inventory]
     # This method can take a block so that you can build up the history of a particular item over
     # time, for instance
-    def inventory_for(organization_id, event_time: nil, validate: false)
-      last_snapshot = Event.most_recent_snapshot(organization_id)
+    def inventory_for(organization_id, event_time: nil, validate: false, from_first_snapshot: false)
+      # unusable snapshots are ignored - see most_recent_snapshot method
+      snapshots = if from_first_snapshot
+        Event.usable_snapshots(organization_id).to_a
+      else
+        [Event.most_recent_snapshot(organization_id)].compact
+      end
+      first_snapshot = snapshots.first
 
-      # ignore all other snapshots as they are considered "unusable" - see most_recent_snapshot method
       events = Event.for_organization(organization_id).without_snapshots
-      if last_snapshot # all previous events can be ignored
-        events = events.where("event_time > ?", last_snapshot.event_time)
+      if first_snapshot # all previous events can be ignored
+        events = events.where("event_time > ?", first_snapshot.event_time)
       end
 
-      if event_time && (!last_snapshot || event_time > last_snapshot.event_time)
+      if event_time && (!first_snapshot || event_time > first_snapshot.event_time)
         events = events.where(event_time: ..event_time)
+        snapshots = snapshots.take_while { |snapshot| snapshot.event_time <= event_time }
       end
 
-      events = events.to_a
-      events.unshift(last_snapshot) if last_snapshot
+      events = snapshots + events.to_a
+      events.sort_by! { |event| [event.event_time, event.id] } if snapshots.size > 1
 
       inventory = EventTypes::Inventory.from(organization_id)
       event_hash = {}
-      events.group_by(&:group_id).each do |_, event_batch|
+      # snapshots have no group_id, so each one is its own group
+      events.group_by { |event| event.group_id || event.id }.each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
         previous_event = nil
         # only versions of an editable record are diffed against its previous version
