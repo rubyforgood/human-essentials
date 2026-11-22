@@ -131,7 +131,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         it "User can create a purchase using dollars decimal amount" do
           select @storage_location.name, from: "purchase_storage_location_id"
-          select @item.name, from: "purchase_line_items_attributes_0_item_id"
+          select @item.name, from: "purchase_line_items_attributes_0_item_id", visible: false
           select @vendor.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
           fill_in "purchase_amount_spent", with: "1,234.56"
@@ -146,7 +146,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         it "User can create a purchase IN THE PAST" do
           select @storage_location.name, from: "purchase_storage_location_id"
-          select @item.name, from: "purchase_line_items_attributes_0_item_id"
+          select @item.name, from: "purchase_line_items_attributes_0_item_id", visible: false
           select @vendor.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
           fill_in "purchase_issued_at", with: "2001-01-01"
@@ -170,23 +170,24 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit new_purchase_path
 
           select @storage_location.name, from: "purchase_storage_location_id"
-          expect(page).to have_content(@item.name)
-          select @item.name, from: "purchase_line_items_attributes_0_item_id"
+          expect(page).to have_css("option", text: @item.name, visible: false)
+          select @item.name, from: "purchase_line_items_attributes_0_item_id", visible: false
 
           @item.update(active: false)
 
           page.refresh
           select @storage_location.name, from: "purchase_storage_location_id"
-          expect(page).to have_no_content(@item.name)
+          expect(page).to have_no_css("option", text: @item.name, visible: false)
         end
 
         it "multiple line items for the same item type are accepted and combined on the backend" do
           select @storage_location.name, from: "purchase_storage_location_id"
-          select @item.name, from: "purchase_line_items_attributes_0_item_id"
+          select @item.name, from: "purchase_line_items_attributes_0_item_id", visible: false
           select @vendor.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
           page.find(:css, "#__add_line_item").click
-          all("select.line_item_name").last.find('option', text: @item.name).select_option
+          expect(page).to have_css("select.line_item_name", count: 2, visible: false)
+          all("select.line_item_name", visible: false).last.find('option', text: @item.name, visible: false).select_option
           all("input.quantity").last.set(11)
 
           fill_in "purchase_amount_spent", with: "10"
@@ -204,11 +205,11 @@ RSpec.describe "Purchases", type: :system, js: true do
           # dropdown is not populated on the return trip.
           it "items dropdown is still repopulated even if initial submission doesn't validate" do
             item_count = organization.items.count + 1 # Adds 1 for the "choose an item" option
-            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
+            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1, visible: false)
             click_button "Save"
 
             expect(page).to have_css("[data-error-summary]", text: /prevented this from being saved/)
-            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
+            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1, visible: false)
           end
 
           it "should display failure with error messages" do

@@ -104,10 +104,12 @@
         <div class="mb-4">
           <%= f.label :partner_form_fields, "Partner profile sections",
                 class: "block text-sm font-medium text-slate-700" %>
-          <%= f.select :partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true},
-                multiple: true,
-                class: EssentialsUiHelper::SELECT_CLASSES,
-                data: {controller: "select2", "select2-config-value": "{}"} %>
+          <%# Renders through <rfg-combobox> (vendor/javascript/rfg-combobox.js -- designsystem's
+              ADR 14); `multiple` on the wrapped select decides multi-select mode, nothing else
+              to set. The visible <label> above already names the real select via for/id, which
+              <rfg-combobox> doesn't need to know about -- see design.md, Comboboxes. %>
+          <%= content_tag("rfg-combobox",
+                f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true}, multiple: true)) %>
         </div>
       <% end %>
 

@@ -3783,6 +3783,66 @@ all.
 controller for a while and the select on `/admin/users/new` is set up by `double_select_controller`
 instead, so it kept the exact fault the fix was written for.
 
+**Update, 2026-11-21 — four of the five real select2 views render through `<rfg-combobox>`
+now** (vendor/javascript/rfg-combobox.js — designsystem's ADR 14; see [Comboboxes](#comboboxes)
+below): `line_items/_line_item_fields` (the item picker shared by donations, purchases,
+distributions, audits and adjustments), `served_areas/_served_area_fields` (county), and the two
+plain multi-selects on `organizations/edit` (partner profile sections) and
+`partners/children/_form` (requested items). The component wraps the real `<select>` directly, so
+the accessible-name problem this section describes doesn't recur by a different route: the
+synthesized textbox's own name comes from the wrapped select's `aria-label` (or a visible
+`<label for>` elsewhere on the page, same as before), never an empty value container.
+`product_drives/_form`'s own select2 — free-tagging mode, `tags: true`, typing a value not in the
+list creates a new tag — stays on select2: `<rfg-combobox>` only ever filters a fixed option list,
+with no create-new-option affordance, so it doesn't fit this one. Named, not silently left behind;
+see `docs/design-decisions.md`.
+
+<a id="comboboxes"></a>
+### Comboboxes
+
+A searchable, single- or multi-select dropdown — for a long, closed list of options picked by
+typing rather than scrolling a native `<select>`. Renders through `<rfg-combobox>`
+(vendor/javascript/rfg-combobox.js — designsystem's ADR 14), which wraps a real, host-provided
+`<select>`/`<select multiple>` rather than reimplementing one: the real select stays in the DOM,
+hidden rather than removed, as the actual form-submitting control, so nothing about how the
+field's value gets to the controller changed — `simple_form`'s `f.input`/`f.select` output needs
+no change beyond dropping select2's own `data-controller` attribute.
+
+Two integration shapes, both real:
+
+```erb
+<%# Through simple_form, opted into per-field with combobox: true -- see
+    config/initializers/simple_form_essentials.rb's EssentialsComboboxInput. %>
+<%= f.input :item_id, collection: @items, combobox: true, input_html: {"aria-label": "Item"} %>
+
+<%# A plain f.select, wrapped directly where there's no simple_form wrapper to intercept. %>
+<%= content_tag("rfg-combobox", f.select(:requested_item_ids, @requestable_items, {}, multiple: true)) %>
+```
+
+**`<rfg-combobox>` can only safely wrap a single bare `<select>`.** Unlike `<rfg-popover>`'s panel,
+it has no mechanism for preserving arbitrary other content placed inside it — only the wrapped
+select is tracked, and real children appear only once (they're never captured and re-inserted the
+way a popover's content is). A visible `<label for="...">` stays a sibling, rendered by simple_form
+or by hand, exactly as it already was; `for`/`id` pairing still names the real control correctly
+regardless of how deep inside `<rfg-combobox>` it ends up, since that's an attribute association,
+not a DOM-adjacency requirement.
+
+**`multiple` on the wrapped select decides single- vs. multi-select, not a second attribute this
+invents.** A multi-select renders its chosen options as dismissible chips, the same 24×24px remove
+target (WCAG 2.5.8) and Backspace-on-empty-query-removes-last-chip rule `<rfg-tag-input>` already
+established for its own chips.
+
+**Keyboard focus never leaves the textbox.** `aria-activedescendant` points at whichever option is
+highlighted; nothing moves real DOM focus the way the row-action menu's arrow-key navigation does,
+because typing *while* navigating results is the whole point of a combobox — the WAI-ARIA combobox
+pattern's own reason the two patterns differ.
+
+**`EssentialsComboboxInput`'s `combobox: true` is opt-in, per field** — not a change to every
+select in the app. It overrides `SimpleForm::Inputs::CollectionSelectInput#input` directly, since a
+wrapper's `b.use` always resolves to calling a method *on the input object itself*
+(`SimpleForm::Wrappers::Leaf`), which is not a seam `b.use` can substitute a different renderer
+into.
+
 ### Forms: required fields and validation errors
 
 Audit with `pw bin/design/form-validation-audit.js`, which opens every `new` form, reads how its

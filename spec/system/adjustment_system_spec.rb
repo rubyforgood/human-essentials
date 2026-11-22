@@ -24,8 +24,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end
 
       it "allows you to choose items that do not yet exist" do
-        find('select option[data-select2-id="3"]', wait: 10)
-        select Item.active.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.active.last.name, from: "adjustment_line_items_attributes_0_item_id", visible: false
         fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 
         expect do
@@ -39,11 +38,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       before do
         visit subject
         click_on "New adjustment"
-        await_select2("#adjustment_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "From storage location"
-        end
+        select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id", visible: false
       end
 
       it "can add an inventory adjustment at a storage location", js: true do
@@ -69,11 +66,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New adjustment"
-        await_select2("#adjustment_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "From storage location"
-        end
+        select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id", visible: false
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
 
         expect do
@@ -88,17 +83,15 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New adjustment"
-        await_select2("#adjustment_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "From storage location"
-        end
+        select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id", visible: false
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
         click_on "Add another item"
         within all(".line_item_section").last do
-          element_1 = find(".line_item_name")
-          expect(page).to have_select(element_1[:id])
-          select Item.last.name, from: element_1[:id]
+          element_1 = find(".line_item_name", visible: false)
+          expect(page).to have_select(element_1[:id], visible: false)
+          select Item.last.name, from: element_1[:id], visible: false
           element_2 = find(".quantity")
           expect(element_2.value).to eq("")
           element_2.set sub_quantity.to_s

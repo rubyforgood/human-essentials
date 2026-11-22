@@ -10956,3 +10956,122 @@ not a regression.
   migration already settled -- carrying a redundant, now-meaningless attribute to avoid updating
   two audit scripts is exactly the drift this project argues against.
 
+## 2026-11-21 · Four of the five real select2 views render through `<rfg-combobox>` now
+
+`line_items/_line_item_fields` (the item picker shared by donations, purchases, distributions,
+audits and adjustments), `served_areas/_served_area_fields` (county), and the two plain
+multi-selects on `organizations/edit` and `partners/children/_form` all moved off select2 onto
+`<rfg-combobox>` (designsystem ADR 14) -- the component that app's own `select2_accessibility.js`
+workaround (hidden select, three unnamed widgets, a fix living in a util because select2
+initializes in two different places) was itself the evidence for.
+
+**`product_drives/_form`'s select2 stays, named rather than silently left behind.** It runs in
+free-tagging mode (`tags: true`) -- typing a value not in the list creates a new tag.
+`<rfg-combobox>` only ever filters a fixed option list; it has no create-new-option affordance.
+Forcing this one onto it would have meant either a worse experience (losing free-tagging) or
+inventing a feature this component was never built for. Surveyed and correctly left alone, the
+same discipline that kept toggle switch and progress bar out of the design system entirely --
+except here the conclusion is "keep the one real exception," not "there's no evidence at all."
+
+**The real integration problem was simple_form, not the component.** Two of the four views
+(`line_items`, `served_areas`) render through `f.input`, whose wrapper renders label, select,
+error and hint as one opaque, already-composed string -- and `<rfg-combobox>` can only safely wrap
+a single bare `<select>`; anything else placed inside it is silently destroyed on its first render
+(no mechanism exists, unlike `<rfg-popover>`'s tracked content, for preserving arbitrary other
+content). simple_form's own wrapper DSL (`b.use`) has no seam for substituting a different
+renderer -- a `b.use` call always resolves to `SimpleForm::Wrappers::Leaf`, which calls a method
+*on the input object itself* (`input.input(options)`). The actual customization point is
+overriding that method directly: `EssentialsComboboxInput`, prepended onto
+`SimpleForm::Inputs::CollectionSelectInput#input`, wraps only the rendered `<select>` tag when the
+field passes `combobox: true` -- opt-in per field, not a change to every select in the app. The
+other two views (`organizations/edit`, `partners/children/_form`) use a plain `f.select` with no
+simple_form wrapper at all, so those just wrap the rendered tag directly with `content_tag`.
+
+**Three real bugs found integrating `<rfg-combobox>` for the first time, each live rather than
+assumed.**
+
+1. The component only ever observed the wrapped select via a `MutationObserver` watching
+   attribute mutations, which a plain `select.value = …` assignment (or jQuery's `.val(x)`) never
+   triggers -- that's a property write, not an attribute mutation. Reproduced directly against the
+   designsystem repo's own Storybook story before trusting it: `select.value` updated, the visible
+   textbox did not. This app's own barcode scanner does exactly this to the item picker it wraps
+   (`$(select).val(itemId).trigger('change')`), so it would have been a real, silent regression on
+   that view specifically. Fixed upstream by also listening for the select's own native `change`
+   event.
+2. The synthesized textbox's `aria-label` fell back to a generic "Options" whenever a visible
+   label was suppressed -- true for `line_items`/`served_areas`, both of which carry a specific
+   name via `input_html: {"aria-label": "Item"}` instead (several of these repeat in one row, so a
+   visible label would say the same word four times down a column). Fixed upstream to fall back to
+   the wrapped select's own `aria-label` first.
+3. Nothing read the wrapped select's `disabled` property. `line_items`' own item picker is
+   conditionally disabled (an item pre-filled by a partner request, meant to stay locked); without
+   this the synthesized textbox stayed fully interactive regardless -- it just wouldn't submit, a
+   real functional regression for a field specifically meant not to be changeable. Fixed upstream:
+   a native `disabled` attribute on the synthesized input is sufficient on its own, since a
+   disabled input can't receive focus at all.
+
+**A fourth and fifth, found opening the actual panel rather than trusting the CSS that was
+supposed to style it.** The panel's own `max-height`/`overflow-y`/`min-width` rule was written as a
+descendant-combinator selector (`rfg-combobox .rfg-popover-panel`), and that selector stops
+matching the instant the panel actually opens: `<rfg-popover>`'s own `open()` portals it straight
+to `<body>` unconditionally, making it a sibling of `<body>`'s other children rather than a
+descendant of `<rfg-combobox>` from that point on. Confirmed by checking computed styles on a real,
+open panel -- `max-height: none`, every option rendered at once in a ~1900px-tall unbounded list --
+not assumed from the CSS text alone. The identical bug was in `<rfg-menu>`'s own equivalent rule,
+also written (and never verified open) in this same project. Both fixed by matching the panel's
+`role` attribute instead, which travels with it wherever it's portalled. Fixing the selector
+surfaced a second, related bug: `min-width: 100%` can only mean "100% of this panel's own
+containing block," which is the viewport once portalled with `position: fixed`, not the box the
+panel visually belongs to -- the panel reopened correctly sized but at the full viewport's width,
+left edge included. Fixed upstream: `_reposition()` now sets a real pixel width directly, matching
+`@floating-ui/dom`'s own documented pattern for this, with `box-sizing: border-box` added so the
+JS-set width isn't then padded out further by the panel's own border and padding.
+
+**What changed, mechanically.** `select2_controller`'s `data-controller="select2"` attribute is
+gone from all four views; `select2.css`'s vendored stylesheet stays (still needed for
+`product_drives/_form`). `EssentialsUiHelper::SELECT_CLASSES` is no longer applied to the two
+plain-`f.select` views, since the real select is hidden and its own visual classes would be dead
+weight. The now-unused `requestable-items-container` wrapper class on `partners/children/_form`
+was removed (`undefined-classes.py` flagged it: styled by nothing, selected by nothing, once the
+spec that used to target it moved onto a label-based lookup instead).
+
+**Verification.** Every system spec interacting with one of these four fields across
+`line_items_system_spec`-adjacent files (`distribution_system_spec.rb`, `audit_system_spec.rb`,
+`adjustment_system_spec.rb`, `purchase_system_spec.rb`) and the two multi-select views
+(`organization_system_spec.rb`, `partners/children_system_spec.rb`,
+`profile_served_area_system_spec.rb` and its `partners/` duplicate) updated: `select`/`find_field`/
+`have_field`/`have_css` calls against what is now a `display: none` real select need `visible:
+false` (select2's own hiding technique was the sr-only clip, which Capybara's default visibility
+check treated as "visible enough"; `display: none` genuinely is not). `await_select2`/`select2()`
+helper calls (which waited for select2's own re-initialization after a dependent field changed, or
+matched by an undocumented class-substring mechanism) removed entirely -- nothing async needs
+waiting for since nothing re-initializes a JS widget here, and ids are read live
+(`all("select.line_item_name")[n][:id]`) rather than guessed, since a dynamically-added row gets a
+timestamp-based index, not a sequential one. A few assertions checking an item's name via
+`have_text`/`have_content` updated to check the real thing that changed -- the field's value
+(`have_field("Item", with: …)`) or the option's existence (`have_css("option", text: …, visible:
+false)`) -- since an `<input>`'s current value was never part of its own `textContent` to begin
+with, select2 or not; those assertions had been relying on select2's own rendered selection
+`<span>`, which doesn't exist here. `rspec`: all affected specs green (two confirmed pre-existing
+flakes along the way, each verified independently via isolated re-runs and unrelated to this
+change). `button-audit.js`, `wcag-audit.js` (same two pre-existing findings only),
+`keyboard-audit.js`, `overlay-audit.js`, `responsive-audit.js`, `dead-code.rb`,
+`undefined-classes.py` (0 after the dead class removal), `template-compile-audit.rb` all re-run
+clean. Full `rubocop`/`erb_lint --lint-all` clean.
+
+**Alternatives rejected.**
+- *Build a generic `<rfg-combobox>`-aware simple_form wrapper component registered via `b.use`,
+  rather than overriding `CollectionSelectInput#input` directly.* Not available: `b.use` only ever
+  constructs a `Leaf` calling a method on the input object itself: there is no wrapper-level seam
+  to substitute a different renderer into, confirmed reading simple_form's own source
+  (`SimpleForm::Wrappers::Builder#use`, `Leaf#render`) rather than assumed from its public API
+  docs.
+- *Migrate `product_drives/_form`'s tags field onto `<rfg-combobox>` anyway, dropping free-tagging
+  as a feature regression.* Rejected outright -- removing a working capability to fit a component
+  is the same mistake forcing evidence that doesn't exist would be, just inverted.
+- *Keep `select2()`/`await_select2()`'s class-substring/position-based matching mechanism for
+  consistency with specs that still use it elsewhere.* Rejected for the migrated fields
+  specifically: those specs now interact with a real `<select>` by id/class directly, which is
+  simpler and more robust than reverse-engineering what select2's own generated DOM happened to
+  expose a class-substring match against.
+

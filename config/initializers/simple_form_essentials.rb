@@ -47,7 +47,36 @@ module EssentialsInputAria
   end
 end
 
+# `f.input :attr, collection: ..., combobox: true` renders through `<rfg-combobox>`
+# (vendor/javascript/rfg-combobox.js -- designsystem's ADR 14) instead of a bare select2-managed
+# `<select>` -- see design.md, Comboboxes. Opt-in rather than a change to every select in the app:
+# only `line_items/_line_item_fields` and `served_areas/_served_area_fields` ask for it so far.
+#
+# **Only the rendered `<select>` tag is wrapped, not the whole field.** `<rfg-combobox>` can only
+# safely wrap a single bare `<select>` -- it has no mechanism, unlike `<rfg-popover>`'s tracked
+# content, for preserving arbitrary *other* content placed inside it, and would silently destroy
+# anything else there on its first render. The wrapper's own `:label`/`:full_error`/`:hint`
+# components keep rendering as ordinary siblings, completely untouched by this; a `<label
+# for="...">` still names the real `<select>` correctly no matter how deep inside `<rfg-combobox>`
+# it ends up, since `for`/`id` pairing is an attribute association, not a DOM-adjacency
+# requirement.
+#
+# This is the simple_form customization point, not a `b.use` wrapper component: a wrapper's `:use`
+# call always resolves to `SimpleForm::Wrappers::Leaf`, which calls a *method on the input object
+# itself* (`input.input(options)`) -- there is no hook in the wrapper DSL for substituting a
+# different renderer. Overriding `#input` directly, prepended the same way `EssentialsInputAria`
+# already is above, is the actual seam simple_form offers for this.
+module EssentialsComboboxInput
+  def input(wrapper_options = nil)
+    html = super
+    return html unless options[:combobox]
+
+    template.content_tag("rfg-combobox", html)
+  end
+end
+
 SimpleForm::Inputs::Base.prepend(EssentialsInputAria)
+SimpleForm::Inputs::CollectionSelectInput.prepend(EssentialsComboboxInput)
 
 SimpleForm.setup do |config|
   input_classes = "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm " \

@@ -57,8 +57,8 @@ RSpec.describe "Creating a parner child", type: :system, js: true do
       fill_in "Agency child ID", with: "01234"
       fill_in "Comments", with: "Some Comment"
 
-      select2(page, "requestable-items-container", "Item 2")
-      select2(page, "requestable-items-container", "Item 1")
+      select "Item 2", from: "Items requested", visible: false
+      select "Item 1", from: "Items requested", visible: false
 
       click_button "Add child"
 

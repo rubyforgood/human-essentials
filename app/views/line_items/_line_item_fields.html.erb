@@ -26,6 +26,9 @@
   <section class="nested-fields line_item_section grid <%= grid_class %> items-start gap-x-3 gap-y-2 px-5 py-2.5">
     <div class="<%= cells[:item] %> min-w-0">
       <%= field.label :item_id, "Item", class: "mb-1 block text-xs font-medium text-slate-500 sm:hidden" %>
+      <%# Renders through <rfg-combobox> (vendor/javascript/rfg-combobox.js -- designsystem's
+          ADR 14): combobox: true, not a second helper -- see
+          config/initializers/simple_form_essentials.rb's `EssentialsComboboxInput`. %>
       <%= field.input :item_id,
             disabled: requested.present? || local_assigns[:changes_disallowed],
             collection: @item_labels_with_quantities || @items,
@@ -33,8 +36,8 @@
             include_blank: "",
             label: false,
             wrapper: :essentials_cell_select,
-            input_html: {class: "line_item_name", "data-controller": "select2",
-                         "aria-label": "Item"} %>
+            combobox: true,
+            input_html: {class: "line_item_name", "aria-label": "Item"} %>
       <% if requested.present? %>
         <%= field.input :item_id, as: :hidden %>
       <% end %>

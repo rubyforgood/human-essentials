@@ -1,4 +1,4 @@
-// Vendored from rubyforgood/designsystem, commit 655ff9186d14d2aec86a352b5adc95f658988a65
+// Vendored from rubyforgood/designsystem, commit b576121298a7b44edeed0118e832def02b2a3d40
 // (2026-11-21): dist/standalone/combobox.mjs — <rfg-combobox>, with Lit bundled in (the
 // "standalone" build target; see that repo's components/README.md). Not on the npm registry
 // yet, and this app has no Node build step (ADR 0012), so this is vendored the same way
@@ -2715,8 +2715,28 @@ var STYLES2 = `
     display: none;
   }
 
-  rfg-combobox .rfg-popover-panel {
-    min-width: 100%;
+  /* .rfg-popover-panel[role=listbox], not rfg-combobox .rfg-popover-panel -- found live
+     integrating this into a real app: RfgPopover.open() portals the panel straight to <body>
+     unconditionally the moment it's actually visible, which makes it a sibling of <body>'s
+     other children rather than a descendant of <rfg-combobox> at all from that point on. A
+     descendant-combinator selector matches the DOM tree as it currently stands, so this rule
+     silently stopped applying the instant any combobox opened -- confirmed by checking computed
+     styles on a real, open panel (max-height: none, overflow-y: visible, every option rendered
+     at once in an unbounded list) rather than assumed from the CSS alone. The panel's own role
+     attribute travels with it wherever it's portalled, so an attribute selector on the panel
+     itself is what actually matches reliably either way -- the same fix <rfg-menu>'s own
+     identical bug needed. No backtick anywhere in this comment, on purpose: this file has hit
+     the stray-backtick-inside-a-css-comment-truncates-the-template bug before.
+     No min-width here: _reposition() sets a real pixel width directly once portalled, where a
+     percentage has nothing meaningful left to resolve against -- a lingering min-width: 100%
+     would just re-break the same thing, since min-width wins over an explicit width that's
+     smaller than it. */
+  .rfg-popover-panel[role="listbox"] {
+    /* border-box, not the browser default content-box: _reposition() sets width to exactly
+       the trigger's own rendered width (border and padding included), and without this that
+       width would only cover this panel's content box, with its own border and padding then
+       added on top -- measured 8px wider than the trigger before this was added. */
+    box-sizing: border-box;
     max-height: 16rem;
     overflow-y: auto;
     padding: 0.25rem;
@@ -2848,6 +2868,34 @@ var RfgCombobox = class extends RfgPopover {
     const selected = (_b2 = (_a4 = this._selectEl) == null ? void 0 : _a4.selectedOptions) == null ? void 0 : _b2[0];
     return selected ? selected.textContent : "";
   }
+  // Falls back to the wrapped `<select>`'s own `aria-label`, not straight to the generic
+  // "Options" — found wiring this into a real app's existing `f.input ..., label: false,
+  // input_html: {"aria-label": "Item"}` pattern (a visible label suppressed in favor of a
+  // specific accessible name, common wherever several of these repeat in one row): without this,
+  // every such consumer's real, specific name was silently discarded and replaced with the same
+  // generic "Options" on both the textbox and the panel, regardless of what the host actually
+  // asked for.
+  _selectAriaLabel() {
+    var _a4;
+    return ((_a4 = this._selectEl) == null ? void 0 : _a4.getAttribute("aria-label")) || "Options";
+  }
+  // Overrides RfgPopover's own version to also pin the panel's width to the trigger's -- the
+  // CSS `min-width: 100%` this panel's own stylesheet carries can only ever mean "100% of
+  // whatever the panel's actual containing block is," and that stops being this element's own
+  // box the moment the panel portals to `<body>` (a `position: fixed` element with no explicit
+  // width resolves a percentage against the viewport, not the box it visually belongs to) --
+  // found live, not assumed, after fixing the padding/max-height selector bug right next to this
+  // one: the panel still opened at full viewport width, left edge included, because nothing
+  // here had ever set a real pixel width to replace what the CSS could no longer express once
+  // portalled. Matches `@floating-ui/dom`'s own documented pattern for exactly this (a `size()`
+  // middleware doing the equivalent) rather than inventing a different mechanism, since this
+  // element already depends on that library for everything else about where the panel goes.
+  async _reposition() {
+    await super._reposition();
+    if (this._panelEl && this._trigger) {
+      this._panelEl.style.width = `${this._trigger.getBoundingClientRect().width}px`;
+    }
+  }
   _onInput(e3) {
     this._query = e3.target.value;
     this._activeIndex = this._options().length ? 0 : -1;
@@ -2899,8 +2947,17 @@ var RfgCombobox = class extends RfgPopover {
     this._selectEl.dispatchEvent(new Event("change", { bubbles: true }));
     this.dispatchEvent(new CustomEvent("rfg-change", { bubbles: true, composed: true }));
   }
+  // `?disabled=${this._selectEl?.disabled}` below is the one place this element reads the
+  // wrapped `<select>`'s `disabled` property at all — found needed integrating a real app's
+  // existing `f.input :item_id, disabled: requested.present? || …` field (an item pre-filled by
+  // a partner request, meant to stay locked): a native `disabled` attribute on the synthesized
+  // `<input>` is sufficient on its own, since a disabled input cannot receive focus at all (not
+  // via a real click, not via this element's own `.focus()` call), and `open()` is only ever
+  // reached through that same focus listener — so nothing else needed to change to make a
+  // disabled wrapped select behave like a disabled control rather than a fully interactive one
+  // that merely doesn't submit.
   render() {
-    var _a4;
+    var _a4, _b2;
     const options = this._options();
     const activeId = this._activeIndex >= 0 && this._activeIndex < options.length ? this._optionId(this._activeIndex) : void 0;
     const chips = this._multiple ? [...((_a4 = this._selectEl) == null ? void 0 : _a4.selectedOptions) ?? []].map(
@@ -2934,8 +2991,9 @@ var RfgCombobox = class extends RfgPopover {
           aria-expanded=${this._open}
           aria-controls=${this._panelId()}
           aria-activedescendant=${activeId ?? A}
-          aria-label=${this.label ? A : "Options"}
+          aria-label=${this.label ? A : this._selectAriaLabel()}
           autocomplete="off"
+          ?disabled=${(_b2 = this._selectEl) == null ? void 0 : _b2.disabled}
           .value=${textValue}
           @input=${this._onInput}
           @keydown=${this._onInputKeydown}
@@ -2944,7 +3002,7 @@ var RfgCombobox = class extends RfgPopover {
       <div
         class="rfg-popover-panel"
         role="listbox"
-        aria-label=${this.label || "Options"}
+        aria-label=${this.label || this._selectAriaLabel()}
         aria-multiselectable=${this._multiple}
         id=${this._panelId()}
         ?hidden=${!this._open}

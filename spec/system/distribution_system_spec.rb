@@ -406,7 +406,7 @@ RSpec.feature "Distributions", type: :system do
       open_filters
       select "Test Partner", from: "Partner"
       select "Test Storage Location", from: "From storage location"
-      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
       select "Test Storage Location", from: "distribution_storage_location_id"
       fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
@@ -443,7 +443,7 @@ RSpec.feature "Distributions", type: :system do
       visit new_distribution_path
       # Forget to fill out partner
       select "Test Storage Location", from: "From storage location"
-      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
       select "Test Storage Location", from: "distribution_storage_location_id"
       fill_in "distribution_line_items_attributes_0_quantity", with: 6
 
@@ -484,7 +484,7 @@ RSpec.feature "Distributions", type: :system do
       open_filters
       select "Test Partner", from: "Partner"
       select "Test Storage Location", from: "From storage location"
-      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
       select "Test Storage Location", from: "distribution_storage_location_id"
       fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
@@ -561,7 +561,7 @@ RSpec.feature "Distributions", type: :system do
         open_filters
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
-        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+        select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
         select "Test Storage Location", from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
@@ -595,11 +595,8 @@ RSpec.feature "Distributions", type: :system do
         open_filters
         select "Test Partner", from: "Partner"
 
-        await_select2("#distribution_line_items_attributes_0_item_id") do
-          select "Test Storage Location", from: "From storage location"
-        end
-
-        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select "Test Storage Location", from: "From storage location"
+        select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"
@@ -631,7 +628,7 @@ RSpec.feature "Distributions", type: :system do
 
         item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first
         quantity = item.quantity
-        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
         fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
 
         expect do
@@ -976,12 +973,18 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates duplicate line items" do
         item = @distribution.line_items.first.item
-        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+        select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
         find_all("[data-quantity]")[0].set 1
 
         click_on "Add another item"
 
-        select2(page, 'distribution_line_items_item_id', item.name, position: 2)
+        # Not a literal "..._1_item_id" -- a dynamically added row gets a timestamp-based index
+        # (cocoon-style), not a sequential one, so the id is read live rather than guessed.
+        # `all(...)` does not itself wait for the new row to render, unlike `find`/`has_css?`, so
+        # the count is awaited first.
+        expect(page).to have_css("select.line_item_name", count: 2, visible: false)
+        new_item_select = all("select.line_item_name", visible: false)[1]
+        select item.name, from: new_item_select[:id], visible: false
         new_select = find_all("[data-quantity]")[1]
         expect(new_select.value).to eq("")
         find_all("[data-quantity]")[1].set 3
@@ -1095,12 +1098,12 @@ RSpec.feature "Distributions", type: :system do
       visit request_path(id: @request.id)
       click_on "Fulfill request"
 
-      expect(page).to have_css(".line_item_section .select2-container")
+      expect(page).to have_css(".line_item_section rfg-combobox")
 
       current_window.resize_to(600, 800)
 
-      dropdown_width = page.evaluate_script("document.querySelector('.line_item_section .select2-container').offsetWidth")
-      column_width = page.evaluate_script("document.querySelector('.line_item_section .select2-container').closest('.line_item_section > div').offsetWidth")
+      dropdown_width = page.evaluate_script("document.querySelector('.line_item_section .rfg-combobox-box').offsetWidth")
+      column_width = page.evaluate_script("document.querySelector('.line_item_section .rfg-combobox-box').closest('.line_item_section > div').offsetWidth")
 
       expect(dropdown_width).to be <= column_width
     end
@@ -1140,7 +1143,7 @@ RSpec.feature "Distributions", type: :system do
         visit new_distribution_path
         Barcode.boop(barcode_value)
 
-        expect(page).to have_text("VerySpecificItem")
+        expect(page).to have_field("Item", with: "VerySpecificItem")
         # By id, not by the label "Quantity": the row's quantity control has no visible label any
         # more -- the column heading carries the word and the control carries it as an aria-label,
         # which Capybara does not match unless enable_aria_label is on. Matching by text here found
@@ -1267,7 +1270,7 @@ RSpec.feature "Distributions", type: :system do
     select "Test Partner", from: "Partner"
     select "Test Storage Location", from: "From storage location"
     choose "Delivery"
-    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
     fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
     click_button "Save"
@@ -1316,7 +1319,7 @@ RSpec.feature "Distributions", type: :system do
     select "Test Partner", from: "Partner"
     select "Test Storage Location", from: "From storage location"
     choose "Delivery"
-    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    select item.name, from: "distribution_line_items_attributes_0_item_id", visible: false
     fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
     click_button "Save"

@@ -46,7 +46,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         first('.storage-location-source').all("option").last.select_option
 
-        find('option', text: item.name.to_s)
+        expect(page).to have_css('option', text: item.name.to_s, visible: false)
       end
 
       context "when adding new items" do
@@ -63,7 +63,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           # Ensure item quantity and name have been filled in, and the scan field is ready again
           expect(page).to have_field Barcode::SCAN_FIELD, with: ""
           expect(page).to have_field "audit_line_items_attributes_0_quantity", with: existing_barcode.quantity.to_s
-          expect(page).to have_field "audit_line_items_attributes_0_item_id", with: existing_barcode.item.id.to_s
+          expect(page).to have_field "audit_line_items_attributes_0_item_id", with: existing_barcode.item.id.to_s, visible: false
         end
 
         it "allows auditing items that are not in a storage location", :js do
@@ -71,10 +71,8 @@ RSpec.describe "Audit management", type: :system, js: true do
           audit_quantity = 1234
           visit new_audit_path
 
-          await_select2("#audit_line_items_attributes_0_item_id") do
-            select storage_location.name, from: "Storage location"
-          end
-          select item.name, from: "audit_line_items_attributes_0_item_id"
+          select storage_location.name, from: "Storage location"
+          select item.name, from: "audit_line_items_attributes_0_item_id", visible: false
           fill_in "audit_line_items_attributes_0_quantity", with: audit_quantity
 
           accept_confirm_dialog do
@@ -120,7 +118,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           within "#audit_line_items" do
             # Ensure item fields have been filled in
             expect(page).to have_field "audit_line_items_attributes_0_quantity", with: '10'
-            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: item_without_barcode.id.to_s
+            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: item_without_barcode.id.to_s, visible: false
           end
 
           # The scan field is emptied and keeps focus, ready for the next scan
@@ -150,11 +148,8 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         click_link "New audit"
 
-        await_select2("#audit_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "Storage location"
-        end
-
-        select item.name, from: "audit_line_items_attributes_0_item_id"
+        select storage_location.name, from: "Storage location"
+        select item.name, from: "audit_line_items_attributes_0_item_id", visible: false
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
         expect do
@@ -176,11 +171,8 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         click_link "New audit"
 
-        await_select2("#audit_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "Storage location"
-        end
-
-        select Item.last.name, from: "audit_line_items_attributes_0_item_id"
+        select storage_location.name, from: "Storage location"
+        select Item.last.name, from: "audit_line_items_attributes_0_item_id", visible: false
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
         expect(page).to have_content("Submit for final approval")
@@ -201,12 +193,10 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         click_link "New audit"
 
-        await_select2("#audit_line_items_attributes_0_item_id") do
-          select storage_location.name, from: "Storage location"
-        end
+        select storage_location.name, from: "Storage location"
 
         # Add first entry for the item
-        select item.name, from: "audit_line_items_attributes_0_item_id"
+        select item.name, from: "audit_line_items_attributes_0_item_id", visible: false
         fill_in "audit_line_items_attributes_0_quantity", with: "10"
 
         # Add a new line item row
@@ -214,8 +204,8 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         # Add second entry for the same item
         within all('.line_item_section').last do
-          item_select = find('select[name*="[item_id]"]')
-          select item.name, from: item_select[:id]
+          item_select = find('select[name*="[item_id]"]', visible: false)
+          select item.name, from: item_select[:id], visible: false
           quantity_input = find('input[name*="[quantity]"]')
           fill_in quantity_input[:id], with: "15"
         end

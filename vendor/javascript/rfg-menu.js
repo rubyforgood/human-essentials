@@ -1,8 +1,8 @@
-// Vendored from rubyforgood/designsystem, commit 38829bdd987d1a35ef0b41416733561904eafe5d
+// Vendored from rubyforgood/designsystem, commit b576121298a7b44edeed0118e832def02b2a3d40
 // (2026-11-21): dist/standalone/menu.mjs — <rfg-menu>, with Lit bundled in (the "standalone"
 // build target; see that repo's components/README.md). Not on the npm registry yet, and this
 // app has no Node build step (ADR 0012), so this is vendored the same way rfg-button.js,
-// rfg-segmented-control.js, filterrific.js, rrule.js and tslib.js already are: copied in and
+// rfg-segmented-control.js, rfg-tooltip.js and rfg-combobox.js already are: copied in and
 // pinned by config/importmap.rb, rather than resolved through a package manager.
 //
 // To update: build the standalone target in that repo (`npm run build`) and copy
@@ -2632,7 +2632,7 @@ if (!customElements.get("rfg-popover")) {
 // components/menu.js
 var STYLE_ID2 = "rfg-menu-styles";
 var STYLES2 = i`
-  rfg-menu .rfg-popover-panel {
+  .rfg-popover-panel[role="menu"] {
     padding: 0.25rem 0;
     min-width: 12rem;
   }
