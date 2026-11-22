@@ -49,12 +49,41 @@ RSpec.describe UserInviteService, type: :service do
     end
 
     it "should add roles to existing user" do
-      described_class.invite(email: "email@email.com",
+      described_class.invite(email: "EMAIL@EMAIL.COM",
         roles: [Role::ORG_USER, Role::ORG_ADMIN],
         resource: organization)
       expect(user).to have_role(Role::ORG_USER, organization)
       expect(user).to have_role(Role::ORG_ADMIN, organization)
       expect(user).not_to have_role(Role::PARTNER, :any)
+    end
+
+    it "should find an existing user case-insensitively" do
+      uppercase_email = user.email.upcase
+      target_partner = partner
+      expect(User.find_by("LOWER(email) = ?", uppercase_email.downcase)).to eq(user)
+
+      expect {
+        described_class.invite(
+          email: uppercase_email,
+          roles: [Role::PARTNER],
+          resource: target_partner
+        )
+      }.not_to change(User, :count)
+
+      expect(user.reload).to have_role(Role::PARTNER, target_partner)
+    end
+
+    it "should add a submitted name when the existing user has no name" do
+      user.update!(name: nil)
+
+      described_class.invite(
+        name: "Existing User",
+        email: user.email,
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+
+      expect(user.reload.name).to eq("Existing User")
     end
   end
 
