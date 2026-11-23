@@ -1,12 +1,10 @@
-// Vendored from rubyforgood/designsystem, commit b0b5e4c5f006b97f72847e54a12378b43bf123e7 (plus uncommitted local fix, see below)
-// (2026-11-21): dist/standalone/button.mjs — <rfg-button>, with Lit bundled in (the "standalone"
-// build target; see that repo's components/README.md). Not on the npm registry yet, and this
-// app has no Node build step (ADR 0012), so this is vendored the same way filterrific.js,
-// rrule.js and tslib.js already are: copied in and pinned by config/importmap.rb, rather than
-// resolved through a package manager.
+// Vendored from @rubyforgood/design-system@0.1.0 (npm), dist/standalone/button.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.0/dist/standalone/button.mjs. Lit is bundled in (the "standalone" build target), so this
+// file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
+// rrule.js, with no Node build step (ADR 0012).
 //
-// To update: build the standalone target in that repo (`npm run build`) and copy
-// dist/standalone/button.mjs over this file, updating the commit hash above.
+// To update: change the version in the URL above, download it over this file, and update the
+// version in this header. See the design system's README, "Using it in a Rails app".
 // node_modules/@lit-labs/ssr-dom-shim/lib/element-internals.js
 var ElementInternalsShim = class ElementInternals {
   get shadowRoot() {
@@ -1527,6 +1525,17 @@ var RfgButton = class extends i3 {
       this.removeAttribute(attr.name);
     }
     this._warnIfNoAccessibleName(control);
+  }
+  // The host tag itself (`<rfg-button>`) has no `tabindex` and is never the thing that's actually
+  // interactive — `.control` is. Without this override, `.focus()` called on the host (anything
+  // that treats this component as its trigger and wants to return focus to it — `<rfg-popover>`
+  // closing is where this was found, a destructive row action's menu never returning focus after
+  // closing) is a silent no-op: a plain custom element isn't focusable by default, so the call
+  // does nothing and focus is left wherever it happened to be. Delegating here means any caller
+  // can treat this element as focusable the same way a real `<button>`/`<a>` already is.
+  focus(options) {
+    var _a4;
+    (_a4 = this._controlEl) == null ? void 0 : _a4.focus(options);
   }
   _warnIfNoAccessibleName(control) {
     if (this._warnedMissingName) return;

@@ -1,12 +1,10 @@
-// Vendored from rubyforgood/designsystem, commit 07d2b2653f87e541413698827da86fe4ec6a1c59
-// (2026-11-22): dist/standalone/menu.mjs — <rfg-menu>, with Lit bundled in (the "standalone"
-// build target; see that repo's components/README.md). Not on the npm registry yet, and this
-// app has no Node build step (ADR 0012), so this is vendored the same way rfg-button.js,
-// rfg-segmented-control.js and rfg-tooltip.js already are: copied in and pinned by
-// config/importmap.rb, rather than resolved through a package manager.
+// Vendored from @rubyforgood/design-system@0.1.0 (npm), dist/standalone/menu.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.0/dist/standalone/menu.mjs. Lit is bundled in (the "standalone" build target), so this
+// file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
+// rrule.js, with no Node build step (ADR 0012).
 //
-// To update: build the standalone target in that repo (`npm run build`) and copy
-// dist/standalone/menu.mjs over this file, updating the commit hash above.
+// To update: change the version in the URL above, download it over this file, and update the
+// version in this header. See the design system's README, "Using it in a Rails app".
 // node_modules/@lit-labs/ssr-dom-shim/lib/element-internals.js
 var ElementInternalsShim = class ElementInternals {
   get shadowRoot() {
