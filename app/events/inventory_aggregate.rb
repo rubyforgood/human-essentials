@@ -69,15 +69,21 @@ module InventoryAggregate
       errors = []
       payload.items.each do |line_item|
         quantity = line_item.quantity
-        if previous_event
-          previous_item = previous_event.data.items.find { |i| i.same_item?(line_item) }
-          quantity -= previous_item.quantity if previous_item
-        end
+        previous_item = previous_event&.data&.items&.find { |i| i.same_item?(line_item) }
+        quantity -= previous_item.quantity if previous_item
         move_item(inventory: inventory,
           item_id: line_item.item_id,
           quantity: quantity,
           from_location: line_item.from_storage_location,
           to_location: line_item.to_storage_location,
+          validate: validate,
+          errors: errors)
+        reserved = reserves?(payload) ? line_item.quantity : 0
+        reserved -= previous_item.quantity if previous_item && reserves?(previous_event.data)
+        adjust_reserved(inventory: inventory,
+          item_id: line_item.item_id,
+          quantity: reserved,
+          location: line_item.from_storage_location,
           validate: validate,
           errors: errors)
       end
@@ -90,6 +96,12 @@ module InventoryAggregate
             quantity: previous_item.quantity,
             from_location: previous_item.to_storage_location,
             to_location: previous_item.from_storage_location,
+            validate: validate,
+            errors: errors)
+          adjust_reserved(inventory: inventory,
+            item_id: previous_item.item_id,
+            quantity: reserves?(previous_event.data) ? -previous_item.quantity : 0,
+            location: previous_item.from_storage_location,
             validate: validate,
             errors: errors)
         end
@@ -106,6 +118,23 @@ module InventoryAggregate
           quantity: line_item.quantity,
           location: line_item.to_storage_location)
       end
+    end
+
+    # @param payload [EventTypes::InventoryPayload]
+    # @return [Boolean]
+    def reserves?(payload)
+      payload.respond_to?(:reserves_inventory) && payload.reserves_inventory
+    end
+
+    def adjust_reserved(inventory:, item_id:, quantity:, location:, validate:, errors:)
+      return if quantity.zero? || location.nil?
+
+      inventory.adjust_reserved_item(item_id: item_id, quantity: quantity, location: location, validate: validate)
+    rescue InventoryActionError => e
+      item = Item.find_by(id: e.item_id)&.name || "Item ID #{e.item_id}"
+      loc = StorageLocation.find_by(id: e.storage_location_id)&.name || "Storage Location ID #{e.storage_location_id}"
+      e.message << " for #{item} in #{loc}"
+      errors.push(e)
     end
 
     def move_item(inventory:, item_id:, quantity:, from_location:, to_location:, validate:, errors:)
@@ -132,8 +161,8 @@ module InventoryAggregate
 
   # diff previous event
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
-    TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-    PurchaseDestroyEvent, TransferDestroyEvent,
+    TransferEvent, DistributionDestroyEvent, DistributionCompleteEvent,
+    DonationDestroyEvent, PurchaseDestroyEvent, TransferDestroyEvent,
     UpdateExistingEvent do |event, inventory, validate: false, previous_event: nil|
     handle_inventory_event(event.data, inventory, validate: validate, previous_event: previous_event)
   rescue InventoryError => e
