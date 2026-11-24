@@ -1,5 +1,5 @@
-// Vendored from @rubyforgood/design-system@0.1.0 (npm), dist/standalone/segmented-control.mjs, downloaded
-// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.0/dist/standalone/segmented-control.mjs. Lit is bundled in (the "standalone" build target), so this
+// Vendored from @rubyforgood/design-system@0.1.3 (npm), dist/standalone/segmented-control.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.3/dist/standalone/segmented-control.mjs. Lit is bundled in (the "standalone" build target), so this
 // file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
 // rrule.js, with no Node build step (ADR 0012).
 //
@@ -1293,7 +1293,7 @@ var STYLES = i`
     color: var(--color-neutral-900);
   }
 
-  /* z-index so a focus ring on a middle segment isn't clipped by its neighbours' own
+  /* z-index so a focus ring on a middle segment isn't clipped by its neighbors' own
      overlapping border/background painting over it. */
   rfg-segmented-control .rfg-segmented-group > button:focus-visible {
     outline: 2px solid var(--color-brand-600);

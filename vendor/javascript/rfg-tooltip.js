@@ -1,5 +1,5 @@
-// Vendored from @rubyforgood/design-system@0.1.0 (npm), dist/standalone/tooltip.mjs, downloaded
-// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.0/dist/standalone/tooltip.mjs. Lit is bundled in (the "standalone" build target), so this
+// Vendored from @rubyforgood/design-system@0.1.3 (npm), dist/standalone/tooltip.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.3/dist/standalone/tooltip.mjs. Lit is bundled in (the "standalone" build target), so this
 // file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
 // rrule.js, with no Node build step (ADR 0012).
 //
@@ -1268,6 +1268,7 @@ var STYLES = `
     pointer-events: auto;
   }
 `;
+var HIDE_DELAY_MS = 150;
 function ensureStylesInjected() {
   if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement("style");
@@ -1291,6 +1292,9 @@ var RfgTooltip = class extends i3 {
     this._onBlur = this._onBlur.bind(this);
     this._onKeydown = this._onKeydown.bind(this);
     this._onScroll = this._onScroll.bind(this);
+    this._onBubbleEnter = this._onBubbleEnter.bind(this);
+    this._onBubbleLeave = this._onBubbleLeave.bind(this);
+    this._hideTimer = null;
   }
   connectedCallback() {
     super.connectedCallback();
@@ -1339,16 +1343,39 @@ var RfgTooltip = class extends i3 {
     this._trigger = null;
   }
   _onOver() {
+    this._cancelHide();
     if (this._escapeDismissed) {
       this._escapeDismissed = false;
       return;
     }
     this._show();
   }
+  // WCAG 1.4.13 "hoverable": the pointer must be able to move from the trigger onto the bubble.
+  // There's an 8px gap between them, so leaving the trigger only schedules the hide, and entering
+  // the bubble cancels it. Fixed in v0.1.3: v0.1.0–0.1.2 hid immediately, so a real pointer
+  // crossing the gap lost the bubble before reaching it.
   _onOut(e3) {
     if (e3.relatedTarget && e3.relatedTarget.closest && e3.relatedTarget.closest(".rfg-tooltip-bubble")) return;
+    if (this._trigger && e3.relatedTarget && this._trigger.contains(e3.relatedTarget)) return;
     this._escapeDismissed = false;
-    this._hide();
+    this._scheduleHide();
+  }
+  _onBubbleEnter() {
+    this._cancelHide();
+  }
+  // Leaving the bubble hides it too, unless the pointer went back to the trigger. Fixed in v0.1.3:
+  // before, only the trigger listened, so a bubble the pointer had moved onto never went away.
+  _onBubbleLeave(e3) {
+    if (this._trigger && e3.relatedTarget && this._trigger.contains(e3.relatedTarget)) return;
+    this._scheduleHide();
+  }
+  _scheduleHide() {
+    this._cancelHide();
+    this._hideTimer = setTimeout(() => this._hide(), HIDE_DELAY_MS);
+  }
+  _cancelHide() {
+    clearTimeout(this._hideTimer);
+    this._hideTimer = null;
   }
   _onFocus() {
     this._show();
@@ -1374,6 +1401,8 @@ var RfgTooltip = class extends i3 {
     this._bubble.className = "rfg-tooltip-bubble";
     this._bubble.setAttribute("aria-hidden", "true");
     this._bubble.textContent = this.text;
+    this._bubble.addEventListener("mouseenter", this._onBubbleEnter);
+    this._bubble.addEventListener("mouseleave", this._onBubbleLeave);
     document.body.appendChild(this._bubble);
     this._place();
     document.addEventListener("keydown", this._onKeydown);
@@ -1398,6 +1427,7 @@ var RfgTooltip = class extends i3 {
     this._bubble.style.top = `${Math.max(gap, top)}px`;
   }
   _hide() {
+    this._cancelHide();
     if (!this._bubble) return;
     this._bubble.remove();
     this._bubble = null;
