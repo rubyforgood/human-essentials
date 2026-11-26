@@ -62,6 +62,7 @@ jobs:
         run: |
           bundle exec rake db:create
           bundle exec rake db:schema:load
+          bundle exec rake tailwindcss:build
       - name: Run rspec
         env:
           POSTGRES_HOST: localhost
