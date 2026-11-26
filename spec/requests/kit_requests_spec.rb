@@ -19,6 +19,64 @@ RSpec.describe "/kits", type: :request do
       end
     end
 
+    describe "POST #validate" do
+      let(:item) { create(:item, organization: organization) }
+
+      it "returns valid and the confirmation modal body for a valid kit" do
+        post validate_kits_url(format: :json), params: {
+          kit: {
+            name: "A new kit",
+            value_in_dollars: "10.10",
+            line_items_attributes: {"0": {item_id: item.id, quantity: 5}}
+          }
+        }
+
+        expect(response).to be_successful
+        json = JSON.parse(response.body)
+        expect(json["valid"]).to eq(true)
+        expect(json["body"]).to include("A new kit")
+        expect(json["body"]).to include("$10.10")
+        expect(json["body"]).to include(item.name)
+      end
+
+      it "returns invalid when the name is blank" do
+        post validate_kits_url(format: :json), params: {
+          kit: {
+            name: "",
+            value_in_dollars: "10.10",
+            line_items_attributes: {"0": {item_id: item.id, quantity: 5}}
+          }
+        }
+
+        expect(response).to be_successful
+        json = JSON.parse(response.body)
+        expect(json["valid"]).to eq(false)
+        expect(json["body"]).to be_nil
+      end
+
+      it "returns invalid when there are no line items" do
+        post validate_kits_url(format: :json), params: {
+          kit: {name: "A new kit", value_in_dollars: "10.10"}
+        }
+
+        expect(response).to be_successful
+        json = JSON.parse(response.body)
+        expect(json["valid"]).to eq(false)
+      end
+
+      it "does not persist the kit" do
+        expect {
+          post validate_kits_url(format: :json), params: {
+            kit: {
+              name: "A new kit",
+              value_in_dollars: "10.10",
+              line_items_attributes: {"0": {item_id: item.id, quantity: 5}}
+            }
+          }
+        }.not_to change(Kit, :count)
+      end
+    end
+
     describe "GET #index" do
       before do
         # this shouldn't be shown

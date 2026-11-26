@@ -15,6 +15,10 @@ import { Controller } from "@hotwired/stimulus"
 
  * If the user clicks the "Yes..." button from the modal, it submits the form.
  * If the user clicks the "No..." button from the modal, it closes and user remains on the same url.
+ *
+ * The button that opened the modal is remembered and passed back into requestSubmit, so that any other
+ * Stimulus controller composed onto the same form (e.g. duplicate-items) still sees it as `event.submitter`
+ * when the form is eventually (re)submitted.
  */
 export default class extends Controller {
   static targets = [
@@ -28,6 +32,8 @@ export default class extends Controller {
 
   openModal(event) {
     event.preventDefault();
+
+    this.submitter = event.currentTarget;
 
     const formData = new FormData(this.formTarget);
     const formObject = this.buildNestedObject(formData);
@@ -49,7 +55,7 @@ export default class extends Controller {
         this.modalTarget.innerHTML = data.body;
         $(this.modalTarget).modal("show");
       } else {
-        this.formTarget.requestSubmit();
+        this.formTarget.requestSubmit(this.submitter);
       }
     })
     .catch((error) => {
@@ -57,7 +63,7 @@ export default class extends Controller {
       // In this case, just submit the form as if the user had clicked Save.
       // NICE TO HAVE: Send to bugsnag but need to install/configure https://www.npmjs.com/package/@bugsnag/js
       console.log(`=== ConfirmationController ERROR ${error}`);
-      this.formTarget.requestSubmit();
+      this.formTarget.requestSubmit(this.submitter);
     });
   }
 
@@ -106,6 +112,6 @@ export default class extends Controller {
     $(this.modalTarget).find('#modalYes').prop('disabled', true);
     $(this.modalTarget).find('#modalNo').prop('disabled', true);
     $(this.modalTarget).modal("hide");
-    this.formTarget.requestSubmit();
+    this.formTarget.requestSubmit(this.submitter);
   }
 }
