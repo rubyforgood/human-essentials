@@ -29,7 +29,9 @@ class ApplicationController < ActionController::Base
       nil
     elsif current_role.resource.is_a?(Organization)
       current_role.resource
-    else
+    elsif current_role.name.to_sym == Role::SUPER_ADMIN
+      # Super admins have no organization on their role, so they may choose
+      # which organization to act on. No other role may do this.
       Organization.find_by(id: params[:organization_id])
     end
   end

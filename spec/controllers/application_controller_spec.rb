@@ -12,6 +12,20 @@ RSpec.describe ApplicationController do
       it "should return nil" do
         expect(controller.current_organization).to eq(nil)
       end
+
+      it "should return nil even when an organization_id param is given" do
+        controller.params[:organization_id] = organization.id
+        expect(controller.current_organization).to eq(nil)
+      end
+    end
+
+    context "As a super admin" do
+      let(:user) { create(:super_admin, organization: nil) }
+
+      it "should return the organization from the organization_id param" do
+        controller.params[:organization_id] = organization.id
+        expect(controller.current_organization).to eq(organization)
+      end
     end
 
     context "As an org user" do

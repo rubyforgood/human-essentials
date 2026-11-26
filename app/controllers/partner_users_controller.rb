@@ -2,7 +2,7 @@
 
 class PartnerUsersController < ApplicationController
   before_action :authorize_admin
-  before_action :set_partner, only: %i[index create destroy resend_invitation]
+  before_action :set_partner
 
   def index
     @users = @partner.users
@@ -29,7 +29,7 @@ class PartnerUsersController < ApplicationController
   end
 
   def destroy
-    user = User.find(params[:id])
+    user = @partner.users.find(params[:id])
 
     if user.remove_role(Role::PARTNER, @partner)
       redirect_back_or_to("/", notice: "Access to #{@partner.name} has been revoked for #{user.display_name}.")
@@ -39,7 +39,7 @@ class PartnerUsersController < ApplicationController
   end
 
   def resend_invitation
-    user = User.find(params[:id])
+    user = @partner.users.find(params[:id])
 
     if user.invitation_accepted_at.nil?
       user.invite!
@@ -55,7 +55,7 @@ class PartnerUsersController < ApplicationController
   end
 
   def reset_password
-    user = User.find(params[:id])
+    user = @partner.users.find(params[:id])
 
     user.send_reset_password_instructions
     redirect_back_or_to(root_path, notice: "Password e-mail sent!")
@@ -64,7 +64,7 @@ class PartnerUsersController < ApplicationController
   private
 
   def set_partner
-    @partner = Partner.find(params[:partner_id])
+    @partner = current_organization.partners.find(params[:partner_id])
   end
 
   def user_params

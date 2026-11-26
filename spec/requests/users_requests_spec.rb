@@ -29,7 +29,7 @@ RSpec.describe "Users", type: :request do
 
   describe "POST #partner_user_reset_password" do
     let(:partner) { create(:partner, organization: organization) }
-    let!(:user) { create(:partner_user, partner: partner, email: "me@partner.com") }
+    let!(:partner_user) { create(:partner_user, partner: partner, email: "me@partner.com") }
     let(:params) { { organization_id: organization.id, partner_id: partner.id, email: "me@partner.com" } }
 
     it "should send a password" do
@@ -46,13 +46,13 @@ RSpec.describe "Users", type: :request do
     end
 
     it "should return an error if it cannot find the user" do
-      user.update!(email: "some-other-email@mail.com")
+      partner_user.update!(email: "some-other-email@mail.com")
       post partner_user_reset_password_users_path(params)
       expect(ActionMailer::Base.deliveries.size).to eq(0)
     end
 
     it "should return send a password even if case-insensitive spelling of email" do
-      user.update!(email: "Me@partner.com")
+      partner_user.update!(email: "Me@partner.com")
       post partner_user_reset_password_users_path(params)
       expect(ActionMailer::Base.deliveries.size).to eq(1)
     end

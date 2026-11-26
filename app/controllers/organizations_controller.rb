@@ -30,14 +30,14 @@ class OrganizationsController < ApplicationController
     UserInviteService.invite(email: params[:email],
       name: params[:name],
       roles: [Role::ORG_USER],
-      resource: Organization.find(params[:org]))
+      resource: current_organization)
     redirect_to organization_path, notice: "User invited to organization!"
   rescue => e
     redirect_to organization_path, alert: e.message
   end
 
   def resend_user_invitation
-    user = User.find(params[:user_id])
+    user = current_organization.users.find(params[:user_id])
     user.invite!
     redirect_to organization_path, notice: "User re-invited to organization!"
   end

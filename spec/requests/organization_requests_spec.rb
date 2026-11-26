@@ -490,10 +490,32 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
+    describe "POST #invite_user" do
+      it "invites the user to the admin's organization" do
+        post invite_user_organization_path(email: "new_user@example.com", name: "New User")
+        expect(User.find_by(email: "new_user@example.com").has_role?(Role::ORG_USER, organization)).to be(true)
+      end
+    end
+
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
         { organization_id: other_organization.id }
+      end
+
+      describe "POST #invite_user" do
+        it "does not invite to the other organization" do
+          post invite_user_organization_path(org: other_organization.id, email: organization_admin.email)
+          expect(organization_admin.reload.has_role?(Role::ORG_USER, other_organization)).to be(false)
+        end
+      end
+
+      describe "POST #resend_user_invitation" do
+        it "does not re-invite the other organization's user" do
+          other_user = create(:user, organization: other_organization)
+          post resend_user_invitation_organization_path(user_id: other_user.id)
+          expect(response).to have_http_status(:not_found)
+        end
       end
 
       describe "GET #show" do
@@ -530,6 +552,14 @@ RSpec.describe "Organizations", type: :request do
   context 'When signed in as a super admin' do
     before do
       sign_in(super_admin_org_admin)
+    end
+
+    describe "POST #invite_user" do
+      it "invites the user to the organization given by organization_id" do
+        other_organization = create(:organization)
+        post invite_user_organization_path(organization_id: other_organization.id, email: "new_user@example.com")
+        expect(User.find_by(email: "new_user@example.com").has_role?(Role::ORG_USER, other_organization)).to be(true)
+      end
     end
 
     describe "POST #promote_to_org_admin" do
