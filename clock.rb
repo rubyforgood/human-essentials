@@ -6,7 +6,7 @@ require_relative "config/environment"
 
 module Clockwork
   handler do |job|
-    puts "Running #{job}"
+    Rails.logger.info("Running #{job}")
   end
 
   DATA_TYPES = %w[Distribution Purchase Donation]
