@@ -1,5 +1,5 @@
-// Vendored from @rubyforgood/design-system@0.1.3 (npm), dist/standalone/menu.mjs, downloaded
-// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.3/dist/standalone/menu.mjs. Lit is bundled in (the "standalone" build target), so this
+// Vendored from @rubyforgood/design-system@0.1.9 (npm), dist/standalone/menu.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.9/dist/standalone/menu.mjs. Lit is bundled in (the "standalone" build target), so this
 // file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
 // rrule.js, with no Node build step (ADR 0012).
 //
@@ -2657,6 +2657,49 @@ var STYLES2 = i`
   .rfg-popover-panel[role="menu"] {
     padding: 0.25rem 0;
     min-width: 12rem;
+    border-radius: var(--radius-control);
+  }
+
+  @layer base {
+    .rfg-popover-panel[role="menu"] form {
+      display: block;
+      margin: 0;
+    }
+
+    .rfg-popover-panel[role="menu"] [role="menuitem"] {
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      margin: 0;
+      padding: 0.5rem 0.75rem;
+      border: 0;
+      background: none;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.25rem;
+      color: var(--color-neutral-700);
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .rfg-popover-panel[role="menu"] [role="menuitem"]:hover,
+    .rfg-popover-panel[role="menu"] [role="menuitem"]:focus-visible {
+      background: var(--color-neutral-100);
+      color: var(--color-neutral-900);
+    }
+
+    .rfg-popover-panel[role="menu"] [role="menuitem"]:focus-visible {
+      outline: 2px solid var(--color-brand-600);
+      outline-offset: -2px;
+    }
+
+    .rfg-popover-panel[role="menu"] [role="menuitem"][aria-disabled="true"] {
+      color: var(--color-neutral-500);
+      background: none;
+      cursor: not-allowed;
+    }
   }
 `;
 function ensureMenuStylesInjected() {

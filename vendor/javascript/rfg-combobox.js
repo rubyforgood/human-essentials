@@ -1,5 +1,5 @@
-// Vendored from @rubyforgood/design-system@0.1.3 (npm), dist/standalone/combobox.mjs, downloaded
-// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.3/dist/standalone/combobox.mjs. Lit is bundled in (the "standalone" build target), so this
+// Vendored from @rubyforgood/design-system@0.1.9 (npm), dist/standalone/combobox.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.9/dist/standalone/combobox.mjs. Lit is bundled in (the "standalone" build target), so this
 // file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
 // rrule.js, with no Node build step (ADR 0012).
 //
@@ -2673,7 +2673,7 @@ var STYLES2 = `
     align-items: center;
     gap: 0.375rem;
     padding: 0.375rem;
-    border: 1px solid var(--color-neutral-200);
+    border: 1px solid var(--color-neutral-500); /* 3:1+ field edge, WCAG 1.4.11 */
     border-radius: var(--radius-control);
     cursor: text;
   }
