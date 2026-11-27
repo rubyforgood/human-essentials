@@ -2060,13 +2060,3 @@ trix-toolbar .trix-button--dialog {
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-brand-500) 30%, transparent);
   outline: none;
 }
-
-/* Menu items stay regular weight. Design system 0.1.9 gives menu items a default look in
-   `@layer base` that includes weight 500, and these items' own classes set no weight, so they
-   would turn medium. The design system's main branch makes the default 400 (649604d); delete this
-   block when the next release is vendored. `:root` and the same layer: the injected 0.1.9 rule is
-   also in `base` and loads later, so this needs the higher specificity; our own utilities still
-   beat both. */
-@layer base {
-  :root .rfg-popover-panel[role="menu"] [role="menuitem"] { font-weight: 400; }
-}

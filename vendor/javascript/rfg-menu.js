@@ -1,5 +1,5 @@
-// Vendored from @rubyforgood/design-system@0.1.9 (npm), dist/standalone/menu.mjs, downloaded
-// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.9/dist/standalone/menu.mjs. Lit is bundled in (the "standalone" build target), so this
+// Vendored from @rubyforgood/design-system@0.1.10 (npm), dist/standalone/menu.mjs, downloaded
+// from https://cdn.jsdelivr.net/npm/@rubyforgood/design-system@0.1.10/dist/standalone/menu.mjs. Lit is bundled in (the "standalone" build target), so this
 // file has no imports of its own and is pinned by config/importmap.rb like filterrific.js and
 // rrule.js, with no Node build step (ADR 0012).
 //
@@ -2676,7 +2676,7 @@ var STYLES2 = i`
       background: none;
       font-family: var(--font-sans);
       font-size: 0.875rem;
-      font-weight: 500;
+      font-weight: 400;
       line-height: 1.25rem;
       color: var(--color-neutral-700);
       text-align: left;
